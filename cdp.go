@@ -2626,6 +2626,11 @@ type Debugger interface {
 	// Stops on the next JavaScript statement.
 	Pause(context.Context) error
 
+	// Command ScheduleStepIntoAsync
+	//
+	// Steps into next scheduled async task if any is scheduled before next pause. Returns success when async task is actually scheduled, returns error if no task were scheduled or another scheduleStepIntoAsync was called.
+	ScheduleStepIntoAsync(context.Context) error
+
 	// Command Resume
 	//
 	// Resumes JavaScript execution.
@@ -2824,6 +2829,11 @@ func (d *debuggerDomain) StepOut(ctx context.Context) (err error) {
 
 func (d *debuggerDomain) Pause(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DebuggerPause.String(), nil, nil, d.conn)
+	return
+}
+
+func (d *debuggerDomain) ScheduleStepIntoAsync(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, cdpcmd.DebuggerScheduleStepIntoAsync.String(), nil, nil, d.conn)
 	return
 }
 
@@ -4395,15 +4405,10 @@ type Network interface {
 	// Returns content served for the given request.
 	GetResponseBody(context.Context, *cdpcmd.NetworkGetResponseBodyArgs) (*cdpcmd.NetworkGetResponseBodyReply, error)
 
-	// Command AddBlockedURL
+	// Command SetBlockedURLs
 	//
 	// Blocks specific URL from loading.
-	AddBlockedURL(context.Context, *cdpcmd.NetworkAddBlockedURLArgs) error
-
-	// Command RemoveBlockedURL
-	//
-	// Cancels blocking of a specific URL from loading.
-	RemoveBlockedURL(context.Context, *cdpcmd.NetworkRemoveBlockedURLArgs) error
+	SetBlockedURLs(context.Context, *cdpcmd.NetworkSetBlockedURLsArgs) error
 
 	// Command ReplayXHR
 	//
@@ -4618,27 +4623,15 @@ func NewNetworkGetResponseBodyArgs(requestID cdptype.NetworkRequestID) *cdpcmd.N
 	return args
 }
 
-func (d *networkDomain) AddBlockedURL(ctx context.Context, args *cdpcmd.NetworkAddBlockedURLArgs) (err error) {
-	err = rpcc.Invoke(ctx, cdpcmd.NetworkAddBlockedURL.String(), args, nil, d.conn)
+func (d *networkDomain) SetBlockedURLs(ctx context.Context, args *cdpcmd.NetworkSetBlockedURLsArgs) (err error) {
+	err = rpcc.Invoke(ctx, cdpcmd.NetworkSetBlockedURLs.String(), args, nil, d.conn)
 	return
 }
 
-// NewNetworkAddBlockedURLArgs initializes the arguments for AddBlockedURL.
-func NewNetworkAddBlockedURLArgs(url string) *cdpcmd.NetworkAddBlockedURLArgs {
-	args := new(cdpcmd.NetworkAddBlockedURLArgs)
-	args.URL = url
-	return args
-}
-
-func (d *networkDomain) RemoveBlockedURL(ctx context.Context, args *cdpcmd.NetworkRemoveBlockedURLArgs) (err error) {
-	err = rpcc.Invoke(ctx, cdpcmd.NetworkRemoveBlockedURL.String(), args, nil, d.conn)
-	return
-}
-
-// NewNetworkRemoveBlockedURLArgs initializes the arguments for RemoveBlockedURL.
-func NewNetworkRemoveBlockedURLArgs(url string) *cdpcmd.NetworkRemoveBlockedURLArgs {
-	args := new(cdpcmd.NetworkRemoveBlockedURLArgs)
-	args.URL = url
+// NewNetworkSetBlockedURLsArgs initializes the arguments for SetBlockedURLs.
+func NewNetworkSetBlockedURLsArgs(urls []string) *cdpcmd.NetworkSetBlockedURLsArgs {
+	args := new(cdpcmd.NetworkSetBlockedURLsArgs)
+	args.Urls = urls
 	return args
 }
 
@@ -5213,6 +5206,11 @@ type Page interface {
 	// Capture page screenshot.
 	CaptureScreenshot(context.Context, *cdpcmd.PageCaptureScreenshotArgs) (*cdpcmd.PageCaptureScreenshotReply, error)
 
+	// Command PrintToPDF
+	//
+	// Print page as pdf.
+	PrintToPDF(context.Context) (*cdpcmd.PagePrintToPDFReply, error)
+
 	// Command StartScreencast
 	//
 	// Starts sending each frame using the screencastFrame event.
@@ -5604,6 +5602,12 @@ func NewPageCaptureScreenshotArgs() *cdpcmd.PageCaptureScreenshotArgs {
 	args := new(cdpcmd.PageCaptureScreenshotArgs)
 
 	return args
+}
+
+func (d *pageDomain) PrintToPDF(ctx context.Context) (reply *cdpcmd.PagePrintToPDFReply, err error) {
+	reply = new(cdpcmd.PagePrintToPDFReply)
+	err = rpcc.Invoke(ctx, cdpcmd.PagePrintToPDF.String(), nil, reply, d.conn)
+	return
 }
 
 func (d *pageDomain) StartScreencast(ctx context.Context, args *cdpcmd.PageStartScreencastArgs) (err error) {
@@ -6082,6 +6086,26 @@ type Profiler interface {
 	//
 	Stop(context.Context) (*cdpcmd.ProfilerStopReply, error)
 
+	// Command StartPreciseCoverage
+	//
+	// Enable precise code coverage. Coverage data for JavaScript executed before enabling precise code coverage may be incomplete. Enabling prevents running optimized code and resets execution counters.
+	StartPreciseCoverage(context.Context) error
+
+	// Command StopPreciseCoverage
+	//
+	// Disable precise code coverage. Disabling releases unnecessary execution count records and allows executing optimized code.
+	StopPreciseCoverage(context.Context) error
+
+	// Command TakePreciseCoverage
+	//
+	// Collect coverage data for the current isolate, and resets execution counters. Precise code coverage needs to have started.
+	TakePreciseCoverage(context.Context) (*cdpcmd.ProfilerTakePreciseCoverageReply, error)
+
+	// Command GetBestEffortCoverage
+	//
+	// Collect coverage data for the current isolate. The coverage data may be incomplete due to garbage collection.
+	GetBestEffortCoverage(context.Context) (*cdpcmd.ProfilerGetBestEffortCoverageReply, error)
+
 	// Event ConsoleProfileStarted
 	//
 	// Sent when new profile recodring is started using console.profile() call.
@@ -6126,6 +6150,28 @@ func (d *profilerDomain) Start(ctx context.Context) (err error) {
 func (d *profilerDomain) Stop(ctx context.Context) (reply *cdpcmd.ProfilerStopReply, err error) {
 	reply = new(cdpcmd.ProfilerStopReply)
 	err = rpcc.Invoke(ctx, cdpcmd.ProfilerStop.String(), nil, reply, d.conn)
+	return
+}
+
+func (d *profilerDomain) StartPreciseCoverage(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, cdpcmd.ProfilerStartPreciseCoverage.String(), nil, nil, d.conn)
+	return
+}
+
+func (d *profilerDomain) StopPreciseCoverage(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, cdpcmd.ProfilerStopPreciseCoverage.String(), nil, nil, d.conn)
+	return
+}
+
+func (d *profilerDomain) TakePreciseCoverage(ctx context.Context) (reply *cdpcmd.ProfilerTakePreciseCoverageReply, err error) {
+	reply = new(cdpcmd.ProfilerTakePreciseCoverageReply)
+	err = rpcc.Invoke(ctx, cdpcmd.ProfilerTakePreciseCoverage.String(), nil, reply, d.conn)
+	return
+}
+
+func (d *profilerDomain) GetBestEffortCoverage(ctx context.Context) (reply *cdpcmd.ProfilerGetBestEffortCoverageReply, err error) {
+	reply = new(cdpcmd.ProfilerGetBestEffortCoverageReply)
+	err = rpcc.Invoke(ctx, cdpcmd.ProfilerGetBestEffortCoverage.String(), nil, reply, d.conn)
 	return
 }
 

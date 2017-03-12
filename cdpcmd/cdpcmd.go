@@ -976,8 +976,9 @@ type DebuggerRemoveBreakpointArgs struct {
 
 // DebuggerGetPossibleBreakpointsArgs contains the arguments for debuggerGetPossibleBreakpoints.
 type DebuggerGetPossibleBreakpointsArgs struct {
-	Start cdptype.DebuggerLocation  `json:"start"`         // Start of range to search possible breakpoint locations in.
-	End   *cdptype.DebuggerLocation `json:"end,omitempty"` // End of range to search possible breakpoint locations in (excluding). When not specifed, end of scripts is used as end of range.
+	Start              cdptype.DebuggerLocation  `json:"start"`                        // Start of range to search possible breakpoint locations in.
+	End                *cdptype.DebuggerLocation `json:"end,omitempty"`                // End of range to search possible breakpoint locations in (excluding). When not specifed, end of scripts is used as end of range.
+	RestrictToFunction *bool                     `json:"restrictToFunction,omitempty"` // Only consider locations which are in the same (non-nested) function as start.
 }
 
 // SetEnd sets the End optional argument. End of range to search possible breakpoint locations in (excluding). When not specifed, end of scripts is used as end of range.
@@ -986,9 +987,15 @@ func (a *DebuggerGetPossibleBreakpointsArgs) SetEnd(end cdptype.DebuggerLocation
 	return a
 }
 
+// SetRestrictToFunction sets the RestrictToFunction optional argument. Only consider locations which are in the same (non-nested) function as start.
+func (a *DebuggerGetPossibleBreakpointsArgs) SetRestrictToFunction(restrictToFunction bool) *DebuggerGetPossibleBreakpointsArgs {
+	a.RestrictToFunction = &restrictToFunction
+	return a
+}
+
 // DebuggerGetPossibleBreakpointsReply contains the return values for debuggerGetPossibleBreakpoints.
 type DebuggerGetPossibleBreakpointsReply struct {
-	Locations []cdptype.DebuggerLocation `json:"locations"` // List of the possible breakpoint locations.
+	Locations []cdptype.DebuggerBreakLocation `json:"locations"` // List of the possible breakpoint locations.
 }
 
 // DebuggerContinueToLocationArgs contains the arguments for debuggerContinueToLocation.
@@ -1957,14 +1964,9 @@ type NetworkGetResponseBodyReply struct {
 	Base64Encoded bool   `json:"base64Encoded"` // True, if content was sent as base64.
 }
 
-// NetworkAddBlockedURLArgs contains the arguments for networkAddBlockedURL.
-type NetworkAddBlockedURLArgs struct {
-	URL string `json:"url"` // URL to block.
-}
-
-// NetworkRemoveBlockedURLArgs contains the arguments for networkRemoveBlockedURL.
-type NetworkRemoveBlockedURLArgs struct {
-	URL string `json:"url"` // URL to stop blocking.
+// NetworkSetBlockedURLsArgs contains the arguments for networkSetBlockedURLs.
+type NetworkSetBlockedURLsArgs struct {
+	Urls []string `json:"urls"` // URLs to block.
 }
 
 // NetworkReplayXHRArgs contains the arguments for networkReplayXHR.
@@ -2148,7 +2150,14 @@ func (a *PageReloadArgs) SetScriptToEvaluateOnLoad(scriptToEvaluateOnLoad string
 
 // PageNavigateArgs contains the arguments for pageNavigate.
 type PageNavigateArgs struct {
-	URL string `json:"url"` // URL to navigate the page to.
+	URL      string  `json:"url"`                // URL to navigate the page to.
+	Referrer *string `json:"referrer,omitempty"` // Referrer URL.
+}
+
+// SetReferrer sets the Referrer optional argument. Referrer URL.
+func (a *PageNavigateArgs) SetReferrer(referrer string) *PageNavigateArgs {
+	a.Referrer = &referrer
+	return a
 }
 
 // PageNavigateReply contains the return values for pageNavigate.
@@ -2359,6 +2368,11 @@ type PageCaptureScreenshotReply struct {
 	Data []byte `json:"data"` // Base64-encoded image data.
 }
 
+// PagePrintToPDFReply contains the return values for pagePrintToPDF.
+type PagePrintToPDFReply struct {
+	Data []byte `json:"data"` // Base64-encoded pdf data.
+}
+
 // PageStartScreencastArgs contains the arguments for pageStartScreencast.
 type PageStartScreencastArgs struct {
 	Format        *string `json:"format,omitempty"`        // Image compression format.
@@ -2460,6 +2474,7 @@ type PageProcessNavigationArgs struct {
 type PageGetLayoutMetricsReply struct {
 	LayoutViewport cdptype.PageLayoutViewport `json:"layoutViewport"` // Metrics relating to the layout viewport.
 	VisualViewport cdptype.PageVisualViewport `json:"visualViewport"` // Metrics relating to the visual viewport.
+	ContentSize    cdptype.DOMRect            `json:"contentSize"`    // Size of scrollable area.
 }
 
 // ProfilerSetSamplingIntervalArgs contains the arguments for profilerSetSamplingInterval.
@@ -2470,6 +2485,16 @@ type ProfilerSetSamplingIntervalArgs struct {
 // ProfilerStopReply contains the return values for profilerStop.
 type ProfilerStopReply struct {
 	Profile cdptype.ProfilerProfile `json:"profile"` // Recorded profile.
+}
+
+// ProfilerTakePreciseCoverageReply contains the return values for profilerTakePreciseCoverage.
+type ProfilerTakePreciseCoverageReply struct {
+	Result []cdptype.ProfilerScriptCoverage `json:"result"` // Coverage data for the current isolate.
+}
+
+// ProfilerGetBestEffortCoverageReply contains the return values for profilerGetBestEffortCoverage.
+type ProfilerGetBestEffortCoverageReply struct {
+	Result []cdptype.ProfilerScriptCoverage `json:"result"` // Coverage data for the current isolate.
 }
 
 // RenderingSetShowPaintRectsArgs contains the arguments for renderingSetShowPaintRects.

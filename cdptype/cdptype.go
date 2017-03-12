@@ -743,6 +743,7 @@ type CSSStyleSheetHeader struct {
 	IsInline     bool                `json:"isInline"`               // Whether this stylesheet is created for STYLE tag by parser. This flag is not set for document.written STYLE tags.
 	StartLine    float64             `json:"startLine"`              // Line offset of the stylesheet within the resource (zero based).
 	StartColumn  float64             `json:"startColumn"`            // Column offset of the stylesheet within the resource (zero based).
+	Length       float64             `json:"length"`                 // Size of the content (in characters).
 }
 
 // CSSRule CSS rule representation.
@@ -757,7 +758,8 @@ type CSSRule struct {
 // CSSRuleUsage CSS rule usage information.
 type CSSRuleUsage struct {
 	StyleSheetID CSSStyleSheetID `json:"styleSheetId"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
-	Range        CSSSourceRange  `json:"range"`        // Style declaration range in the enclosing stylesheet (if available).
+	StartOffset  float64         `json:"startOffset"`  // Offset of the start of the rule (including selector) from the beginning of the stylesheet.
+	EndOffset    float64         `json:"endOffset"`    // Offset of the end of the rule body from the beginning of the stylesheet.
 	Used         bool            `json:"used"`         // Indicates whether the rule was actually used by some element in the page.
 }
 
@@ -1304,6 +1306,14 @@ type DebuggerScope struct {
 type DebuggerSearchMatch struct {
 	LineNumber  float64 `json:"lineNumber"`  // Line number in resource content.
 	LineContent string  `json:"lineContent"` // Line with match content.
+}
+
+// DebuggerBreakLocation
+type DebuggerBreakLocation struct {
+	ScriptID     RuntimeScriptID `json:"scriptId"`               // Script identifier as reported in the Debugger.scriptParsed.
+	LineNumber   int             `json:"lineNumber"`             // Line number in the script (0-based).
+	ColumnNumber int             `json:"columnNumber,omitempty"` // Column number in the script (0-based).
+	Type         string          `json:"type,omitempty"`         //
 }
 
 // EmulationScreenOrientation Screen orientation.
@@ -2205,6 +2215,26 @@ type ProfilerProfile struct {
 type ProfilerPositionTickInfo struct {
 	Line  int `json:"line"`  // Source line number (1-based).
 	Ticks int `json:"ticks"` // Number of samples attributed to the source line.
+}
+
+// ProfilerCoverageRange Coverage data for a source range.
+type ProfilerCoverageRange struct {
+	StartOffset int `json:"startOffset"` // JavaScript script source offset for the range start.
+	EndOffset   int `json:"endOffset"`   // JavaScript script source offset for the range end.
+	Count       int `json:"count"`       // Collected execution count of the source range.
+}
+
+// ProfilerFunctionCoverage Coverage data for a JavaScript function.
+type ProfilerFunctionCoverage struct {
+	FunctionName string                  `json:"functionName"` // JavaScript function name.
+	Ranges       []ProfilerCoverageRange `json:"ranges"`       // Source ranges inside the function with coverage data.
+}
+
+// ProfilerScriptCoverage Coverage data for a JavaScript script.
+type ProfilerScriptCoverage struct {
+	ScriptID  RuntimeScriptID            `json:"scriptId"`  // JavaScript script id.
+	URL       string                     `json:"url"`       // JavaScript script name or url.
+	Functions []ProfilerFunctionCoverage `json:"functions"` // Functions contained in the script that has coverage data.
 }
 
 // RuntimeScriptID Unique script identifier.

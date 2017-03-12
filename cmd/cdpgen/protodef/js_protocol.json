@@ -251,7 +251,8 @@
             {
                 "name": "navigate",
                 "parameters": [
-                    { "name": "url", "type": "string", "description": "URL to navigate the page to." }
+                    { "name": "url", "type": "string", "description": "URL to navigate the page to." },
+                    { "name": "referrer", "type": "string", "optional": true, "experimental": true, "description": "Referrer URL." }
                 ],
                 "returns": [
                     { "name": "frameId", "$ref": "FrameId", "experimental": true, "description": "Frame id that will be navigated." }
@@ -426,6 +427,14 @@
                 "experimental": true
             },
             {
+                "name": "printToPDF",
+                "description": "Print page as pdf.",
+                "returns": [
+                    { "name": "data", "type": "string", "description": "Base64-encoded pdf data." }
+                ],
+                "experimental": true
+            },
+            {
                 "name": "startScreencast",
                 "description": "Starts sending each frame using the <code>screencastFrame</code> event.",
                 "parameters": [
@@ -511,7 +520,8 @@
                 "experimental": true,
                 "returns": [
                     { "name": "layoutViewport", "$ref": "LayoutViewport", "description": "Metrics relating to the layout viewport." },
-                    { "name": "visualViewport", "$ref": "VisualViewport", "description": "Metrics relating to the visual viewport." }
+                    { "name": "visualViewport", "$ref": "VisualViewport", "description": "Metrics relating to the visual viewport." },
+                    { "name": "contentSize", "$ref": "DOM.Rect", "description": "Size of scrollable area."}
                 ]
             }
         ],
@@ -1187,18 +1197,10 @@
                 ]
             },
             {
-                "name": "addBlockedURL",
+                "name": "setBlockedURLs",
                 "description": "Blocks specific URL from loading.",
                 "parameters": [
-                    { "name": "url", "type": "string", "description": "URL to block." }
-                ],
-                "experimental": true
-            },
-            {
-                "name": "removeBlockedURL",
-                "description": "Cancels blocking of a specific URL from loading.",
-                "parameters": [
-                    { "name": "url", "type": "string", "description": "URL to stop blocking." }
+                    { "name": "urls", "type": "array", "items": { "type": "string" }, "description": "URLs to block." }
                 ],
                 "experimental": true
             },
@@ -2762,7 +2764,8 @@
                     { "name": "hasSourceURL", "type": "boolean", "optional": true, "description": "Whether the sourceURL field value comes from the sourceURL comment." },
                     { "name": "isInline", "type": "boolean", "description": "Whether this stylesheet is created for STYLE tag by parser. This flag is not set for document.written STYLE tags." },
                     { "name": "startLine", "type": "number", "description": "Line offset of the stylesheet within the resource (zero based)." },
-                    { "name": "startColumn", "type": "number", "description": "Column offset of the stylesheet within the resource (zero based)." }
+                    { "name": "startColumn", "type": "number", "description": "Column offset of the stylesheet within the resource (zero based)." },
+                    { "name": "length", "type": "number", "description": "Size of the content (in characters).", "experimental": true }
                 ],
                 "description": "CSS stylesheet metainformation."
             },
@@ -2783,7 +2786,8 @@
                 "type": "object",
                 "properties": [
                     { "name": "styleSheetId", "$ref": "StyleSheetId", "description": "The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from." },
-                    { "name": "range", "$ref": "SourceRange", "description": "Style declaration range in the enclosing stylesheet (if available)." },
+                    { "name": "startOffset", "type": "number", "description": "Offset of the start of the rule (including selector) from the beginning of the stylesheet." },
+                    { "name": "endOffset", "type": "number", "description": "Offset of the end of the rule body from the beginning of the stylesheet." },
                     { "name": "used", "type": "boolean", "description": "Indicates whether the rule was actually used by some element in the page." }
                 ],
                 "description": "CSS rule usage information.",
@@ -4436,7 +4440,7 @@
                 "type": "object",
                 "description": "Violation configuration setting.",
                 "properties": [
-                    { "name": "name", "type": "string", "enum": ["longTask", "longLayout", "blockedEvent", "blockedParser", "handler", "recurringHandler"], "description": "Violation type." },
+                    { "name": "name", "type": "string", "enum": ["longTask", "longLayout", "blockedEvent", "blockedParser", "discouragedAPIUse", "handler", "recurringHandler"], "description": "Violation type." },
                     { "name": "threshold", "type": "number", "description": "Time threshold to trigger upon." }
                 ]
             }

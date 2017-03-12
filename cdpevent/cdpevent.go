@@ -398,6 +398,7 @@ type DebuggerScriptParsedReply struct {
 	SourceMapURL            *string                           `json:"sourceMapURL,omitempty"`            // URL of source map associated with script (if any).
 	HasSourceURL            *bool                             `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
 	IsModule                *bool                             `json:"isModule,omitempty"`                // True, if this script is ES6 module.
+	Length                  *int                              `json:"length,omitempty"`                  // This script length.
 }
 
 // DebuggerScriptFailedToParseClient receives ScriptFailedToParse events.
@@ -420,6 +421,7 @@ type DebuggerScriptFailedToParseReply struct {
 	SourceMapURL            *string                           `json:"sourceMapURL,omitempty"`            // URL of source map associated with script (if any).
 	HasSourceURL            *bool                             `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
 	IsModule                *bool                             `json:"isModule,omitempty"`                // True, if this script is ES6 module.
+	Length                  *int                              `json:"length,omitempty"`                  // This script length.
 }
 
 // DebuggerBreakpointResolvedClient receives BreakpointResolved events.
