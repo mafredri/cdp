@@ -600,16 +600,16 @@ type NetworkRequestWillBeSentClient interface {
 
 // NetworkRequestWillBeSentReply fired when page is about to send HTTP request.
 type NetworkRequestWillBeSentReply struct {
-	RequestID        cdptype.NetworkRequestID  `json:"requestId"`                  // Request identifier.
-	FrameID          cdptype.PageFrameID       `json:"frameId"`                    // Frame identifier.
-	LoaderID         cdptype.NetworkLoaderID   `json:"loaderId"`                   // Loader identifier.
-	DocumentURL      string                    `json:"documentURL"`                // URL of the document this request is loaded for.
-	Request          cdptype.NetworkRequest    `json:"request"`                    // Request data.
-	Timestamp        cdptype.NetworkTimestamp  `json:"timestamp"`                  // Timestamp.
-	WallTime         cdptype.NetworkTimestamp  `json:"wallTime"`                   // UTC Timestamp.
-	Initiator        cdptype.NetworkInitiator  `json:"initiator"`                  // Request initiator.
-	RedirectResponse *cdptype.NetworkResponse  `json:"redirectResponse,omitempty"` // Redirect response data.
-	Type             *cdptype.PageResourceType `json:"type,omitempty"`             // Type of this resource.
+	RequestID        cdptype.NetworkRequestID `json:"requestId"`                  // Request identifier.
+	FrameID          cdptype.PageFrameID      `json:"frameId"`                    // Frame identifier.
+	LoaderID         cdptype.NetworkLoaderID  `json:"loaderId"`                   // Loader identifier.
+	DocumentURL      string                   `json:"documentURL"`                // URL of the document this request is loaded for.
+	Request          cdptype.NetworkRequest   `json:"request"`                    // Request data.
+	Timestamp        cdptype.NetworkTimestamp `json:"timestamp"`                  // Timestamp.
+	WallTime         cdptype.NetworkTimestamp `json:"wallTime"`                   // UTC Timestamp.
+	Initiator        cdptype.NetworkInitiator `json:"initiator"`                  // Request initiator.
+	RedirectResponse *cdptype.NetworkResponse `json:"redirectResponse,omitempty"` // Redirect response data.
+	Type             cdptype.PageResourceType `json:"type,omitempty"`             // Type of this resource.
 }
 
 // NetworkRequestServedFromCacheClient receives RequestServedFromCache events.
@@ -674,12 +674,12 @@ type NetworkLoadingFailedClient interface {
 
 // NetworkLoadingFailedReply fired when HTTP request has failed to load.
 type NetworkLoadingFailedReply struct {
-	RequestID     cdptype.NetworkRequestID      `json:"requestId"`               // Request identifier.
-	Timestamp     cdptype.NetworkTimestamp      `json:"timestamp"`               // Timestamp.
-	Type          cdptype.PageResourceType      `json:"type"`                    // Resource type.
-	ErrorText     string                        `json:"errorText"`               // User friendly error message.
-	Canceled      *bool                         `json:"canceled,omitempty"`      // True if loading was canceled.
-	BlockedReason *cdptype.NetworkBlockedReason `json:"blockedReason,omitempty"` // The reason why loading was blocked, if any.
+	RequestID     cdptype.NetworkRequestID     `json:"requestId"`               // Request identifier.
+	Timestamp     cdptype.NetworkTimestamp     `json:"timestamp"`               // Timestamp.
+	Type          cdptype.PageResourceType     `json:"type"`                    // Resource type.
+	ErrorText     string                       `json:"errorText"`               // User friendly error message.
+	Canceled      *bool                        `json:"canceled,omitempty"`      // True if loading was canceled.
+	BlockedReason cdptype.NetworkBlockedReason `json:"blockedReason,omitempty"` // The reason why loading was blocked, if any.
 }
 
 // NetworkWebSocketWillSendHandshakeRequestClient receives WebSocketWillSendHandshakeRequest events.

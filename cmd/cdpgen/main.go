@@ -113,6 +113,7 @@ func main() {
 			nam := t.Name(d)
 			if isNonPointer(tg.pkg, d, t) {
 				nonPtrMap[nam] = true
+				nonPtrMap[tg.pkg+"."+nam] = true
 			}
 		}
 	}
@@ -560,7 +561,9 @@ type %[1]s struct {`, c.ArgsName(d), c.CmdName(d, false))
 	g.Printf("}\n\n")
 
 	for _, arg := range c.Parameters {
-		if !arg.Optional || strings.HasPrefix(arg.GoType("cdptype", d), "[]") {
+		typ := arg.GoType(g.pkg, d)
+		isNonPtr := nonPtrMap[typ]
+		if !arg.Optional || isNonPtr || isNonPointer(g.pkg, d, arg) {
 			continue
 		}
 		name := arg.Name(d)

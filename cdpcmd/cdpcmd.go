@@ -1674,11 +1674,11 @@ func (a *InputEmulateTouchFromMouseEventArgs) SetClickCount(clickCount int) *Inp
 
 // InputSynthesizePinchGestureArgs contains the arguments for inputSynthesizePinchGesture.
 type InputSynthesizePinchGestureArgs struct {
-	X                 int                             `json:"x"`                           // X coordinate of the start of the gesture in CSS pixels.
-	Y                 int                             `json:"y"`                           // Y coordinate of the start of the gesture in CSS pixels.
-	ScaleFactor       float64                         `json:"scaleFactor"`                 // Relative scale factor after zooming (>1.0 zooms in, <1.0 zooms out).
-	RelativeSpeed     *int                            `json:"relativeSpeed,omitempty"`     // Relative pointer speed in pixels per second (default: 800).
-	GestureSourceType *cdptype.InputGestureSourceType `json:"gestureSourceType,omitempty"` // Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
+	X                 int                            `json:"x"`                           // X coordinate of the start of the gesture in CSS pixels.
+	Y                 int                            `json:"y"`                           // Y coordinate of the start of the gesture in CSS pixels.
+	ScaleFactor       float64                        `json:"scaleFactor"`                 // Relative scale factor after zooming (>1.0 zooms in, <1.0 zooms out).
+	RelativeSpeed     *int                           `json:"relativeSpeed,omitempty"`     // Relative pointer speed in pixels per second (default: 800).
+	GestureSourceType cdptype.InputGestureSourceType `json:"gestureSourceType,omitempty"` // Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
 }
 
 // SetRelativeSpeed sets the RelativeSpeed optional argument. Relative pointer speed in pixels per second (default: 800).
@@ -1687,26 +1687,20 @@ func (a *InputSynthesizePinchGestureArgs) SetRelativeSpeed(relativeSpeed int) *I
 	return a
 }
 
-// SetGestureSourceType sets the GestureSourceType optional argument. Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
-func (a *InputSynthesizePinchGestureArgs) SetGestureSourceType(gestureSourceType cdptype.InputGestureSourceType) *InputSynthesizePinchGestureArgs {
-	a.GestureSourceType = &gestureSourceType
-	return a
-}
-
 // InputSynthesizeScrollGestureArgs contains the arguments for inputSynthesizeScrollGesture.
 type InputSynthesizeScrollGestureArgs struct {
-	X                     int                             `json:"x"`                               // X coordinate of the start of the gesture in CSS pixels.
-	Y                     int                             `json:"y"`                               // Y coordinate of the start of the gesture in CSS pixels.
-	XDistance             *int                            `json:"xDistance,omitempty"`             // The distance to scroll along the X axis (positive to scroll left).
-	YDistance             *int                            `json:"yDistance,omitempty"`             // The distance to scroll along the Y axis (positive to scroll up).
-	XOverscroll           *int                            `json:"xOverscroll,omitempty"`           // The number of additional pixels to scroll back along the X axis, in addition to the given distance.
-	YOverscroll           *int                            `json:"yOverscroll,omitempty"`           // The number of additional pixels to scroll back along the Y axis, in addition to the given distance.
-	PreventFling          *bool                           `json:"preventFling,omitempty"`          // Prevent fling (default: true).
-	Speed                 *int                            `json:"speed,omitempty"`                 // Swipe speed in pixels per second (default: 800).
-	GestureSourceType     *cdptype.InputGestureSourceType `json:"gestureSourceType,omitempty"`     // Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
-	RepeatCount           *int                            `json:"repeatCount,omitempty"`           // The number of times to repeat the gesture (default: 0).
-	RepeatDelayMs         *int                            `json:"repeatDelayMs,omitempty"`         // The number of milliseconds delay between each repeat. (default: 250).
-	InteractionMarkerName *string                         `json:"interactionMarkerName,omitempty"` // The name of the interaction markers to generate, if not empty (default: "").
+	X                     int                            `json:"x"`                               // X coordinate of the start of the gesture in CSS pixels.
+	Y                     int                            `json:"y"`                               // Y coordinate of the start of the gesture in CSS pixels.
+	XDistance             *int                           `json:"xDistance,omitempty"`             // The distance to scroll along the X axis (positive to scroll left).
+	YDistance             *int                           `json:"yDistance,omitempty"`             // The distance to scroll along the Y axis (positive to scroll up).
+	XOverscroll           *int                           `json:"xOverscroll,omitempty"`           // The number of additional pixels to scroll back along the X axis, in addition to the given distance.
+	YOverscroll           *int                           `json:"yOverscroll,omitempty"`           // The number of additional pixels to scroll back along the Y axis, in addition to the given distance.
+	PreventFling          *bool                          `json:"preventFling,omitempty"`          // Prevent fling (default: true).
+	Speed                 *int                           `json:"speed,omitempty"`                 // Swipe speed in pixels per second (default: 800).
+	GestureSourceType     cdptype.InputGestureSourceType `json:"gestureSourceType,omitempty"`     // Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
+	RepeatCount           *int                           `json:"repeatCount,omitempty"`           // The number of times to repeat the gesture (default: 0).
+	RepeatDelayMs         *int                           `json:"repeatDelayMs,omitempty"`         // The number of milliseconds delay between each repeat. (default: 250).
+	InteractionMarkerName *string                        `json:"interactionMarkerName,omitempty"` // The name of the interaction markers to generate, if not empty (default: "").
 }
 
 // SetXDistance sets the XDistance optional argument. The distance to scroll along the X axis (positive to scroll left).
@@ -1745,12 +1739,6 @@ func (a *InputSynthesizeScrollGestureArgs) SetSpeed(speed int) *InputSynthesizeS
 	return a
 }
 
-// SetGestureSourceType sets the GestureSourceType optional argument. Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
-func (a *InputSynthesizeScrollGestureArgs) SetGestureSourceType(gestureSourceType cdptype.InputGestureSourceType) *InputSynthesizeScrollGestureArgs {
-	a.GestureSourceType = &gestureSourceType
-	return a
-}
-
 // SetRepeatCount sets the RepeatCount optional argument. The number of times to repeat the gesture (default: 0).
 func (a *InputSynthesizeScrollGestureArgs) SetRepeatCount(repeatCount int) *InputSynthesizeScrollGestureArgs {
 	a.RepeatCount = &repeatCount
@@ -1771,11 +1759,11 @@ func (a *InputSynthesizeScrollGestureArgs) SetInteractionMarkerName(interactionM
 
 // InputSynthesizeTapGestureArgs contains the arguments for inputSynthesizeTapGesture.
 type InputSynthesizeTapGestureArgs struct {
-	X                 int                             `json:"x"`                           // X coordinate of the start of the gesture in CSS pixels.
-	Y                 int                             `json:"y"`                           // Y coordinate of the start of the gesture in CSS pixels.
-	Duration          *int                            `json:"duration,omitempty"`          // Duration between touchdown and touchup events in ms (default: 50).
-	TapCount          *int                            `json:"tapCount,omitempty"`          // Number of times to perform the tap (e.g. 2 for double tap, default: 1).
-	GestureSourceType *cdptype.InputGestureSourceType `json:"gestureSourceType,omitempty"` // Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
+	X                 int                            `json:"x"`                           // X coordinate of the start of the gesture in CSS pixels.
+	Y                 int                            `json:"y"`                           // Y coordinate of the start of the gesture in CSS pixels.
+	Duration          *int                           `json:"duration,omitempty"`          // Duration between touchdown and touchup events in ms (default: 50).
+	TapCount          *int                           `json:"tapCount,omitempty"`          // Number of times to perform the tap (e.g. 2 for double tap, default: 1).
+	GestureSourceType cdptype.InputGestureSourceType `json:"gestureSourceType,omitempty"` // Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
 }
 
 // SetDuration sets the Duration optional argument. Duration between touchdown and touchup events in ms (default: 50).
@@ -1787,12 +1775,6 @@ func (a *InputSynthesizeTapGestureArgs) SetDuration(duration int) *InputSynthesi
 // SetTapCount sets the TapCount optional argument. Number of times to perform the tap (e.g. 2 for double tap, default: 1).
 func (a *InputSynthesizeTapGestureArgs) SetTapCount(tapCount int) *InputSynthesizeTapGestureArgs {
 	a.TapCount = &tapCount
-	return a
-}
-
-// SetGestureSourceType sets the GestureSourceType optional argument. Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
-func (a *InputSynthesizeTapGestureArgs) SetGestureSourceType(gestureSourceType cdptype.InputGestureSourceType) *InputSynthesizeTapGestureArgs {
-	a.GestureSourceType = &gestureSourceType
 	return a
 }
 
@@ -2012,15 +1994,15 @@ type NetworkDeleteCookieArgs struct {
 
 // NetworkSetCookieArgs contains the arguments for networkSetCookie.
 type NetworkSetCookieArgs struct {
-	URL            string                         `json:"url"`                      // The request-URI to associate with the setting of the cookie. This value can affect the default domain and path values of the created cookie.
-	Name           string                         `json:"name"`                     // The name of the cookie.
-	Value          string                         `json:"value"`                    // The value of the cookie.
-	Domain         *string                        `json:"domain,omitempty"`         // If omitted, the cookie becomes a host-only cookie.
-	Path           *string                        `json:"path,omitempty"`           // Defaults to the path portion of the url parameter.
-	Secure         *bool                          `json:"secure,omitempty"`         // Defaults ot false.
-	HTTPOnly       *bool                          `json:"httpOnly,omitempty"`       // Defaults to false.
-	SameSite       *cdptype.NetworkCookieSameSite `json:"sameSite,omitempty"`       // Defaults to browser default behavior.
-	ExpirationDate *cdptype.NetworkTimestamp      `json:"expirationDate,omitempty"` // If omitted, the cookie becomes a session cookie.
+	URL            string                        `json:"url"`                      // The request-URI to associate with the setting of the cookie. This value can affect the default domain and path values of the created cookie.
+	Name           string                        `json:"name"`                     // The name of the cookie.
+	Value          string                        `json:"value"`                    // The value of the cookie.
+	Domain         *string                       `json:"domain,omitempty"`         // If omitted, the cookie becomes a host-only cookie.
+	Path           *string                       `json:"path,omitempty"`           // Defaults to the path portion of the url parameter.
+	Secure         *bool                         `json:"secure,omitempty"`         // Defaults ot false.
+	HTTPOnly       *bool                         `json:"httpOnly,omitempty"`       // Defaults to false.
+	SameSite       cdptype.NetworkCookieSameSite `json:"sameSite,omitempty"`       // Defaults to browser default behavior.
+	ExpirationDate *cdptype.NetworkTimestamp     `json:"expirationDate,omitempty"` // If omitted, the cookie becomes a session cookie.
 }
 
 // SetDomain sets the Domain optional argument. If omitted, the cookie becomes a host-only cookie.
@@ -2047,12 +2029,6 @@ func (a *NetworkSetCookieArgs) SetHTTPOnly(httpOnly bool) *NetworkSetCookieArgs 
 	return a
 }
 
-// SetSameSite sets the SameSite optional argument. Defaults to browser default behavior.
-func (a *NetworkSetCookieArgs) SetSameSite(sameSite cdptype.NetworkCookieSameSite) *NetworkSetCookieArgs {
-	a.SameSite = &sameSite
-	return a
-}
-
 // SetExpirationDate sets the ExpirationDate optional argument. If omitted, the cookie becomes a session cookie.
 func (a *NetworkSetCookieArgs) SetExpirationDate(expirationDate cdptype.NetworkTimestamp) *NetworkSetCookieArgs {
 	a.ExpirationDate = &expirationDate
@@ -2071,17 +2047,11 @@ type NetworkCanEmulateNetworkConditionsReply struct {
 
 // NetworkEmulateNetworkConditionsArgs contains the arguments for networkEmulateNetworkConditions.
 type NetworkEmulateNetworkConditionsArgs struct {
-	Offline            bool                           `json:"offline"`                  // True to emulate internet disconnection.
-	Latency            float64                        `json:"latency"`                  // Additional latency (ms).
-	DownloadThroughput float64                        `json:"downloadThroughput"`       // Maximal aggregated download throughput.
-	UploadThroughput   float64                        `json:"uploadThroughput"`         // Maximal aggregated upload throughput.
-	ConnectionType     *cdptype.NetworkConnectionType `json:"connectionType,omitempty"` // Connection type if known.
-}
-
-// SetConnectionType sets the ConnectionType optional argument. Connection type if known.
-func (a *NetworkEmulateNetworkConditionsArgs) SetConnectionType(connectionType cdptype.NetworkConnectionType) *NetworkEmulateNetworkConditionsArgs {
-	a.ConnectionType = &connectionType
-	return a
+	Offline            bool                          `json:"offline"`                  // True to emulate internet disconnection.
+	Latency            float64                       `json:"latency"`                  // Additional latency (ms).
+	DownloadThroughput float64                       `json:"downloadThroughput"`       // Maximal aggregated download throughput.
+	UploadThroughput   float64                       `json:"uploadThroughput"`         // Maximal aggregated upload throughput.
+	ConnectionType     cdptype.NetworkConnectionType `json:"connectionType,omitempty"` // Connection type if known.
 }
 
 // NetworkSetCacheDisabledArgs contains the arguments for networkSetCacheDisabled.
