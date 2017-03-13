@@ -280,6 +280,10 @@ func (at AnyType) GoType(pkg string, d Domain) string {
 		return prefix + nameInDomain(d, at.Ref, "")
 	}
 
+	if at.IDName == "Timestamp" && at.Type == "number" {
+		return "time.Time"
+	}
+
 	// Special handling for enums.
 	if at.IsEnum() {
 		return "enum"

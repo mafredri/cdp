@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 )
 
 // AccessibilityAXNodeID Unique accessibility node identifier.
@@ -1815,6 +1816,39 @@ type NetworkRequestID string
 // NetworkTimestamp Number of seconds since epoch.
 type NetworkTimestamp float64
 
+func (t NetworkTimestamp) String() string {
+	return t.Time().String()
+}
+
+func (t NetworkTimestamp) Time() time.Time {
+	secs := int64(t)
+	ns := int64((float64(t)-float64(secs))*1000000) * 1000
+	return time.Unix(secs, ns)
+}
+
+func (t NetworkTimestamp) MarshalJSON() ([]byte, error) {
+	if t == 0 {
+		return []byte("null"), nil
+	}
+	return json.Marshal(&t)
+}
+
+func (t *NetworkTimestamp) UnmarshalJSON(data []byte) error {
+	*t = 0
+	if len(data) == 0 {
+		return nil
+	}
+	var f float64
+	if err := json.Unmarshal(data, &f); err != nil {
+		return errors.New("cdptype.NetworkTimestamp: " + err.Error())
+	}
+	*t = NetworkTimestamp(f)
+	return nil
+}
+
+var _ json.Marshaler = (*NetworkTimestamp)(nil)
+var _ json.Unmarshaler = (*NetworkTimestamp)(nil)
+
 // NetworkHeaders Request / response headers as keys / values of JSON object.
 type NetworkHeaders []byte
 
@@ -2358,13 +2392,13 @@ type PageFrame struct {
 
 // PageFrameResource Information about the Resource on the page.
 type PageFrameResource struct {
-	URL          string            `json:"url"`                    // Resource URL.
-	Type         PageResourceType  `json:"type"`                   // Type of this resource.
-	MimeType     string            `json:"mimeType"`               // Resource mimeType as determined by the browser.
-	LastModified *NetworkTimestamp `json:"lastModified,omitempty"` // last-modified timestamp as reported by server.
-	ContentSize  *float64          `json:"contentSize,omitempty"`  // Resource content size.
-	Failed       *bool             `json:"failed,omitempty"`       // True if the resource failed to load.
-	Canceled     *bool             `json:"canceled,omitempty"`     // True if the resource was canceled during loading.
+	URL          string           `json:"url"`                    // Resource URL.
+	Type         PageResourceType `json:"type"`                   // Type of this resource.
+	MimeType     string           `json:"mimeType"`               // Resource mimeType as determined by the browser.
+	LastModified NetworkTimestamp `json:"lastModified,omitempty"` // last-modified timestamp as reported by server.
+	ContentSize  *float64         `json:"contentSize,omitempty"`  // Resource content size.
+	Failed       *bool            `json:"failed,omitempty"`       // True if the resource failed to load.
+	Canceled     *bool            `json:"canceled,omitempty"`     // True if the resource was canceled during loading.
 }
 
 // PageFrameResourceTree Information about the Frame hierarchy along with their cached resources.
@@ -2745,6 +2779,39 @@ type RuntimeExceptionDetails struct {
 
 // RuntimeTimestamp Number of milliseconds since epoch.
 type RuntimeTimestamp float64
+
+func (t RuntimeTimestamp) String() string {
+	return t.Time().String()
+}
+
+func (t RuntimeTimestamp) Time() time.Time {
+	secs := int64(t)
+	ns := int64((float64(t)-float64(secs))*1000000) * 1000
+	return time.Unix(secs, ns)
+}
+
+func (t RuntimeTimestamp) MarshalJSON() ([]byte, error) {
+	if t == 0 {
+		return []byte("null"), nil
+	}
+	return json.Marshal(&t)
+}
+
+func (t *RuntimeTimestamp) UnmarshalJSON(data []byte) error {
+	*t = 0
+	if len(data) == 0 {
+		return nil
+	}
+	var f float64
+	if err := json.Unmarshal(data, &f); err != nil {
+		return errors.New("cdptype.RuntimeTimestamp: " + err.Error())
+	}
+	*t = RuntimeTimestamp(f)
+	return nil
+}
+
+var _ json.Marshaler = (*RuntimeTimestamp)(nil)
+var _ json.Unmarshaler = (*RuntimeTimestamp)(nil)
 
 // RuntimeCallFrame Stack entry for runtime errors and assertions.
 type RuntimeCallFrame struct {

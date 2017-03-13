@@ -378,6 +378,8 @@ type %[1]s `, t.Name(d), t.Desc())
 		g.domainTypeStruct(d, t)
 	case "enum":
 		g.domainTypeEnum(d, t)
+	case "time.Time":
+		g.domainTypeTime(d, t)
 	case "RawMessage":
 		g.domainTypeRawMessage(d, t)
 	default:
@@ -417,6 +419,44 @@ func (g *Generator) domainTypeStruct(d proto.Domain, t proto.AnyType) {
 	g.Printf("struct{\n")
 	g.printStructProperties(d, t.Name(d), t.Properties, true, false)
 	g.Printf("}")
+}
+
+func (g *Generator) domainTypeTime(d proto.Domain, t proto.AnyType) {
+	g.Printf(`float64
+
+func (t %[1]s) String() string {
+	return t.Time().String()
+}
+
+func (t %[1]s) Time() time.Time {
+	secs := int64(t)
+	ns := int64((float64(t)-float64(secs))*1000000)*1000
+	return time.Unix(secs, ns)
+}
+
+func (t %[1]s) MarshalJSON() ([]byte, error) {
+	if t == 0 {
+		return []byte("null"), nil
+	}
+	return json.Marshal(&t)
+}
+
+func (t *%[1]s) UnmarshalJSON(data []byte) error {
+	*t = 0
+	if len(data) == 0 {
+		return nil
+	}
+	var f float64
+	if err := json.Unmarshal(data, &f); err != nil {
+		return errors.New("%[2]s.%[1]s: " + err.Error())
+	}
+	*t = %[1]s(f)
+	return nil
+}
+
+var _ json.Marshaler = (*%[1]s)(nil)
+var _ json.Unmarshaler = (*%[1]s)(nil)
+`, t.Name(d), g.pkg)
 }
 
 func (g *Generator) domainTypeRawMessage(d proto.Domain, t proto.AnyType) {
@@ -649,6 +689,7 @@ func isNonPointer(pkg string, d proto.Domain, t proto.AnyType) bool {
 	case t.IsEnum():
 	case strings.HasPrefix(typ, "[]"):
 	case strings.HasPrefix(typ, "map["):
+	case typ == "time.Time":
 	case typ == "json.RawMessage":
 	case typ == "RawMessage":
 	case typ == "interface{}":

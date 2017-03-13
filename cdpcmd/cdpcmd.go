@@ -2002,7 +2002,7 @@ type NetworkSetCookieArgs struct {
 	Secure         *bool                         `json:"secure,omitempty"`         // Defaults ot false.
 	HTTPOnly       *bool                         `json:"httpOnly,omitempty"`       // Defaults to false.
 	SameSite       cdptype.NetworkCookieSameSite `json:"sameSite,omitempty"`       // Defaults to browser default behavior.
-	ExpirationDate *cdptype.NetworkTimestamp     `json:"expirationDate,omitempty"` // If omitted, the cookie becomes a session cookie.
+	ExpirationDate cdptype.NetworkTimestamp      `json:"expirationDate,omitempty"` // If omitted, the cookie becomes a session cookie.
 }
 
 // SetDomain sets the Domain optional argument. If omitted, the cookie becomes a host-only cookie.
@@ -2026,12 +2026,6 @@ func (a *NetworkSetCookieArgs) SetSecure(secure bool) *NetworkSetCookieArgs {
 // SetHTTPOnly sets the HTTPOnly optional argument. Defaults to false.
 func (a *NetworkSetCookieArgs) SetHTTPOnly(httpOnly bool) *NetworkSetCookieArgs {
 	a.HTTPOnly = &httpOnly
-	return a
-}
-
-// SetExpirationDate sets the ExpirationDate optional argument. If omitted, the cookie becomes a session cookie.
-func (a *NetworkSetCookieArgs) SetExpirationDate(expirationDate cdptype.NetworkTimestamp) *NetworkSetCookieArgs {
-	a.ExpirationDate = &expirationDate
 	return a
 }
 
