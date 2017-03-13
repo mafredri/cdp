@@ -25,6 +25,10 @@ const (
 	realEnum           = true
 )
 
+var (
+	nonPtrMap = make(map[string]bool)
+)
+
 func main() {
 	var (
 		destPkg          string
@@ -103,6 +107,17 @@ func main() {
 	eg.PackageHeader()
 	eg.EventType(protocol.Domains)
 	eg.writeFile("event.go")
+
+	for _, d := range protocol.Domains {
+		for _, t := range d.Types {
+			switch {
+			case t.IsEnum():
+				nonPtrMap[t.Name(d)] = true
+			case t.GoType(tg.pkg, d) == "json.RawMessage":
+				nonPtrMap[t.Name(d)] = true
+			}
+		}
+	}
 
 	for _, d := range protocol.Domains {
 		g.PackageHeader()
@@ -376,7 +391,8 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 		ptype := prop.GoType(g.pkg, d)
 		// Make all optional properties into pointers, unless they are slices.
 		if prop.Optional {
-			if ptrOptional && !strings.HasPrefix(ptype, "[]") {
+			isNonPtr := nonPtrMap[ptype]
+			if ptrOptional && !strings.HasPrefix(ptype, "[]") && ptype != "json.RawMessage" && !isNonPtr {
 				ptype = "*" + ptype
 			}
 			jsontag += ",omitempty"
@@ -398,7 +414,7 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 
 func (g *Generator) domainTypeStruct(d proto.Domain, t proto.AnyType) {
 	g.Printf("struct{\n")
-	g.printStructProperties(d, t.Name(d), t.Properties, false, false)
+	g.printStructProperties(d, t.Name(d), t.Properties, true, false)
 	g.Printf("}")
 }
 
