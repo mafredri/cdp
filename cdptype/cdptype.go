@@ -4,6 +4,7 @@ package cdptype
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 )
 
@@ -1815,7 +1816,27 @@ type NetworkRequestID string
 type NetworkTimestamp float64
 
 // NetworkHeaders Request / response headers as keys / values of JSON object.
-type NetworkHeaders json.RawMessage
+type NetworkHeaders []byte
+
+// MarshalJSON returns m as the JSON encoding of m.
+func (m NetworkHeaders) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return m, nil
+}
+
+// UnmarshalJSON sets *m to a copy of data.
+func (m *NetworkHeaders) UnmarshalJSON(data []byte) error {
+	if m == nil {
+		return errors.New("cdptype.NetworkHeaders: UnmarshalJSON on nil pointer")
+	}
+	*m = append((*m)[0:0], data...)
+	return nil
+}
+
+var _ json.Marshaler = (*NetworkHeaders)(nil)
+var _ json.Unmarshaler = (*NetworkHeaders)(nil)
 
 // NetworkConnectionType Loading priority of a resource request.
 type NetworkConnectionType int
@@ -3122,7 +3143,27 @@ type TargetRemoteLocation struct {
 }
 
 // TracingMemoryDumpConfig Configuration for memory dump. Used only when "memory-infra" category is enabled.
-type TracingMemoryDumpConfig json.RawMessage
+type TracingMemoryDumpConfig []byte
+
+// MarshalJSON returns m as the JSON encoding of m.
+func (m TracingMemoryDumpConfig) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return m, nil
+}
+
+// UnmarshalJSON sets *m to a copy of data.
+func (m *TracingMemoryDumpConfig) UnmarshalJSON(data []byte) error {
+	if m == nil {
+		return errors.New("cdptype.TracingMemoryDumpConfig: UnmarshalJSON on nil pointer")
+	}
+	*m = append((*m)[0:0], data...)
+	return nil
+}
+
+var _ json.Marshaler = (*TracingMemoryDumpConfig)(nil)
+var _ json.Unmarshaler = (*TracingMemoryDumpConfig)(nil)
 
 // TracingTraceConfig
 type TracingTraceConfig struct {

@@ -110,11 +110,9 @@ func main() {
 
 	for _, d := range protocol.Domains {
 		for _, t := range d.Types {
-			switch {
-			case t.IsEnum():
-				nonPtrMap[t.Name(d)] = true
-			case t.GoType(tg.pkg, d) == "json.RawMessage":
-				nonPtrMap[t.Name(d)] = true
+			nam := t.Name(d)
+			if isNonPointer(tg.pkg, d, t) {
+				nonPtrMap[nam] = true
 			}
 		}
 	}
@@ -379,6 +377,8 @@ type %[1]s `, t.Name(d), t.Desc())
 		g.domainTypeStruct(d, t)
 	case "enum":
 		g.domainTypeEnum(d, t)
+	case "RawMessage":
+		g.domainTypeRawMessage(d, t)
 	default:
 		g.Printf(t.GoType(g.pkg, d))
 	}
@@ -392,7 +392,7 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 		// Make all optional properties into pointers, unless they are slices.
 		if prop.Optional {
 			isNonPtr := nonPtrMap[ptype]
-			if ptrOptional && !strings.HasPrefix(ptype, "[]") && ptype != "json.RawMessage" && !isNonPtr {
+			if ptrOptional && !isNonPtr && !isNonPointer(g.pkg, d, prop) {
 				ptype = "*" + ptype
 			}
 			jsontag += ",omitempty"
@@ -416,6 +416,31 @@ func (g *Generator) domainTypeStruct(d proto.Domain, t proto.AnyType) {
 	g.Printf("struct{\n")
 	g.printStructProperties(d, t.Name(d), t.Properties, true, false)
 	g.Printf("}")
+}
+
+func (g *Generator) domainTypeRawMessage(d proto.Domain, t proto.AnyType) {
+	g.Printf(`[]byte
+
+// MarshalJSON returns m as the JSON encoding of m.
+func (m %[1]s) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("null"), nil
+	}
+	return m, nil
+}
+
+// UnmarshalJSON sets *m to a copy of data.
+func (m *%[1]s) UnmarshalJSON(data []byte) error {
+	if m == nil {
+		return errors.New("%[2]s.%[1]s: UnmarshalJSON on nil pointer")
+	}
+	*m = append((*m)[0:0], data...)
+	return nil
+}
+
+var _ json.Marshaler = (*%[1]s)(nil)
+var _ json.Unmarshaler = (*%[1]s)(nil)
+`, t.Name(d), g.pkg)
 }
 
 func (g *Generator) domainTypeEnum(d proto.Domain, t proto.AnyType) {
@@ -613,4 +638,19 @@ func quotedImports(imports []string) string {
 	}
 
 	return "\"" + strings.Join(imports, "\"\n\"") + "\""
+}
+
+func isNonPointer(pkg string, d proto.Domain, t proto.AnyType) bool {
+	typ := t.GoType(pkg, d)
+	switch {
+	case t.IsEnum():
+	case strings.HasPrefix(typ, "[]"):
+	case strings.HasPrefix(typ, "map["):
+	case typ == "json.RawMessage":
+	case typ == "RawMessage":
+	case typ == "interface{}":
+	default:
+		return false
+	}
+	return true
 }

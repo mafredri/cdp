@@ -2853,7 +2853,7 @@ type StorageClearDataForOriginArgs struct {
 
 // SystemInfoGetInfoReply contains the return values for systeminfoGetInfo.
 type SystemInfoGetInfoReply struct {
-	Gpu          cdptype.SystemInfoGPUInfo `json:"gpu"`          // Information about the GPUs on the system.
+	GPU          cdptype.SystemInfoGPUInfo `json:"gpu"`          // Information about the GPUs on the system.
 	ModelName    string                    `json:"modelName"`    // A platform-dependent description of the model of the machine. On Mac OS, this is, for example, 'MacBookPro'. Will be the empty string if not supported.
 	ModelVersion string                    `json:"modelVersion"` // A platform-dependent description of the version of the machine. On Mac OS, this is, for example, '10.1'. Will be the empty string if not supported.
 }

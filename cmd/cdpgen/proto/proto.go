@@ -304,6 +304,10 @@ func (at AnyType) GoType(pkg string, d Domain) string {
 		return "int"
 	case "object":
 		if len(at.Properties) == 0 {
+			if at.IDName != "" {
+				// return "map[string]interface{}"
+				return "RawMessage"
+			}
 			return "json.RawMessage"
 		}
 		return "struct"
