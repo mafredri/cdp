@@ -2420,13 +2420,13 @@ type PageNavigationEntry struct {
 
 // PageScreencastFrameMetadata Screencast frame metadata.
 type PageScreencastFrameMetadata struct {
-	OffsetTop       float64  `json:"offsetTop"`           // Top offset in DIP.
-	PageScaleFactor float64  `json:"pageScaleFactor"`     // Page scale factor.
-	DeviceWidth     float64  `json:"deviceWidth"`         // Device screen width in DIP.
-	DeviceHeight    float64  `json:"deviceHeight"`        // Device screen height in DIP.
-	ScrollOffsetX   float64  `json:"scrollOffsetX"`       // Position of horizontal scroll in CSS pixels.
-	ScrollOffsetY   float64  `json:"scrollOffsetY"`       // Position of vertical scroll in CSS pixels.
-	Timestamp       *float64 `json:"timestamp,omitempty"` // Frame swap timestamp.
+	OffsetTop       float64   `json:"offsetTop"`           // Top offset in DIP.
+	PageScaleFactor float64   `json:"pageScaleFactor"`     // Page scale factor.
+	DeviceWidth     float64   `json:"deviceWidth"`         // Device screen width in DIP.
+	DeviceHeight    float64   `json:"deviceHeight"`        // Device screen height in DIP.
+	ScrollOffsetX   float64   `json:"scrollOffsetX"`       // Position of horizontal scroll in CSS pixels.
+	ScrollOffsetY   float64   `json:"scrollOffsetY"`       // Position of vertical scroll in CSS pixels.
+	Timestamp       Timestamp `json:"timestamp,omitempty"` // Frame swap timestamp.
 }
 
 // PageDialogType Javascript dialog type.
@@ -3243,3 +3243,39 @@ type TracingTraceConfig struct {
 	SyntheticDelays      []string                `json:"syntheticDelays,omitempty"`      // Configuration to synthesize the delays in tracing.
 	MemoryDumpConfig     TracingMemoryDumpConfig `json:"memoryDumpConfig,omitempty"`     // Configuration for memory dump triggers. Used only when "memory-infra" category is enabled.
 }
+
+// Timestamp represents a timestamp (since epoch).
+type Timestamp float64
+
+func (t Timestamp) String() string {
+	return t.Time().String()
+}
+
+func (t Timestamp) Time() time.Time {
+	secs := int64(t)
+	ns := int64((float64(t)-float64(secs))*1000000) * 1000
+	return time.Unix(secs, ns)
+}
+
+func (t Timestamp) MarshalJSON() ([]byte, error) {
+	if t == 0 {
+		return []byte("null"), nil
+	}
+	return json.Marshal(&t)
+}
+
+func (t *Timestamp) UnmarshalJSON(data []byte) error {
+	*t = 0
+	if len(data) == 0 {
+		return nil
+	}
+	var f float64
+	if err := json.Unmarshal(data, &f); err != nil {
+		return errors.New("cdptype.Timestamp: " + err.Error())
+	}
+	*t = Timestamp(f)
+	return nil
+}
+
+var _ json.Marshaler = (*Timestamp)(nil)
+var _ json.Unmarshaler = (*Timestamp)(nil)

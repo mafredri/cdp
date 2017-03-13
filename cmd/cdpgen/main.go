@@ -117,6 +117,8 @@ func main() {
 			}
 		}
 	}
+	nonPtrMap["Timestamp"] = true
+	nonPtrMap[tg.pkg+"."+"Timestamp"] = true
 
 	for _, d := range protocol.Domains {
 		g.PackageHeader()
@@ -150,6 +152,14 @@ func main() {
 		// eg.writeFile(domfile)
 		// g.writeFile(domfile)
 	}
+
+	// Add a custom Timestamp type.
+	tg.Printf(`
+// Timestamp represents a timestamp (since epoch).
+type Timestamp `)
+	tg.domainTypeTime(proto.Domain{}, proto.AnyType{NameName: "Timestamp", Type: "number"})
+	tg.Printf("\n\n")
+
 	tg.writeFile(tg.pkg + ".go")
 	cg.writeFile(cg.pkg + ".go")
 	eg.writeFile(eg.pkg + ".go")

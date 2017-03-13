@@ -510,8 +510,8 @@ type HeapProfilerLastSeenObjectIDClient interface {
 
 // HeapProfilerLastSeenObjectIDReply if heap objects tracking has been started then backend regulary sends a current value for last seen object id and corresponding timestamp. If the were changes in the heap since last event then one or more heapStatsUpdate events will be sent before a new lastSeenObjectId event.
 type HeapProfilerLastSeenObjectIDReply struct {
-	LastSeenObjectID int     `json:"lastSeenObjectId"` //
-	Timestamp        float64 `json:"timestamp"`        //
+	LastSeenObjectID int               `json:"lastSeenObjectId"` //
+	Timestamp        cdptype.Timestamp `json:"timestamp"`        //
 }
 
 // HeapProfilerHeapStatsUpdateClient receives HeapStatsUpdate events.
@@ -796,7 +796,7 @@ type PageDOMContentEventFiredClient interface {
 
 // PageDOMContentEventFiredReply
 type PageDOMContentEventFiredReply struct {
-	Timestamp float64 `json:"timestamp"` //
+	Timestamp cdptype.Timestamp `json:"timestamp"` //
 }
 
 // PageLoadEventFiredClient receives LoadEventFired events.
@@ -807,7 +807,7 @@ type PageLoadEventFiredClient interface {
 
 // PageLoadEventFiredReply
 type PageLoadEventFiredReply struct {
-	Timestamp float64 `json:"timestamp"` //
+	Timestamp cdptype.Timestamp `json:"timestamp"` //
 }
 
 // PageFrameAttachedClient receives FrameAttached events.

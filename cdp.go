@@ -3917,7 +3917,7 @@ func (d *inputDomain) EmulateTouchFromMouseEvent(ctx context.Context, args *cdpc
 }
 
 // NewInputEmulateTouchFromMouseEventArgs initializes the arguments for EmulateTouchFromMouseEvent.
-func NewInputEmulateTouchFromMouseEventArgs(typ string, x int, y int, timestamp float64, button string) *cdpcmd.InputEmulateTouchFromMouseEventArgs {
+func NewInputEmulateTouchFromMouseEventArgs(typ string, x int, y int, timestamp cdptype.Timestamp, button string) *cdpcmd.InputEmulateTouchFromMouseEventArgs {
 	args := new(cdpcmd.InputEmulateTouchFromMouseEventArgs)
 	args.Type = typ
 	args.X = x
