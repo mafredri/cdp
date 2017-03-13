@@ -2,8 +2,6 @@
 package proto
 
 import (
-	"bytes"
-	"fmt"
 	"log"
 	"strings"
 
@@ -283,42 +281,8 @@ func (at AnyType) GoType(pkg string, d Domain) string {
 	}
 
 	// Special handling for enums.
-	// if at.IDName != "" && len(at.Enum) > 0 {
-	// 	return "enum"
-	// }
-
-	// Special handling for enums.
 	if at.IDName != "" && len(at.Enum) > 0 {
-		var b bytes.Buffer
-		name := strings.Title(at.Name(d))
-		fmt.Fprintf(&b, "int\n\n// %s as enums.\n", name)
-		fmt.Fprintf(&b, "const (\n")
-		for i, e := range at.Enum {
-			fmt.Fprintf(&b, "\t%s%s", name, e.Name())
-			if i == 0 {
-				fmt.Fprintf(&b, " %s = iota + 1", name)
-			}
-			fmt.Fprintf(&b, "\n")
-		}
-		fmt.Fprintf(&b, ")\n\n")
-		fmt.Fprintf(&b, "func (e %s) String() string {\n", name)
-		fmt.Fprintf(&b, "\tswitch e {\n")
-		for i, e := range at.Enum {
-			fmt.Fprintf(&b, "\tcase %d:\n", i+1)
-			fmt.Fprintf(&b, "\t\treturn \"%s\"\n", e)
-		}
-		fmt.Fprintf(&b, "\t}\n")
-		fmt.Fprintf(&b, "\treturn fmt.Sprintf(\"%s(%%%%d)\", e)\n}\n\n", name)
-		fmt.Fprintf(&b, "func (e %s) MarshalJSON() ([]byte, error) {\n\treturn json.Marshal(e.String())\n}\n\n", name)
-		fmt.Fprintf(&b, "func (e *%s) UnmarshalJSON(data []byte) error {\n", name)
-		fmt.Fprintf(&b, "\tswitch string(data) {\n")
-		for i, e := range at.Enum {
-			fmt.Fprintf(&b, "\tcase \"\\\"%s\\\"\":\n", e)
-			fmt.Fprintf(&b, "\t\t*e = %d\n", i+1)
-		}
-		fmt.Fprintf(&b, "\tdefault:\n\t\treturn fmt.Errorf(\"bad %s: %%%%s\", data)\n", name)
-		fmt.Fprintf(&b, "\t}\n\treturn nil\n}")
-		return b.String()
+		return "enum"
 	}
 
 	// By using a []byte here, Base64-encoded images are automatically

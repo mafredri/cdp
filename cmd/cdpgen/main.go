@@ -22,6 +22,7 @@ import (
 // Global constants.
 const (
 	OptionalPropPrefix = ""
+	realEnum           = true
 )
 
 func main() {
@@ -405,7 +406,37 @@ func (g *Generator) domainTypeEnum(d proto.Domain, t proto.AnyType) {
 	if t.Type != "string" {
 		log.Panicf("unknown enum type: %s", t.Type)
 	}
-	g.Printf(`string
+	if realEnum {
+		name := strings.Title(t.Name(d))
+		g.Printf("int\n\n// %s as enums.\n", name)
+		g.Printf("const (\n")
+		for i, e := range t.Enum {
+			g.Printf("\t%s%s", name, e.Name())
+			if i == 0 {
+				g.Printf(" %s = iota + 1", name)
+			}
+			g.Printf("\n")
+		}
+		g.Printf(")\n\n")
+		g.Printf("func (e %s) String() string {\n", name)
+		g.Printf("\tswitch e {\n")
+		for i, e := range t.Enum {
+			g.Printf("\tcase %d:\n", i+1)
+			g.Printf("\t\treturn \"%s\"\n", e)
+		}
+		g.Printf("\t}\n")
+		g.Printf("\treturn fmt.Sprintf(\"%s(%%d)\", e)\n}\n\n", name)
+		g.Printf("func (e %s) MarshalJSON() ([]byte, error) {\n\treturn json.Marshal(e.String())\n}\n\n", name)
+		g.Printf("func (e *%s) UnmarshalJSON(data []byte) error {\n", name)
+		g.Printf("\tswitch string(data) {\n")
+		for i, e := range t.Enum {
+			g.Printf("\tcase \"\\\"%s\\\"\":\n", e)
+			g.Printf("\t\t*e = %d\n", i+1)
+		}
+		g.Printf("\tdefault:\n\t\treturn fmt.Errorf(\"bad %s: %%s\", data)\n", name)
+		g.Printf("\t}\n\treturn nil\n}")
+	} else {
+		g.Printf(`string
 
 func (e %[1]s) String() string {
 	return string(e)
@@ -414,10 +445,11 @@ func (e %[1]s) String() string {
 // %[1]s types.
 const (
 `, t.Name(d))
-	for _, e := range t.Enum {
-		g.Printf("\t%s %s = %q\n", t.Name(d)+e.Name(), t.Name(d), e)
+		for _, e := range t.Enum {
+			g.Printf("\t%s %s = %q\n", t.Name(d)+e.Name(), t.Name(d), e)
+		}
+		g.Printf(")")
 	}
-	g.Printf(")")
 }
 
 // CmdType generates the type for CDP methods names.
