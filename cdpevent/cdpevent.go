@@ -393,7 +393,7 @@ type DebuggerScriptParsedReply struct {
 	EndColumn               int                               `json:"endColumn"`                         // Length of the last line of the script.
 	ExecutionContextID      cdptype.RuntimeExecutionContextID `json:"executionContextId"`                // Specifies script creation context.
 	Hash                    string                            `json:"hash"`                              // Content hash of the script.
-	ExecutionContextAuxData *json.RawMessage                  `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
+	ExecutionContextAuxData json.RawMessage                   `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
 	IsLiveEdit              *bool                             `json:"isLiveEdit,omitempty"`              // True, if this script is generated as a result of the live edit operation.
 	SourceMapURL            *string                           `json:"sourceMapURL,omitempty"`            // URL of source map associated with script (if any).
 	HasSourceURL            *bool                             `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
@@ -417,7 +417,7 @@ type DebuggerScriptFailedToParseReply struct {
 	EndColumn               int                               `json:"endColumn"`                         // Length of the last line of the script.
 	ExecutionContextID      cdptype.RuntimeExecutionContextID `json:"executionContextId"`                // Specifies script creation context.
 	Hash                    string                            `json:"hash"`                              // Content hash of the script.
-	ExecutionContextAuxData *json.RawMessage                  `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
+	ExecutionContextAuxData json.RawMessage                   `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
 	SourceMapURL            *string                           `json:"sourceMapURL,omitempty"`            // URL of source map associated with script (if any).
 	HasSourceURL            *bool                             `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
 	IsModule                *bool                             `json:"isModule,omitempty"`                // True, if this script is ES6 module.
@@ -446,7 +446,7 @@ type DebuggerPausedClient interface {
 type DebuggerPausedReply struct {
 	CallFrames      []cdptype.DebuggerCallFrame `json:"callFrames"`                // Call stack the virtual machine stopped on.
 	Reason          string                      `json:"reason"`                    // Pause reason.
-	Data            *json.RawMessage            `json:"data,omitempty"`            // Object containing break-specific auxiliary properties.
+	Data            json.RawMessage             `json:"data,omitempty"`            // Object containing break-specific auxiliary properties.
 	HitBreakpoints  []string                    `json:"hitBreakpoints,omitempty"`  // Hit breakpoints IDs
 	AsyncStackTrace *cdptype.RuntimeStackTrace  `json:"asyncStackTrace,omitempty"` // Async stack trace, if any.
 }

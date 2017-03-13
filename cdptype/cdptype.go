@@ -15,10 +15,11 @@ type AccessibilityAXValueType int
 
 // AccessibilityAXValueType as enums.
 const (
-	AccessibilityAXValueTypeBoolean AccessibilityAXValueType = iota + 1
+	AccessibilityAXValueTypeNotSet AccessibilityAXValueType = iota
+	AccessibilityAXValueTypeBoolean
 	AccessibilityAXValueTypeTristate
 	AccessibilityAXValueTypeBooleanOrUndefined
-	AccessibilityAXValueTypeIdref
+	AccessibilityAXValueTypeIDRef
 	AccessibilityAXValueTypeIdrefList
 	AccessibilityAXValueTypeInteger
 	AccessibilityAXValueTypeNode
@@ -34,8 +35,14 @@ const (
 	AccessibilityAXValueTypeValueUndefined
 )
 
+func (e AccessibilityAXValueType) Valid() bool {
+	return e >= 1 && e <= 17
+}
+
 func (e AccessibilityAXValueType) String() string {
 	switch e {
+	case 0:
+		return "AccessibilityAXValueTypeNotSet"
 	case 1:
 		return "boolean"
 	case 2:
@@ -75,10 +82,17 @@ func (e AccessibilityAXValueType) String() string {
 }
 
 func (e AccessibilityAXValueType) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *AccessibilityAXValueType) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"boolean\"":
 		*e = 1
@@ -125,7 +139,8 @@ type AccessibilityAXValueSourceType int
 
 // AccessibilityAXValueSourceType as enums.
 const (
-	AccessibilityAXValueSourceTypeAttribute AccessibilityAXValueSourceType = iota + 1
+	AccessibilityAXValueSourceTypeNotSet AccessibilityAXValueSourceType = iota
+	AccessibilityAXValueSourceTypeAttribute
 	AccessibilityAXValueSourceTypeImplicit
 	AccessibilityAXValueSourceTypeStyle
 	AccessibilityAXValueSourceTypeContents
@@ -133,8 +148,14 @@ const (
 	AccessibilityAXValueSourceTypeRelatedElement
 )
 
+func (e AccessibilityAXValueSourceType) Valid() bool {
+	return e >= 1 && e <= 6
+}
+
 func (e AccessibilityAXValueSourceType) String() string {
 	switch e {
+	case 0:
+		return "AccessibilityAXValueSourceTypeNotSet"
 	case 1:
 		return "attribute"
 	case 2:
@@ -152,10 +173,17 @@ func (e AccessibilityAXValueSourceType) String() string {
 }
 
 func (e AccessibilityAXValueSourceType) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *AccessibilityAXValueSourceType) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"attribute\"":
 		*e = 1
@@ -180,7 +208,8 @@ type AccessibilityAXValueNativeSourceType int
 
 // AccessibilityAXValueNativeSourceType as enums.
 const (
-	AccessibilityAXValueNativeSourceTypeFigcaption AccessibilityAXValueNativeSourceType = iota + 1
+	AccessibilityAXValueNativeSourceTypeNotSet AccessibilityAXValueNativeSourceType = iota
+	AccessibilityAXValueNativeSourceTypeFigcaption
 	AccessibilityAXValueNativeSourceTypeLabel
 	AccessibilityAXValueNativeSourceTypeLabelfor
 	AccessibilityAXValueNativeSourceTypeLabelwrapped
@@ -190,8 +219,14 @@ const (
 	AccessibilityAXValueNativeSourceTypeOther
 )
 
+func (e AccessibilityAXValueNativeSourceType) Valid() bool {
+	return e >= 1 && e <= 8
+}
+
 func (e AccessibilityAXValueNativeSourceType) String() string {
 	switch e {
+	case 0:
+		return "AccessibilityAXValueNativeSourceTypeNotSet"
 	case 1:
 		return "figcaption"
 	case 2:
@@ -213,10 +248,17 @@ func (e AccessibilityAXValueNativeSourceType) String() string {
 }
 
 func (e AccessibilityAXValueNativeSourceType) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *AccessibilityAXValueNativeSourceType) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"figcaption\"":
 		*e = 1
@@ -243,21 +285,21 @@ func (e *AccessibilityAXValueNativeSourceType) UnmarshalJSON(data []byte) error 
 // AccessibilityAXValueSource A single source for a computed AX property.
 type AccessibilityAXValueSource struct {
 	Type              AccessibilityAXValueSourceType       `json:"type"`                        // What type of source this is.
-	Value             AccessibilityAXValue                 `json:"value,omitempty"`             // The value of this property source.
-	Attribute         string                               `json:"attribute,omitempty"`         // The name of the relevant attribute, if any.
-	AttributeValue    AccessibilityAXValue                 `json:"attributeValue,omitempty"`    // The value of the relevant attribute, if any.
-	Superseded        bool                                 `json:"superseded,omitempty"`        // Whether this source is superseded by a higher priority source.
+	Value             *AccessibilityAXValue                `json:"value,omitempty"`             // The value of this property source.
+	Attribute         *string                              `json:"attribute,omitempty"`         // The name of the relevant attribute, if any.
+	AttributeValue    *AccessibilityAXValue                `json:"attributeValue,omitempty"`    // The value of the relevant attribute, if any.
+	Superseded        *bool                                `json:"superseded,omitempty"`        // Whether this source is superseded by a higher priority source.
 	NativeSource      AccessibilityAXValueNativeSourceType `json:"nativeSource,omitempty"`      // The native markup source for this value, e.g. a <label> element.
-	NativeSourceValue AccessibilityAXValue                 `json:"nativeSourceValue,omitempty"` // The value, such as a node or node list, of the native source.
-	Invalid           bool                                 `json:"invalid,omitempty"`           // Whether the value for this property is invalid.
-	InvalidReason     string                               `json:"invalidReason,omitempty"`     // Reason for the value being invalid, if it is.
+	NativeSourceValue *AccessibilityAXValue                `json:"nativeSourceValue,omitempty"` // The value, such as a node or node list, of the native source.
+	Invalid           *bool                                `json:"invalid,omitempty"`           // Whether the value for this property is invalid.
+	InvalidReason     *string                              `json:"invalidReason,omitempty"`     // Reason for the value being invalid, if it is.
 }
 
 // AccessibilityAXRelatedNode
 type AccessibilityAXRelatedNode struct {
 	BackendDOMNodeID DOMBackendNodeID `json:"backendDOMNodeId"` // The BackendNodeId of the related DOM node.
-	Idref            string           `json:"idref,omitempty"`  // The IDRef value provided, if any.
-	Text             string           `json:"text,omitempty"`   // The text alternative of this node in the current context.
+	IDRef            *string          `json:"idref,omitempty"`  // The IDRef value provided, if any.
+	Text             *string          `json:"text,omitempty"`   // The text alternative of this node in the current context.
 }
 
 // AccessibilityAXProperty
@@ -279,7 +321,8 @@ type AccessibilityAXGlobalStates int
 
 // AccessibilityAXGlobalStates as enums.
 const (
-	AccessibilityAXGlobalStatesDisabled AccessibilityAXGlobalStates = iota + 1
+	AccessibilityAXGlobalStatesNotSet AccessibilityAXGlobalStates = iota
+	AccessibilityAXGlobalStatesDisabled
 	AccessibilityAXGlobalStatesHidden
 	AccessibilityAXGlobalStatesHiddenRoot
 	AccessibilityAXGlobalStatesInvalid
@@ -287,8 +330,14 @@ const (
 	AccessibilityAXGlobalStatesRoledescription
 )
 
+func (e AccessibilityAXGlobalStates) Valid() bool {
+	return e >= 1 && e <= 6
+}
+
 func (e AccessibilityAXGlobalStates) String() string {
 	switch e {
+	case 0:
+		return "AccessibilityAXGlobalStatesNotSet"
 	case 1:
 		return "disabled"
 	case 2:
@@ -306,10 +355,17 @@ func (e AccessibilityAXGlobalStates) String() string {
 }
 
 func (e AccessibilityAXGlobalStates) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *AccessibilityAXGlobalStates) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"disabled\"":
 		*e = 1
@@ -334,15 +390,22 @@ type AccessibilityAXLiveRegionAttributes int
 
 // AccessibilityAXLiveRegionAttributes as enums.
 const (
-	AccessibilityAXLiveRegionAttributesLive AccessibilityAXLiveRegionAttributes = iota + 1
+	AccessibilityAXLiveRegionAttributesNotSet AccessibilityAXLiveRegionAttributes = iota
+	AccessibilityAXLiveRegionAttributesLive
 	AccessibilityAXLiveRegionAttributesAtomic
 	AccessibilityAXLiveRegionAttributesRelevant
 	AccessibilityAXLiveRegionAttributesBusy
 	AccessibilityAXLiveRegionAttributesRoot
 )
 
+func (e AccessibilityAXLiveRegionAttributes) Valid() bool {
+	return e >= 1 && e <= 5
+}
+
 func (e AccessibilityAXLiveRegionAttributes) String() string {
 	switch e {
+	case 0:
+		return "AccessibilityAXLiveRegionAttributesNotSet"
 	case 1:
 		return "live"
 	case 2:
@@ -358,10 +421,17 @@ func (e AccessibilityAXLiveRegionAttributes) String() string {
 }
 
 func (e AccessibilityAXLiveRegionAttributes) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *AccessibilityAXLiveRegionAttributes) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"live\"":
 		*e = 1
@@ -384,7 +454,8 @@ type AccessibilityAXWidgetAttributes int
 
 // AccessibilityAXWidgetAttributes as enums.
 const (
-	AccessibilityAXWidgetAttributesAutocomplete AccessibilityAXWidgetAttributes = iota + 1
+	AccessibilityAXWidgetAttributesNotSet AccessibilityAXWidgetAttributes = iota
+	AccessibilityAXWidgetAttributesAutocomplete
 	AccessibilityAXWidgetAttributesHaspopup
 	AccessibilityAXWidgetAttributesLevel
 	AccessibilityAXWidgetAttributesMultiselectable
@@ -397,8 +468,14 @@ const (
 	AccessibilityAXWidgetAttributesValuetext
 )
 
+func (e AccessibilityAXWidgetAttributes) Valid() bool {
+	return e >= 1 && e <= 11
+}
+
 func (e AccessibilityAXWidgetAttributes) String() string {
 	switch e {
+	case 0:
+		return "AccessibilityAXWidgetAttributesNotSet"
 	case 1:
 		return "autocomplete"
 	case 2:
@@ -426,10 +503,17 @@ func (e AccessibilityAXWidgetAttributes) String() string {
 }
 
 func (e AccessibilityAXWidgetAttributes) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *AccessibilityAXWidgetAttributes) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"autocomplete\"":
 		*e = 1
@@ -464,15 +548,22 @@ type AccessibilityAXWidgetStates int
 
 // AccessibilityAXWidgetStates as enums.
 const (
-	AccessibilityAXWidgetStatesChecked AccessibilityAXWidgetStates = iota + 1
+	AccessibilityAXWidgetStatesNotSet AccessibilityAXWidgetStates = iota
+	AccessibilityAXWidgetStatesChecked
 	AccessibilityAXWidgetStatesExpanded
 	AccessibilityAXWidgetStatesModal
 	AccessibilityAXWidgetStatesPressed
 	AccessibilityAXWidgetStatesSelected
 )
 
+func (e AccessibilityAXWidgetStates) Valid() bool {
+	return e >= 1 && e <= 5
+}
+
 func (e AccessibilityAXWidgetStates) String() string {
 	switch e {
+	case 0:
+		return "AccessibilityAXWidgetStatesNotSet"
 	case 1:
 		return "checked"
 	case 2:
@@ -488,10 +579,17 @@ func (e AccessibilityAXWidgetStates) String() string {
 }
 
 func (e AccessibilityAXWidgetStates) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *AccessibilityAXWidgetStates) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"checked\"":
 		*e = 1
@@ -514,7 +612,8 @@ type AccessibilityAXRelationshipAttributes int
 
 // AccessibilityAXRelationshipAttributes as enums.
 const (
-	AccessibilityAXRelationshipAttributesActivedescendant AccessibilityAXRelationshipAttributes = iota + 1
+	AccessibilityAXRelationshipAttributesNotSet AccessibilityAXRelationshipAttributes = iota
+	AccessibilityAXRelationshipAttributesActivedescendant
 	AccessibilityAXRelationshipAttributesControls
 	AccessibilityAXRelationshipAttributesDescribedby
 	AccessibilityAXRelationshipAttributesDetails
@@ -524,8 +623,14 @@ const (
 	AccessibilityAXRelationshipAttributesOwns
 )
 
+func (e AccessibilityAXRelationshipAttributes) Valid() bool {
+	return e >= 1 && e <= 8
+}
+
 func (e AccessibilityAXRelationshipAttributes) String() string {
 	switch e {
+	case 0:
+		return "AccessibilityAXRelationshipAttributesNotSet"
 	case 1:
 		return "activedescendant"
 	case 2:
@@ -547,10 +652,17 @@ func (e AccessibilityAXRelationshipAttributes) String() string {
 }
 
 func (e AccessibilityAXRelationshipAttributes) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *AccessibilityAXRelationshipAttributes) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"activedescendant\"":
 		*e = 1
@@ -579,13 +691,13 @@ type AccessibilityAXNode struct {
 	NodeID           AccessibilityAXNodeID     `json:"nodeId"`                     // Unique identifier for this node.
 	Ignored          bool                      `json:"ignored"`                    // Whether this node is ignored for accessibility
 	IgnoredReasons   []AccessibilityAXProperty `json:"ignoredReasons,omitempty"`   // Collection of reasons why this node is hidden.
-	Role             AccessibilityAXValue      `json:"role,omitempty"`             // This Node's role, whether explicit or implicit.
-	Name             AccessibilityAXValue      `json:"name,omitempty"`             // The accessible name for this Node.
-	Description      AccessibilityAXValue      `json:"description,omitempty"`      // The accessible description for this Node.
-	Value            AccessibilityAXValue      `json:"value,omitempty"`            // The value for this Node.
+	Role             *AccessibilityAXValue     `json:"role,omitempty"`             // This Node's role, whether explicit or implicit.
+	Name             *AccessibilityAXValue     `json:"name,omitempty"`             // The accessible name for this Node.
+	Description      *AccessibilityAXValue     `json:"description,omitempty"`      // The accessible description for this Node.
+	Value            *AccessibilityAXValue     `json:"value,omitempty"`            // The value for this Node.
 	Properties       []AccessibilityAXProperty `json:"properties,omitempty"`       // All other properties
 	ChildIDs         []AccessibilityAXNodeID   `json:"childIds,omitempty"`         // IDs for each of this node's child nodes.
-	BackendDOMNodeID DOMBackendNodeID          `json:"backendDOMNodeId,omitempty"` // The backend ID for the associated DOM node, if any.
+	BackendDOMNodeID *DOMBackendNodeID         `json:"backendDOMNodeId,omitempty"` // The backend ID for the associated DOM node, if any.
 }
 
 // Animation Animation instance.
@@ -599,26 +711,26 @@ type Animation struct {
 	CurrentTime  float64         `json:"currentTime"`     // Animation's current time.
 	Source       AnimationEffect `json:"source"`          // Animation's source animation node.
 	Type         string          `json:"type"`            // Animation type of Animation.
-	CSSID        string          `json:"cssId,omitempty"` // A unique ID for Animation representing the sources that triggered this CSS animation/transition.
+	CSSID        *string         `json:"cssId,omitempty"` // A unique ID for Animation representing the sources that triggered this CSS animation/transition.
 }
 
 // AnimationEffect AnimationEffect instance
 type AnimationEffect struct {
-	Delay          float64                `json:"delay"`                   // AnimationEffect's delay.
-	EndDelay       float64                `json:"endDelay"`                // AnimationEffect's end delay.
-	IterationStart float64                `json:"iterationStart"`          // AnimationEffect's iteration start.
-	Iterations     float64                `json:"iterations"`              // AnimationEffect's iterations.
-	Duration       float64                `json:"duration"`                // AnimationEffect's iteration duration.
-	Direction      string                 `json:"direction"`               // AnimationEffect's playback direction.
-	Fill           string                 `json:"fill"`                    // AnimationEffect's fill mode.
-	BackendNodeID  DOMBackendNodeID       `json:"backendNodeId"`           // AnimationEffect's target node.
-	KeyframesRule  AnimationKeyframesRule `json:"keyframesRule,omitempty"` // AnimationEffect's keyframes.
-	Easing         string                 `json:"easing"`                  // AnimationEffect's timing function.
+	Delay          float64                 `json:"delay"`                   // AnimationEffect's delay.
+	EndDelay       float64                 `json:"endDelay"`                // AnimationEffect's end delay.
+	IterationStart float64                 `json:"iterationStart"`          // AnimationEffect's iteration start.
+	Iterations     float64                 `json:"iterations"`              // AnimationEffect's iterations.
+	Duration       float64                 `json:"duration"`                // AnimationEffect's iteration duration.
+	Direction      string                  `json:"direction"`               // AnimationEffect's playback direction.
+	Fill           string                  `json:"fill"`                    // AnimationEffect's fill mode.
+	BackendNodeID  DOMBackendNodeID        `json:"backendNodeId"`           // AnimationEffect's target node.
+	KeyframesRule  *AnimationKeyframesRule `json:"keyframesRule,omitempty"` // AnimationEffect's keyframes.
+	Easing         string                  `json:"easing"`                  // AnimationEffect's timing function.
 }
 
 // AnimationKeyframesRule Keyframes Rule
 type AnimationKeyframesRule struct {
-	Name      string                   `json:"name,omitempty"` // CSS keyframed animation's name.
+	Name      *string                  `json:"name,omitempty"` // CSS keyframed animation's name.
 	Keyframes []AnimationKeyframeStyle `json:"keyframes"`      // List of animation keyframes.
 }
 
@@ -659,14 +771,21 @@ type CSSStyleSheetOrigin int
 
 // CSSStyleSheetOrigin as enums.
 const (
-	CSSStyleSheetOriginInjected CSSStyleSheetOrigin = iota + 1
+	CSSStyleSheetOriginNotSet CSSStyleSheetOrigin = iota
+	CSSStyleSheetOriginInjected
 	CSSStyleSheetOriginUserAgent
 	CSSStyleSheetOriginInspector
 	CSSStyleSheetOriginRegular
 )
 
+func (e CSSStyleSheetOrigin) Valid() bool {
+	return e >= 1 && e <= 4
+}
+
 func (e CSSStyleSheetOrigin) String() string {
 	switch e {
+	case 0:
+		return "CSSStyleSheetOriginNotSet"
 	case 1:
 		return "injected"
 	case 2:
@@ -680,10 +799,17 @@ func (e CSSStyleSheetOrigin) String() string {
 }
 
 func (e CSSStyleSheetOrigin) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *CSSStyleSheetOrigin) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"injected\"":
 		*e = 1
@@ -707,7 +833,7 @@ type CSSPseudoElementMatches struct {
 
 // CSSInheritedStyleEntry Inherited CSS rule collection from ancestor node.
 type CSSInheritedStyleEntry struct {
-	InlineStyle     CSSStyle       `json:"inlineStyle,omitempty"` // The ancestor node's inline style, if any, in the style inheritance chain.
+	InlineStyle     *CSSStyle      `json:"inlineStyle,omitempty"` // The ancestor node's inline style, if any, in the style inheritance chain.
 	MatchedCSSRules []CSSRuleMatch `json:"matchedCSSRules"`       // Matches of CSS rules matching the ancestor node in the style inheritance chain.
 }
 
@@ -719,8 +845,8 @@ type CSSRuleMatch struct {
 
 // CSSValue Data for a simple selector (these are delimited by commas in a selector list).
 type CSSValue struct {
-	Text  string         `json:"text"`            // Value text.
-	Range CSSSourceRange `json:"range,omitempty"` // Value range in the underlying resource (if available).
+	Text  string          `json:"text"`            // Value text.
+	Range *CSSSourceRange `json:"range,omitempty"` // Value range in the underlying resource (if available).
 }
 
 // CSSSelectorList Selector list data.
@@ -734,12 +860,12 @@ type CSSStyleSheetHeader struct {
 	StyleSheetID CSSStyleSheetID     `json:"styleSheetId"`           // The stylesheet identifier.
 	FrameID      PageFrameID         `json:"frameId"`                // Owner frame identifier.
 	SourceURL    string              `json:"sourceURL"`              // Stylesheet resource URL.
-	SourceMapURL string              `json:"sourceMapURL,omitempty"` // URL of source map associated with the stylesheet (if any).
+	SourceMapURL *string             `json:"sourceMapURL,omitempty"` // URL of source map associated with the stylesheet (if any).
 	Origin       CSSStyleSheetOrigin `json:"origin"`                 // Stylesheet origin.
 	Title        string              `json:"title"`                  // Stylesheet title.
-	OwnerNode    DOMBackendNodeID    `json:"ownerNode,omitempty"`    // The backend id for the owner node of the stylesheet.
+	OwnerNode    *DOMBackendNodeID   `json:"ownerNode,omitempty"`    // The backend id for the owner node of the stylesheet.
 	Disabled     bool                `json:"disabled"`               // Denotes whether the stylesheet is disabled.
-	HasSourceURL bool                `json:"hasSourceURL,omitempty"` // Whether the sourceURL field value comes from the sourceURL comment.
+	HasSourceURL *bool               `json:"hasSourceURL,omitempty"` // Whether the sourceURL field value comes from the sourceURL comment.
 	IsInline     bool                `json:"isInline"`               // Whether this stylesheet is created for STYLE tag by parser. This flag is not set for document.written STYLE tags.
 	StartLine    float64             `json:"startLine"`              // Line offset of the stylesheet within the resource (zero based).
 	StartColumn  float64             `json:"startColumn"`            // Column offset of the stylesheet within the resource (zero based).
@@ -748,7 +874,7 @@ type CSSStyleSheetHeader struct {
 
 // CSSRule CSS rule representation.
 type CSSRule struct {
-	StyleSheetID CSSStyleSheetID     `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
+	StyleSheetID *CSSStyleSheetID    `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
 	SelectorList CSSSelectorList     `json:"selectorList"`           // Rule selector data.
 	Origin       CSSStyleSheetOrigin `json:"origin"`                 // Parent stylesheet's origin.
 	Style        CSSStyle            `json:"style"`                  // Associated style declaration.
@@ -775,7 +901,7 @@ type CSSSourceRange struct {
 type CSSShorthandEntry struct {
 	Name      string `json:"name"`                // Shorthand name.
 	Value     string `json:"value"`               // Shorthand value.
-	Important bool   `json:"important,omitempty"` // Whether the property has "!important" annotation (implies false if absent).
+	Important *bool  `json:"important,omitempty"` // Whether the property has "!important" annotation (implies false if absent).
 }
 
 // CSSComputedStyleProperty
@@ -786,33 +912,33 @@ type CSSComputedStyleProperty struct {
 
 // CSSStyle CSS style representation.
 type CSSStyle struct {
-	StyleSheetID     CSSStyleSheetID     `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
+	StyleSheetID     *CSSStyleSheetID    `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
 	CSSProperties    []CSSProperty       `json:"cssProperties"`          // CSS properties in the style.
 	ShorthandEntries []CSSShorthandEntry `json:"shorthandEntries"`       // Computed values for all shorthands found in the style.
-	CSSText          string              `json:"cssText,omitempty"`      // Style declaration text (if available).
-	Range            CSSSourceRange      `json:"range,omitempty"`        // Style declaration range in the enclosing stylesheet (if available).
+	CSSText          *string             `json:"cssText,omitempty"`      // Style declaration text (if available).
+	Range            *CSSSourceRange     `json:"range,omitempty"`        // Style declaration range in the enclosing stylesheet (if available).
 }
 
 // CSSProperty CSS property declaration data.
 type CSSProperty struct {
-	Name      string         `json:"name"`                // The property name.
-	Value     string         `json:"value"`               // The property value.
-	Important bool           `json:"important,omitempty"` // Whether the property has "!important" annotation (implies false if absent).
-	Implicit  bool           `json:"implicit,omitempty"`  // Whether the property is implicit (implies false if absent).
-	Text      string         `json:"text,omitempty"`      // The full property text as specified in the style.
-	ParsedOk  bool           `json:"parsedOk,omitempty"`  // Whether the property is understood by the browser (implies true if absent).
-	Disabled  bool           `json:"disabled,omitempty"`  // Whether the property is disabled by the user (present for source-based properties only).
-	Range     CSSSourceRange `json:"range,omitempty"`     // The entire property range in the enclosing style declaration (if available).
+	Name      string          `json:"name"`                // The property name.
+	Value     string          `json:"value"`               // The property value.
+	Important *bool           `json:"important,omitempty"` // Whether the property has "!important" annotation (implies false if absent).
+	Implicit  *bool           `json:"implicit,omitempty"`  // Whether the property is implicit (implies false if absent).
+	Text      *string         `json:"text,omitempty"`      // The full property text as specified in the style.
+	ParsedOk  *bool           `json:"parsedOk,omitempty"`  // Whether the property is understood by the browser (implies true if absent).
+	Disabled  *bool           `json:"disabled,omitempty"`  // Whether the property is disabled by the user (present for source-based properties only).
+	Range     *CSSSourceRange `json:"range,omitempty"`     // The entire property range in the enclosing style declaration (if available).
 }
 
 // CSSMedia CSS media rule descriptor.
 type CSSMedia struct {
-	Text         string          `json:"text"`                   // Media query text.
-	Source       string          `json:"source"`                 // Source of the media query: "mediaRule" if specified by a @media rule, "importRule" if specified by an @import rule, "linkedSheet" if specified by a "media" attribute in a linked stylesheet's LINK tag, "inlineSheet" if specified by a "media" attribute in an inline stylesheet's STYLE tag.
-	SourceURL    string          `json:"sourceURL,omitempty"`    // URL of the document containing the media query description.
-	Range        CSSSourceRange  `json:"range,omitempty"`        // The associated rule (@media or @import) header range in the enclosing stylesheet (if available).
-	StyleSheetID CSSStyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
-	MediaList    []CSSMediaQuery `json:"mediaList,omitempty"`    // Array of media queries.
+	Text         string           `json:"text"`                   // Media query text.
+	Source       string           `json:"source"`                 // Source of the media query: "mediaRule" if specified by a @media rule, "importRule" if specified by an @import rule, "linkedSheet" if specified by a "media" attribute in a linked stylesheet's LINK tag, "inlineSheet" if specified by a "media" attribute in an inline stylesheet's STYLE tag.
+	SourceURL    *string          `json:"sourceURL,omitempty"`    // URL of the document containing the media query description.
+	Range        *CSSSourceRange  `json:"range,omitempty"`        // The associated rule (@media or @import) header range in the enclosing stylesheet (if available).
+	StyleSheetID *CSSStyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
+	MediaList    []CSSMediaQuery  `json:"mediaList,omitempty"`    // Array of media queries.
 }
 
 // CSSMediaQuery Media query descriptor.
@@ -823,11 +949,11 @@ type CSSMediaQuery struct {
 
 // CSSMediaQueryExpression Media query expression descriptor.
 type CSSMediaQueryExpression struct {
-	Value          float64        `json:"value"`                    // Media query expression value.
-	Unit           string         `json:"unit"`                     // Media query expression units.
-	Feature        string         `json:"feature"`                  // Media query expression feature.
-	ValueRange     CSSSourceRange `json:"valueRange,omitempty"`     // The associated range of the value text in the enclosing stylesheet (if available).
-	ComputedLength float64        `json:"computedLength,omitempty"` // Computed length of media query expression (if applicable).
+	Value          float64         `json:"value"`                    // Media query expression value.
+	Unit           string          `json:"unit"`                     // Media query expression units.
+	Feature        string          `json:"feature"`                  // Media query expression feature.
+	ValueRange     *CSSSourceRange `json:"valueRange,omitempty"`     // The associated range of the value text in the enclosing stylesheet (if available).
+	ComputedLength *float64        `json:"computedLength,omitempty"` // Computed length of media query expression (if applicable).
 }
 
 // CSSPlatformFontUsage Information about amount of glyphs that were rendered with given font.
@@ -845,7 +971,7 @@ type CSSKeyframesRule struct {
 
 // CSSKeyframeRule CSS keyframe rule representation.
 type CSSKeyframeRule struct {
-	StyleSheetID CSSStyleSheetID     `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
+	StyleSheetID *CSSStyleSheetID    `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
 	Origin       CSSStyleSheetOrigin `json:"origin"`                 // Parent stylesheet's origin.
 	KeyText      CSSValue            `json:"keyText"`                // Associated key text.
 	Style        CSSStyle            `json:"style"`                  // Associated style declaration.
@@ -869,9 +995,9 @@ type CSSInlineTextBox struct {
 type CSSLayoutTreeNode struct {
 	NodeID          DOMNodeID          `json:"nodeId"`                    // The id of the related DOM node matching one from DOM.GetDocument.
 	BoundingBox     DOMRect            `json:"boundingBox"`               // The absolute position bounding box.
-	LayoutText      string             `json:"layoutText,omitempty"`      // Contents of the LayoutText if any
+	LayoutText      *string            `json:"layoutText,omitempty"`      // Contents of the LayoutText if any
 	InlineTextNodes []CSSInlineTextBox `json:"inlineTextNodes,omitempty"` // The post layout inline text nodes, if any.
-	StyleIndex      int                `json:"styleIndex,omitempty"`      // Index into the computedStyles array returned by getLayoutTreeAndStyles.
+	StyleIndex      *int               `json:"styleIndex,omitempty"`      // Index into the computedStyles array returned by getLayoutTreeAndStyles.
 }
 
 // CSSComputedStyle A subset of the full ComputedStyle as defined by the request whitelist.
@@ -897,12 +1023,12 @@ type CacheStorageCache struct {
 
 // ConsoleMessage Console message.
 type ConsoleMessage struct {
-	Source string `json:"source"`           // Message source.
-	Level  string `json:"level"`            // Message severity.
-	Text   string `json:"text"`             // Message text.
-	URL    string `json:"url,omitempty"`    // URL of the message origin.
-	Line   int    `json:"line,omitempty"`   // Line number in the resource that generated this message (1-based).
-	Column int    `json:"column,omitempty"` // Column number in the resource that generated this message (1-based).
+	Source string  `json:"source"`           // Message source.
+	Level  string  `json:"level"`            // Message severity.
+	Text   string  `json:"text"`             // Message text.
+	URL    *string `json:"url,omitempty"`    // URL of the message origin.
+	Line   *int    `json:"line,omitempty"`   // Line number in the resource that generated this message (1-based).
+	Column *int    `json:"column,omitempty"` // Column number in the resource that generated this message (1-based).
 }
 
 // DOMNodeID Unique DOM node identifier.
@@ -923,7 +1049,8 @@ type DOMPseudoType int
 
 // DOMPseudoType as enums.
 const (
-	DOMPseudoTypeFirstLine DOMPseudoType = iota + 1
+	DOMPseudoTypeNotSet DOMPseudoType = iota
+	DOMPseudoTypeFirstLine
 	DOMPseudoTypeFirstLetter
 	DOMPseudoTypeBefore
 	DOMPseudoTypeAfter
@@ -940,8 +1067,14 @@ const (
 	DOMPseudoTypeInputListButton
 )
 
+func (e DOMPseudoType) Valid() bool {
+	return e >= 1 && e <= 15
+}
+
 func (e DOMPseudoType) String() string {
 	switch e {
+	case 0:
+		return "DOMPseudoTypeNotSet"
 	case 1:
 		return "first-line"
 	case 2:
@@ -977,10 +1110,17 @@ func (e DOMPseudoType) String() string {
 }
 
 func (e DOMPseudoType) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *DOMPseudoType) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"first-line\"":
 		*e = 1
@@ -1023,13 +1163,20 @@ type DOMShadowRootType int
 
 // DOMShadowRootType as enums.
 const (
-	DOMShadowRootTypeUserAgent DOMShadowRootType = iota + 1
+	DOMShadowRootTypeNotSet DOMShadowRootType = iota
+	DOMShadowRootTypeUserAgent
 	DOMShadowRootTypeOpen
 	DOMShadowRootTypeClosed
 )
 
+func (e DOMShadowRootType) Valid() bool {
+	return e >= 1 && e <= 3
+}
+
 func (e DOMShadowRootType) String() string {
 	switch e {
+	case 0:
+		return "DOMShadowRootTypeNotSet"
 	case 1:
 		return "user-agent"
 	case 2:
@@ -1041,10 +1188,17 @@ func (e DOMShadowRootType) String() string {
 }
 
 func (e DOMShadowRootType) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *DOMShadowRootType) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"user-agent\"":
 		*e = 1
@@ -1061,41 +1215,41 @@ func (e *DOMShadowRootType) UnmarshalJSON(data []byte) error {
 // DOMNode DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type.
 type DOMNode struct {
 	NodeID           DOMNodeID         `json:"nodeId"`                     // Node identifier that is passed into the rest of the DOM messages as the nodeId. Backend will only push node with given id once. It is aware of all requested nodes and will only fire DOM events for nodes known to the client.
-	ParentID         DOMNodeID         `json:"parentId,omitempty"`         // The id of the parent node if any.
+	ParentID         *DOMNodeID        `json:"parentId,omitempty"`         // The id of the parent node if any.
 	BackendNodeID    DOMBackendNodeID  `json:"backendNodeId"`              // The BackendNodeId for this node.
 	NodeType         int               `json:"nodeType"`                   // Node's nodeType.
 	NodeName         string            `json:"nodeName"`                   // Node's nodeName.
 	LocalName        string            `json:"localName"`                  // Node's localName.
 	NodeValue        string            `json:"nodeValue"`                  // Node's nodeValue.
-	ChildNodeCount   int               `json:"childNodeCount,omitempty"`   // Child count for Container nodes.
+	ChildNodeCount   *int              `json:"childNodeCount,omitempty"`   // Child count for Container nodes.
 	Children         []DOMNode         `json:"children,omitempty"`         // Child nodes of this node when requested with children.
 	Attributes       []string          `json:"attributes,omitempty"`       // Attributes of the Element node in the form of flat array [name1, value1, name2, value2].
-	DocumentURL      string            `json:"documentURL,omitempty"`      // Document URL that Document or FrameOwner node points to.
-	BaseURL          string            `json:"baseURL,omitempty"`          // Base URL that Document or FrameOwner node uses for URL completion.
-	PublicID         string            `json:"publicId,omitempty"`         // DocumentType's publicId.
-	SystemID         string            `json:"systemId,omitempty"`         // DocumentType's systemId.
-	InternalSubset   string            `json:"internalSubset,omitempty"`   // DocumentType's internalSubset.
-	XMLVersion       string            `json:"xmlVersion,omitempty"`       // Document's XML version in case of XML documents.
-	Name             string            `json:"name,omitempty"`             // Attr's name.
-	Value            string            `json:"value,omitempty"`            // Attr's value.
+	DocumentURL      *string           `json:"documentURL,omitempty"`      // Document URL that Document or FrameOwner node points to.
+	BaseURL          *string           `json:"baseURL,omitempty"`          // Base URL that Document or FrameOwner node uses for URL completion.
+	PublicID         *string           `json:"publicId,omitempty"`         // DocumentType's publicId.
+	SystemID         *string           `json:"systemId,omitempty"`         // DocumentType's systemId.
+	InternalSubset   *string           `json:"internalSubset,omitempty"`   // DocumentType's internalSubset.
+	XMLVersion       *string           `json:"xmlVersion,omitempty"`       // Document's XML version in case of XML documents.
+	Name             *string           `json:"name,omitempty"`             // Attr's name.
+	Value            *string           `json:"value,omitempty"`            // Attr's value.
 	PseudoType       DOMPseudoType     `json:"pseudoType,omitempty"`       // Pseudo element type for this node.
 	ShadowRootType   DOMShadowRootType `json:"shadowRootType,omitempty"`   // Shadow root type.
-	FrameID          PageFrameID       `json:"frameId,omitempty"`          // Frame ID for frame owner elements.
+	FrameID          *PageFrameID      `json:"frameId,omitempty"`          // Frame ID for frame owner elements.
 	ContentDocument  *DOMNode          `json:"contentDocument,omitempty"`  // Content document for frame owner elements.
 	ShadowRoots      []DOMNode         `json:"shadowRoots,omitempty"`      // Shadow root list for given element host.
 	TemplateContent  *DOMNode          `json:"templateContent,omitempty"`  // Content document fragment for template elements.
 	PseudoElements   []DOMNode         `json:"pseudoElements,omitempty"`   // Pseudo elements associated with this node.
 	ImportedDocument *DOMNode          `json:"importedDocument,omitempty"` // Import document for the HTMLImport links.
 	DistributedNodes []DOMBackendNode  `json:"distributedNodes,omitempty"` // Distributed nodes for given insertion point.
-	IsSVG            bool              `json:"isSVG,omitempty"`            // Whether the node is SVG.
+	IsSVG            *bool             `json:"isSVG,omitempty"`            // Whether the node is SVG.
 }
 
 // DOMRGBA A structure holding an RGBA color.
 type DOMRGBA struct {
-	R int     `json:"r"`           // The red component, in the [0-255] range.
-	G int     `json:"g"`           // The green component, in the [0-255] range.
-	B int     `json:"b"`           // The blue component, in the [0-255] range.
-	A float64 `json:"a,omitempty"` // The alpha component, in the [0-1] range (default: 1).
+	R int      `json:"r"`           // The red component, in the [0-255] range.
+	G int      `json:"g"`           // The green component, in the [0-255] range.
+	B int      `json:"b"`           // The blue component, in the [0-255] range.
+	A *float64 `json:"a,omitempty"` // The alpha component, in the [0-1] range (default: 1).
 }
 
 // DOMQuad An array of quad vertices, x immediately followed by y for each point, points clock-wise.
@@ -1103,13 +1257,13 @@ type DOMQuad []float64
 
 // DOMBoxModel Box model.
 type DOMBoxModel struct {
-	Content      DOMQuad             `json:"content"`                // Content box
-	Padding      DOMQuad             `json:"padding"`                // Padding box
-	Border       DOMQuad             `json:"border"`                 // Border box
-	Margin       DOMQuad             `json:"margin"`                 // Margin box
-	Width        int                 `json:"width"`                  // Node width
-	Height       int                 `json:"height"`                 // Node height
-	ShapeOutside DOMShapeOutsideInfo `json:"shapeOutside,omitempty"` // Shape outside coordinates
+	Content      DOMQuad              `json:"content"`                // Content box
+	Padding      DOMQuad              `json:"padding"`                // Padding box
+	Border       DOMQuad              `json:"border"`                 // Border box
+	Margin       DOMQuad              `json:"margin"`                 // Margin box
+	Width        int                  `json:"width"`                  // Node width
+	Height       int                  `json:"height"`                 // Node height
+	ShapeOutside *DOMShapeOutsideInfo `json:"shapeOutside,omitempty"` // Shape outside coordinates
 }
 
 // DOMShapeOutsideInfo CSS Shape Outside details.
@@ -1129,18 +1283,18 @@ type DOMRect struct {
 
 // DOMHighlightConfig Configuration data for the highlighting of page elements.
 type DOMHighlightConfig struct {
-	ShowInfo           bool    `json:"showInfo,omitempty"`           // Whether the node info tooltip should be shown (default: false).
-	ShowRulers         bool    `json:"showRulers,omitempty"`         // Whether the rulers should be shown (default: false).
-	ShowExtensionLines bool    `json:"showExtensionLines,omitempty"` // Whether the extension lines from node to the rulers should be shown (default: false).
-	DisplayAsMaterial  bool    `json:"displayAsMaterial,omitempty"`  //
-	ContentColor       DOMRGBA `json:"contentColor,omitempty"`       // The content box highlight fill color (default: transparent).
-	PaddingColor       DOMRGBA `json:"paddingColor,omitempty"`       // The padding highlight fill color (default: transparent).
-	BorderColor        DOMRGBA `json:"borderColor,omitempty"`        // The border highlight fill color (default: transparent).
-	MarginColor        DOMRGBA `json:"marginColor,omitempty"`        // The margin highlight fill color (default: transparent).
-	EventTargetColor   DOMRGBA `json:"eventTargetColor,omitempty"`   // The event target element highlight fill color (default: transparent).
-	ShapeColor         DOMRGBA `json:"shapeColor,omitempty"`         // The shape outside fill color (default: transparent).
-	ShapeMarginColor   DOMRGBA `json:"shapeMarginColor,omitempty"`   // The shape margin fill color (default: transparent).
-	SelectorList       string  `json:"selectorList,omitempty"`       // Selectors to highlight relevant nodes.
+	ShowInfo           *bool    `json:"showInfo,omitempty"`           // Whether the node info tooltip should be shown (default: false).
+	ShowRulers         *bool    `json:"showRulers,omitempty"`         // Whether the rulers should be shown (default: false).
+	ShowExtensionLines *bool    `json:"showExtensionLines,omitempty"` // Whether the extension lines from node to the rulers should be shown (default: false).
+	DisplayAsMaterial  *bool    `json:"displayAsMaterial,omitempty"`  //
+	ContentColor       *DOMRGBA `json:"contentColor,omitempty"`       // The content box highlight fill color (default: transparent).
+	PaddingColor       *DOMRGBA `json:"paddingColor,omitempty"`       // The padding highlight fill color (default: transparent).
+	BorderColor        *DOMRGBA `json:"borderColor,omitempty"`        // The border highlight fill color (default: transparent).
+	MarginColor        *DOMRGBA `json:"marginColor,omitempty"`        // The margin highlight fill color (default: transparent).
+	EventTargetColor   *DOMRGBA `json:"eventTargetColor,omitempty"`   // The event target element highlight fill color (default: transparent).
+	ShapeColor         *DOMRGBA `json:"shapeColor,omitempty"`         // The shape outside fill color (default: transparent).
+	ShapeMarginColor   *DOMRGBA `json:"shapeMarginColor,omitempty"`   // The shape margin fill color (default: transparent).
+	SelectorList       *string  `json:"selectorList,omitempty"`       // Selectors to highlight relevant nodes.
 }
 
 // DOMInspectMode
@@ -1148,13 +1302,20 @@ type DOMInspectMode int
 
 // DOMInspectMode as enums.
 const (
-	DOMInspectModeSearchForNode DOMInspectMode = iota + 1
+	DOMInspectModeNotSet DOMInspectMode = iota
+	DOMInspectModeSearchForNode
 	DOMInspectModeSearchForUAShadowDOM
 	DOMInspectModeNone
 )
 
+func (e DOMInspectMode) Valid() bool {
+	return e >= 1 && e <= 3
+}
+
 func (e DOMInspectMode) String() string {
 	switch e {
+	case 0:
+		return "DOMInspectModeNotSet"
 	case 1:
 		return "searchForNode"
 	case 2:
@@ -1166,10 +1327,17 @@ func (e DOMInspectMode) String() string {
 }
 
 func (e DOMInspectMode) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *DOMInspectMode) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"searchForNode\"":
 		*e = 1
@@ -1188,13 +1356,20 @@ type DOMDebuggerDOMBreakpointType int
 
 // DOMDebuggerDOMBreakpointType as enums.
 const (
-	DOMDebuggerDOMBreakpointTypeSubtreeModified DOMDebuggerDOMBreakpointType = iota + 1
+	DOMDebuggerDOMBreakpointTypeNotSet DOMDebuggerDOMBreakpointType = iota
+	DOMDebuggerDOMBreakpointTypeSubtreeModified
 	DOMDebuggerDOMBreakpointTypeAttributeModified
 	DOMDebuggerDOMBreakpointTypeNodeRemoved
 )
 
+func (e DOMDebuggerDOMBreakpointType) Valid() bool {
+	return e >= 1 && e <= 3
+}
+
 func (e DOMDebuggerDOMBreakpointType) String() string {
 	switch e {
+	case 0:
+		return "DOMDebuggerDOMBreakpointTypeNotSet"
 	case 1:
 		return "subtree-modified"
 	case 2:
@@ -1206,10 +1381,17 @@ func (e DOMDebuggerDOMBreakpointType) String() string {
 }
 
 func (e DOMDebuggerDOMBreakpointType) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *DOMDebuggerDOMBreakpointType) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"subtree-modified\"":
 		*e = 1
@@ -1225,16 +1407,16 @@ func (e *DOMDebuggerDOMBreakpointType) UnmarshalJSON(data []byte) error {
 
 // DOMDebuggerEventListener Object event listener.
 type DOMDebuggerEventListener struct {
-	Type            string              `json:"type"`                      // EventListener's type.
-	UseCapture      bool                `json:"useCapture"`                // EventListener's useCapture.
-	Passive         bool                `json:"passive"`                   // EventListener's passive flag.
-	Once            bool                `json:"once"`                      // EventListener's once flag.
-	ScriptID        RuntimeScriptID     `json:"scriptId"`                  // Script id of the handler code.
-	LineNumber      int                 `json:"lineNumber"`                // Line number in the script (0-based).
-	ColumnNumber    int                 `json:"columnNumber"`              // Column number in the script (0-based).
-	Handler         RuntimeRemoteObject `json:"handler,omitempty"`         // Event handler function value.
-	OriginalHandler RuntimeRemoteObject `json:"originalHandler,omitempty"` // Event original handler function value.
-	BackendNodeID   DOMBackendNodeID    `json:"backendNodeId,omitempty"`   // Node the listener is added to (if any).
+	Type            string               `json:"type"`                      // EventListener's type.
+	UseCapture      bool                 `json:"useCapture"`                // EventListener's useCapture.
+	Passive         bool                 `json:"passive"`                   // EventListener's passive flag.
+	Once            bool                 `json:"once"`                      // EventListener's once flag.
+	ScriptID        RuntimeScriptID      `json:"scriptId"`                  // Script id of the handler code.
+	LineNumber      int                  `json:"lineNumber"`                // Line number in the script (0-based).
+	ColumnNumber    int                  `json:"columnNumber"`              // Column number in the script (0-based).
+	Handler         *RuntimeRemoteObject `json:"handler,omitempty"`         // Event handler function value.
+	OriginalHandler *RuntimeRemoteObject `json:"originalHandler,omitempty"` // Event original handler function value.
+	BackendNodeID   *DOMBackendNodeID    `json:"backendNodeId,omitempty"`   // Node the listener is added to (if any).
 }
 
 // DOMStorageStorageID DOM Storage identifier.
@@ -1273,7 +1455,7 @@ type DebuggerCallFrameID string
 type DebuggerLocation struct {
 	ScriptID     RuntimeScriptID `json:"scriptId"`               // Script identifier as reported in the Debugger.scriptParsed.
 	LineNumber   int             `json:"lineNumber"`             // Line number in the script (0-based).
-	ColumnNumber int             `json:"columnNumber,omitempty"` // Column number in the script (0-based).
+	ColumnNumber *int            `json:"columnNumber,omitempty"` // Column number in the script (0-based).
 }
 
 // DebuggerScriptPosition Location in the source code.
@@ -1284,22 +1466,22 @@ type DebuggerScriptPosition struct {
 
 // DebuggerCallFrame JavaScript call frame. Array of call frames form the call stack.
 type DebuggerCallFrame struct {
-	CallFrameID      DebuggerCallFrameID `json:"callFrameId"`                // Call frame identifier. This identifier is only valid while the virtual machine is paused.
-	FunctionName     string              `json:"functionName"`               // Name of the JavaScript function called on this call frame.
-	FunctionLocation DebuggerLocation    `json:"functionLocation,omitempty"` // Location in the source code.
-	Location         DebuggerLocation    `json:"location"`                   // Location in the source code.
-	ScopeChain       []DebuggerScope     `json:"scopeChain"`                 // Scope chain for this call frame.
-	This             RuntimeRemoteObject `json:"this"`                       // this object for this call frame.
-	ReturnValue      RuntimeRemoteObject `json:"returnValue,omitempty"`      // The value being returned, if the function is at return point.
+	CallFrameID      DebuggerCallFrameID  `json:"callFrameId"`                // Call frame identifier. This identifier is only valid while the virtual machine is paused.
+	FunctionName     string               `json:"functionName"`               // Name of the JavaScript function called on this call frame.
+	FunctionLocation *DebuggerLocation    `json:"functionLocation,omitempty"` // Location in the source code.
+	Location         DebuggerLocation     `json:"location"`                   // Location in the source code.
+	ScopeChain       []DebuggerScope      `json:"scopeChain"`                 // Scope chain for this call frame.
+	This             RuntimeRemoteObject  `json:"this"`                       // this object for this call frame.
+	ReturnValue      *RuntimeRemoteObject `json:"returnValue,omitempty"`      // The value being returned, if the function is at return point.
 }
 
 // DebuggerScope Scope description.
 type DebuggerScope struct {
 	Type          string              `json:"type"`                    // Scope type.
 	Object        RuntimeRemoteObject `json:"object"`                  // Object representing the scope. For global and with scopes it represents the actual object; for the rest of the scopes, it is artificial transient object enumerating scope variables as its properties.
-	Name          string              `json:"name,omitempty"`          //
-	StartLocation DebuggerLocation    `json:"startLocation,omitempty"` // Location in the source code where scope starts
-	EndLocation   DebuggerLocation    `json:"endLocation,omitempty"`   // Location in the source code where scope ends
+	Name          *string             `json:"name,omitempty"`          //
+	StartLocation *DebuggerLocation   `json:"startLocation,omitempty"` // Location in the source code where scope starts
+	EndLocation   *DebuggerLocation   `json:"endLocation,omitempty"`   // Location in the source code where scope ends
 }
 
 // DebuggerSearchMatch Search match for resource.
@@ -1312,8 +1494,8 @@ type DebuggerSearchMatch struct {
 type DebuggerBreakLocation struct {
 	ScriptID     RuntimeScriptID `json:"scriptId"`               // Script identifier as reported in the Debugger.scriptParsed.
 	LineNumber   int             `json:"lineNumber"`             // Line number in the script (0-based).
-	ColumnNumber int             `json:"columnNumber,omitempty"` // Column number in the script (0-based).
-	Type         string          `json:"type,omitempty"`         //
+	ColumnNumber *int            `json:"columnNumber,omitempty"` // Column number in the script (0-based).
+	Type         *string         `json:"type,omitempty"`         //
 }
 
 // EmulationScreenOrientation Screen orientation.
@@ -1327,13 +1509,20 @@ type EmulationVirtualTimePolicy int
 
 // EmulationVirtualTimePolicy as enums.
 const (
-	EmulationVirtualTimePolicyAdvance EmulationVirtualTimePolicy = iota + 1
+	EmulationVirtualTimePolicyNotSet EmulationVirtualTimePolicy = iota
+	EmulationVirtualTimePolicyAdvance
 	EmulationVirtualTimePolicyPause
 	EmulationVirtualTimePolicyPauseIfNetworkFetchesPending
 )
 
+func (e EmulationVirtualTimePolicy) Valid() bool {
+	return e >= 1 && e <= 3
+}
+
 func (e EmulationVirtualTimePolicy) String() string {
 	switch e {
+	case 0:
+		return "EmulationVirtualTimePolicyNotSet"
 	case 1:
 		return "advance"
 	case 2:
@@ -1345,10 +1534,17 @@ func (e EmulationVirtualTimePolicy) String() string {
 }
 
 func (e EmulationVirtualTimePolicy) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *EmulationVirtualTimePolicy) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"advance\"":
 		*e = 1
@@ -1406,18 +1602,18 @@ type IndexedDBObjectStoreIndex struct {
 // IndexedDBKey Key.
 type IndexedDBKey struct {
 	Type   string         `json:"type"`             // Key type.
-	Number float64        `json:"number,omitempty"` // Number value.
-	String string         `json:"string,omitempty"` // String value.
-	Date   float64        `json:"date,omitempty"`   // Date value.
+	Number *float64       `json:"number,omitempty"` // Number value.
+	String *string        `json:"string,omitempty"` // String value.
+	Date   *float64       `json:"date,omitempty"`   // Date value.
 	Array  []IndexedDBKey `json:"array,omitempty"`  // Array value.
 }
 
 // IndexedDBKeyRange Key range.
 type IndexedDBKeyRange struct {
-	Lower     IndexedDBKey `json:"lower,omitempty"` // Lower bound.
-	Upper     IndexedDBKey `json:"upper,omitempty"` // Upper bound.
-	LowerOpen bool         `json:"lowerOpen"`       // If true lower bound is open.
-	UpperOpen bool         `json:"upperOpen"`       // If true upper bound is open.
+	Lower     *IndexedDBKey `json:"lower,omitempty"` // Lower bound.
+	Upper     *IndexedDBKey `json:"upper,omitempty"` // Upper bound.
+	LowerOpen bool          `json:"lowerOpen"`       // If true lower bound is open.
+	UpperOpen bool          `json:"upperOpen"`       // If true upper bound is open.
 }
 
 // IndexedDBDataEntry Data entry.
@@ -1430,20 +1626,20 @@ type IndexedDBDataEntry struct {
 // IndexedDBKeyPath Key path.
 type IndexedDBKeyPath struct {
 	Type   string   `json:"type"`             // Key path type.
-	String string   `json:"string,omitempty"` // String value.
+	String *string  `json:"string,omitempty"` // String value.
 	Array  []string `json:"array,omitempty"`  // Array value.
 }
 
 // InputTouchPoint
 type InputTouchPoint struct {
-	State         string  `json:"state"`                   // State of the touch point.
-	X             int     `json:"x"`                       // X coordinate of the event relative to the main frame's viewport.
-	Y             int     `json:"y"`                       // Y coordinate of the event relative to the main frame's viewport. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport.
-	RadiusX       int     `json:"radiusX,omitempty"`       // X radius of the touch area (default: 1).
-	RadiusY       int     `json:"radiusY,omitempty"`       // Y radius of the touch area (default: 1).
-	RotationAngle float64 `json:"rotationAngle,omitempty"` // Rotation angle (default: 0.0).
-	Force         float64 `json:"force,omitempty"`         // Force (default: 1.0).
-	ID            float64 `json:"id,omitempty"`            // Identifier used to track touch sources between events, must be unique within an event.
+	State         string   `json:"state"`                   // State of the touch point.
+	X             int      `json:"x"`                       // X coordinate of the event relative to the main frame's viewport.
+	Y             int      `json:"y"`                       // Y coordinate of the event relative to the main frame's viewport. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport.
+	RadiusX       *int     `json:"radiusX,omitempty"`       // X radius of the touch area (default: 1).
+	RadiusY       *int     `json:"radiusY,omitempty"`       // Y radius of the touch area (default: 1).
+	RotationAngle *float64 `json:"rotationAngle,omitempty"` // Rotation angle (default: 0.0).
+	Force         *float64 `json:"force,omitempty"`         // Force (default: 1.0).
+	ID            *float64 `json:"id,omitempty"`            // Identifier used to track touch sources between events, must be unique within an event.
 }
 
 // InputGestureSourceType
@@ -1451,13 +1647,20 @@ type InputGestureSourceType int
 
 // InputGestureSourceType as enums.
 const (
-	InputGestureSourceTypeDefault InputGestureSourceType = iota + 1
+	InputGestureSourceTypeNotSet InputGestureSourceType = iota
+	InputGestureSourceTypeDefault
 	InputGestureSourceTypeTouch
 	InputGestureSourceTypeMouse
 )
 
+func (e InputGestureSourceType) Valid() bool {
+	return e >= 1 && e <= 3
+}
+
 func (e InputGestureSourceType) String() string {
 	switch e {
+	case 0:
+		return "InputGestureSourceTypeNotSet"
 	case 1:
 		return "default"
 	case 2:
@@ -1469,10 +1672,17 @@ func (e InputGestureSourceType) String() string {
 }
 
 func (e InputGestureSourceType) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *InputGestureSourceType) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"default\"":
 		*e = 1
@@ -1508,19 +1718,19 @@ type LayerTreePictureTile struct {
 // LayerTreeLayer Information about a compositing layer.
 type LayerTreeLayer struct {
 	LayerID       LayerTreeLayerID      `json:"layerId"`                 // The unique id for this layer.
-	ParentLayerID LayerTreeLayerID      `json:"parentLayerId,omitempty"` // The id of parent (not present for root).
-	BackendNodeID DOMBackendNodeID      `json:"backendNodeId,omitempty"` // The backend id for the node associated with this layer.
+	ParentLayerID *LayerTreeLayerID     `json:"parentLayerId,omitempty"` // The id of parent (not present for root).
+	BackendNodeID *DOMBackendNodeID     `json:"backendNodeId,omitempty"` // The backend id for the node associated with this layer.
 	OffsetX       float64               `json:"offsetX"`                 // Offset from parent layer, X coordinate.
 	OffsetY       float64               `json:"offsetY"`                 // Offset from parent layer, Y coordinate.
 	Width         float64               `json:"width"`                   // Layer width.
 	Height        float64               `json:"height"`                  // Layer height.
 	Transform     []float64             `json:"transform,omitempty"`     // Transformation matrix for layer, default is identity matrix
-	AnchorX       float64               `json:"anchorX,omitempty"`       // Transform anchor point X, absent if no transform specified
-	AnchorY       float64               `json:"anchorY,omitempty"`       // Transform anchor point Y, absent if no transform specified
-	AnchorZ       float64               `json:"anchorZ,omitempty"`       // Transform anchor point Z, absent if no transform specified
+	AnchorX       *float64              `json:"anchorX,omitempty"`       // Transform anchor point X, absent if no transform specified
+	AnchorY       *float64              `json:"anchorY,omitempty"`       // Transform anchor point Y, absent if no transform specified
+	AnchorZ       *float64              `json:"anchorZ,omitempty"`       // Transform anchor point Z, absent if no transform specified
 	PaintCount    int                   `json:"paintCount"`              // Indicates how many time this layer has painted.
 	DrawsContent  bool                  `json:"drawsContent"`            // Indicates whether this layer hosts any content, rather than being used for transform/scrolling purposes only.
-	Invisible     bool                  `json:"invisible,omitempty"`     // Set if layer is not visible.
+	Invisible     *bool                 `json:"invisible,omitempty"`     // Set if layer is not visible.
 	ScrollRects   []LayerTreeScrollRect `json:"scrollRects,omitempty"`   // Rectangles scrolling on main thread only.
 }
 
@@ -1529,15 +1739,15 @@ type LayerTreePaintProfile []float64
 
 // LogEntry Log entry.
 type LogEntry struct {
-	Source           string            `json:"source"`                     // Log entry source.
-	Level            string            `json:"level"`                      // Log entry severity.
-	Text             string            `json:"text"`                       // Logged text.
-	Timestamp        RuntimeTimestamp  `json:"timestamp"`                  // Timestamp when this entry was added.
-	URL              string            `json:"url,omitempty"`              // URL of the resource if known.
-	LineNumber       int               `json:"lineNumber,omitempty"`       // Line number in the resource.
-	StackTrace       RuntimeStackTrace `json:"stackTrace,omitempty"`       // JavaScript stack trace.
-	NetworkRequestID NetworkRequestID  `json:"networkRequestId,omitempty"` // Identifier of the network request associated with this entry.
-	WorkerID         string            `json:"workerId,omitempty"`         // Identifier of the worker associated with this entry.
+	Source           string             `json:"source"`                     // Log entry source.
+	Level            string             `json:"level"`                      // Log entry severity.
+	Text             string             `json:"text"`                       // Logged text.
+	Timestamp        RuntimeTimestamp   `json:"timestamp"`                  // Timestamp when this entry was added.
+	URL              *string            `json:"url,omitempty"`              // URL of the resource if known.
+	LineNumber       *int               `json:"lineNumber,omitempty"`       // Line number in the resource.
+	StackTrace       *RuntimeStackTrace `json:"stackTrace,omitempty"`       // JavaScript stack trace.
+	NetworkRequestID *NetworkRequestID  `json:"networkRequestId,omitempty"` // Identifier of the network request associated with this entry.
+	WorkerID         *string            `json:"workerId,omitempty"`         // Identifier of the worker associated with this entry.
 }
 
 // LogViolationSetting Violation configuration setting.
@@ -1551,12 +1761,19 @@ type MemoryPressureLevel int
 
 // MemoryPressureLevel as enums.
 const (
-	MemoryPressureLevelModerate MemoryPressureLevel = iota + 1
+	MemoryPressureLevelNotSet MemoryPressureLevel = iota
+	MemoryPressureLevelModerate
 	MemoryPressureLevelCritical
 )
 
+func (e MemoryPressureLevel) Valid() bool {
+	return e >= 1 && e <= 2
+}
+
 func (e MemoryPressureLevel) String() string {
 	switch e {
+	case 0:
+		return "MemoryPressureLevelNotSet"
 	case 1:
 		return "moderate"
 	case 2:
@@ -1566,10 +1783,17 @@ func (e MemoryPressureLevel) String() string {
 }
 
 func (e MemoryPressureLevel) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *MemoryPressureLevel) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"moderate\"":
 		*e = 1
@@ -1598,7 +1822,8 @@ type NetworkConnectionType int
 
 // NetworkConnectionType as enums.
 const (
-	NetworkConnectionTypeNone NetworkConnectionType = iota + 1
+	NetworkConnectionTypeNotSet NetworkConnectionType = iota
+	NetworkConnectionTypeNone
 	NetworkConnectionTypeCellular2g
 	NetworkConnectionTypeCellular3g
 	NetworkConnectionTypeCellular4g
@@ -1609,8 +1834,14 @@ const (
 	NetworkConnectionTypeOther
 )
 
+func (e NetworkConnectionType) Valid() bool {
+	return e >= 1 && e <= 9
+}
+
 func (e NetworkConnectionType) String() string {
 	switch e {
+	case 0:
+		return "NetworkConnectionTypeNotSet"
 	case 1:
 		return "none"
 	case 2:
@@ -1634,10 +1865,17 @@ func (e NetworkConnectionType) String() string {
 }
 
 func (e NetworkConnectionType) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *NetworkConnectionType) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"none\"":
 		*e = 1
@@ -1668,12 +1906,19 @@ type NetworkCookieSameSite int
 
 // NetworkCookieSameSite as enums.
 const (
-	NetworkCookieSameSiteStrict NetworkCookieSameSite = iota + 1
+	NetworkCookieSameSiteNotSet NetworkCookieSameSite = iota
+	NetworkCookieSameSiteStrict
 	NetworkCookieSameSiteLax
 )
 
+func (e NetworkCookieSameSite) Valid() bool {
+	return e >= 1 && e <= 2
+}
+
 func (e NetworkCookieSameSite) String() string {
 	switch e {
+	case 0:
+		return "NetworkCookieSameSiteNotSet"
 	case 1:
 		return "Strict"
 	case 2:
@@ -1683,10 +1928,17 @@ func (e NetworkCookieSameSite) String() string {
 }
 
 func (e NetworkCookieSameSite) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *NetworkCookieSameSite) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"Strict\"":
 		*e = 1
@@ -1723,15 +1975,22 @@ type NetworkResourcePriority int
 
 // NetworkResourcePriority as enums.
 const (
-	NetworkResourcePriorityVeryLow NetworkResourcePriority = iota + 1
+	NetworkResourcePriorityNotSet NetworkResourcePriority = iota
+	NetworkResourcePriorityVeryLow
 	NetworkResourcePriorityLow
 	NetworkResourcePriorityMedium
 	NetworkResourcePriorityHigh
 	NetworkResourcePriorityVeryHigh
 )
 
+func (e NetworkResourcePriority) Valid() bool {
+	return e >= 1 && e <= 5
+}
+
 func (e NetworkResourcePriority) String() string {
 	switch e {
+	case 0:
+		return "NetworkResourcePriorityNotSet"
 	case 1:
 		return "VeryLow"
 	case 2:
@@ -1747,10 +2006,17 @@ func (e NetworkResourcePriority) String() string {
 }
 
 func (e NetworkResourcePriority) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *NetworkResourcePriority) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"VeryLow\"":
 		*e = 1
@@ -1773,8 +2039,8 @@ type NetworkRequest struct {
 	URL              string                  `json:"url"`                        // Request URL.
 	Method           string                  `json:"method"`                     // HTTP request method.
 	Headers          NetworkHeaders          `json:"headers"`                    // HTTP request headers.
-	PostData         string                  `json:"postData,omitempty"`         // HTTP POST request data.
-	MixedContentType string                  `json:"mixedContentType,omitempty"` // The mixed content status of the request, as defined in http://www.w3.org/TR/mixed-content/
+	PostData         *string                 `json:"postData,omitempty"`         // HTTP POST request data.
+	MixedContentType *string                 `json:"mixedContentType,omitempty"` // The mixed content status of the request, as defined in http://www.w3.org/TR/mixed-content/
 	InitialPriority  NetworkResourcePriority `json:"initialPriority"`            // Priority of the resource request at the time request is sent.
 	ReferrerPolicy   string                  `json:"referrerPolicy"`             // The referrer policy of the request, as defined in https://www.w3.org/TR/referrer-policy/
 }
@@ -1795,9 +2061,9 @@ type NetworkSignedCertificateTimestamp struct {
 type NetworkSecurityDetails struct {
 	Protocol                       string                              `json:"protocol"`                       // Protocol name (e.g. "TLS 1.2" or "QUIC").
 	KeyExchange                    string                              `json:"keyExchange"`                    // Key Exchange used by the connection, or the empty string if not applicable.
-	KeyExchangeGroup               string                              `json:"keyExchangeGroup,omitempty"`     // (EC)DH group used by the connection, if applicable.
+	KeyExchangeGroup               *string                             `json:"keyExchangeGroup,omitempty"`     // (EC)DH group used by the connection, if applicable.
 	Cipher                         string                              `json:"cipher"`                         // Cipher name.
-	Mac                            string                              `json:"mac,omitempty"`                  // TLS MAC. Note that AEAD ciphers do not have separate MACs.
+	Mac                            *string                             `json:"mac,omitempty"`                  // TLS MAC. Note that AEAD ciphers do not have separate MACs.
 	CertificateID                  SecurityCertificateID               `json:"certificateId"`                  // Certificate ID value.
 	SubjectName                    string                              `json:"subjectName"`                    // Certificate subject name.
 	SanList                        []string                            `json:"sanList"`                        // Subject Alternative Name (SAN) DNS names and IP addresses.
@@ -1812,7 +2078,8 @@ type NetworkBlockedReason int
 
 // NetworkBlockedReason as enums.
 const (
-	NetworkBlockedReasonCsp NetworkBlockedReason = iota + 1
+	NetworkBlockedReasonNotSet NetworkBlockedReason = iota
+	NetworkBlockedReasonCsp
 	NetworkBlockedReasonMixedContent
 	NetworkBlockedReasonOrigin
 	NetworkBlockedReasonInspector
@@ -1820,8 +2087,14 @@ const (
 	NetworkBlockedReasonOther
 )
 
+func (e NetworkBlockedReason) Valid() bool {
+	return e >= 1 && e <= 6
+}
+
 func (e NetworkBlockedReason) String() string {
 	switch e {
+	case 0:
+		return "NetworkBlockedReasonNotSet"
 	case 1:
 		return "csp"
 	case 2:
@@ -1839,10 +2112,17 @@ func (e NetworkBlockedReason) String() string {
 }
 
 func (e NetworkBlockedReason) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *NetworkBlockedReason) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"csp\"":
 		*e = 1
@@ -1864,25 +2144,25 @@ func (e *NetworkBlockedReason) UnmarshalJSON(data []byte) error {
 
 // NetworkResponse HTTP response data.
 type NetworkResponse struct {
-	URL                string                 `json:"url"`                          // Response URL. This URL can be different from CachedResource.url in case of redirect.
-	Status             float64                `json:"status"`                       // HTTP response status code.
-	StatusText         string                 `json:"statusText"`                   // HTTP response status text.
-	Headers            NetworkHeaders         `json:"headers"`                      // HTTP response headers.
-	HeadersText        string                 `json:"headersText,omitempty"`        // HTTP response headers text.
-	MimeType           string                 `json:"mimeType"`                     // Resource mimeType as determined by the browser.
-	RequestHeaders     NetworkHeaders         `json:"requestHeaders,omitempty"`     // Refined HTTP request headers that were actually transmitted over the network.
-	RequestHeadersText string                 `json:"requestHeadersText,omitempty"` // HTTP request headers text.
-	ConnectionReused   bool                   `json:"connectionReused"`             // Specifies whether physical connection was actually reused for this request.
-	ConnectionID       float64                `json:"connectionId"`                 // Physical connection id that was actually used for this request.
-	RemoteIPAddress    string                 `json:"remoteIPAddress,omitempty"`    // Remote IP address.
-	RemotePort         int                    `json:"remotePort,omitempty"`         // Remote port.
-	FromDiskCache      bool                   `json:"fromDiskCache,omitempty"`      // Specifies that the request was served from the disk cache.
-	FromServiceWorker  bool                   `json:"fromServiceWorker,omitempty"`  // Specifies that the request was served from the ServiceWorker.
-	EncodedDataLength  float64                `json:"encodedDataLength"`            // Total number of bytes received for this request so far.
-	Timing             NetworkResourceTiming  `json:"timing,omitempty"`             // Timing information for the given request.
-	Protocol           string                 `json:"protocol,omitempty"`           // Protocol used to fetch this request.
-	SecurityState      SecurityState          `json:"securityState"`                // Security state of the request resource.
-	SecurityDetails    NetworkSecurityDetails `json:"securityDetails,omitempty"`    // Security details for the request.
+	URL                string                  `json:"url"`                          // Response URL. This URL can be different from CachedResource.url in case of redirect.
+	Status             float64                 `json:"status"`                       // HTTP response status code.
+	StatusText         string                  `json:"statusText"`                   // HTTP response status text.
+	Headers            NetworkHeaders          `json:"headers"`                      // HTTP response headers.
+	HeadersText        *string                 `json:"headersText,omitempty"`        // HTTP response headers text.
+	MimeType           string                  `json:"mimeType"`                     // Resource mimeType as determined by the browser.
+	RequestHeaders     NetworkHeaders          `json:"requestHeaders,omitempty"`     // Refined HTTP request headers that were actually transmitted over the network.
+	RequestHeadersText *string                 `json:"requestHeadersText,omitempty"` // HTTP request headers text.
+	ConnectionReused   bool                    `json:"connectionReused"`             // Specifies whether physical connection was actually reused for this request.
+	ConnectionID       float64                 `json:"connectionId"`                 // Physical connection id that was actually used for this request.
+	RemoteIPAddress    *string                 `json:"remoteIPAddress,omitempty"`    // Remote IP address.
+	RemotePort         *int                    `json:"remotePort,omitempty"`         // Remote port.
+	FromDiskCache      *bool                   `json:"fromDiskCache,omitempty"`      // Specifies that the request was served from the disk cache.
+	FromServiceWorker  *bool                   `json:"fromServiceWorker,omitempty"`  // Specifies that the request was served from the ServiceWorker.
+	EncodedDataLength  float64                 `json:"encodedDataLength"`            // Total number of bytes received for this request so far.
+	Timing             *NetworkResourceTiming  `json:"timing,omitempty"`             // Timing information for the given request.
+	Protocol           *string                 `json:"protocol,omitempty"`           // Protocol used to fetch this request.
+	SecurityState      SecurityState           `json:"securityState"`                // Security state of the request resource.
+	SecurityDetails    *NetworkSecurityDetails `json:"securityDetails,omitempty"`    // Security details for the request.
 }
 
 // NetworkWebSocketRequest WebSocket request data.
@@ -1895,9 +2175,9 @@ type NetworkWebSocketResponse struct {
 	Status             float64        `json:"status"`                       // HTTP response status code.
 	StatusText         string         `json:"statusText"`                   // HTTP response status text.
 	Headers            NetworkHeaders `json:"headers"`                      // HTTP response headers.
-	HeadersText        string         `json:"headersText,omitempty"`        // HTTP response headers text.
+	HeadersText        *string        `json:"headersText,omitempty"`        // HTTP response headers text.
 	RequestHeaders     NetworkHeaders `json:"requestHeaders,omitempty"`     // HTTP request headers.
-	RequestHeadersText string         `json:"requestHeadersText,omitempty"` // HTTP request headers text.
+	RequestHeadersText *string        `json:"requestHeadersText,omitempty"` // HTTP request headers text.
 }
 
 // NetworkWebSocketFrame WebSocket frame data.
@@ -1911,16 +2191,16 @@ type NetworkWebSocketFrame struct {
 type NetworkCachedResource struct {
 	URL      string           `json:"url"`                // Resource URL. This is the url of the original network request.
 	Type     PageResourceType `json:"type"`               // Type of this resource.
-	Response NetworkResponse  `json:"response,omitempty"` // Cached response data.
+	Response *NetworkResponse `json:"response,omitempty"` // Cached response data.
 	BodySize float64          `json:"bodySize"`           // Cached response body size.
 }
 
 // NetworkInitiator Information about the request initiator.
 type NetworkInitiator struct {
-	Type       string            `json:"type"`                 // Type of this initiator.
-	Stack      RuntimeStackTrace `json:"stack,omitempty"`      // Initiator JavaScript stack trace, set for Script only.
-	URL        string            `json:"url,omitempty"`        // Initiator URL, set for Parser type only.
-	LineNumber float64           `json:"lineNumber,omitempty"` // Initiator line number, set for Parser type only (0-based).
+	Type       string             `json:"type"`                 // Type of this initiator.
+	Stack      *RuntimeStackTrace `json:"stack,omitempty"`      // Initiator JavaScript stack trace, set for Script only.
+	URL        *string            `json:"url,omitempty"`        // Initiator URL, set for Parser type only.
+	LineNumber *float64           `json:"lineNumber,omitempty"` // Initiator line number, set for Parser type only (0-based).
 }
 
 // NetworkCookie Cookie object
@@ -1942,7 +2222,8 @@ type PageResourceType int
 
 // PageResourceType as enums.
 const (
-	PageResourceTypeDocument PageResourceType = iota + 1
+	PageResourceTypeNotSet PageResourceType = iota
+	PageResourceTypeDocument
 	PageResourceTypeStylesheet
 	PageResourceTypeImage
 	PageResourceTypeMedia
@@ -1957,8 +2238,14 @@ const (
 	PageResourceTypeOther
 )
 
+func (e PageResourceType) Valid() bool {
+	return e >= 1 && e <= 13
+}
+
 func (e PageResourceType) String() string {
 	switch e {
+	case 0:
+		return "PageResourceTypeNotSet"
 	case 1:
 		return "Document"
 	case 2:
@@ -1990,10 +2277,17 @@ func (e PageResourceType) String() string {
 }
 
 func (e PageResourceType) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *PageResourceType) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"Document\"":
 		*e = 1
@@ -2033,9 +2327,9 @@ type PageFrameID string
 // PageFrame Information about the Frame on the page.
 type PageFrame struct {
 	ID             string          `json:"id"`                 // Frame unique identifier.
-	ParentID       string          `json:"parentId,omitempty"` // Parent frame identifier.
+	ParentID       *string         `json:"parentId,omitempty"` // Parent frame identifier.
 	LoaderID       NetworkLoaderID `json:"loaderId"`           // Identifier of the loader associated with this frame.
-	Name           string          `json:"name,omitempty"`     // Frame's name as specified in the tag.
+	Name           *string         `json:"name,omitempty"`     // Frame's name as specified in the tag.
 	URL            string          `json:"url"`                // Frame document's URL.
 	SecurityOrigin string          `json:"securityOrigin"`     // Frame document's security origin.
 	MimeType       string          `json:"mimeType"`           // Frame document's mimeType as determined by the browser.
@@ -2043,13 +2337,13 @@ type PageFrame struct {
 
 // PageFrameResource Information about the Resource on the page.
 type PageFrameResource struct {
-	URL          string           `json:"url"`                    // Resource URL.
-	Type         PageResourceType `json:"type"`                   // Type of this resource.
-	MimeType     string           `json:"mimeType"`               // Resource mimeType as determined by the browser.
-	LastModified NetworkTimestamp `json:"lastModified,omitempty"` // last-modified timestamp as reported by server.
-	ContentSize  float64          `json:"contentSize,omitempty"`  // Resource content size.
-	Failed       bool             `json:"failed,omitempty"`       // True if the resource failed to load.
-	Canceled     bool             `json:"canceled,omitempty"`     // True if the resource was canceled during loading.
+	URL          string            `json:"url"`                    // Resource URL.
+	Type         PageResourceType  `json:"type"`                   // Type of this resource.
+	MimeType     string            `json:"mimeType"`               // Resource mimeType as determined by the browser.
+	LastModified *NetworkTimestamp `json:"lastModified,omitempty"` // last-modified timestamp as reported by server.
+	ContentSize  *float64          `json:"contentSize,omitempty"`  // Resource content size.
+	Failed       *bool             `json:"failed,omitempty"`       // True if the resource failed to load.
+	Canceled     *bool             `json:"canceled,omitempty"`     // True if the resource was canceled during loading.
 }
 
 // PageFrameResourceTree Information about the Frame hierarchy along with their cached resources.
@@ -2071,13 +2365,13 @@ type PageNavigationEntry struct {
 
 // PageScreencastFrameMetadata Screencast frame metadata.
 type PageScreencastFrameMetadata struct {
-	OffsetTop       float64 `json:"offsetTop"`           // Top offset in DIP.
-	PageScaleFactor float64 `json:"pageScaleFactor"`     // Page scale factor.
-	DeviceWidth     float64 `json:"deviceWidth"`         // Device screen width in DIP.
-	DeviceHeight    float64 `json:"deviceHeight"`        // Device screen height in DIP.
-	ScrollOffsetX   float64 `json:"scrollOffsetX"`       // Position of horizontal scroll in CSS pixels.
-	ScrollOffsetY   float64 `json:"scrollOffsetY"`       // Position of vertical scroll in CSS pixels.
-	Timestamp       float64 `json:"timestamp,omitempty"` // Frame swap timestamp.
+	OffsetTop       float64  `json:"offsetTop"`           // Top offset in DIP.
+	PageScaleFactor float64  `json:"pageScaleFactor"`     // Page scale factor.
+	DeviceWidth     float64  `json:"deviceWidth"`         // Device screen width in DIP.
+	DeviceHeight    float64  `json:"deviceHeight"`        // Device screen height in DIP.
+	ScrollOffsetX   float64  `json:"scrollOffsetX"`       // Position of horizontal scroll in CSS pixels.
+	ScrollOffsetY   float64  `json:"scrollOffsetY"`       // Position of vertical scroll in CSS pixels.
+	Timestamp       *float64 `json:"timestamp,omitempty"` // Frame swap timestamp.
 }
 
 // PageDialogType Javascript dialog type.
@@ -2085,14 +2379,21 @@ type PageDialogType int
 
 // PageDialogType as enums.
 const (
-	PageDialogTypeAlert PageDialogType = iota + 1
+	PageDialogTypeNotSet PageDialogType = iota
+	PageDialogTypeAlert
 	PageDialogTypeConfirm
 	PageDialogTypePrompt
 	PageDialogTypeBeforeunload
 )
 
+func (e PageDialogType) Valid() bool {
+	return e >= 1 && e <= 4
+}
+
 func (e PageDialogType) String() string {
 	switch e {
+	case 0:
+		return "PageDialogTypeNotSet"
 	case 1:
 		return "alert"
 	case 2:
@@ -2106,10 +2407,17 @@ func (e PageDialogType) String() string {
 }
 
 func (e PageDialogType) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *PageDialogType) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"alert\"":
 		*e = 1
@@ -2138,13 +2446,20 @@ type PageNavigationResponse int
 
 // PageNavigationResponse as enums.
 const (
-	PageNavigationResponseProceed PageNavigationResponse = iota + 1
+	PageNavigationResponseNotSet PageNavigationResponse = iota
+	PageNavigationResponseProceed
 	PageNavigationResponseCancel
 	PageNavigationResponseCancelAndIgnore
 )
 
+func (e PageNavigationResponse) Valid() bool {
+	return e >= 1 && e <= 3
+}
+
 func (e PageNavigationResponse) String() string {
 	switch e {
+	case 0:
+		return "PageNavigationResponseNotSet"
 	case 1:
 		return "Proceed"
 	case 2:
@@ -2156,10 +2471,17 @@ func (e PageNavigationResponse) String() string {
 }
 
 func (e PageNavigationResponse) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *PageNavigationResponse) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"Proceed\"":
 		*e = 1
@@ -2196,9 +2518,9 @@ type PageVisualViewport struct {
 type ProfilerProfileNode struct {
 	ID            int                        `json:"id"`                      // Unique id of the node.
 	CallFrame     RuntimeCallFrame           `json:"callFrame"`               // Function location.
-	HitCount      int                        `json:"hitCount,omitempty"`      // Number of samples where this node was on top of the call stack.
+	HitCount      *int                       `json:"hitCount,omitempty"`      // Number of samples where this node was on top of the call stack.
 	Children      []int                      `json:"children,omitempty"`      // Child node ids.
-	DeoptReason   string                     `json:"deoptReason,omitempty"`   // The reason of being not optimized. The function may be deoptimized or marked as don't optimize.
+	DeoptReason   *string                    `json:"deoptReason,omitempty"`   // The reason of being not optimized. The function may be deoptimized or marked as don't optimize.
 	PositionTicks []ProfilerPositionTickInfo `json:"positionTicks,omitempty"` // An array of source position ticks.
 }
 
@@ -2248,14 +2570,21 @@ type RuntimeUnserializableValue int
 
 // RuntimeUnserializableValue as enums.
 const (
-	RuntimeUnserializableValueInfinity RuntimeUnserializableValue = iota + 1
+	RuntimeUnserializableValueNotSet RuntimeUnserializableValue = iota
+	RuntimeUnserializableValueInfinity
 	RuntimeUnserializableValueNaN
 	RuntimeUnserializableValueNegativeInfinity
 	RuntimeUnserializableValueNegative0
 )
 
+func (e RuntimeUnserializableValue) Valid() bool {
+	return e >= 1 && e <= 4
+}
+
 func (e RuntimeUnserializableValue) String() string {
 	switch e {
+	case 0:
+		return "RuntimeUnserializableValueNotSet"
 	case 1:
 		return "Infinity"
 	case 2:
@@ -2269,10 +2598,17 @@ func (e RuntimeUnserializableValue) String() string {
 }
 
 func (e RuntimeUnserializableValue) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *RuntimeUnserializableValue) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"Infinity\"":
 		*e = 1
@@ -2291,30 +2627,30 @@ func (e *RuntimeUnserializableValue) UnmarshalJSON(data []byte) error {
 // RuntimeRemoteObject Mirror object referencing original JavaScript object.
 type RuntimeRemoteObject struct {
 	Type                string                     `json:"type"`                          // Object type.
-	Subtype             string                     `json:"subtype,omitempty"`             // Object subtype hint. Specified for object type values only.
-	ClassName           string                     `json:"className,omitempty"`           // Object class (constructor) name. Specified for object type values only.
+	Subtype             *string                    `json:"subtype,omitempty"`             // Object subtype hint. Specified for object type values only.
+	ClassName           *string                    `json:"className,omitempty"`           // Object class (constructor) name. Specified for object type values only.
 	Value               json.RawMessage            `json:"value,omitempty"`               // Remote object value in case of primitive values or JSON values (if it was requested).
 	UnserializableValue RuntimeUnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified does not have value, but gets this property.
-	Description         string                     `json:"description,omitempty"`         // String representation of the object.
-	ObjectID            RuntimeRemoteObjectID      `json:"objectId,omitempty"`            // Unique object identifier (for non-primitive values).
-	Preview             RuntimeObjectPreview       `json:"preview,omitempty"`             // Preview containing abbreviated property values. Specified for object type values only.
-	CustomPreview       RuntimeCustomPreview       `json:"customPreview,omitempty"`       //
+	Description         *string                    `json:"description,omitempty"`         // String representation of the object.
+	ObjectID            *RuntimeRemoteObjectID     `json:"objectId,omitempty"`            // Unique object identifier (for non-primitive values).
+	Preview             *RuntimeObjectPreview      `json:"preview,omitempty"`             // Preview containing abbreviated property values. Specified for object type values only.
+	CustomPreview       *RuntimeCustomPreview      `json:"customPreview,omitempty"`       //
 }
 
 // RuntimeCustomPreview
 type RuntimeCustomPreview struct {
-	Header                     string                `json:"header"`                     //
-	HasBody                    bool                  `json:"hasBody"`                    //
-	FormatterObjectID          RuntimeRemoteObjectID `json:"formatterObjectId"`          //
-	BindRemoteObjectFunctionID RuntimeRemoteObjectID `json:"bindRemoteObjectFunctionId"` //
-	ConfigObjectID             RuntimeRemoteObjectID `json:"configObjectId,omitempty"`   //
+	Header                     string                 `json:"header"`                     //
+	HasBody                    bool                   `json:"hasBody"`                    //
+	FormatterObjectID          RuntimeRemoteObjectID  `json:"formatterObjectId"`          //
+	BindRemoteObjectFunctionID RuntimeRemoteObjectID  `json:"bindRemoteObjectFunctionId"` //
+	ConfigObjectID             *RuntimeRemoteObjectID `json:"configObjectId,omitempty"`   //
 }
 
 // RuntimeObjectPreview Object containing abbreviated remote object value.
 type RuntimeObjectPreview struct {
 	Type        string                   `json:"type"`                  // Object type.
-	Subtype     string                   `json:"subtype,omitempty"`     // Object subtype hint. Specified for object type values only.
-	Description string                   `json:"description,omitempty"` // String representation of the object.
+	Subtype     *string                  `json:"subtype,omitempty"`     // Object subtype hint. Specified for object type values only.
+	Description *string                  `json:"description,omitempty"` // String representation of the object.
 	Overflow    bool                     `json:"overflow"`              // True iff some of the properties or entries of the original object did not fit.
 	Properties  []RuntimePropertyPreview `json:"properties"`            // List of the properties.
 	Entries     []RuntimeEntryPreview    `json:"entries,omitempty"`     // List of the entries. Specified for map and set subtype values only.
@@ -2322,44 +2658,44 @@ type RuntimeObjectPreview struct {
 
 // RuntimePropertyPreview
 type RuntimePropertyPreview struct {
-	Name         string               `json:"name"`                   // Property name.
-	Type         string               `json:"type"`                   // Object type. Accessor means that the property itself is an accessor property.
-	Value        string               `json:"value,omitempty"`        // User-friendly property value string.
-	ValuePreview RuntimeObjectPreview `json:"valuePreview,omitempty"` // Nested value preview.
-	Subtype      string               `json:"subtype,omitempty"`      // Object subtype hint. Specified for object type values only.
+	Name         string                `json:"name"`                   // Property name.
+	Type         string                `json:"type"`                   // Object type. Accessor means that the property itself is an accessor property.
+	Value        *string               `json:"value,omitempty"`        // User-friendly property value string.
+	ValuePreview *RuntimeObjectPreview `json:"valuePreview,omitempty"` // Nested value preview.
+	Subtype      *string               `json:"subtype,omitempty"`      // Object subtype hint. Specified for object type values only.
 }
 
 // RuntimeEntryPreview
 type RuntimeEntryPreview struct {
-	Key   RuntimeObjectPreview `json:"key,omitempty"` // Preview of the key. Specified for map-like collection entries.
-	Value RuntimeObjectPreview `json:"value"`         // Preview of the value.
+	Key   *RuntimeObjectPreview `json:"key,omitempty"` // Preview of the key. Specified for map-like collection entries.
+	Value RuntimeObjectPreview  `json:"value"`         // Preview of the value.
 }
 
 // RuntimePropertyDescriptor Object property descriptor.
 type RuntimePropertyDescriptor struct {
-	Name         string              `json:"name"`                // Property name or symbol description.
-	Value        RuntimeRemoteObject `json:"value,omitempty"`     // The value associated with the property.
-	Writable     bool                `json:"writable,omitempty"`  // True if the value associated with the property may be changed (data descriptors only).
-	Get          RuntimeRemoteObject `json:"get,omitempty"`       // A function which serves as a getter for the property, or undefined if there is no getter (accessor descriptors only).
-	Set          RuntimeRemoteObject `json:"set,omitempty"`       // A function which serves as a setter for the property, or undefined if there is no setter (accessor descriptors only).
-	Configurable bool                `json:"configurable"`        // True if the type of this property descriptor may be changed and if the property may be deleted from the corresponding object.
-	Enumerable   bool                `json:"enumerable"`          // True if this property shows up during enumeration of the properties on the corresponding object.
-	WasThrown    bool                `json:"wasThrown,omitempty"` // True if the result was thrown during the evaluation.
-	IsOwn        bool                `json:"isOwn,omitempty"`     // True if the property is owned for the object.
-	Symbol       RuntimeRemoteObject `json:"symbol,omitempty"`    // Property symbol object, if the property is of the symbol type.
+	Name         string               `json:"name"`                // Property name or symbol description.
+	Value        *RuntimeRemoteObject `json:"value,omitempty"`     // The value associated with the property.
+	Writable     *bool                `json:"writable,omitempty"`  // True if the value associated with the property may be changed (data descriptors only).
+	Get          *RuntimeRemoteObject `json:"get,omitempty"`       // A function which serves as a getter for the property, or undefined if there is no getter (accessor descriptors only).
+	Set          *RuntimeRemoteObject `json:"set,omitempty"`       // A function which serves as a setter for the property, or undefined if there is no setter (accessor descriptors only).
+	Configurable bool                 `json:"configurable"`        // True if the type of this property descriptor may be changed and if the property may be deleted from the corresponding object.
+	Enumerable   bool                 `json:"enumerable"`          // True if this property shows up during enumeration of the properties on the corresponding object.
+	WasThrown    *bool                `json:"wasThrown,omitempty"` // True if the result was thrown during the evaluation.
+	IsOwn        *bool                `json:"isOwn,omitempty"`     // True if the property is owned for the object.
+	Symbol       *RuntimeRemoteObject `json:"symbol,omitempty"`    // Property symbol object, if the property is of the symbol type.
 }
 
 // RuntimeInternalPropertyDescriptor Object internal property descriptor. This property isn't normally visible in JavaScript code.
 type RuntimeInternalPropertyDescriptor struct {
-	Name  string              `json:"name"`            // Conventional property name.
-	Value RuntimeRemoteObject `json:"value,omitempty"` // The value associated with the property.
+	Name  string               `json:"name"`            // Conventional property name.
+	Value *RuntimeRemoteObject `json:"value,omitempty"` // The value associated with the property.
 }
 
 // RuntimeCallArgument Represents function call argument. Either remote object id objectId, primitive value, unserializable primitive value or neither of (for undefined) them should be specified.
 type RuntimeCallArgument struct {
 	Value               json.RawMessage            `json:"value,omitempty"`               // Primitive value.
 	UnserializableValue RuntimeUnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified.
-	ObjectID            RuntimeRemoteObjectID      `json:"objectId,omitempty"`            // Remote object handle.
+	ObjectID            *RuntimeRemoteObjectID     `json:"objectId,omitempty"`            // Remote object handle.
 }
 
 // RuntimeExecutionContextID Id of an execution context.
@@ -2375,15 +2711,15 @@ type RuntimeExecutionContextDescription struct {
 
 // RuntimeExceptionDetails Detailed information about exception (or error) that was thrown during script compilation or execution.
 type RuntimeExceptionDetails struct {
-	ExceptionID        int                       `json:"exceptionId"`                  // Exception id.
-	Text               string                    `json:"text"`                         // Exception text, which should be used together with exception object when available.
-	LineNumber         int                       `json:"lineNumber"`                   // Line number of the exception location (0-based).
-	ColumnNumber       int                       `json:"columnNumber"`                 // Column number of the exception location (0-based).
-	ScriptID           RuntimeScriptID           `json:"scriptId,omitempty"`           // Script ID of the exception location.
-	URL                string                    `json:"url,omitempty"`                // URL of the exception location, to be used when the script was not reported.
-	StackTrace         RuntimeStackTrace         `json:"stackTrace,omitempty"`         // JavaScript stack trace if available.
-	Exception          RuntimeRemoteObject       `json:"exception,omitempty"`          // Exception object if available.
-	ExecutionContextID RuntimeExecutionContextID `json:"executionContextId,omitempty"` // Identifier of the context where exception happened.
+	ExceptionID        int                        `json:"exceptionId"`                  // Exception id.
+	Text               string                     `json:"text"`                         // Exception text, which should be used together with exception object when available.
+	LineNumber         int                        `json:"lineNumber"`                   // Line number of the exception location (0-based).
+	ColumnNumber       int                        `json:"columnNumber"`                 // Column number of the exception location (0-based).
+	ScriptID           *RuntimeScriptID           `json:"scriptId,omitempty"`           // Script ID of the exception location.
+	URL                *string                    `json:"url,omitempty"`                // URL of the exception location, to be used when the script was not reported.
+	StackTrace         *RuntimeStackTrace         `json:"stackTrace,omitempty"`         // JavaScript stack trace if available.
+	Exception          *RuntimeRemoteObject       `json:"exception,omitempty"`          // Exception object if available.
+	ExecutionContextID *RuntimeExecutionContextID `json:"executionContextId,omitempty"` // Identifier of the context where exception happened.
 }
 
 // RuntimeTimestamp Number of milliseconds since epoch.
@@ -2400,10 +2736,10 @@ type RuntimeCallFrame struct {
 
 // RuntimeStackTrace Call frames for assertions or error messages.
 type RuntimeStackTrace struct {
-	Description          string             `json:"description,omitempty"`          // String label of this stack trace. For async traces this may be a name of the function that initiated the async call.
+	Description          *string            `json:"description,omitempty"`          // String label of this stack trace. For async traces this may be a name of the function that initiated the async call.
 	CallFrames           []RuntimeCallFrame `json:"callFrames"`                     // JavaScript function name.
 	Parent               *RuntimeStackTrace `json:"parent,omitempty"`               // Asynchronous JavaScript stack trace that preceded this stack, if available.
-	PromiseCreationFrame RuntimeCallFrame   `json:"promiseCreationFrame,omitempty"` // Creation frame of the Promise which produced the next synchronous trace when resolved, if available.
+	PromiseCreationFrame *RuntimeCallFrame  `json:"promiseCreationFrame,omitempty"` // Creation frame of the Promise which produced the next synchronous trace when resolved, if available.
 }
 
 // SchemaDomain Description of the protocol domain.
@@ -2420,7 +2756,8 @@ type SecurityState int
 
 // SecurityState as enums.
 const (
-	SecurityStateUnknown SecurityState = iota + 1
+	SecurityStateNotSet SecurityState = iota
+	SecurityStateUnknown
 	SecurityStateNeutral
 	SecurityStateInsecure
 	SecurityStateWarning
@@ -2428,8 +2765,14 @@ const (
 	SecurityStateInfo
 )
 
+func (e SecurityState) Valid() bool {
+	return e >= 1 && e <= 6
+}
+
 func (e SecurityState) String() string {
 	switch e {
+	case 0:
+		return "SecurityStateNotSet"
 	case 1:
 		return "unknown"
 	case 2:
@@ -2447,10 +2790,17 @@ func (e SecurityState) String() string {
 }
 
 func (e SecurityState) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *SecurityState) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"unknown\"":
 		*e = 1
@@ -2500,14 +2850,21 @@ type ServiceWorkerVersionRunningStatus int
 
 // ServiceWorkerVersionRunningStatus as enums.
 const (
-	ServiceWorkerVersionRunningStatusStopped ServiceWorkerVersionRunningStatus = iota + 1
+	ServiceWorkerVersionRunningStatusNotSet ServiceWorkerVersionRunningStatus = iota
+	ServiceWorkerVersionRunningStatusStopped
 	ServiceWorkerVersionRunningStatusStarting
 	ServiceWorkerVersionRunningStatusRunning
 	ServiceWorkerVersionRunningStatusStopping
 )
 
+func (e ServiceWorkerVersionRunningStatus) Valid() bool {
+	return e >= 1 && e <= 4
+}
+
 func (e ServiceWorkerVersionRunningStatus) String() string {
 	switch e {
+	case 0:
+		return "ServiceWorkerVersionRunningStatusNotSet"
 	case 1:
 		return "stopped"
 	case 2:
@@ -2521,10 +2878,17 @@ func (e ServiceWorkerVersionRunningStatus) String() string {
 }
 
 func (e ServiceWorkerVersionRunningStatus) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *ServiceWorkerVersionRunningStatus) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"stopped\"":
 		*e = 1
@@ -2545,7 +2909,8 @@ type ServiceWorkerVersionStatus int
 
 // ServiceWorkerVersionStatus as enums.
 const (
-	ServiceWorkerVersionStatusNew ServiceWorkerVersionStatus = iota + 1
+	ServiceWorkerVersionStatusNotSet ServiceWorkerVersionStatus = iota
+	ServiceWorkerVersionStatusNew
 	ServiceWorkerVersionStatusInstalling
 	ServiceWorkerVersionStatusInstalled
 	ServiceWorkerVersionStatusActivating
@@ -2553,8 +2918,14 @@ const (
 	ServiceWorkerVersionStatusRedundant
 )
 
+func (e ServiceWorkerVersionStatus) Valid() bool {
+	return e >= 1 && e <= 6
+}
+
 func (e ServiceWorkerVersionStatus) String() string {
 	switch e {
+	case 0:
+		return "ServiceWorkerVersionStatusNotSet"
 	case 1:
 		return "new"
 	case 2:
@@ -2572,10 +2943,17 @@ func (e ServiceWorkerVersionStatus) String() string {
 }
 
 func (e ServiceWorkerVersionStatus) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *ServiceWorkerVersionStatus) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"new\"":
 		*e = 1
@@ -2602,10 +2980,10 @@ type ServiceWorkerVersion struct {
 	ScriptURL          string                            `json:"scriptURL"`                    //
 	RunningStatus      ServiceWorkerVersionRunningStatus `json:"runningStatus"`                //
 	Status             ServiceWorkerVersionStatus        `json:"status"`                       //
-	ScriptLastModified float64                           `json:"scriptLastModified,omitempty"` // The Last-Modified header value of the main script.
-	ScriptResponseTime float64                           `json:"scriptResponseTime,omitempty"` // The time at which the response headers of the main script were received from the server.  For cached script it is the last time the cache entry was validated.
+	ScriptLastModified *float64                          `json:"scriptLastModified,omitempty"` // The Last-Modified header value of the main script.
+	ScriptResponseTime *float64                          `json:"scriptResponseTime,omitempty"` // The time at which the response headers of the main script were received from the server.  For cached script it is the last time the cache entry was validated.
 	ControlledClients  []TargetID                        `json:"controlledClients,omitempty"`  //
-	TargetID           TargetID                          `json:"targetId,omitempty"`           //
+	TargetID           *TargetID                         `json:"targetId,omitempty"`           //
 }
 
 // ServiceWorkerErrorMessage ServiceWorker error message.
@@ -2623,7 +3001,8 @@ type StorageType int
 
 // StorageType as enums.
 const (
-	StorageTypeAppcache StorageType = iota + 1
+	StorageTypeNotSet StorageType = iota
+	StorageTypeAppcache
 	StorageTypeCookies
 	StorageTypeFileSystems
 	StorageTypeIndexeddb
@@ -2635,8 +3014,14 @@ const (
 	StorageTypeAll
 )
 
+func (e StorageType) Valid() bool {
+	return e >= 1 && e <= 10
+}
+
 func (e StorageType) String() string {
 	switch e {
+	case 0:
+		return "StorageTypeNotSet"
 	case 1:
 		return "appcache"
 	case 2:
@@ -2662,10 +3047,17 @@ func (e StorageType) String() string {
 }
 
 func (e StorageType) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
 	return json.Marshal(e.String())
 }
 
 func (e *StorageType) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
 	switch string(data) {
 	case "\"appcache\"":
 		*e = 1
@@ -2734,10 +3126,10 @@ type TracingMemoryDumpConfig json.RawMessage
 
 // TracingTraceConfig
 type TracingTraceConfig struct {
-	RecordMode           string                  `json:"recordMode,omitempty"`           // Controls how the trace buffer stores data.
-	EnableSampling       bool                    `json:"enableSampling,omitempty"`       // Turns on JavaScript stack sampling.
-	EnableSystrace       bool                    `json:"enableSystrace,omitempty"`       // Turns on system tracing.
-	EnableArgumentFilter bool                    `json:"enableArgumentFilter,omitempty"` // Turns on argument filter.
+	RecordMode           *string                 `json:"recordMode,omitempty"`           // Controls how the trace buffer stores data.
+	EnableSampling       *bool                   `json:"enableSampling,omitempty"`       // Turns on JavaScript stack sampling.
+	EnableSystrace       *bool                   `json:"enableSystrace,omitempty"`       // Turns on system tracing.
+	EnableArgumentFilter *bool                   `json:"enableArgumentFilter,omitempty"` // Turns on argument filter.
 	IncludedCategories   []string                `json:"includedCategories,omitempty"`   // Included category filters.
 	ExcludedCategories   []string                `json:"excludedCategories,omitempty"`   // Excluded category filters.
 	SyntheticDelays      []string                `json:"syntheticDelays,omitempty"`      // Configuration to synthesize the delays in tracing.
