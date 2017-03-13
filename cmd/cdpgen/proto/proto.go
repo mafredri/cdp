@@ -281,7 +281,7 @@ func (at AnyType) GoType(pkg string, d Domain) string {
 	}
 
 	// Special handling for enums.
-	if at.IDName != "" && len(at.Enum) > 0 {
+	if at.IsEnum() {
 		return "enum"
 	}
 
@@ -317,6 +317,11 @@ func (at AnyType) GoType(pkg string, d Domain) string {
 	}
 
 	panic("unreachable")
+}
+
+// IsEnum returns true if type is an enum.
+func (at AnyType) IsEnum() bool {
+	return at.IDName != "" && len(at.Enum) > 0
 }
 
 func lowerFirst(d string) string {

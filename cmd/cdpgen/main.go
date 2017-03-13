@@ -408,33 +408,59 @@ func (g *Generator) domainTypeEnum(d proto.Domain, t proto.AnyType) {
 	}
 	if realEnum {
 		name := strings.Title(t.Name(d))
-		g.Printf("int\n\n// %s as enums.\n", name)
-		g.Printf("const (\n")
-		for i, e := range t.Enum {
-			g.Printf("\t%s%s", name, e.Name())
-			if i == 0 {
-				g.Printf(" %s = iota + 1", name)
-			}
-			g.Printf("\n")
+		g.Printf(`int
+
+// %s as enums.
+const (
+	%sNotSet %s = iota`, name, name, name)
+		for _, e := range t.Enum {
+			g.Printf("\n\t%s%s", name, e.Name())
 		}
-		g.Printf(")\n\n")
-		g.Printf("func (e %s) String() string {\n", name)
-		g.Printf("\tswitch e {\n")
+		g.Printf(`
+)
+
+func (e %s) Valid() bool {
+	return e >= 1 && e <= %d
+}
+
+func (e %s) String() string {
+	switch e {
+	case 0:
+		return "%sNotSet"`, name, len(t.Enum), name, name)
 		for i, e := range t.Enum {
-			g.Printf("\tcase %d:\n", i+1)
-			g.Printf("\t\treturn \"%s\"\n", e)
+			g.Printf(`
+	case %d:
+		return "%s"`, i+1, e)
 		}
-		g.Printf("\t}\n")
-		g.Printf("\treturn fmt.Sprintf(\"%s(%%d)\", e)\n}\n\n", name)
-		g.Printf("func (e %s) MarshalJSON() ([]byte, error) {\n\treturn json.Marshal(e.String())\n}\n\n", name)
-		g.Printf("func (e *%s) UnmarshalJSON(data []byte) error {\n", name)
-		g.Printf("\tswitch string(data) {\n")
+		g.Printf(`
+	}
+	return fmt.Sprintf("%s(%%d)", e)
+}
+
+func (e %s) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
+	return json.Marshal(e.String())
+}
+
+func (e *%s) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
+	switch string(data) {`, name, name, name)
 		for i, e := range t.Enum {
-			g.Printf("\tcase \"\\\"%s\\\"\":\n", e)
-			g.Printf("\t\t*e = %d\n", i+1)
+			g.Printf(`
+	case "\"%s\"":
+		*e = %d`, e, i+1)
 		}
-		g.Printf("\tdefault:\n\t\treturn fmt.Errorf(\"bad %s: %%s\", data)\n", name)
-		g.Printf("\t}\n\treturn nil\n}")
+		g.Printf(`
+	default:
+		return fmt.Errorf("bad %s: %%s", data)
+	}
+	return nil
+}`, name)
 	} else {
 		g.Printf(`string
 
