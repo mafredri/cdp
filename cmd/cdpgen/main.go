@@ -434,16 +434,20 @@ func (g *Generator) domainTypeStruct(d proto.Domain, t proto.AnyType) {
 func (g *Generator) domainTypeTime(d proto.Domain, t proto.AnyType) {
 	g.Printf(`float64
 
+// String calls (time.Time).String().
 func (t %[1]s) String() string {
 	return t.Time().String()
 }
 
+// Time parses the Unix time with millisecond accuracy.
 func (t %[1]s) Time() time.Time {
 	secs := int64(t)
-	ns := int64((float64(t)-float64(secs))*1000000)*1000
-	return time.Unix(secs, ns)
+	// The Unix time in t only has ms accuracy.
+	ms := int64((float64(t)-float64(secs))*1000000)
+	return time.Unix(secs, ms*1000)
 }
 
+// MarshalJSON implements json.Marshaler. Encodes to null if t is zero.
 func (t %[1]s) MarshalJSON() ([]byte, error) {
 	if t == 0 {
 		return []byte("null"), nil
@@ -451,6 +455,7 @@ func (t %[1]s) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&t)
 }
 
+// UnmarshalJSON implements json.Unmarshaler.
 func (t *%[1]s) UnmarshalJSON(data []byte) error {
 	*t = 0
 	if len(data) == 0 {
@@ -472,7 +477,7 @@ var _ json.Unmarshaler = (*%[1]s)(nil)
 func (g *Generator) domainTypeRawMessage(d proto.Domain, t proto.AnyType) {
 	g.Printf(`[]byte
 
-// MarshalJSON returns m as the JSON encoding of m.
+// MarshalJSON copies behavior of json.RawMessage.
 func (m %[1]s) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
@@ -480,7 +485,7 @@ func (m %[1]s) MarshalJSON() ([]byte, error) {
 	return m, nil
 }
 
-// UnmarshalJSON sets *m to a copy of data.
+// UnmarshalJSON copies behavior of json.RawMessage.
 func (m *%[1]s) UnmarshalJSON(data []byte) error {
 	if m == nil {
 		return errors.New("%[2]s.%[1]s: UnmarshalJSON on nil pointer")
@@ -511,14 +516,15 @@ const (
 		g.Printf(`
 )
 
-func (e %s) Valid() bool {
-	return e >= 1 && e <= %d
+// Valid returns true if enum is set.
+func (e %[1]s) Valid() bool {
+	return e >= 1 && e <= %[2]d
 }
 
-func (e %s) String() string {
+func (e %[1]s) String() string {
 	switch e {
 	case 0:
-		return "%sNotSet"`, name, len(t.Enum), name, name)
+		return "%[1]sNotSet"`, name, len(t.Enum))
 		for i, e := range t.Enum {
 			g.Printf(`
 	case %d:
@@ -526,22 +532,27 @@ func (e %s) String() string {
 		}
 		g.Printf(`
 	}
-	return fmt.Sprintf("%s(%%d)", e)
+	return fmt.Sprintf("%[1]s(%%d)", e)
 }
 
-func (e %s) MarshalJSON() ([]byte, error) {
+// MarshalJSON encodes enum into a string or null when not set.
+func (e %[1]s) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
+	}
+	if !e.Valid() {
+		return nil, errors.New("%[2]s.%[1]s: MarshalJSON on bad enum value: " + e.String())
 	}
 	return json.Marshal(e.String())
 }
 
-func (e *%s) UnmarshalJSON(data []byte) error {
+// UnmarshalJSON decodes a string value into a enum.
+func (e *%[1]s) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
 		return nil
 	}
-	switch string(data) {`, name, name, name)
+	switch string(data) {`, name, g.pkg)
 		for i, e := range t.Enum {
 			g.Printf(`
 	case "\"%s\"":
@@ -549,10 +560,10 @@ func (e *%s) UnmarshalJSON(data []byte) error {
 		}
 		g.Printf(`
 	default:
-		return fmt.Errorf("bad %s: %%s", data)
+		return fmt.Errorf("%s.%s: UnmarshalJSON on bad input: %%s", data)
 	}
 	return nil
-}`, name)
+}`, g.pkg, name)
 	} else {
 		g.Printf(`string
 

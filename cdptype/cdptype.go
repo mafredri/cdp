@@ -37,6 +37,7 @@ const (
 	AccessibilityAXValueTypeValueUndefined
 )
 
+// Valid returns true if enum is set.
 func (e AccessibilityAXValueType) Valid() bool {
 	return e >= 1 && e <= 17
 }
@@ -83,13 +84,18 @@ func (e AccessibilityAXValueType) String() string {
 	return fmt.Sprintf("AccessibilityAXValueType(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e AccessibilityAXValueType) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.AccessibilityAXValueType: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXValueType) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -131,7 +137,7 @@ func (e *AccessibilityAXValueType) UnmarshalJSON(data []byte) error {
 	case "\"valueUndefined\"":
 		*e = 17
 	default:
-		return fmt.Errorf("bad AccessibilityAXValueType: %s", data)
+		return fmt.Errorf("cdptype.AccessibilityAXValueType: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -150,6 +156,7 @@ const (
 	AccessibilityAXValueSourceTypeRelatedElement
 )
 
+// Valid returns true if enum is set.
 func (e AccessibilityAXValueSourceType) Valid() bool {
 	return e >= 1 && e <= 6
 }
@@ -174,13 +181,18 @@ func (e AccessibilityAXValueSourceType) String() string {
 	return fmt.Sprintf("AccessibilityAXValueSourceType(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e AccessibilityAXValueSourceType) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.AccessibilityAXValueSourceType: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXValueSourceType) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -200,7 +212,7 @@ func (e *AccessibilityAXValueSourceType) UnmarshalJSON(data []byte) error {
 	case "\"relatedElement\"":
 		*e = 6
 	default:
-		return fmt.Errorf("bad AccessibilityAXValueSourceType: %s", data)
+		return fmt.Errorf("cdptype.AccessibilityAXValueSourceType: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -221,6 +233,7 @@ const (
 	AccessibilityAXValueNativeSourceTypeOther
 )
 
+// Valid returns true if enum is set.
 func (e AccessibilityAXValueNativeSourceType) Valid() bool {
 	return e >= 1 && e <= 8
 }
@@ -249,13 +262,18 @@ func (e AccessibilityAXValueNativeSourceType) String() string {
 	return fmt.Sprintf("AccessibilityAXValueNativeSourceType(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e AccessibilityAXValueNativeSourceType) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.AccessibilityAXValueNativeSourceType: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXValueNativeSourceType) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -279,7 +297,7 @@ func (e *AccessibilityAXValueNativeSourceType) UnmarshalJSON(data []byte) error 
 	case "\"other\"":
 		*e = 8
 	default:
-		return fmt.Errorf("bad AccessibilityAXValueNativeSourceType: %s", data)
+		return fmt.Errorf("cdptype.AccessibilityAXValueNativeSourceType: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -332,6 +350,7 @@ const (
 	AccessibilityAXGlobalStatesRoledescription
 )
 
+// Valid returns true if enum is set.
 func (e AccessibilityAXGlobalStates) Valid() bool {
 	return e >= 1 && e <= 6
 }
@@ -356,13 +375,18 @@ func (e AccessibilityAXGlobalStates) String() string {
 	return fmt.Sprintf("AccessibilityAXGlobalStates(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e AccessibilityAXGlobalStates) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.AccessibilityAXGlobalStates: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXGlobalStates) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -382,7 +406,7 @@ func (e *AccessibilityAXGlobalStates) UnmarshalJSON(data []byte) error {
 	case "\"roledescription\"":
 		*e = 6
 	default:
-		return fmt.Errorf("bad AccessibilityAXGlobalStates: %s", data)
+		return fmt.Errorf("cdptype.AccessibilityAXGlobalStates: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -400,6 +424,7 @@ const (
 	AccessibilityAXLiveRegionAttributesRoot
 )
 
+// Valid returns true if enum is set.
 func (e AccessibilityAXLiveRegionAttributes) Valid() bool {
 	return e >= 1 && e <= 5
 }
@@ -422,13 +447,18 @@ func (e AccessibilityAXLiveRegionAttributes) String() string {
 	return fmt.Sprintf("AccessibilityAXLiveRegionAttributes(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e AccessibilityAXLiveRegionAttributes) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.AccessibilityAXLiveRegionAttributes: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXLiveRegionAttributes) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -446,7 +476,7 @@ func (e *AccessibilityAXLiveRegionAttributes) UnmarshalJSON(data []byte) error {
 	case "\"root\"":
 		*e = 5
 	default:
-		return fmt.Errorf("bad AccessibilityAXLiveRegionAttributes: %s", data)
+		return fmt.Errorf("cdptype.AccessibilityAXLiveRegionAttributes: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -470,6 +500,7 @@ const (
 	AccessibilityAXWidgetAttributesValuetext
 )
 
+// Valid returns true if enum is set.
 func (e AccessibilityAXWidgetAttributes) Valid() bool {
 	return e >= 1 && e <= 11
 }
@@ -504,13 +535,18 @@ func (e AccessibilityAXWidgetAttributes) String() string {
 	return fmt.Sprintf("AccessibilityAXWidgetAttributes(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e AccessibilityAXWidgetAttributes) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.AccessibilityAXWidgetAttributes: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXWidgetAttributes) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -540,7 +576,7 @@ func (e *AccessibilityAXWidgetAttributes) UnmarshalJSON(data []byte) error {
 	case "\"valuetext\"":
 		*e = 11
 	default:
-		return fmt.Errorf("bad AccessibilityAXWidgetAttributes: %s", data)
+		return fmt.Errorf("cdptype.AccessibilityAXWidgetAttributes: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -558,6 +594,7 @@ const (
 	AccessibilityAXWidgetStatesSelected
 )
 
+// Valid returns true if enum is set.
 func (e AccessibilityAXWidgetStates) Valid() bool {
 	return e >= 1 && e <= 5
 }
@@ -580,13 +617,18 @@ func (e AccessibilityAXWidgetStates) String() string {
 	return fmt.Sprintf("AccessibilityAXWidgetStates(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e AccessibilityAXWidgetStates) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.AccessibilityAXWidgetStates: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXWidgetStates) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -604,7 +646,7 @@ func (e *AccessibilityAXWidgetStates) UnmarshalJSON(data []byte) error {
 	case "\"selected\"":
 		*e = 5
 	default:
-		return fmt.Errorf("bad AccessibilityAXWidgetStates: %s", data)
+		return fmt.Errorf("cdptype.AccessibilityAXWidgetStates: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -625,6 +667,7 @@ const (
 	AccessibilityAXRelationshipAttributesOwns
 )
 
+// Valid returns true if enum is set.
 func (e AccessibilityAXRelationshipAttributes) Valid() bool {
 	return e >= 1 && e <= 8
 }
@@ -653,13 +696,18 @@ func (e AccessibilityAXRelationshipAttributes) String() string {
 	return fmt.Sprintf("AccessibilityAXRelationshipAttributes(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e AccessibilityAXRelationshipAttributes) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.AccessibilityAXRelationshipAttributes: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXRelationshipAttributes) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -683,7 +731,7 @@ func (e *AccessibilityAXRelationshipAttributes) UnmarshalJSON(data []byte) error
 	case "\"owns\"":
 		*e = 8
 	default:
-		return fmt.Errorf("bad AccessibilityAXRelationshipAttributes: %s", data)
+		return fmt.Errorf("cdptype.AccessibilityAXRelationshipAttributes: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -780,6 +828,7 @@ const (
 	CSSStyleSheetOriginRegular
 )
 
+// Valid returns true if enum is set.
 func (e CSSStyleSheetOrigin) Valid() bool {
 	return e >= 1 && e <= 4
 }
@@ -800,13 +849,18 @@ func (e CSSStyleSheetOrigin) String() string {
 	return fmt.Sprintf("CSSStyleSheetOrigin(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e CSSStyleSheetOrigin) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.CSSStyleSheetOrigin: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *CSSStyleSheetOrigin) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -822,7 +876,7 @@ func (e *CSSStyleSheetOrigin) UnmarshalJSON(data []byte) error {
 	case "\"regular\"":
 		*e = 4
 	default:
-		return fmt.Errorf("bad CSSStyleSheetOrigin: %s", data)
+		return fmt.Errorf("cdptype.CSSStyleSheetOrigin: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -1069,6 +1123,7 @@ const (
 	DOMPseudoTypeInputListButton
 )
 
+// Valid returns true if enum is set.
 func (e DOMPseudoType) Valid() bool {
 	return e >= 1 && e <= 15
 }
@@ -1111,13 +1166,18 @@ func (e DOMPseudoType) String() string {
 	return fmt.Sprintf("DOMPseudoType(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e DOMPseudoType) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.DOMPseudoType: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *DOMPseudoType) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -1155,7 +1215,7 @@ func (e *DOMPseudoType) UnmarshalJSON(data []byte) error {
 	case "\"input-list-button\"":
 		*e = 15
 	default:
-		return fmt.Errorf("bad DOMPseudoType: %s", data)
+		return fmt.Errorf("cdptype.DOMPseudoType: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -1171,6 +1231,7 @@ const (
 	DOMShadowRootTypeClosed
 )
 
+// Valid returns true if enum is set.
 func (e DOMShadowRootType) Valid() bool {
 	return e >= 1 && e <= 3
 }
@@ -1189,13 +1250,18 @@ func (e DOMShadowRootType) String() string {
 	return fmt.Sprintf("DOMShadowRootType(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e DOMShadowRootType) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.DOMShadowRootType: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *DOMShadowRootType) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -1209,7 +1275,7 @@ func (e *DOMShadowRootType) UnmarshalJSON(data []byte) error {
 	case "\"closed\"":
 		*e = 3
 	default:
-		return fmt.Errorf("bad DOMShadowRootType: %s", data)
+		return fmt.Errorf("cdptype.DOMShadowRootType: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -1310,6 +1376,7 @@ const (
 	DOMInspectModeNone
 )
 
+// Valid returns true if enum is set.
 func (e DOMInspectMode) Valid() bool {
 	return e >= 1 && e <= 3
 }
@@ -1328,13 +1395,18 @@ func (e DOMInspectMode) String() string {
 	return fmt.Sprintf("DOMInspectMode(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e DOMInspectMode) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.DOMInspectMode: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *DOMInspectMode) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -1348,7 +1420,7 @@ func (e *DOMInspectMode) UnmarshalJSON(data []byte) error {
 	case "\"none\"":
 		*e = 3
 	default:
-		return fmt.Errorf("bad DOMInspectMode: %s", data)
+		return fmt.Errorf("cdptype.DOMInspectMode: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -1364,6 +1436,7 @@ const (
 	DOMDebuggerDOMBreakpointTypeNodeRemoved
 )
 
+// Valid returns true if enum is set.
 func (e DOMDebuggerDOMBreakpointType) Valid() bool {
 	return e >= 1 && e <= 3
 }
@@ -1382,13 +1455,18 @@ func (e DOMDebuggerDOMBreakpointType) String() string {
 	return fmt.Sprintf("DOMDebuggerDOMBreakpointType(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e DOMDebuggerDOMBreakpointType) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.DOMDebuggerDOMBreakpointType: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *DOMDebuggerDOMBreakpointType) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -1402,7 +1480,7 @@ func (e *DOMDebuggerDOMBreakpointType) UnmarshalJSON(data []byte) error {
 	case "\"node-removed\"":
 		*e = 3
 	default:
-		return fmt.Errorf("bad DOMDebuggerDOMBreakpointType: %s", data)
+		return fmt.Errorf("cdptype.DOMDebuggerDOMBreakpointType: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -1517,6 +1595,7 @@ const (
 	EmulationVirtualTimePolicyPauseIfNetworkFetchesPending
 )
 
+// Valid returns true if enum is set.
 func (e EmulationVirtualTimePolicy) Valid() bool {
 	return e >= 1 && e <= 3
 }
@@ -1535,13 +1614,18 @@ func (e EmulationVirtualTimePolicy) String() string {
 	return fmt.Sprintf("EmulationVirtualTimePolicy(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e EmulationVirtualTimePolicy) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.EmulationVirtualTimePolicy: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *EmulationVirtualTimePolicy) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -1555,7 +1639,7 @@ func (e *EmulationVirtualTimePolicy) UnmarshalJSON(data []byte) error {
 	case "\"pauseIfNetworkFetchesPending\"":
 		*e = 3
 	default:
-		return fmt.Errorf("bad EmulationVirtualTimePolicy: %s", data)
+		return fmt.Errorf("cdptype.EmulationVirtualTimePolicy: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -1655,6 +1739,7 @@ const (
 	InputGestureSourceTypeMouse
 )
 
+// Valid returns true if enum is set.
 func (e InputGestureSourceType) Valid() bool {
 	return e >= 1 && e <= 3
 }
@@ -1673,13 +1758,18 @@ func (e InputGestureSourceType) String() string {
 	return fmt.Sprintf("InputGestureSourceType(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e InputGestureSourceType) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.InputGestureSourceType: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *InputGestureSourceType) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -1693,7 +1783,7 @@ func (e *InputGestureSourceType) UnmarshalJSON(data []byte) error {
 	case "\"mouse\"":
 		*e = 3
 	default:
-		return fmt.Errorf("bad InputGestureSourceType: %s", data)
+		return fmt.Errorf("cdptype.InputGestureSourceType: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -1768,6 +1858,7 @@ const (
 	MemoryPressureLevelCritical
 )
 
+// Valid returns true if enum is set.
 func (e MemoryPressureLevel) Valid() bool {
 	return e >= 1 && e <= 2
 }
@@ -1784,13 +1875,18 @@ func (e MemoryPressureLevel) String() string {
 	return fmt.Sprintf("MemoryPressureLevel(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e MemoryPressureLevel) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.MemoryPressureLevel: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *MemoryPressureLevel) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -1802,7 +1898,7 @@ func (e *MemoryPressureLevel) UnmarshalJSON(data []byte) error {
 	case "\"critical\"":
 		*e = 2
 	default:
-		return fmt.Errorf("bad MemoryPressureLevel: %s", data)
+		return fmt.Errorf("cdptype.MemoryPressureLevel: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -1816,16 +1912,20 @@ type NetworkRequestID string
 // NetworkTimestamp Number of seconds since epoch.
 type NetworkTimestamp float64
 
+// String calls (time.Time).String().
 func (t NetworkTimestamp) String() string {
 	return t.Time().String()
 }
 
+// Time parses the Unix time with millisecond accuracy.
 func (t NetworkTimestamp) Time() time.Time {
 	secs := int64(t)
-	ns := int64((float64(t)-float64(secs))*1000000) * 1000
-	return time.Unix(secs, ns)
+	// The Unix time in t only has ms accuracy.
+	ms := int64((float64(t) - float64(secs)) * 1000000)
+	return time.Unix(secs, ms*1000)
 }
 
+// MarshalJSON implements json.Marshaler. Encodes to null if t is zero.
 func (t NetworkTimestamp) MarshalJSON() ([]byte, error) {
 	if t == 0 {
 		return []byte("null"), nil
@@ -1833,6 +1933,7 @@ func (t NetworkTimestamp) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&t)
 }
 
+// UnmarshalJSON implements json.Unmarshaler.
 func (t *NetworkTimestamp) UnmarshalJSON(data []byte) error {
 	*t = 0
 	if len(data) == 0 {
@@ -1852,7 +1953,7 @@ var _ json.Unmarshaler = (*NetworkTimestamp)(nil)
 // NetworkHeaders Request / response headers as keys / values of JSON object.
 type NetworkHeaders []byte
 
-// MarshalJSON returns m as the JSON encoding of m.
+// MarshalJSON copies behavior of json.RawMessage.
 func (m NetworkHeaders) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
@@ -1860,7 +1961,7 @@ func (m NetworkHeaders) MarshalJSON() ([]byte, error) {
 	return m, nil
 }
 
-// UnmarshalJSON sets *m to a copy of data.
+// UnmarshalJSON copies behavior of json.RawMessage.
 func (m *NetworkHeaders) UnmarshalJSON(data []byte) error {
 	if m == nil {
 		return errors.New("cdptype.NetworkHeaders: UnmarshalJSON on nil pointer")
@@ -1889,6 +1990,7 @@ const (
 	NetworkConnectionTypeOther
 )
 
+// Valid returns true if enum is set.
 func (e NetworkConnectionType) Valid() bool {
 	return e >= 1 && e <= 9
 }
@@ -1919,13 +2021,18 @@ func (e NetworkConnectionType) String() string {
 	return fmt.Sprintf("NetworkConnectionType(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e NetworkConnectionType) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.NetworkConnectionType: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *NetworkConnectionType) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -1951,7 +2058,7 @@ func (e *NetworkConnectionType) UnmarshalJSON(data []byte) error {
 	case "\"other\"":
 		*e = 9
 	default:
-		return fmt.Errorf("bad NetworkConnectionType: %s", data)
+		return fmt.Errorf("cdptype.NetworkConnectionType: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -1966,6 +2073,7 @@ const (
 	NetworkCookieSameSiteLax
 )
 
+// Valid returns true if enum is set.
 func (e NetworkCookieSameSite) Valid() bool {
 	return e >= 1 && e <= 2
 }
@@ -1982,13 +2090,18 @@ func (e NetworkCookieSameSite) String() string {
 	return fmt.Sprintf("NetworkCookieSameSite(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e NetworkCookieSameSite) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.NetworkCookieSameSite: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *NetworkCookieSameSite) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -2000,7 +2113,7 @@ func (e *NetworkCookieSameSite) UnmarshalJSON(data []byte) error {
 	case "\"Lax\"":
 		*e = 2
 	default:
-		return fmt.Errorf("bad NetworkCookieSameSite: %s", data)
+		return fmt.Errorf("cdptype.NetworkCookieSameSite: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -2038,6 +2151,7 @@ const (
 	NetworkResourcePriorityVeryHigh
 )
 
+// Valid returns true if enum is set.
 func (e NetworkResourcePriority) Valid() bool {
 	return e >= 1 && e <= 5
 }
@@ -2060,13 +2174,18 @@ func (e NetworkResourcePriority) String() string {
 	return fmt.Sprintf("NetworkResourcePriority(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e NetworkResourcePriority) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.NetworkResourcePriority: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *NetworkResourcePriority) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -2084,7 +2203,7 @@ func (e *NetworkResourcePriority) UnmarshalJSON(data []byte) error {
 	case "\"VeryHigh\"":
 		*e = 5
 	default:
-		return fmt.Errorf("bad NetworkResourcePriority: %s", data)
+		return fmt.Errorf("cdptype.NetworkResourcePriority: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -2142,6 +2261,7 @@ const (
 	NetworkBlockedReasonOther
 )
 
+// Valid returns true if enum is set.
 func (e NetworkBlockedReason) Valid() bool {
 	return e >= 1 && e <= 6
 }
@@ -2166,13 +2286,18 @@ func (e NetworkBlockedReason) String() string {
 	return fmt.Sprintf("NetworkBlockedReason(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e NetworkBlockedReason) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.NetworkBlockedReason: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *NetworkBlockedReason) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -2192,7 +2317,7 @@ func (e *NetworkBlockedReason) UnmarshalJSON(data []byte) error {
 	case "\"other\"":
 		*e = 6
 	default:
-		return fmt.Errorf("bad NetworkBlockedReason: %s", data)
+		return fmt.Errorf("cdptype.NetworkBlockedReason: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -2293,6 +2418,7 @@ const (
 	PageResourceTypeOther
 )
 
+// Valid returns true if enum is set.
 func (e PageResourceType) Valid() bool {
 	return e >= 1 && e <= 13
 }
@@ -2331,13 +2457,18 @@ func (e PageResourceType) String() string {
 	return fmt.Sprintf("PageResourceType(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e PageResourceType) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.PageResourceType: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *PageResourceType) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -2371,7 +2502,7 @@ func (e *PageResourceType) UnmarshalJSON(data []byte) error {
 	case "\"Other\"":
 		*e = 13
 	default:
-		return fmt.Errorf("bad PageResourceType: %s", data)
+		return fmt.Errorf("cdptype.PageResourceType: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -2441,6 +2572,7 @@ const (
 	PageDialogTypeBeforeunload
 )
 
+// Valid returns true if enum is set.
 func (e PageDialogType) Valid() bool {
 	return e >= 1 && e <= 4
 }
@@ -2461,13 +2593,18 @@ func (e PageDialogType) String() string {
 	return fmt.Sprintf("PageDialogType(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e PageDialogType) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.PageDialogType: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *PageDialogType) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -2483,7 +2620,7 @@ func (e *PageDialogType) UnmarshalJSON(data []byte) error {
 	case "\"beforeunload\"":
 		*e = 4
 	default:
-		return fmt.Errorf("bad PageDialogType: %s", data)
+		return fmt.Errorf("cdptype.PageDialogType: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -2507,6 +2644,7 @@ const (
 	PageNavigationResponseCancelAndIgnore
 )
 
+// Valid returns true if enum is set.
 func (e PageNavigationResponse) Valid() bool {
 	return e >= 1 && e <= 3
 }
@@ -2525,13 +2663,18 @@ func (e PageNavigationResponse) String() string {
 	return fmt.Sprintf("PageNavigationResponse(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e PageNavigationResponse) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.PageNavigationResponse: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *PageNavigationResponse) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -2545,7 +2688,7 @@ func (e *PageNavigationResponse) UnmarshalJSON(data []byte) error {
 	case "\"CancelAndIgnore\"":
 		*e = 3
 	default:
-		return fmt.Errorf("bad PageNavigationResponse: %s", data)
+		return fmt.Errorf("cdptype.PageNavigationResponse: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -2632,6 +2775,7 @@ const (
 	RuntimeUnserializableValueNegative0
 )
 
+// Valid returns true if enum is set.
 func (e RuntimeUnserializableValue) Valid() bool {
 	return e >= 1 && e <= 4
 }
@@ -2652,13 +2796,18 @@ func (e RuntimeUnserializableValue) String() string {
 	return fmt.Sprintf("RuntimeUnserializableValue(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e RuntimeUnserializableValue) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.RuntimeUnserializableValue: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *RuntimeUnserializableValue) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -2674,7 +2823,7 @@ func (e *RuntimeUnserializableValue) UnmarshalJSON(data []byte) error {
 	case "\"-0\"":
 		*e = 4
 	default:
-		return fmt.Errorf("bad RuntimeUnserializableValue: %s", data)
+		return fmt.Errorf("cdptype.RuntimeUnserializableValue: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -2780,16 +2929,20 @@ type RuntimeExceptionDetails struct {
 // RuntimeTimestamp Number of milliseconds since epoch.
 type RuntimeTimestamp float64
 
+// String calls (time.Time).String().
 func (t RuntimeTimestamp) String() string {
 	return t.Time().String()
 }
 
+// Time parses the Unix time with millisecond accuracy.
 func (t RuntimeTimestamp) Time() time.Time {
 	secs := int64(t)
-	ns := int64((float64(t)-float64(secs))*1000000) * 1000
-	return time.Unix(secs, ns)
+	// The Unix time in t only has ms accuracy.
+	ms := int64((float64(t) - float64(secs)) * 1000000)
+	return time.Unix(secs, ms*1000)
 }
 
+// MarshalJSON implements json.Marshaler. Encodes to null if t is zero.
 func (t RuntimeTimestamp) MarshalJSON() ([]byte, error) {
 	if t == 0 {
 		return []byte("null"), nil
@@ -2797,6 +2950,7 @@ func (t RuntimeTimestamp) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&t)
 }
 
+// UnmarshalJSON implements json.Unmarshaler.
 func (t *RuntimeTimestamp) UnmarshalJSON(data []byte) error {
 	*t = 0
 	if len(data) == 0 {
@@ -2853,6 +3007,7 @@ const (
 	SecurityStateInfo
 )
 
+// Valid returns true if enum is set.
 func (e SecurityState) Valid() bool {
 	return e >= 1 && e <= 6
 }
@@ -2877,13 +3032,18 @@ func (e SecurityState) String() string {
 	return fmt.Sprintf("SecurityState(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e SecurityState) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.SecurityState: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *SecurityState) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -2903,7 +3063,7 @@ func (e *SecurityState) UnmarshalJSON(data []byte) error {
 	case "\"info\"":
 		*e = 6
 	default:
-		return fmt.Errorf("bad SecurityState: %s", data)
+		return fmt.Errorf("cdptype.SecurityState: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -2945,6 +3105,7 @@ const (
 	ServiceWorkerVersionRunningStatusStopping
 )
 
+// Valid returns true if enum is set.
 func (e ServiceWorkerVersionRunningStatus) Valid() bool {
 	return e >= 1 && e <= 4
 }
@@ -2965,13 +3126,18 @@ func (e ServiceWorkerVersionRunningStatus) String() string {
 	return fmt.Sprintf("ServiceWorkerVersionRunningStatus(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e ServiceWorkerVersionRunningStatus) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.ServiceWorkerVersionRunningStatus: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *ServiceWorkerVersionRunningStatus) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -2987,7 +3153,7 @@ func (e *ServiceWorkerVersionRunningStatus) UnmarshalJSON(data []byte) error {
 	case "\"stopping\"":
 		*e = 4
 	default:
-		return fmt.Errorf("bad ServiceWorkerVersionRunningStatus: %s", data)
+		return fmt.Errorf("cdptype.ServiceWorkerVersionRunningStatus: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -3006,6 +3172,7 @@ const (
 	ServiceWorkerVersionStatusRedundant
 )
 
+// Valid returns true if enum is set.
 func (e ServiceWorkerVersionStatus) Valid() bool {
 	return e >= 1 && e <= 6
 }
@@ -3030,13 +3197,18 @@ func (e ServiceWorkerVersionStatus) String() string {
 	return fmt.Sprintf("ServiceWorkerVersionStatus(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e ServiceWorkerVersionStatus) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.ServiceWorkerVersionStatus: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *ServiceWorkerVersionStatus) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -3056,7 +3228,7 @@ func (e *ServiceWorkerVersionStatus) UnmarshalJSON(data []byte) error {
 	case "\"redundant\"":
 		*e = 6
 	default:
-		return fmt.Errorf("bad ServiceWorkerVersionStatus: %s", data)
+		return fmt.Errorf("cdptype.ServiceWorkerVersionStatus: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -3102,6 +3274,7 @@ const (
 	StorageTypeAll
 )
 
+// Valid returns true if enum is set.
 func (e StorageType) Valid() bool {
 	return e >= 1 && e <= 10
 }
@@ -3134,13 +3307,18 @@ func (e StorageType) String() string {
 	return fmt.Sprintf("StorageType(%d)", e)
 }
 
+// MarshalJSON encodes enum into a string or null when not set.
 func (e StorageType) MarshalJSON() ([]byte, error) {
 	if e == 0 {
 		return []byte("null"), nil
 	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.StorageType: MarshalJSON on bad enum value: " + e.String())
+	}
 	return json.Marshal(e.String())
 }
 
+// UnmarshalJSON decodes a string value into a enum.
 func (e *StorageType) UnmarshalJSON(data []byte) error {
 	if data == nil {
 		*e = 0
@@ -3168,7 +3346,7 @@ func (e *StorageType) UnmarshalJSON(data []byte) error {
 	case "\"all\"":
 		*e = 10
 	default:
-		return fmt.Errorf("bad StorageType: %s", data)
+		return fmt.Errorf("cdptype.StorageType: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
 }
@@ -3212,7 +3390,7 @@ type TargetRemoteLocation struct {
 // TracingMemoryDumpConfig Configuration for memory dump. Used only when "memory-infra" category is enabled.
 type TracingMemoryDumpConfig []byte
 
-// MarshalJSON returns m as the JSON encoding of m.
+// MarshalJSON copies behavior of json.RawMessage.
 func (m TracingMemoryDumpConfig) MarshalJSON() ([]byte, error) {
 	if m == nil {
 		return []byte("null"), nil
@@ -3220,7 +3398,7 @@ func (m TracingMemoryDumpConfig) MarshalJSON() ([]byte, error) {
 	return m, nil
 }
 
-// UnmarshalJSON sets *m to a copy of data.
+// UnmarshalJSON copies behavior of json.RawMessage.
 func (m *TracingMemoryDumpConfig) UnmarshalJSON(data []byte) error {
 	if m == nil {
 		return errors.New("cdptype.TracingMemoryDumpConfig: UnmarshalJSON on nil pointer")
@@ -3247,16 +3425,20 @@ type TracingTraceConfig struct {
 // Timestamp represents a timestamp (since epoch).
 type Timestamp float64
 
+// String calls (time.Time).String().
 func (t Timestamp) String() string {
 	return t.Time().String()
 }
 
+// Time parses the Unix time with millisecond accuracy.
 func (t Timestamp) Time() time.Time {
 	secs := int64(t)
-	ns := int64((float64(t)-float64(secs))*1000000) * 1000
-	return time.Unix(secs, ns)
+	// The Unix time in t only has ms accuracy.
+	ms := int64((float64(t) - float64(secs)) * 1000000)
+	return time.Unix(secs, ms*1000)
 }
 
+// MarshalJSON implements json.Marshaler. Encodes to null if t is zero.
 func (t Timestamp) MarshalJSON() ([]byte, error) {
 	if t == 0 {
 		return []byte("null"), nil
@@ -3264,6 +3446,7 @@ func (t Timestamp) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&t)
 }
 
+// UnmarshalJSON implements json.Unmarshaler.
 func (t *Timestamp) UnmarshalJSON(data []byte) error {
 	*t = 0
 	if len(data) == 0 {
