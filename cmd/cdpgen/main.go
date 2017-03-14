@@ -611,10 +611,14 @@ type %[1]s struct {`, c.ArgsName(d), c.CmdName(d, false))
 	g.Printf("}\n\n")
 
 	for _, arg := range c.Parameters {
+		if !arg.Optional {
+			continue
+		}
 		typ := arg.GoType(g.pkg, d)
 		isNonPtr := nonPtrMap[typ]
-		if !arg.Optional || isNonPtr || isNonPointer(g.pkg, d, arg) {
-			continue
+		ptr := "&"
+		if isNonPtr || isNonPointer(g.pkg, d, arg) {
+			ptr = ""
 		}
 		name := arg.Name(d)
 		if name == "range" || name == "type" {
@@ -623,10 +627,10 @@ type %[1]s struct {`, c.ArgsName(d), c.CmdName(d, false))
 		g.Printf(`
 // Set%[1]s sets the %[1]s optional argument. %[6]s
 func (a *%[2]s) Set%[1]s(%[3]s %[4]s) *%[2]s {
-	a.%[5]s%[1]s = &%[3]s
+	a.%[5]s%[1]s = %[7]s%[3]s
 	return a
 }
-`, arg.ExportedName(d), c.ArgsName(d), name, arg.GoType("cdp", d), OptionalPropPrefix, arg.Desc())
+`, arg.ExportedName(d), c.ArgsName(d), name, arg.GoType("cdp", d), OptionalPropPrefix, arg.Desc(), ptr)
 	}
 }
 
