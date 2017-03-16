@@ -22,7 +22,7 @@ type rpcResponse struct {
 	Params json.RawMessage `json:"params"` // Method parameters, if any.
 }
 
-func (r *rpcResponse) Reset() {
+func (r *rpcResponse) reset() {
 	r.ID = 0
 	r.Result = nil
 	r.Error = nil

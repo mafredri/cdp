@@ -159,7 +159,7 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 	var resp rpcResponse
 	var err error
 	for {
-		resp.Reset()
+		resp.reset()
 		if err = c.codec.Decode(&resp); err != nil {
 			done <- err
 			return
@@ -199,8 +199,8 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 
 func (c *Conn) send(call *rpcCall) {
 	c.pendingMu.Lock()
-	reqID := c.reqSeq
 	c.reqSeq++
+	reqID := c.reqSeq
 	c.pending[reqID] = call
 	c.pendingMu.Unlock()
 
