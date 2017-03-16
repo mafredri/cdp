@@ -50,7 +50,6 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	}
 
 	c := &Conn{
-		send:    make(chan *rpcCall),
 		pending: make(map[uint64]*rpcCall),
 		streams: make(map[string]*streamService),
 	}
@@ -100,7 +99,6 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 
 	recvDone := make(chan error)
 	go c.recv(c.notify, recvDone)
-	go c.dispatch()
 	go func() {
 		defer close(recvDone)
 		select {
@@ -139,10 +137,12 @@ type Conn struct {
 	dialOpts dialOptions
 	conn     net.Conn
 	codec    codec
-	send     chan *rpcCall
 
 	mu     sync.Mutex
 	closed bool
+
+	reqMu sync.Mutex // Protects following.
+	req   rpcRequest
 
 	pendingMu sync.Mutex // Protects following.
 	reqSeq    uint64
@@ -197,41 +197,34 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 	}
 }
 
-// dispatch receives calls on the send channel,
-// encodes and dispatches them as rpcRequest.
-func (c *Conn) dispatch() {
-	var req rpcRequest
-	for {
-		select {
-		case <-c.ctx.Done():
-			return
-		case call, ok := <-c.send:
-			if !ok {
-				continue
-			}
+func (c *Conn) send(call *rpcCall) {
+	c.pendingMu.Lock()
+	reqID := c.reqSeq
+	c.reqSeq++
+	c.pending[reqID] = call
+	c.pendingMu.Unlock()
 
-			c.pendingMu.Lock()
-			reqID := c.reqSeq
-			c.reqSeq++
-			c.pending[reqID] = call
-			c.pendingMu.Unlock()
+	c.reqMu.Lock()
+	c.req.ID = reqID
+	c.req.Method = call.Method
+	c.req.Params = call.Args
+	if err := c.codec.Encode(&c.req); err != nil {
+		c.req.Params = nil
+		c.reqMu.Unlock()
 
-			req.ID = reqID
-			req.Method = call.Method
-			req.Params = call.Args
-			if err := c.codec.Encode(&req); err != nil {
-				// Clean up after error.
-				c.pendingMu.Lock()
-				call := c.pending[reqID]
-				delete(c.pending, reqID)
-				c.pendingMu.Unlock()
+		// Clean up after error.
+		c.pendingMu.Lock()
+		call := c.pending[reqID]
+		delete(c.pending, reqID)
+		c.pendingMu.Unlock()
 
-				if call != nil {
-					// Call was not handled by recv.
-					call.done(err)
-				}
-			}
+		if call != nil {
+			// Call was not handled by recv.
+			call.done(err)
 		}
+	} else {
+		c.req.Params = nil
+		c.reqMu.Lock()
 	}
 }
 
@@ -277,7 +270,6 @@ func (c *Conn) Close() (err error) {
 		return ErrConnClosing
 	}
 	c.cancel()
-	close(c.send)
 
 	c.streamMu.Lock()
 	streams := c.streams

@@ -29,9 +29,7 @@ func Invoke(ctx context.Context, method string, args, reply interface{}, conn *C
 		Reply:  reply,
 		Error:  make(chan error, 1), // Do not block.
 	}
-	go func() {
-		conn.send <- call
-	}()
+	go conn.send(call)
 
 	select {
 	case <-conn.ctx.Done():
