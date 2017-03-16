@@ -97,10 +97,9 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 		Decoder: json.NewDecoder(c.conn),
 	}
 
-	recvDone := make(chan error)
+	recvDone := make(chan error, 1)
 	go c.recv(c.notify, recvDone)
 	go func() {
-		defer close(recvDone)
 		select {
 		case <-ctx.Done():
 		case <-recvDone:
@@ -161,6 +160,13 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 	for {
 		resp.reset()
 		if err = c.codec.Decode(&resp); err != nil {
+			// Notify pending calls.
+			c.pendingMu.Lock()
+			for id, call := range c.pending {
+				delete(c.pending, id)
+				call.done(err)
+			}
+			c.pendingMu.Unlock()
 			done <- err
 			return
 		}
