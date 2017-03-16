@@ -224,7 +224,7 @@ func (c *Conn) send(call *rpcCall) {
 		}
 	} else {
 		c.req.Params = nil
-		c.reqMu.Lock()
+		c.reqMu.Unlock()
 	}
 }
 

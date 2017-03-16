@@ -1,6 +1,7 @@
 package rpcc
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -56,10 +57,14 @@ func newTestServer(t *testing.T, respond func(*websocket.Conn, *rpcRequest) erro
 }
 
 func TestConn_Invoke(t *testing.T) {
+	responses := []string{
+		"hello",
+		"world",
+	}
 	srv := newTestServer(t, func(conn *websocket.Conn, req *rpcRequest) error {
 		resp := rpcResponse{
 			ID:     req.ID,
-			Result: []byte(`"hello"`),
+			Result: []byte(fmt.Sprintf("%q", responses[int(req.ID)-1])),
 		}
 		return conn.WriteJSON(&resp)
 	})
@@ -73,6 +78,15 @@ func TestConn_Invoke(t *testing.T) {
 
 	if reply != "hello" {
 		t.Errorf("test.Hello: got reply %q, want %q", reply, "hello")
+	}
+
+	err = Invoke(nil, "test.World", nil, &reply, srv.conn)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if reply != "world" {
+		t.Errorf("test.World: got reply %q, want %q", reply, "world")
 	}
 }
 
