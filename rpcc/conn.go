@@ -188,7 +188,10 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 
 		switch {
 		case call == nil:
-			log.Println("rpcc: no pending call: " + resp.String())
+			// Request was sent, but returned an error.
+			if enableDebug {
+				log.Println("rpcc: no pending call: " + resp.String())
+			}
 		case resp.Error != nil:
 			call.done(resp.Error)
 		default:
@@ -288,3 +291,6 @@ func (c *Conn) Close() (err error) {
 	}
 	return err
 }
+
+// Debugging, enabled in tests.
+var enableDebug = false
