@@ -11,7 +11,7 @@ import (
 
 type testServer struct {
 	srv    *httptest.Server
-	wsConn *websocket.Conn
+	wsConn *websocket.Conn // Set after Dial.
 	conn   *Conn
 }
 
@@ -21,12 +21,18 @@ func (ts *testServer) Close() error {
 }
 
 func newTestServer(t *testing.T, respond func(*websocket.Conn, *rpcRequest) error) *testServer {
+	var err error
+	ts := &testServer{}
 	upgrader := &websocket.Upgrader{}
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+	setupDone := make(chan struct{})
+	ts.srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, r.Header)
 		if err != nil {
 			t.Fatal(err)
 		}
+		ts.wsConn = conn
+		close(setupDone)
 		defer conn.Close()
 
 		for {
@@ -40,15 +46,13 @@ func newTestServer(t *testing.T, respond func(*websocket.Conn, *rpcRequest) erro
 		}
 	}))
 
-	conn, err := Dial("ws" + strings.TrimPrefix(srv.URL, "http"))
+	ts.conn, err = Dial("ws" + strings.TrimPrefix(ts.srv.URL, "http"))
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	return &testServer{
-		srv:  srv,
-		conn: conn,
-	}
+	<-setupDone
+	return ts
 }
 
 func TestConn_Invoke(t *testing.T) {
@@ -95,19 +99,7 @@ func TestConn_InvokeError(t *testing.T) {
 }
 
 func TestConn_Notify(t *testing.T) {
-	srv := newTestServer(t, func(conn *websocket.Conn, req *rpcRequest) error {
-		resp := rpcResponse{ID: req.ID}
-		if err := conn.WriteJSON(&resp); err != nil {
-			t.Fatal(err)
-		}
-
-		resp.Method = "test.Notify"
-		resp.Params = []byte(`"hello"`)
-		if err := conn.WriteJSON(&resp); err != nil {
-			t.Fatal(err)
-		}
-		return nil
-	})
+	srv := newTestServer(t, nil)
 	defer srv.Close()
 
 	s, err := NewStream(nil, "test.Notify", srv.conn)
@@ -116,8 +108,15 @@ func TestConn_Notify(t *testing.T) {
 	}
 	defer s.Close()
 
-	// Fire off server response.
-	go Invoke(nil, "test.Hello", nil, nil, srv.conn)
+	go func() {
+		resp := rpcResponse{
+			Method: "test.Notify",
+			Params: []byte(`"hello"`),
+		}
+		if err := srv.wsConn.WriteJSON(&resp); err != nil {
+			t.Fatal(err)
+		}
+	}()
 
 	var reply string
 	if err = s.RecvMsg(&reply); err != nil {
@@ -128,15 +127,18 @@ func TestConn_Notify(t *testing.T) {
 	if reply != want {
 		t.Errorf("test.Notify reply: got %q, want %q", reply, want)
 	}
+
+	s.Close()
+	if err = s.RecvMsg(nil); err == nil {
+		t.Error("test.Notify read after closed: want error, got nil")
+	}
 }
 
 func TestConn_RemoteDisconnected(t *testing.T) {
-	srv := newTestServer(t, func(conn *websocket.Conn, req *rpcRequest) error {
-		conn.Close()
-		return nil
-	})
+	srv := newTestServer(t, nil)
 	defer srv.Close()
 
+	srv.wsConn.Close()
 	if err := Invoke(nil, "test.Hello", nil, nil, srv.conn); err != ErrConnClosing {
 		t.Errorf("Invoke error: got %v, want ErrConnClosing", err)
 	}
