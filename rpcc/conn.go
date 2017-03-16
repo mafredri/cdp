@@ -137,15 +137,13 @@ type Conn struct {
 	conn     net.Conn
 	codec    codec
 
-	mu     sync.Mutex
-	closed bool
+	mu      sync.Mutex // Protects following.
+	closed  bool
+	reqSeq  uint64
+	pending map[uint64]*rpcCall
 
 	reqMu sync.Mutex // Protects following.
 	req   rpcRequest
-
-	pendingMu sync.Mutex // Protects following.
-	reqSeq    uint64
-	pending   map[uint64]*rpcCall
 
 	streamMu sync.Mutex // Protects following.
 	streams  map[string]*streamService
@@ -161,12 +159,15 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 		resp.reset()
 		if err = c.codec.Decode(&resp); err != nil {
 			// Notify pending calls.
-			c.pendingMu.Lock()
+			c.mu.Lock()
+			if c.closed {
+				err = ErrConnClosing
+			}
 			for id, call := range c.pending {
 				delete(c.pending, id)
 				call.done(err)
 			}
-			c.pendingMu.Unlock()
+			c.mu.Unlock()
 			done <- err
 			return
 		}
@@ -181,10 +182,10 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 			continue
 		}
 
-		c.pendingMu.Lock()
+		c.mu.Lock()
 		call := c.pending[resp.ID]
 		delete(c.pending, resp.ID)
-		c.pendingMu.Unlock()
+		c.mu.Unlock()
 
 		switch {
 		case call == nil:
@@ -207,11 +208,16 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 }
 
 func (c *Conn) send(call *rpcCall) {
-	c.pendingMu.Lock()
+	c.mu.Lock()
+	if c.closed {
+		c.mu.Unlock()
+		call.done(ErrConnClosing)
+		return
+	}
 	c.reqSeq++
 	reqID := c.reqSeq
 	c.pending[reqID] = call
-	c.pendingMu.Unlock()
+	c.mu.Unlock()
 
 	c.reqMu.Lock()
 	c.req.ID = reqID
@@ -222,10 +228,10 @@ func (c *Conn) send(call *rpcCall) {
 		c.reqMu.Unlock()
 
 		// Clean up after error.
-		c.pendingMu.Lock()
+		c.mu.Lock()
 		call := c.pending[reqID]
 		delete(c.pending, reqID)
-		c.pendingMu.Unlock()
+		c.mu.Unlock()
 
 		if call != nil {
 			// Call was not handled by recv.
