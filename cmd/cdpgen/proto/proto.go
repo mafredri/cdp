@@ -245,6 +245,11 @@ func (at AnyType) Name(d Domain) string {
 	return lint.Name(at.NameName)
 }
 
+// Recvr returns the receiver for the type.
+func (at AnyType) Recvr(d Domain) string {
+	return strings.ToLower(at.Name(d)[0:1])
+}
+
 func nameInDomain(d Domain, name, sep string) string {
 	// Used _ to separate the domain name from the type, e.g. DOM_NodeID.
 	// if sep == "" {

@@ -320,9 +320,14 @@ func (g *Generator) Domain(d proto.Domain) {
 			domDef.Printf("\treply = new(cdpcmd.%s)\n", c.ReplyName(d))
 			invokeReply = "reply"
 		}
-		domDef.Printf("\terr = rpcc.Invoke(ctx, cdpcmd.%s.String(), %s, %s, d.conn)\n", c.CmdName(d, true), invokeArgs, invokeReply)
-		domDef.Printf("\treturn\n")
-		domDef.Printf("}\n")
+		domDef.Printf(`
+	err = rpcc.Invoke(ctx, cdpcmd.%s.String(), %s, %s, d.conn)
+	if err != nil {
+		err = &Error{Domain: %q, Op: %q, Err: err}
+	}
+	return
+}
+`, c.CmdName(d, true), invokeArgs, invokeReply, d.Name(), c.Name())
 
 		if len(c.Parameters) > 0 {
 			domDef.Printf(`
@@ -358,11 +363,11 @@ type %[4]s struct { rpcc.Stream }
 func (c *%[4]s) Recv() (*cdpevent.%[3]s, error) {
 	event := new(cdpevent.%[3]s)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, errors.New("cdp: %[1]s Recv: " + err.Error())
+		return nil, &Error{Domain: %[5]q, Op: "%[6]s Recv", Err: err}
 	}
 	return event, nil
 }
-`, eventClient, "", e.ReplyName(d), eventClientImpl)
+`, eventClient, "", e.ReplyName(d), eventClientImpl, d.Name(), e.Name())
 
 	}
 
@@ -478,25 +483,25 @@ func (g *Generator) domainTypeRawMessage(d proto.Domain, t proto.AnyType) {
 	g.Printf(`[]byte
 
 // MarshalJSON copies behavior of json.RawMessage.
-func (m %[1]s) MarshalJSON() ([]byte, error) {
-	if m == nil {
+func (%[3]s %[1]s) MarshalJSON() ([]byte, error) {
+	if %[3]s == nil {
 		return []byte("null"), nil
 	}
-	return m, nil
+	return %[3]s, nil
 }
 
 // UnmarshalJSON copies behavior of json.RawMessage.
-func (m *%[1]s) UnmarshalJSON(data []byte) error {
-	if m == nil {
+func (%[3]s *%[1]s) UnmarshalJSON(data []byte) error {
+	if %[3]s == nil {
 		return errors.New("%[2]s.%[1]s: UnmarshalJSON on nil pointer")
 	}
-	*m = append((*m)[0:0], data...)
+	*%[3]s = append((*%[3]s)[0:0], data...)
 	return nil
 }
 
 var _ json.Marshaler = (*%[1]s)(nil)
 var _ json.Unmarshaler = (*%[1]s)(nil)
-`, t.Name(d), g.pkg)
+`, t.Name(d), g.pkg, t.Recvr(d))
 }
 
 func (g *Generator) domainTypeEnum(d proto.Domain, t proto.AnyType) {
