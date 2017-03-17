@@ -1954,19 +1954,19 @@ var _ json.Unmarshaler = (*NetworkTimestamp)(nil)
 type NetworkHeaders []byte
 
 // MarshalJSON copies behavior of json.RawMessage.
-func (m NetworkHeaders) MarshalJSON() ([]byte, error) {
-	if m == nil {
+func (n NetworkHeaders) MarshalJSON() ([]byte, error) {
+	if n == nil {
 		return []byte("null"), nil
 	}
-	return m, nil
+	return n, nil
 }
 
 // UnmarshalJSON copies behavior of json.RawMessage.
-func (m *NetworkHeaders) UnmarshalJSON(data []byte) error {
-	if m == nil {
+func (n *NetworkHeaders) UnmarshalJSON(data []byte) error {
+	if n == nil {
 		return errors.New("cdptype.NetworkHeaders: UnmarshalJSON on nil pointer")
 	}
-	*m = append((*m)[0:0], data...)
+	*n = append((*n)[0:0], data...)
 	return nil
 }
 
@@ -3391,19 +3391,19 @@ type TargetRemoteLocation struct {
 type TracingMemoryDumpConfig []byte
 
 // MarshalJSON copies behavior of json.RawMessage.
-func (m TracingMemoryDumpConfig) MarshalJSON() ([]byte, error) {
-	if m == nil {
+func (t TracingMemoryDumpConfig) MarshalJSON() ([]byte, error) {
+	if t == nil {
 		return []byte("null"), nil
 	}
-	return m, nil
+	return t, nil
 }
 
 // UnmarshalJSON copies behavior of json.RawMessage.
-func (m *TracingMemoryDumpConfig) UnmarshalJSON(data []byte) error {
-	if m == nil {
+func (t *TracingMemoryDumpConfig) UnmarshalJSON(data []byte) error {
+	if t == nil {
 		return errors.New("cdptype.TracingMemoryDumpConfig: UnmarshalJSON on nil pointer")
 	}
-	*m = append((*m)[0:0], data...)
+	*t = append((*t)[0:0], data...)
 	return nil
 }
 
