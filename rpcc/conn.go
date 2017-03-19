@@ -101,14 +101,14 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	go c.recv(c.notify, recvDone)
 	go func() {
 		select {
-		case <-ctx.Done():
-		case <-recvDone:
+		case <-c.ctx.Done():
+		case err := <-recvDone:
 			// When we receive Inspector.detached the remote will close
 			// the connection afterwards and recvDone will return. Maybe
 			// we could give the user time to react to the event before
 			// closing?
 			// TODO: Do we want to close here, like this?
-			c.Close()
+			c.close(err)
 		}
 	}()
 
@@ -135,10 +135,13 @@ type Conn struct {
 
 	dialOpts dialOptions
 	conn     net.Conn
-	codec    codec
+	closed   bool
+
+	// Codec encodes and decodes JSON onto conn. There is only one
+	// active decoder (recv) and encoder (guaranteed via reqMu).
+	codec codec
 
 	mu      sync.Mutex // Protects following.
-	closed  bool
 	reqSeq  uint64
 	pending map[uint64]*rpcCall
 
@@ -158,26 +161,15 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 	for {
 		resp.reset()
 		if err = c.codec.Decode(&resp); err != nil {
-			// Notify pending calls.
-			c.mu.Lock()
-			if c.closed {
-				err = ErrConnClosing
-			}
-			for id, call := range c.pending {
-				delete(c.pending, id)
-				call.done(err)
-			}
-			c.mu.Unlock()
 			done <- err
 			return
 		}
 
+		// Check if this is an RPC notification from the server.
 		if resp.Method != "" {
-			// Response contained a method, this means we received a request
-			// from the server. This is a simplistic approach since we only
-			// need to support notifications. If this was a RPC request from
-			// the server, the ID field would be included and the server would
-			// expect a response.
+			// Method represents the event that was triggered over the
+			// Chrome Debugging Protocol. We do not expect to receive
+			// RPC requests, if this was one, the ID field would be set.
 			notify(resp.Method, resp.Params)
 			continue
 		}
@@ -189,7 +181,8 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 
 		switch {
 		case call == nil:
-			// Request was sent, but returned an error.
+			// No pending call, this could mean there was an error during
+			// send or the server sent an unexpected response.
 			if enableDebug {
 				log.Println("rpcc: no pending call: " + resp.String())
 			}
@@ -207,40 +200,46 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 	}
 }
 
-func (c *Conn) send(call *rpcCall) {
+// send returns after the call has successfully been dispatched over
+// the RPC connection.
+func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 	c.mu.Lock()
-	if c.closed {
-		c.mu.Unlock()
-		call.done(ErrConnClosing)
-		return
-	}
 	c.reqSeq++
 	reqID := c.reqSeq
 	c.pending[reqID] = call
 	c.mu.Unlock()
 
-	c.reqMu.Lock()
-	c.req.ID = reqID
-	c.req.Method = call.Method
-	c.req.Params = call.Args
-	if err := c.codec.Encode(&c.req); err != nil {
+	done := make(chan error, 1)
+	go func() {
+		c.reqMu.Lock()
+		c.req.ID = reqID
+		c.req.Method = call.Method
+		c.req.Params = call.Args
+
+		err := c.codec.Encode(&c.req)
+
 		c.req.Params = nil
 		c.reqMu.Unlock()
+		done <- err
+	}()
 
+	select {
+	case <-c.ctx.Done():
+		err = ErrConnClosing
+	case <-ctx.Done():
+		err = ctx.Err()
+	case err = <-done:
+	}
+
+	if err != nil {
 		// Clean up after error.
 		c.mu.Lock()
-		call := c.pending[reqID]
 		delete(c.pending, reqID)
 		c.mu.Unlock()
-
-		if call != nil {
-			// Call was not handled by recv.
-			call.done(err)
-		}
-	} else {
-		c.req.Params = nil
-		c.reqMu.Unlock()
+		return err
 	}
+
+	return nil
 }
 
 // notify handles RPC notifications and sends them
@@ -276,26 +275,43 @@ func (c *Conn) listen(method string, ch chan<- []byte) (func(), error) {
 }
 
 // Close closes the connection.
-func (c *Conn) Close() (err error) {
+func (c *Conn) close(err error) error {
+	c.cancel()
+
 	c.mu.Lock()
-	closed := c.closed
-	c.closed = true
-	c.mu.Unlock()
-	if closed {
+	if c.closed {
+		c.mu.Unlock()
 		return ErrConnClosing
 	}
-	c.cancel()
+	c.closed = true
+	if err == nil {
+		err = ErrConnClosing
+	}
+	for id, call := range c.pending {
+		delete(c.pending, id)
+		call.done(err)
+	}
+	c.mu.Unlock()
+
+	// Conn could be nil if DialContext did not complete.
+	if c.conn != nil {
+		err = c.conn.Close()
+	}
 
 	c.streamMu.Lock()
 	streams := c.streams
 	c.streams = nil
 	c.streamMu.Unlock()
-	_ = streams
-
-	if c.conn != nil {
-		err = c.conn.Close()
+	for _, s := range streams {
+		_ = s
 	}
+
 	return err
+}
+
+// Close closes the connection.
+func (c *Conn) Close() error {
+	return c.close(nil)
 }
 
 // Debugging, enabled in tests.

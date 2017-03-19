@@ -29,14 +29,16 @@ func Invoke(ctx context.Context, method string, args, reply interface{}, conn *C
 		Reply:  reply,
 		Error:  make(chan error, 1), // Do not block.
 	}
-	go conn.send(call)
+
+	err := conn.send(ctx, call)
+	if err != nil {
+		return err
+	}
 
 	select {
-	case <-conn.ctx.Done():
-		return ErrConnClosing
 	case <-ctx.Done():
 		return ctx.Err()
-	case err := <-call.Error:
+	case err = <-call.Error:
 		return err
 	}
 }

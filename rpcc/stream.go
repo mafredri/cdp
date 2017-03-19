@@ -91,8 +91,8 @@ func (s *streamClient) Close() error {
 	s.setErr(errors.New("rpcc: stream is closed"))
 	s.close()
 
-	// If channel is left open, we could leak
-	// goroutines in streamService.send.
+	// At this point the channel has been removed from
+	// the stream service, and is safe to close.
 	close(s.ch)
 
 	return nil

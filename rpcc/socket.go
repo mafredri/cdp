@@ -3,7 +3,6 @@ package rpcc
 import (
 	"io"
 	"net"
-	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -24,7 +23,6 @@ type websocketConn interface {
 type wsNetConn struct {
 	conn websocketConn
 	r    io.Reader
-	mu   sync.Mutex // Protects Write.
 }
 
 var (
@@ -66,11 +64,8 @@ func (cw *wsNetConn) Read(p []byte) (n int, err error) {
 }
 
 // Write requests the NextWriter for the WebSocket and writes the
-// message. Implements a thread-safe io.Writer as part of net.Conn.
+// message. Implements io.Writer as part of net.Conn.
 func (cw *wsNetConn) Write(p []byte) (n int, err error) {
-	cw.mu.Lock()
-	defer cw.mu.Unlock()
-
 	w, err := cw.conn.NextWriter(websocket.TextMessage)
 	if err != nil {
 		return 0, err

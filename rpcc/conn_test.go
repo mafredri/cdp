@@ -25,7 +25,7 @@ func (ts *testServer) Close() error {
 	return ts.conn.Close()
 }
 
-func newTestServer(t *testing.T, respond func(*websocket.Conn, *rpcRequest) error) *testServer {
+func newTestServer(t testing.TB, respond func(*websocket.Conn, *rpcRequest) error) *testServer {
 	// Timeouts to prevent tests from running forever.
 	timeout := 5 * time.Second
 
@@ -42,19 +42,22 @@ func newTestServer(t *testing.T, respond func(*websocket.Conn, *rpcRequest) erro
 			t.Fatal(err)
 		}
 		ts.wsConn = conn
+
+		conn.SetReadDeadline(time.Now().Add(timeout))
+		conn.SetWriteDeadline(time.Now().Add(timeout))
+
 		close(setupDone)
 		defer conn.Close()
 
 		for {
-			conn.SetReadDeadline(time.Now().Add(timeout))
-			conn.SetWriteDeadline(time.Now().Add(timeout))
-
 			var req rpcRequest
 			if err := conn.ReadJSON(&req); err != nil {
 				break
 			}
-			if err := respond(conn, &req); err != nil {
-				break
+			if respond != nil {
+				if err := respond(conn, &req); err != nil {
+					break
+				}
 			}
 		}
 	}))
@@ -121,6 +124,41 @@ func TestConn_InvokeError(t *testing.T) {
 		}
 	default:
 		t.Errorf("Invoke: want *rpcError, got %#v", err)
+	}
+}
+
+func TestConn_InvokeRemoteDisconnected(t *testing.T) {
+	srv := newTestServer(t, nil)
+	defer srv.Close()
+
+	srv.wsConn.Close()
+	err := Invoke(nil, "test.Hello", nil, nil, srv.conn)
+	if err == nil {
+		t.Error("Invoke error: got nil, want error")
+	}
+}
+
+func TestConn_InvokeConnectionClosed(t *testing.T) {
+	srv := newTestServer(t, nil)
+	defer srv.Close()
+
+	srv.conn.Close()
+	err := Invoke(nil, "test.Hello", nil, nil, srv.conn)
+	if err != ErrConnClosing {
+		t.Errorf("Invoke error: got %v, want ErrConnClosing", err)
+	}
+}
+
+func TestConn_InvokeDeadlineExceeded(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 0)
+	defer cancel()
+
+	srv := newTestServer(t, nil)
+	defer srv.Close()
+
+	err := Invoke(ctx, "test.Hello", nil, nil, srv.conn)
+	if err != context.DeadlineExceeded {
+		t.Errorf("Invoke error: got %v, want DeadlineExceeded", err)
 	}
 }
 
@@ -202,18 +240,6 @@ func TestConn_Notify(t *testing.T) {
 	s.Close()
 	if err = s.RecvMsg(nil); err == nil {
 		t.Error("test.Notify read after closed: want error, got nil")
-	}
-}
-
-func TestConn_RemoteDisconnected(t *testing.T) {
-	srv := newTestServer(t, nil)
-	defer srv.Close()
-
-	srv.wsConn.Close()
-	err := Invoke(nil, "test.Hello", nil, nil, srv.conn)
-	wsErr, ok := err.(*websocket.CloseError)
-	if !(ok && wsErr.Code == websocket.CloseAbnormalClosure) && err != ErrConnClosing {
-		t.Errorf("Invoke error: got %v, want websocket.CloseError or ErrConnClosing", err)
 	}
 }
 
