@@ -7,6 +7,49 @@ import (
 	"sync"
 )
 
+var (
+	// ErrStreamClosing indicates that
+	ErrStreamClosing = errors.New("rpcc: stream is closing")
+)
+
+type messageBuffer struct {
+	ch    chan []byte
+	mu    sync.Mutex
+	queue [][]byte
+}
+
+func (b *messageBuffer) store(m []byte) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	if len(b.ch) == 0 {
+		select {
+		case b.ch <- m:
+			return
+		default:
+		}
+	}
+	b.queue = append(b.queue, m)
+}
+
+func (b *messageBuffer) load() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	if len(b.queue) > 0 {
+		select {
+		case b.ch <- b.queue[0]:
+			// Pop from queue and ensure references are freed.
+			copied := copy(b.queue, b.queue[1:])
+			b.queue[copied] = nil
+			b.queue = b.queue[:copied]
+		default:
+		}
+	}
+}
+
+func (b *messageBuffer) get() <-chan []byte {
+	return b.ch
+}
+
 // Stream represents a stream of notifications for a certain method.
 type Stream interface {
 	RecvMsg(m interface{}) error
@@ -20,128 +63,143 @@ func NewStream(ctx context.Context, method string, conn *Conn) (Stream, error) {
 		ctx = context.Background()
 	}
 
-	s := &streamClient{
-		ch: make(chan []byte, 1),
-	}
+	s := &streamClient{userCtx: ctx, done: make(chan struct{})}
+	s.msgBuf.ch = make(chan []byte, 1)
+	s.ctx, s.cancel = context.WithCancel(context.Background())
+
 	var err error
-	s.close, err = conn.listen(method, s.ch)
+	s.remove, err = conn.listen(method, s)
 	if err != nil {
 		return nil, err
 	}
 
 	go func() {
-		var err error
 		select {
+		case <-s.ctx.Done():
 		case <-conn.ctx.Done():
-			err = ErrConnClosing
+			s.close(ErrConnClosing)
 		case <-ctx.Done():
-			err = ctx.Err()
+			s.close(ctx.Err())
 		}
-		s.setErr(err)
-		s.Close()
 	}()
 
 	return s, nil
 }
 
 type streamClient struct {
-	ch chan []byte
+	userCtx context.Context
+	ctx     context.Context
+	cancel  context.CancelFunc
+
+	// msgBuf stores all incoming messages
+	// until they are ready to be received.
+	msgBuf messageBuffer
 
 	mu     sync.Mutex // Protects following.
-	close  func()
-	closed bool
-	err    error
+	remove func()     // Unsubscribes from messages.
+
+	done chan struct{} // Protects err.
+	err  error
 }
 
-func (s *streamClient) RecvMsg(m interface{}) error {
-	s.mu.Lock()
-	err := s.err
-	s.mu.Unlock()
-	if err != nil {
-		return err
-	}
+func (s *streamClient) RecvMsg(m interface{}) (err error) {
+	var data []byte
 
 	select {
-	case data, ok := <-s.ch:
-		// Stream errors are fatal, no messages will be
-		// processed once an error is encountered.
-		s.mu.Lock()
-		err = s.err
-		s.mu.Unlock()
-		if err != nil {
-			return err
+	case <-s.ctx.Done():
+		// Give precedence for user cancellation.
+		select {
+		case <-s.userCtx.Done():
+			return s.userCtx.Err()
+		default:
 		}
 
-		if !ok {
-			return errors.New("rpcc: empty response on stream channel")
+		// Send all messages before returning error.
+		select {
+		case data = <-s.msgBuf.get():
+		default:
+			<-s.done
+			return s.err
 		}
-		return json.Unmarshal(data, m)
+	case <-s.userCtx.Done():
+		return s.userCtx.Err()
+	case data = <-s.msgBuf.get():
+		// Give precedence for user cancellation.
+		select {
+		case <-s.userCtx.Done():
+			return s.userCtx.Err()
+		default:
+		}
 	}
+
+	// Preload the next message.
+	s.msgBuf.load()
+
+	return json.Unmarshal(data, m)
 }
 
 // Close closes the stream client.
-func (s *streamClient) Close() error {
+func (s *streamClient) close(err error) error {
 	s.mu.Lock()
-	closed := s.closed
-	s.closed = true
+	remove := s.remove
+	s.remove = nil
 	s.mu.Unlock()
-	if closed {
-		return errors.New("rpcc: stream already closed")
-	}
-	s.setErr(errors.New("rpcc: stream is closed"))
-	s.close()
 
-	// At this point the channel has been removed from
-	// the stream service, and is safe to close.
-	close(s.ch)
+	if remove == nil {
+		return errors.New("rpcc: stream is already closed")
+	}
+
+	if err == nil {
+		err = ErrStreamClosing
+	}
+
+	// Unsubscribe first to prevent incoming messages.
+	remove()
+	s.cancel()
+	s.err = err
+	close(s.done)
 
 	return nil
 }
 
-// setErr only sets the stream error once.
-func (s *streamClient) setErr(err error) {
-	s.mu.Lock()
-	if s.err == nil {
-		s.err = err
+// Close closes the stream client.
+func (s *streamClient) Close() error {
+	return s.close(nil)
+}
+
+// streamClients handles multiple instances of streamClient and
+// enables sending of the same message to multiple clients.
+type streamClients struct {
+	mu      sync.Mutex
+	seq     uint64
+	clients map[uint64]*streamClient
+}
+
+func newStreamService() *streamClients {
+	return &streamClients{
+		clients: make(map[uint64]*streamClient),
 	}
-	s.mu.Unlock()
 }
 
-// streamService manages stream subscribers, the service enables
-// registering multiple subscribers to a CDP event.
-type streamService struct {
-	mu    sync.RWMutex
-	seq   uint64
-	chans map[uint64]chan<- []byte
-}
-
-func newStreamService() *streamService {
-	return &streamService{chans: make(map[uint64]chan<- []byte)}
-}
-
-func (s *streamService) add(ch chan<- []byte) (seq uint64) {
+func (s *streamClients) add(client *streamClient) (seq uint64) {
 	s.mu.Lock()
 	seq = s.seq
 	s.seq++
-	s.chans[seq] = ch
+	s.clients[seq] = client
 	s.mu.Unlock()
 	return seq
 }
 
-func (s *streamService) remove(seq uint64) {
+func (s *streamClients) remove(seq uint64) {
 	s.mu.Lock()
-	delete(s.chans, seq)
+	delete(s.clients, seq)
 	s.mu.Unlock()
 }
 
-// send is called in jsonrpc2 and transmits
-// on all active channels for the stream.
-func (s *streamService) send(args []byte) {
-	s.mu.RLock()
-	for _, ch := range s.chans {
-		// We cannot block here since the user decides
-		// when stream messages are received.
-		go func(ch chan<- []byte) { ch <- args }(ch)
+func (s *streamClients) send(args []byte) {
+	s.mu.Lock()
+	for _, client := range s.clients {
+		client.msgBuf.store(args)
 	}
-	s.mu.RUnlock()
+	s.mu.Unlock()
 }

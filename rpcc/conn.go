@@ -51,7 +51,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 
 	c := &Conn{
 		pending: make(map[uint64]*rpcCall),
-		streams: make(map[string]*streamService),
+		streams: make(map[string]*streamClients),
 	}
 	c.ctx, c.cancel = context.WithCancel(context.Background())
 
@@ -149,7 +149,7 @@ type Conn struct {
 	req   rpcRequest
 
 	streamMu sync.Mutex // Protects following.
-	streams  map[string]*streamService
+	streams  map[string]*streamClients
 }
 
 type rpcResponse struct {
@@ -256,6 +256,15 @@ type rpcRequest struct {
 // send returns after the call has successfully been dispatched over
 // the RPC connection.
 func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
+	defer func() {
+		// Give precedence for user cancellation.
+		select {
+		case <-ctx.Done():
+			err = ctx.Err()
+		default:
+		}
+	}()
+
 	c.mu.Lock()
 	c.reqSeq++
 	reqID := c.reqSeq
@@ -276,6 +285,7 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 		done <- err
 	}()
 
+	// Abort on user or connection cancellation.
 	select {
 	case <-c.ctx.Done():
 		err = ErrConnClosing
@@ -285,7 +295,8 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 	}
 
 	if err != nil {
-		// Clean up after error.
+		// Remove reference on error, avoid
+		// unnecessary work in recv.
 		c.mu.Lock()
 		delete(c.pending, reqID)
 		c.mu.Unlock()
@@ -299,17 +310,17 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 // to the appropriate stream listeners.
 func (c *Conn) notify(method string, data []byte) {
 	c.streamMu.Lock()
-	s := c.streams[method]
-	c.streamMu.Unlock()
-	if s != nil {
-		s.send(data)
+	stream := c.streams[method]
+	if stream != nil {
+		stream.send(data)
 	}
+	c.streamMu.Unlock()
 }
 
-// listen registers a new stream listener (chan) for the RPC notificaiton
+// listen registers a new stream listener (chan) for the RPC notification
 // method. Returns a function for removing the listener. Error if the
 // connection is closed.
-func (c *Conn) listen(method string, ch chan<- []byte) (func(), error) {
+func (c *Conn) listen(method string, client *streamClient) (func(), error) {
 	c.streamMu.Lock()
 	defer c.streamMu.Unlock()
 
@@ -317,18 +328,22 @@ func (c *Conn) listen(method string, ch chan<- []byte) (func(), error) {
 		return nil, ErrConnClosing
 	}
 
-	service, ok := c.streams[method]
+	stream, ok := c.streams[method]
 	if !ok {
-		service = newStreamService()
-		c.streams[method] = service
+		stream = newStreamService()
+		c.streams[method] = stream
 	}
-	seq := service.add(ch)
+	seq := stream.add(client)
 
-	return func() { service.remove(seq) }, nil
+	return func() { stream.remove(seq) }, nil
 }
 
 // Close closes the connection.
 func (c *Conn) close(err error) error {
+	c.streamMu.Lock()
+	c.streams = nil
+	c.streamMu.Unlock()
+
 	c.cancel()
 
 	c.mu.Lock()
@@ -349,14 +364,6 @@ func (c *Conn) close(err error) error {
 	// Conn can be nil if DialContext did not complete.
 	if c.conn != nil {
 		err = c.conn.Close()
-	}
-
-	c.streamMu.Lock()
-	streams := c.streams
-	c.streams = nil
-	c.streamMu.Unlock()
-	for _, s := range streams {
-		_ = s
 	}
 
 	return err

@@ -2,6 +2,7 @@ package rpcc
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -240,6 +241,47 @@ func TestConn_Notify(t *testing.T) {
 	s.Close()
 	if err = s.RecvMsg(nil); err == nil {
 		t.Error("test.Notify read after closed: want error, got nil")
+	}
+}
+
+func TestConn_StreamRecv(t *testing.T) {
+	srv := newTestServer(t, nil)
+	defer srv.Close()
+
+	s, err := NewStream(nil, "test.Stream", srv.conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s.Close()
+
+	messages := []rpcResponse{
+		{Method: "test.Stream", Params: []byte(`"first"`)},
+		{Method: "test.Stream", Params: []byte(`"second"`)},
+		{Method: "test.Stream", Params: []byte(`"third"`)},
+	}
+
+	for _, m := range messages {
+		if err = srv.wsConn.WriteJSON(&m); err != nil {
+			t.Fatal(err)
+		}
+	}
+	// Allow messages to propagate and trigger buffering
+	// (multiple messages before Recv).
+	// TODO: Remove the reliance on sleep here.
+	time.Sleep(10 * time.Millisecond)
+
+	for _, m := range messages {
+		var want string
+		if err = json.Unmarshal(m.Params, &want); err != nil {
+			t.Error(err)
+		}
+		var reply string
+		if err = s.RecvMsg(&reply); err != nil {
+			t.Error(err)
+		}
+		if reply != want {
+			t.Errorf("RecvMsg: got %v, want %v", reply, want)
+		}
 	}
 }
 
