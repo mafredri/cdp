@@ -9,7 +9,7 @@ import (
 
 var (
 	// ErrStreamClosing indicates that
-	ErrStreamClosing = errors.New("rpcc: stream is closing")
+	ErrStreamClosing = errors.New("rpcc: the stream is closing")
 )
 
 type messageBuffer struct {
@@ -151,7 +151,7 @@ func (s *streamClient) close(err error) error {
 	s.mu.Unlock()
 
 	if remove == nil {
-		return errors.New("rpcc: stream is already closed")
+		return errors.New("rpcc: the stream is already closed")
 	}
 
 	if err == nil {
