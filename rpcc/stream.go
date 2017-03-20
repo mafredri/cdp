@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	// ErrStreamClosing indicates that
+	// ErrStreamClosing indicates that the operation is illegal because
+	// the stream is closing and there are no pending messages.
 	ErrStreamClosing = errors.New("rpcc: the stream is closing")
 )
 
@@ -52,11 +53,17 @@ func (b *messageBuffer) get() <-chan []byte {
 
 // Stream represents a stream of notifications for a certain method.
 type Stream interface {
+	// RecvMsg unmarshals pending messages onto m. Blocks until the
+	// next message is received, context is cancelled or stream is
+	// closed.
 	RecvMsg(m interface{}) error
+	// Close closes the stream and no new messages will be received.
+	// RecvMsg will return ErrStreamClosing once all pending messages
+	// have been received.
 	Close() error
 }
 
-// NewStream creates a new stream that listens to method notifications from the
+// NewStream creates a new stream that listens to notifications from the
 // RPC server. This function is called by generated code.
 func NewStream(ctx context.Context, method string, conn *Conn) (Stream, error) {
 	if ctx == nil {
