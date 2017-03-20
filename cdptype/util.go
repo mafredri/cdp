@@ -86,15 +86,18 @@ func (r RuntimeObjectPreview) String() string {
 			}
 			b.WriteByte(']')
 			return b.String()
-		case "date", "regexp":
+		case "date", "map", "regexp", "set", "typedarray":
 			stype = ""
-		case "map":
-			stype = desc
-			desc = ""
 		default:
 			if val, ok := primitiveValue(r.Properties); ok {
 				fmt.Fprintf(&b, "%s(%s)", desc, val)
 				return b.String()
+			}
+			if desc == "Object" {
+				if len(r.Properties) == 0 {
+					return "{}"
+				}
+				desc = ""
 			}
 		}
 	case "string":
