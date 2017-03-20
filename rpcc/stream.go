@@ -105,13 +105,22 @@ type streamClient struct {
 func (s *streamClient) RecvMsg(m interface{}) (err error) {
 	var data []byte
 
-	select {
-	case <-s.ctx.Done():
-		// Give precedence for user cancellation.
+	userCancelled := func() bool {
 		select {
 		case <-s.userCtx.Done():
-			return s.userCtx.Err()
+			return true
 		default:
+			return false
+		}
+	}
+
+	select {
+	case <-s.userCtx.Done():
+		return s.userCtx.Err()
+	case <-s.ctx.Done():
+		// Give precedence for user cancellation.
+		if userCancelled() {
+			return s.userCtx.Err()
 		}
 
 		// Send all messages before returning error.
@@ -121,14 +130,10 @@ func (s *streamClient) RecvMsg(m interface{}) (err error) {
 			<-s.done
 			return s.err
 		}
-	case <-s.userCtx.Done():
-		return s.userCtx.Err()
 	case data = <-s.msgBuf.get():
 		// Give precedence for user cancellation.
-		select {
-		case <-s.userCtx.Done():
+		if userCancelled() {
 			return s.userCtx.Err()
-		default:
 		}
 	}
 

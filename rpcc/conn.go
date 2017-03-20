@@ -340,6 +340,7 @@ func (c *Conn) listen(method string, client *streamClient) (func(), error) {
 
 // Close closes the connection.
 func (c *Conn) close(err error) error {
+	// Stop sending on all streams.
 	c.streamMu.Lock()
 	c.streams = nil
 	c.streamMu.Unlock()
