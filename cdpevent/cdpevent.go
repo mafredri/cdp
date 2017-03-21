@@ -399,6 +399,7 @@ type DebuggerScriptParsedReply struct {
 	HasSourceURL            *bool                             `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
 	IsModule                *bool                             `json:"isModule,omitempty"`                // True, if this script is ES6 module.
 	Length                  *int                              `json:"length,omitempty"`                  // This script length.
+	StackTrace              *cdptype.RuntimeStackTrace        `json:"stackTrace,omitempty"`              // JavaScript top stack frame of where the script parsed event was triggered if available.
 }
 
 // DebuggerScriptFailedToParseClient receives ScriptFailedToParse events.
@@ -422,6 +423,7 @@ type DebuggerScriptFailedToParseReply struct {
 	HasSourceURL            *bool                             `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
 	IsModule                *bool                             `json:"isModule,omitempty"`                // True, if this script is ES6 module.
 	Length                  *int                              `json:"length,omitempty"`                  // This script length.
+	StackTrace              *cdptype.RuntimeStackTrace        `json:"stackTrace,omitempty"`              // JavaScript top stack frame of where the script parsed event was triggered if available.
 }
 
 // DebuggerBreakpointResolvedClient receives BreakpointResolved events.

@@ -2353,8 +2353,9 @@ func (a *PageSetTouchEmulationEnabledArgs) SetConfiguration(configuration string
 
 // PageCaptureScreenshotArgs contains the arguments for pageCaptureScreenshot.
 type PageCaptureScreenshotArgs struct {
-	Format  *string `json:"format,omitempty"`  // Image compression format (defaults to png).
-	Quality *int    `json:"quality,omitempty"` // Compression quality from range [0..100] (jpeg only).
+	Format      *string `json:"format,omitempty"`      // Image compression format (defaults to png).
+	Quality     *int    `json:"quality,omitempty"`     // Compression quality from range [0..100] (jpeg only).
+	FromSurface *bool   `json:"fromSurface,omitempty"` // Capture the screenshot from the surface, rather than the view. Defaults to false.
 }
 
 // SetFormat sets the Format optional argument. Image compression format (defaults to png).
@@ -2366,6 +2367,12 @@ func (a *PageCaptureScreenshotArgs) SetFormat(format string) *PageCaptureScreens
 // SetQuality sets the Quality optional argument. Compression quality from range [0..100] (jpeg only).
 func (a *PageCaptureScreenshotArgs) SetQuality(quality int) *PageCaptureScreenshotArgs {
 	a.Quality = &quality
+	return a
+}
+
+// SetFromSurface sets the FromSurface optional argument. Capture the screenshot from the surface, rather than the view. Defaults to false.
+func (a *PageCaptureScreenshotArgs) SetFromSurface(fromSurface bool) *PageCaptureScreenshotArgs {
+	a.FromSurface = &fromSurface
 	return a
 }
 
