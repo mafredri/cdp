@@ -12,6 +12,7 @@ null
 Object
 Object
 Object
+Object
 Array(0)
 Array(4)
 1257894000000
@@ -32,6 +33,8 @@ Promise
 Promise
 Uint8Array(2)
 Int8Array(0)
+function () {}
+() => {}
 "foo"
 String("bar")
 42
@@ -46,6 +49,7 @@ null
 Object {}
 Object {:^): "^_^", ping: "pong", t: -10}
 Object {a: 1}
+Object {a: true, b: false, c: Object, d: Array(0), e: Tue Mar 21 2017 13:29:31 GMT+0200 (EET), ...}
 Array(0) []
 Array(4) [1, 2.333, 666, Object]
 1257894000000
@@ -66,3 +70,5 @@ Promise {[[PromiseStatus]]: "pending", [[PromiseValue]]: undefined}
 Promise {[[PromiseStatus]]: "resolved", [[PromiseValue]]: "'ello"}
 Uint8Array(2) [1, 0]
 Int8Array(0) []
+function () {}
+() => {}

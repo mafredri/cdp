@@ -5,6 +5,8 @@
 </head>
 <body>
     <script>
+        const epoch = 1257894000 * 1000;
+
         console.log("foo");
         console.log(new String("bar"));
 
@@ -24,12 +26,13 @@
         console.log({});
         console.log({':^)': '^_^', ping: 'pong', t: -10});
         console.log(new Object({a: 1}));
+        console.log(new Object({a: true, b: false, c: {}, d: [], e: new Date(epoch), f: function() {}}));
 
         console.log([]);
         console.log([1, 2.333, 666, {}]);
 
-        console.log((new Date(1257894000 * 1000)).valueOf());
-        console.log(new Date(1257894000 * 1000));
+        console.log((new Date(epoch)).valueOf());
+        console.log(new Date(epoch));
 
         console.log((new RegExp('/.*/', 'g')).valueOf());
         console.log(new RegExp('/$^/'));
@@ -54,6 +57,9 @@
 
         console.log(new Uint8Array([1, 256]));
         console.log(new Int8Array());
+
+        console.log(function() {});
+        console.log(() => {});
     </script>
 </body>
 </html>
