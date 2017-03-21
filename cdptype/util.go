@@ -61,21 +61,27 @@ func (r RuntimeRemoteObject) String() string {
 
 // String returns a human readable string of the object preview.
 func (r RuntimeObjectPreview) String() string {
-	var stype, desc string
-	if r.Subtype != nil {
-		stype = *r.Subtype
-	}
+	var desc string
 	if r.Description != nil {
 		desc = *r.Description
 	}
 
 	var b bytes.Buffer
+
 	switch r.Type {
 	case "object":
+		var stype string
+		if r.Subtype != nil {
+			stype = *r.Subtype
+		}
 		switch stype {
 		case "null":
 			return "null"
-		case "array":
+		case "array", "typedarray":
+			if desc != "" {
+				b.WriteString(desc)
+				b.WriteByte(' ')
+			}
 			b.WriteByte('[')
 			for _, prop := range r.Properties {
 				b.WriteString(prop.string(false))
@@ -86,59 +92,40 @@ func (r RuntimeObjectPreview) String() string {
 			}
 			b.WriteByte(']')
 			return b.String()
-		case "date", "map", "regexp", "set", "typedarray":
-			stype = ""
+		case "date", "regexp":
+			return desc
 		default:
 			if val, ok := primitiveValue(r.Properties); ok {
 				fmt.Fprintf(&b, "%s(%s)", desc, val)
 				return b.String()
 			}
-			if desc == "Object" {
-				if len(r.Properties) == 0 {
-					return "{}"
-				}
-				desc = ""
-			}
 		}
+
+		b.WriteString(desc)
+		b.WriteString(" {")
+		for _, prop := range r.Properties {
+			b.WriteString(prop.String())
+			b.WriteString(", ")
+		}
+		for _, entry := range r.Entries {
+			b.WriteString(entry.String())
+			b.WriteString(", ")
+		}
+
+		if r.Overflow {
+			b.WriteString("...")
+		} else if b.Len() >= 2 && (len(r.Properties) > 0 || len(r.Entries) > 0) {
+			b.Truncate(b.Len() - 2)
+		}
+
+		b.WriteByte('}')
+		return b.String()
 	case "string":
 		fmt.Fprintf(&b, "%q", desc)
 		return b.String()
 	default:
 		return desc
 	}
-
-	typeAndDesc := stype != "" && desc != ""
-	b.WriteString(stype)
-	if typeAndDesc {
-		b.WriteByte('(')
-	}
-	b.WriteString(desc)
-	if typeAndDesc {
-		b.WriteByte(')')
-	}
-
-	if len(r.Properties) == 0 && len(r.Entries) == 0 {
-		return b.String()
-	}
-
-	b.WriteByte('{')
-	for _, prop := range r.Properties {
-		b.WriteString(prop.String())
-		b.WriteString(", ")
-	}
-	for _, entry := range r.Entries {
-		b.WriteString(entry.String())
-		b.WriteString(", ")
-	}
-
-	if r.Overflow {
-		b.WriteString("...")
-	} else if b.Len() >= 2 {
-		b.Truncate(b.Len() - 2)
-	}
-
-	b.WriteByte('}')
-	return b.String()
 }
 
 // String returns a human readable string of the property.
@@ -170,7 +157,7 @@ func (r RuntimeEntryPreview) String() string {
 	var b bytes.Buffer
 	if r.Key != nil {
 		b.WriteString(r.Key.String())
-		b.WriteString(": ")
+		b.WriteString(" => ")
 	}
 	b.WriteString(r.Value.String())
 	return b.String()

@@ -1,0 +1,68 @@
+"foo"
+String
+42
+Number
+Infinity
+-Infinity
+NaN
+true
+Boolean
+undefined
+null
+Object
+Object
+Object
+Array(0)
+Array(4)
+1490087113822
+Tue Mar 21 2017 11:05:13 GMT+0200 (EET)
+/\/.*\//g
+/\/$^\//
+Symbol(=))
+Symbol(=()
+Map(1)
+Map(0)
+Map(1)
+WeakMap
+Set(3)
+Set(0)
+Set(3)
+WeakSet
+Promise
+Promise
+Uint8Array(2)
+Int8Array(0)
+"foo"
+String("bar")
+42
+Number(9001)
+Infinity
+-Infinity
+NaN
+true
+Boolean(false)
+undefined
+null
+Object {}
+Object {:^): "^_^", ping: "pong", t: -10}
+Object {a: 1}
+Array(0) []
+Array(4) [1, 2.333, 666, Object]
+1490087113873
+Tue Mar 21 2017 11:05:13 GMT+0200 (EET)
+/\/.*\//g
+/\/$^\//
+Symbol(=))
+Symbol(=()
+Map(1) {true => false}
+Map(0) {}
+Map(1) {1337 => "hello"}
+WeakMap {}
+Set(3) {true, false, null}
+Set(0) {}
+Set(3) {1, 2, 3}
+WeakSet {}
+Promise {[[PromiseStatus]]: "pending", [[PromiseValue]]: undefined}
+Promise {[[PromiseStatus]]: "resolved", [[PromiseValue]]: "'ello"}
+Uint8Array(2) [1, 0]
+Int8Array(0) []

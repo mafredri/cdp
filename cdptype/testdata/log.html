@@ -1,0 +1,59 @@
+<DOCTYPE html>
+<html>
+<head>
+    <title>Console log</title>
+</head>
+<body>
+    <script>
+        console.log("foo");
+        console.log(new String("bar"));
+
+        console.log(42.0);
+        console.log(new Number(9001));
+
+        console.log(42 / +0); // +Infinity
+        console.log(42 / -0); // -Infinity
+        console.log(42 / 'haha'); // NaN
+
+        console.log(true);
+        console.log(new Boolean(false));
+
+        console.log(undefined);
+        console.log(null);
+
+        console.log({});
+        console.log({':^)': '^_^', ping: 'pong', t: -10});
+        console.log(new Object({a: 1}));
+
+        console.log([]);
+        console.log([1, 2.333, 666, {}]);
+
+        console.log((new Date()).valueOf());
+        console.log(new Date());
+
+        console.log((new RegExp('/.*/', 'g')).valueOf());
+        console.log(new RegExp('/$^/'));
+
+        console.log(Symbol('=)').valueOf());
+        console.log(Symbol('=('));
+
+        console.log((new Map([[true, false]])).valueOf());
+        console.log(new Map());
+        console.log(new Map([[1337, "hello"]]));
+
+        console.log(new WeakMap());
+
+        console.log((new Set([true, false, null])).valueOf());
+        console.log(new Set());
+        console.log(new Set([1, 2, 1, 3, 1]));
+
+        console.log(new WeakSet());
+
+        console.log(new Promise(() => {}));
+        console.log(Promise.resolve("'ello"));
+
+        console.log(new Uint8Array([1, 256]));
+        console.log(new Int8Array());
+    </script>
+</body>
+</html>
