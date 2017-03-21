@@ -191,8 +191,8 @@ type badEncoder struct {
 	err error
 }
 
-func (enc *badEncoder) Decode(v interface{}) error { return nil }
-func (enc *badEncoder) Encode(v interface{}) error { return enc.err }
+func (enc *badEncoder) ReadResponse(v interface{}) error { return nil }
+func (enc *badEncoder) WriteRequest(v interface{}) error { return enc.err }
 
 func TestConn_EncodeFailed(t *testing.T) {
 	enc := &badEncoder{err: errors.New("fail"), ch: make(chan struct{})}

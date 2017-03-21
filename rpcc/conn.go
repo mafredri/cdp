@@ -22,6 +22,15 @@ var (
 // DialOption represents a dial option passed to Dial.
 type DialOption func(*dialOptions)
 
+// WithCodec returns a DialOption that sets the codec responsible for
+// encoding and decoding requests and responses onto the connection.
+// This option overrides the default json codec.
+func WithCodec(f func(conn net.Conn) Codec) DialOption {
+	return func(o *dialOptions) {
+		o.codec = f
+	}
+}
+
 // WithDialer returns a DialOption that sets the dialer for the underlying
 // net.Conn. This option overrides the default WebSocket dialer.
 func WithDialer(f func(ctx context.Context, addr string) (net.Conn, error)) DialOption {
@@ -31,6 +40,7 @@ func WithDialer(f func(ctx context.Context, addr string) (net.Conn, error)) Dial
 }
 
 type dialOptions struct {
+	codec       func(net.Conn) Codec
 	dialer      func(context.Context, string) (net.Conn, error)
 	interceptor func(conn io.ReadWriteCloser) io.ReadWriteCloser
 }
@@ -92,10 +102,16 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	if err != nil {
 		return nil, err
 	}
-	c.codec = &jsonCodec{
-		Encoder: json.NewEncoder(c.conn),
-		Decoder: json.NewDecoder(c.conn),
+	newCodec := c.dialOpts.codec
+	if newCodec == nil {
+		newCodec = func(conn net.Conn) Codec {
+			return &jsonCodec{
+				enc: json.NewEncoder(conn),
+				dec: json.NewDecoder(conn),
+			}
+		}
 	}
+	c.codec = newCodec(c.conn)
 
 	recvDone := make(chan error, 1)
 	go c.recv(c.notify, recvDone)
@@ -115,18 +131,21 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	return c, nil
 }
 
-// codec is used by recv and dispatcher to
+// Codec is used by recv and dispatcher to
 // send and receive RPC communication.
-type codec interface {
-	Encode(v interface{}) error
-	Decode(v interface{}) error
+type Codec interface {
+	WriteRequest(v interface{}) error
+	ReadResponse(v interface{}) error
 }
 
 // jsonCodec implements codec.
 type jsonCodec struct {
-	*json.Encoder
-	*json.Decoder
+	enc *json.Encoder
+	dec *json.Decoder
 }
+
+func (c *jsonCodec) WriteRequest(v interface{}) error { return c.enc.Encode(v) }
+func (c *jsonCodec) ReadResponse(v interface{}) error { return c.dec.Decode(v) }
 
 // Conn represents an active RPC connection.
 type Conn struct {
@@ -139,7 +158,7 @@ type Conn struct {
 
 	// Codec encodes and decodes JSON onto conn. There is only one
 	// active decoder (recv) and encoder (guaranteed via reqMu).
-	codec codec
+	codec Codec
 
 	mu      sync.Mutex // Protects following.
 	reqSeq  uint64
@@ -207,7 +226,7 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 	var err error
 	for {
 		resp.reset()
-		if err = c.codec.Decode(&resp); err != nil {
+		if err = c.codec.ReadResponse(&resp); err != nil {
 			done <- err
 			return
 		}
@@ -278,7 +297,7 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 		c.req.Method = call.Method
 		c.req.Params = call.Args
 
-		err := c.codec.Encode(&c.req)
+		err := c.codec.WriteRequest(&c.req)
 
 		c.req.Params = nil
 		c.reqMu.Unlock()
