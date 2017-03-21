@@ -1930,7 +1930,8 @@ func (t NetworkTimestamp) MarshalJSON() ([]byte, error) {
 	if t == 0 {
 		return []byte("null"), nil
 	}
-	return json.Marshal(&t)
+	f := float64(t)
+	return json.Marshal(&f)
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -2947,7 +2948,8 @@ func (t RuntimeTimestamp) MarshalJSON() ([]byte, error) {
 	if t == 0 {
 		return []byte("null"), nil
 	}
-	return json.Marshal(&t)
+	f := float64(t)
+	return json.Marshal(&f)
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -3443,7 +3445,8 @@ func (t Timestamp) MarshalJSON() ([]byte, error) {
 	if t == 0 {
 		return []byte("null"), nil
 	}
-	return json.Marshal(&t)
+	f := float64(t)
+	return json.Marshal(&f)
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
