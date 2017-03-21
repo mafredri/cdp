@@ -46,6 +46,14 @@ func main() {
 			if err != nil {
 				return
 			}
+			// Reset fields that would cause noise in diffs.
+			ev.ExecutionContextID = 0
+			ev.Timestamp = 0
+			ev.StackTrace = nil
+			for i, arg := range ev.Args {
+				arg.ObjectID = nil
+				ev.Args[i] = arg
+			}
 			if err = json.NewEncoder(input).Encode(ev); err != nil {
 				panic(err)
 			}
