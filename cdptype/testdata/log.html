@@ -16,6 +16,7 @@
         console.log(42 / +0); // +Infinity
         console.log(42 / -0); // -Infinity
         console.log(42 / 'haha'); // NaN
+        console.log(new Number(42 / 'haha')); // Number(NaN)
 
         console.log(true);
         console.log(new Boolean(false));

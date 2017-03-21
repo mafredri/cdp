@@ -5,6 +5,7 @@ Number
 Infinity
 -Infinity
 NaN
+Number
 true
 Boolean
 undefined
@@ -42,6 +43,7 @@ Number(9001)
 Infinity
 -Infinity
 NaN
+Number(NaN)
 true
 Boolean(false)
 undefined
@@ -49,7 +51,7 @@ null
 Object {}
 Object {:^): "^_^", ping: "pong", t: -10}
 Object {a: 1}
-Object {a: true, b: false, c: Object, d: Array(0), e: Tue Mar 21 2017 13:29:31 GMT+0200 (EET), ...}
+Object {a: true, b: false, c: Object, d: Array(0), e: Wed Nov 11 2009 01:00:00 GMT+0200 (EET), ...}
 Array(0) []
 Array(4) [1, 2.333, 666, Object]
 1257894000000

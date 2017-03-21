@@ -44,16 +44,15 @@ func (r RuntimeRemoteObject) String() string {
 		switch {
 		case r.Preview != nil:
 			return r.Preview.String()
-		case r.UnserializableValue.Valid():
+		}
+	default:
+		if r.UnserializableValue.Valid() {
 			return r.UnserializableValue.String()
 		}
 	}
 
 	if len(r.Value) == 0 && r.Description != nil {
 		return *r.Description
-	}
-	if len(r.Value) == 0 {
-		return r.Type + "?"
 	}
 
 	return string(r.Value)

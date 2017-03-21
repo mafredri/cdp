@@ -5,6 +5,7 @@
 {"type":"log","args":[{"type":"number","unserializableValue":"Infinity","description":"Infinity"}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"number","unserializableValue":"-Infinity","description":"-Infinity"}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"number","unserializableValue":"NaN","description":"NaN"}],"executionContextId":0,"timestamp":null}
+{"type":"log","args":[{"type":"object","className":"Number","description":"Number"}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"boolean","value":true}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"object","className":"Boolean","description":"Boolean"}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"undefined"}],"executionContextId":0,"timestamp":null}
@@ -42,6 +43,7 @@
 {"type":"log","args":[{"type":"number","unserializableValue":"Infinity","description":"Infinity"}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"number","unserializableValue":"-Infinity","description":"-Infinity"}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"number","unserializableValue":"NaN","description":"NaN"}],"executionContextId":0,"timestamp":null}
+{"type":"log","args":[{"type":"object","className":"Number","description":"Number","preview":{"type":"object","description":"Number","overflow":false,"properties":[{"name":"[[PrimitiveValue]]","type":"number","value":"NaN"}]}}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"boolean","value":true}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"object","className":"Boolean","description":"Boolean","preview":{"type":"object","description":"Boolean","overflow":false,"properties":[{"name":"[[PrimitiveValue]]","type":"boolean","value":"false"}]}}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"undefined"}],"executionContextId":0,"timestamp":null}
@@ -49,7 +51,7 @@
 {"type":"log","args":[{"type":"object","className":"Object","description":"Object","preview":{"type":"object","description":"Object","overflow":false,"properties":[]}}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"object","className":"Object","description":"Object","preview":{"type":"object","description":"Object","overflow":false,"properties":[{"name":":^)","type":"string","value":"^_^"},{"name":"ping","type":"string","value":"pong"},{"name":"t","type":"number","value":"-10"}]}}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"object","className":"Object","description":"Object","preview":{"type":"object","description":"Object","overflow":false,"properties":[{"name":"a","type":"number","value":"1"}]}}],"executionContextId":0,"timestamp":null}
-{"type":"log","args":[{"type":"object","className":"Object","description":"Object","preview":{"type":"object","description":"Object","overflow":true,"properties":[{"name":"a","type":"boolean","value":"true"},{"name":"b","type":"boolean","value":"false"},{"name":"c","type":"object","value":"Object"},{"name":"d","type":"object","value":"Array(0)","subtype":"array"},{"name":"e","type":"object","value":"Tue Mar 21 2017 13:29:31 GMT+0200 (EET)","subtype":"date"}]}}],"executionContextId":0,"timestamp":null}
+{"type":"log","args":[{"type":"object","className":"Object","description":"Object","preview":{"type":"object","description":"Object","overflow":true,"properties":[{"name":"a","type":"boolean","value":"true"},{"name":"b","type":"boolean","value":"false"},{"name":"c","type":"object","value":"Object"},{"name":"d","type":"object","value":"Array(0)","subtype":"array"},{"name":"e","type":"object","value":"Wed Nov 11 2009 01:00:00 GMT+0200 (EET)","subtype":"date"}]}}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"object","subtype":"array","className":"Array","description":"Array(0)","preview":{"type":"object","subtype":"array","description":"Array(0)","overflow":false,"properties":[]}}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"object","subtype":"array","className":"Array","description":"Array(4)","preview":{"type":"object","subtype":"array","description":"Array(4)","overflow":false,"properties":[{"name":"0","type":"number","value":"1"},{"name":"1","type":"number","value":"2.333"},{"name":"2","type":"number","value":"666"},{"name":"3","type":"object","value":"Object"}]}}],"executionContextId":0,"timestamp":null}
 {"type":"log","args":[{"type":"number","value":1257894000000,"description":"1257894000000"}],"executionContextId":0,"timestamp":null}
