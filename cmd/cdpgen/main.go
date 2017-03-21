@@ -304,30 +304,43 @@ func (g *Generator) Domain(d proto.Domain) {
 		interfaceDef.Printf("\n\t// Command %s\n\t//\n\t// %s\n\t%s(context.Context%s) %s\n", c.Name(), c.Desc(true), c.Name(), request, reply)
 
 		// Implement command on %sDomain.
-		invokeArgs := "nil"
 		invokeReply := "nil"
 		if len(c.Parameters) > 0 {
 			request = ", args *cdpcmd." + c.ArgsName(d)
-			invokeArgs = "args"
 		}
 		if len(c.Returns) > 0 {
 			reply = fmt.Sprintf("(reply *cdpcmd.%s, err error)", c.ReplyName(d))
 		} else {
 			reply = "(err error)"
 		}
-		domDef.Printf("\nfunc (d *%sDomain) %s(ctx context.Context%s) %s {\n", strings.ToLower(d.Name()), c.Name(), request, reply)
+		domDef.Printf("\nfunc (d *%sDomain) %s(ctx context.Context%s) %s {", strings.ToLower(d.Name()), c.Name(), request, reply)
 		if len(c.Returns) > 0 {
-			domDef.Printf("\treply = new(cdpcmd.%s)\n", c.ReplyName(d))
+			domDef.Printf("\n\treply = new(cdpcmd.%s)", c.ReplyName(d))
 			invokeReply = "reply"
 		}
-		domDef.Printf(`
-	err = rpcc.Invoke(ctx, cdpcmd.%s.String(), %s, %s, d.conn)
+		if len(c.Parameters) > 0 {
+			domDef.Printf(`
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.%[1]s.String(), args, %[2]s, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.%[1]s.String(), nil, %[2]s, d.conn)
+	}
+	if err != nil {
+		err = &Error{Domain: %[3]q, Op: %[4]q, Err: err}
+	}
+	return
+}
+`, c.CmdName(d, true), invokeReply, d.Name(), c.Name())
+		} else {
+			domDef.Printf(`
+	err = rpcc.Invoke(ctx, cdpcmd.%s.String(), nil, %s, d.conn)
 	if err != nil {
 		err = &Error{Domain: %q, Op: %q, Err: err}
 	}
 	return
 }
-`, c.CmdName(d, true), invokeArgs, invokeReply, d.Name(), c.Name())
+`, c.CmdName(d, true), invokeReply, d.Name(), c.Name())
+		}
 
 		if len(c.Parameters) > 0 {
 			domDef.Printf(`
