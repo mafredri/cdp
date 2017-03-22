@@ -174,7 +174,7 @@ func (e Event) Name() string {
 	return lint.Name(strings.Title(e.NameName))
 }
 
-// Desc retuns the cleaned description.
+// Desc returns the cleaned description.
 func (e Event) Desc(lineEndComment bool) string {
 	if lineEndComment {
 		return cleanDescription(e.Description)
@@ -360,7 +360,28 @@ func cleanDescription(d string) string {
 	// <p> is only used by DOM description.
 	d = strings.Replace(d, "<p>", "\n//\n// ", -1)
 	d = strings.Replace(d, "</p>", "", -1)
-	return d
+
+	return misspell(d)
+}
+
+var (
+	misspellBadWords = "distrubutiondistrubutedregularyspecifedoccuredoverridencancelled"
+	misspellWords    = map[string]string{
+		misspellBadWords[0:12]:  "distribution",
+		misspellBadWords[12:23]: "distributed",
+		misspellBadWords[23:31]: "regularly",
+		misspellBadWords[31:39]: "specified",
+		misspellBadWords[39:46]: "occurred",
+		misspellBadWords[46:55]: "overridden",
+		misspellBadWords[55:64]: "canceled",
+	}
+)
+
+func misspell(s string) string {
+	for bad, good := range misspellWords {
+		s = strings.Replace(s, bad, good, -1)
+	}
+	return s
 }
 
 type filterFunc func(at AnyType) bool
