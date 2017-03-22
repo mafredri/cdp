@@ -326,7 +326,7 @@ func (g *Generator) Domain(d proto.Domain) {
 		err = rpcc.Invoke(ctx, cdpcmd.%[1]s.String(), nil, %[2]s, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: %[3]q, Op: %[4]q, Err: err}
+		err = &cdpError{Domain: %[3]q, Op: %[4]q, Err: err}
 	}
 	return
 }
@@ -335,7 +335,7 @@ func (g *Generator) Domain(d proto.Domain) {
 			domDef.Printf(`
 	err = rpcc.Invoke(ctx, cdpcmd.%s.String(), nil, %s, d.conn)
 	if err != nil {
-		err = &Error{Domain: %q, Op: %q, Err: err}
+		err = &cdpError{Domain: %q, Op: %q, Err: err}
 	}
 	return
 }
@@ -376,7 +376,7 @@ type %[4]s struct { rpcc.Stream }
 func (c *%[4]s) Recv() (*cdpevent.%[3]s, error) {
 	event := new(cdpevent.%[3]s)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: %[5]q, Op: "%[6]s Recv", Err: err}
+		return nil, &cdpError{Domain: %[5]q, Op: "%[6]s Recv", Err: err}
 	}
 	return event, nil
 }

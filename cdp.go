@@ -30,7 +30,7 @@ func (d *accessibilityDomain) GetPartialAXTree(ctx context.Context, args *cdpcmd
 		err = rpcc.Invoke(ctx, cdpcmd.AccessibilityGetPartialAXTree.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Accessibility", Op: "GetPartialAXTree", Err: err}
+		err = &cdpError{Domain: "Accessibility", Op: "GetPartialAXTree", Err: err}
 	}
 	return
 }
@@ -116,7 +116,7 @@ type animationDomain struct{ conn *rpcc.Conn }
 func (d *animationDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.AnimationEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Animation", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "Animation", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -124,7 +124,7 @@ func (d *animationDomain) Enable(ctx context.Context) (err error) {
 func (d *animationDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.AnimationDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Animation", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "Animation", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -133,7 +133,7 @@ func (d *animationDomain) GetPlaybackRate(ctx context.Context) (reply *cdpcmd.An
 	reply = new(cdpcmd.AnimationGetPlaybackRateReply)
 	err = rpcc.Invoke(ctx, cdpcmd.AnimationGetPlaybackRate.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Animation", Op: "GetPlaybackRate", Err: err}
+		err = &cdpError{Domain: "Animation", Op: "GetPlaybackRate", Err: err}
 	}
 	return
 }
@@ -145,7 +145,7 @@ func (d *animationDomain) SetPlaybackRate(ctx context.Context, args *cdpcmd.Anim
 		err = rpcc.Invoke(ctx, cdpcmd.AnimationSetPlaybackRate.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Animation", Op: "SetPlaybackRate", Err: err}
+		err = &cdpError{Domain: "Animation", Op: "SetPlaybackRate", Err: err}
 	}
 	return
 }
@@ -165,7 +165,7 @@ func (d *animationDomain) GetCurrentTime(ctx context.Context, args *cdpcmd.Anima
 		err = rpcc.Invoke(ctx, cdpcmd.AnimationGetCurrentTime.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Animation", Op: "GetCurrentTime", Err: err}
+		err = &cdpError{Domain: "Animation", Op: "GetCurrentTime", Err: err}
 	}
 	return
 }
@@ -184,7 +184,7 @@ func (d *animationDomain) SetPaused(ctx context.Context, args *cdpcmd.AnimationS
 		err = rpcc.Invoke(ctx, cdpcmd.AnimationSetPaused.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Animation", Op: "SetPaused", Err: err}
+		err = &cdpError{Domain: "Animation", Op: "SetPaused", Err: err}
 	}
 	return
 }
@@ -204,7 +204,7 @@ func (d *animationDomain) SetTiming(ctx context.Context, args *cdpcmd.AnimationS
 		err = rpcc.Invoke(ctx, cdpcmd.AnimationSetTiming.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Animation", Op: "SetTiming", Err: err}
+		err = &cdpError{Domain: "Animation", Op: "SetTiming", Err: err}
 	}
 	return
 }
@@ -225,7 +225,7 @@ func (d *animationDomain) SeekAnimations(ctx context.Context, args *cdpcmd.Anima
 		err = rpcc.Invoke(ctx, cdpcmd.AnimationSeekAnimations.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Animation", Op: "SeekAnimations", Err: err}
+		err = &cdpError{Domain: "Animation", Op: "SeekAnimations", Err: err}
 	}
 	return
 }
@@ -245,7 +245,7 @@ func (d *animationDomain) ReleaseAnimations(ctx context.Context, args *cdpcmd.An
 		err = rpcc.Invoke(ctx, cdpcmd.AnimationReleaseAnimations.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Animation", Op: "ReleaseAnimations", Err: err}
+		err = &cdpError{Domain: "Animation", Op: "ReleaseAnimations", Err: err}
 	}
 	return
 }
@@ -265,7 +265,7 @@ func (d *animationDomain) ResolveAnimation(ctx context.Context, args *cdpcmd.Ani
 		err = rpcc.Invoke(ctx, cdpcmd.AnimationResolveAnimation.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Animation", Op: "ResolveAnimation", Err: err}
+		err = &cdpError{Domain: "Animation", Op: "ResolveAnimation", Err: err}
 	}
 	return
 }
@@ -291,7 +291,7 @@ type animationAnimationCreatedClient struct{ rpcc.Stream }
 func (c *animationAnimationCreatedClient) Recv() (*cdpevent.AnimationCreatedReply, error) {
 	event := new(cdpevent.AnimationCreatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Animation", Op: "AnimationCreated Recv", Err: err}
+		return nil, &cdpError{Domain: "Animation", Op: "AnimationCreated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -310,7 +310,7 @@ type animationAnimationStartedClient struct{ rpcc.Stream }
 func (c *animationAnimationStartedClient) Recv() (*cdpevent.AnimationStartedReply, error) {
 	event := new(cdpevent.AnimationStartedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Animation", Op: "AnimationStarted Recv", Err: err}
+		return nil, &cdpError{Domain: "Animation", Op: "AnimationStarted Recv", Err: err}
 	}
 	return event, nil
 }
@@ -329,7 +329,7 @@ type animationAnimationCanceledClient struct{ rpcc.Stream }
 func (c *animationAnimationCanceledClient) Recv() (*cdpevent.AnimationCanceledReply, error) {
 	event := new(cdpevent.AnimationCanceledReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Animation", Op: "AnimationCanceled Recv", Err: err}
+		return nil, &cdpError{Domain: "Animation", Op: "AnimationCanceled Recv", Err: err}
 	}
 	return event, nil
 }
@@ -374,7 +374,7 @@ func (d *applicationcacheDomain) GetFramesWithManifests(ctx context.Context) (re
 	reply = new(cdpcmd.ApplicationCacheGetFramesWithManifestsReply)
 	err = rpcc.Invoke(ctx, cdpcmd.ApplicationCacheGetFramesWithManifests.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "ApplicationCache", Op: "GetFramesWithManifests", Err: err}
+		err = &cdpError{Domain: "ApplicationCache", Op: "GetFramesWithManifests", Err: err}
 	}
 	return
 }
@@ -382,7 +382,7 @@ func (d *applicationcacheDomain) GetFramesWithManifests(ctx context.Context) (re
 func (d *applicationcacheDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.ApplicationCacheEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "ApplicationCache", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "ApplicationCache", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -395,7 +395,7 @@ func (d *applicationcacheDomain) GetManifestForFrame(ctx context.Context, args *
 		err = rpcc.Invoke(ctx, cdpcmd.ApplicationCacheGetManifestForFrame.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "ApplicationCache", Op: "GetManifestForFrame", Err: err}
+		err = &cdpError{Domain: "ApplicationCache", Op: "GetManifestForFrame", Err: err}
 	}
 	return
 }
@@ -415,7 +415,7 @@ func (d *applicationcacheDomain) GetApplicationCacheForFrame(ctx context.Context
 		err = rpcc.Invoke(ctx, cdpcmd.ApplicationCacheGetApplicationCacheForFrame.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "ApplicationCache", Op: "GetApplicationCacheForFrame", Err: err}
+		err = &cdpError{Domain: "ApplicationCache", Op: "GetApplicationCacheForFrame", Err: err}
 	}
 	return
 }
@@ -441,7 +441,7 @@ type applicationcacheApplicationCacheStatusUpdatedClient struct{ rpcc.Stream }
 func (c *applicationcacheApplicationCacheStatusUpdatedClient) Recv() (*cdpevent.ApplicationCacheStatusUpdatedReply, error) {
 	event := new(cdpevent.ApplicationCacheStatusUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "ApplicationCache", Op: "ApplicationCacheStatusUpdated Recv", Err: err}
+		return nil, &cdpError{Domain: "ApplicationCache", Op: "ApplicationCacheStatusUpdated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -460,7 +460,7 @@ type applicationcacheNetworkStateUpdatedClient struct{ rpcc.Stream }
 func (c *applicationcacheNetworkStateUpdatedClient) Recv() (*cdpevent.ApplicationCacheNetworkStateUpdatedReply, error) {
 	event := new(cdpevent.ApplicationCacheNetworkStateUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "ApplicationCache", Op: "NetworkStateUpdated Recv", Err: err}
+		return nil, &cdpError{Domain: "ApplicationCache", Op: "NetworkStateUpdated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -609,7 +609,7 @@ type cssDomain struct{ conn *rpcc.Conn }
 func (d *cssDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.CSSEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -617,7 +617,7 @@ func (d *cssDomain) Enable(ctx context.Context) (err error) {
 func (d *cssDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.CSSDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -630,7 +630,7 @@ func (d *cssDomain) GetMatchedStylesForNode(ctx context.Context, args *cdpcmd.CS
 		err = rpcc.Invoke(ctx, cdpcmd.CSSGetMatchedStylesForNode.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "GetMatchedStylesForNode", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "GetMatchedStylesForNode", Err: err}
 	}
 	return
 }
@@ -650,7 +650,7 @@ func (d *cssDomain) GetInlineStylesForNode(ctx context.Context, args *cdpcmd.CSS
 		err = rpcc.Invoke(ctx, cdpcmd.CSSGetInlineStylesForNode.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "GetInlineStylesForNode", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "GetInlineStylesForNode", Err: err}
 	}
 	return
 }
@@ -670,7 +670,7 @@ func (d *cssDomain) GetComputedStyleForNode(ctx context.Context, args *cdpcmd.CS
 		err = rpcc.Invoke(ctx, cdpcmd.CSSGetComputedStyleForNode.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "GetComputedStyleForNode", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "GetComputedStyleForNode", Err: err}
 	}
 	return
 }
@@ -690,7 +690,7 @@ func (d *cssDomain) GetPlatformFontsForNode(ctx context.Context, args *cdpcmd.CS
 		err = rpcc.Invoke(ctx, cdpcmd.CSSGetPlatformFontsForNode.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "GetPlatformFontsForNode", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "GetPlatformFontsForNode", Err: err}
 	}
 	return
 }
@@ -710,7 +710,7 @@ func (d *cssDomain) GetStyleSheetText(ctx context.Context, args *cdpcmd.CSSGetSt
 		err = rpcc.Invoke(ctx, cdpcmd.CSSGetStyleSheetText.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "GetStyleSheetText", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "GetStyleSheetText", Err: err}
 	}
 	return
 }
@@ -730,7 +730,7 @@ func (d *cssDomain) CollectClassNames(ctx context.Context, args *cdpcmd.CSSColle
 		err = rpcc.Invoke(ctx, cdpcmd.CSSCollectClassNames.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "CollectClassNames", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "CollectClassNames", Err: err}
 	}
 	return
 }
@@ -750,7 +750,7 @@ func (d *cssDomain) SetStyleSheetText(ctx context.Context, args *cdpcmd.CSSSetSt
 		err = rpcc.Invoke(ctx, cdpcmd.CSSSetStyleSheetText.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "SetStyleSheetText", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "SetStyleSheetText", Err: err}
 	}
 	return
 }
@@ -771,7 +771,7 @@ func (d *cssDomain) SetRuleSelector(ctx context.Context, args *cdpcmd.CSSSetRule
 		err = rpcc.Invoke(ctx, cdpcmd.CSSSetRuleSelector.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "SetRuleSelector", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "SetRuleSelector", Err: err}
 	}
 	return
 }
@@ -793,7 +793,7 @@ func (d *cssDomain) SetKeyframeKey(ctx context.Context, args *cdpcmd.CSSSetKeyfr
 		err = rpcc.Invoke(ctx, cdpcmd.CSSSetKeyframeKey.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "SetKeyframeKey", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "SetKeyframeKey", Err: err}
 	}
 	return
 }
@@ -815,7 +815,7 @@ func (d *cssDomain) SetStyleTexts(ctx context.Context, args *cdpcmd.CSSSetStyleT
 		err = rpcc.Invoke(ctx, cdpcmd.CSSSetStyleTexts.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "SetStyleTexts", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "SetStyleTexts", Err: err}
 	}
 	return
 }
@@ -835,7 +835,7 @@ func (d *cssDomain) SetMediaText(ctx context.Context, args *cdpcmd.CSSSetMediaTe
 		err = rpcc.Invoke(ctx, cdpcmd.CSSSetMediaText.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "SetMediaText", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "SetMediaText", Err: err}
 	}
 	return
 }
@@ -857,7 +857,7 @@ func (d *cssDomain) CreateStyleSheet(ctx context.Context, args *cdpcmd.CSSCreate
 		err = rpcc.Invoke(ctx, cdpcmd.CSSCreateStyleSheet.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "CreateStyleSheet", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "CreateStyleSheet", Err: err}
 	}
 	return
 }
@@ -877,7 +877,7 @@ func (d *cssDomain) AddRule(ctx context.Context, args *cdpcmd.CSSAddRuleArgs) (r
 		err = rpcc.Invoke(ctx, cdpcmd.CSSAddRule.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "AddRule", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "AddRule", Err: err}
 	}
 	return
 }
@@ -898,7 +898,7 @@ func (d *cssDomain) ForcePseudoState(ctx context.Context, args *cdpcmd.CSSForceP
 		err = rpcc.Invoke(ctx, cdpcmd.CSSForcePseudoState.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "ForcePseudoState", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "ForcePseudoState", Err: err}
 	}
 	return
 }
@@ -915,7 +915,7 @@ func (d *cssDomain) GetMediaQueries(ctx context.Context) (reply *cdpcmd.CSSGetMe
 	reply = new(cdpcmd.CSSGetMediaQueriesReply)
 	err = rpcc.Invoke(ctx, cdpcmd.CSSGetMediaQueries.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "GetMediaQueries", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "GetMediaQueries", Err: err}
 	}
 	return
 }
@@ -927,7 +927,7 @@ func (d *cssDomain) SetEffectivePropertyValueForNode(ctx context.Context, args *
 		err = rpcc.Invoke(ctx, cdpcmd.CSSSetEffectivePropertyValueForNode.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "SetEffectivePropertyValueForNode", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "SetEffectivePropertyValueForNode", Err: err}
 	}
 	return
 }
@@ -949,7 +949,7 @@ func (d *cssDomain) GetBackgroundColors(ctx context.Context, args *cdpcmd.CSSGet
 		err = rpcc.Invoke(ctx, cdpcmd.CSSGetBackgroundColors.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "GetBackgroundColors", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "GetBackgroundColors", Err: err}
 	}
 	return
 }
@@ -969,7 +969,7 @@ func (d *cssDomain) GetLayoutTreeAndStyles(ctx context.Context, args *cdpcmd.CSS
 		err = rpcc.Invoke(ctx, cdpcmd.CSSGetLayoutTreeAndStyles.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "GetLayoutTreeAndStyles", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "GetLayoutTreeAndStyles", Err: err}
 	}
 	return
 }
@@ -984,7 +984,7 @@ func NewCSSGetLayoutTreeAndStylesArgs(computedStyleWhitelist []string) *cdpcmd.C
 func (d *cssDomain) StartRuleUsageTracking(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.CSSStartRuleUsageTracking.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "StartRuleUsageTracking", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "StartRuleUsageTracking", Err: err}
 	}
 	return
 }
@@ -993,7 +993,7 @@ func (d *cssDomain) StopRuleUsageTracking(ctx context.Context) (reply *cdpcmd.CS
 	reply = new(cdpcmd.CSSStopRuleUsageTrackingReply)
 	err = rpcc.Invoke(ctx, cdpcmd.CSSStopRuleUsageTracking.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "CSS", Op: "StopRuleUsageTracking", Err: err}
+		err = &cdpError{Domain: "CSS", Op: "StopRuleUsageTracking", Err: err}
 	}
 	return
 }
@@ -1012,7 +1012,7 @@ type cssMediaQueryResultChangedClient struct{ rpcc.Stream }
 func (c *cssMediaQueryResultChangedClient) Recv() (*cdpevent.CSSMediaQueryResultChangedReply, error) {
 	event := new(cdpevent.CSSMediaQueryResultChangedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "CSS", Op: "MediaQueryResultChanged Recv", Err: err}
+		return nil, &cdpError{Domain: "CSS", Op: "MediaQueryResultChanged Recv", Err: err}
 	}
 	return event, nil
 }
@@ -1031,7 +1031,7 @@ type cssFontsUpdatedClient struct{ rpcc.Stream }
 func (c *cssFontsUpdatedClient) Recv() (*cdpevent.CSSFontsUpdatedReply, error) {
 	event := new(cdpevent.CSSFontsUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "CSS", Op: "FontsUpdated Recv", Err: err}
+		return nil, &cdpError{Domain: "CSS", Op: "FontsUpdated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -1050,7 +1050,7 @@ type cssStyleSheetChangedClient struct{ rpcc.Stream }
 func (c *cssStyleSheetChangedClient) Recv() (*cdpevent.CSSStyleSheetChangedReply, error) {
 	event := new(cdpevent.CSSStyleSheetChangedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "CSS", Op: "StyleSheetChanged Recv", Err: err}
+		return nil, &cdpError{Domain: "CSS", Op: "StyleSheetChanged Recv", Err: err}
 	}
 	return event, nil
 }
@@ -1069,7 +1069,7 @@ type cssStyleSheetAddedClient struct{ rpcc.Stream }
 func (c *cssStyleSheetAddedClient) Recv() (*cdpevent.CSSStyleSheetAddedReply, error) {
 	event := new(cdpevent.CSSStyleSheetAddedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "CSS", Op: "StyleSheetAdded Recv", Err: err}
+		return nil, &cdpError{Domain: "CSS", Op: "StyleSheetAdded Recv", Err: err}
 	}
 	return event, nil
 }
@@ -1088,7 +1088,7 @@ type cssStyleSheetRemovedClient struct{ rpcc.Stream }
 func (c *cssStyleSheetRemovedClient) Recv() (*cdpevent.CSSStyleSheetRemovedReply, error) {
 	event := new(cdpevent.CSSStyleSheetRemovedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "CSS", Op: "StyleSheetRemoved Recv", Err: err}
+		return nil, &cdpError{Domain: "CSS", Op: "StyleSheetRemoved Recv", Err: err}
 	}
 	return event, nil
 }
@@ -1127,7 +1127,7 @@ func (d *cachestorageDomain) RequestCacheNames(ctx context.Context, args *cdpcmd
 		err = rpcc.Invoke(ctx, cdpcmd.CacheStorageRequestCacheNames.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CacheStorage", Op: "RequestCacheNames", Err: err}
+		err = &cdpError{Domain: "CacheStorage", Op: "RequestCacheNames", Err: err}
 	}
 	return
 }
@@ -1147,7 +1147,7 @@ func (d *cachestorageDomain) RequestEntries(ctx context.Context, args *cdpcmd.Ca
 		err = rpcc.Invoke(ctx, cdpcmd.CacheStorageRequestEntries.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CacheStorage", Op: "RequestEntries", Err: err}
+		err = &cdpError{Domain: "CacheStorage", Op: "RequestEntries", Err: err}
 	}
 	return
 }
@@ -1168,7 +1168,7 @@ func (d *cachestorageDomain) DeleteCache(ctx context.Context, args *cdpcmd.Cache
 		err = rpcc.Invoke(ctx, cdpcmd.CacheStorageDeleteCache.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CacheStorage", Op: "DeleteCache", Err: err}
+		err = &cdpError{Domain: "CacheStorage", Op: "DeleteCache", Err: err}
 	}
 	return
 }
@@ -1187,7 +1187,7 @@ func (d *cachestorageDomain) DeleteEntry(ctx context.Context, args *cdpcmd.Cache
 		err = rpcc.Invoke(ctx, cdpcmd.CacheStorageDeleteEntry.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "CacheStorage", Op: "DeleteEntry", Err: err}
+		err = &cdpError{Domain: "CacheStorage", Op: "DeleteEntry", Err: err}
 	}
 	return
 }
@@ -1229,7 +1229,7 @@ type consoleDomain struct{ conn *rpcc.Conn }
 func (d *consoleDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.ConsoleEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Console", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "Console", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -1237,7 +1237,7 @@ func (d *consoleDomain) Enable(ctx context.Context) (err error) {
 func (d *consoleDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.ConsoleDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Console", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "Console", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -1245,7 +1245,7 @@ func (d *consoleDomain) Disable(ctx context.Context) (err error) {
 func (d *consoleDomain) ClearMessages(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.ConsoleClearMessages.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Console", Op: "ClearMessages", Err: err}
+		err = &cdpError{Domain: "Console", Op: "ClearMessages", Err: err}
 	}
 	return
 }
@@ -1264,7 +1264,7 @@ type consoleMessageAddedClient struct{ rpcc.Stream }
 func (c *consoleMessageAddedClient) Recv() (*cdpevent.ConsoleMessageAddedReply, error) {
 	event := new(cdpevent.ConsoleMessageAddedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Console", Op: "MessageAdded Recv", Err: err}
+		return nil, &cdpError{Domain: "Console", Op: "MessageAdded Recv", Err: err}
 	}
 	return event, nil
 }
@@ -1570,7 +1570,7 @@ type domDomain struct{ conn *rpcc.Conn }
 func (d *domDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DOMEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -1578,7 +1578,7 @@ func (d *domDomain) Enable(ctx context.Context) (err error) {
 func (d *domDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DOMDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -1591,7 +1591,7 @@ func (d *domDomain) GetDocument(ctx context.Context, args *cdpcmd.DOMGetDocument
 		err = rpcc.Invoke(ctx, cdpcmd.DOMGetDocument.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "GetDocument", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "GetDocument", Err: err}
 	}
 	return
 }
@@ -1611,7 +1611,7 @@ func (d *domDomain) GetFlattenedDocument(ctx context.Context, args *cdpcmd.DOMGe
 		err = rpcc.Invoke(ctx, cdpcmd.DOMGetFlattenedDocument.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "GetFlattenedDocument", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "GetFlattenedDocument", Err: err}
 	}
 	return
 }
@@ -1631,7 +1631,7 @@ func (d *domDomain) CollectClassNamesFromSubtree(ctx context.Context, args *cdpc
 		err = rpcc.Invoke(ctx, cdpcmd.DOMCollectClassNamesFromSubtree.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "CollectClassNamesFromSubtree", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "CollectClassNamesFromSubtree", Err: err}
 	}
 	return
 }
@@ -1650,7 +1650,7 @@ func (d *domDomain) RequestChildNodes(ctx context.Context, args *cdpcmd.DOMReque
 		err = rpcc.Invoke(ctx, cdpcmd.DOMRequestChildNodes.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "RequestChildNodes", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "RequestChildNodes", Err: err}
 	}
 	return
 }
@@ -1670,7 +1670,7 @@ func (d *domDomain) QuerySelector(ctx context.Context, args *cdpcmd.DOMQuerySele
 		err = rpcc.Invoke(ctx, cdpcmd.DOMQuerySelector.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "QuerySelector", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "QuerySelector", Err: err}
 	}
 	return
 }
@@ -1691,7 +1691,7 @@ func (d *domDomain) QuerySelectorAll(ctx context.Context, args *cdpcmd.DOMQueryS
 		err = rpcc.Invoke(ctx, cdpcmd.DOMQuerySelectorAll.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "QuerySelectorAll", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "QuerySelectorAll", Err: err}
 	}
 	return
 }
@@ -1712,7 +1712,7 @@ func (d *domDomain) SetNodeName(ctx context.Context, args *cdpcmd.DOMSetNodeName
 		err = rpcc.Invoke(ctx, cdpcmd.DOMSetNodeName.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "SetNodeName", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "SetNodeName", Err: err}
 	}
 	return
 }
@@ -1732,7 +1732,7 @@ func (d *domDomain) SetNodeValue(ctx context.Context, args *cdpcmd.DOMSetNodeVal
 		err = rpcc.Invoke(ctx, cdpcmd.DOMSetNodeValue.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "SetNodeValue", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "SetNodeValue", Err: err}
 	}
 	return
 }
@@ -1752,7 +1752,7 @@ func (d *domDomain) RemoveNode(ctx context.Context, args *cdpcmd.DOMRemoveNodeAr
 		err = rpcc.Invoke(ctx, cdpcmd.DOMRemoveNode.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "RemoveNode", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "RemoveNode", Err: err}
 	}
 	return
 }
@@ -1771,7 +1771,7 @@ func (d *domDomain) SetAttributeValue(ctx context.Context, args *cdpcmd.DOMSetAt
 		err = rpcc.Invoke(ctx, cdpcmd.DOMSetAttributeValue.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "SetAttributeValue", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "SetAttributeValue", Err: err}
 	}
 	return
 }
@@ -1792,7 +1792,7 @@ func (d *domDomain) SetAttributesAsText(ctx context.Context, args *cdpcmd.DOMSet
 		err = rpcc.Invoke(ctx, cdpcmd.DOMSetAttributesAsText.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "SetAttributesAsText", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "SetAttributesAsText", Err: err}
 	}
 	return
 }
@@ -1812,7 +1812,7 @@ func (d *domDomain) RemoveAttribute(ctx context.Context, args *cdpcmd.DOMRemoveA
 		err = rpcc.Invoke(ctx, cdpcmd.DOMRemoveAttribute.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "RemoveAttribute", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "RemoveAttribute", Err: err}
 	}
 	return
 }
@@ -1833,7 +1833,7 @@ func (d *domDomain) GetOuterHTML(ctx context.Context, args *cdpcmd.DOMGetOuterHT
 		err = rpcc.Invoke(ctx, cdpcmd.DOMGetOuterHTML.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "GetOuterHTML", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "GetOuterHTML", Err: err}
 	}
 	return
 }
@@ -1852,7 +1852,7 @@ func (d *domDomain) SetOuterHTML(ctx context.Context, args *cdpcmd.DOMSetOuterHT
 		err = rpcc.Invoke(ctx, cdpcmd.DOMSetOuterHTML.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "SetOuterHTML", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "SetOuterHTML", Err: err}
 	}
 	return
 }
@@ -1873,7 +1873,7 @@ func (d *domDomain) PerformSearch(ctx context.Context, args *cdpcmd.DOMPerformSe
 		err = rpcc.Invoke(ctx, cdpcmd.DOMPerformSearch.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "PerformSearch", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "PerformSearch", Err: err}
 	}
 	return
 }
@@ -1893,7 +1893,7 @@ func (d *domDomain) GetSearchResults(ctx context.Context, args *cdpcmd.DOMGetSea
 		err = rpcc.Invoke(ctx, cdpcmd.DOMGetSearchResults.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "GetSearchResults", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "GetSearchResults", Err: err}
 	}
 	return
 }
@@ -1914,7 +1914,7 @@ func (d *domDomain) DiscardSearchResults(ctx context.Context, args *cdpcmd.DOMDi
 		err = rpcc.Invoke(ctx, cdpcmd.DOMDiscardSearchResults.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "DiscardSearchResults", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "DiscardSearchResults", Err: err}
 	}
 	return
 }
@@ -1934,7 +1934,7 @@ func (d *domDomain) RequestNode(ctx context.Context, args *cdpcmd.DOMRequestNode
 		err = rpcc.Invoke(ctx, cdpcmd.DOMRequestNode.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "RequestNode", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "RequestNode", Err: err}
 	}
 	return
 }
@@ -1953,7 +1953,7 @@ func (d *domDomain) SetInspectMode(ctx context.Context, args *cdpcmd.DOMSetInspe
 		err = rpcc.Invoke(ctx, cdpcmd.DOMSetInspectMode.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "SetInspectMode", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "SetInspectMode", Err: err}
 	}
 	return
 }
@@ -1972,7 +1972,7 @@ func (d *domDomain) HighlightRect(ctx context.Context, args *cdpcmd.DOMHighlight
 		err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightRect.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "HighlightRect", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "HighlightRect", Err: err}
 	}
 	return
 }
@@ -1994,7 +1994,7 @@ func (d *domDomain) HighlightQuad(ctx context.Context, args *cdpcmd.DOMHighlight
 		err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightQuad.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "HighlightQuad", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "HighlightQuad", Err: err}
 	}
 	return
 }
@@ -2013,7 +2013,7 @@ func (d *domDomain) HighlightNode(ctx context.Context, args *cdpcmd.DOMHighlight
 		err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightNode.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "HighlightNode", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "HighlightNode", Err: err}
 	}
 	return
 }
@@ -2028,7 +2028,7 @@ func NewDOMHighlightNodeArgs(highlightConfig cdptype.DOMHighlightConfig) *cdpcmd
 func (d *domDomain) HideHighlight(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DOMHideHighlight.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "HideHighlight", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "HideHighlight", Err: err}
 	}
 	return
 }
@@ -2040,7 +2040,7 @@ func (d *domDomain) HighlightFrame(ctx context.Context, args *cdpcmd.DOMHighligh
 		err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightFrame.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "HighlightFrame", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "HighlightFrame", Err: err}
 	}
 	return
 }
@@ -2060,7 +2060,7 @@ func (d *domDomain) PushNodeByPathToFrontend(ctx context.Context, args *cdpcmd.D
 		err = rpcc.Invoke(ctx, cdpcmd.DOMPushNodeByPathToFrontend.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "PushNodeByPathToFrontend", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "PushNodeByPathToFrontend", Err: err}
 	}
 	return
 }
@@ -2080,7 +2080,7 @@ func (d *domDomain) PushNodesByBackendIdsToFrontend(ctx context.Context, args *c
 		err = rpcc.Invoke(ctx, cdpcmd.DOMPushNodesByBackendIdsToFrontend.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "PushNodesByBackendIdsToFrontend", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "PushNodesByBackendIdsToFrontend", Err: err}
 	}
 	return
 }
@@ -2099,7 +2099,7 @@ func (d *domDomain) SetInspectedNode(ctx context.Context, args *cdpcmd.DOMSetIns
 		err = rpcc.Invoke(ctx, cdpcmd.DOMSetInspectedNode.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "SetInspectedNode", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "SetInspectedNode", Err: err}
 	}
 	return
 }
@@ -2119,7 +2119,7 @@ func (d *domDomain) ResolveNode(ctx context.Context, args *cdpcmd.DOMResolveNode
 		err = rpcc.Invoke(ctx, cdpcmd.DOMResolveNode.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "ResolveNode", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "ResolveNode", Err: err}
 	}
 	return
 }
@@ -2139,7 +2139,7 @@ func (d *domDomain) GetAttributes(ctx context.Context, args *cdpcmd.DOMGetAttrib
 		err = rpcc.Invoke(ctx, cdpcmd.DOMGetAttributes.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "GetAttributes", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "GetAttributes", Err: err}
 	}
 	return
 }
@@ -2159,7 +2159,7 @@ func (d *domDomain) CopyTo(ctx context.Context, args *cdpcmd.DOMCopyToArgs) (rep
 		err = rpcc.Invoke(ctx, cdpcmd.DOMCopyTo.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "CopyTo", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "CopyTo", Err: err}
 	}
 	return
 }
@@ -2180,7 +2180,7 @@ func (d *domDomain) MoveTo(ctx context.Context, args *cdpcmd.DOMMoveToArgs) (rep
 		err = rpcc.Invoke(ctx, cdpcmd.DOMMoveTo.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "MoveTo", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "MoveTo", Err: err}
 	}
 	return
 }
@@ -2196,7 +2196,7 @@ func NewDOMMoveToArgs(nodeID cdptype.DOMNodeID, targetNodeID cdptype.DOMNodeID) 
 func (d *domDomain) Undo(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DOMUndo.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "Undo", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "Undo", Err: err}
 	}
 	return
 }
@@ -2204,7 +2204,7 @@ func (d *domDomain) Undo(ctx context.Context) (err error) {
 func (d *domDomain) Redo(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DOMRedo.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "Redo", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "Redo", Err: err}
 	}
 	return
 }
@@ -2212,7 +2212,7 @@ func (d *domDomain) Redo(ctx context.Context) (err error) {
 func (d *domDomain) MarkUndoableState(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DOMMarkUndoableState.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "MarkUndoableState", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "MarkUndoableState", Err: err}
 	}
 	return
 }
@@ -2224,7 +2224,7 @@ func (d *domDomain) Focus(ctx context.Context, args *cdpcmd.DOMFocusArgs) (err e
 		err = rpcc.Invoke(ctx, cdpcmd.DOMFocus.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "Focus", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "Focus", Err: err}
 	}
 	return
 }
@@ -2243,7 +2243,7 @@ func (d *domDomain) SetFileInputFiles(ctx context.Context, args *cdpcmd.DOMSetFi
 		err = rpcc.Invoke(ctx, cdpcmd.DOMSetFileInputFiles.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "SetFileInputFiles", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "SetFileInputFiles", Err: err}
 	}
 	return
 }
@@ -2264,7 +2264,7 @@ func (d *domDomain) GetBoxModel(ctx context.Context, args *cdpcmd.DOMGetBoxModel
 		err = rpcc.Invoke(ctx, cdpcmd.DOMGetBoxModel.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "GetBoxModel", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "GetBoxModel", Err: err}
 	}
 	return
 }
@@ -2284,7 +2284,7 @@ func (d *domDomain) GetNodeForLocation(ctx context.Context, args *cdpcmd.DOMGetN
 		err = rpcc.Invoke(ctx, cdpcmd.DOMGetNodeForLocation.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "GetNodeForLocation", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "GetNodeForLocation", Err: err}
 	}
 	return
 }
@@ -2305,7 +2305,7 @@ func (d *domDomain) GetRelayoutBoundary(ctx context.Context, args *cdpcmd.DOMGet
 		err = rpcc.Invoke(ctx, cdpcmd.DOMGetRelayoutBoundary.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "GetRelayoutBoundary", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "GetRelayoutBoundary", Err: err}
 	}
 	return
 }
@@ -2325,7 +2325,7 @@ func (d *domDomain) GetHighlightObjectForTest(ctx context.Context, args *cdpcmd.
 		err = rpcc.Invoke(ctx, cdpcmd.DOMGetHighlightObjectForTest.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOM", Op: "GetHighlightObjectForTest", Err: err}
+		err = &cdpError{Domain: "DOM", Op: "GetHighlightObjectForTest", Err: err}
 	}
 	return
 }
@@ -2351,7 +2351,7 @@ type domDocumentUpdatedClient struct{ rpcc.Stream }
 func (c *domDocumentUpdatedClient) Recv() (*cdpevent.DOMDocumentUpdatedReply, error) {
 	event := new(cdpevent.DOMDocumentUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "DocumentUpdated Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "DocumentUpdated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2370,7 +2370,7 @@ type domInspectNodeRequestedClient struct{ rpcc.Stream }
 func (c *domInspectNodeRequestedClient) Recv() (*cdpevent.DOMInspectNodeRequestedReply, error) {
 	event := new(cdpevent.DOMInspectNodeRequestedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "InspectNodeRequested Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "InspectNodeRequested Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2389,7 +2389,7 @@ type domSetChildNodesClient struct{ rpcc.Stream }
 func (c *domSetChildNodesClient) Recv() (*cdpevent.DOMSetChildNodesReply, error) {
 	event := new(cdpevent.DOMSetChildNodesReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "SetChildNodes Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "SetChildNodes Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2408,7 +2408,7 @@ type domAttributeModifiedClient struct{ rpcc.Stream }
 func (c *domAttributeModifiedClient) Recv() (*cdpevent.DOMAttributeModifiedReply, error) {
 	event := new(cdpevent.DOMAttributeModifiedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "AttributeModified Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "AttributeModified Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2427,7 +2427,7 @@ type domAttributeRemovedClient struct{ rpcc.Stream }
 func (c *domAttributeRemovedClient) Recv() (*cdpevent.DOMAttributeRemovedReply, error) {
 	event := new(cdpevent.DOMAttributeRemovedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "AttributeRemoved Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "AttributeRemoved Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2446,7 +2446,7 @@ type domInlineStyleInvalidatedClient struct{ rpcc.Stream }
 func (c *domInlineStyleInvalidatedClient) Recv() (*cdpevent.DOMInlineStyleInvalidatedReply, error) {
 	event := new(cdpevent.DOMInlineStyleInvalidatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "InlineStyleInvalidated Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "InlineStyleInvalidated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2465,7 +2465,7 @@ type domCharacterDataModifiedClient struct{ rpcc.Stream }
 func (c *domCharacterDataModifiedClient) Recv() (*cdpevent.DOMCharacterDataModifiedReply, error) {
 	event := new(cdpevent.DOMCharacterDataModifiedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "CharacterDataModified Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "CharacterDataModified Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2484,7 +2484,7 @@ type domChildNodeCountUpdatedClient struct{ rpcc.Stream }
 func (c *domChildNodeCountUpdatedClient) Recv() (*cdpevent.DOMChildNodeCountUpdatedReply, error) {
 	event := new(cdpevent.DOMChildNodeCountUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "ChildNodeCountUpdated Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "ChildNodeCountUpdated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2503,7 +2503,7 @@ type domChildNodeInsertedClient struct{ rpcc.Stream }
 func (c *domChildNodeInsertedClient) Recv() (*cdpevent.DOMChildNodeInsertedReply, error) {
 	event := new(cdpevent.DOMChildNodeInsertedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "ChildNodeInserted Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "ChildNodeInserted Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2522,7 +2522,7 @@ type domChildNodeRemovedClient struct{ rpcc.Stream }
 func (c *domChildNodeRemovedClient) Recv() (*cdpevent.DOMChildNodeRemovedReply, error) {
 	event := new(cdpevent.DOMChildNodeRemovedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "ChildNodeRemoved Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "ChildNodeRemoved Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2541,7 +2541,7 @@ type domShadowRootPushedClient struct{ rpcc.Stream }
 func (c *domShadowRootPushedClient) Recv() (*cdpevent.DOMShadowRootPushedReply, error) {
 	event := new(cdpevent.DOMShadowRootPushedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "ShadowRootPushed Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "ShadowRootPushed Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2560,7 +2560,7 @@ type domShadowRootPoppedClient struct{ rpcc.Stream }
 func (c *domShadowRootPoppedClient) Recv() (*cdpevent.DOMShadowRootPoppedReply, error) {
 	event := new(cdpevent.DOMShadowRootPoppedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "ShadowRootPopped Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "ShadowRootPopped Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2579,7 +2579,7 @@ type domPseudoElementAddedClient struct{ rpcc.Stream }
 func (c *domPseudoElementAddedClient) Recv() (*cdpevent.DOMPseudoElementAddedReply, error) {
 	event := new(cdpevent.DOMPseudoElementAddedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "PseudoElementAdded Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "PseudoElementAdded Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2598,7 +2598,7 @@ type domPseudoElementRemovedClient struct{ rpcc.Stream }
 func (c *domPseudoElementRemovedClient) Recv() (*cdpevent.DOMPseudoElementRemovedReply, error) {
 	event := new(cdpevent.DOMPseudoElementRemovedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "PseudoElementRemoved Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "PseudoElementRemoved Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2617,7 +2617,7 @@ type domDistributedNodesUpdatedClient struct{ rpcc.Stream }
 func (c *domDistributedNodesUpdatedClient) Recv() (*cdpevent.DOMDistributedNodesUpdatedReply, error) {
 	event := new(cdpevent.DOMDistributedNodesUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "DistributedNodesUpdated Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "DistributedNodesUpdated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2636,7 +2636,7 @@ type domNodeHighlightRequestedClient struct{ rpcc.Stream }
 func (c *domNodeHighlightRequestedClient) Recv() (*cdpevent.DOMNodeHighlightRequestedReply, error) {
 	event := new(cdpevent.DOMNodeHighlightRequestedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOM", Op: "NodeHighlightRequested Recv", Err: err}
+		return nil, &cdpError{Domain: "DOM", Op: "NodeHighlightRequested Recv", Err: err}
 	}
 	return event, nil
 }
@@ -2699,7 +2699,7 @@ func (d *domdebuggerDomain) SetDOMBreakpoint(ctx context.Context, args *cdpcmd.D
 		err = rpcc.Invoke(ctx, cdpcmd.DOMDebuggerSetDOMBreakpoint.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMDebugger", Op: "SetDOMBreakpoint", Err: err}
+		err = &cdpError{Domain: "DOMDebugger", Op: "SetDOMBreakpoint", Err: err}
 	}
 	return
 }
@@ -2719,7 +2719,7 @@ func (d *domdebuggerDomain) RemoveDOMBreakpoint(ctx context.Context, args *cdpcm
 		err = rpcc.Invoke(ctx, cdpcmd.DOMDebuggerRemoveDOMBreakpoint.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMDebugger", Op: "RemoveDOMBreakpoint", Err: err}
+		err = &cdpError{Domain: "DOMDebugger", Op: "RemoveDOMBreakpoint", Err: err}
 	}
 	return
 }
@@ -2739,7 +2739,7 @@ func (d *domdebuggerDomain) SetEventListenerBreakpoint(ctx context.Context, args
 		err = rpcc.Invoke(ctx, cdpcmd.DOMDebuggerSetEventListenerBreakpoint.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMDebugger", Op: "SetEventListenerBreakpoint", Err: err}
+		err = &cdpError{Domain: "DOMDebugger", Op: "SetEventListenerBreakpoint", Err: err}
 	}
 	return
 }
@@ -2758,7 +2758,7 @@ func (d *domdebuggerDomain) RemoveEventListenerBreakpoint(ctx context.Context, a
 		err = rpcc.Invoke(ctx, cdpcmd.DOMDebuggerRemoveEventListenerBreakpoint.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMDebugger", Op: "RemoveEventListenerBreakpoint", Err: err}
+		err = &cdpError{Domain: "DOMDebugger", Op: "RemoveEventListenerBreakpoint", Err: err}
 	}
 	return
 }
@@ -2777,7 +2777,7 @@ func (d *domdebuggerDomain) SetInstrumentationBreakpoint(ctx context.Context, ar
 		err = rpcc.Invoke(ctx, cdpcmd.DOMDebuggerSetInstrumentationBreakpoint.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMDebugger", Op: "SetInstrumentationBreakpoint", Err: err}
+		err = &cdpError{Domain: "DOMDebugger", Op: "SetInstrumentationBreakpoint", Err: err}
 	}
 	return
 }
@@ -2796,7 +2796,7 @@ func (d *domdebuggerDomain) RemoveInstrumentationBreakpoint(ctx context.Context,
 		err = rpcc.Invoke(ctx, cdpcmd.DOMDebuggerRemoveInstrumentationBreakpoint.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMDebugger", Op: "RemoveInstrumentationBreakpoint", Err: err}
+		err = &cdpError{Domain: "DOMDebugger", Op: "RemoveInstrumentationBreakpoint", Err: err}
 	}
 	return
 }
@@ -2815,7 +2815,7 @@ func (d *domdebuggerDomain) SetXHRBreakpoint(ctx context.Context, args *cdpcmd.D
 		err = rpcc.Invoke(ctx, cdpcmd.DOMDebuggerSetXHRBreakpoint.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMDebugger", Op: "SetXHRBreakpoint", Err: err}
+		err = &cdpError{Domain: "DOMDebugger", Op: "SetXHRBreakpoint", Err: err}
 	}
 	return
 }
@@ -2834,7 +2834,7 @@ func (d *domdebuggerDomain) RemoveXHRBreakpoint(ctx context.Context, args *cdpcm
 		err = rpcc.Invoke(ctx, cdpcmd.DOMDebuggerRemoveXHRBreakpoint.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMDebugger", Op: "RemoveXHRBreakpoint", Err: err}
+		err = &cdpError{Domain: "DOMDebugger", Op: "RemoveXHRBreakpoint", Err: err}
 	}
 	return
 }
@@ -2854,7 +2854,7 @@ func (d *domdebuggerDomain) GetEventListeners(ctx context.Context, args *cdpcmd.
 		err = rpcc.Invoke(ctx, cdpcmd.DOMDebuggerGetEventListeners.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMDebugger", Op: "GetEventListeners", Err: err}
+		err = &cdpError{Domain: "DOMDebugger", Op: "GetEventListeners", Err: err}
 	}
 	return
 }
@@ -2925,7 +2925,7 @@ type domstorageDomain struct{ conn *rpcc.Conn }
 func (d *domstorageDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DOMStorageEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "DOMStorage", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "DOMStorage", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -2933,7 +2933,7 @@ func (d *domstorageDomain) Enable(ctx context.Context) (err error) {
 func (d *domstorageDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DOMStorageDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "DOMStorage", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "DOMStorage", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -2945,7 +2945,7 @@ func (d *domstorageDomain) Clear(ctx context.Context, args *cdpcmd.DOMStorageCle
 		err = rpcc.Invoke(ctx, cdpcmd.DOMStorageClear.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMStorage", Op: "Clear", Err: err}
+		err = &cdpError{Domain: "DOMStorage", Op: "Clear", Err: err}
 	}
 	return
 }
@@ -2965,7 +2965,7 @@ func (d *domstorageDomain) GetDOMStorageItems(ctx context.Context, args *cdpcmd.
 		err = rpcc.Invoke(ctx, cdpcmd.DOMStorageGetDOMStorageItems.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMStorage", Op: "GetDOMStorageItems", Err: err}
+		err = &cdpError{Domain: "DOMStorage", Op: "GetDOMStorageItems", Err: err}
 	}
 	return
 }
@@ -2984,7 +2984,7 @@ func (d *domstorageDomain) SetDOMStorageItem(ctx context.Context, args *cdpcmd.D
 		err = rpcc.Invoke(ctx, cdpcmd.DOMStorageSetDOMStorageItem.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMStorage", Op: "SetDOMStorageItem", Err: err}
+		err = &cdpError{Domain: "DOMStorage", Op: "SetDOMStorageItem", Err: err}
 	}
 	return
 }
@@ -3005,7 +3005,7 @@ func (d *domstorageDomain) RemoveDOMStorageItem(ctx context.Context, args *cdpcm
 		err = rpcc.Invoke(ctx, cdpcmd.DOMStorageRemoveDOMStorageItem.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DOMStorage", Op: "RemoveDOMStorageItem", Err: err}
+		err = &cdpError{Domain: "DOMStorage", Op: "RemoveDOMStorageItem", Err: err}
 	}
 	return
 }
@@ -3032,7 +3032,7 @@ type domstorageDOMStorageItemsClearedClient struct{ rpcc.Stream }
 func (c *domstorageDOMStorageItemsClearedClient) Recv() (*cdpevent.DOMStorageItemsClearedReply, error) {
 	event := new(cdpevent.DOMStorageItemsClearedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOMStorage", Op: "DOMStorageItemsCleared Recv", Err: err}
+		return nil, &cdpError{Domain: "DOMStorage", Op: "DOMStorageItemsCleared Recv", Err: err}
 	}
 	return event, nil
 }
@@ -3051,7 +3051,7 @@ type domstorageDOMStorageItemRemovedClient struct{ rpcc.Stream }
 func (c *domstorageDOMStorageItemRemovedClient) Recv() (*cdpevent.DOMStorageItemRemovedReply, error) {
 	event := new(cdpevent.DOMStorageItemRemovedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOMStorage", Op: "DOMStorageItemRemoved Recv", Err: err}
+		return nil, &cdpError{Domain: "DOMStorage", Op: "DOMStorageItemRemoved Recv", Err: err}
 	}
 	return event, nil
 }
@@ -3070,7 +3070,7 @@ type domstorageDOMStorageItemAddedClient struct{ rpcc.Stream }
 func (c *domstorageDOMStorageItemAddedClient) Recv() (*cdpevent.DOMStorageItemAddedReply, error) {
 	event := new(cdpevent.DOMStorageItemAddedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOMStorage", Op: "DOMStorageItemAdded Recv", Err: err}
+		return nil, &cdpError{Domain: "DOMStorage", Op: "DOMStorageItemAdded Recv", Err: err}
 	}
 	return event, nil
 }
@@ -3089,7 +3089,7 @@ type domstorageDOMStorageItemUpdatedClient struct{ rpcc.Stream }
 func (c *domstorageDOMStorageItemUpdatedClient) Recv() (*cdpevent.DOMStorageItemUpdatedReply, error) {
 	event := new(cdpevent.DOMStorageItemUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "DOMStorage", Op: "DOMStorageItemUpdated Recv", Err: err}
+		return nil, &cdpError{Domain: "DOMStorage", Op: "DOMStorageItemUpdated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -3128,7 +3128,7 @@ type databaseDomain struct{ conn *rpcc.Conn }
 func (d *databaseDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DatabaseEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Database", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "Database", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -3136,7 +3136,7 @@ func (d *databaseDomain) Enable(ctx context.Context) (err error) {
 func (d *databaseDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DatabaseDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Database", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "Database", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -3149,7 +3149,7 @@ func (d *databaseDomain) GetDatabaseTableNames(ctx context.Context, args *cdpcmd
 		err = rpcc.Invoke(ctx, cdpcmd.DatabaseGetDatabaseTableNames.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Database", Op: "GetDatabaseTableNames", Err: err}
+		err = &cdpError{Domain: "Database", Op: "GetDatabaseTableNames", Err: err}
 	}
 	return
 }
@@ -3169,7 +3169,7 @@ func (d *databaseDomain) ExecuteSQL(ctx context.Context, args *cdpcmd.DatabaseEx
 		err = rpcc.Invoke(ctx, cdpcmd.DatabaseExecuteSQL.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Database", Op: "ExecuteSQL", Err: err}
+		err = &cdpError{Domain: "Database", Op: "ExecuteSQL", Err: err}
 	}
 	return
 }
@@ -3196,7 +3196,7 @@ type databaseAddDatabaseClient struct{ rpcc.Stream }
 func (c *databaseAddDatabaseClient) Recv() (*cdpevent.DatabaseAddDatabaseReply, error) {
 	event := new(cdpevent.DatabaseAddDatabaseReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Database", Op: "AddDatabase Recv", Err: err}
+		return nil, &cdpError{Domain: "Database", Op: "AddDatabase Recv", Err: err}
 	}
 	return event, nil
 }
@@ -3360,7 +3360,7 @@ type debuggerDomain struct{ conn *rpcc.Conn }
 func (d *debuggerDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DebuggerEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -3368,7 +3368,7 @@ func (d *debuggerDomain) Enable(ctx context.Context) (err error) {
 func (d *debuggerDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DebuggerDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -3380,7 +3380,7 @@ func (d *debuggerDomain) SetBreakpointsActive(ctx context.Context, args *cdpcmd.
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerSetBreakpointsActive.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "SetBreakpointsActive", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "SetBreakpointsActive", Err: err}
 	}
 	return
 }
@@ -3399,7 +3399,7 @@ func (d *debuggerDomain) SetSkipAllPauses(ctx context.Context, args *cdpcmd.Debu
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerSetSkipAllPauses.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "SetSkipAllPauses", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "SetSkipAllPauses", Err: err}
 	}
 	return
 }
@@ -3419,7 +3419,7 @@ func (d *debuggerDomain) SetBreakpointByURL(ctx context.Context, args *cdpcmd.De
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerSetBreakpointByURL.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "SetBreakpointByURL", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "SetBreakpointByURL", Err: err}
 	}
 	return
 }
@@ -3439,7 +3439,7 @@ func (d *debuggerDomain) SetBreakpoint(ctx context.Context, args *cdpcmd.Debugge
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerSetBreakpoint.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "SetBreakpoint", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "SetBreakpoint", Err: err}
 	}
 	return
 }
@@ -3458,7 +3458,7 @@ func (d *debuggerDomain) RemoveBreakpoint(ctx context.Context, args *cdpcmd.Debu
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerRemoveBreakpoint.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "RemoveBreakpoint", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "RemoveBreakpoint", Err: err}
 	}
 	return
 }
@@ -3478,7 +3478,7 @@ func (d *debuggerDomain) GetPossibleBreakpoints(ctx context.Context, args *cdpcm
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerGetPossibleBreakpoints.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "GetPossibleBreakpoints", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "GetPossibleBreakpoints", Err: err}
 	}
 	return
 }
@@ -3497,7 +3497,7 @@ func (d *debuggerDomain) ContinueToLocation(ctx context.Context, args *cdpcmd.De
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerContinueToLocation.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "ContinueToLocation", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "ContinueToLocation", Err: err}
 	}
 	return
 }
@@ -3512,7 +3512,7 @@ func NewDebuggerContinueToLocationArgs(location cdptype.DebuggerLocation) *cdpcm
 func (d *debuggerDomain) StepOver(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DebuggerStepOver.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "StepOver", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "StepOver", Err: err}
 	}
 	return
 }
@@ -3520,7 +3520,7 @@ func (d *debuggerDomain) StepOver(ctx context.Context) (err error) {
 func (d *debuggerDomain) StepInto(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DebuggerStepInto.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "StepInto", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "StepInto", Err: err}
 	}
 	return
 }
@@ -3528,7 +3528,7 @@ func (d *debuggerDomain) StepInto(ctx context.Context) (err error) {
 func (d *debuggerDomain) StepOut(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DebuggerStepOut.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "StepOut", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "StepOut", Err: err}
 	}
 	return
 }
@@ -3536,7 +3536,7 @@ func (d *debuggerDomain) StepOut(ctx context.Context) (err error) {
 func (d *debuggerDomain) Pause(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DebuggerPause.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "Pause", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "Pause", Err: err}
 	}
 	return
 }
@@ -3544,7 +3544,7 @@ func (d *debuggerDomain) Pause(ctx context.Context) (err error) {
 func (d *debuggerDomain) ScheduleStepIntoAsync(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DebuggerScheduleStepIntoAsync.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "ScheduleStepIntoAsync", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "ScheduleStepIntoAsync", Err: err}
 	}
 	return
 }
@@ -3552,7 +3552,7 @@ func (d *debuggerDomain) ScheduleStepIntoAsync(ctx context.Context) (err error) 
 func (d *debuggerDomain) Resume(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DebuggerResume.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "Resume", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "Resume", Err: err}
 	}
 	return
 }
@@ -3565,7 +3565,7 @@ func (d *debuggerDomain) SearchInContent(ctx context.Context, args *cdpcmd.Debug
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerSearchInContent.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "SearchInContent", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "SearchInContent", Err: err}
 	}
 	return
 }
@@ -3586,7 +3586,7 @@ func (d *debuggerDomain) SetScriptSource(ctx context.Context, args *cdpcmd.Debug
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerSetScriptSource.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "SetScriptSource", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "SetScriptSource", Err: err}
 	}
 	return
 }
@@ -3607,7 +3607,7 @@ func (d *debuggerDomain) RestartFrame(ctx context.Context, args *cdpcmd.Debugger
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerRestartFrame.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "RestartFrame", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "RestartFrame", Err: err}
 	}
 	return
 }
@@ -3627,7 +3627,7 @@ func (d *debuggerDomain) GetScriptSource(ctx context.Context, args *cdpcmd.Debug
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerGetScriptSource.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "GetScriptSource", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "GetScriptSource", Err: err}
 	}
 	return
 }
@@ -3646,7 +3646,7 @@ func (d *debuggerDomain) SetPauseOnExceptions(ctx context.Context, args *cdpcmd.
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerSetPauseOnExceptions.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "SetPauseOnExceptions", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "SetPauseOnExceptions", Err: err}
 	}
 	return
 }
@@ -3666,7 +3666,7 @@ func (d *debuggerDomain) EvaluateOnCallFrame(ctx context.Context, args *cdpcmd.D
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerEvaluateOnCallFrame.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "EvaluateOnCallFrame", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "EvaluateOnCallFrame", Err: err}
 	}
 	return
 }
@@ -3686,7 +3686,7 @@ func (d *debuggerDomain) SetVariableValue(ctx context.Context, args *cdpcmd.Debu
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerSetVariableValue.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "SetVariableValue", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "SetVariableValue", Err: err}
 	}
 	return
 }
@@ -3708,7 +3708,7 @@ func (d *debuggerDomain) SetAsyncCallStackDepth(ctx context.Context, args *cdpcm
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerSetAsyncCallStackDepth.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "SetAsyncCallStackDepth", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "SetAsyncCallStackDepth", Err: err}
 	}
 	return
 }
@@ -3727,7 +3727,7 @@ func (d *debuggerDomain) SetBlackboxPatterns(ctx context.Context, args *cdpcmd.D
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerSetBlackboxPatterns.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "SetBlackboxPatterns", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "SetBlackboxPatterns", Err: err}
 	}
 	return
 }
@@ -3746,7 +3746,7 @@ func (d *debuggerDomain) SetBlackboxedRanges(ctx context.Context, args *cdpcmd.D
 		err = rpcc.Invoke(ctx, cdpcmd.DebuggerSetBlackboxedRanges.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Debugger", Op: "SetBlackboxedRanges", Err: err}
+		err = &cdpError{Domain: "Debugger", Op: "SetBlackboxedRanges", Err: err}
 	}
 	return
 }
@@ -3773,7 +3773,7 @@ type debuggerScriptParsedClient struct{ rpcc.Stream }
 func (c *debuggerScriptParsedClient) Recv() (*cdpevent.DebuggerScriptParsedReply, error) {
 	event := new(cdpevent.DebuggerScriptParsedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Debugger", Op: "ScriptParsed Recv", Err: err}
+		return nil, &cdpError{Domain: "Debugger", Op: "ScriptParsed Recv", Err: err}
 	}
 	return event, nil
 }
@@ -3792,7 +3792,7 @@ type debuggerScriptFailedToParseClient struct{ rpcc.Stream }
 func (c *debuggerScriptFailedToParseClient) Recv() (*cdpevent.DebuggerScriptFailedToParseReply, error) {
 	event := new(cdpevent.DebuggerScriptFailedToParseReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Debugger", Op: "ScriptFailedToParse Recv", Err: err}
+		return nil, &cdpError{Domain: "Debugger", Op: "ScriptFailedToParse Recv", Err: err}
 	}
 	return event, nil
 }
@@ -3811,7 +3811,7 @@ type debuggerBreakpointResolvedClient struct{ rpcc.Stream }
 func (c *debuggerBreakpointResolvedClient) Recv() (*cdpevent.DebuggerBreakpointResolvedReply, error) {
 	event := new(cdpevent.DebuggerBreakpointResolvedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Debugger", Op: "BreakpointResolved Recv", Err: err}
+		return nil, &cdpError{Domain: "Debugger", Op: "BreakpointResolved Recv", Err: err}
 	}
 	return event, nil
 }
@@ -3830,7 +3830,7 @@ type debuggerPausedClient struct{ rpcc.Stream }
 func (c *debuggerPausedClient) Recv() (*cdpevent.DebuggerPausedReply, error) {
 	event := new(cdpevent.DebuggerPausedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Debugger", Op: "Paused Recv", Err: err}
+		return nil, &cdpError{Domain: "Debugger", Op: "Paused Recv", Err: err}
 	}
 	return event, nil
 }
@@ -3849,7 +3849,7 @@ type debuggerResumedClient struct{ rpcc.Stream }
 func (c *debuggerResumedClient) Recv() (*cdpevent.DebuggerResumedReply, error) {
 	event := new(cdpevent.DebuggerResumedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Debugger", Op: "Resumed Recv", Err: err}
+		return nil, &cdpError{Domain: "Debugger", Op: "Resumed Recv", Err: err}
 	}
 	return event, nil
 }
@@ -3877,7 +3877,7 @@ func (d *deviceorientationDomain) SetDeviceOrientationOverride(ctx context.Conte
 		err = rpcc.Invoke(ctx, cdpcmd.DeviceOrientationSetDeviceOrientationOverride.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "DeviceOrientation", Op: "SetDeviceOrientationOverride", Err: err}
+		err = &cdpError{Domain: "DeviceOrientation", Op: "SetDeviceOrientationOverride", Err: err}
 	}
 	return
 }
@@ -3894,7 +3894,7 @@ func NewDeviceOrientationSetDeviceOrientationOverrideArgs(alpha float64, beta fl
 func (d *deviceorientationDomain) ClearDeviceOrientationOverride(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DeviceOrientationClearDeviceOrientationOverride.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "DeviceOrientation", Op: "ClearDeviceOrientationOverride", Err: err}
+		err = &cdpError{Domain: "DeviceOrientation", Op: "ClearDeviceOrientationOverride", Err: err}
 	}
 	return
 }
@@ -3997,7 +3997,7 @@ func (d *emulationDomain) SetDeviceMetricsOverride(ctx context.Context, args *cd
 		err = rpcc.Invoke(ctx, cdpcmd.EmulationSetDeviceMetricsOverride.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "SetDeviceMetricsOverride", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "SetDeviceMetricsOverride", Err: err}
 	}
 	return
 }
@@ -4016,7 +4016,7 @@ func NewEmulationSetDeviceMetricsOverrideArgs(width int, height int, deviceScale
 func (d *emulationDomain) ClearDeviceMetricsOverride(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.EmulationClearDeviceMetricsOverride.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "ClearDeviceMetricsOverride", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "ClearDeviceMetricsOverride", Err: err}
 	}
 	return
 }
@@ -4028,7 +4028,7 @@ func (d *emulationDomain) ForceViewport(ctx context.Context, args *cdpcmd.Emulat
 		err = rpcc.Invoke(ctx, cdpcmd.EmulationForceViewport.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "ForceViewport", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "ForceViewport", Err: err}
 	}
 	return
 }
@@ -4045,7 +4045,7 @@ func NewEmulationForceViewportArgs(x float64, y float64, scale float64) *cdpcmd.
 func (d *emulationDomain) ResetViewport(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.EmulationResetViewport.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "ResetViewport", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "ResetViewport", Err: err}
 	}
 	return
 }
@@ -4053,7 +4053,7 @@ func (d *emulationDomain) ResetViewport(ctx context.Context) (err error) {
 func (d *emulationDomain) ResetPageScaleFactor(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.EmulationResetPageScaleFactor.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "ResetPageScaleFactor", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "ResetPageScaleFactor", Err: err}
 	}
 	return
 }
@@ -4065,7 +4065,7 @@ func (d *emulationDomain) SetPageScaleFactor(ctx context.Context, args *cdpcmd.E
 		err = rpcc.Invoke(ctx, cdpcmd.EmulationSetPageScaleFactor.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "SetPageScaleFactor", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "SetPageScaleFactor", Err: err}
 	}
 	return
 }
@@ -4084,7 +4084,7 @@ func (d *emulationDomain) SetVisibleSize(ctx context.Context, args *cdpcmd.Emula
 		err = rpcc.Invoke(ctx, cdpcmd.EmulationSetVisibleSize.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "SetVisibleSize", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "SetVisibleSize", Err: err}
 	}
 	return
 }
@@ -4104,7 +4104,7 @@ func (d *emulationDomain) SetScriptExecutionDisabled(ctx context.Context, args *
 		err = rpcc.Invoke(ctx, cdpcmd.EmulationSetScriptExecutionDisabled.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "SetScriptExecutionDisabled", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "SetScriptExecutionDisabled", Err: err}
 	}
 	return
 }
@@ -4123,7 +4123,7 @@ func (d *emulationDomain) SetGeolocationOverride(ctx context.Context, args *cdpc
 		err = rpcc.Invoke(ctx, cdpcmd.EmulationSetGeolocationOverride.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "SetGeolocationOverride", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "SetGeolocationOverride", Err: err}
 	}
 	return
 }
@@ -4138,7 +4138,7 @@ func NewEmulationSetGeolocationOverrideArgs() *cdpcmd.EmulationSetGeolocationOve
 func (d *emulationDomain) ClearGeolocationOverride(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.EmulationClearGeolocationOverride.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "ClearGeolocationOverride", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "ClearGeolocationOverride", Err: err}
 	}
 	return
 }
@@ -4150,7 +4150,7 @@ func (d *emulationDomain) SetTouchEmulationEnabled(ctx context.Context, args *cd
 		err = rpcc.Invoke(ctx, cdpcmd.EmulationSetTouchEmulationEnabled.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "SetTouchEmulationEnabled", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "SetTouchEmulationEnabled", Err: err}
 	}
 	return
 }
@@ -4169,7 +4169,7 @@ func (d *emulationDomain) SetEmulatedMedia(ctx context.Context, args *cdpcmd.Emu
 		err = rpcc.Invoke(ctx, cdpcmd.EmulationSetEmulatedMedia.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "SetEmulatedMedia", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "SetEmulatedMedia", Err: err}
 	}
 	return
 }
@@ -4188,7 +4188,7 @@ func (d *emulationDomain) SetCPUThrottlingRate(ctx context.Context, args *cdpcmd
 		err = rpcc.Invoke(ctx, cdpcmd.EmulationSetCPUThrottlingRate.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "SetCPUThrottlingRate", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "SetCPUThrottlingRate", Err: err}
 	}
 	return
 }
@@ -4204,7 +4204,7 @@ func (d *emulationDomain) CanEmulate(ctx context.Context) (reply *cdpcmd.Emulati
 	reply = new(cdpcmd.EmulationCanEmulateReply)
 	err = rpcc.Invoke(ctx, cdpcmd.EmulationCanEmulate.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "CanEmulate", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "CanEmulate", Err: err}
 	}
 	return
 }
@@ -4216,7 +4216,7 @@ func (d *emulationDomain) SetVirtualTimePolicy(ctx context.Context, args *cdpcmd
 		err = rpcc.Invoke(ctx, cdpcmd.EmulationSetVirtualTimePolicy.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "SetVirtualTimePolicy", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "SetVirtualTimePolicy", Err: err}
 	}
 	return
 }
@@ -4235,7 +4235,7 @@ func (d *emulationDomain) SetDefaultBackgroundColorOverride(ctx context.Context,
 		err = rpcc.Invoke(ctx, cdpcmd.EmulationSetDefaultBackgroundColorOverride.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Emulation", Op: "SetDefaultBackgroundColorOverride", Err: err}
+		err = &cdpError{Domain: "Emulation", Op: "SetDefaultBackgroundColorOverride", Err: err}
 	}
 	return
 }
@@ -4261,7 +4261,7 @@ type emulationVirtualTimeBudgetExpiredClient struct{ rpcc.Stream }
 func (c *emulationVirtualTimeBudgetExpiredClient) Recv() (*cdpevent.EmulationVirtualTimeBudgetExpiredReply, error) {
 	event := new(cdpevent.EmulationVirtualTimeBudgetExpiredReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Emulation", Op: "VirtualTimeBudgetExpired Recv", Err: err}
+		return nil, &cdpError{Domain: "Emulation", Op: "VirtualTimeBudgetExpired Recv", Err: err}
 	}
 	return event, nil
 }
@@ -4355,7 +4355,7 @@ type heapprofilerDomain struct{ conn *rpcc.Conn }
 func (d *heapprofilerDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.HeapProfilerEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "HeapProfiler", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "HeapProfiler", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -4363,7 +4363,7 @@ func (d *heapprofilerDomain) Enable(ctx context.Context) (err error) {
 func (d *heapprofilerDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.HeapProfilerDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "HeapProfiler", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "HeapProfiler", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -4375,7 +4375,7 @@ func (d *heapprofilerDomain) StartTrackingHeapObjects(ctx context.Context, args 
 		err = rpcc.Invoke(ctx, cdpcmd.HeapProfilerStartTrackingHeapObjects.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "HeapProfiler", Op: "StartTrackingHeapObjects", Err: err}
+		err = &cdpError{Domain: "HeapProfiler", Op: "StartTrackingHeapObjects", Err: err}
 	}
 	return
 }
@@ -4394,7 +4394,7 @@ func (d *heapprofilerDomain) StopTrackingHeapObjects(ctx context.Context, args *
 		err = rpcc.Invoke(ctx, cdpcmd.HeapProfilerStopTrackingHeapObjects.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "HeapProfiler", Op: "StopTrackingHeapObjects", Err: err}
+		err = &cdpError{Domain: "HeapProfiler", Op: "StopTrackingHeapObjects", Err: err}
 	}
 	return
 }
@@ -4413,7 +4413,7 @@ func (d *heapprofilerDomain) TakeHeapSnapshot(ctx context.Context, args *cdpcmd.
 		err = rpcc.Invoke(ctx, cdpcmd.HeapProfilerTakeHeapSnapshot.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "HeapProfiler", Op: "TakeHeapSnapshot", Err: err}
+		err = &cdpError{Domain: "HeapProfiler", Op: "TakeHeapSnapshot", Err: err}
 	}
 	return
 }
@@ -4428,7 +4428,7 @@ func NewHeapProfilerTakeHeapSnapshotArgs() *cdpcmd.HeapProfilerTakeHeapSnapshotA
 func (d *heapprofilerDomain) CollectGarbage(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.HeapProfilerCollectGarbage.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "HeapProfiler", Op: "CollectGarbage", Err: err}
+		err = &cdpError{Domain: "HeapProfiler", Op: "CollectGarbage", Err: err}
 	}
 	return
 }
@@ -4441,7 +4441,7 @@ func (d *heapprofilerDomain) GetObjectByHeapObjectID(ctx context.Context, args *
 		err = rpcc.Invoke(ctx, cdpcmd.HeapProfilerGetObjectByHeapObjectID.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "HeapProfiler", Op: "GetObjectByHeapObjectID", Err: err}
+		err = &cdpError{Domain: "HeapProfiler", Op: "GetObjectByHeapObjectID", Err: err}
 	}
 	return
 }
@@ -4460,7 +4460,7 @@ func (d *heapprofilerDomain) AddInspectedHeapObject(ctx context.Context, args *c
 		err = rpcc.Invoke(ctx, cdpcmd.HeapProfilerAddInspectedHeapObject.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "HeapProfiler", Op: "AddInspectedHeapObject", Err: err}
+		err = &cdpError{Domain: "HeapProfiler", Op: "AddInspectedHeapObject", Err: err}
 	}
 	return
 }
@@ -4480,7 +4480,7 @@ func (d *heapprofilerDomain) GetHeapObjectID(ctx context.Context, args *cdpcmd.H
 		err = rpcc.Invoke(ctx, cdpcmd.HeapProfilerGetHeapObjectID.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "HeapProfiler", Op: "GetHeapObjectID", Err: err}
+		err = &cdpError{Domain: "HeapProfiler", Op: "GetHeapObjectID", Err: err}
 	}
 	return
 }
@@ -4499,7 +4499,7 @@ func (d *heapprofilerDomain) StartSampling(ctx context.Context, args *cdpcmd.Hea
 		err = rpcc.Invoke(ctx, cdpcmd.HeapProfilerStartSampling.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "HeapProfiler", Op: "StartSampling", Err: err}
+		err = &cdpError{Domain: "HeapProfiler", Op: "StartSampling", Err: err}
 	}
 	return
 }
@@ -4515,7 +4515,7 @@ func (d *heapprofilerDomain) StopSampling(ctx context.Context) (reply *cdpcmd.He
 	reply = new(cdpcmd.HeapProfilerStopSamplingReply)
 	err = rpcc.Invoke(ctx, cdpcmd.HeapProfilerStopSampling.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "HeapProfiler", Op: "StopSampling", Err: err}
+		err = &cdpError{Domain: "HeapProfiler", Op: "StopSampling", Err: err}
 	}
 	return
 }
@@ -4534,7 +4534,7 @@ type heapprofilerAddHeapSnapshotChunkClient struct{ rpcc.Stream }
 func (c *heapprofilerAddHeapSnapshotChunkClient) Recv() (*cdpevent.HeapProfilerAddHeapSnapshotChunkReply, error) {
 	event := new(cdpevent.HeapProfilerAddHeapSnapshotChunkReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "HeapProfiler", Op: "AddHeapSnapshotChunk Recv", Err: err}
+		return nil, &cdpError{Domain: "HeapProfiler", Op: "AddHeapSnapshotChunk Recv", Err: err}
 	}
 	return event, nil
 }
@@ -4553,7 +4553,7 @@ type heapprofilerResetProfilesClient struct{ rpcc.Stream }
 func (c *heapprofilerResetProfilesClient) Recv() (*cdpevent.HeapProfilerResetProfilesReply, error) {
 	event := new(cdpevent.HeapProfilerResetProfilesReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "HeapProfiler", Op: "ResetProfiles Recv", Err: err}
+		return nil, &cdpError{Domain: "HeapProfiler", Op: "ResetProfiles Recv", Err: err}
 	}
 	return event, nil
 }
@@ -4572,7 +4572,7 @@ type heapprofilerReportHeapSnapshotProgressClient struct{ rpcc.Stream }
 func (c *heapprofilerReportHeapSnapshotProgressClient) Recv() (*cdpevent.HeapProfilerReportHeapSnapshotProgressReply, error) {
 	event := new(cdpevent.HeapProfilerReportHeapSnapshotProgressReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "HeapProfiler", Op: "ReportHeapSnapshotProgress Recv", Err: err}
+		return nil, &cdpError{Domain: "HeapProfiler", Op: "ReportHeapSnapshotProgress Recv", Err: err}
 	}
 	return event, nil
 }
@@ -4591,7 +4591,7 @@ type heapprofilerLastSeenObjectIDClient struct{ rpcc.Stream }
 func (c *heapprofilerLastSeenObjectIDClient) Recv() (*cdpevent.HeapProfilerLastSeenObjectIDReply, error) {
 	event := new(cdpevent.HeapProfilerLastSeenObjectIDReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "HeapProfiler", Op: "LastSeenObjectID Recv", Err: err}
+		return nil, &cdpError{Domain: "HeapProfiler", Op: "LastSeenObjectID Recv", Err: err}
 	}
 	return event, nil
 }
@@ -4610,7 +4610,7 @@ type heapprofilerHeapStatsUpdateClient struct{ rpcc.Stream }
 func (c *heapprofilerHeapStatsUpdateClient) Recv() (*cdpevent.HeapProfilerHeapStatsUpdateReply, error) {
 	event := new(cdpevent.HeapProfilerHeapStatsUpdateReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "HeapProfiler", Op: "HeapStatsUpdate Recv", Err: err}
+		return nil, &cdpError{Domain: "HeapProfiler", Op: "HeapStatsUpdate Recv", Err: err}
 	}
 	return event, nil
 }
@@ -4639,7 +4639,7 @@ func (d *ioDomain) Read(ctx context.Context, args *cdpcmd.IOReadArgs) (reply *cd
 		err = rpcc.Invoke(ctx, cdpcmd.IORead.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "IO", Op: "Read", Err: err}
+		err = &cdpError{Domain: "IO", Op: "Read", Err: err}
 	}
 	return
 }
@@ -4658,7 +4658,7 @@ func (d *ioDomain) Close(ctx context.Context, args *cdpcmd.IOCloseArgs) (err err
 		err = rpcc.Invoke(ctx, cdpcmd.IOClose.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "IO", Op: "Close", Err: err}
+		err = &cdpError{Domain: "IO", Op: "Close", Err: err}
 	}
 	return
 }
@@ -4714,7 +4714,7 @@ type indexeddbDomain struct{ conn *rpcc.Conn }
 func (d *indexeddbDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.IndexedDBEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "IndexedDB", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "IndexedDB", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -4722,7 +4722,7 @@ func (d *indexeddbDomain) Enable(ctx context.Context) (err error) {
 func (d *indexeddbDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.IndexedDBDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "IndexedDB", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "IndexedDB", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -4735,7 +4735,7 @@ func (d *indexeddbDomain) RequestDatabaseNames(ctx context.Context, args *cdpcmd
 		err = rpcc.Invoke(ctx, cdpcmd.IndexedDBRequestDatabaseNames.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "IndexedDB", Op: "RequestDatabaseNames", Err: err}
+		err = &cdpError{Domain: "IndexedDB", Op: "RequestDatabaseNames", Err: err}
 	}
 	return
 }
@@ -4755,7 +4755,7 @@ func (d *indexeddbDomain) RequestDatabase(ctx context.Context, args *cdpcmd.Inde
 		err = rpcc.Invoke(ctx, cdpcmd.IndexedDBRequestDatabase.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "IndexedDB", Op: "RequestDatabase", Err: err}
+		err = &cdpError{Domain: "IndexedDB", Op: "RequestDatabase", Err: err}
 	}
 	return
 }
@@ -4776,7 +4776,7 @@ func (d *indexeddbDomain) RequestData(ctx context.Context, args *cdpcmd.IndexedD
 		err = rpcc.Invoke(ctx, cdpcmd.IndexedDBRequestData.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "IndexedDB", Op: "RequestData", Err: err}
+		err = &cdpError{Domain: "IndexedDB", Op: "RequestData", Err: err}
 	}
 	return
 }
@@ -4800,7 +4800,7 @@ func (d *indexeddbDomain) ClearObjectStore(ctx context.Context, args *cdpcmd.Ind
 		err = rpcc.Invoke(ctx, cdpcmd.IndexedDBClearObjectStore.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "IndexedDB", Op: "ClearObjectStore", Err: err}
+		err = &cdpError{Domain: "IndexedDB", Op: "ClearObjectStore", Err: err}
 	}
 	return
 }
@@ -4821,7 +4821,7 @@ func (d *indexeddbDomain) DeleteDatabase(ctx context.Context, args *cdpcmd.Index
 		err = rpcc.Invoke(ctx, cdpcmd.IndexedDBDeleteDatabase.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "IndexedDB", Op: "DeleteDatabase", Err: err}
+		err = &cdpError{Domain: "IndexedDB", Op: "DeleteDatabase", Err: err}
 	}
 	return
 }
@@ -4882,7 +4882,7 @@ func (d *inputDomain) DispatchKeyEvent(ctx context.Context, args *cdpcmd.InputDi
 		err = rpcc.Invoke(ctx, cdpcmd.InputDispatchKeyEvent.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Input", Op: "DispatchKeyEvent", Err: err}
+		err = &cdpError{Domain: "Input", Op: "DispatchKeyEvent", Err: err}
 	}
 	return
 }
@@ -4901,7 +4901,7 @@ func (d *inputDomain) DispatchMouseEvent(ctx context.Context, args *cdpcmd.Input
 		err = rpcc.Invoke(ctx, cdpcmd.InputDispatchMouseEvent.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Input", Op: "DispatchMouseEvent", Err: err}
+		err = &cdpError{Domain: "Input", Op: "DispatchMouseEvent", Err: err}
 	}
 	return
 }
@@ -4922,7 +4922,7 @@ func (d *inputDomain) DispatchTouchEvent(ctx context.Context, args *cdpcmd.Input
 		err = rpcc.Invoke(ctx, cdpcmd.InputDispatchTouchEvent.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Input", Op: "DispatchTouchEvent", Err: err}
+		err = &cdpError{Domain: "Input", Op: "DispatchTouchEvent", Err: err}
 	}
 	return
 }
@@ -4942,7 +4942,7 @@ func (d *inputDomain) EmulateTouchFromMouseEvent(ctx context.Context, args *cdpc
 		err = rpcc.Invoke(ctx, cdpcmd.InputEmulateTouchFromMouseEvent.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Input", Op: "EmulateTouchFromMouseEvent", Err: err}
+		err = &cdpError{Domain: "Input", Op: "EmulateTouchFromMouseEvent", Err: err}
 	}
 	return
 }
@@ -4965,7 +4965,7 @@ func (d *inputDomain) SynthesizePinchGesture(ctx context.Context, args *cdpcmd.I
 		err = rpcc.Invoke(ctx, cdpcmd.InputSynthesizePinchGesture.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Input", Op: "SynthesizePinchGesture", Err: err}
+		err = &cdpError{Domain: "Input", Op: "SynthesizePinchGesture", Err: err}
 	}
 	return
 }
@@ -4986,7 +4986,7 @@ func (d *inputDomain) SynthesizeScrollGesture(ctx context.Context, args *cdpcmd.
 		err = rpcc.Invoke(ctx, cdpcmd.InputSynthesizeScrollGesture.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Input", Op: "SynthesizeScrollGesture", Err: err}
+		err = &cdpError{Domain: "Input", Op: "SynthesizeScrollGesture", Err: err}
 	}
 	return
 }
@@ -5006,7 +5006,7 @@ func (d *inputDomain) SynthesizeTapGesture(ctx context.Context, args *cdpcmd.Inp
 		err = rpcc.Invoke(ctx, cdpcmd.InputSynthesizeTapGesture.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Input", Op: "SynthesizeTapGesture", Err: err}
+		err = &cdpError{Domain: "Input", Op: "SynthesizeTapGesture", Err: err}
 	}
 	return
 }
@@ -5048,7 +5048,7 @@ type inspectorDomain struct{ conn *rpcc.Conn }
 func (d *inspectorDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.InspectorEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Inspector", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "Inspector", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -5056,7 +5056,7 @@ func (d *inspectorDomain) Enable(ctx context.Context) (err error) {
 func (d *inspectorDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.InspectorDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Inspector", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "Inspector", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -5075,7 +5075,7 @@ type inspectorDetachedClient struct{ rpcc.Stream }
 func (c *inspectorDetachedClient) Recv() (*cdpevent.InspectorDetachedReply, error) {
 	event := new(cdpevent.InspectorDetachedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Inspector", Op: "Detached Recv", Err: err}
+		return nil, &cdpError{Domain: "Inspector", Op: "Detached Recv", Err: err}
 	}
 	return event, nil
 }
@@ -5094,7 +5094,7 @@ type inspectorTargetCrashedClient struct{ rpcc.Stream }
 func (c *inspectorTargetCrashedClient) Recv() (*cdpevent.InspectorTargetCrashedReply, error) {
 	event := new(cdpevent.InspectorTargetCrashedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Inspector", Op: "TargetCrashed Recv", Err: err}
+		return nil, &cdpError{Domain: "Inspector", Op: "TargetCrashed Recv", Err: err}
 	}
 	return event, nil
 }
@@ -5163,7 +5163,7 @@ type layertreeDomain struct{ conn *rpcc.Conn }
 func (d *layertreeDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.LayerTreeEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "LayerTree", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "LayerTree", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -5171,7 +5171,7 @@ func (d *layertreeDomain) Enable(ctx context.Context) (err error) {
 func (d *layertreeDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.LayerTreeDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "LayerTree", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "LayerTree", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -5184,7 +5184,7 @@ func (d *layertreeDomain) CompositingReasons(ctx context.Context, args *cdpcmd.L
 		err = rpcc.Invoke(ctx, cdpcmd.LayerTreeCompositingReasons.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "LayerTree", Op: "CompositingReasons", Err: err}
+		err = &cdpError{Domain: "LayerTree", Op: "CompositingReasons", Err: err}
 	}
 	return
 }
@@ -5204,7 +5204,7 @@ func (d *layertreeDomain) MakeSnapshot(ctx context.Context, args *cdpcmd.LayerTr
 		err = rpcc.Invoke(ctx, cdpcmd.LayerTreeMakeSnapshot.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "LayerTree", Op: "MakeSnapshot", Err: err}
+		err = &cdpError{Domain: "LayerTree", Op: "MakeSnapshot", Err: err}
 	}
 	return
 }
@@ -5224,7 +5224,7 @@ func (d *layertreeDomain) LoadSnapshot(ctx context.Context, args *cdpcmd.LayerTr
 		err = rpcc.Invoke(ctx, cdpcmd.LayerTreeLoadSnapshot.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "LayerTree", Op: "LoadSnapshot", Err: err}
+		err = &cdpError{Domain: "LayerTree", Op: "LoadSnapshot", Err: err}
 	}
 	return
 }
@@ -5243,7 +5243,7 @@ func (d *layertreeDomain) ReleaseSnapshot(ctx context.Context, args *cdpcmd.Laye
 		err = rpcc.Invoke(ctx, cdpcmd.LayerTreeReleaseSnapshot.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "LayerTree", Op: "ReleaseSnapshot", Err: err}
+		err = &cdpError{Domain: "LayerTree", Op: "ReleaseSnapshot", Err: err}
 	}
 	return
 }
@@ -5263,7 +5263,7 @@ func (d *layertreeDomain) ProfileSnapshot(ctx context.Context, args *cdpcmd.Laye
 		err = rpcc.Invoke(ctx, cdpcmd.LayerTreeProfileSnapshot.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "LayerTree", Op: "ProfileSnapshot", Err: err}
+		err = &cdpError{Domain: "LayerTree", Op: "ProfileSnapshot", Err: err}
 	}
 	return
 }
@@ -5283,7 +5283,7 @@ func (d *layertreeDomain) ReplaySnapshot(ctx context.Context, args *cdpcmd.Layer
 		err = rpcc.Invoke(ctx, cdpcmd.LayerTreeReplaySnapshot.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "LayerTree", Op: "ReplaySnapshot", Err: err}
+		err = &cdpError{Domain: "LayerTree", Op: "ReplaySnapshot", Err: err}
 	}
 	return
 }
@@ -5303,7 +5303,7 @@ func (d *layertreeDomain) SnapshotCommandLog(ctx context.Context, args *cdpcmd.L
 		err = rpcc.Invoke(ctx, cdpcmd.LayerTreeSnapshotCommandLog.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "LayerTree", Op: "SnapshotCommandLog", Err: err}
+		err = &cdpError{Domain: "LayerTree", Op: "SnapshotCommandLog", Err: err}
 	}
 	return
 }
@@ -5329,7 +5329,7 @@ type layertreeLayerTreeDidChangeClient struct{ rpcc.Stream }
 func (c *layertreeLayerTreeDidChangeClient) Recv() (*cdpevent.LayerTreeDidChangeReply, error) {
 	event := new(cdpevent.LayerTreeDidChangeReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "LayerTree", Op: "LayerTreeDidChange Recv", Err: err}
+		return nil, &cdpError{Domain: "LayerTree", Op: "LayerTreeDidChange Recv", Err: err}
 	}
 	return event, nil
 }
@@ -5348,7 +5348,7 @@ type layertreeLayerPaintedClient struct{ rpcc.Stream }
 func (c *layertreeLayerPaintedClient) Recv() (*cdpevent.LayerTreeLayerPaintedReply, error) {
 	event := new(cdpevent.LayerTreeLayerPaintedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "LayerTree", Op: "LayerPainted Recv", Err: err}
+		return nil, &cdpError{Domain: "LayerTree", Op: "LayerPainted Recv", Err: err}
 	}
 	return event, nil
 }
@@ -5392,7 +5392,7 @@ type logDomain struct{ conn *rpcc.Conn }
 func (d *logDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.LogEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Log", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "Log", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -5400,7 +5400,7 @@ func (d *logDomain) Enable(ctx context.Context) (err error) {
 func (d *logDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.LogDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Log", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "Log", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -5408,7 +5408,7 @@ func (d *logDomain) Disable(ctx context.Context) (err error) {
 func (d *logDomain) Clear(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.LogClear.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Log", Op: "Clear", Err: err}
+		err = &cdpError{Domain: "Log", Op: "Clear", Err: err}
 	}
 	return
 }
@@ -5420,7 +5420,7 @@ func (d *logDomain) StartViolationsReport(ctx context.Context, args *cdpcmd.LogS
 		err = rpcc.Invoke(ctx, cdpcmd.LogStartViolationsReport.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Log", Op: "StartViolationsReport", Err: err}
+		err = &cdpError{Domain: "Log", Op: "StartViolationsReport", Err: err}
 	}
 	return
 }
@@ -5435,7 +5435,7 @@ func NewLogStartViolationsReportArgs(config []cdptype.LogViolationSetting) *cdpc
 func (d *logDomain) StopViolationsReport(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.LogStopViolationsReport.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Log", Op: "StopViolationsReport", Err: err}
+		err = &cdpError{Domain: "Log", Op: "StopViolationsReport", Err: err}
 	}
 	return
 }
@@ -5454,7 +5454,7 @@ type logEntryAddedClient struct{ rpcc.Stream }
 func (c *logEntryAddedClient) Recv() (*cdpevent.LogEntryAddedReply, error) {
 	event := new(cdpevent.LogEntryAddedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Log", Op: "EntryAdded Recv", Err: err}
+		return nil, &cdpError{Domain: "Log", Op: "EntryAdded Recv", Err: err}
 	}
 	return event, nil
 }
@@ -5484,7 +5484,7 @@ func (d *memoryDomain) GetDOMCounters(ctx context.Context) (reply *cdpcmd.Memory
 	reply = new(cdpcmd.MemoryGetDOMCountersReply)
 	err = rpcc.Invoke(ctx, cdpcmd.MemoryGetDOMCounters.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Memory", Op: "GetDOMCounters", Err: err}
+		err = &cdpError{Domain: "Memory", Op: "GetDOMCounters", Err: err}
 	}
 	return
 }
@@ -5496,7 +5496,7 @@ func (d *memoryDomain) SetPressureNotificationsSuppressed(ctx context.Context, a
 		err = rpcc.Invoke(ctx, cdpcmd.MemorySetPressureNotificationsSuppressed.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Memory", Op: "SetPressureNotificationsSuppressed", Err: err}
+		err = &cdpError{Domain: "Memory", Op: "SetPressureNotificationsSuppressed", Err: err}
 	}
 	return
 }
@@ -5515,7 +5515,7 @@ func (d *memoryDomain) SimulatePressureNotification(ctx context.Context, args *c
 		err = rpcc.Invoke(ctx, cdpcmd.MemorySimulatePressureNotification.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Memory", Op: "SimulatePressureNotification", Err: err}
+		err = &cdpError{Domain: "Memory", Op: "SimulatePressureNotification", Err: err}
 	}
 	return
 }
@@ -5725,7 +5725,7 @@ func (d *networkDomain) Enable(ctx context.Context, args *cdpcmd.NetworkEnableAr
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkEnable.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "Network", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -5740,7 +5740,7 @@ func NewNetworkEnableArgs() *cdpcmd.NetworkEnableArgs {
 func (d *networkDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.NetworkDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "Network", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -5752,7 +5752,7 @@ func (d *networkDomain) SetUserAgentOverride(ctx context.Context, args *cdpcmd.N
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkSetUserAgentOverride.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "SetUserAgentOverride", Err: err}
+		err = &cdpError{Domain: "Network", Op: "SetUserAgentOverride", Err: err}
 	}
 	return
 }
@@ -5771,7 +5771,7 @@ func (d *networkDomain) SetExtraHTTPHeaders(ctx context.Context, args *cdpcmd.Ne
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkSetExtraHTTPHeaders.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "SetExtraHTTPHeaders", Err: err}
+		err = &cdpError{Domain: "Network", Op: "SetExtraHTTPHeaders", Err: err}
 	}
 	return
 }
@@ -5791,7 +5791,7 @@ func (d *networkDomain) GetResponseBody(ctx context.Context, args *cdpcmd.Networ
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkGetResponseBody.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "GetResponseBody", Err: err}
+		err = &cdpError{Domain: "Network", Op: "GetResponseBody", Err: err}
 	}
 	return
 }
@@ -5810,7 +5810,7 @@ func (d *networkDomain) SetBlockedURLs(ctx context.Context, args *cdpcmd.Network
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkSetBlockedURLs.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "SetBlockedURLs", Err: err}
+		err = &cdpError{Domain: "Network", Op: "SetBlockedURLs", Err: err}
 	}
 	return
 }
@@ -5829,7 +5829,7 @@ func (d *networkDomain) ReplayXHR(ctx context.Context, args *cdpcmd.NetworkRepla
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkReplayXHR.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "ReplayXHR", Err: err}
+		err = &cdpError{Domain: "Network", Op: "ReplayXHR", Err: err}
 	}
 	return
 }
@@ -5848,7 +5848,7 @@ func (d *networkDomain) SetMonitoringXHREnabled(ctx context.Context, args *cdpcm
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkSetMonitoringXHREnabled.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "SetMonitoringXHREnabled", Err: err}
+		err = &cdpError{Domain: "Network", Op: "SetMonitoringXHREnabled", Err: err}
 	}
 	return
 }
@@ -5864,7 +5864,7 @@ func (d *networkDomain) CanClearBrowserCache(ctx context.Context) (reply *cdpcmd
 	reply = new(cdpcmd.NetworkCanClearBrowserCacheReply)
 	err = rpcc.Invoke(ctx, cdpcmd.NetworkCanClearBrowserCache.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "CanClearBrowserCache", Err: err}
+		err = &cdpError{Domain: "Network", Op: "CanClearBrowserCache", Err: err}
 	}
 	return
 }
@@ -5872,7 +5872,7 @@ func (d *networkDomain) CanClearBrowserCache(ctx context.Context) (reply *cdpcmd
 func (d *networkDomain) ClearBrowserCache(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.NetworkClearBrowserCache.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "ClearBrowserCache", Err: err}
+		err = &cdpError{Domain: "Network", Op: "ClearBrowserCache", Err: err}
 	}
 	return
 }
@@ -5881,7 +5881,7 @@ func (d *networkDomain) CanClearBrowserCookies(ctx context.Context) (reply *cdpc
 	reply = new(cdpcmd.NetworkCanClearBrowserCookiesReply)
 	err = rpcc.Invoke(ctx, cdpcmd.NetworkCanClearBrowserCookies.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "CanClearBrowserCookies", Err: err}
+		err = &cdpError{Domain: "Network", Op: "CanClearBrowserCookies", Err: err}
 	}
 	return
 }
@@ -5889,7 +5889,7 @@ func (d *networkDomain) CanClearBrowserCookies(ctx context.Context) (reply *cdpc
 func (d *networkDomain) ClearBrowserCookies(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.NetworkClearBrowserCookies.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "ClearBrowserCookies", Err: err}
+		err = &cdpError{Domain: "Network", Op: "ClearBrowserCookies", Err: err}
 	}
 	return
 }
@@ -5902,7 +5902,7 @@ func (d *networkDomain) GetCookies(ctx context.Context, args *cdpcmd.NetworkGetC
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkGetCookies.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "GetCookies", Err: err}
+		err = &cdpError{Domain: "Network", Op: "GetCookies", Err: err}
 	}
 	return
 }
@@ -5918,7 +5918,7 @@ func (d *networkDomain) GetAllCookies(ctx context.Context) (reply *cdpcmd.Networ
 	reply = new(cdpcmd.NetworkGetAllCookiesReply)
 	err = rpcc.Invoke(ctx, cdpcmd.NetworkGetAllCookies.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "GetAllCookies", Err: err}
+		err = &cdpError{Domain: "Network", Op: "GetAllCookies", Err: err}
 	}
 	return
 }
@@ -5930,7 +5930,7 @@ func (d *networkDomain) DeleteCookie(ctx context.Context, args *cdpcmd.NetworkDe
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkDeleteCookie.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "DeleteCookie", Err: err}
+		err = &cdpError{Domain: "Network", Op: "DeleteCookie", Err: err}
 	}
 	return
 }
@@ -5951,7 +5951,7 @@ func (d *networkDomain) SetCookie(ctx context.Context, args *cdpcmd.NetworkSetCo
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkSetCookie.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "SetCookie", Err: err}
+		err = &cdpError{Domain: "Network", Op: "SetCookie", Err: err}
 	}
 	return
 }
@@ -5969,7 +5969,7 @@ func (d *networkDomain) CanEmulateNetworkConditions(ctx context.Context) (reply 
 	reply = new(cdpcmd.NetworkCanEmulateNetworkConditionsReply)
 	err = rpcc.Invoke(ctx, cdpcmd.NetworkCanEmulateNetworkConditions.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "CanEmulateNetworkConditions", Err: err}
+		err = &cdpError{Domain: "Network", Op: "CanEmulateNetworkConditions", Err: err}
 	}
 	return
 }
@@ -5981,7 +5981,7 @@ func (d *networkDomain) EmulateNetworkConditions(ctx context.Context, args *cdpc
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkEmulateNetworkConditions.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "EmulateNetworkConditions", Err: err}
+		err = &cdpError{Domain: "Network", Op: "EmulateNetworkConditions", Err: err}
 	}
 	return
 }
@@ -6003,7 +6003,7 @@ func (d *networkDomain) SetCacheDisabled(ctx context.Context, args *cdpcmd.Netwo
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkSetCacheDisabled.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "SetCacheDisabled", Err: err}
+		err = &cdpError{Domain: "Network", Op: "SetCacheDisabled", Err: err}
 	}
 	return
 }
@@ -6022,7 +6022,7 @@ func (d *networkDomain) SetBypassServiceWorker(ctx context.Context, args *cdpcmd
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkSetBypassServiceWorker.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "SetBypassServiceWorker", Err: err}
+		err = &cdpError{Domain: "Network", Op: "SetBypassServiceWorker", Err: err}
 	}
 	return
 }
@@ -6041,7 +6041,7 @@ func (d *networkDomain) SetDataSizeLimitsForTest(ctx context.Context, args *cdpc
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkSetDataSizeLimitsForTest.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "SetDataSizeLimitsForTest", Err: err}
+		err = &cdpError{Domain: "Network", Op: "SetDataSizeLimitsForTest", Err: err}
 	}
 	return
 }
@@ -6062,7 +6062,7 @@ func (d *networkDomain) GetCertificate(ctx context.Context, args *cdpcmd.Network
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkGetCertificate.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Network", Op: "GetCertificate", Err: err}
+		err = &cdpError{Domain: "Network", Op: "GetCertificate", Err: err}
 	}
 	return
 }
@@ -6088,7 +6088,7 @@ type networkResourceChangedPriorityClient struct{ rpcc.Stream }
 func (c *networkResourceChangedPriorityClient) Recv() (*cdpevent.NetworkResourceChangedPriorityReply, error) {
 	event := new(cdpevent.NetworkResourceChangedPriorityReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "ResourceChangedPriority Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "ResourceChangedPriority Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6107,7 +6107,7 @@ type networkRequestWillBeSentClient struct{ rpcc.Stream }
 func (c *networkRequestWillBeSentClient) Recv() (*cdpevent.NetworkRequestWillBeSentReply, error) {
 	event := new(cdpevent.NetworkRequestWillBeSentReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "RequestWillBeSent Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "RequestWillBeSent Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6126,7 +6126,7 @@ type networkRequestServedFromCacheClient struct{ rpcc.Stream }
 func (c *networkRequestServedFromCacheClient) Recv() (*cdpevent.NetworkRequestServedFromCacheReply, error) {
 	event := new(cdpevent.NetworkRequestServedFromCacheReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "RequestServedFromCache Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "RequestServedFromCache Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6145,7 +6145,7 @@ type networkResponseReceivedClient struct{ rpcc.Stream }
 func (c *networkResponseReceivedClient) Recv() (*cdpevent.NetworkResponseReceivedReply, error) {
 	event := new(cdpevent.NetworkResponseReceivedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "ResponseReceived Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "ResponseReceived Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6164,7 +6164,7 @@ type networkDataReceivedClient struct{ rpcc.Stream }
 func (c *networkDataReceivedClient) Recv() (*cdpevent.NetworkDataReceivedReply, error) {
 	event := new(cdpevent.NetworkDataReceivedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "DataReceived Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "DataReceived Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6183,7 +6183,7 @@ type networkLoadingFinishedClient struct{ rpcc.Stream }
 func (c *networkLoadingFinishedClient) Recv() (*cdpevent.NetworkLoadingFinishedReply, error) {
 	event := new(cdpevent.NetworkLoadingFinishedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "LoadingFinished Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "LoadingFinished Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6202,7 +6202,7 @@ type networkLoadingFailedClient struct{ rpcc.Stream }
 func (c *networkLoadingFailedClient) Recv() (*cdpevent.NetworkLoadingFailedReply, error) {
 	event := new(cdpevent.NetworkLoadingFailedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "LoadingFailed Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "LoadingFailed Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6221,7 +6221,7 @@ type networkWebSocketWillSendHandshakeRequestClient struct{ rpcc.Stream }
 func (c *networkWebSocketWillSendHandshakeRequestClient) Recv() (*cdpevent.NetworkWebSocketWillSendHandshakeRequestReply, error) {
 	event := new(cdpevent.NetworkWebSocketWillSendHandshakeRequestReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "WebSocketWillSendHandshakeRequest Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "WebSocketWillSendHandshakeRequest Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6240,7 +6240,7 @@ type networkWebSocketHandshakeResponseReceivedClient struct{ rpcc.Stream }
 func (c *networkWebSocketHandshakeResponseReceivedClient) Recv() (*cdpevent.NetworkWebSocketHandshakeResponseReceivedReply, error) {
 	event := new(cdpevent.NetworkWebSocketHandshakeResponseReceivedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "WebSocketHandshakeResponseReceived Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "WebSocketHandshakeResponseReceived Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6259,7 +6259,7 @@ type networkWebSocketCreatedClient struct{ rpcc.Stream }
 func (c *networkWebSocketCreatedClient) Recv() (*cdpevent.NetworkWebSocketCreatedReply, error) {
 	event := new(cdpevent.NetworkWebSocketCreatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "WebSocketCreated Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "WebSocketCreated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6278,7 +6278,7 @@ type networkWebSocketClosedClient struct{ rpcc.Stream }
 func (c *networkWebSocketClosedClient) Recv() (*cdpevent.NetworkWebSocketClosedReply, error) {
 	event := new(cdpevent.NetworkWebSocketClosedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "WebSocketClosed Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "WebSocketClosed Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6297,7 +6297,7 @@ type networkWebSocketFrameReceivedClient struct{ rpcc.Stream }
 func (c *networkWebSocketFrameReceivedClient) Recv() (*cdpevent.NetworkWebSocketFrameReceivedReply, error) {
 	event := new(cdpevent.NetworkWebSocketFrameReceivedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "WebSocketFrameReceived Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "WebSocketFrameReceived Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6316,7 +6316,7 @@ type networkWebSocketFrameErrorClient struct{ rpcc.Stream }
 func (c *networkWebSocketFrameErrorClient) Recv() (*cdpevent.NetworkWebSocketFrameErrorReply, error) {
 	event := new(cdpevent.NetworkWebSocketFrameErrorReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "WebSocketFrameError Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "WebSocketFrameError Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6335,7 +6335,7 @@ type networkWebSocketFrameSentClient struct{ rpcc.Stream }
 func (c *networkWebSocketFrameSentClient) Recv() (*cdpevent.NetworkWebSocketFrameSentReply, error) {
 	event := new(cdpevent.NetworkWebSocketFrameSentReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "WebSocketFrameSent Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "WebSocketFrameSent Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6354,7 +6354,7 @@ type networkEventSourceMessageReceivedClient struct{ rpcc.Stream }
 func (c *networkEventSourceMessageReceivedClient) Recv() (*cdpevent.NetworkEventSourceMessageReceivedReply, error) {
 	event := new(cdpevent.NetworkEventSourceMessageReceivedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Network", Op: "EventSourceMessageReceived Recv", Err: err}
+		return nil, &cdpError{Domain: "Network", Op: "EventSourceMessageReceived Recv", Err: err}
 	}
 	return event, nil
 }
@@ -6638,7 +6638,7 @@ type pageDomain struct{ conn *rpcc.Conn }
 func (d *pageDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.PageEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "Page", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -6646,7 +6646,7 @@ func (d *pageDomain) Enable(ctx context.Context) (err error) {
 func (d *pageDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.PageDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "Page", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -6659,7 +6659,7 @@ func (d *pageDomain) AddScriptToEvaluateOnLoad(ctx context.Context, args *cdpcmd
 		err = rpcc.Invoke(ctx, cdpcmd.PageAddScriptToEvaluateOnLoad.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "AddScriptToEvaluateOnLoad", Err: err}
+		err = &cdpError{Domain: "Page", Op: "AddScriptToEvaluateOnLoad", Err: err}
 	}
 	return
 }
@@ -6678,7 +6678,7 @@ func (d *pageDomain) RemoveScriptToEvaluateOnLoad(ctx context.Context, args *cdp
 		err = rpcc.Invoke(ctx, cdpcmd.PageRemoveScriptToEvaluateOnLoad.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "RemoveScriptToEvaluateOnLoad", Err: err}
+		err = &cdpError{Domain: "Page", Op: "RemoveScriptToEvaluateOnLoad", Err: err}
 	}
 	return
 }
@@ -6697,7 +6697,7 @@ func (d *pageDomain) SetAutoAttachToCreatedPages(ctx context.Context, args *cdpc
 		err = rpcc.Invoke(ctx, cdpcmd.PageSetAutoAttachToCreatedPages.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "SetAutoAttachToCreatedPages", Err: err}
+		err = &cdpError{Domain: "Page", Op: "SetAutoAttachToCreatedPages", Err: err}
 	}
 	return
 }
@@ -6716,7 +6716,7 @@ func (d *pageDomain) Reload(ctx context.Context, args *cdpcmd.PageReloadArgs) (e
 		err = rpcc.Invoke(ctx, cdpcmd.PageReload.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "Reload", Err: err}
+		err = &cdpError{Domain: "Page", Op: "Reload", Err: err}
 	}
 	return
 }
@@ -6736,7 +6736,7 @@ func (d *pageDomain) Navigate(ctx context.Context, args *cdpcmd.PageNavigateArgs
 		err = rpcc.Invoke(ctx, cdpcmd.PageNavigate.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "Navigate", Err: err}
+		err = &cdpError{Domain: "Page", Op: "Navigate", Err: err}
 	}
 	return
 }
@@ -6751,7 +6751,7 @@ func NewPageNavigateArgs(url string) *cdpcmd.PageNavigateArgs {
 func (d *pageDomain) StopLoading(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.PageStopLoading.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "StopLoading", Err: err}
+		err = &cdpError{Domain: "Page", Op: "StopLoading", Err: err}
 	}
 	return
 }
@@ -6760,7 +6760,7 @@ func (d *pageDomain) GetNavigationHistory(ctx context.Context) (reply *cdpcmd.Pa
 	reply = new(cdpcmd.PageGetNavigationHistoryReply)
 	err = rpcc.Invoke(ctx, cdpcmd.PageGetNavigationHistory.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "GetNavigationHistory", Err: err}
+		err = &cdpError{Domain: "Page", Op: "GetNavigationHistory", Err: err}
 	}
 	return
 }
@@ -6772,7 +6772,7 @@ func (d *pageDomain) NavigateToHistoryEntry(ctx context.Context, args *cdpcmd.Pa
 		err = rpcc.Invoke(ctx, cdpcmd.PageNavigateToHistoryEntry.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "NavigateToHistoryEntry", Err: err}
+		err = &cdpError{Domain: "Page", Op: "NavigateToHistoryEntry", Err: err}
 	}
 	return
 }
@@ -6788,7 +6788,7 @@ func (d *pageDomain) GetCookies(ctx context.Context) (reply *cdpcmd.PageGetCooki
 	reply = new(cdpcmd.PageGetCookiesReply)
 	err = rpcc.Invoke(ctx, cdpcmd.PageGetCookies.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "GetCookies", Err: err}
+		err = &cdpError{Domain: "Page", Op: "GetCookies", Err: err}
 	}
 	return
 }
@@ -6800,7 +6800,7 @@ func (d *pageDomain) DeleteCookie(ctx context.Context, args *cdpcmd.PageDeleteCo
 		err = rpcc.Invoke(ctx, cdpcmd.PageDeleteCookie.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "DeleteCookie", Err: err}
+		err = &cdpError{Domain: "Page", Op: "DeleteCookie", Err: err}
 	}
 	return
 }
@@ -6817,7 +6817,7 @@ func (d *pageDomain) GetResourceTree(ctx context.Context) (reply *cdpcmd.PageGet
 	reply = new(cdpcmd.PageGetResourceTreeReply)
 	err = rpcc.Invoke(ctx, cdpcmd.PageGetResourceTree.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "GetResourceTree", Err: err}
+		err = &cdpError{Domain: "Page", Op: "GetResourceTree", Err: err}
 	}
 	return
 }
@@ -6830,7 +6830,7 @@ func (d *pageDomain) GetResourceContent(ctx context.Context, args *cdpcmd.PageGe
 		err = rpcc.Invoke(ctx, cdpcmd.PageGetResourceContent.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "GetResourceContent", Err: err}
+		err = &cdpError{Domain: "Page", Op: "GetResourceContent", Err: err}
 	}
 	return
 }
@@ -6851,7 +6851,7 @@ func (d *pageDomain) SearchInResource(ctx context.Context, args *cdpcmd.PageSear
 		err = rpcc.Invoke(ctx, cdpcmd.PageSearchInResource.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "SearchInResource", Err: err}
+		err = &cdpError{Domain: "Page", Op: "SearchInResource", Err: err}
 	}
 	return
 }
@@ -6872,7 +6872,7 @@ func (d *pageDomain) SetDocumentContent(ctx context.Context, args *cdpcmd.PageSe
 		err = rpcc.Invoke(ctx, cdpcmd.PageSetDocumentContent.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "SetDocumentContent", Err: err}
+		err = &cdpError{Domain: "Page", Op: "SetDocumentContent", Err: err}
 	}
 	return
 }
@@ -6892,7 +6892,7 @@ func (d *pageDomain) SetDeviceMetricsOverride(ctx context.Context, args *cdpcmd.
 		err = rpcc.Invoke(ctx, cdpcmd.PageSetDeviceMetricsOverride.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "SetDeviceMetricsOverride", Err: err}
+		err = &cdpError{Domain: "Page", Op: "SetDeviceMetricsOverride", Err: err}
 	}
 	return
 }
@@ -6911,7 +6911,7 @@ func NewPageSetDeviceMetricsOverrideArgs(width int, height int, deviceScaleFacto
 func (d *pageDomain) ClearDeviceMetricsOverride(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.PageClearDeviceMetricsOverride.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "ClearDeviceMetricsOverride", Err: err}
+		err = &cdpError{Domain: "Page", Op: "ClearDeviceMetricsOverride", Err: err}
 	}
 	return
 }
@@ -6923,7 +6923,7 @@ func (d *pageDomain) SetGeolocationOverride(ctx context.Context, args *cdpcmd.Pa
 		err = rpcc.Invoke(ctx, cdpcmd.PageSetGeolocationOverride.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "SetGeolocationOverride", Err: err}
+		err = &cdpError{Domain: "Page", Op: "SetGeolocationOverride", Err: err}
 	}
 	return
 }
@@ -6938,7 +6938,7 @@ func NewPageSetGeolocationOverrideArgs() *cdpcmd.PageSetGeolocationOverrideArgs 
 func (d *pageDomain) ClearGeolocationOverride(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.PageClearGeolocationOverride.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "ClearGeolocationOverride", Err: err}
+		err = &cdpError{Domain: "Page", Op: "ClearGeolocationOverride", Err: err}
 	}
 	return
 }
@@ -6950,7 +6950,7 @@ func (d *pageDomain) SetDeviceOrientationOverride(ctx context.Context, args *cdp
 		err = rpcc.Invoke(ctx, cdpcmd.PageSetDeviceOrientationOverride.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "SetDeviceOrientationOverride", Err: err}
+		err = &cdpError{Domain: "Page", Op: "SetDeviceOrientationOverride", Err: err}
 	}
 	return
 }
@@ -6967,7 +6967,7 @@ func NewPageSetDeviceOrientationOverrideArgs(alpha float64, beta float64, gamma 
 func (d *pageDomain) ClearDeviceOrientationOverride(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.PageClearDeviceOrientationOverride.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "ClearDeviceOrientationOverride", Err: err}
+		err = &cdpError{Domain: "Page", Op: "ClearDeviceOrientationOverride", Err: err}
 	}
 	return
 }
@@ -6979,7 +6979,7 @@ func (d *pageDomain) SetTouchEmulationEnabled(ctx context.Context, args *cdpcmd.
 		err = rpcc.Invoke(ctx, cdpcmd.PageSetTouchEmulationEnabled.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "SetTouchEmulationEnabled", Err: err}
+		err = &cdpError{Domain: "Page", Op: "SetTouchEmulationEnabled", Err: err}
 	}
 	return
 }
@@ -6999,7 +6999,7 @@ func (d *pageDomain) CaptureScreenshot(ctx context.Context, args *cdpcmd.PageCap
 		err = rpcc.Invoke(ctx, cdpcmd.PageCaptureScreenshot.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "CaptureScreenshot", Err: err}
+		err = &cdpError{Domain: "Page", Op: "CaptureScreenshot", Err: err}
 	}
 	return
 }
@@ -7015,7 +7015,7 @@ func (d *pageDomain) PrintToPDF(ctx context.Context) (reply *cdpcmd.PagePrintToP
 	reply = new(cdpcmd.PagePrintToPDFReply)
 	err = rpcc.Invoke(ctx, cdpcmd.PagePrintToPDF.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "PrintToPDF", Err: err}
+		err = &cdpError{Domain: "Page", Op: "PrintToPDF", Err: err}
 	}
 	return
 }
@@ -7027,7 +7027,7 @@ func (d *pageDomain) StartScreencast(ctx context.Context, args *cdpcmd.PageStart
 		err = rpcc.Invoke(ctx, cdpcmd.PageStartScreencast.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "StartScreencast", Err: err}
+		err = &cdpError{Domain: "Page", Op: "StartScreencast", Err: err}
 	}
 	return
 }
@@ -7042,7 +7042,7 @@ func NewPageStartScreencastArgs() *cdpcmd.PageStartScreencastArgs {
 func (d *pageDomain) StopScreencast(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.PageStopScreencast.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "StopScreencast", Err: err}
+		err = &cdpError{Domain: "Page", Op: "StopScreencast", Err: err}
 	}
 	return
 }
@@ -7054,7 +7054,7 @@ func (d *pageDomain) ScreencastFrameAck(ctx context.Context, args *cdpcmd.PageSc
 		err = rpcc.Invoke(ctx, cdpcmd.PageScreencastFrameAck.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "ScreencastFrameAck", Err: err}
+		err = &cdpError{Domain: "Page", Op: "ScreencastFrameAck", Err: err}
 	}
 	return
 }
@@ -7073,7 +7073,7 @@ func (d *pageDomain) HandleJavaScriptDialog(ctx context.Context, args *cdpcmd.Pa
 		err = rpcc.Invoke(ctx, cdpcmd.PageHandleJavaScriptDialog.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "HandleJavaScriptDialog", Err: err}
+		err = &cdpError{Domain: "Page", Op: "HandleJavaScriptDialog", Err: err}
 	}
 	return
 }
@@ -7092,7 +7092,7 @@ func (d *pageDomain) SetColorPickerEnabled(ctx context.Context, args *cdpcmd.Pag
 		err = rpcc.Invoke(ctx, cdpcmd.PageSetColorPickerEnabled.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "SetColorPickerEnabled", Err: err}
+		err = &cdpError{Domain: "Page", Op: "SetColorPickerEnabled", Err: err}
 	}
 	return
 }
@@ -7111,7 +7111,7 @@ func (d *pageDomain) ConfigureOverlay(ctx context.Context, args *cdpcmd.PageConf
 		err = rpcc.Invoke(ctx, cdpcmd.PageConfigureOverlay.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "ConfigureOverlay", Err: err}
+		err = &cdpError{Domain: "Page", Op: "ConfigureOverlay", Err: err}
 	}
 	return
 }
@@ -7127,7 +7127,7 @@ func (d *pageDomain) GetAppManifest(ctx context.Context) (reply *cdpcmd.PageGetA
 	reply = new(cdpcmd.PageGetAppManifestReply)
 	err = rpcc.Invoke(ctx, cdpcmd.PageGetAppManifest.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "GetAppManifest", Err: err}
+		err = &cdpError{Domain: "Page", Op: "GetAppManifest", Err: err}
 	}
 	return
 }
@@ -7135,7 +7135,7 @@ func (d *pageDomain) GetAppManifest(ctx context.Context) (reply *cdpcmd.PageGetA
 func (d *pageDomain) RequestAppBanner(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.PageRequestAppBanner.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "RequestAppBanner", Err: err}
+		err = &cdpError{Domain: "Page", Op: "RequestAppBanner", Err: err}
 	}
 	return
 }
@@ -7147,7 +7147,7 @@ func (d *pageDomain) SetControlNavigations(ctx context.Context, args *cdpcmd.Pag
 		err = rpcc.Invoke(ctx, cdpcmd.PageSetControlNavigations.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "SetControlNavigations", Err: err}
+		err = &cdpError{Domain: "Page", Op: "SetControlNavigations", Err: err}
 	}
 	return
 }
@@ -7166,7 +7166,7 @@ func (d *pageDomain) ProcessNavigation(ctx context.Context, args *cdpcmd.PagePro
 		err = rpcc.Invoke(ctx, cdpcmd.PageProcessNavigation.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "ProcessNavigation", Err: err}
+		err = &cdpError{Domain: "Page", Op: "ProcessNavigation", Err: err}
 	}
 	return
 }
@@ -7183,7 +7183,7 @@ func (d *pageDomain) GetLayoutMetrics(ctx context.Context) (reply *cdpcmd.PageGe
 	reply = new(cdpcmd.PageGetLayoutMetricsReply)
 	err = rpcc.Invoke(ctx, cdpcmd.PageGetLayoutMetrics.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Page", Op: "GetLayoutMetrics", Err: err}
+		err = &cdpError{Domain: "Page", Op: "GetLayoutMetrics", Err: err}
 	}
 	return
 }
@@ -7202,7 +7202,7 @@ type pageDOMContentEventFiredClient struct{ rpcc.Stream }
 func (c *pageDOMContentEventFiredClient) Recv() (*cdpevent.PageDOMContentEventFiredReply, error) {
 	event := new(cdpevent.PageDOMContentEventFiredReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "DOMContentEventFired Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "DOMContentEventFired Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7221,7 +7221,7 @@ type pageLoadEventFiredClient struct{ rpcc.Stream }
 func (c *pageLoadEventFiredClient) Recv() (*cdpevent.PageLoadEventFiredReply, error) {
 	event := new(cdpevent.PageLoadEventFiredReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "LoadEventFired Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "LoadEventFired Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7240,7 +7240,7 @@ type pageFrameAttachedClient struct{ rpcc.Stream }
 func (c *pageFrameAttachedClient) Recv() (*cdpevent.PageFrameAttachedReply, error) {
 	event := new(cdpevent.PageFrameAttachedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "FrameAttached Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "FrameAttached Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7259,7 +7259,7 @@ type pageFrameNavigatedClient struct{ rpcc.Stream }
 func (c *pageFrameNavigatedClient) Recv() (*cdpevent.PageFrameNavigatedReply, error) {
 	event := new(cdpevent.PageFrameNavigatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "FrameNavigated Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "FrameNavigated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7278,7 +7278,7 @@ type pageFrameDetachedClient struct{ rpcc.Stream }
 func (c *pageFrameDetachedClient) Recv() (*cdpevent.PageFrameDetachedReply, error) {
 	event := new(cdpevent.PageFrameDetachedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "FrameDetached Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "FrameDetached Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7297,7 +7297,7 @@ type pageFrameStartedLoadingClient struct{ rpcc.Stream }
 func (c *pageFrameStartedLoadingClient) Recv() (*cdpevent.PageFrameStartedLoadingReply, error) {
 	event := new(cdpevent.PageFrameStartedLoadingReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "FrameStartedLoading Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "FrameStartedLoading Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7316,7 +7316,7 @@ type pageFrameStoppedLoadingClient struct{ rpcc.Stream }
 func (c *pageFrameStoppedLoadingClient) Recv() (*cdpevent.PageFrameStoppedLoadingReply, error) {
 	event := new(cdpevent.PageFrameStoppedLoadingReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "FrameStoppedLoading Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "FrameStoppedLoading Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7335,7 +7335,7 @@ type pageFrameScheduledNavigationClient struct{ rpcc.Stream }
 func (c *pageFrameScheduledNavigationClient) Recv() (*cdpevent.PageFrameScheduledNavigationReply, error) {
 	event := new(cdpevent.PageFrameScheduledNavigationReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "FrameScheduledNavigation Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "FrameScheduledNavigation Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7354,7 +7354,7 @@ type pageFrameClearedScheduledNavigationClient struct{ rpcc.Stream }
 func (c *pageFrameClearedScheduledNavigationClient) Recv() (*cdpevent.PageFrameClearedScheduledNavigationReply, error) {
 	event := new(cdpevent.PageFrameClearedScheduledNavigationReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "FrameClearedScheduledNavigation Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "FrameClearedScheduledNavigation Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7373,7 +7373,7 @@ type pageFrameResizedClient struct{ rpcc.Stream }
 func (c *pageFrameResizedClient) Recv() (*cdpevent.PageFrameResizedReply, error) {
 	event := new(cdpevent.PageFrameResizedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "FrameResized Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "FrameResized Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7392,7 +7392,7 @@ type pageJavascriptDialogOpeningClient struct{ rpcc.Stream }
 func (c *pageJavascriptDialogOpeningClient) Recv() (*cdpevent.PageJavascriptDialogOpeningReply, error) {
 	event := new(cdpevent.PageJavascriptDialogOpeningReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "JavascriptDialogOpening Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "JavascriptDialogOpening Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7411,7 +7411,7 @@ type pageJavascriptDialogClosedClient struct{ rpcc.Stream }
 func (c *pageJavascriptDialogClosedClient) Recv() (*cdpevent.PageJavascriptDialogClosedReply, error) {
 	event := new(cdpevent.PageJavascriptDialogClosedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "JavascriptDialogClosed Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "JavascriptDialogClosed Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7430,7 +7430,7 @@ type pageScreencastFrameClient struct{ rpcc.Stream }
 func (c *pageScreencastFrameClient) Recv() (*cdpevent.PageScreencastFrameReply, error) {
 	event := new(cdpevent.PageScreencastFrameReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "ScreencastFrame Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "ScreencastFrame Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7449,7 +7449,7 @@ type pageScreencastVisibilityChangedClient struct{ rpcc.Stream }
 func (c *pageScreencastVisibilityChangedClient) Recv() (*cdpevent.PageScreencastVisibilityChangedReply, error) {
 	event := new(cdpevent.PageScreencastVisibilityChangedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "ScreencastVisibilityChanged Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "ScreencastVisibilityChanged Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7468,7 +7468,7 @@ type pageColorPickedClient struct{ rpcc.Stream }
 func (c *pageColorPickedClient) Recv() (*cdpevent.PageColorPickedReply, error) {
 	event := new(cdpevent.PageColorPickedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "ColorPicked Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "ColorPicked Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7487,7 +7487,7 @@ type pageInterstitialShownClient struct{ rpcc.Stream }
 func (c *pageInterstitialShownClient) Recv() (*cdpevent.PageInterstitialShownReply, error) {
 	event := new(cdpevent.PageInterstitialShownReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "InterstitialShown Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "InterstitialShown Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7506,7 +7506,7 @@ type pageInterstitialHiddenClient struct{ rpcc.Stream }
 func (c *pageInterstitialHiddenClient) Recv() (*cdpevent.PageInterstitialHiddenReply, error) {
 	event := new(cdpevent.PageInterstitialHiddenReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "InterstitialHidden Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "InterstitialHidden Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7525,7 +7525,7 @@ type pageNavigationRequestedClient struct{ rpcc.Stream }
 func (c *pageNavigationRequestedClient) Recv() (*cdpevent.PageNavigationRequestedReply, error) {
 	event := new(cdpevent.PageNavigationRequestedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Page", Op: "NavigationRequested Recv", Err: err}
+		return nil, &cdpError{Domain: "Page", Op: "NavigationRequested Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7594,7 +7594,7 @@ type profilerDomain struct{ conn *rpcc.Conn }
 func (d *profilerDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.ProfilerEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Profiler", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "Profiler", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -7602,7 +7602,7 @@ func (d *profilerDomain) Enable(ctx context.Context) (err error) {
 func (d *profilerDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.ProfilerDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Profiler", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "Profiler", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -7614,7 +7614,7 @@ func (d *profilerDomain) SetSamplingInterval(ctx context.Context, args *cdpcmd.P
 		err = rpcc.Invoke(ctx, cdpcmd.ProfilerSetSamplingInterval.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Profiler", Op: "SetSamplingInterval", Err: err}
+		err = &cdpError{Domain: "Profiler", Op: "SetSamplingInterval", Err: err}
 	}
 	return
 }
@@ -7629,7 +7629,7 @@ func NewProfilerSetSamplingIntervalArgs(interval int) *cdpcmd.ProfilerSetSamplin
 func (d *profilerDomain) Start(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.ProfilerStart.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Profiler", Op: "Start", Err: err}
+		err = &cdpError{Domain: "Profiler", Op: "Start", Err: err}
 	}
 	return
 }
@@ -7638,7 +7638,7 @@ func (d *profilerDomain) Stop(ctx context.Context) (reply *cdpcmd.ProfilerStopRe
 	reply = new(cdpcmd.ProfilerStopReply)
 	err = rpcc.Invoke(ctx, cdpcmd.ProfilerStop.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Profiler", Op: "Stop", Err: err}
+		err = &cdpError{Domain: "Profiler", Op: "Stop", Err: err}
 	}
 	return
 }
@@ -7646,7 +7646,7 @@ func (d *profilerDomain) Stop(ctx context.Context) (reply *cdpcmd.ProfilerStopRe
 func (d *profilerDomain) StartPreciseCoverage(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.ProfilerStartPreciseCoverage.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Profiler", Op: "StartPreciseCoverage", Err: err}
+		err = &cdpError{Domain: "Profiler", Op: "StartPreciseCoverage", Err: err}
 	}
 	return
 }
@@ -7654,7 +7654,7 @@ func (d *profilerDomain) StartPreciseCoverage(ctx context.Context) (err error) {
 func (d *profilerDomain) StopPreciseCoverage(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.ProfilerStopPreciseCoverage.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Profiler", Op: "StopPreciseCoverage", Err: err}
+		err = &cdpError{Domain: "Profiler", Op: "StopPreciseCoverage", Err: err}
 	}
 	return
 }
@@ -7663,7 +7663,7 @@ func (d *profilerDomain) TakePreciseCoverage(ctx context.Context) (reply *cdpcmd
 	reply = new(cdpcmd.ProfilerTakePreciseCoverageReply)
 	err = rpcc.Invoke(ctx, cdpcmd.ProfilerTakePreciseCoverage.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Profiler", Op: "TakePreciseCoverage", Err: err}
+		err = &cdpError{Domain: "Profiler", Op: "TakePreciseCoverage", Err: err}
 	}
 	return
 }
@@ -7672,7 +7672,7 @@ func (d *profilerDomain) GetBestEffortCoverage(ctx context.Context) (reply *cdpc
 	reply = new(cdpcmd.ProfilerGetBestEffortCoverageReply)
 	err = rpcc.Invoke(ctx, cdpcmd.ProfilerGetBestEffortCoverage.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Profiler", Op: "GetBestEffortCoverage", Err: err}
+		err = &cdpError{Domain: "Profiler", Op: "GetBestEffortCoverage", Err: err}
 	}
 	return
 }
@@ -7691,7 +7691,7 @@ type profilerConsoleProfileStartedClient struct{ rpcc.Stream }
 func (c *profilerConsoleProfileStartedClient) Recv() (*cdpevent.ProfilerConsoleProfileStartedReply, error) {
 	event := new(cdpevent.ProfilerConsoleProfileStartedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Profiler", Op: "ConsoleProfileStarted Recv", Err: err}
+		return nil, &cdpError{Domain: "Profiler", Op: "ConsoleProfileStarted Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7710,7 +7710,7 @@ type profilerConsoleProfileFinishedClient struct{ rpcc.Stream }
 func (c *profilerConsoleProfileFinishedClient) Recv() (*cdpevent.ProfilerConsoleProfileFinishedReply, error) {
 	event := new(cdpevent.ProfilerConsoleProfileFinishedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Profiler", Op: "ConsoleProfileFinished Recv", Err: err}
+		return nil, &cdpError{Domain: "Profiler", Op: "ConsoleProfileFinished Recv", Err: err}
 	}
 	return event, nil
 }
@@ -7753,7 +7753,7 @@ func (d *renderingDomain) SetShowPaintRects(ctx context.Context, args *cdpcmd.Re
 		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowPaintRects.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Rendering", Op: "SetShowPaintRects", Err: err}
+		err = &cdpError{Domain: "Rendering", Op: "SetShowPaintRects", Err: err}
 	}
 	return
 }
@@ -7772,7 +7772,7 @@ func (d *renderingDomain) SetShowDebugBorders(ctx context.Context, args *cdpcmd.
 		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowDebugBorders.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Rendering", Op: "SetShowDebugBorders", Err: err}
+		err = &cdpError{Domain: "Rendering", Op: "SetShowDebugBorders", Err: err}
 	}
 	return
 }
@@ -7791,7 +7791,7 @@ func (d *renderingDomain) SetShowFPSCounter(ctx context.Context, args *cdpcmd.Re
 		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowFPSCounter.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Rendering", Op: "SetShowFPSCounter", Err: err}
+		err = &cdpError{Domain: "Rendering", Op: "SetShowFPSCounter", Err: err}
 	}
 	return
 }
@@ -7810,7 +7810,7 @@ func (d *renderingDomain) SetShowScrollBottleneckRects(ctx context.Context, args
 		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowScrollBottleneckRects.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Rendering", Op: "SetShowScrollBottleneckRects", Err: err}
+		err = &cdpError{Domain: "Rendering", Op: "SetShowScrollBottleneckRects", Err: err}
 	}
 	return
 }
@@ -7829,7 +7829,7 @@ func (d *renderingDomain) SetShowViewportSizeOnResize(ctx context.Context, args 
 		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowViewportSizeOnResize.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Rendering", Op: "SetShowViewportSizeOnResize", Err: err}
+		err = &cdpError{Domain: "Rendering", Op: "SetShowViewportSizeOnResize", Err: err}
 	}
 	return
 }
@@ -7955,7 +7955,7 @@ func (d *runtimeDomain) Evaluate(ctx context.Context, args *cdpcmd.RuntimeEvalua
 		err = rpcc.Invoke(ctx, cdpcmd.RuntimeEvaluate.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "Evaluate", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "Evaluate", Err: err}
 	}
 	return
 }
@@ -7975,7 +7975,7 @@ func (d *runtimeDomain) AwaitPromise(ctx context.Context, args *cdpcmd.RuntimeAw
 		err = rpcc.Invoke(ctx, cdpcmd.RuntimeAwaitPromise.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "AwaitPromise", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "AwaitPromise", Err: err}
 	}
 	return
 }
@@ -7995,7 +7995,7 @@ func (d *runtimeDomain) CallFunctionOn(ctx context.Context, args *cdpcmd.Runtime
 		err = rpcc.Invoke(ctx, cdpcmd.RuntimeCallFunctionOn.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "CallFunctionOn", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "CallFunctionOn", Err: err}
 	}
 	return
 }
@@ -8016,7 +8016,7 @@ func (d *runtimeDomain) GetProperties(ctx context.Context, args *cdpcmd.RuntimeG
 		err = rpcc.Invoke(ctx, cdpcmd.RuntimeGetProperties.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "GetProperties", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "GetProperties", Err: err}
 	}
 	return
 }
@@ -8035,7 +8035,7 @@ func (d *runtimeDomain) ReleaseObject(ctx context.Context, args *cdpcmd.RuntimeR
 		err = rpcc.Invoke(ctx, cdpcmd.RuntimeReleaseObject.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "ReleaseObject", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "ReleaseObject", Err: err}
 	}
 	return
 }
@@ -8054,7 +8054,7 @@ func (d *runtimeDomain) ReleaseObjectGroup(ctx context.Context, args *cdpcmd.Run
 		err = rpcc.Invoke(ctx, cdpcmd.RuntimeReleaseObjectGroup.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "ReleaseObjectGroup", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "ReleaseObjectGroup", Err: err}
 	}
 	return
 }
@@ -8069,7 +8069,7 @@ func NewRuntimeReleaseObjectGroupArgs(objectGroup string) *cdpcmd.RuntimeRelease
 func (d *runtimeDomain) RunIfWaitingForDebugger(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.RuntimeRunIfWaitingForDebugger.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "RunIfWaitingForDebugger", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "RunIfWaitingForDebugger", Err: err}
 	}
 	return
 }
@@ -8077,7 +8077,7 @@ func (d *runtimeDomain) RunIfWaitingForDebugger(ctx context.Context) (err error)
 func (d *runtimeDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.RuntimeEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -8085,7 +8085,7 @@ func (d *runtimeDomain) Enable(ctx context.Context) (err error) {
 func (d *runtimeDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.RuntimeDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -8093,7 +8093,7 @@ func (d *runtimeDomain) Disable(ctx context.Context) (err error) {
 func (d *runtimeDomain) DiscardConsoleEntries(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.RuntimeDiscardConsoleEntries.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "DiscardConsoleEntries", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "DiscardConsoleEntries", Err: err}
 	}
 	return
 }
@@ -8105,7 +8105,7 @@ func (d *runtimeDomain) SetCustomObjectFormatterEnabled(ctx context.Context, arg
 		err = rpcc.Invoke(ctx, cdpcmd.RuntimeSetCustomObjectFormatterEnabled.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "SetCustomObjectFormatterEnabled", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "SetCustomObjectFormatterEnabled", Err: err}
 	}
 	return
 }
@@ -8125,7 +8125,7 @@ func (d *runtimeDomain) CompileScript(ctx context.Context, args *cdpcmd.RuntimeC
 		err = rpcc.Invoke(ctx, cdpcmd.RuntimeCompileScript.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "CompileScript", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "CompileScript", Err: err}
 	}
 	return
 }
@@ -8147,7 +8147,7 @@ func (d *runtimeDomain) RunScript(ctx context.Context, args *cdpcmd.RuntimeRunSc
 		err = rpcc.Invoke(ctx, cdpcmd.RuntimeRunScript.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Runtime", Op: "RunScript", Err: err}
+		err = &cdpError{Domain: "Runtime", Op: "RunScript", Err: err}
 	}
 	return
 }
@@ -8173,7 +8173,7 @@ type runtimeExecutionContextCreatedClient struct{ rpcc.Stream }
 func (c *runtimeExecutionContextCreatedClient) Recv() (*cdpevent.RuntimeExecutionContextCreatedReply, error) {
 	event := new(cdpevent.RuntimeExecutionContextCreatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Runtime", Op: "ExecutionContextCreated Recv", Err: err}
+		return nil, &cdpError{Domain: "Runtime", Op: "ExecutionContextCreated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -8192,7 +8192,7 @@ type runtimeExecutionContextDestroyedClient struct{ rpcc.Stream }
 func (c *runtimeExecutionContextDestroyedClient) Recv() (*cdpevent.RuntimeExecutionContextDestroyedReply, error) {
 	event := new(cdpevent.RuntimeExecutionContextDestroyedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Runtime", Op: "ExecutionContextDestroyed Recv", Err: err}
+		return nil, &cdpError{Domain: "Runtime", Op: "ExecutionContextDestroyed Recv", Err: err}
 	}
 	return event, nil
 }
@@ -8211,7 +8211,7 @@ type runtimeExecutionContextsClearedClient struct{ rpcc.Stream }
 func (c *runtimeExecutionContextsClearedClient) Recv() (*cdpevent.RuntimeExecutionContextsClearedReply, error) {
 	event := new(cdpevent.RuntimeExecutionContextsClearedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Runtime", Op: "ExecutionContextsCleared Recv", Err: err}
+		return nil, &cdpError{Domain: "Runtime", Op: "ExecutionContextsCleared Recv", Err: err}
 	}
 	return event, nil
 }
@@ -8230,7 +8230,7 @@ type runtimeExceptionThrownClient struct{ rpcc.Stream }
 func (c *runtimeExceptionThrownClient) Recv() (*cdpevent.RuntimeExceptionThrownReply, error) {
 	event := new(cdpevent.RuntimeExceptionThrownReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Runtime", Op: "ExceptionThrown Recv", Err: err}
+		return nil, &cdpError{Domain: "Runtime", Op: "ExceptionThrown Recv", Err: err}
 	}
 	return event, nil
 }
@@ -8249,7 +8249,7 @@ type runtimeExceptionRevokedClient struct{ rpcc.Stream }
 func (c *runtimeExceptionRevokedClient) Recv() (*cdpevent.RuntimeExceptionRevokedReply, error) {
 	event := new(cdpevent.RuntimeExceptionRevokedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Runtime", Op: "ExceptionRevoked Recv", Err: err}
+		return nil, &cdpError{Domain: "Runtime", Op: "ExceptionRevoked Recv", Err: err}
 	}
 	return event, nil
 }
@@ -8268,7 +8268,7 @@ type runtimeConsoleAPICalledClient struct{ rpcc.Stream }
 func (c *runtimeConsoleAPICalledClient) Recv() (*cdpevent.RuntimeConsoleAPICalledReply, error) {
 	event := new(cdpevent.RuntimeConsoleAPICalledReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Runtime", Op: "ConsoleAPICalled Recv", Err: err}
+		return nil, &cdpError{Domain: "Runtime", Op: "ConsoleAPICalled Recv", Err: err}
 	}
 	return event, nil
 }
@@ -8287,7 +8287,7 @@ type runtimeInspectRequestedClient struct{ rpcc.Stream }
 func (c *runtimeInspectRequestedClient) Recv() (*cdpevent.RuntimeInspectRequestedReply, error) {
 	event := new(cdpevent.RuntimeInspectRequestedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Runtime", Op: "InspectRequested Recv", Err: err}
+		return nil, &cdpError{Domain: "Runtime", Op: "InspectRequested Recv", Err: err}
 	}
 	return event, nil
 }
@@ -8307,7 +8307,7 @@ func (d *schemaDomain) GetDomains(ctx context.Context) (reply *cdpcmd.SchemaGetD
 	reply = new(cdpcmd.SchemaGetDomainsReply)
 	err = rpcc.Invoke(ctx, cdpcmd.SchemaGetDomains.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Schema", Op: "GetDomains", Err: err}
+		err = &cdpError{Domain: "Schema", Op: "GetDomains", Err: err}
 	}
 	return
 }
@@ -8341,7 +8341,7 @@ type securityDomain struct{ conn *rpcc.Conn }
 func (d *securityDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.SecurityEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Security", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "Security", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -8349,7 +8349,7 @@ func (d *securityDomain) Enable(ctx context.Context) (err error) {
 func (d *securityDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.SecurityDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Security", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "Security", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -8357,7 +8357,7 @@ func (d *securityDomain) Disable(ctx context.Context) (err error) {
 func (d *securityDomain) ShowCertificateViewer(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.SecurityShowCertificateViewer.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Security", Op: "ShowCertificateViewer", Err: err}
+		err = &cdpError{Domain: "Security", Op: "ShowCertificateViewer", Err: err}
 	}
 	return
 }
@@ -8376,7 +8376,7 @@ type securitySecurityStateChangedClient struct{ rpcc.Stream }
 func (c *securitySecurityStateChangedClient) Recv() (*cdpevent.SecurityStateChangedReply, error) {
 	event := new(cdpevent.SecurityStateChangedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Security", Op: "SecurityStateChanged Recv", Err: err}
+		return nil, &cdpError{Domain: "Security", Op: "SecurityStateChanged Recv", Err: err}
 	}
 	return event, nil
 }
@@ -8460,7 +8460,7 @@ type serviceworkerDomain struct{ conn *rpcc.Conn }
 func (d *serviceworkerDomain) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.ServiceWorkerEnable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "ServiceWorker", Op: "Enable", Err: err}
+		err = &cdpError{Domain: "ServiceWorker", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -8468,7 +8468,7 @@ func (d *serviceworkerDomain) Enable(ctx context.Context) (err error) {
 func (d *serviceworkerDomain) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.ServiceWorkerDisable.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "ServiceWorker", Op: "Disable", Err: err}
+		err = &cdpError{Domain: "ServiceWorker", Op: "Disable", Err: err}
 	}
 	return
 }
@@ -8480,7 +8480,7 @@ func (d *serviceworkerDomain) Unregister(ctx context.Context, args *cdpcmd.Servi
 		err = rpcc.Invoke(ctx, cdpcmd.ServiceWorkerUnregister.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "ServiceWorker", Op: "Unregister", Err: err}
+		err = &cdpError{Domain: "ServiceWorker", Op: "Unregister", Err: err}
 	}
 	return
 }
@@ -8499,7 +8499,7 @@ func (d *serviceworkerDomain) UpdateRegistration(ctx context.Context, args *cdpc
 		err = rpcc.Invoke(ctx, cdpcmd.ServiceWorkerUpdateRegistration.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "ServiceWorker", Op: "UpdateRegistration", Err: err}
+		err = &cdpError{Domain: "ServiceWorker", Op: "UpdateRegistration", Err: err}
 	}
 	return
 }
@@ -8518,7 +8518,7 @@ func (d *serviceworkerDomain) StartWorker(ctx context.Context, args *cdpcmd.Serv
 		err = rpcc.Invoke(ctx, cdpcmd.ServiceWorkerStartWorker.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "ServiceWorker", Op: "StartWorker", Err: err}
+		err = &cdpError{Domain: "ServiceWorker", Op: "StartWorker", Err: err}
 	}
 	return
 }
@@ -8537,7 +8537,7 @@ func (d *serviceworkerDomain) SkipWaiting(ctx context.Context, args *cdpcmd.Serv
 		err = rpcc.Invoke(ctx, cdpcmd.ServiceWorkerSkipWaiting.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "ServiceWorker", Op: "SkipWaiting", Err: err}
+		err = &cdpError{Domain: "ServiceWorker", Op: "SkipWaiting", Err: err}
 	}
 	return
 }
@@ -8556,7 +8556,7 @@ func (d *serviceworkerDomain) StopWorker(ctx context.Context, args *cdpcmd.Servi
 		err = rpcc.Invoke(ctx, cdpcmd.ServiceWorkerStopWorker.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "ServiceWorker", Op: "StopWorker", Err: err}
+		err = &cdpError{Domain: "ServiceWorker", Op: "StopWorker", Err: err}
 	}
 	return
 }
@@ -8575,7 +8575,7 @@ func (d *serviceworkerDomain) InspectWorker(ctx context.Context, args *cdpcmd.Se
 		err = rpcc.Invoke(ctx, cdpcmd.ServiceWorkerInspectWorker.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "ServiceWorker", Op: "InspectWorker", Err: err}
+		err = &cdpError{Domain: "ServiceWorker", Op: "InspectWorker", Err: err}
 	}
 	return
 }
@@ -8594,7 +8594,7 @@ func (d *serviceworkerDomain) SetForceUpdateOnPageLoad(ctx context.Context, args
 		err = rpcc.Invoke(ctx, cdpcmd.ServiceWorkerSetForceUpdateOnPageLoad.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "ServiceWorker", Op: "SetForceUpdateOnPageLoad", Err: err}
+		err = &cdpError{Domain: "ServiceWorker", Op: "SetForceUpdateOnPageLoad", Err: err}
 	}
 	return
 }
@@ -8613,7 +8613,7 @@ func (d *serviceworkerDomain) DeliverPushMessage(ctx context.Context, args *cdpc
 		err = rpcc.Invoke(ctx, cdpcmd.ServiceWorkerDeliverPushMessage.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "ServiceWorker", Op: "DeliverPushMessage", Err: err}
+		err = &cdpError{Domain: "ServiceWorker", Op: "DeliverPushMessage", Err: err}
 	}
 	return
 }
@@ -8634,7 +8634,7 @@ func (d *serviceworkerDomain) DispatchSyncEvent(ctx context.Context, args *cdpcm
 		err = rpcc.Invoke(ctx, cdpcmd.ServiceWorkerDispatchSyncEvent.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "ServiceWorker", Op: "DispatchSyncEvent", Err: err}
+		err = &cdpError{Domain: "ServiceWorker", Op: "DispatchSyncEvent", Err: err}
 	}
 	return
 }
@@ -8663,7 +8663,7 @@ type serviceworkerWorkerRegistrationUpdatedClient struct{ rpcc.Stream }
 func (c *serviceworkerWorkerRegistrationUpdatedClient) Recv() (*cdpevent.ServiceWorkerWorkerRegistrationUpdatedReply, error) {
 	event := new(cdpevent.ServiceWorkerWorkerRegistrationUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "ServiceWorker", Op: "WorkerRegistrationUpdated Recv", Err: err}
+		return nil, &cdpError{Domain: "ServiceWorker", Op: "WorkerRegistrationUpdated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -8682,7 +8682,7 @@ type serviceworkerWorkerVersionUpdatedClient struct{ rpcc.Stream }
 func (c *serviceworkerWorkerVersionUpdatedClient) Recv() (*cdpevent.ServiceWorkerWorkerVersionUpdatedReply, error) {
 	event := new(cdpevent.ServiceWorkerWorkerVersionUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "ServiceWorker", Op: "WorkerVersionUpdated Recv", Err: err}
+		return nil, &cdpError{Domain: "ServiceWorker", Op: "WorkerVersionUpdated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -8701,7 +8701,7 @@ type serviceworkerWorkerErrorReportedClient struct{ rpcc.Stream }
 func (c *serviceworkerWorkerErrorReportedClient) Recv() (*cdpevent.ServiceWorkerWorkerErrorReportedReply, error) {
 	event := new(cdpevent.ServiceWorkerWorkerErrorReportedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "ServiceWorker", Op: "WorkerErrorReported Recv", Err: err}
+		return nil, &cdpError{Domain: "ServiceWorker", Op: "WorkerErrorReported Recv", Err: err}
 	}
 	return event, nil
 }
@@ -8724,7 +8724,7 @@ func (d *storageDomain) ClearDataForOrigin(ctx context.Context, args *cdpcmd.Sto
 		err = rpcc.Invoke(ctx, cdpcmd.StorageClearDataForOrigin.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Storage", Op: "ClearDataForOrigin", Err: err}
+		err = &cdpError{Domain: "Storage", Op: "ClearDataForOrigin", Err: err}
 	}
 	return
 }
@@ -8752,7 +8752,7 @@ func (d *systeminfoDomain) GetInfo(ctx context.Context) (reply *cdpcmd.SystemInf
 	reply = new(cdpcmd.SystemInfoGetInfoReply)
 	err = rpcc.Invoke(ctx, cdpcmd.SystemInfoGetInfo.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "SystemInfo", Op: "GetInfo", Err: err}
+		err = &cdpError{Domain: "SystemInfo", Op: "GetInfo", Err: err}
 	}
 	return
 }
@@ -8865,7 +8865,7 @@ func (d *targetDomain) SetDiscoverTargets(ctx context.Context, args *cdpcmd.Targ
 		err = rpcc.Invoke(ctx, cdpcmd.TargetSetDiscoverTargets.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "SetDiscoverTargets", Err: err}
+		err = &cdpError{Domain: "Target", Op: "SetDiscoverTargets", Err: err}
 	}
 	return
 }
@@ -8884,7 +8884,7 @@ func (d *targetDomain) SetAutoAttach(ctx context.Context, args *cdpcmd.TargetSet
 		err = rpcc.Invoke(ctx, cdpcmd.TargetSetAutoAttach.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "SetAutoAttach", Err: err}
+		err = &cdpError{Domain: "Target", Op: "SetAutoAttach", Err: err}
 	}
 	return
 }
@@ -8904,7 +8904,7 @@ func (d *targetDomain) SetAttachToFrames(ctx context.Context, args *cdpcmd.Targe
 		err = rpcc.Invoke(ctx, cdpcmd.TargetSetAttachToFrames.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "SetAttachToFrames", Err: err}
+		err = &cdpError{Domain: "Target", Op: "SetAttachToFrames", Err: err}
 	}
 	return
 }
@@ -8923,7 +8923,7 @@ func (d *targetDomain) SetRemoteLocations(ctx context.Context, args *cdpcmd.Targ
 		err = rpcc.Invoke(ctx, cdpcmd.TargetSetRemoteLocations.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "SetRemoteLocations", Err: err}
+		err = &cdpError{Domain: "Target", Op: "SetRemoteLocations", Err: err}
 	}
 	return
 }
@@ -8942,7 +8942,7 @@ func (d *targetDomain) SendMessageToTarget(ctx context.Context, args *cdpcmd.Tar
 		err = rpcc.Invoke(ctx, cdpcmd.TargetSendMessageToTarget.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "SendMessageToTarget", Err: err}
+		err = &cdpError{Domain: "Target", Op: "SendMessageToTarget", Err: err}
 	}
 	return
 }
@@ -8963,7 +8963,7 @@ func (d *targetDomain) GetTargetInfo(ctx context.Context, args *cdpcmd.TargetGet
 		err = rpcc.Invoke(ctx, cdpcmd.TargetGetTargetInfo.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "GetTargetInfo", Err: err}
+		err = &cdpError{Domain: "Target", Op: "GetTargetInfo", Err: err}
 	}
 	return
 }
@@ -8982,7 +8982,7 @@ func (d *targetDomain) ActivateTarget(ctx context.Context, args *cdpcmd.TargetAc
 		err = rpcc.Invoke(ctx, cdpcmd.TargetActivateTarget.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "ActivateTarget", Err: err}
+		err = &cdpError{Domain: "Target", Op: "ActivateTarget", Err: err}
 	}
 	return
 }
@@ -9002,7 +9002,7 @@ func (d *targetDomain) CloseTarget(ctx context.Context, args *cdpcmd.TargetClose
 		err = rpcc.Invoke(ctx, cdpcmd.TargetCloseTarget.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "CloseTarget", Err: err}
+		err = &cdpError{Domain: "Target", Op: "CloseTarget", Err: err}
 	}
 	return
 }
@@ -9022,7 +9022,7 @@ func (d *targetDomain) AttachToTarget(ctx context.Context, args *cdpcmd.TargetAt
 		err = rpcc.Invoke(ctx, cdpcmd.TargetAttachToTarget.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "AttachToTarget", Err: err}
+		err = &cdpError{Domain: "Target", Op: "AttachToTarget", Err: err}
 	}
 	return
 }
@@ -9041,7 +9041,7 @@ func (d *targetDomain) DetachFromTarget(ctx context.Context, args *cdpcmd.Target
 		err = rpcc.Invoke(ctx, cdpcmd.TargetDetachFromTarget.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "DetachFromTarget", Err: err}
+		err = &cdpError{Domain: "Target", Op: "DetachFromTarget", Err: err}
 	}
 	return
 }
@@ -9057,7 +9057,7 @@ func (d *targetDomain) CreateBrowserContext(ctx context.Context) (reply *cdpcmd.
 	reply = new(cdpcmd.TargetCreateBrowserContextReply)
 	err = rpcc.Invoke(ctx, cdpcmd.TargetCreateBrowserContext.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "CreateBrowserContext", Err: err}
+		err = &cdpError{Domain: "Target", Op: "CreateBrowserContext", Err: err}
 	}
 	return
 }
@@ -9070,7 +9070,7 @@ func (d *targetDomain) DisposeBrowserContext(ctx context.Context, args *cdpcmd.T
 		err = rpcc.Invoke(ctx, cdpcmd.TargetDisposeBrowserContext.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "DisposeBrowserContext", Err: err}
+		err = &cdpError{Domain: "Target", Op: "DisposeBrowserContext", Err: err}
 	}
 	return
 }
@@ -9090,7 +9090,7 @@ func (d *targetDomain) CreateTarget(ctx context.Context, args *cdpcmd.TargetCrea
 		err = rpcc.Invoke(ctx, cdpcmd.TargetCreateTarget.String(), nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "CreateTarget", Err: err}
+		err = &cdpError{Domain: "Target", Op: "CreateTarget", Err: err}
 	}
 	return
 }
@@ -9106,7 +9106,7 @@ func (d *targetDomain) GetTargets(ctx context.Context) (reply *cdpcmd.TargetGetT
 	reply = new(cdpcmd.TargetGetTargetsReply)
 	err = rpcc.Invoke(ctx, cdpcmd.TargetGetTargets.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Target", Op: "GetTargets", Err: err}
+		err = &cdpError{Domain: "Target", Op: "GetTargets", Err: err}
 	}
 	return
 }
@@ -9125,7 +9125,7 @@ type targetTargetCreatedClient struct{ rpcc.Stream }
 func (c *targetTargetCreatedClient) Recv() (*cdpevent.TargetCreatedReply, error) {
 	event := new(cdpevent.TargetCreatedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Target", Op: "TargetCreated Recv", Err: err}
+		return nil, &cdpError{Domain: "Target", Op: "TargetCreated Recv", Err: err}
 	}
 	return event, nil
 }
@@ -9144,7 +9144,7 @@ type targetTargetDestroyedClient struct{ rpcc.Stream }
 func (c *targetTargetDestroyedClient) Recv() (*cdpevent.TargetDestroyedReply, error) {
 	event := new(cdpevent.TargetDestroyedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Target", Op: "TargetDestroyed Recv", Err: err}
+		return nil, &cdpError{Domain: "Target", Op: "TargetDestroyed Recv", Err: err}
 	}
 	return event, nil
 }
@@ -9163,7 +9163,7 @@ type targetAttachedToTargetClient struct{ rpcc.Stream }
 func (c *targetAttachedToTargetClient) Recv() (*cdpevent.TargetAttachedToTargetReply, error) {
 	event := new(cdpevent.TargetAttachedToTargetReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Target", Op: "AttachedToTarget Recv", Err: err}
+		return nil, &cdpError{Domain: "Target", Op: "AttachedToTarget Recv", Err: err}
 	}
 	return event, nil
 }
@@ -9182,7 +9182,7 @@ type targetDetachedFromTargetClient struct{ rpcc.Stream }
 func (c *targetDetachedFromTargetClient) Recv() (*cdpevent.TargetDetachedFromTargetReply, error) {
 	event := new(cdpevent.TargetDetachedFromTargetReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Target", Op: "DetachedFromTarget Recv", Err: err}
+		return nil, &cdpError{Domain: "Target", Op: "DetachedFromTarget Recv", Err: err}
 	}
 	return event, nil
 }
@@ -9201,7 +9201,7 @@ type targetReceivedMessageFromTargetClient struct{ rpcc.Stream }
 func (c *targetReceivedMessageFromTargetClient) Recv() (*cdpevent.TargetReceivedMessageFromTargetReply, error) {
 	event := new(cdpevent.TargetReceivedMessageFromTargetReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Target", Op: "ReceivedMessageFromTarget Recv", Err: err}
+		return nil, &cdpError{Domain: "Target", Op: "ReceivedMessageFromTarget Recv", Err: err}
 	}
 	return event, nil
 }
@@ -9234,7 +9234,7 @@ func (d *tetheringDomain) Bind(ctx context.Context, args *cdpcmd.TetheringBindAr
 		err = rpcc.Invoke(ctx, cdpcmd.TetheringBind.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Tethering", Op: "Bind", Err: err}
+		err = &cdpError{Domain: "Tethering", Op: "Bind", Err: err}
 	}
 	return
 }
@@ -9253,7 +9253,7 @@ func (d *tetheringDomain) Unbind(ctx context.Context, args *cdpcmd.TetheringUnbi
 		err = rpcc.Invoke(ctx, cdpcmd.TetheringUnbind.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Tethering", Op: "Unbind", Err: err}
+		err = &cdpError{Domain: "Tethering", Op: "Unbind", Err: err}
 	}
 	return
 }
@@ -9279,7 +9279,7 @@ type tetheringAcceptedClient struct{ rpcc.Stream }
 func (c *tetheringAcceptedClient) Recv() (*cdpevent.TetheringAcceptedReply, error) {
 	event := new(cdpevent.TetheringAcceptedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Tethering", Op: "Accepted Recv", Err: err}
+		return nil, &cdpError{Domain: "Tethering", Op: "Accepted Recv", Err: err}
 	}
 	return event, nil
 }
@@ -9337,7 +9337,7 @@ func (d *tracingDomain) Start(ctx context.Context, args *cdpcmd.TracingStartArgs
 		err = rpcc.Invoke(ctx, cdpcmd.TracingStart.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Tracing", Op: "Start", Err: err}
+		err = &cdpError{Domain: "Tracing", Op: "Start", Err: err}
 	}
 	return
 }
@@ -9352,7 +9352,7 @@ func NewTracingStartArgs() *cdpcmd.TracingStartArgs {
 func (d *tracingDomain) End(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.TracingEnd.String(), nil, nil, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Tracing", Op: "End", Err: err}
+		err = &cdpError{Domain: "Tracing", Op: "End", Err: err}
 	}
 	return
 }
@@ -9361,7 +9361,7 @@ func (d *tracingDomain) GetCategories(ctx context.Context) (reply *cdpcmd.Tracin
 	reply = new(cdpcmd.TracingGetCategoriesReply)
 	err = rpcc.Invoke(ctx, cdpcmd.TracingGetCategories.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Tracing", Op: "GetCategories", Err: err}
+		err = &cdpError{Domain: "Tracing", Op: "GetCategories", Err: err}
 	}
 	return
 }
@@ -9370,7 +9370,7 @@ func (d *tracingDomain) RequestMemoryDump(ctx context.Context) (reply *cdpcmd.Tr
 	reply = new(cdpcmd.TracingRequestMemoryDumpReply)
 	err = rpcc.Invoke(ctx, cdpcmd.TracingRequestMemoryDump.String(), nil, reply, d.conn)
 	if err != nil {
-		err = &Error{Domain: "Tracing", Op: "RequestMemoryDump", Err: err}
+		err = &cdpError{Domain: "Tracing", Op: "RequestMemoryDump", Err: err}
 	}
 	return
 }
@@ -9382,7 +9382,7 @@ func (d *tracingDomain) RecordClockSyncMarker(ctx context.Context, args *cdpcmd.
 		err = rpcc.Invoke(ctx, cdpcmd.TracingRecordClockSyncMarker.String(), nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &Error{Domain: "Tracing", Op: "RecordClockSyncMarker", Err: err}
+		err = &cdpError{Domain: "Tracing", Op: "RecordClockSyncMarker", Err: err}
 	}
 	return
 }
@@ -9408,7 +9408,7 @@ type tracingDataCollectedClient struct{ rpcc.Stream }
 func (c *tracingDataCollectedClient) Recv() (*cdpevent.TracingDataCollectedReply, error) {
 	event := new(cdpevent.TracingDataCollectedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Tracing", Op: "DataCollected Recv", Err: err}
+		return nil, &cdpError{Domain: "Tracing", Op: "DataCollected Recv", Err: err}
 	}
 	return event, nil
 }
@@ -9427,7 +9427,7 @@ type tracingTracingCompleteClient struct{ rpcc.Stream }
 func (c *tracingTracingCompleteClient) Recv() (*cdpevent.TracingCompleteReply, error) {
 	event := new(cdpevent.TracingCompleteReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Tracing", Op: "TracingComplete Recv", Err: err}
+		return nil, &cdpError{Domain: "Tracing", Op: "TracingComplete Recv", Err: err}
 	}
 	return event, nil
 }
@@ -9446,7 +9446,7 @@ type tracingBufferUsageClient struct{ rpcc.Stream }
 func (c *tracingBufferUsageClient) Recv() (*cdpevent.TracingBufferUsageReply, error) {
 	event := new(cdpevent.TracingBufferUsageReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &Error{Domain: "Tracing", Op: "BufferUsage Recv", Err: err}
+		return nil, &cdpError{Domain: "Tracing", Op: "BufferUsage Recv", Err: err}
 	}
 	return event, nil
 }
