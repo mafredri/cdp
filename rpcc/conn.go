@@ -134,8 +134,8 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 // Codec is used by recv and dispatcher to
 // send and receive RPC communication.
 type Codec interface {
-	WriteRequest(v interface{}) error
-	ReadResponse(v interface{}) error
+	WriteRequest(*Request) error
+	ReadResponse(*Response) error
 }
 
 // jsonCodec implements codec.
@@ -144,8 +144,8 @@ type jsonCodec struct {
 	dec *json.Decoder
 }
 
-func (c *jsonCodec) WriteRequest(v interface{}) error { return c.enc.Encode(v) }
-func (c *jsonCodec) ReadResponse(v interface{}) error { return c.dec.Decode(v) }
+func (c *jsonCodec) WriteRequest(r *Request) error  { return c.enc.Encode(r) }
+func (c *jsonCodec) ReadResponse(r *Response) error { return c.dec.Decode(r) }
 
 // Conn represents an active RPC connection.
 type Conn struct {
@@ -165,34 +165,35 @@ type Conn struct {
 	pending map[uint64]*rpcCall
 
 	reqMu sync.Mutex // Protects following.
-	req   rpcRequest
+	req   Request
 
 	streamMu sync.Mutex // Protects following.
 	streams  map[string]*streamClients
 }
 
-type rpcResponse struct {
-	// Response to request.
-	ID     uint64          `json:"id"`     // Echoes that of the rpcRequest.
+// Response represents an RPC response or notification sent by the server.
+type Response struct {
+	// RPC response to a Request.
+	ID     uint64          `json:"id"`     // Echoes that of the Request.
 	Result json.RawMessage `json:"result"` // Result from invokation, if any.
-	Error  *rpcError       `json:"error"`  // Error, if any.
+	Error  *ResponseError  `json:"error"`  // Error, if any.
 
 	// RPC notification from remote.
 	Method string          `json:"method"` // Method invokation requested by remote.
-	Params json.RawMessage `json:"params"` // Method parameters, if any.
+	Args   json.RawMessage `json:"params"` // Method parameters, if any.
 }
 
-func (r *rpcResponse) reset() {
+func (r *Response) reset() {
 	r.ID = 0
 	r.Result = nil
 	r.Error = nil
 	r.Method = ""
-	r.Params = nil
+	r.Args = nil
 }
 
-func (r *rpcResponse) String() string {
+func (r *Response) String() string {
 	if r.Method != "" {
-		return fmt.Sprintf("Method = %s, Params = %s", r.Method, r.Params)
+		return fmt.Sprintf("Method = %s, Params = %s", r.Method, r.Args)
 	}
 	if r.Error != nil {
 		return fmt.Sprintf("ID = %d, Error = %s", r.ID, r.Error.Error())
@@ -200,13 +201,14 @@ func (r *rpcResponse) String() string {
 	return fmt.Sprintf("ID = %d, Result = %s", r.ID, r.Result)
 }
 
-type rpcError struct {
+// ResponseError represents the RPC response error sent by the server.
+type ResponseError struct {
 	Code    int64  `json:"code"`
 	Message string `json:"message"`
 	Data    string `json:"data"`
 }
 
-func (e *rpcError) Error() string {
+func (e *ResponseError) Error() string {
 	var data string
 	if e.Data != "" {
 		data = ", data = " + e.Data
@@ -215,14 +217,14 @@ func (e *rpcError) Error() string {
 }
 
 var (
-	_ error = (*rpcError)(nil)
+	_ error = (*ResponseError)(nil)
 )
 
 // recv decodes and handles RPC responses. Respones to RPC requests
 // are forwarded to the pending call, if any. RPC Notifications are
 // forwarded by calling notify, synchronously.
 func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
-	var resp rpcResponse
+	var resp Response
 	var err error
 	for {
 		resp.reset()
@@ -236,7 +238,7 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 			// Method represents the event that was triggered over the
 			// Chrome Debugging Protocol. We do not expect to receive
 			// RPC requests, if this was one, the ID field would be set.
-			notify(resp.Method, resp.Params)
+			notify(resp.Method, resp.Args)
 			continue
 		}
 
@@ -266,10 +268,11 @@ func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
 	}
 }
 
-type rpcRequest struct {
+// Request represents an RPC request to be sent to the server.
+type Request struct {
 	ID     uint64      `json:"id"`               // ID chosen by client.
 	Method string      `json:"method"`           // Method invoked on remote.
-	Params interface{} `json:"params,omitempty"` // Method parameters, if any.
+	Args   interface{} `json:"params,omitempty"` // Method parameters, if any.
 }
 
 // send returns after the call has successfully been dispatched over
@@ -295,11 +298,11 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 		c.reqMu.Lock()
 		c.req.ID = reqID
 		c.req.Method = call.Method
-		c.req.Params = call.Args
+		c.req.Args = call.Args
 
 		err := c.codec.WriteRequest(&c.req)
 
-		c.req.Params = nil
+		c.req.Args = nil
 		c.reqMu.Unlock()
 		done <- err
 	}()

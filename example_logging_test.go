@@ -18,9 +18,9 @@ type LogCodec struct{ conn io.ReadWriter }
 
 // WriteRequest marshals v into a buffer, writes its contents onto the
 // connection and logs it.
-func (c *LogCodec) WriteRequest(v interface{}) error {
+func (c *LogCodec) WriteRequest(req *rpcc.Request) error {
 	var buf bytes.Buffer
-	if err := json.NewEncoder(&buf).Encode(v); err != nil {
+	if err := json.NewEncoder(&buf).Encode(req); err != nil {
 		return err
 	}
 	_, err := c.conn.Write(buf.Bytes())
@@ -33,9 +33,9 @@ func (c *LogCodec) WriteRequest(v interface{}) error {
 
 // ReadResponse unmarshals from the connection into v whilst echoing
 // what is read into a buffer for logging.
-func (c *LogCodec) ReadResponse(v interface{}) error {
+func (c *LogCodec) ReadResponse(resp *rpcc.Response) error {
 	var buf bytes.Buffer
-	if err := json.NewDecoder(io.TeeReader(c.conn, &buf)).Decode(v); err != nil {
+	if err := json.NewDecoder(io.TeeReader(c.conn, &buf)).Decode(resp); err != nil {
 		return err
 	}
 	fmt.Printf("RECV: %s\n", buf.String())

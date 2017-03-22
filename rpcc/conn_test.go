@@ -26,7 +26,7 @@ func (ts *testServer) Close() error {
 	return ts.conn.Close()
 }
 
-func newTestServer(t testing.TB, respond func(*websocket.Conn, *rpcRequest) error) *testServer {
+func newTestServer(t testing.TB, respond func(*websocket.Conn, *Request) error) *testServer {
 	// Timeouts to prevent tests from running forever.
 	timeout := 5 * time.Second
 
@@ -51,7 +51,7 @@ func newTestServer(t testing.TB, respond func(*websocket.Conn, *rpcRequest) erro
 		defer conn.Close()
 
 		for {
-			var req rpcRequest
+			var req Request
 			if err := conn.ReadJSON(&req); err != nil {
 				break
 			}
@@ -77,8 +77,8 @@ func TestConn_Invoke(t *testing.T) {
 		"hello",
 		"world",
 	}
-	srv := newTestServer(t, func(conn *websocket.Conn, req *rpcRequest) error {
-		resp := rpcResponse{
+	srv := newTestServer(t, func(conn *websocket.Conn, req *Request) error {
+		resp := Response{
 			ID:     req.ID,
 			Result: []byte(fmt.Sprintf("%q", responses[int(req.ID)-1])),
 		}
@@ -109,17 +109,17 @@ func TestConn_Invoke(t *testing.T) {
 func TestConn_InvokeError(t *testing.T) {
 	want := "bad request"
 
-	srv := newTestServer(t, func(conn *websocket.Conn, req *rpcRequest) error {
-		resp := rpcResponse{
+	srv := newTestServer(t, func(conn *websocket.Conn, req *Request) error {
+		resp := Response{
 			ID:    req.ID,
-			Error: &rpcError{Message: want},
+			Error: &ResponseError{Message: want},
 		}
 		return conn.WriteJSON(&resp)
 	})
 	defer srv.Close()
 
 	switch err := Invoke(nil, "test.Hello", nil, nil, srv.conn).(type) {
-	case *rpcError:
+	case *ResponseError:
 		if err.Message != want {
 			t.Errorf("Invoke err.Message: got %q, want %q", err.Message, want)
 		}
@@ -164,7 +164,7 @@ func TestConn_InvokeDeadlineExceeded(t *testing.T) {
 }
 
 func TestConn_DecodeError(t *testing.T) {
-	srv := newTestServer(t, func(conn *websocket.Conn, req *rpcRequest) error {
+	srv := newTestServer(t, func(conn *websocket.Conn, req *Request) error {
 		msg := fmt.Sprintf(`{"id": %d, "result": {}}`, req.ID)
 		w, err := conn.NextWriter(websocket.TextMessage)
 		if err != nil {
@@ -191,8 +191,8 @@ type badEncoder struct {
 	err error
 }
 
-func (enc *badEncoder) ReadResponse(v interface{}) error { return nil }
-func (enc *badEncoder) WriteRequest(v interface{}) error { return enc.err }
+func (enc *badEncoder) WriteRequest(r *Request) error  { return enc.err }
+func (enc *badEncoder) ReadResponse(r *Response) error { return nil }
 
 func TestConn_EncodeFailed(t *testing.T) {
 	enc := &badEncoder{err: errors.New("fail"), ch: make(chan struct{})}
@@ -219,9 +219,9 @@ func TestConn_Notify(t *testing.T) {
 	defer s.Close()
 
 	go func() {
-		resp := rpcResponse{
+		resp := Response{
 			Method: "test.Notify",
-			Params: []byte(`"hello"`),
+			Args:   []byte(`"hello"`),
 		}
 		if err := srv.wsConn.WriteJSON(&resp); err != nil {
 			t.Fatal(err)
@@ -254,10 +254,10 @@ func TestConn_StreamRecv(t *testing.T) {
 	}
 	defer s.Close()
 
-	messages := []rpcResponse{
-		{Method: "test.Stream", Params: []byte(`"first"`)},
-		{Method: "test.Stream", Params: []byte(`"second"`)},
-		{Method: "test.Stream", Params: []byte(`"third"`)},
+	messages := []Response{
+		{Method: "test.Stream", Args: []byte(`"first"`)},
+		{Method: "test.Stream", Args: []byte(`"second"`)},
+		{Method: "test.Stream", Args: []byte(`"third"`)},
 	}
 
 	for _, m := range messages {
@@ -272,7 +272,7 @@ func TestConn_StreamRecv(t *testing.T) {
 
 	for _, m := range messages {
 		var want string
-		if err = json.Unmarshal(m.Params, &want); err != nil {
+		if err = json.Unmarshal(m.Args, &want); err != nil {
 			t.Error(err)
 		}
 		var reply string
