@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net"
 
 	"github.com/mafredri/cdp"
 	"github.com/mafredri/cdp/rpcc"
@@ -15,7 +14,7 @@ import (
 // LogCodec captures the output from writing RPC requests and reading
 // responses on the connection. It implements rpcc.Codec via
 // WriteRequest and ReadResponse.
-type LogCodec struct{ conn net.Conn }
+type LogCodec struct{ conn io.ReadWriter }
 
 // WriteRequest marshals v into a buffer, writes its contents onto the
 // connection and logs it.
@@ -47,7 +46,7 @@ func Example_logging() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	newLogCodec := func(conn net.Conn) rpcc.Codec {
+	newLogCodec := func(conn io.ReadWriter) rpcc.Codec {
 		return &LogCodec{conn: conn}
 	}
 	conn, err := rpcc.Dial("ws://"+TestSockSrv+"/example_logging", rpcc.WithCodec(newLogCodec))

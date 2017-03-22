@@ -25,7 +25,7 @@ type DialOption func(*dialOptions)
 // WithCodec returns a DialOption that sets the codec responsible for
 // encoding and decoding requests and responses onto the connection.
 // This option overrides the default json codec.
-func WithCodec(f func(conn net.Conn) Codec) DialOption {
+func WithCodec(f func(conn io.ReadWriter) Codec) DialOption {
 	return func(o *dialOptions) {
 		o.codec = f
 	}
@@ -40,7 +40,7 @@ func WithDialer(f func(ctx context.Context, addr string) (net.Conn, error)) Dial
 }
 
 type dialOptions struct {
-	codec       func(net.Conn) Codec
+	codec       func(io.ReadWriter) Codec
 	dialer      func(context.Context, string) (net.Conn, error)
 	interceptor func(conn io.ReadWriteCloser) io.ReadWriteCloser
 }
@@ -104,7 +104,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	}
 	newCodec := c.dialOpts.codec
 	if newCodec == nil {
-		newCodec = func(conn net.Conn) Codec {
+		newCodec = func(conn io.ReadWriter) Codec {
 			return &jsonCodec{
 				enc: json.NewEncoder(conn),
 				dec: json.NewDecoder(conn),
