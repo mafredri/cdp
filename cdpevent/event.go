@@ -102,6 +102,7 @@ const (
 	RuntimeConsoleAPICalled                   EventType = "Runtime.consoleAPICalled"
 	RuntimeInspectRequested                   EventType = "Runtime.inspectRequested"
 	SecurityStateChanged                      EventType = "Security.securityStateChanged"
+	SecurityCertificateError                  EventType = "Security.certificateError"
 	ServiceWorkerWorkerRegistrationUpdated    EventType = "ServiceWorker.workerRegistrationUpdated"
 	ServiceWorkerWorkerVersionUpdated         EventType = "ServiceWorker.workerVersionUpdated"
 	ServiceWorkerWorkerErrorReported          EventType = "ServiceWorker.workerErrorReported"

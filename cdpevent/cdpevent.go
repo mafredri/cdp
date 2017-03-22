@@ -1114,6 +1114,19 @@ type SecurityStateChangedReply struct {
 	Summary               *string                               `json:"summary,omitempty"`     // Overrides user-visible description of the state.
 }
 
+// SecurityCertificateErrorClient receives CertificateError events.
+type SecurityCertificateErrorClient interface {
+	Recv() (*SecurityCertificateErrorReply, error)
+	rpcc.Stream
+}
+
+// SecurityCertificateErrorReply there is a certificate error. If overriding certificate errors is enabled, then it should be handled with the handleCertificateError command. Note: this event does not fire if the certificate error has been allowed internally.
+type SecurityCertificateErrorReply struct {
+	EventID    int    `json:"eventId"`    // The ID of the event.
+	ErrorType  string `json:"errorType"`  // The type of the error.
+	RequestURL string `json:"requestURL"` // The url that was requested.
+}
+
 // ServiceWorkerWorkerRegistrationUpdatedClient receives WorkerRegistrationUpdated events.
 type ServiceWorkerWorkerRegistrationUpdatedClient interface {
 	Recv() (*ServiceWorkerWorkerRegistrationUpdatedReply, error)

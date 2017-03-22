@@ -2814,6 +2814,17 @@ type SchemaGetDomainsReply struct {
 	Domains []cdptype.SchemaDomain `json:"domains"` // List of supported domains.
 }
 
+// SecurityHandleCertificateErrorArgs contains the arguments for securityHandleCertificateError.
+type SecurityHandleCertificateErrorArgs struct {
+	EventID int                                    `json:"eventId"` // The ID of the event.
+	Action  cdptype.SecurityCertificateErrorAction `json:"action"`  // The action to take on the certificate error.
+}
+
+// SecuritySetOverrideCertificateErrorsArgs contains the arguments for securitySetOverrideCertificateErrors.
+type SecuritySetOverrideCertificateErrorsArgs struct {
+	Override bool `json:"override"` // If true, certificate errors will be overridden.
+}
+
 // ServiceWorkerUnregisterArgs contains the arguments for serviceworkerUnregister.
 type ServiceWorkerUnregisterArgs struct {
 	ScopeURL string `json:"scopeURL"` //

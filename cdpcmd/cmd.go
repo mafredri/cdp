@@ -294,6 +294,8 @@ const (
 	SecurityEnable                                  CmdType = "Security.enable"
 	SecurityDisable                                 CmdType = "Security.disable"
 	SecurityShowCertificateViewer                   CmdType = "Security.showCertificateViewer"
+	SecurityHandleCertificateError                  CmdType = "Security.handleCertificateError"
+	SecuritySetOverrideCertificateErrors            CmdType = "Security.setOverrideCertificateErrors"
 	ServiceWorkerEnable                             CmdType = "ServiceWorker.enable"
 	ServiceWorkerDisable                            CmdType = "ServiceWorker.disable"
 	ServiceWorkerUnregister                         CmdType = "ServiceWorker.unregister"

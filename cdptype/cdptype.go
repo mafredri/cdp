@@ -3088,6 +3088,61 @@ type SecurityInsecureContentStatus struct {
 	DisplayedInsecureContentStyle  SecurityState `json:"displayedInsecureContentStyle"`  // Security state representing a page that displayed insecure content.
 }
 
+// SecurityCertificateErrorAction The action to take when a certificate error occurs. continue will continue processing the request and cancel will cancel the request.
+type SecurityCertificateErrorAction int
+
+// SecurityCertificateErrorAction as enums.
+const (
+	SecurityCertificateErrorActionNotSet SecurityCertificateErrorAction = iota
+	SecurityCertificateErrorActionContinue
+	SecurityCertificateErrorActionCancel
+)
+
+// Valid returns true if enum is set.
+func (e SecurityCertificateErrorAction) Valid() bool {
+	return e >= 1 && e <= 2
+}
+
+func (e SecurityCertificateErrorAction) String() string {
+	switch e {
+	case 0:
+		return "SecurityCertificateErrorActionNotSet"
+	case 1:
+		return "continue"
+	case 2:
+		return "cancel"
+	}
+	return fmt.Sprintf("SecurityCertificateErrorAction(%d)", e)
+}
+
+// MarshalJSON encodes enum into a string or null when not set.
+func (e SecurityCertificateErrorAction) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.SecurityCertificateErrorAction: MarshalJSON on bad enum value: " + e.String())
+	}
+	return json.Marshal(e.String())
+}
+
+// UnmarshalJSON decodes a string value into a enum.
+func (e *SecurityCertificateErrorAction) UnmarshalJSON(data []byte) error {
+	if data == nil {
+		*e = 0
+		return nil
+	}
+	switch string(data) {
+	case "\"continue\"":
+		*e = 1
+	case "\"cancel\"":
+		*e = 2
+	default:
+		return fmt.Errorf("cdptype.SecurityCertificateErrorAction: UnmarshalJSON on bad input: %s", data)
+	}
+	return nil
+}
+
 // ServiceWorkerRegistration ServiceWorker registration.
 type ServiceWorkerRegistration struct {
 	RegistrationID string `json:"registrationId"` //

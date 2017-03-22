@@ -907,6 +907,12 @@
                     { "name": "displayedInsecureContentStyle", "$ref": "SecurityState", "description": "Security state representing a page that displayed insecure content." }
                 ],
                 "description": "Information about insecure content on the page."
+            },
+            {
+                "id": "CertificateErrorAction",
+                "type": "string",
+                "enum": ["continue", "cancel"],
+                "description": "The action to take when a certificate error occurs. continue will continue processing the request and cancel will cancel the request."
             }
         ],
         "commands": [
@@ -921,6 +927,21 @@
             {
                 "name": "showCertificateViewer",
                 "description": "Displays native dialog with the certificate details."
+            },
+            {
+                "name": "handleCertificateError",
+                "description": "Handles a certificate error that fired a certificateError event.",
+                "parameters": [
+                    { "name": "eventId", "type": "integer", "description": "The ID of the event."},
+                    { "name": "action", "$ref": "CertificateErrorAction", "description": "The action to take on the certificate error." }
+                ]
+            },
+            {
+                "name": "setOverrideCertificateErrors",
+                "description": "Enable/disable overriding certificate errors. If enabled, all certificate error events need to be handled by the DevTools client and should be answered with handleCertificateError commands.",
+                "parameters": [
+                    { "name": "override", "type": "boolean", "description": "If true, certificate errors will be overridden."}
+                ]
             }
         ],
         "events": [
@@ -933,6 +954,15 @@
                     { "name": "explanations", "type": "array", "items": { "$ref": "SecurityStateExplanation" }, "description": "List of explanations for the security state. If the overall security state is `insecure` or `warning`, at least one corresponding explanation should be included." },
                     { "name": "insecureContentStatus", "$ref": "InsecureContentStatus", "description": "Information about insecure content on the page." },
                     { "name": "summary", "type": "string", "description": "Overrides user-visible description of the state.", "optional": true }
+                ]
+            },
+            {
+                "name": "certificateError",
+                "description": "There is a certificate error. If overriding certificate errors is enabled, then it should be handled with the handleCertificateError command. Note: this event does not fire if the certificate error has been allowed internally.",
+                "parameters": [
+                    { "name": "eventId", "type": "integer", "description": "The ID of the event."},
+                    { "name": "errorType", "type": "string", "description": "The type of the error."},
+                    { "name": "requestURL", "type": "string", "description": "The url that was requested."}
                 ]
             }
         ]

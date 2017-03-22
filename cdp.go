@@ -8329,10 +8329,25 @@ type Security interface {
 	// Displays native dialog with the certificate details.
 	ShowCertificateViewer(context.Context) error
 
+	// Command HandleCertificateError
+	//
+	// Handles a certificate error that fired a certificateError event.
+	HandleCertificateError(context.Context, *cdpcmd.SecurityHandleCertificateErrorArgs) error
+
+	// Command SetOverrideCertificateErrors
+	//
+	// Enable/disable overriding certificate errors. If enabled, all certificate error events need to be handled by the DevTools client and should be answered with handleCertificateError commands.
+	SetOverrideCertificateErrors(context.Context, *cdpcmd.SecuritySetOverrideCertificateErrorsArgs) error
+
 	// Event SecurityStateChanged
 	//
 	// The security state of the page changed.
 	SecurityStateChanged(context.Context) (cdpevent.SecurityStateChangedClient, error)
+
+	// Event CertificateError
+	//
+	// There is a certificate error. If overriding certificate errors is enabled, then it should be handled with the handleCertificateError command. Note: this event does not fire if the certificate error has been allowed internally.
+	CertificateError(context.Context) (cdpevent.SecurityCertificateErrorClient, error)
 }
 
 // securityDomain implements the Security domain.
@@ -8362,6 +8377,45 @@ func (d *securityDomain) ShowCertificateViewer(ctx context.Context) (err error) 
 	return
 }
 
+func (d *securityDomain) HandleCertificateError(ctx context.Context, args *cdpcmd.SecurityHandleCertificateErrorArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.SecurityHandleCertificateError.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.SecurityHandleCertificateError.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &cdpError{Domain: "Security", Op: "HandleCertificateError", Err: err}
+	}
+	return
+}
+
+// NewSecurityHandleCertificateErrorArgs initializes the arguments for HandleCertificateError.
+func NewSecurityHandleCertificateErrorArgs(eventID int, action cdptype.SecurityCertificateErrorAction) *cdpcmd.SecurityHandleCertificateErrorArgs {
+	args := new(cdpcmd.SecurityHandleCertificateErrorArgs)
+	args.EventID = eventID
+	args.Action = action
+	return args
+}
+
+func (d *securityDomain) SetOverrideCertificateErrors(ctx context.Context, args *cdpcmd.SecuritySetOverrideCertificateErrorsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.SecuritySetOverrideCertificateErrors.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.SecuritySetOverrideCertificateErrors.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &cdpError{Domain: "Security", Op: "SetOverrideCertificateErrors", Err: err}
+	}
+	return
+}
+
+// NewSecuritySetOverrideCertificateErrorsArgs initializes the arguments for SetOverrideCertificateErrors.
+func NewSecuritySetOverrideCertificateErrorsArgs(override bool) *cdpcmd.SecuritySetOverrideCertificateErrorsArgs {
+	args := new(cdpcmd.SecuritySetOverrideCertificateErrorsArgs)
+	args.Override = override
+	return args
+}
+
 func (d *securityDomain) SecurityStateChanged(ctx context.Context) (cdpevent.SecurityStateChangedClient, error) {
 	s, err := rpcc.NewStream(ctx, cdpevent.SecurityStateChanged.String(), d.conn)
 	if err != nil {
@@ -8377,6 +8431,25 @@ func (c *securitySecurityStateChangedClient) Recv() (*cdpevent.SecurityStateChan
 	event := new(cdpevent.SecurityStateChangedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &cdpError{Domain: "Security", Op: "SecurityStateChanged Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *securityDomain) CertificateError(ctx context.Context) (cdpevent.SecurityCertificateErrorClient, error) {
+	s, err := rpcc.NewStream(ctx, cdpevent.SecurityCertificateError.String(), d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &securityCertificateErrorClient{Stream: s}, nil
+}
+
+// securityCertificateErrorClient implements SecurityCertificateErrorClient.
+type securityCertificateErrorClient struct{ rpcc.Stream }
+
+func (c *securityCertificateErrorClient) Recv() (*cdpevent.SecurityCertificateErrorReply, error) {
+	event := new(cdpevent.SecurityCertificateErrorReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &cdpError{Domain: "Security", Op: "CertificateError Recv", Err: err}
 	}
 	return event, nil
 }
