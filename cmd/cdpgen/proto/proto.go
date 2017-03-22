@@ -6,7 +6,16 @@ import (
 	"strings"
 
 	"github.com/mafredri/cdp/cmd/cdpgen/lint"
+
+	"github.com/client9/misspell"
 )
+
+var misspellReplacer = misspell.New()
+
+func init() {
+	misspellReplacer.AddRuleList(misspell.DictAmerican)
+	misspellReplacer.Compile()
+}
 
 // Protocol represents the JSON protocol structure.
 type Protocol struct {
@@ -361,27 +370,8 @@ func cleanDescription(d string) string {
 	d = strings.Replace(d, "<p>", "\n//\n// ", -1)
 	d = strings.Replace(d, "</p>", "", -1)
 
-	return misspell(d)
-}
-
-var (
-	misspellBadWords = "distrubutiondistrubutedregularyspecifedoccuredoverridencancelled"
-	misspellWords    = map[string]string{
-		misspellBadWords[0:12]:  "distribution",
-		misspellBadWords[12:23]: "distributed",
-		misspellBadWords[23:31]: "regularly",
-		misspellBadWords[31:39]: "specified",
-		misspellBadWords[39:46]: "occurred",
-		misspellBadWords[46:55]: "overridden",
-		misspellBadWords[55:64]: "canceled",
-	}
-)
-
-func misspell(s string) string {
-	for bad, good := range misspellWords {
-		s = strings.Replace(s, bad, good, -1)
-	}
-	return s
+	d, _ = misspellReplacer.Replace(d)
+	return d
 }
 
 type filterFunc func(at AnyType) bool
