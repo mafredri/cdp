@@ -3,6 +3,7 @@ package cdp_test
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"time"
 
 	"github.com/mafredri/cdp"
@@ -14,11 +15,10 @@ func Example() {
 	defer cancel()
 
 	// Connect to Chrome Debugging Protocol target (webSocketDebuggerUrl).
-	debuggerURL := "ws://localhost:9222/devtools/page/45a887ba-c92a-4cff-9194-d9398cc87e2c"
-	conn, err := rpcc.DialContext(ctx, debuggerURL)
+	wsURL := "ws://localhost:9222/devtools/page/45a887ba-c92a-4cff-9194-d9398cc87e2c"
+	conn, err := rpcc.DialContext(ctx, wsURL)
 	if err != nil {
-		fmt.Println(err)
-		return
+		panic(err)
 	}
 	defer conn.Close() // Must be closed when we are done.
 
@@ -66,4 +66,15 @@ func Example() {
 	}
 
 	fmt.Printf("HTML: %s\n", result.OuterHTML)
+
+	// Capture a screenshot of the current page.
+	screenshotName := "screenshot.jpg"
+	screenshot, err := c.Page.CaptureScreenshot(ctx, cdp.NewPageCaptureScreenshotArgs().SetFormat("jpeg").SetQuality(80))
+	if err != nil {
+		panic(err)
+	}
+	if err = ioutil.WriteFile(screenshotName, screenshot.Data, 0644); err != nil {
+		panic(err)
+	}
+	fmt.Printf("Saved screenshot: %s\n", screenshotName)
 }

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"time"
 
 	"github.com/mafredri/cdp"
@@ -174,19 +173,6 @@ func Example_advanced() {
 		fmt.Println(err)
 		return
 	}
-
-	// Capture a screenshot.
-	screenshotFile := "my-url-screenshot.jpg"
-	shot, err := c.Page.CaptureScreenshot(ctx, cdp.NewPageCaptureScreenshotArgs().SetFormat("jpeg").SetQuality(80))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	if err = ioutil.WriteFile(screenshotFile, shot.Data, 0644); err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Printf("Saved screenshot: %s\n", screenshotFile)
 }
 
 // runBatchFunc is the function signature for runBatch.
