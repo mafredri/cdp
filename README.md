@@ -130,3 +130,4 @@ These are alternative implementations of the Chrome Debugging Protocol, written 
 * [gcd](https://github.com/wirepair/gcd): Low-level client library for communicating with Google Chrome
 * [autogcd](https://github.com/wirepair/autogcd): Wrapper around gcd to enable browser automation
 * [chromedp](https://github.com/knq/chromedp): High-level API for driving web browsers
+* [godet](https://github.com/raff/godet): Remote client for Chrome DevTools
