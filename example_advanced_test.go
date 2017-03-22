@@ -1,0 +1,263 @@
+package cdp_test
+
+import (
+	"context"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"io/ioutil"
+	"time"
+
+	"github.com/mafredri/cdp"
+	"github.com/mafredri/cdp/cdptype"
+	"github.com/mafredri/cdp/rpcc"
+
+	"golang.org/x/sync/errgroup"
+)
+
+// Cookie represents a browser cookie.
+type Cookie struct {
+	URL   string `json:"url"`
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+// DocumentInfo contains information about the document.
+type DocumentInfo struct {
+	Title string `json:"title"`
+}
+
+var (
+	MyURL   = "https://google.com"
+	Cookies = []Cookie{
+		{MyURL, "myauth", "myvalue"},
+		{MyURL, "mysetting1", "myvalue1"},
+		{MyURL, "mysetting2", "myvalue2"},
+		{MyURL, "mysetting3", "myvalue3"},
+	}
+)
+
+func Example_advanced() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Connect to WebSocket URL (page) that speaks the Chrome Debugging Protocol.
+	conn, err := rpcc.DialContext(ctx, "ws://localhost:9222/devtools/page/45a887ba-c92a-4cff-9194-d9398cc87e2c")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer conn.Close() // Cleanup.
+
+	// Create a new CDP Client that uses conn.
+	c := cdp.NewClient(conn)
+
+	// Give enough capacity to avoid blocking any event listeners
+	abort := make(chan error, 2)
+
+	// Watch the abort channel.
+	go func() {
+		select {
+		case <-ctx.Done():
+		case err := <-abort:
+			fmt.Printf("aborted: %s\n", err.Error())
+			cancel()
+		}
+	}()
+
+	// Listen to exceptions so we can abort as soon as one is encountered.
+	exceptionThrown, err := c.Runtime.ExceptionThrown(ctx)
+	if err != nil {
+		// Connection is closed.
+		fmt.Println(err)
+		return
+	}
+	go func() {
+		defer exceptionThrown.Close() // Cleanup.
+		for {
+			ev, err := exceptionThrown.Recv()
+			if err != nil {
+				// This could be any one of: connection closed,
+				// context deadline or unmarshal failed.
+				abort <- err
+				return
+			}
+
+			// Ruh-roh! Let the caller know something went wrong.
+			abort <- ev.ExceptionDetails
+		}
+	}()
+
+	// Check for non-canceled resources that failed to load.
+	loadingFailed, err := c.Network.LoadingFailed(ctx)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	go func() {
+		defer loadingFailed.Close()
+		for {
+			ev, err := loadingFailed.Recv()
+			if err != nil {
+				abort <- err
+				return
+			}
+
+			// For now, most optional fields are pointers and must be
+			// checked for nil.
+			canceled := ev.Canceled != nil && *ev.Canceled
+
+			if !canceled {
+				abort <- fmt.Errorf("request %s failed: %s", ev.RequestID, ev.ErrorText)
+			}
+		}
+	}()
+
+	// Enable all the domain events that we're interested in.
+	if err = runBatch(
+		func() error { return c.DOM.Enable(ctx) },
+		func() error { return c.Network.Enable(ctx, nil) },
+		func() error { return c.Page.Enable(ctx) },
+		func() error { return c.Runtime.Enable(ctx) },
+		func() error { return setCookies(c.Network, Cookies...) },
+	); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	domLoadTimeout := 5 * time.Second
+	frameID, err := navigate(ctx, c.Page, MyURL, domLoadTimeout)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("Navigating with frame ID: %v\n", frameID)
+
+	// Parse information from the document by evaluating JavaScript.
+	expression := `
+		new Promise((resolve, reject) => {
+			setTimeout(() => {
+				const title = document.querySelector('title').innerText;
+				resolve({title});
+			}, 500);
+		});
+	`
+	evalArgs := cdp.NewRuntimeEvaluateArgs(expression).SetAwaitPromise(true).SetReturnByValue(true)
+	eval, err := c.Runtime.Evaluate(ctx, evalArgs)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	var info DocumentInfo
+	if err = json.Unmarshal(eval.Result.Value, &info); err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("Document title: %q\n", info.Title)
+
+	// Fetch the document root node.
+	doc, err := c.DOM.GetDocument(ctx, nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Fetch all <script> and <noscript> elements so we can delete them.
+	scriptIDs, err := c.DOM.QuerySelectorAll(ctx, cdp.NewDOMQuerySelectorAllArgs(doc.Root.NodeID, "script, noscript"))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	if err = removeNodes(c.DOM, scriptIDs.NodeIDs...); err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	// Capture a screenshot.
+	screenshotFile := "my-url-screenshot.jpg"
+	shot, err := c.Page.CaptureScreenshot(ctx, cdp.NewPageCaptureScreenshotArgs().SetFormat("jpeg").SetQuality(80))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if err = ioutil.WriteFile(screenshotFile, shot.Data, 0644); err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("Saved screenshot: %s\n", screenshotFile)
+}
+
+// runBatchFunc is the function signature for runBatch.
+type runBatchFunc func() error
+
+// runBatch runs all functions simultaneously and waits until
+// execution has completed or an error is encountered.
+func runBatch(fn ...runBatchFunc) error {
+	eg := errgroup.Group{}
+	for _, f := range fn {
+		eg.Go(f)
+	}
+	return eg.Wait()
+}
+
+// setCookies sets all the provided cookies.
+func setCookies(net cdp.Network, cookie ...Cookie) error {
+	var cmds []runBatchFunc
+	for _, c := range cookie {
+		args := cdp.NewNetworkSetCookieArgs(c.URL, c.Name, c.Value)
+		cmds = append(cmds, func() error {
+			reply, err := net.SetCookie(nil, args)
+			if err != nil {
+				return err
+			}
+			if !reply.Success {
+				return errors.New("could not set cookie")
+			}
+			return nil
+		})
+	}
+	return runBatch(cmds...)
+}
+
+// navigate to the URL and wait for DOMContentEventFired. An error is
+// returned if timeout happens before DOMContentEventFired.
+func navigate(ctx context.Context, page cdp.Page, url string, timeout time.Duration) (frame cdptype.PageFrameID, err error) {
+	var cancel context.CancelFunc
+	ctx, cancel = context.WithTimeout(ctx, timeout)
+	defer cancel()
+
+	// Make sure Page events are enabled.
+	if err = page.Enable(ctx); err != nil {
+		return frame, err
+	}
+
+	// Open client for DOMContentEventFired to block until DOM has fully loaded.
+	domContentEventFired, err := page.DOMContentEventFired(ctx)
+	if err != nil {
+		return frame, err
+	}
+	defer domContentEventFired.Close()
+
+	nav, err := page.Navigate(ctx, cdp.NewPageNavigateArgs(url))
+	if err != nil {
+		return frame, err
+	}
+
+	if _, err = domContentEventFired.Recv(); err != nil {
+		return frame, err
+	}
+
+	return nav.FrameID, nil
+}
+
+// removeNodes deletes all provided nodeIDs from the DOM.
+func removeNodes(dom cdp.DOM, node ...cdptype.DOMNodeID) error {
+	var rmNodes []runBatchFunc
+	for _, id := range node {
+		arg := cdp.NewDOMRemoveNodeArgs(id)
+		rmNodes = append(rmNodes, func() error { return dom.RemoveNode(nil, arg) })
+	}
+	return runBatch(rmNodes...)
+}

@@ -22,7 +22,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	chromium := "ws://localhost:9222/devtools/page/1326c55d-0bcd-4516-b132-762ca26c5bc8"
+	chromium := "ws://localhost:9222/devtools/page/45a887ba-c92a-4cff-9194-d9398cc87e2c"
 	conn, err := rpcc.Dial(chromium)
 	if err != nil {
 		panic(err)
