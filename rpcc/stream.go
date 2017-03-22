@@ -54,7 +54,7 @@ func (b *messageBuffer) get() <-chan []byte {
 // Stream represents a stream of notifications for a certain method.
 type Stream interface {
 	// RecvMsg unmarshals pending messages onto m. Blocks until the
-	// next message is received, context is cancelled or stream is
+	// next message is received, context is canceled or stream is
 	// closed.
 	RecvMsg(m interface{}) error
 	// Close closes the stream and no new messages will be received.

@@ -37,9 +37,9 @@ type AnimationCanceledClient interface {
 	rpcc.Stream
 }
 
-// AnimationCanceledReply event for when an animation has been cancelled.
+// AnimationCanceledReply event for when an animation has been canceled.
 type AnimationCanceledReply struct {
-	ID string `json:"id"` // Id of the animation that was cancelled.
+	ID string `json:"id"` // Id of the animation that was canceled.
 }
 
 // ApplicationCacheStatusUpdatedClient receives ApplicationCacheStatusUpdated events.
@@ -299,9 +299,9 @@ type DOMDistributedNodesUpdatedClient interface {
 	rpcc.Stream
 }
 
-// DOMDistributedNodesUpdatedReply called when distrubution is changed.
+// DOMDistributedNodesUpdatedReply called when distribution is changed.
 type DOMDistributedNodesUpdatedReply struct {
-	InsertionPointID cdptype.DOMNodeID        `json:"insertionPointId"` // Insertion point where distrubuted nodes were updated.
+	InsertionPointID cdptype.DOMNodeID        `json:"insertionPointId"` // Insertion point where distributed nodes were updated.
 	DistributedNodes []cdptype.DOMBackendNode `json:"distributedNodes"` // Distributed nodes for given insertion point.
 }
 
@@ -510,7 +510,7 @@ type HeapProfilerLastSeenObjectIDClient interface {
 	rpcc.Stream
 }
 
-// HeapProfilerLastSeenObjectIDReply if heap objects tracking has been started then backend regulary sends a current value for last seen object id and corresponding timestamp. If the were changes in the heap since last event then one or more heapStatsUpdate events will be sent before a new lastSeenObjectId event.
+// HeapProfilerLastSeenObjectIDReply if heap objects tracking has been started then backend regularly sends a current value for last seen object id and corresponding timestamp. If the were changes in the heap since last event then one or more heapStatsUpdate events will be sent before a new lastSeenObjectId event.
 type HeapProfilerLastSeenObjectIDReply struct {
 	LastSeenObjectID int               `json:"lastSeenObjectId"` //
 	Timestamp        cdptype.Timestamp `json:"timestamp"`        //

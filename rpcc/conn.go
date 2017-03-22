@@ -220,7 +220,7 @@ var (
 	_ error = (*ResponseError)(nil)
 )
 
-// recv decodes and handles RPC responses. Respones to RPC requests
+// recv decodes and handles RPC responses. Responses to RPC requests
 // are forwarded to the pending call, if any. RPC Notifications are
 // forwarded by calling notify, synchronously.
 func (c *Conn) recv(notify func(string, []byte), done chan<- error) {

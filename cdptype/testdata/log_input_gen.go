@@ -62,7 +62,7 @@ func main() {
 
 	domLoadTimeout := 5 * time.Second
 
-	// First page load is to trigger console log behaviour without object
+	// First page load is to trigger console log behavior without object
 	// previews.
 	_, err = navigate(c.Page, "file:///"+dir+"/log.html", domLoadTimeout)
 	if err != nil {

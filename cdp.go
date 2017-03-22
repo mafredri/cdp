@@ -106,7 +106,7 @@ type Animation interface {
 
 	// Event AnimationCanceled
 	//
-	// Event for when an animation has been cancelled.
+	// Event for when an animation has been canceled.
 	AnimationCanceled(context.Context) (cdpevent.AnimationCanceledClient, error)
 }
 
@@ -1555,7 +1555,7 @@ type DOM interface {
 
 	// Event DistributedNodesUpdated
 	//
-	// Called when distrubution is changed.
+	// Called when distribution is changed.
 	DistributedNodesUpdated(context.Context) (cdpevent.DOMDistributedNodesUpdatedClient, error)
 
 	// Event NodeHighlightRequested
@@ -3908,7 +3908,7 @@ type Emulation interface {
 
 	// Command ClearDeviceMetricsOverride
 	//
-	// Clears the overriden device metrics.
+	// Clears the overridden device metrics.
 	ClearDeviceMetricsOverride(context.Context) error
 
 	// Command ForceViewport
@@ -3948,7 +3948,7 @@ type Emulation interface {
 
 	// Command ClearGeolocationOverride
 	//
-	// Clears the overriden Geolocation Position and Error.
+	// Clears the overridden Geolocation Position and Error.
 	ClearGeolocationOverride(context.Context) error
 
 	// Command SetTouchEmulationEnabled
@@ -4340,7 +4340,7 @@ type HeapProfiler interface {
 
 	// Event LastSeenObjectID
 	//
-	// If heap objects tracking has been started then backend regulary sends a current value for last seen object id and corresponding timestamp. If the were changes in the heap since last event then one or more heapStatsUpdate events will be sent before a new lastSeenObjectId event.
+	// If heap objects tracking has been started then backend regularly sends a current value for last seen object id and corresponding timestamp. If the were changes in the heap since last event then one or more heapStatsUpdate events will be sent before a new lastSeenObjectId event.
 	LastSeenObjectID(context.Context) (cdpevent.HeapProfilerLastSeenObjectIDClient, error)
 
 	// Event HeapStatsUpdate
@@ -6448,7 +6448,7 @@ type Page interface {
 
 	// Command ClearDeviceMetricsOverride
 	//
-	// Clears the overriden device metrics.
+	// Clears the overridden device metrics.
 	ClearDeviceMetricsOverride(context.Context) error
 
 	// Command SetGeolocationOverride
@@ -6458,7 +6458,7 @@ type Page interface {
 
 	// Command ClearGeolocationOverride
 	//
-	// Clears the overriden Geolocation Position and Error.
+	// Clears the overridden Geolocation Position and Error.
 	ClearGeolocationOverride(context.Context) error
 
 	// Command SetDeviceOrientationOverride

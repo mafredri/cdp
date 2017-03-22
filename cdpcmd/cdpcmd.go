@@ -977,11 +977,11 @@ type DebuggerRemoveBreakpointArgs struct {
 // DebuggerGetPossibleBreakpointsArgs contains the arguments for debuggerGetPossibleBreakpoints.
 type DebuggerGetPossibleBreakpointsArgs struct {
 	Start              cdptype.DebuggerLocation  `json:"start"`                        // Start of range to search possible breakpoint locations in.
-	End                *cdptype.DebuggerLocation `json:"end,omitempty"`                // End of range to search possible breakpoint locations in (excluding). When not specifed, end of scripts is used as end of range.
+	End                *cdptype.DebuggerLocation `json:"end,omitempty"`                // End of range to search possible breakpoint locations in (excluding). When not specified, end of scripts is used as end of range.
 	RestrictToFunction *bool                     `json:"restrictToFunction,omitempty"` // Only consider locations which are in the same (non-nested) function as start.
 }
 
-// SetEnd sets the End optional argument. End of range to search possible breakpoint locations in (excluding). When not specifed, end of scripts is used as end of range.
+// SetEnd sets the End optional argument. End of range to search possible breakpoint locations in (excluding). When not specified, end of scripts is used as end of range.
 func (a *DebuggerGetPossibleBreakpointsArgs) SetEnd(end cdptype.DebuggerLocation) *DebuggerGetPossibleBreakpointsArgs {
 	a.End = &end
 	return a
@@ -1426,7 +1426,7 @@ func (a *IOReadArgs) SetSize(size int) *IOReadArgs {
 // IOReadReply contains the return values for ioRead.
 type IOReadReply struct {
 	Data string `json:"data"` // Data that were read.
-	EOF  bool   `json:"eof"`  // Set if the end-of-file condition occured while reading.
+	EOF  bool   `json:"eof"`  // Set if the end-of-file condition occurred while reading.
 }
 
 // IOCloseArgs contains the arguments for ioClose.
