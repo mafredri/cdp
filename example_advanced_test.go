@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/mafredri/cdp"
+	"github.com/mafredri/cdp/cdpcmd"
 	"github.com/mafredri/cdp/cdptype"
 	"github.com/mafredri/cdp/rpcc"
 
@@ -141,7 +142,7 @@ func Example_advanced() {
 			}, 500);
 		});
 	`
-	evalArgs := cdp.NewRuntimeEvaluateArgs(expression).SetAwaitPromise(true).SetReturnByValue(true)
+	evalArgs := cdpcmd.NewRuntimeEvaluateArgs(expression).SetAwaitPromise(true).SetReturnByValue(true)
 	eval, err := c.Runtime.Evaluate(ctx, evalArgs)
 	if err != nil {
 		fmt.Println(err)
@@ -163,7 +164,7 @@ func Example_advanced() {
 	}
 
 	// Fetch all <script> and <noscript> elements so we can delete them.
-	scriptIDs, err := c.DOM.QuerySelectorAll(ctx, cdp.NewDOMQuerySelectorAllArgs(doc.Root.NodeID, "script, noscript"))
+	scriptIDs, err := c.DOM.QuerySelectorAll(ctx, cdpcmd.NewDOMQuerySelectorAllArgs(doc.Root.NodeID, "script, noscript"))
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -192,7 +193,7 @@ func runBatch(fn ...runBatchFunc) error {
 func setCookies(net cdp.Network, cookie ...Cookie) error {
 	var cmds []runBatchFunc
 	for _, c := range cookie {
-		args := cdp.NewNetworkSetCookieArgs(c.URL, c.Name, c.Value)
+		args := cdpcmd.NewNetworkSetCookieArgs(c.URL, c.Name, c.Value)
 		cmds = append(cmds, func() error {
 			reply, err := net.SetCookie(nil, args)
 			if err != nil {
@@ -226,7 +227,10 @@ func navigate(ctx context.Context, page cdp.Page, url string, timeout time.Durat
 	}
 	defer domContentEventFired.Close()
 
-	nav, err := page.Navigate(ctx, cdp.NewPageNavigateArgs(url))
+	// args := cdpcmd.NewPageNavigateArgs(url)
+	nav, err := page.Navigate(ctx, (&cdpcmd.PageNavigateArgs{
+		URL: url,
+	}))
 	if err != nil {
 		return frame, err
 	}
@@ -242,7 +246,7 @@ func navigate(ctx context.Context, page cdp.Page, url string, timeout time.Durat
 func removeNodes(dom cdp.DOM, node ...cdptype.DOMNodeID) error {
 	var rmNodes []runBatchFunc
 	for _, id := range node {
-		arg := cdp.NewDOMRemoveNodeArgs(id)
+		arg := cdpcmd.NewDOMRemoveNodeArgs(id)
 		rmNodes = append(rmNodes, func() error { return dom.RemoveNode(nil, arg) })
 	}
 	return runBatch(rmNodes...)

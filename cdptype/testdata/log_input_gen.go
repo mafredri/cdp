@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/mafredri/cdp"
+	"github.com/mafredri/cdp/cdpcmd"
 	"github.com/mafredri/cdp/cdptype"
 	"github.com/mafredri/cdp/rpcc"
 )
@@ -102,7 +103,7 @@ func navigate(page cdp.Page, url string, timeout time.Duration) (frame cdptype.P
 	}
 	defer domContentEventFired.Close()
 
-	nav, err := page.Navigate(ctx, cdp.NewPageNavigateArgs(url))
+	nav, err := page.Navigate(ctx, cdpcmd.NewPageNavigateArgs(url))
 	if err != nil {
 		return frame, err
 	}

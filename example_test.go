@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/mafredri/cdp"
+	"github.com/mafredri/cdp/cdpcmd"
 	"github.com/mafredri/cdp/rpcc"
 )
 
@@ -39,7 +40,7 @@ func Example() {
 	defer domContentEventFired.Close()
 
 	// Create the Navigate arguments with the optional Referrer field set.
-	navArgs := cdp.NewPageNavigateArgs("https://www.google.com").SetReferrer("https://duckduckgo.com")
+	navArgs := cdpcmd.NewPageNavigateArgs("https://www.google.com").SetReferrer("https://duckduckgo.com")
 	nav, err := c.Page.Navigate(ctx, navArgs)
 	if err != nil {
 		panic(err)
@@ -60,7 +61,7 @@ func Example() {
 	}
 
 	// Get the outer HTML for the page.
-	result, err := c.DOM.GetOuterHTML(ctx, cdp.NewDOMGetOuterHTMLArgs(doc.Root.NodeID))
+	result, err := c.DOM.GetOuterHTML(ctx, cdpcmd.NewDOMGetOuterHTMLArgs(doc.Root.NodeID))
 	if err != nil {
 		panic(err)
 	}
@@ -69,7 +70,7 @@ func Example() {
 
 	// Capture a screenshot of the current page.
 	screenshotName := "screenshot.jpg"
-	screenshot, err := c.Page.CaptureScreenshot(ctx, cdp.NewPageCaptureScreenshotArgs().SetFormat("jpeg").SetQuality(80))
+	screenshot, err := c.Page.CaptureScreenshot(ctx, cdpcmd.NewPageCaptureScreenshotArgs().SetFormat("jpeg").SetQuality(80))
 	if err != nil {
 		panic(err)
 	}
