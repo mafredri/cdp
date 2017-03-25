@@ -301,6 +301,18 @@ func TestConn_StreamRecv(t *testing.T) {
 	}
 }
 
+func TestDialContext_PanicOnNilContext(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf("DialContext() should panic")
+		}
+	}()
+
+	DialContext(nil, "")
+
+	t.Errorf("DialContext() unreachable code after panic")
+}
+
 func TestDialContext_DeadlineExceeded(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 0)
 	defer cancel()
@@ -309,6 +321,28 @@ func TestDialContext_DeadlineExceeded(t *testing.T) {
 	// Should return deadline even when dial address is bad.
 	if err != context.DeadlineExceeded {
 		t.Errorf("DialContext: got %v, want %v", err, context.DeadlineExceeded)
+	}
+}
+
+func TestResponse_String(t *testing.T) {
+	tests := []struct {
+		name string
+		resp Response
+		want string
+	}{
+		{"Notification", Response{Method: "notification", Args: []byte(`{}`)}, "Method = notification, Params = {}"},
+		{"Response", Response{ID: 1, Result: []byte(`{}`)}, "ID = 1, Result = {}"},
+		{"Error", Response{ID: 2, Error: &ResponseError{Code: -1000, Message: "bad request"}}, "ID = 2, Error = rpc error: bad request (code = -1000)"},
+		{"Error with data", Response{ID: 3, Error: &ResponseError{Code: -1000, Message: "bad request", Data: "extra"}}, "ID = 3, Error = rpc error: bad request (code = -1000, data = extra)"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := tt.resp.String()
+			if got != tt.want {
+				t.Errorf("String() got %q, want %q", got, tt.want)
+			}
+		})
 	}
 }
 
