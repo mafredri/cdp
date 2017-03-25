@@ -163,6 +163,22 @@ func TestConn_InvokeDeadlineExceeded(t *testing.T) {
 	}
 }
 
+func TestConn_InvokeContextCanceled(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	srv := newTestServer(t, func(conn *websocket.Conn, req *Request) error {
+		cancel()
+		return nil
+	})
+	defer srv.Close()
+
+	err := Invoke(ctx, "test.Hello", nil, nil, srv.conn)
+	if err != context.Canceled {
+		t.Errorf("Invoke error: got %v, want %v", err, context.Canceled)
+	}
+}
+
 func TestConn_DecodeError(t *testing.T) {
 	srv := newTestServer(t, func(conn *websocket.Conn, req *Request) error {
 		msg := fmt.Sprintf(`{"id": %d, "result": {}}`, req.ID)
