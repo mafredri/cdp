@@ -2,7 +2,10 @@
 
 package cdp
 
-import "github.com/mafredri/cdp/rpcc"
+import (
+	"github.com/mafredri/cdp/cdpdom"
+	"github.com/mafredri/cdp/rpcc"
+)
 
 // Client represents a Chrome Debugging Protocol client that can be used to
 // invoke methods or listen to events in every CDP domain. The Client consumes
@@ -47,39 +50,39 @@ type Client struct {
 // NewClient returns a new Client.
 func NewClient(conn *rpcc.Conn) *Client {
 	return &Client{
-		Accessibility:     &accessibilityDomain{conn: conn},
-		Animation:         &animationDomain{conn: conn},
-		ApplicationCache:  &applicationcacheDomain{conn: conn},
-		CSS:               &cssDomain{conn: conn},
-		CacheStorage:      &cachestorageDomain{conn: conn},
-		Console:           &consoleDomain{conn: conn},
-		DOM:               &domDomain{conn: conn},
-		DOMDebugger:       &domdebuggerDomain{conn: conn},
-		DOMStorage:        &domstorageDomain{conn: conn},
-		Database:          &databaseDomain{conn: conn},
-		Debugger:          &debuggerDomain{conn: conn},
-		DeviceOrientation: &deviceorientationDomain{conn: conn},
-		Emulation:         &emulationDomain{conn: conn},
-		HeapProfiler:      &heapprofilerDomain{conn: conn},
-		IO:                &ioDomain{conn: conn},
-		IndexedDB:         &indexeddbDomain{conn: conn},
-		Input:             &inputDomain{conn: conn},
-		Inspector:         &inspectorDomain{conn: conn},
-		LayerTree:         &layertreeDomain{conn: conn},
-		Log:               &logDomain{conn: conn},
-		Memory:            &memoryDomain{conn: conn},
-		Network:           &networkDomain{conn: conn},
-		Page:              &pageDomain{conn: conn},
-		Profiler:          &profilerDomain{conn: conn},
-		Rendering:         &renderingDomain{conn: conn},
-		Runtime:           &runtimeDomain{conn: conn},
-		Schema:            &schemaDomain{conn: conn},
-		Security:          &securityDomain{conn: conn},
-		ServiceWorker:     &serviceworkerDomain{conn: conn},
-		Storage:           &storageDomain{conn: conn},
-		SystemInfo:        &systeminfoDomain{conn: conn},
-		Target:            &targetDomain{conn: conn},
-		Tethering:         &tetheringDomain{conn: conn},
-		Tracing:           &tracingDomain{conn: conn},
+		Accessibility:     cdpdom.NewAccessibility(conn),
+		Animation:         cdpdom.NewAnimation(conn),
+		ApplicationCache:  cdpdom.NewApplicationCache(conn),
+		CSS:               cdpdom.NewCSS(conn),
+		CacheStorage:      cdpdom.NewCacheStorage(conn),
+		Console:           cdpdom.NewConsole(conn),
+		DOM:               cdpdom.NewDOM(conn),
+		DOMDebugger:       cdpdom.NewDOMDebugger(conn),
+		DOMStorage:        cdpdom.NewDOMStorage(conn),
+		Database:          cdpdom.NewDatabase(conn),
+		Debugger:          cdpdom.NewDebugger(conn),
+		DeviceOrientation: cdpdom.NewDeviceOrientation(conn),
+		Emulation:         cdpdom.NewEmulation(conn),
+		HeapProfiler:      cdpdom.NewHeapProfiler(conn),
+		IO:                cdpdom.NewIO(conn),
+		IndexedDB:         cdpdom.NewIndexedDB(conn),
+		Input:             cdpdom.NewInput(conn),
+		Inspector:         cdpdom.NewInspector(conn),
+		LayerTree:         cdpdom.NewLayerTree(conn),
+		Log:               cdpdom.NewLog(conn),
+		Memory:            cdpdom.NewMemory(conn),
+		Network:           cdpdom.NewNetwork(conn),
+		Page:              cdpdom.NewPage(conn),
+		Profiler:          cdpdom.NewProfiler(conn),
+		Rendering:         cdpdom.NewRendering(conn),
+		Runtime:           cdpdom.NewRuntime(conn),
+		Schema:            cdpdom.NewSchema(conn),
+		Security:          cdpdom.NewSecurity(conn),
+		ServiceWorker:     cdpdom.NewServiceWorker(conn),
+		Storage:           cdpdom.NewStorage(conn),
+		SystemInfo:        cdpdom.NewSystemInfo(conn),
+		Target:            cdpdom.NewTarget(conn),
+		Tethering:         cdpdom.NewTethering(conn),
+		Tracing:           cdpdom.NewTracing(conn),
 	}
 }

@@ -11,6 +11,8 @@ import (
 
 // AnimationCreatedClient receives AnimationCreated events.
 type AnimationCreatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*AnimationCreatedReply, error)
 	rpcc.Stream
 }
@@ -22,6 +24,8 @@ type AnimationCreatedReply struct {
 
 // AnimationStartedClient receives AnimationStarted events.
 type AnimationStartedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*AnimationStartedReply, error)
 	rpcc.Stream
 }
@@ -33,6 +37,8 @@ type AnimationStartedReply struct {
 
 // AnimationCanceledClient receives AnimationCanceled events.
 type AnimationCanceledClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*AnimationCanceledReply, error)
 	rpcc.Stream
 }
@@ -44,6 +50,8 @@ type AnimationCanceledReply struct {
 
 // ApplicationCacheStatusUpdatedClient receives ApplicationCacheStatusUpdated events.
 type ApplicationCacheStatusUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*ApplicationCacheStatusUpdatedReply, error)
 	rpcc.Stream
 }
@@ -57,6 +65,8 @@ type ApplicationCacheStatusUpdatedReply struct {
 
 // ApplicationCacheNetworkStateUpdatedClient receives NetworkStateUpdated events.
 type ApplicationCacheNetworkStateUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*ApplicationCacheNetworkStateUpdatedReply, error)
 	rpcc.Stream
 }
@@ -68,6 +78,8 @@ type ApplicationCacheNetworkStateUpdatedReply struct {
 
 // CSSMediaQueryResultChangedClient receives MediaQueryResultChanged events.
 type CSSMediaQueryResultChangedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*CSSMediaQueryResultChangedReply, error)
 	rpcc.Stream
 }
@@ -77,6 +89,8 @@ type CSSMediaQueryResultChangedReply struct{}
 
 // CSSFontsUpdatedClient receives FontsUpdated events.
 type CSSFontsUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*CSSFontsUpdatedReply, error)
 	rpcc.Stream
 }
@@ -86,6 +100,8 @@ type CSSFontsUpdatedReply struct{}
 
 // CSSStyleSheetChangedClient receives StyleSheetChanged events.
 type CSSStyleSheetChangedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*CSSStyleSheetChangedReply, error)
 	rpcc.Stream
 }
@@ -97,6 +113,8 @@ type CSSStyleSheetChangedReply struct {
 
 // CSSStyleSheetAddedClient receives StyleSheetAdded events.
 type CSSStyleSheetAddedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*CSSStyleSheetAddedReply, error)
 	rpcc.Stream
 }
@@ -108,6 +126,8 @@ type CSSStyleSheetAddedReply struct {
 
 // CSSStyleSheetRemovedClient receives StyleSheetRemoved events.
 type CSSStyleSheetRemovedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*CSSStyleSheetRemovedReply, error)
 	rpcc.Stream
 }
@@ -119,6 +139,8 @@ type CSSStyleSheetRemovedReply struct {
 
 // ConsoleMessageAddedClient receives MessageAdded events.
 type ConsoleMessageAddedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*ConsoleMessageAddedReply, error)
 	rpcc.Stream
 }
@@ -130,6 +152,8 @@ type ConsoleMessageAddedReply struct {
 
 // DOMDocumentUpdatedClient receives DocumentUpdated events.
 type DOMDocumentUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMDocumentUpdatedReply, error)
 	rpcc.Stream
 }
@@ -139,6 +163,8 @@ type DOMDocumentUpdatedReply struct{}
 
 // DOMInspectNodeRequestedClient receives InspectNodeRequested events.
 type DOMInspectNodeRequestedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMInspectNodeRequestedReply, error)
 	rpcc.Stream
 }
@@ -150,6 +176,8 @@ type DOMInspectNodeRequestedReply struct {
 
 // DOMSetChildNodesClient receives SetChildNodes events.
 type DOMSetChildNodesClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMSetChildNodesReply, error)
 	rpcc.Stream
 }
@@ -162,6 +190,8 @@ type DOMSetChildNodesReply struct {
 
 // DOMAttributeModifiedClient receives AttributeModified events.
 type DOMAttributeModifiedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMAttributeModifiedReply, error)
 	rpcc.Stream
 }
@@ -175,6 +205,8 @@ type DOMAttributeModifiedReply struct {
 
 // DOMAttributeRemovedClient receives AttributeRemoved events.
 type DOMAttributeRemovedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMAttributeRemovedReply, error)
 	rpcc.Stream
 }
@@ -187,6 +219,8 @@ type DOMAttributeRemovedReply struct {
 
 // DOMInlineStyleInvalidatedClient receives InlineStyleInvalidated events.
 type DOMInlineStyleInvalidatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMInlineStyleInvalidatedReply, error)
 	rpcc.Stream
 }
@@ -198,6 +232,8 @@ type DOMInlineStyleInvalidatedReply struct {
 
 // DOMCharacterDataModifiedClient receives CharacterDataModified events.
 type DOMCharacterDataModifiedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMCharacterDataModifiedReply, error)
 	rpcc.Stream
 }
@@ -210,6 +246,8 @@ type DOMCharacterDataModifiedReply struct {
 
 // DOMChildNodeCountUpdatedClient receives ChildNodeCountUpdated events.
 type DOMChildNodeCountUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMChildNodeCountUpdatedReply, error)
 	rpcc.Stream
 }
@@ -222,6 +260,8 @@ type DOMChildNodeCountUpdatedReply struct {
 
 // DOMChildNodeInsertedClient receives ChildNodeInserted events.
 type DOMChildNodeInsertedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMChildNodeInsertedReply, error)
 	rpcc.Stream
 }
@@ -235,6 +275,8 @@ type DOMChildNodeInsertedReply struct {
 
 // DOMChildNodeRemovedClient receives ChildNodeRemoved events.
 type DOMChildNodeRemovedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMChildNodeRemovedReply, error)
 	rpcc.Stream
 }
@@ -247,6 +289,8 @@ type DOMChildNodeRemovedReply struct {
 
 // DOMShadowRootPushedClient receives ShadowRootPushed events.
 type DOMShadowRootPushedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMShadowRootPushedReply, error)
 	rpcc.Stream
 }
@@ -259,6 +303,8 @@ type DOMShadowRootPushedReply struct {
 
 // DOMShadowRootPoppedClient receives ShadowRootPopped events.
 type DOMShadowRootPoppedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMShadowRootPoppedReply, error)
 	rpcc.Stream
 }
@@ -271,6 +317,8 @@ type DOMShadowRootPoppedReply struct {
 
 // DOMPseudoElementAddedClient receives PseudoElementAdded events.
 type DOMPseudoElementAddedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMPseudoElementAddedReply, error)
 	rpcc.Stream
 }
@@ -283,6 +331,8 @@ type DOMPseudoElementAddedReply struct {
 
 // DOMPseudoElementRemovedClient receives PseudoElementRemoved events.
 type DOMPseudoElementRemovedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMPseudoElementRemovedReply, error)
 	rpcc.Stream
 }
@@ -295,6 +345,8 @@ type DOMPseudoElementRemovedReply struct {
 
 // DOMDistributedNodesUpdatedClient receives DistributedNodesUpdated events.
 type DOMDistributedNodesUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMDistributedNodesUpdatedReply, error)
 	rpcc.Stream
 }
@@ -307,6 +359,8 @@ type DOMDistributedNodesUpdatedReply struct {
 
 // DOMNodeHighlightRequestedClient receives NodeHighlightRequested events.
 type DOMNodeHighlightRequestedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMNodeHighlightRequestedReply, error)
 	rpcc.Stream
 }
@@ -318,6 +372,8 @@ type DOMNodeHighlightRequestedReply struct {
 
 // DOMStorageItemsClearedClient receives DOMStorageItemsCleared events.
 type DOMStorageItemsClearedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMStorageItemsClearedReply, error)
 	rpcc.Stream
 }
@@ -329,6 +385,8 @@ type DOMStorageItemsClearedReply struct {
 
 // DOMStorageItemRemovedClient receives DOMStorageItemRemoved events.
 type DOMStorageItemRemovedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMStorageItemRemovedReply, error)
 	rpcc.Stream
 }
@@ -341,6 +399,8 @@ type DOMStorageItemRemovedReply struct {
 
 // DOMStorageItemAddedClient receives DOMStorageItemAdded events.
 type DOMStorageItemAddedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMStorageItemAddedReply, error)
 	rpcc.Stream
 }
@@ -354,6 +414,8 @@ type DOMStorageItemAddedReply struct {
 
 // DOMStorageItemUpdatedClient receives DOMStorageItemUpdated events.
 type DOMStorageItemUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DOMStorageItemUpdatedReply, error)
 	rpcc.Stream
 }
@@ -368,6 +430,8 @@ type DOMStorageItemUpdatedReply struct {
 
 // DatabaseAddDatabaseClient receives AddDatabase events.
 type DatabaseAddDatabaseClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DatabaseAddDatabaseReply, error)
 	rpcc.Stream
 }
@@ -379,6 +443,8 @@ type DatabaseAddDatabaseReply struct {
 
 // DebuggerScriptParsedClient receives ScriptParsed events.
 type DebuggerScriptParsedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DebuggerScriptParsedReply, error)
 	rpcc.Stream
 }
@@ -404,6 +470,8 @@ type DebuggerScriptParsedReply struct {
 
 // DebuggerScriptFailedToParseClient receives ScriptFailedToParse events.
 type DebuggerScriptFailedToParseClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DebuggerScriptFailedToParseReply, error)
 	rpcc.Stream
 }
@@ -428,6 +496,8 @@ type DebuggerScriptFailedToParseReply struct {
 
 // DebuggerBreakpointResolvedClient receives BreakpointResolved events.
 type DebuggerBreakpointResolvedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DebuggerBreakpointResolvedReply, error)
 	rpcc.Stream
 }
@@ -440,6 +510,8 @@ type DebuggerBreakpointResolvedReply struct {
 
 // DebuggerPausedClient receives Paused events.
 type DebuggerPausedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DebuggerPausedReply, error)
 	rpcc.Stream
 }
@@ -455,6 +527,8 @@ type DebuggerPausedReply struct {
 
 // DebuggerResumedClient receives Resumed events.
 type DebuggerResumedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*DebuggerResumedReply, error)
 	rpcc.Stream
 }
@@ -464,6 +538,8 @@ type DebuggerResumedReply struct{}
 
 // EmulationVirtualTimeBudgetExpiredClient receives VirtualTimeBudgetExpired events.
 type EmulationVirtualTimeBudgetExpiredClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*EmulationVirtualTimeBudgetExpiredReply, error)
 	rpcc.Stream
 }
@@ -473,6 +549,8 @@ type EmulationVirtualTimeBudgetExpiredReply struct{}
 
 // HeapProfilerAddHeapSnapshotChunkClient receives AddHeapSnapshotChunk events.
 type HeapProfilerAddHeapSnapshotChunkClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*HeapProfilerAddHeapSnapshotChunkReply, error)
 	rpcc.Stream
 }
@@ -484,6 +562,8 @@ type HeapProfilerAddHeapSnapshotChunkReply struct {
 
 // HeapProfilerResetProfilesClient receives ResetProfiles events.
 type HeapProfilerResetProfilesClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*HeapProfilerResetProfilesReply, error)
 	rpcc.Stream
 }
@@ -493,6 +573,8 @@ type HeapProfilerResetProfilesReply struct{}
 
 // HeapProfilerReportHeapSnapshotProgressClient receives ReportHeapSnapshotProgress events.
 type HeapProfilerReportHeapSnapshotProgressClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*HeapProfilerReportHeapSnapshotProgressReply, error)
 	rpcc.Stream
 }
@@ -506,6 +588,8 @@ type HeapProfilerReportHeapSnapshotProgressReply struct {
 
 // HeapProfilerLastSeenObjectIDClient receives LastSeenObjectID events.
 type HeapProfilerLastSeenObjectIDClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*HeapProfilerLastSeenObjectIDReply, error)
 	rpcc.Stream
 }
@@ -518,6 +602,8 @@ type HeapProfilerLastSeenObjectIDReply struct {
 
 // HeapProfilerHeapStatsUpdateClient receives HeapStatsUpdate events.
 type HeapProfilerHeapStatsUpdateClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*HeapProfilerHeapStatsUpdateReply, error)
 	rpcc.Stream
 }
@@ -529,6 +615,8 @@ type HeapProfilerHeapStatsUpdateReply struct {
 
 // InspectorDetachedClient receives Detached events.
 type InspectorDetachedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*InspectorDetachedReply, error)
 	rpcc.Stream
 }
@@ -540,6 +628,8 @@ type InspectorDetachedReply struct {
 
 // InspectorTargetCrashedClient receives TargetCrashed events.
 type InspectorTargetCrashedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*InspectorTargetCrashedReply, error)
 	rpcc.Stream
 }
@@ -549,6 +639,8 @@ type InspectorTargetCrashedReply struct{}
 
 // LayerTreeDidChangeClient receives LayerTreeDidChange events.
 type LayerTreeDidChangeClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*LayerTreeDidChangeReply, error)
 	rpcc.Stream
 }
@@ -560,6 +652,8 @@ type LayerTreeDidChangeReply struct {
 
 // LayerTreeLayerPaintedClient receives LayerPainted events.
 type LayerTreeLayerPaintedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*LayerTreeLayerPaintedReply, error)
 	rpcc.Stream
 }
@@ -572,6 +666,8 @@ type LayerTreeLayerPaintedReply struct {
 
 // LogEntryAddedClient receives EntryAdded events.
 type LogEntryAddedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*LogEntryAddedReply, error)
 	rpcc.Stream
 }
@@ -583,6 +679,8 @@ type LogEntryAddedReply struct {
 
 // NetworkResourceChangedPriorityClient receives ResourceChangedPriority events.
 type NetworkResourceChangedPriorityClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkResourceChangedPriorityReply, error)
 	rpcc.Stream
 }
@@ -596,6 +694,8 @@ type NetworkResourceChangedPriorityReply struct {
 
 // NetworkRequestWillBeSentClient receives RequestWillBeSent events.
 type NetworkRequestWillBeSentClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkRequestWillBeSentReply, error)
 	rpcc.Stream
 }
@@ -616,6 +716,8 @@ type NetworkRequestWillBeSentReply struct {
 
 // NetworkRequestServedFromCacheClient receives RequestServedFromCache events.
 type NetworkRequestServedFromCacheClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkRequestServedFromCacheReply, error)
 	rpcc.Stream
 }
@@ -627,6 +729,8 @@ type NetworkRequestServedFromCacheReply struct {
 
 // NetworkResponseReceivedClient receives ResponseReceived events.
 type NetworkResponseReceivedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkResponseReceivedReply, error)
 	rpcc.Stream
 }
@@ -643,6 +747,8 @@ type NetworkResponseReceivedReply struct {
 
 // NetworkDataReceivedClient receives DataReceived events.
 type NetworkDataReceivedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkDataReceivedReply, error)
 	rpcc.Stream
 }
@@ -657,6 +763,8 @@ type NetworkDataReceivedReply struct {
 
 // NetworkLoadingFinishedClient receives LoadingFinished events.
 type NetworkLoadingFinishedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkLoadingFinishedReply, error)
 	rpcc.Stream
 }
@@ -670,6 +778,8 @@ type NetworkLoadingFinishedReply struct {
 
 // NetworkLoadingFailedClient receives LoadingFailed events.
 type NetworkLoadingFailedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkLoadingFailedReply, error)
 	rpcc.Stream
 }
@@ -686,6 +796,8 @@ type NetworkLoadingFailedReply struct {
 
 // NetworkWebSocketWillSendHandshakeRequestClient receives WebSocketWillSendHandshakeRequest events.
 type NetworkWebSocketWillSendHandshakeRequestClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkWebSocketWillSendHandshakeRequestReply, error)
 	rpcc.Stream
 }
@@ -700,6 +812,8 @@ type NetworkWebSocketWillSendHandshakeRequestReply struct {
 
 // NetworkWebSocketHandshakeResponseReceivedClient receives WebSocketHandshakeResponseReceived events.
 type NetworkWebSocketHandshakeResponseReceivedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkWebSocketHandshakeResponseReceivedReply, error)
 	rpcc.Stream
 }
@@ -713,6 +827,8 @@ type NetworkWebSocketHandshakeResponseReceivedReply struct {
 
 // NetworkWebSocketCreatedClient receives WebSocketCreated events.
 type NetworkWebSocketCreatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkWebSocketCreatedReply, error)
 	rpcc.Stream
 }
@@ -726,6 +842,8 @@ type NetworkWebSocketCreatedReply struct {
 
 // NetworkWebSocketClosedClient receives WebSocketClosed events.
 type NetworkWebSocketClosedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkWebSocketClosedReply, error)
 	rpcc.Stream
 }
@@ -738,6 +856,8 @@ type NetworkWebSocketClosedReply struct {
 
 // NetworkWebSocketFrameReceivedClient receives WebSocketFrameReceived events.
 type NetworkWebSocketFrameReceivedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkWebSocketFrameReceivedReply, error)
 	rpcc.Stream
 }
@@ -751,6 +871,8 @@ type NetworkWebSocketFrameReceivedReply struct {
 
 // NetworkWebSocketFrameErrorClient receives WebSocketFrameError events.
 type NetworkWebSocketFrameErrorClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkWebSocketFrameErrorReply, error)
 	rpcc.Stream
 }
@@ -764,6 +886,8 @@ type NetworkWebSocketFrameErrorReply struct {
 
 // NetworkWebSocketFrameSentClient receives WebSocketFrameSent events.
 type NetworkWebSocketFrameSentClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkWebSocketFrameSentReply, error)
 	rpcc.Stream
 }
@@ -777,6 +901,8 @@ type NetworkWebSocketFrameSentReply struct {
 
 // NetworkEventSourceMessageReceivedClient receives EventSourceMessageReceived events.
 type NetworkEventSourceMessageReceivedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*NetworkEventSourceMessageReceivedReply, error)
 	rpcc.Stream
 }
@@ -792,6 +918,8 @@ type NetworkEventSourceMessageReceivedReply struct {
 
 // PageDOMContentEventFiredClient receives DOMContentEventFired events.
 type PageDOMContentEventFiredClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageDOMContentEventFiredReply, error)
 	rpcc.Stream
 }
@@ -803,6 +931,8 @@ type PageDOMContentEventFiredReply struct {
 
 // PageLoadEventFiredClient receives LoadEventFired events.
 type PageLoadEventFiredClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageLoadEventFiredReply, error)
 	rpcc.Stream
 }
@@ -814,6 +944,8 @@ type PageLoadEventFiredReply struct {
 
 // PageFrameAttachedClient receives FrameAttached events.
 type PageFrameAttachedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageFrameAttachedReply, error)
 	rpcc.Stream
 }
@@ -826,6 +958,8 @@ type PageFrameAttachedReply struct {
 
 // PageFrameNavigatedClient receives FrameNavigated events.
 type PageFrameNavigatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageFrameNavigatedReply, error)
 	rpcc.Stream
 }
@@ -837,6 +971,8 @@ type PageFrameNavigatedReply struct {
 
 // PageFrameDetachedClient receives FrameDetached events.
 type PageFrameDetachedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageFrameDetachedReply, error)
 	rpcc.Stream
 }
@@ -848,6 +984,8 @@ type PageFrameDetachedReply struct {
 
 // PageFrameStartedLoadingClient receives FrameStartedLoading events.
 type PageFrameStartedLoadingClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageFrameStartedLoadingReply, error)
 	rpcc.Stream
 }
@@ -859,6 +997,8 @@ type PageFrameStartedLoadingReply struct {
 
 // PageFrameStoppedLoadingClient receives FrameStoppedLoading events.
 type PageFrameStoppedLoadingClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageFrameStoppedLoadingReply, error)
 	rpcc.Stream
 }
@@ -870,6 +1010,8 @@ type PageFrameStoppedLoadingReply struct {
 
 // PageFrameScheduledNavigationClient receives FrameScheduledNavigation events.
 type PageFrameScheduledNavigationClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageFrameScheduledNavigationReply, error)
 	rpcc.Stream
 }
@@ -882,6 +1024,8 @@ type PageFrameScheduledNavigationReply struct {
 
 // PageFrameClearedScheduledNavigationClient receives FrameClearedScheduledNavigation events.
 type PageFrameClearedScheduledNavigationClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageFrameClearedScheduledNavigationReply, error)
 	rpcc.Stream
 }
@@ -893,6 +1037,8 @@ type PageFrameClearedScheduledNavigationReply struct {
 
 // PageFrameResizedClient receives FrameResized events.
 type PageFrameResizedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageFrameResizedReply, error)
 	rpcc.Stream
 }
@@ -902,6 +1048,8 @@ type PageFrameResizedReply struct{}
 
 // PageJavascriptDialogOpeningClient receives JavascriptDialogOpening events.
 type PageJavascriptDialogOpeningClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageJavascriptDialogOpeningReply, error)
 	rpcc.Stream
 }
@@ -914,6 +1062,8 @@ type PageJavascriptDialogOpeningReply struct {
 
 // PageJavascriptDialogClosedClient receives JavascriptDialogClosed events.
 type PageJavascriptDialogClosedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageJavascriptDialogClosedReply, error)
 	rpcc.Stream
 }
@@ -925,6 +1075,8 @@ type PageJavascriptDialogClosedReply struct {
 
 // PageScreencastFrameClient receives ScreencastFrame events.
 type PageScreencastFrameClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageScreencastFrameReply, error)
 	rpcc.Stream
 }
@@ -938,6 +1090,8 @@ type PageScreencastFrameReply struct {
 
 // PageScreencastVisibilityChangedClient receives ScreencastVisibilityChanged events.
 type PageScreencastVisibilityChangedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageScreencastVisibilityChangedReply, error)
 	rpcc.Stream
 }
@@ -949,6 +1103,8 @@ type PageScreencastVisibilityChangedReply struct {
 
 // PageColorPickedClient receives ColorPicked events.
 type PageColorPickedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageColorPickedReply, error)
 	rpcc.Stream
 }
@@ -960,6 +1116,8 @@ type PageColorPickedReply struct {
 
 // PageInterstitialShownClient receives InterstitialShown events.
 type PageInterstitialShownClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageInterstitialShownReply, error)
 	rpcc.Stream
 }
@@ -969,6 +1127,8 @@ type PageInterstitialShownReply struct{}
 
 // PageInterstitialHiddenClient receives InterstitialHidden events.
 type PageInterstitialHiddenClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageInterstitialHiddenReply, error)
 	rpcc.Stream
 }
@@ -978,6 +1138,8 @@ type PageInterstitialHiddenReply struct{}
 
 // PageNavigationRequestedClient receives NavigationRequested events.
 type PageNavigationRequestedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*PageNavigationRequestedReply, error)
 	rpcc.Stream
 }
@@ -992,6 +1154,8 @@ type PageNavigationRequestedReply struct {
 
 // ProfilerConsoleProfileStartedClient receives ConsoleProfileStarted events.
 type ProfilerConsoleProfileStartedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*ProfilerConsoleProfileStartedReply, error)
 	rpcc.Stream
 }
@@ -1005,6 +1169,8 @@ type ProfilerConsoleProfileStartedReply struct {
 
 // ProfilerConsoleProfileFinishedClient receives ConsoleProfileFinished events.
 type ProfilerConsoleProfileFinishedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*ProfilerConsoleProfileFinishedReply, error)
 	rpcc.Stream
 }
@@ -1019,6 +1185,8 @@ type ProfilerConsoleProfileFinishedReply struct {
 
 // RuntimeExecutionContextCreatedClient receives ExecutionContextCreated events.
 type RuntimeExecutionContextCreatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*RuntimeExecutionContextCreatedReply, error)
 	rpcc.Stream
 }
@@ -1030,6 +1198,8 @@ type RuntimeExecutionContextCreatedReply struct {
 
 // RuntimeExecutionContextDestroyedClient receives ExecutionContextDestroyed events.
 type RuntimeExecutionContextDestroyedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*RuntimeExecutionContextDestroyedReply, error)
 	rpcc.Stream
 }
@@ -1041,6 +1211,8 @@ type RuntimeExecutionContextDestroyedReply struct {
 
 // RuntimeExecutionContextsClearedClient receives ExecutionContextsCleared events.
 type RuntimeExecutionContextsClearedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*RuntimeExecutionContextsClearedReply, error)
 	rpcc.Stream
 }
@@ -1050,6 +1222,8 @@ type RuntimeExecutionContextsClearedReply struct{}
 
 // RuntimeExceptionThrownClient receives ExceptionThrown events.
 type RuntimeExceptionThrownClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*RuntimeExceptionThrownReply, error)
 	rpcc.Stream
 }
@@ -1062,6 +1236,8 @@ type RuntimeExceptionThrownReply struct {
 
 // RuntimeExceptionRevokedClient receives ExceptionRevoked events.
 type RuntimeExceptionRevokedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*RuntimeExceptionRevokedReply, error)
 	rpcc.Stream
 }
@@ -1074,6 +1250,8 @@ type RuntimeExceptionRevokedReply struct {
 
 // RuntimeConsoleAPICalledClient receives ConsoleAPICalled events.
 type RuntimeConsoleAPICalledClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*RuntimeConsoleAPICalledReply, error)
 	rpcc.Stream
 }
@@ -1089,6 +1267,8 @@ type RuntimeConsoleAPICalledReply struct {
 
 // RuntimeInspectRequestedClient receives InspectRequested events.
 type RuntimeInspectRequestedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*RuntimeInspectRequestedReply, error)
 	rpcc.Stream
 }
@@ -1101,6 +1281,8 @@ type RuntimeInspectRequestedReply struct {
 
 // SecurityStateChangedClient receives SecurityStateChanged events.
 type SecurityStateChangedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*SecurityStateChangedReply, error)
 	rpcc.Stream
 }
@@ -1116,6 +1298,8 @@ type SecurityStateChangedReply struct {
 
 // SecurityCertificateErrorClient receives CertificateError events.
 type SecurityCertificateErrorClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*SecurityCertificateErrorReply, error)
 	rpcc.Stream
 }
@@ -1129,6 +1313,8 @@ type SecurityCertificateErrorReply struct {
 
 // ServiceWorkerWorkerRegistrationUpdatedClient receives WorkerRegistrationUpdated events.
 type ServiceWorkerWorkerRegistrationUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*ServiceWorkerWorkerRegistrationUpdatedReply, error)
 	rpcc.Stream
 }
@@ -1140,6 +1326,8 @@ type ServiceWorkerWorkerRegistrationUpdatedReply struct {
 
 // ServiceWorkerWorkerVersionUpdatedClient receives WorkerVersionUpdated events.
 type ServiceWorkerWorkerVersionUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*ServiceWorkerWorkerVersionUpdatedReply, error)
 	rpcc.Stream
 }
@@ -1151,6 +1339,8 @@ type ServiceWorkerWorkerVersionUpdatedReply struct {
 
 // ServiceWorkerWorkerErrorReportedClient receives WorkerErrorReported events.
 type ServiceWorkerWorkerErrorReportedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*ServiceWorkerWorkerErrorReportedReply, error)
 	rpcc.Stream
 }
@@ -1162,6 +1352,8 @@ type ServiceWorkerWorkerErrorReportedReply struct {
 
 // TargetCreatedClient receives TargetCreated events.
 type TargetCreatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*TargetCreatedReply, error)
 	rpcc.Stream
 }
@@ -1173,6 +1365,8 @@ type TargetCreatedReply struct {
 
 // TargetDestroyedClient receives TargetDestroyed events.
 type TargetDestroyedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*TargetDestroyedReply, error)
 	rpcc.Stream
 }
@@ -1184,6 +1378,8 @@ type TargetDestroyedReply struct {
 
 // TargetAttachedToTargetClient receives AttachedToTarget events.
 type TargetAttachedToTargetClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*TargetAttachedToTargetReply, error)
 	rpcc.Stream
 }
@@ -1196,6 +1392,8 @@ type TargetAttachedToTargetReply struct {
 
 // TargetDetachedFromTargetClient receives DetachedFromTarget events.
 type TargetDetachedFromTargetClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*TargetDetachedFromTargetReply, error)
 	rpcc.Stream
 }
@@ -1207,6 +1405,8 @@ type TargetDetachedFromTargetReply struct {
 
 // TargetReceivedMessageFromTargetClient receives ReceivedMessageFromTarget events.
 type TargetReceivedMessageFromTargetClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*TargetReceivedMessageFromTargetReply, error)
 	rpcc.Stream
 }
@@ -1219,6 +1419,8 @@ type TargetReceivedMessageFromTargetReply struct {
 
 // TetheringAcceptedClient receives Accepted events.
 type TetheringAcceptedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*TetheringAcceptedReply, error)
 	rpcc.Stream
 }
@@ -1231,6 +1433,8 @@ type TetheringAcceptedReply struct {
 
 // TracingDataCollectedClient receives DataCollected events.
 type TracingDataCollectedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*TracingDataCollectedReply, error)
 	rpcc.Stream
 }
@@ -1242,6 +1446,8 @@ type TracingDataCollectedReply struct {
 
 // TracingCompleteClient receives TracingComplete events.
 type TracingCompleteClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*TracingCompleteReply, error)
 	rpcc.Stream
 }
@@ -1253,6 +1459,8 @@ type TracingCompleteReply struct {
 
 // TracingBufferUsageClient receives BufferUsage events.
 type TracingBufferUsageClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
 	Recv() (*TracingBufferUsageReply, error)
 	rpcc.Stream
 }
