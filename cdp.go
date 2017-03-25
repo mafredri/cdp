@@ -225,6 +225,11 @@ type CSS interface {
 	// Enables the selector recording.
 	StartRuleUsageTracking(context.Context) error
 
+	// Command TakeCoverageDelta
+	//
+	// Obtain list of rules that became used since last call to this method (or since start of coverage instrumentation)
+	TakeCoverageDelta(context.Context) (*cdpcmd.CSSTakeCoverageDeltaReply, error)
+
 	// Command StopRuleUsageTracking
 	//
 	// The list of rules with an indication of whether these were used
@@ -1775,7 +1780,7 @@ type Profiler interface {
 	// Command StartPreciseCoverage
 	//
 	// Enable precise code coverage. Coverage data for JavaScript executed before enabling precise code coverage may be incomplete. Enabling prevents running optimized code and resets execution counters.
-	StartPreciseCoverage(context.Context) error
+	StartPreciseCoverage(context.Context, *cdpcmd.ProfilerStartPreciseCoverageArgs) error
 
 	// Command StopPreciseCoverage
 	//

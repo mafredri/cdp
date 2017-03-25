@@ -919,7 +919,7 @@ type CSSRule struct {
 	Media        []CSSMedia          `json:"media,omitempty"`        // Media list array (for rules involving media queries). The array enumerates media queries starting with the innermost one, going outwards.
 }
 
-// CSSRuleUsage CSS rule usage information.
+// CSSRuleUsage CSS coverage information.
 type CSSRuleUsage struct {
 	StyleSheetID CSSStyleSheetID `json:"styleSheetId"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
 	StartOffset  float64         `json:"startOffset"`  // Offset of the start of the rule (including selector) from the beginning of the stylesheet.

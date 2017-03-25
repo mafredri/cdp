@@ -493,6 +493,11 @@ type CSSGetLayoutTreeAndStylesReply struct {
 	ComputedStyles  []cdptype.CSSComputedStyle  `json:"computedStyles"`  //
 }
 
+// CSSTakeCoverageDeltaReply represents the return values for TakeCoverageDelta in the CSS domain.
+type CSSTakeCoverageDeltaReply struct {
+	Coverage []cdptype.CSSRuleUsage `json:"coverage"` //
+}
+
 // CSSStopRuleUsageTrackingReply represents the return values for StopRuleUsageTracking in the CSS domain.
 type CSSStopRuleUsageTrackingReply struct {
 	RuleUsage []cdptype.CSSRuleUsage `json:"ruleUsage"` //
@@ -1226,8 +1231,9 @@ type DOMGetBoxModelReply struct {
 
 // DOMGetNodeForLocationArgs represents the arguments for GetNodeForLocation in the DOM domain.
 type DOMGetNodeForLocationArgs struct {
-	X int `json:"x"` // X coordinate.
-	Y int `json:"y"` // Y coordinate.
+	X                         int   `json:"x"`                                   // X coordinate.
+	Y                         int   `json:"y"`                                   // Y coordinate.
+	IncludeUserAgentShadowDOM *bool `json:"includeUserAgentShadowDOM,omitempty"` // False to skip to the nearest non-UA shadow root ancestor (default: false).
 }
 
 // NewDOMGetNodeForLocationArgs initializes DOMGetNodeForLocationArgs with the required arguments.
@@ -1236,6 +1242,12 @@ func NewDOMGetNodeForLocationArgs(x int, y int) *DOMGetNodeForLocationArgs {
 	args.X = x
 	args.Y = y
 	return args
+}
+
+// SetIncludeUserAgentShadowDOM sets the IncludeUserAgentShadowDOM optional argument. False to skip to the nearest non-UA shadow root ancestor (default: false).
+func (a *DOMGetNodeForLocationArgs) SetIncludeUserAgentShadowDOM(includeUserAgentShadowDOM bool) *DOMGetNodeForLocationArgs {
+	a.IncludeUserAgentShadowDOM = &includeUserAgentShadowDOM
+	return a
 }
 
 // DOMGetNodeForLocationReply represents the return values for GetNodeForLocation in the DOM domain.
@@ -3856,6 +3868,24 @@ func NewProfilerSetSamplingIntervalArgs(interval int) *ProfilerSetSamplingInterv
 // ProfilerStopReply represents the return values for Stop in the Profiler domain.
 type ProfilerStopReply struct {
 	Profile cdptype.ProfilerProfile `json:"profile"` // Recorded profile.
+}
+
+// ProfilerStartPreciseCoverageArgs represents the arguments for StartPreciseCoverage in the Profiler domain.
+type ProfilerStartPreciseCoverageArgs struct {
+	CallCount *bool `json:"callCount,omitempty"` // Collect accurate call counts beyond simple 'covered' or 'not covered'.
+}
+
+// NewProfilerStartPreciseCoverageArgs initializes ProfilerStartPreciseCoverageArgs with the required arguments.
+func NewProfilerStartPreciseCoverageArgs() *ProfilerStartPreciseCoverageArgs {
+	args := new(ProfilerStartPreciseCoverageArgs)
+
+	return args
+}
+
+// SetCallCount sets the CallCount optional argument. Collect accurate call counts beyond simple 'covered' or 'not covered'.
+func (a *ProfilerStartPreciseCoverageArgs) SetCallCount(callCount bool) *ProfilerStartPreciseCoverageArgs {
+	a.CallCount = &callCount
+	return a
 }
 
 // ProfilerTakePreciseCoverageReply represents the return values for TakePreciseCoverage in the Profiler domain.

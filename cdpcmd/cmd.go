@@ -47,6 +47,7 @@ const (
 	CSSGetBackgroundColors                          CmdType = "CSS.getBackgroundColors"
 	CSSGetLayoutTreeAndStyles                       CmdType = "CSS.getLayoutTreeAndStyles"
 	CSSStartRuleUsageTracking                       CmdType = "CSS.startRuleUsageTracking"
+	CSSTakeCoverageDelta                            CmdType = "CSS.takeCoverageDelta"
 	CSSStopRuleUsageTracking                        CmdType = "CSS.stopRuleUsageTracking"
 	CacheStorageRequestCacheNames                   CmdType = "CacheStorage.requestCacheNames"
 	CacheStorageRequestEntries                      CmdType = "CacheStorage.requestEntries"

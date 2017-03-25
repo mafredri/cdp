@@ -952,8 +952,9 @@ type PageFrameAttachedClient interface {
 
 // PageFrameAttachedReply fired when frame has been attached to its parent.
 type PageFrameAttachedReply struct {
-	FrameID       cdptype.PageFrameID `json:"frameId"`       // Id of the frame that has been attached.
-	ParentFrameID cdptype.PageFrameID `json:"parentFrameId"` // Parent frame identifier.
+	FrameID       cdptype.PageFrameID        `json:"frameId"`         // Id of the frame that has been attached.
+	ParentFrameID cdptype.PageFrameID        `json:"parentFrameId"`   // Parent frame identifier.
+	Stack         *cdptype.RuntimeStackTrace `json:"stack,omitempty"` // JavaScript stack trace of when frame was attached, only set if frame initiated from script.
 }
 
 // PageFrameNavigatedClient receives FrameNavigated events.

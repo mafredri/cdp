@@ -607,6 +607,16 @@ func (d *CSS) StartRuleUsageTracking(ctx context.Context) (err error) {
 	return
 }
 
+// TakeCoverageDelta invokes the CSS method. Obtain list of rules that became used since last call to this method (or since start of coverage instrumentation)
+func (d *CSS) TakeCoverageDelta(ctx context.Context) (reply *cdpcmd.CSSTakeCoverageDeltaReply, err error) {
+	reply = new(cdpcmd.CSSTakeCoverageDeltaReply)
+	err = rpcc.Invoke(ctx, cdpcmd.CSSTakeCoverageDelta.String(), nil, reply, d.conn)
+	if err != nil {
+		err = &OpError{Domain: "CSS", Op: "TakeCoverageDelta", Err: err}
+	}
+	return
+}
+
 // StopRuleUsageTracking invokes the CSS method. The list of rules with an indication of whether these were used
 func (d *CSS) StopRuleUsageTracking(ctx context.Context) (reply *cdpcmd.CSSStopRuleUsageTrackingReply, err error) {
 	reply = new(cdpcmd.CSSStopRuleUsageTrackingReply)
@@ -5113,8 +5123,12 @@ func (d *Profiler) Stop(ctx context.Context) (reply *cdpcmd.ProfilerStopReply, e
 }
 
 // StartPreciseCoverage invokes the Profiler method. Enable precise code coverage. Coverage data for JavaScript executed before enabling precise code coverage may be incomplete. Enabling prevents running optimized code and resets execution counters.
-func (d *Profiler) StartPreciseCoverage(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, cdpcmd.ProfilerStartPreciseCoverage.String(), nil, nil, d.conn)
+func (d *Profiler) StartPreciseCoverage(ctx context.Context, args *cdpcmd.ProfilerStartPreciseCoverageArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.ProfilerStartPreciseCoverage.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.ProfilerStartPreciseCoverage.String(), nil, nil, d.conn)
+	}
 	if err != nil {
 		err = &OpError{Domain: "Profiler", Op: "StartPreciseCoverage", Err: err}
 	}
