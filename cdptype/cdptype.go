@@ -97,11 +97,9 @@ func (e AccessibilityAXValueType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXValueType) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"boolean\"":
 		*e = 1
 	case "\"tristate\"":
@@ -194,11 +192,9 @@ func (e AccessibilityAXValueSourceType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXValueSourceType) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"attribute\"":
 		*e = 1
 	case "\"implicit\"":
@@ -275,11 +271,9 @@ func (e AccessibilityAXValueNativeSourceType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXValueNativeSourceType) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"figcaption\"":
 		*e = 1
 	case "\"label\"":
@@ -388,11 +382,9 @@ func (e AccessibilityAXGlobalStates) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXGlobalStates) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"disabled\"":
 		*e = 1
 	case "\"hidden\"":
@@ -460,11 +452,9 @@ func (e AccessibilityAXLiveRegionAttributes) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXLiveRegionAttributes) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"live\"":
 		*e = 1
 	case "\"atomic\"":
@@ -548,11 +538,9 @@ func (e AccessibilityAXWidgetAttributes) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXWidgetAttributes) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"autocomplete\"":
 		*e = 1
 	case "\"haspopup\"":
@@ -630,11 +618,9 @@ func (e AccessibilityAXWidgetStates) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXWidgetStates) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"checked\"":
 		*e = 1
 	case "\"expanded\"":
@@ -709,11 +695,9 @@ func (e AccessibilityAXRelationshipAttributes) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *AccessibilityAXRelationshipAttributes) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"activedescendant\"":
 		*e = 1
 	case "\"controls\"":
@@ -862,11 +846,9 @@ func (e CSSStyleSheetOrigin) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *CSSStyleSheetOrigin) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"injected\"":
 		*e = 1
 	case "\"user-agent\"":
@@ -1179,11 +1161,9 @@ func (e DOMPseudoType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *DOMPseudoType) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"first-line\"":
 		*e = 1
 	case "\"first-letter\"":
@@ -1263,11 +1243,9 @@ func (e DOMShadowRootType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *DOMShadowRootType) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"user-agent\"":
 		*e = 1
 	case "\"open\"":
@@ -1408,11 +1386,9 @@ func (e DOMInspectMode) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *DOMInspectMode) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"searchForNode\"":
 		*e = 1
 	case "\"searchForUAShadowDOM\"":
@@ -1468,11 +1444,9 @@ func (e DOMDebuggerDOMBreakpointType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *DOMDebuggerDOMBreakpointType) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"subtree-modified\"":
 		*e = 1
 	case "\"attribute-modified\"":
@@ -1627,11 +1601,9 @@ func (e EmulationVirtualTimePolicy) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *EmulationVirtualTimePolicy) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"advance\"":
 		*e = 1
 	case "\"pause\"":
@@ -1771,11 +1743,9 @@ func (e InputGestureSourceType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *InputGestureSourceType) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"default\"":
 		*e = 1
 	case "\"touch\"":
@@ -1888,11 +1858,9 @@ func (e MemoryPressureLevel) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *MemoryPressureLevel) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"moderate\"":
 		*e = 1
 	case "\"critical\"":
@@ -2035,11 +2003,9 @@ func (e NetworkConnectionType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *NetworkConnectionType) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"none\"":
 		*e = 1
 	case "\"cellular2g\"":
@@ -2104,11 +2070,9 @@ func (e NetworkCookieSameSite) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *NetworkCookieSameSite) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"Strict\"":
 		*e = 1
 	case "\"Lax\"":
@@ -2188,11 +2152,9 @@ func (e NetworkResourcePriority) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *NetworkResourcePriority) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"VeryLow\"":
 		*e = 1
 	case "\"Low\"":
@@ -2300,11 +2262,9 @@ func (e NetworkBlockedReason) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *NetworkBlockedReason) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"csp\"":
 		*e = 1
 	case "\"mixed-content\"":
@@ -2471,11 +2431,9 @@ func (e PageResourceType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *PageResourceType) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"Document\"":
 		*e = 1
 	case "\"Stylesheet\"":
@@ -2607,11 +2565,9 @@ func (e PageDialogType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *PageDialogType) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"alert\"":
 		*e = 1
 	case "\"confirm\"":
@@ -2677,11 +2633,9 @@ func (e PageNavigationResponse) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *PageNavigationResponse) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"Proceed\"":
 		*e = 1
 	case "\"Cancel\"":
@@ -2810,11 +2764,9 @@ func (e RuntimeUnserializableValue) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *RuntimeUnserializableValue) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"Infinity\"":
 		*e = 1
 	case "\"NaN\"":
@@ -3047,11 +2999,9 @@ func (e SecurityState) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *SecurityState) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"unknown\"":
 		*e = 1
 	case "\"neutral\"":
@@ -3128,11 +3078,9 @@ func (e SecurityCertificateErrorAction) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *SecurityCertificateErrorAction) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"continue\"":
 		*e = 1
 	case "\"cancel\"":
@@ -3196,11 +3144,9 @@ func (e ServiceWorkerVersionRunningStatus) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *ServiceWorkerVersionRunningStatus) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"stopped\"":
 		*e = 1
 	case "\"starting\"":
@@ -3267,11 +3213,9 @@ func (e ServiceWorkerVersionStatus) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *ServiceWorkerVersionStatus) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"new\"":
 		*e = 1
 	case "\"installing\"":
@@ -3377,11 +3321,9 @@ func (e StorageType) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *StorageType) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
 	switch string(data) {
+	case "null":
+		*e = 0
 	case "\"appcache\"":
 		*e = 1
 	case "\"cookies\"":
