@@ -201,6 +201,7 @@ type Generator struct {
 	pkg        string
 	imports    []string
 	buf        bytes.Buffer // Accumulated output.
+	testbuf    bytes.Buffer // Accumulated test output.
 	hasContent bool
 	hasHeader  bool
 }
@@ -212,6 +213,11 @@ func (g *Generator) path() string {
 // Printf prints to the Generator buffer.
 func (g *Generator) Printf(format string, args ...interface{}) {
 	fmt.Fprintf(&g.buf, format, args...)
+}
+
+// TestPrintf prints to the Generator test buffer.
+func (g *Generator) TestPrintf(format string, args ...interface{}) {
+	fmt.Fprintf(&g.testbuf, format, args...)
 }
 
 func (g *Generator) writeFile(f string) {
@@ -229,6 +235,20 @@ func (g *Generator) writeFile(f string) {
 	if err := ioutil.WriteFile(fp, g.format(), 0644); err != nil {
 		panic(err)
 	}
+	if g.testbuf.Len() > 0 {
+		g.buf.Truncate(0)
+		g.Printf("package %s\n\n", g.pkg)
+		_, err := g.testbuf.WriteTo(&g.buf)
+		if err != nil {
+			panic(err)
+		}
+		fptest := strings.Replace(fp, ".go", "_test.go", 1)
+		log.Printf("Writing %s...", fptest)
+
+		if err := ioutil.WriteFile(fptest, g.format(), 0644); err != nil {
+			panic(err)
+		}
+	}
 	g.clear()
 }
 
@@ -236,6 +256,7 @@ func (g *Generator) clear() {
 	g.hasContent = false
 	g.hasHeader = false
 	g.buf.Truncate(0)
+	g.testbuf.Truncate(0)
 }
 
 // format returns the gofmt-ed contents of the Generator's buffer.
@@ -506,6 +527,38 @@ func (t *%[1]s) UnmarshalJSON(data []byte) error {
 var _ json.Marshaler = (*%[1]s)(nil)
 var _ json.Unmarshaler = (*%[1]s)(nil)
 `, t.Name(d), g.pkg)
+	g.TestPrintf(`
+func Test%[1]s_Marshal(t *testing.T) {
+	var v %[1]s
+
+	// Test empty.
+	b, err := json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %%v, want no error", err)
+	}
+	if string(b) != "null" {
+		t.Errorf("Marshal() got %%s, want null", b)
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %%v, want no error", err)
+	}
+
+	// Test non-empty.
+	v = 1
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %%v, want no error", err)
+	}
+	if string(b) != "1" {
+		t.Errorf("Marshal() got %%s, want 1", b)
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %%v, want no error", err)
+	}
+}
+`, t.Name(d))
 }
 
 func (g *Generator) domainTypeRawMessage(d proto.Domain, t proto.AnyType) {
@@ -531,6 +584,43 @@ func (%[3]s *%[1]s) UnmarshalJSON(data []byte) error {
 var _ json.Marshaler = (*%[1]s)(nil)
 var _ json.Unmarshaler = (*%[1]s)(nil)
 `, t.Name(d), g.pkg, t.Recvr(d))
+
+	g.TestPrintf(`
+func Test%[1]s_Marshal(t *testing.T) {
+	var v %[1]s
+
+	// Test empty.
+	b, err := json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %%v, want no error", err)
+	}
+	if string(b) != "null" {
+		t.Errorf("Marshal() got %%s, want null", b)
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %%v, want no error", err)
+	}
+
+	// Test non-empty.
+	v = []byte("\"test\"")
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %%v, want no error", err)
+	}
+	if !bytes.Equal(v, b) {
+		t.Errorf("Marshal() got %%s, want %%s", b, v)
+	}
+	v = nil
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %%v, want no error", err)
+	}
+	if !bytes.Equal(v, b) {
+		t.Errorf("Unmarshal() got %%s, want %%s", b, v)
+	}
+}
+`, t.Name(d))
 }
 
 func (g *Generator) domainTypeEnum(d proto.Domain, t proto.AnyType) {
@@ -582,11 +672,9 @@ func (e %[1]s) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON decodes a string value into a enum.
 func (e *%[1]s) UnmarshalJSON(data []byte) error {
-	if data == nil {
-		*e = 0
-		return nil
-	}
-	switch string(data) {`, name, g.pkg)
+	switch string(data) {
+	case "null":
+		*e = 0`, name, g.pkg)
 		for i, e := range t.Enum {
 			g.Printf(`
 	case "\"%s\"":
@@ -613,6 +701,59 @@ const (
 		}
 		g.Printf(")")
 	}
+
+	g.TestPrintf(`
+func Test%[1]s_Marshal(t *testing.T) {
+	var v %[1]s
+
+	// Test empty.
+	b, err := json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %%v, want no error", err)
+	}
+	if string(b) != "null" {
+		t.Errorf("Marshal() got %%s, want null", b)
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %%v, want no error", err)
+	}
+
+	// Test bad input.
+	v = 9001
+	_, err = json.Marshal(&v)
+	if err == nil {
+		t.Error("Marshal(9001) got no error, want error")
+	}
+	err = json.Unmarshal([]byte("9001"), &v)
+	if err == nil {
+		t.Error("Unmarshal(9001) got no error, want error")
+	}
+`, t.Name(d))
+	for i, e := range t.Enum {
+		i := i + 1
+		g.TestPrintf(`
+	// Test %s.
+	v = %d
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %%v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %%s, want ~~ %%s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %%v, want no error", err)
+	}
+	if v != %d {
+		t.Errorf("Unmarshal(%d): v == %%d, want %d", v)
+	}
+	`, e.Name(), i, i, i, i)
+	}
+	g.TestPrintf(`
+}
+`)
 }
 
 // CmdType generates the type for CDP methods names.
