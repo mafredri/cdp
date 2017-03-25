@@ -8,10 +8,17 @@ import (
 	"github.com/mafredri/cdp/cdptype"
 )
 
-// AccessibilityGetPartialAXTreeArgs contains the arguments for accessibilityGetPartialAXTree.
+// AccessibilityGetPartialAXTreeArgs represents the arguments for GetPartialAXTree in the Accessibility domain.
 type AccessibilityGetPartialAXTreeArgs struct {
 	NodeID         cdptype.DOMNodeID `json:"nodeId"`                   // ID of node to get the partial accessibility tree for.
 	FetchRelatives *bool             `json:"fetchRelatives,omitempty"` // Whether to fetch this nodes ancestors, siblings and children. Defaults to true.
+}
+
+// NewAccessibilityGetPartialAXTreeArgs initializes AccessibilityGetPartialAXTreeArgs with the required arguments.
+func NewAccessibilityGetPartialAXTreeArgs(nodeID cdptype.DOMNodeID) *AccessibilityGetPartialAXTreeArgs {
+	args := new(AccessibilityGetPartialAXTreeArgs)
+	args.NodeID = nodeID
+	return args
 }
 
 // SetFetchRelatives sets the FetchRelatives optional argument. Whether to fetch this nodes ancestors, siblings and children. Defaults to true.
@@ -20,96 +27,170 @@ func (a *AccessibilityGetPartialAXTreeArgs) SetFetchRelatives(fetchRelatives boo
 	return a
 }
 
-// AccessibilityGetPartialAXTreeReply contains the return values for accessibilityGetPartialAXTree.
+// AccessibilityGetPartialAXTreeReply represents the return values for GetPartialAXTree in the Accessibility domain.
 type AccessibilityGetPartialAXTreeReply struct {
 	Nodes []cdptype.AccessibilityAXNode `json:"nodes"` // The Accessibility.AXNode for this DOM node, if it exists, plus its ancestors, siblings and children, if requested.
 }
 
-// AnimationGetPlaybackRateReply contains the return values for animationGetPlaybackRate.
+// AnimationGetPlaybackRateReply represents the return values for GetPlaybackRate in the Animation domain.
 type AnimationGetPlaybackRateReply struct {
 	PlaybackRate float64 `json:"playbackRate"` // Playback rate for animations on page.
 }
 
-// AnimationSetPlaybackRateArgs contains the arguments for animationSetPlaybackRate.
+// AnimationSetPlaybackRateArgs represents the arguments for SetPlaybackRate in the Animation domain.
 type AnimationSetPlaybackRateArgs struct {
 	PlaybackRate float64 `json:"playbackRate"` // Playback rate for animations on page
 }
 
-// AnimationGetCurrentTimeArgs contains the arguments for animationGetCurrentTime.
+// NewAnimationSetPlaybackRateArgs initializes AnimationSetPlaybackRateArgs with the required arguments.
+func NewAnimationSetPlaybackRateArgs(playbackRate float64) *AnimationSetPlaybackRateArgs {
+	args := new(AnimationSetPlaybackRateArgs)
+	args.PlaybackRate = playbackRate
+	return args
+}
+
+// AnimationGetCurrentTimeArgs represents the arguments for GetCurrentTime in the Animation domain.
 type AnimationGetCurrentTimeArgs struct {
 	ID string `json:"id"` // Id of animation.
 }
 
-// AnimationGetCurrentTimeReply contains the return values for animationGetCurrentTime.
+// NewAnimationGetCurrentTimeArgs initializes AnimationGetCurrentTimeArgs with the required arguments.
+func NewAnimationGetCurrentTimeArgs(id string) *AnimationGetCurrentTimeArgs {
+	args := new(AnimationGetCurrentTimeArgs)
+	args.ID = id
+	return args
+}
+
+// AnimationGetCurrentTimeReply represents the return values for GetCurrentTime in the Animation domain.
 type AnimationGetCurrentTimeReply struct {
 	CurrentTime float64 `json:"currentTime"` // Current time of the page.
 }
 
-// AnimationSetPausedArgs contains the arguments for animationSetPaused.
+// AnimationSetPausedArgs represents the arguments for SetPaused in the Animation domain.
 type AnimationSetPausedArgs struct {
 	Animations []string `json:"animations"` // Animations to set the pause state of.
 	Paused     bool     `json:"paused"`     // Paused state to set to.
 }
 
-// AnimationSetTimingArgs contains the arguments for animationSetTiming.
+// NewAnimationSetPausedArgs initializes AnimationSetPausedArgs with the required arguments.
+func NewAnimationSetPausedArgs(animations []string, paused bool) *AnimationSetPausedArgs {
+	args := new(AnimationSetPausedArgs)
+	args.Animations = animations
+	args.Paused = paused
+	return args
+}
+
+// AnimationSetTimingArgs represents the arguments for SetTiming in the Animation domain.
 type AnimationSetTimingArgs struct {
 	AnimationID string  `json:"animationId"` // Animation id.
 	Duration    float64 `json:"duration"`    // Duration of the animation.
 	Delay       float64 `json:"delay"`       // Delay of the animation.
 }
 
-// AnimationSeekAnimationsArgs contains the arguments for animationSeekAnimations.
+// NewAnimationSetTimingArgs initializes AnimationSetTimingArgs with the required arguments.
+func NewAnimationSetTimingArgs(animationID string, duration float64, delay float64) *AnimationSetTimingArgs {
+	args := new(AnimationSetTimingArgs)
+	args.AnimationID = animationID
+	args.Duration = duration
+	args.Delay = delay
+	return args
+}
+
+// AnimationSeekAnimationsArgs represents the arguments for SeekAnimations in the Animation domain.
 type AnimationSeekAnimationsArgs struct {
 	Animations  []string `json:"animations"`  // List of animation ids to seek.
 	CurrentTime float64  `json:"currentTime"` // Set the current time of each animation.
 }
 
-// AnimationReleaseAnimationsArgs contains the arguments for animationReleaseAnimations.
+// NewAnimationSeekAnimationsArgs initializes AnimationSeekAnimationsArgs with the required arguments.
+func NewAnimationSeekAnimationsArgs(animations []string, currentTime float64) *AnimationSeekAnimationsArgs {
+	args := new(AnimationSeekAnimationsArgs)
+	args.Animations = animations
+	args.CurrentTime = currentTime
+	return args
+}
+
+// AnimationReleaseAnimationsArgs represents the arguments for ReleaseAnimations in the Animation domain.
 type AnimationReleaseAnimationsArgs struct {
 	Animations []string `json:"animations"` // List of animation ids to seek.
 }
 
-// AnimationResolveAnimationArgs contains the arguments for animationResolveAnimation.
+// NewAnimationReleaseAnimationsArgs initializes AnimationReleaseAnimationsArgs with the required arguments.
+func NewAnimationReleaseAnimationsArgs(animations []string) *AnimationReleaseAnimationsArgs {
+	args := new(AnimationReleaseAnimationsArgs)
+	args.Animations = animations
+	return args
+}
+
+// AnimationResolveAnimationArgs represents the arguments for ResolveAnimation in the Animation domain.
 type AnimationResolveAnimationArgs struct {
 	AnimationID string `json:"animationId"` // Animation id.
 }
 
-// AnimationResolveAnimationReply contains the return values for animationResolveAnimation.
+// NewAnimationResolveAnimationArgs initializes AnimationResolveAnimationArgs with the required arguments.
+func NewAnimationResolveAnimationArgs(animationID string) *AnimationResolveAnimationArgs {
+	args := new(AnimationResolveAnimationArgs)
+	args.AnimationID = animationID
+	return args
+}
+
+// AnimationResolveAnimationReply represents the return values for ResolveAnimation in the Animation domain.
 type AnimationResolveAnimationReply struct {
 	RemoteObject cdptype.RuntimeRemoteObject `json:"remoteObject"` // Corresponding remote object.
 }
 
-// ApplicationCacheGetFramesWithManifestsReply contains the return values for applicationcacheGetFramesWithManifests.
+// ApplicationCacheGetFramesWithManifestsReply represents the return values for GetFramesWithManifests in the ApplicationCache domain.
 type ApplicationCacheGetFramesWithManifestsReply struct {
 	FrameIDs []cdptype.ApplicationCacheFrameWithManifest `json:"frameIds"` // Array of frame identifiers with manifest urls for each frame containing a document associated with some application cache.
 }
 
-// ApplicationCacheGetManifestForFrameArgs contains the arguments for applicationcacheGetManifestForFrame.
+// ApplicationCacheGetManifestForFrameArgs represents the arguments for GetManifestForFrame in the ApplicationCache domain.
 type ApplicationCacheGetManifestForFrameArgs struct {
 	FrameID cdptype.PageFrameID `json:"frameId"` // Identifier of the frame containing document whose manifest is retrieved.
 }
 
-// ApplicationCacheGetManifestForFrameReply contains the return values for applicationcacheGetManifestForFrame.
+// NewApplicationCacheGetManifestForFrameArgs initializes ApplicationCacheGetManifestForFrameArgs with the required arguments.
+func NewApplicationCacheGetManifestForFrameArgs(frameID cdptype.PageFrameID) *ApplicationCacheGetManifestForFrameArgs {
+	args := new(ApplicationCacheGetManifestForFrameArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// ApplicationCacheGetManifestForFrameReply represents the return values for GetManifestForFrame in the ApplicationCache domain.
 type ApplicationCacheGetManifestForFrameReply struct {
 	ManifestURL string `json:"manifestURL"` // Manifest URL for document in the given frame.
 }
 
-// ApplicationCacheGetApplicationCacheForFrameArgs contains the arguments for applicationcacheGetApplicationCacheForFrame.
+// ApplicationCacheGetApplicationCacheForFrameArgs represents the arguments for GetApplicationCacheForFrame in the ApplicationCache domain.
 type ApplicationCacheGetApplicationCacheForFrameArgs struct {
 	FrameID cdptype.PageFrameID `json:"frameId"` // Identifier of the frame containing document whose application cache is retrieved.
 }
 
-// ApplicationCacheGetApplicationCacheForFrameReply contains the return values for applicationcacheGetApplicationCacheForFrame.
+// NewApplicationCacheGetApplicationCacheForFrameArgs initializes ApplicationCacheGetApplicationCacheForFrameArgs with the required arguments.
+func NewApplicationCacheGetApplicationCacheForFrameArgs(frameID cdptype.PageFrameID) *ApplicationCacheGetApplicationCacheForFrameArgs {
+	args := new(ApplicationCacheGetApplicationCacheForFrameArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// ApplicationCacheGetApplicationCacheForFrameReply represents the return values for GetApplicationCacheForFrame in the ApplicationCache domain.
 type ApplicationCacheGetApplicationCacheForFrameReply struct {
 	ApplicationCache cdptype.ApplicationCache `json:"applicationCache"` // Relevant application cache data for the document in given frame.
 }
 
-// CSSGetMatchedStylesForNodeArgs contains the arguments for cssGetMatchedStylesForNode.
+// CSSGetMatchedStylesForNodeArgs represents the arguments for GetMatchedStylesForNode in the CSS domain.
 type CSSGetMatchedStylesForNodeArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` //
 }
 
-// CSSGetMatchedStylesForNodeReply contains the return values for cssGetMatchedStylesForNode.
+// NewCSSGetMatchedStylesForNodeArgs initializes CSSGetMatchedStylesForNodeArgs with the required arguments.
+func NewCSSGetMatchedStylesForNodeArgs(nodeID cdptype.DOMNodeID) *CSSGetMatchedStylesForNodeArgs {
+	args := new(CSSGetMatchedStylesForNodeArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// CSSGetMatchedStylesForNodeReply represents the return values for GetMatchedStylesForNode in the CSS domain.
 type CSSGetMatchedStylesForNodeReply struct {
 	InlineStyle       *cdptype.CSSStyle                 `json:"inlineStyle,omitempty"`       // Inline style for the specified DOM node.
 	AttributesStyle   *cdptype.CSSStyle                 `json:"attributesStyle,omitempty"`   // Attribute-defined element style (e.g. resulting from "width=20 height=100%").
@@ -119,218 +200,380 @@ type CSSGetMatchedStylesForNodeReply struct {
 	CSSKeyframesRules []cdptype.CSSKeyframesRule        `json:"cssKeyframesRules,omitempty"` // A list of CSS keyframed animations matching this node.
 }
 
-// CSSGetInlineStylesForNodeArgs contains the arguments for cssGetInlineStylesForNode.
+// CSSGetInlineStylesForNodeArgs represents the arguments for GetInlineStylesForNode in the CSS domain.
 type CSSGetInlineStylesForNodeArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` //
 }
 
-// CSSGetInlineStylesForNodeReply contains the return values for cssGetInlineStylesForNode.
+// NewCSSGetInlineStylesForNodeArgs initializes CSSGetInlineStylesForNodeArgs with the required arguments.
+func NewCSSGetInlineStylesForNodeArgs(nodeID cdptype.DOMNodeID) *CSSGetInlineStylesForNodeArgs {
+	args := new(CSSGetInlineStylesForNodeArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// CSSGetInlineStylesForNodeReply represents the return values for GetInlineStylesForNode in the CSS domain.
 type CSSGetInlineStylesForNodeReply struct {
 	InlineStyle     *cdptype.CSSStyle `json:"inlineStyle,omitempty"`     // Inline style for the specified DOM node.
 	AttributesStyle *cdptype.CSSStyle `json:"attributesStyle,omitempty"` // Attribute-defined element style (e.g. resulting from "width=20 height=100%").
 }
 
-// CSSGetComputedStyleForNodeArgs contains the arguments for cssGetComputedStyleForNode.
+// CSSGetComputedStyleForNodeArgs represents the arguments for GetComputedStyleForNode in the CSS domain.
 type CSSGetComputedStyleForNodeArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` //
 }
 
-// CSSGetComputedStyleForNodeReply contains the return values for cssGetComputedStyleForNode.
+// NewCSSGetComputedStyleForNodeArgs initializes CSSGetComputedStyleForNodeArgs with the required arguments.
+func NewCSSGetComputedStyleForNodeArgs(nodeID cdptype.DOMNodeID) *CSSGetComputedStyleForNodeArgs {
+	args := new(CSSGetComputedStyleForNodeArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// CSSGetComputedStyleForNodeReply represents the return values for GetComputedStyleForNode in the CSS domain.
 type CSSGetComputedStyleForNodeReply struct {
 	ComputedStyle []cdptype.CSSComputedStyleProperty `json:"computedStyle"` // Computed style for the specified DOM node.
 }
 
-// CSSGetPlatformFontsForNodeArgs contains the arguments for cssGetPlatformFontsForNode.
+// CSSGetPlatformFontsForNodeArgs represents the arguments for GetPlatformFontsForNode in the CSS domain.
 type CSSGetPlatformFontsForNodeArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` //
 }
 
-// CSSGetPlatformFontsForNodeReply contains the return values for cssGetPlatformFontsForNode.
+// NewCSSGetPlatformFontsForNodeArgs initializes CSSGetPlatformFontsForNodeArgs with the required arguments.
+func NewCSSGetPlatformFontsForNodeArgs(nodeID cdptype.DOMNodeID) *CSSGetPlatformFontsForNodeArgs {
+	args := new(CSSGetPlatformFontsForNodeArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// CSSGetPlatformFontsForNodeReply represents the return values for GetPlatformFontsForNode in the CSS domain.
 type CSSGetPlatformFontsForNodeReply struct {
 	Fonts []cdptype.CSSPlatformFontUsage `json:"fonts"` // Usage statistics for every employed platform font.
 }
 
-// CSSGetStyleSheetTextArgs contains the arguments for cssGetStyleSheetText.
+// CSSGetStyleSheetTextArgs represents the arguments for GetStyleSheetText in the CSS domain.
 type CSSGetStyleSheetTextArgs struct {
 	StyleSheetID cdptype.CSSStyleSheetID `json:"styleSheetId"` //
 }
 
-// CSSGetStyleSheetTextReply contains the return values for cssGetStyleSheetText.
+// NewCSSGetStyleSheetTextArgs initializes CSSGetStyleSheetTextArgs with the required arguments.
+func NewCSSGetStyleSheetTextArgs(styleSheetID cdptype.CSSStyleSheetID) *CSSGetStyleSheetTextArgs {
+	args := new(CSSGetStyleSheetTextArgs)
+	args.StyleSheetID = styleSheetID
+	return args
+}
+
+// CSSGetStyleSheetTextReply represents the return values for GetStyleSheetText in the CSS domain.
 type CSSGetStyleSheetTextReply struct {
 	Text string `json:"text"` // The stylesheet text.
 }
 
-// CSSCollectClassNamesArgs contains the arguments for cssCollectClassNames.
+// CSSCollectClassNamesArgs represents the arguments for CollectClassNames in the CSS domain.
 type CSSCollectClassNamesArgs struct {
 	StyleSheetID cdptype.CSSStyleSheetID `json:"styleSheetId"` //
 }
 
-// CSSCollectClassNamesReply contains the return values for cssCollectClassNames.
+// NewCSSCollectClassNamesArgs initializes CSSCollectClassNamesArgs with the required arguments.
+func NewCSSCollectClassNamesArgs(styleSheetID cdptype.CSSStyleSheetID) *CSSCollectClassNamesArgs {
+	args := new(CSSCollectClassNamesArgs)
+	args.StyleSheetID = styleSheetID
+	return args
+}
+
+// CSSCollectClassNamesReply represents the return values for CollectClassNames in the CSS domain.
 type CSSCollectClassNamesReply struct {
 	ClassNames []string `json:"classNames"` // Class name list.
 }
 
-// CSSSetStyleSheetTextArgs contains the arguments for cssSetStyleSheetText.
+// CSSSetStyleSheetTextArgs represents the arguments for SetStyleSheetText in the CSS domain.
 type CSSSetStyleSheetTextArgs struct {
 	StyleSheetID cdptype.CSSStyleSheetID `json:"styleSheetId"` //
 	Text         string                  `json:"text"`         //
 }
 
-// CSSSetStyleSheetTextReply contains the return values for cssSetStyleSheetText.
+// NewCSSSetStyleSheetTextArgs initializes CSSSetStyleSheetTextArgs with the required arguments.
+func NewCSSSetStyleSheetTextArgs(styleSheetID cdptype.CSSStyleSheetID, text string) *CSSSetStyleSheetTextArgs {
+	args := new(CSSSetStyleSheetTextArgs)
+	args.StyleSheetID = styleSheetID
+	args.Text = text
+	return args
+}
+
+// CSSSetStyleSheetTextReply represents the return values for SetStyleSheetText in the CSS domain.
 type CSSSetStyleSheetTextReply struct {
 	SourceMapURL *string `json:"sourceMapURL,omitempty"` // URL of source map associated with script (if any).
 }
 
-// CSSSetRuleSelectorArgs contains the arguments for cssSetRuleSelector.
+// CSSSetRuleSelectorArgs represents the arguments for SetRuleSelector in the CSS domain.
 type CSSSetRuleSelectorArgs struct {
 	StyleSheetID cdptype.CSSStyleSheetID `json:"styleSheetId"` //
 	Range        cdptype.CSSSourceRange  `json:"range"`        //
 	Selector     string                  `json:"selector"`     //
 }
 
-// CSSSetRuleSelectorReply contains the return values for cssSetRuleSelector.
+// NewCSSSetRuleSelectorArgs initializes CSSSetRuleSelectorArgs with the required arguments.
+func NewCSSSetRuleSelectorArgs(styleSheetID cdptype.CSSStyleSheetID, rang cdptype.CSSSourceRange, selector string) *CSSSetRuleSelectorArgs {
+	args := new(CSSSetRuleSelectorArgs)
+	args.StyleSheetID = styleSheetID
+	args.Range = rang
+	args.Selector = selector
+	return args
+}
+
+// CSSSetRuleSelectorReply represents the return values for SetRuleSelector in the CSS domain.
 type CSSSetRuleSelectorReply struct {
 	SelectorList cdptype.CSSSelectorList `json:"selectorList"` // The resulting selector list after modification.
 }
 
-// CSSSetKeyframeKeyArgs contains the arguments for cssSetKeyframeKey.
+// CSSSetKeyframeKeyArgs represents the arguments for SetKeyframeKey in the CSS domain.
 type CSSSetKeyframeKeyArgs struct {
 	StyleSheetID cdptype.CSSStyleSheetID `json:"styleSheetId"` //
 	Range        cdptype.CSSSourceRange  `json:"range"`        //
 	KeyText      string                  `json:"keyText"`      //
 }
 
-// CSSSetKeyframeKeyReply contains the return values for cssSetKeyframeKey.
+// NewCSSSetKeyframeKeyArgs initializes CSSSetKeyframeKeyArgs with the required arguments.
+func NewCSSSetKeyframeKeyArgs(styleSheetID cdptype.CSSStyleSheetID, rang cdptype.CSSSourceRange, keyText string) *CSSSetKeyframeKeyArgs {
+	args := new(CSSSetKeyframeKeyArgs)
+	args.StyleSheetID = styleSheetID
+	args.Range = rang
+	args.KeyText = keyText
+	return args
+}
+
+// CSSSetKeyframeKeyReply represents the return values for SetKeyframeKey in the CSS domain.
 type CSSSetKeyframeKeyReply struct {
 	KeyText cdptype.CSSValue `json:"keyText"` // The resulting key text after modification.
 }
 
-// CSSSetStyleTextsArgs contains the arguments for cssSetStyleTexts.
+// CSSSetStyleTextsArgs represents the arguments for SetStyleTexts in the CSS domain.
 type CSSSetStyleTextsArgs struct {
 	Edits []cdptype.CSSStyleDeclarationEdit `json:"edits"` //
 }
 
-// CSSSetStyleTextsReply contains the return values for cssSetStyleTexts.
+// NewCSSSetStyleTextsArgs initializes CSSSetStyleTextsArgs with the required arguments.
+func NewCSSSetStyleTextsArgs(edits []cdptype.CSSStyleDeclarationEdit) *CSSSetStyleTextsArgs {
+	args := new(CSSSetStyleTextsArgs)
+	args.Edits = edits
+	return args
+}
+
+// CSSSetStyleTextsReply represents the return values for SetStyleTexts in the CSS domain.
 type CSSSetStyleTextsReply struct {
 	Styles []cdptype.CSSStyle `json:"styles"` // The resulting styles after modification.
 }
 
-// CSSSetMediaTextArgs contains the arguments for cssSetMediaText.
+// CSSSetMediaTextArgs represents the arguments for SetMediaText in the CSS domain.
 type CSSSetMediaTextArgs struct {
 	StyleSheetID cdptype.CSSStyleSheetID `json:"styleSheetId"` //
 	Range        cdptype.CSSSourceRange  `json:"range"`        //
 	Text         string                  `json:"text"`         //
 }
 
-// CSSSetMediaTextReply contains the return values for cssSetMediaText.
+// NewCSSSetMediaTextArgs initializes CSSSetMediaTextArgs with the required arguments.
+func NewCSSSetMediaTextArgs(styleSheetID cdptype.CSSStyleSheetID, rang cdptype.CSSSourceRange, text string) *CSSSetMediaTextArgs {
+	args := new(CSSSetMediaTextArgs)
+	args.StyleSheetID = styleSheetID
+	args.Range = rang
+	args.Text = text
+	return args
+}
+
+// CSSSetMediaTextReply represents the return values for SetMediaText in the CSS domain.
 type CSSSetMediaTextReply struct {
 	Media cdptype.CSSMedia `json:"media"` // The resulting CSS media rule after modification.
 }
 
-// CSSCreateStyleSheetArgs contains the arguments for cssCreateStyleSheet.
+// CSSCreateStyleSheetArgs represents the arguments for CreateStyleSheet in the CSS domain.
 type CSSCreateStyleSheetArgs struct {
 	FrameID cdptype.PageFrameID `json:"frameId"` // Identifier of the frame where "via-inspector" stylesheet should be created.
 }
 
-// CSSCreateStyleSheetReply contains the return values for cssCreateStyleSheet.
+// NewCSSCreateStyleSheetArgs initializes CSSCreateStyleSheetArgs with the required arguments.
+func NewCSSCreateStyleSheetArgs(frameID cdptype.PageFrameID) *CSSCreateStyleSheetArgs {
+	args := new(CSSCreateStyleSheetArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// CSSCreateStyleSheetReply represents the return values for CreateStyleSheet in the CSS domain.
 type CSSCreateStyleSheetReply struct {
 	StyleSheetID cdptype.CSSStyleSheetID `json:"styleSheetId"` // Identifier of the created "via-inspector" stylesheet.
 }
 
-// CSSAddRuleArgs contains the arguments for cssAddRule.
+// CSSAddRuleArgs represents the arguments for AddRule in the CSS domain.
 type CSSAddRuleArgs struct {
 	StyleSheetID cdptype.CSSStyleSheetID `json:"styleSheetId"` // The css style sheet identifier where a new rule should be inserted.
 	RuleText     string                  `json:"ruleText"`     // The text of a new rule.
 	Location     cdptype.CSSSourceRange  `json:"location"`     // Text position of a new rule in the target style sheet.
 }
 
-// CSSAddRuleReply contains the return values for cssAddRule.
+// NewCSSAddRuleArgs initializes CSSAddRuleArgs with the required arguments.
+func NewCSSAddRuleArgs(styleSheetID cdptype.CSSStyleSheetID, ruleText string, location cdptype.CSSSourceRange) *CSSAddRuleArgs {
+	args := new(CSSAddRuleArgs)
+	args.StyleSheetID = styleSheetID
+	args.RuleText = ruleText
+	args.Location = location
+	return args
+}
+
+// CSSAddRuleReply represents the return values for AddRule in the CSS domain.
 type CSSAddRuleReply struct {
 	Rule cdptype.CSSRule `json:"rule"` // The newly created rule.
 }
 
-// CSSForcePseudoStateArgs contains the arguments for cssForcePseudoState.
+// CSSForcePseudoStateArgs represents the arguments for ForcePseudoState in the CSS domain.
 type CSSForcePseudoStateArgs struct {
 	NodeID              cdptype.DOMNodeID `json:"nodeId"`              // The element id for which to force the pseudo state.
 	ForcedPseudoClasses []string          `json:"forcedPseudoClasses"` // Element pseudo classes to force when computing the element's style.
 }
 
-// CSSGetMediaQueriesReply contains the return values for cssGetMediaQueries.
+// NewCSSForcePseudoStateArgs initializes CSSForcePseudoStateArgs with the required arguments.
+func NewCSSForcePseudoStateArgs(nodeID cdptype.DOMNodeID, forcedPseudoClasses []string) *CSSForcePseudoStateArgs {
+	args := new(CSSForcePseudoStateArgs)
+	args.NodeID = nodeID
+	args.ForcedPseudoClasses = forcedPseudoClasses
+	return args
+}
+
+// CSSGetMediaQueriesReply represents the return values for GetMediaQueries in the CSS domain.
 type CSSGetMediaQueriesReply struct {
 	Medias []cdptype.CSSMedia `json:"medias"` //
 }
 
-// CSSSetEffectivePropertyValueForNodeArgs contains the arguments for cssSetEffectivePropertyValueForNode.
+// CSSSetEffectivePropertyValueForNodeArgs represents the arguments for SetEffectivePropertyValueForNode in the CSS domain.
 type CSSSetEffectivePropertyValueForNodeArgs struct {
 	NodeID       cdptype.DOMNodeID `json:"nodeId"`       // The element id for which to set property.
 	PropertyName string            `json:"propertyName"` //
 	Value        string            `json:"value"`        //
 }
 
-// CSSGetBackgroundColorsArgs contains the arguments for cssGetBackgroundColors.
+// NewCSSSetEffectivePropertyValueForNodeArgs initializes CSSSetEffectivePropertyValueForNodeArgs with the required arguments.
+func NewCSSSetEffectivePropertyValueForNodeArgs(nodeID cdptype.DOMNodeID, propertyName string, value string) *CSSSetEffectivePropertyValueForNodeArgs {
+	args := new(CSSSetEffectivePropertyValueForNodeArgs)
+	args.NodeID = nodeID
+	args.PropertyName = propertyName
+	args.Value = value
+	return args
+}
+
+// CSSGetBackgroundColorsArgs represents the arguments for GetBackgroundColors in the CSS domain.
 type CSSGetBackgroundColorsArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node to get background colors for.
 }
 
-// CSSGetBackgroundColorsReply contains the return values for cssGetBackgroundColors.
+// NewCSSGetBackgroundColorsArgs initializes CSSGetBackgroundColorsArgs with the required arguments.
+func NewCSSGetBackgroundColorsArgs(nodeID cdptype.DOMNodeID) *CSSGetBackgroundColorsArgs {
+	args := new(CSSGetBackgroundColorsArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// CSSGetBackgroundColorsReply represents the return values for GetBackgroundColors in the CSS domain.
 type CSSGetBackgroundColorsReply struct {
 	BackgroundColors []string `json:"backgroundColors,omitempty"` // The range of background colors behind this element, if it contains any visible text. If no visible text is present, this will be undefined. In the case of a flat background color, this will consist of simply that color. In the case of a gradient, this will consist of each of the color stops. For anything more complicated, this will be an empty array. Images will be ignored (as if the image had failed to load).
 }
 
-// CSSGetLayoutTreeAndStylesArgs contains the arguments for cssGetLayoutTreeAndStyles.
+// CSSGetLayoutTreeAndStylesArgs represents the arguments for GetLayoutTreeAndStyles in the CSS domain.
 type CSSGetLayoutTreeAndStylesArgs struct {
 	ComputedStyleWhitelist []string `json:"computedStyleWhitelist"` // Whitelist of computed styles to return.
 }
 
-// CSSGetLayoutTreeAndStylesReply contains the return values for cssGetLayoutTreeAndStyles.
+// NewCSSGetLayoutTreeAndStylesArgs initializes CSSGetLayoutTreeAndStylesArgs with the required arguments.
+func NewCSSGetLayoutTreeAndStylesArgs(computedStyleWhitelist []string) *CSSGetLayoutTreeAndStylesArgs {
+	args := new(CSSGetLayoutTreeAndStylesArgs)
+	args.ComputedStyleWhitelist = computedStyleWhitelist
+	return args
+}
+
+// CSSGetLayoutTreeAndStylesReply represents the return values for GetLayoutTreeAndStyles in the CSS domain.
 type CSSGetLayoutTreeAndStylesReply struct {
 	LayoutTreeNodes []cdptype.CSSLayoutTreeNode `json:"layoutTreeNodes"` //
 	ComputedStyles  []cdptype.CSSComputedStyle  `json:"computedStyles"`  //
 }
 
-// CSSStopRuleUsageTrackingReply contains the return values for cssStopRuleUsageTracking.
+// CSSStopRuleUsageTrackingReply represents the return values for StopRuleUsageTracking in the CSS domain.
 type CSSStopRuleUsageTrackingReply struct {
 	RuleUsage []cdptype.CSSRuleUsage `json:"ruleUsage"` //
 }
 
-// CacheStorageRequestCacheNamesArgs contains the arguments for cachestorageRequestCacheNames.
+// CacheStorageRequestCacheNamesArgs represents the arguments for RequestCacheNames in the CacheStorage domain.
 type CacheStorageRequestCacheNamesArgs struct {
 	SecurityOrigin string `json:"securityOrigin"` // Security origin.
 }
 
-// CacheStorageRequestCacheNamesReply contains the return values for cachestorageRequestCacheNames.
+// NewCacheStorageRequestCacheNamesArgs initializes CacheStorageRequestCacheNamesArgs with the required arguments.
+func NewCacheStorageRequestCacheNamesArgs(securityOrigin string) *CacheStorageRequestCacheNamesArgs {
+	args := new(CacheStorageRequestCacheNamesArgs)
+	args.SecurityOrigin = securityOrigin
+	return args
+}
+
+// CacheStorageRequestCacheNamesReply represents the return values for RequestCacheNames in the CacheStorage domain.
 type CacheStorageRequestCacheNamesReply struct {
 	Caches []cdptype.CacheStorageCache `json:"caches"` // Caches for the security origin.
 }
 
-// CacheStorageRequestEntriesArgs contains the arguments for cachestorageRequestEntries.
+// CacheStorageRequestEntriesArgs represents the arguments for RequestEntries in the CacheStorage domain.
 type CacheStorageRequestEntriesArgs struct {
 	CacheID   cdptype.CacheStorageCacheID `json:"cacheId"`   // ID of cache to get entries from.
 	SkipCount int                         `json:"skipCount"` // Number of records to skip.
 	PageSize  int                         `json:"pageSize"`  // Number of records to fetch.
 }
 
-// CacheStorageRequestEntriesReply contains the return values for cachestorageRequestEntries.
+// NewCacheStorageRequestEntriesArgs initializes CacheStorageRequestEntriesArgs with the required arguments.
+func NewCacheStorageRequestEntriesArgs(cacheID cdptype.CacheStorageCacheID, skipCount int, pageSize int) *CacheStorageRequestEntriesArgs {
+	args := new(CacheStorageRequestEntriesArgs)
+	args.CacheID = cacheID
+	args.SkipCount = skipCount
+	args.PageSize = pageSize
+	return args
+}
+
+// CacheStorageRequestEntriesReply represents the return values for RequestEntries in the CacheStorage domain.
 type CacheStorageRequestEntriesReply struct {
 	CacheDataEntries []cdptype.CacheStorageDataEntry `json:"cacheDataEntries"` // Array of object store data entries.
 	HasMore          bool                            `json:"hasMore"`          // If true, there are more entries to fetch in the given range.
 }
 
-// CacheStorageDeleteCacheArgs contains the arguments for cachestorageDeleteCache.
+// CacheStorageDeleteCacheArgs represents the arguments for DeleteCache in the CacheStorage domain.
 type CacheStorageDeleteCacheArgs struct {
 	CacheID cdptype.CacheStorageCacheID `json:"cacheId"` // Id of cache for deletion.
 }
 
-// CacheStorageDeleteEntryArgs contains the arguments for cachestorageDeleteEntry.
+// NewCacheStorageDeleteCacheArgs initializes CacheStorageDeleteCacheArgs with the required arguments.
+func NewCacheStorageDeleteCacheArgs(cacheID cdptype.CacheStorageCacheID) *CacheStorageDeleteCacheArgs {
+	args := new(CacheStorageDeleteCacheArgs)
+	args.CacheID = cacheID
+	return args
+}
+
+// CacheStorageDeleteEntryArgs represents the arguments for DeleteEntry in the CacheStorage domain.
 type CacheStorageDeleteEntryArgs struct {
 	CacheID cdptype.CacheStorageCacheID `json:"cacheId"` // Id of cache where the entry will be deleted.
 	Request string                      `json:"request"` // URL spec of the request.
 }
 
-// DOMGetDocumentArgs contains the arguments for domGetDocument.
+// NewCacheStorageDeleteEntryArgs initializes CacheStorageDeleteEntryArgs with the required arguments.
+func NewCacheStorageDeleteEntryArgs(cacheID cdptype.CacheStorageCacheID, request string) *CacheStorageDeleteEntryArgs {
+	args := new(CacheStorageDeleteEntryArgs)
+	args.CacheID = cacheID
+	args.Request = request
+	return args
+}
+
+// DOMGetDocumentArgs represents the arguments for GetDocument in the DOM domain.
 type DOMGetDocumentArgs struct {
 	Depth  *int  `json:"depth,omitempty"`  // The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
 	Pierce *bool `json:"pierce,omitempty"` // Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+}
+
+// NewDOMGetDocumentArgs initializes DOMGetDocumentArgs with the required arguments.
+func NewDOMGetDocumentArgs() *DOMGetDocumentArgs {
+	args := new(DOMGetDocumentArgs)
+
+	return args
 }
 
 // SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
@@ -345,15 +588,22 @@ func (a *DOMGetDocumentArgs) SetPierce(pierce bool) *DOMGetDocumentArgs {
 	return a
 }
 
-// DOMGetDocumentReply contains the return values for domGetDocument.
+// DOMGetDocumentReply represents the return values for GetDocument in the DOM domain.
 type DOMGetDocumentReply struct {
 	Root cdptype.DOMNode `json:"root"` // Resulting node.
 }
 
-// DOMGetFlattenedDocumentArgs contains the arguments for domGetFlattenedDocument.
+// DOMGetFlattenedDocumentArgs represents the arguments for GetFlattenedDocument in the DOM domain.
 type DOMGetFlattenedDocumentArgs struct {
 	Depth  *int  `json:"depth,omitempty"`  // The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
 	Pierce *bool `json:"pierce,omitempty"` // Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+}
+
+// NewDOMGetFlattenedDocumentArgs initializes DOMGetFlattenedDocumentArgs with the required arguments.
+func NewDOMGetFlattenedDocumentArgs() *DOMGetFlattenedDocumentArgs {
+	args := new(DOMGetFlattenedDocumentArgs)
+
+	return args
 }
 
 // SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
@@ -368,26 +618,40 @@ func (a *DOMGetFlattenedDocumentArgs) SetPierce(pierce bool) *DOMGetFlattenedDoc
 	return a
 }
 
-// DOMGetFlattenedDocumentReply contains the return values for domGetFlattenedDocument.
+// DOMGetFlattenedDocumentReply represents the return values for GetFlattenedDocument in the DOM domain.
 type DOMGetFlattenedDocumentReply struct {
 	Nodes []cdptype.DOMNode `json:"nodes"` // Resulting node.
 }
 
-// DOMCollectClassNamesFromSubtreeArgs contains the arguments for domCollectClassNamesFromSubtree.
+// DOMCollectClassNamesFromSubtreeArgs represents the arguments for CollectClassNamesFromSubtree in the DOM domain.
 type DOMCollectClassNamesFromSubtreeArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node to collect class names.
 }
 
-// DOMCollectClassNamesFromSubtreeReply contains the return values for domCollectClassNamesFromSubtree.
+// NewDOMCollectClassNamesFromSubtreeArgs initializes DOMCollectClassNamesFromSubtreeArgs with the required arguments.
+func NewDOMCollectClassNamesFromSubtreeArgs(nodeID cdptype.DOMNodeID) *DOMCollectClassNamesFromSubtreeArgs {
+	args := new(DOMCollectClassNamesFromSubtreeArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// DOMCollectClassNamesFromSubtreeReply represents the return values for CollectClassNamesFromSubtree in the DOM domain.
 type DOMCollectClassNamesFromSubtreeReply struct {
 	ClassNames []string `json:"classNames"` // Class name list.
 }
 
-// DOMRequestChildNodesArgs contains the arguments for domRequestChildNodes.
+// DOMRequestChildNodesArgs represents the arguments for RequestChildNodes in the DOM domain.
 type DOMRequestChildNodesArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"`           // Id of the node to get children for.
 	Depth  *int              `json:"depth,omitempty"`  // The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
 	Pierce *bool             `json:"pierce,omitempty"` // Whether or not iframes and shadow roots should be traversed when returning the sub-tree (default is false).
+}
+
+// NewDOMRequestChildNodesArgs initializes DOMRequestChildNodesArgs with the required arguments.
+func NewDOMRequestChildNodesArgs(nodeID cdptype.DOMNodeID) *DOMRequestChildNodesArgs {
+	args := new(DOMRequestChildNodesArgs)
+	args.NodeID = nodeID
+	return args
 }
 
 // SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
@@ -402,62 +666,118 @@ func (a *DOMRequestChildNodesArgs) SetPierce(pierce bool) *DOMRequestChildNodesA
 	return a
 }
 
-// DOMQuerySelectorArgs contains the arguments for domQuerySelector.
+// DOMQuerySelectorArgs represents the arguments for QuerySelector in the DOM domain.
 type DOMQuerySelectorArgs struct {
 	NodeID   cdptype.DOMNodeID `json:"nodeId"`   // Id of the node to query upon.
 	Selector string            `json:"selector"` // Selector string.
 }
 
-// DOMQuerySelectorReply contains the return values for domQuerySelector.
+// NewDOMQuerySelectorArgs initializes DOMQuerySelectorArgs with the required arguments.
+func NewDOMQuerySelectorArgs(nodeID cdptype.DOMNodeID, selector string) *DOMQuerySelectorArgs {
+	args := new(DOMQuerySelectorArgs)
+	args.NodeID = nodeID
+	args.Selector = selector
+	return args
+}
+
+// DOMQuerySelectorReply represents the return values for QuerySelector in the DOM domain.
 type DOMQuerySelectorReply struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Query selector result.
 }
 
-// DOMQuerySelectorAllArgs contains the arguments for domQuerySelectorAll.
+// DOMQuerySelectorAllArgs represents the arguments for QuerySelectorAll in the DOM domain.
 type DOMQuerySelectorAllArgs struct {
 	NodeID   cdptype.DOMNodeID `json:"nodeId"`   // Id of the node to query upon.
 	Selector string            `json:"selector"` // Selector string.
 }
 
-// DOMQuerySelectorAllReply contains the return values for domQuerySelectorAll.
+// NewDOMQuerySelectorAllArgs initializes DOMQuerySelectorAllArgs with the required arguments.
+func NewDOMQuerySelectorAllArgs(nodeID cdptype.DOMNodeID, selector string) *DOMQuerySelectorAllArgs {
+	args := new(DOMQuerySelectorAllArgs)
+	args.NodeID = nodeID
+	args.Selector = selector
+	return args
+}
+
+// DOMQuerySelectorAllReply represents the return values for QuerySelectorAll in the DOM domain.
 type DOMQuerySelectorAllReply struct {
 	NodeIDs []cdptype.DOMNodeID `json:"nodeIds"` // Query selector result.
 }
 
-// DOMSetNodeNameArgs contains the arguments for domSetNodeName.
+// DOMSetNodeNameArgs represents the arguments for SetNodeName in the DOM domain.
 type DOMSetNodeNameArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node to set name for.
 	Name   string            `json:"name"`   // New node's name.
 }
 
-// DOMSetNodeNameReply contains the return values for domSetNodeName.
+// NewDOMSetNodeNameArgs initializes DOMSetNodeNameArgs with the required arguments.
+func NewDOMSetNodeNameArgs(nodeID cdptype.DOMNodeID, name string) *DOMSetNodeNameArgs {
+	args := new(DOMSetNodeNameArgs)
+	args.NodeID = nodeID
+	args.Name = name
+	return args
+}
+
+// DOMSetNodeNameReply represents the return values for SetNodeName in the DOM domain.
 type DOMSetNodeNameReply struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // New node's id.
 }
 
-// DOMSetNodeValueArgs contains the arguments for domSetNodeValue.
+// DOMSetNodeValueArgs represents the arguments for SetNodeValue in the DOM domain.
 type DOMSetNodeValueArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node to set value for.
 	Value  string            `json:"value"`  // New node's value.
 }
 
-// DOMRemoveNodeArgs contains the arguments for domRemoveNode.
+// NewDOMSetNodeValueArgs initializes DOMSetNodeValueArgs with the required arguments.
+func NewDOMSetNodeValueArgs(nodeID cdptype.DOMNodeID, value string) *DOMSetNodeValueArgs {
+	args := new(DOMSetNodeValueArgs)
+	args.NodeID = nodeID
+	args.Value = value
+	return args
+}
+
+// DOMRemoveNodeArgs represents the arguments for RemoveNode in the DOM domain.
 type DOMRemoveNodeArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node to remove.
 }
 
-// DOMSetAttributeValueArgs contains the arguments for domSetAttributeValue.
+// NewDOMRemoveNodeArgs initializes DOMRemoveNodeArgs with the required arguments.
+func NewDOMRemoveNodeArgs(nodeID cdptype.DOMNodeID) *DOMRemoveNodeArgs {
+	args := new(DOMRemoveNodeArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// DOMSetAttributeValueArgs represents the arguments for SetAttributeValue in the DOM domain.
 type DOMSetAttributeValueArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the element to set attribute for.
 	Name   string            `json:"name"`   // Attribute name.
 	Value  string            `json:"value"`  // Attribute value.
 }
 
-// DOMSetAttributesAsTextArgs contains the arguments for domSetAttributesAsText.
+// NewDOMSetAttributeValueArgs initializes DOMSetAttributeValueArgs with the required arguments.
+func NewDOMSetAttributeValueArgs(nodeID cdptype.DOMNodeID, name string, value string) *DOMSetAttributeValueArgs {
+	args := new(DOMSetAttributeValueArgs)
+	args.NodeID = nodeID
+	args.Name = name
+	args.Value = value
+	return args
+}
+
+// DOMSetAttributesAsTextArgs represents the arguments for SetAttributesAsText in the DOM domain.
 type DOMSetAttributesAsTextArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"`         // Id of the element to set attributes for.
 	Text   string            `json:"text"`           // Text with a number of attributes. Will parse this text using HTML parser.
 	Name   *string           `json:"name,omitempty"` // Attribute name to replace with new attributes derived from text in case text parsed successfully.
+}
+
+// NewDOMSetAttributesAsTextArgs initializes DOMSetAttributesAsTextArgs with the required arguments.
+func NewDOMSetAttributesAsTextArgs(nodeID cdptype.DOMNodeID, text string) *DOMSetAttributesAsTextArgs {
+	args := new(DOMSetAttributesAsTextArgs)
+	args.NodeID = nodeID
+	args.Text = text
+	return args
 }
 
 // SetName sets the Name optional argument. Attribute name to replace with new attributes derived from text in case text parsed successfully.
@@ -466,32 +786,62 @@ func (a *DOMSetAttributesAsTextArgs) SetName(name string) *DOMSetAttributesAsTex
 	return a
 }
 
-// DOMRemoveAttributeArgs contains the arguments for domRemoveAttribute.
+// DOMRemoveAttributeArgs represents the arguments for RemoveAttribute in the DOM domain.
 type DOMRemoveAttributeArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the element to remove attribute from.
 	Name   string            `json:"name"`   // Name of the attribute to remove.
 }
 
-// DOMGetOuterHTMLArgs contains the arguments for domGetOuterHTML.
+// NewDOMRemoveAttributeArgs initializes DOMRemoveAttributeArgs with the required arguments.
+func NewDOMRemoveAttributeArgs(nodeID cdptype.DOMNodeID, name string) *DOMRemoveAttributeArgs {
+	args := new(DOMRemoveAttributeArgs)
+	args.NodeID = nodeID
+	args.Name = name
+	return args
+}
+
+// DOMGetOuterHTMLArgs represents the arguments for GetOuterHTML in the DOM domain.
 type DOMGetOuterHTMLArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node to get markup for.
 }
 
-// DOMGetOuterHTMLReply contains the return values for domGetOuterHTML.
+// NewDOMGetOuterHTMLArgs initializes DOMGetOuterHTMLArgs with the required arguments.
+func NewDOMGetOuterHTMLArgs(nodeID cdptype.DOMNodeID) *DOMGetOuterHTMLArgs {
+	args := new(DOMGetOuterHTMLArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// DOMGetOuterHTMLReply represents the return values for GetOuterHTML in the DOM domain.
 type DOMGetOuterHTMLReply struct {
 	OuterHTML string `json:"outerHTML"` // Outer HTML markup.
 }
 
-// DOMSetOuterHTMLArgs contains the arguments for domSetOuterHTML.
+// DOMSetOuterHTMLArgs represents the arguments for SetOuterHTML in the DOM domain.
 type DOMSetOuterHTMLArgs struct {
 	NodeID    cdptype.DOMNodeID `json:"nodeId"`    // Id of the node to set markup for.
 	OuterHTML string            `json:"outerHTML"` // Outer HTML markup to set.
 }
 
-// DOMPerformSearchArgs contains the arguments for domPerformSearch.
+// NewDOMSetOuterHTMLArgs initializes DOMSetOuterHTMLArgs with the required arguments.
+func NewDOMSetOuterHTMLArgs(nodeID cdptype.DOMNodeID, outerHTML string) *DOMSetOuterHTMLArgs {
+	args := new(DOMSetOuterHTMLArgs)
+	args.NodeID = nodeID
+	args.OuterHTML = outerHTML
+	return args
+}
+
+// DOMPerformSearchArgs represents the arguments for PerformSearch in the DOM domain.
 type DOMPerformSearchArgs struct {
 	Query                     string `json:"query"`                               // Plain text or query selector or XPath search query.
 	IncludeUserAgentShadowDOM *bool  `json:"includeUserAgentShadowDOM,omitempty"` // True to search in user agent shadow DOM.
+}
+
+// NewDOMPerformSearchArgs initializes DOMPerformSearchArgs with the required arguments.
+func NewDOMPerformSearchArgs(query string) *DOMPerformSearchArgs {
+	args := new(DOMPerformSearchArgs)
+	args.Query = query
+	return args
 }
 
 // SetIncludeUserAgentShadowDOM sets the IncludeUserAgentShadowDOM optional argument. True to search in user agent shadow DOM.
@@ -500,43 +850,73 @@ func (a *DOMPerformSearchArgs) SetIncludeUserAgentShadowDOM(includeUserAgentShad
 	return a
 }
 
-// DOMPerformSearchReply contains the return values for domPerformSearch.
+// DOMPerformSearchReply represents the return values for PerformSearch in the DOM domain.
 type DOMPerformSearchReply struct {
 	SearchID    string `json:"searchId"`    // Unique search session identifier.
 	ResultCount int    `json:"resultCount"` // Number of search results.
 }
 
-// DOMGetSearchResultsArgs contains the arguments for domGetSearchResults.
+// DOMGetSearchResultsArgs represents the arguments for GetSearchResults in the DOM domain.
 type DOMGetSearchResultsArgs struct {
 	SearchID  string `json:"searchId"`  // Unique search session identifier.
 	FromIndex int    `json:"fromIndex"` // Start index of the search result to be returned.
 	ToIndex   int    `json:"toIndex"`   // End index of the search result to be returned.
 }
 
-// DOMGetSearchResultsReply contains the return values for domGetSearchResults.
+// NewDOMGetSearchResultsArgs initializes DOMGetSearchResultsArgs with the required arguments.
+func NewDOMGetSearchResultsArgs(searchID string, fromIndex int, toIndex int) *DOMGetSearchResultsArgs {
+	args := new(DOMGetSearchResultsArgs)
+	args.SearchID = searchID
+	args.FromIndex = fromIndex
+	args.ToIndex = toIndex
+	return args
+}
+
+// DOMGetSearchResultsReply represents the return values for GetSearchResults in the DOM domain.
 type DOMGetSearchResultsReply struct {
 	NodeIDs []cdptype.DOMNodeID `json:"nodeIds"` // Ids of the search result nodes.
 }
 
-// DOMDiscardSearchResultsArgs contains the arguments for domDiscardSearchResults.
+// DOMDiscardSearchResultsArgs represents the arguments for DiscardSearchResults in the DOM domain.
 type DOMDiscardSearchResultsArgs struct {
 	SearchID string `json:"searchId"` // Unique search session identifier.
 }
 
-// DOMRequestNodeArgs contains the arguments for domRequestNode.
+// NewDOMDiscardSearchResultsArgs initializes DOMDiscardSearchResultsArgs with the required arguments.
+func NewDOMDiscardSearchResultsArgs(searchID string) *DOMDiscardSearchResultsArgs {
+	args := new(DOMDiscardSearchResultsArgs)
+	args.SearchID = searchID
+	return args
+}
+
+// DOMRequestNodeArgs represents the arguments for RequestNode in the DOM domain.
 type DOMRequestNodeArgs struct {
 	ObjectID cdptype.RuntimeRemoteObjectID `json:"objectId"` // JavaScript object id to convert into node.
 }
 
-// DOMRequestNodeReply contains the return values for domRequestNode.
+// NewDOMRequestNodeArgs initializes DOMRequestNodeArgs with the required arguments.
+func NewDOMRequestNodeArgs(objectID cdptype.RuntimeRemoteObjectID) *DOMRequestNodeArgs {
+	args := new(DOMRequestNodeArgs)
+	args.ObjectID = objectID
+	return args
+}
+
+// DOMRequestNodeReply represents the return values for RequestNode in the DOM domain.
 type DOMRequestNodeReply struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Node id for given object.
 }
 
-// DOMSetInspectModeArgs contains the arguments for domSetInspectMode.
+// DOMSetInspectModeArgs represents the arguments for SetInspectMode in the DOM domain.
 type DOMSetInspectModeArgs struct {
 	Mode            cdptype.DOMInspectMode      `json:"mode"`                      // Set an inspection mode.
 	HighlightConfig *cdptype.DOMHighlightConfig `json:"highlightConfig,omitempty"` // A descriptor for the highlight appearance of hovered-over nodes. May be omitted if enabled == false.
+}
+
+// NewDOMSetInspectModeArgs initializes DOMSetInspectModeArgs with the required arguments.
+func NewDOMSetInspectModeArgs(mode cdptype.DOMInspectMode) *DOMSetInspectModeArgs {
+	args := new(DOMSetInspectModeArgs)
+	args.Mode = mode
+	return args
 }
 
 // SetHighlightConfig sets the HighlightConfig optional argument. A descriptor for the highlight appearance of hovered-over nodes. May be omitted if enabled == false.
@@ -545,7 +925,7 @@ func (a *DOMSetInspectModeArgs) SetHighlightConfig(highlightConfig cdptype.DOMHi
 	return a
 }
 
-// DOMHighlightRectArgs contains the arguments for domHighlightRect.
+// DOMHighlightRectArgs represents the arguments for HighlightRect in the DOM domain.
 type DOMHighlightRectArgs struct {
 	X            int              `json:"x"`                      // X coordinate
 	Y            int              `json:"y"`                      // Y coordinate
@@ -553,6 +933,16 @@ type DOMHighlightRectArgs struct {
 	Height       int              `json:"height"`                 // Rectangle height
 	Color        *cdptype.DOMRGBA `json:"color,omitempty"`        // The highlight fill color (default: transparent).
 	OutlineColor *cdptype.DOMRGBA `json:"outlineColor,omitempty"` // The highlight outline color (default: transparent).
+}
+
+// NewDOMHighlightRectArgs initializes DOMHighlightRectArgs with the required arguments.
+func NewDOMHighlightRectArgs(x int, y int, width int, height int) *DOMHighlightRectArgs {
+	args := new(DOMHighlightRectArgs)
+	args.X = x
+	args.Y = y
+	args.Width = width
+	args.Height = height
+	return args
 }
 
 // SetColor sets the Color optional argument. The highlight fill color (default: transparent).
@@ -567,11 +957,18 @@ func (a *DOMHighlightRectArgs) SetOutlineColor(outlineColor cdptype.DOMRGBA) *DO
 	return a
 }
 
-// DOMHighlightQuadArgs contains the arguments for domHighlightQuad.
+// DOMHighlightQuadArgs represents the arguments for HighlightQuad in the DOM domain.
 type DOMHighlightQuadArgs struct {
 	Quad         cdptype.DOMQuad  `json:"quad"`                   // Quad to highlight
 	Color        *cdptype.DOMRGBA `json:"color,omitempty"`        // The highlight fill color (default: transparent).
 	OutlineColor *cdptype.DOMRGBA `json:"outlineColor,omitempty"` // The highlight outline color (default: transparent).
+}
+
+// NewDOMHighlightQuadArgs initializes DOMHighlightQuadArgs with the required arguments.
+func NewDOMHighlightQuadArgs(quad cdptype.DOMQuad) *DOMHighlightQuadArgs {
+	args := new(DOMHighlightQuadArgs)
+	args.Quad = quad
+	return args
 }
 
 // SetColor sets the Color optional argument. The highlight fill color (default: transparent).
@@ -586,12 +983,19 @@ func (a *DOMHighlightQuadArgs) SetOutlineColor(outlineColor cdptype.DOMRGBA) *DO
 	return a
 }
 
-// DOMHighlightNodeArgs contains the arguments for domHighlightNode.
+// DOMHighlightNodeArgs represents the arguments for HighlightNode in the DOM domain.
 type DOMHighlightNodeArgs struct {
 	HighlightConfig cdptype.DOMHighlightConfig     `json:"highlightConfig"`         // A descriptor for the highlight appearance.
 	NodeID          *cdptype.DOMNodeID             `json:"nodeId,omitempty"`        // Identifier of the node to highlight.
 	BackendNodeID   *cdptype.DOMBackendNodeID      `json:"backendNodeId,omitempty"` // Identifier of the backend node to highlight.
 	ObjectID        *cdptype.RuntimeRemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node to be highlighted.
+}
+
+// NewDOMHighlightNodeArgs initializes DOMHighlightNodeArgs with the required arguments.
+func NewDOMHighlightNodeArgs(highlightConfig cdptype.DOMHighlightConfig) *DOMHighlightNodeArgs {
+	args := new(DOMHighlightNodeArgs)
+	args.HighlightConfig = highlightConfig
+	return args
 }
 
 // SetNodeID sets the NodeID optional argument. Identifier of the node to highlight.
@@ -612,11 +1016,18 @@ func (a *DOMHighlightNodeArgs) SetObjectID(objectID cdptype.RuntimeRemoteObjectI
 	return a
 }
 
-// DOMHighlightFrameArgs contains the arguments for domHighlightFrame.
+// DOMHighlightFrameArgs represents the arguments for HighlightFrame in the DOM domain.
 type DOMHighlightFrameArgs struct {
 	FrameID             cdptype.PageFrameID `json:"frameId"`                       // Identifier of the frame to highlight.
 	ContentColor        *cdptype.DOMRGBA    `json:"contentColor,omitempty"`        // The content box highlight fill color (default: transparent).
 	ContentOutlineColor *cdptype.DOMRGBA    `json:"contentOutlineColor,omitempty"` // The content box highlight outline color (default: transparent).
+}
+
+// NewDOMHighlightFrameArgs initializes DOMHighlightFrameArgs with the required arguments.
+func NewDOMHighlightFrameArgs(frameID cdptype.PageFrameID) *DOMHighlightFrameArgs {
+	args := new(DOMHighlightFrameArgs)
+	args.FrameID = frameID
+	return args
 }
 
 // SetContentColor sets the ContentColor optional argument. The content box highlight fill color (default: transparent).
@@ -631,35 +1042,63 @@ func (a *DOMHighlightFrameArgs) SetContentOutlineColor(contentOutlineColor cdpty
 	return a
 }
 
-// DOMPushNodeByPathToFrontendArgs contains the arguments for domPushNodeByPathToFrontend.
+// DOMPushNodeByPathToFrontendArgs represents the arguments for PushNodeByPathToFrontend in the DOM domain.
 type DOMPushNodeByPathToFrontendArgs struct {
 	Path string `json:"path"` // Path to node in the proprietary format.
 }
 
-// DOMPushNodeByPathToFrontendReply contains the return values for domPushNodeByPathToFrontend.
+// NewDOMPushNodeByPathToFrontendArgs initializes DOMPushNodeByPathToFrontendArgs with the required arguments.
+func NewDOMPushNodeByPathToFrontendArgs(path string) *DOMPushNodeByPathToFrontendArgs {
+	args := new(DOMPushNodeByPathToFrontendArgs)
+	args.Path = path
+	return args
+}
+
+// DOMPushNodeByPathToFrontendReply represents the return values for PushNodeByPathToFrontend in the DOM domain.
 type DOMPushNodeByPathToFrontendReply struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node for given path.
 }
 
-// DOMPushNodesByBackendIdsToFrontendArgs contains the arguments for domPushNodesByBackendIdsToFrontend.
+// DOMPushNodesByBackendIdsToFrontendArgs represents the arguments for PushNodesByBackendIdsToFrontend in the DOM domain.
 type DOMPushNodesByBackendIdsToFrontendArgs struct {
 	BackendNodeIDs []cdptype.DOMBackendNodeID `json:"backendNodeIds"` // The array of backend node ids.
 }
 
-// DOMPushNodesByBackendIdsToFrontendReply contains the return values for domPushNodesByBackendIdsToFrontend.
+// NewDOMPushNodesByBackendIdsToFrontendArgs initializes DOMPushNodesByBackendIdsToFrontendArgs with the required arguments.
+func NewDOMPushNodesByBackendIdsToFrontendArgs(backendNodeIDs []cdptype.DOMBackendNodeID) *DOMPushNodesByBackendIdsToFrontendArgs {
+	args := new(DOMPushNodesByBackendIdsToFrontendArgs)
+	args.BackendNodeIDs = backendNodeIDs
+	return args
+}
+
+// DOMPushNodesByBackendIdsToFrontendReply represents the return values for PushNodesByBackendIdsToFrontend in the DOM domain.
 type DOMPushNodesByBackendIdsToFrontendReply struct {
 	NodeIDs []cdptype.DOMNodeID `json:"nodeIds"` // The array of ids of pushed nodes that correspond to the backend ids specified in backendNodeIds.
 }
 
-// DOMSetInspectedNodeArgs contains the arguments for domSetInspectedNode.
+// DOMSetInspectedNodeArgs represents the arguments for SetInspectedNode in the DOM domain.
 type DOMSetInspectedNodeArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // DOM node id to be accessible by means of $x command line API.
 }
 
-// DOMResolveNodeArgs contains the arguments for domResolveNode.
+// NewDOMSetInspectedNodeArgs initializes DOMSetInspectedNodeArgs with the required arguments.
+func NewDOMSetInspectedNodeArgs(nodeID cdptype.DOMNodeID) *DOMSetInspectedNodeArgs {
+	args := new(DOMSetInspectedNodeArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// DOMResolveNodeArgs represents the arguments for ResolveNode in the DOM domain.
 type DOMResolveNodeArgs struct {
 	NodeID      cdptype.DOMNodeID `json:"nodeId"`                // Id of the node to resolve.
 	ObjectGroup *string           `json:"objectGroup,omitempty"` // Symbolic group name that can be used to release multiple objects.
+}
+
+// NewDOMResolveNodeArgs initializes DOMResolveNodeArgs with the required arguments.
+func NewDOMResolveNodeArgs(nodeID cdptype.DOMNodeID) *DOMResolveNodeArgs {
+	args := new(DOMResolveNodeArgs)
+	args.NodeID = nodeID
+	return args
 }
 
 // SetObjectGroup sets the ObjectGroup optional argument. Symbolic group name that can be used to release multiple objects.
@@ -668,26 +1107,41 @@ func (a *DOMResolveNodeArgs) SetObjectGroup(objectGroup string) *DOMResolveNodeA
 	return a
 }
 
-// DOMResolveNodeReply contains the return values for domResolveNode.
+// DOMResolveNodeReply represents the return values for ResolveNode in the DOM domain.
 type DOMResolveNodeReply struct {
 	Object cdptype.RuntimeRemoteObject `json:"object"` // JavaScript object wrapper for given node.
 }
 
-// DOMGetAttributesArgs contains the arguments for domGetAttributes.
+// DOMGetAttributesArgs represents the arguments for GetAttributes in the DOM domain.
 type DOMGetAttributesArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node to retrieve attibutes for.
 }
 
-// DOMGetAttributesReply contains the return values for domGetAttributes.
+// NewDOMGetAttributesArgs initializes DOMGetAttributesArgs with the required arguments.
+func NewDOMGetAttributesArgs(nodeID cdptype.DOMNodeID) *DOMGetAttributesArgs {
+	args := new(DOMGetAttributesArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// DOMGetAttributesReply represents the return values for GetAttributes in the DOM domain.
 type DOMGetAttributesReply struct {
 	Attributes []string `json:"attributes"` // An interleaved array of node attribute names and values.
 }
 
-// DOMCopyToArgs contains the arguments for domCopyTo.
+// DOMCopyToArgs represents the arguments for CopyTo in the DOM domain.
 type DOMCopyToArgs struct {
 	NodeID             cdptype.DOMNodeID  `json:"nodeId"`                       // Id of the node to copy.
 	TargetNodeID       cdptype.DOMNodeID  `json:"targetNodeId"`                 // Id of the element to drop the copy into.
 	InsertBeforeNodeID *cdptype.DOMNodeID `json:"insertBeforeNodeId,omitempty"` // Drop the copy before this node (if absent, the copy becomes the last child of targetNodeId).
+}
+
+// NewDOMCopyToArgs initializes DOMCopyToArgs with the required arguments.
+func NewDOMCopyToArgs(nodeID cdptype.DOMNodeID, targetNodeID cdptype.DOMNodeID) *DOMCopyToArgs {
+	args := new(DOMCopyToArgs)
+	args.NodeID = nodeID
+	args.TargetNodeID = targetNodeID
+	return args
 }
 
 // SetInsertBeforeNodeID sets the InsertBeforeNodeID optional argument. Drop the copy before this node (if absent, the copy becomes the last child of targetNodeId).
@@ -696,16 +1150,24 @@ func (a *DOMCopyToArgs) SetInsertBeforeNodeID(insertBeforeNodeID cdptype.DOMNode
 	return a
 }
 
-// DOMCopyToReply contains the return values for domCopyTo.
+// DOMCopyToReply represents the return values for CopyTo in the DOM domain.
 type DOMCopyToReply struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node clone.
 }
 
-// DOMMoveToArgs contains the arguments for domMoveTo.
+// DOMMoveToArgs represents the arguments for MoveTo in the DOM domain.
 type DOMMoveToArgs struct {
 	NodeID             cdptype.DOMNodeID  `json:"nodeId"`                       // Id of the node to move.
 	TargetNodeID       cdptype.DOMNodeID  `json:"targetNodeId"`                 // Id of the element to drop the moved node into.
 	InsertBeforeNodeID *cdptype.DOMNodeID `json:"insertBeforeNodeId,omitempty"` // Drop node before this one (if absent, the moved node becomes the last child of targetNodeId).
+}
+
+// NewDOMMoveToArgs initializes DOMMoveToArgs with the required arguments.
+func NewDOMMoveToArgs(nodeID cdptype.DOMNodeID, targetNodeID cdptype.DOMNodeID) *DOMMoveToArgs {
+	args := new(DOMMoveToArgs)
+	args.NodeID = nodeID
+	args.TargetNodeID = targetNodeID
+	return args
 }
 
 // SetInsertBeforeNodeID sets the InsertBeforeNodeID optional argument. Drop node before this one (if absent, the moved node becomes the last child of targetNodeId).
@@ -714,79 +1176,146 @@ func (a *DOMMoveToArgs) SetInsertBeforeNodeID(insertBeforeNodeID cdptype.DOMNode
 	return a
 }
 
-// DOMMoveToReply contains the return values for domMoveTo.
+// DOMMoveToReply represents the return values for MoveTo in the DOM domain.
 type DOMMoveToReply struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // New id of the moved node.
 }
 
-// DOMFocusArgs contains the arguments for domFocus.
+// DOMFocusArgs represents the arguments for Focus in the DOM domain.
 type DOMFocusArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node to focus.
 }
 
-// DOMSetFileInputFilesArgs contains the arguments for domSetFileInputFiles.
+// NewDOMFocusArgs initializes DOMFocusArgs with the required arguments.
+func NewDOMFocusArgs(nodeID cdptype.DOMNodeID) *DOMFocusArgs {
+	args := new(DOMFocusArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// DOMSetFileInputFilesArgs represents the arguments for SetFileInputFiles in the DOM domain.
 type DOMSetFileInputFilesArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the file input node to set files for.
 	Files  []string          `json:"files"`  // Array of file paths to set.
 }
 
-// DOMGetBoxModelArgs contains the arguments for domGetBoxModel.
+// NewDOMSetFileInputFilesArgs initializes DOMSetFileInputFilesArgs with the required arguments.
+func NewDOMSetFileInputFilesArgs(nodeID cdptype.DOMNodeID, files []string) *DOMSetFileInputFilesArgs {
+	args := new(DOMSetFileInputFilesArgs)
+	args.NodeID = nodeID
+	args.Files = files
+	return args
+}
+
+// DOMGetBoxModelArgs represents the arguments for GetBoxModel in the DOM domain.
 type DOMGetBoxModelArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node to get box model for.
 }
 
-// DOMGetBoxModelReply contains the return values for domGetBoxModel.
+// NewDOMGetBoxModelArgs initializes DOMGetBoxModelArgs with the required arguments.
+func NewDOMGetBoxModelArgs(nodeID cdptype.DOMNodeID) *DOMGetBoxModelArgs {
+	args := new(DOMGetBoxModelArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// DOMGetBoxModelReply represents the return values for GetBoxModel in the DOM domain.
 type DOMGetBoxModelReply struct {
 	Model cdptype.DOMBoxModel `json:"model"` // Box model for the node.
 }
 
-// DOMGetNodeForLocationArgs contains the arguments for domGetNodeForLocation.
+// DOMGetNodeForLocationArgs represents the arguments for GetNodeForLocation in the DOM domain.
 type DOMGetNodeForLocationArgs struct {
 	X int `json:"x"` // X coordinate.
 	Y int `json:"y"` // Y coordinate.
 }
 
-// DOMGetNodeForLocationReply contains the return values for domGetNodeForLocation.
+// NewDOMGetNodeForLocationArgs initializes DOMGetNodeForLocationArgs with the required arguments.
+func NewDOMGetNodeForLocationArgs(x int, y int) *DOMGetNodeForLocationArgs {
+	args := new(DOMGetNodeForLocationArgs)
+	args.X = x
+	args.Y = y
+	return args
+}
+
+// DOMGetNodeForLocationReply represents the return values for GetNodeForLocation in the DOM domain.
 type DOMGetNodeForLocationReply struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node at given coordinates.
 }
 
-// DOMGetRelayoutBoundaryArgs contains the arguments for domGetRelayoutBoundary.
+// DOMGetRelayoutBoundaryArgs represents the arguments for GetRelayoutBoundary in the DOM domain.
 type DOMGetRelayoutBoundaryArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node.
 }
 
-// DOMGetRelayoutBoundaryReply contains the return values for domGetRelayoutBoundary.
+// NewDOMGetRelayoutBoundaryArgs initializes DOMGetRelayoutBoundaryArgs with the required arguments.
+func NewDOMGetRelayoutBoundaryArgs(nodeID cdptype.DOMNodeID) *DOMGetRelayoutBoundaryArgs {
+	args := new(DOMGetRelayoutBoundaryArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// DOMGetRelayoutBoundaryReply represents the return values for GetRelayoutBoundary in the DOM domain.
 type DOMGetRelayoutBoundaryReply struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Relayout boundary node id for the given node.
 }
 
-// DOMGetHighlightObjectForTestArgs contains the arguments for domGetHighlightObjectForTest.
+// DOMGetHighlightObjectForTestArgs represents the arguments for GetHighlightObjectForTest in the DOM domain.
 type DOMGetHighlightObjectForTestArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node to get highlight object for.
 }
 
-// DOMGetHighlightObjectForTestReply contains the return values for domGetHighlightObjectForTest.
+// NewDOMGetHighlightObjectForTestArgs initializes DOMGetHighlightObjectForTestArgs with the required arguments.
+func NewDOMGetHighlightObjectForTestArgs(nodeID cdptype.DOMNodeID) *DOMGetHighlightObjectForTestArgs {
+	args := new(DOMGetHighlightObjectForTestArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// DOMGetHighlightObjectForTestReply represents the return values for GetHighlightObjectForTest in the DOM domain.
 type DOMGetHighlightObjectForTestReply struct {
 	Highlight json.RawMessage `json:"highlight"` // Highlight data for the node.
 }
 
-// DOMDebuggerSetDOMBreakpointArgs contains the arguments for domdebuggerSetDOMBreakpoint.
+// DOMDebuggerSetDOMBreakpointArgs represents the arguments for SetDOMBreakpoint in the DOMDebugger domain.
 type DOMDebuggerSetDOMBreakpointArgs struct {
 	NodeID cdptype.DOMNodeID                    `json:"nodeId"` // Identifier of the node to set breakpoint on.
 	Type   cdptype.DOMDebuggerDOMBreakpointType `json:"type"`   // Type of the operation to stop upon.
 }
 
-// DOMDebuggerRemoveDOMBreakpointArgs contains the arguments for domdebuggerRemoveDOMBreakpoint.
+// NewDOMDebuggerSetDOMBreakpointArgs initializes DOMDebuggerSetDOMBreakpointArgs with the required arguments.
+func NewDOMDebuggerSetDOMBreakpointArgs(nodeID cdptype.DOMNodeID, typ cdptype.DOMDebuggerDOMBreakpointType) *DOMDebuggerSetDOMBreakpointArgs {
+	args := new(DOMDebuggerSetDOMBreakpointArgs)
+	args.NodeID = nodeID
+	args.Type = typ
+	return args
+}
+
+// DOMDebuggerRemoveDOMBreakpointArgs represents the arguments for RemoveDOMBreakpoint in the DOMDebugger domain.
 type DOMDebuggerRemoveDOMBreakpointArgs struct {
 	NodeID cdptype.DOMNodeID                    `json:"nodeId"` // Identifier of the node to remove breakpoint from.
 	Type   cdptype.DOMDebuggerDOMBreakpointType `json:"type"`   // Type of the breakpoint to remove.
 }
 
-// DOMDebuggerSetEventListenerBreakpointArgs contains the arguments for domdebuggerSetEventListenerBreakpoint.
+// NewDOMDebuggerRemoveDOMBreakpointArgs initializes DOMDebuggerRemoveDOMBreakpointArgs with the required arguments.
+func NewDOMDebuggerRemoveDOMBreakpointArgs(nodeID cdptype.DOMNodeID, typ cdptype.DOMDebuggerDOMBreakpointType) *DOMDebuggerRemoveDOMBreakpointArgs {
+	args := new(DOMDebuggerRemoveDOMBreakpointArgs)
+	args.NodeID = nodeID
+	args.Type = typ
+	return args
+}
+
+// DOMDebuggerSetEventListenerBreakpointArgs represents the arguments for SetEventListenerBreakpoint in the DOMDebugger domain.
 type DOMDebuggerSetEventListenerBreakpointArgs struct {
 	EventName  string  `json:"eventName"`            // DOM Event name to stop on (any DOM event will do).
 	TargetName *string `json:"targetName,omitempty"` // EventTarget interface name to stop on. If equal to "*" or not provided, will stop on any EventTarget.
+}
+
+// NewDOMDebuggerSetEventListenerBreakpointArgs initializes DOMDebuggerSetEventListenerBreakpointArgs with the required arguments.
+func NewDOMDebuggerSetEventListenerBreakpointArgs(eventName string) *DOMDebuggerSetEventListenerBreakpointArgs {
+	args := new(DOMDebuggerSetEventListenerBreakpointArgs)
+	args.EventName = eventName
+	return args
 }
 
 // SetTargetName sets the TargetName optional argument. EventTarget interface name to stop on. If equal to "*" or not provided, will stop on any EventTarget.
@@ -795,10 +1324,17 @@ func (a *DOMDebuggerSetEventListenerBreakpointArgs) SetTargetName(targetName str
 	return a
 }
 
-// DOMDebuggerRemoveEventListenerBreakpointArgs contains the arguments for domdebuggerRemoveEventListenerBreakpoint.
+// DOMDebuggerRemoveEventListenerBreakpointArgs represents the arguments for RemoveEventListenerBreakpoint in the DOMDebugger domain.
 type DOMDebuggerRemoveEventListenerBreakpointArgs struct {
 	EventName  string  `json:"eventName"`            // Event name.
 	TargetName *string `json:"targetName,omitempty"` // EventTarget interface name.
+}
+
+// NewDOMDebuggerRemoveEventListenerBreakpointArgs initializes DOMDebuggerRemoveEventListenerBreakpointArgs with the required arguments.
+func NewDOMDebuggerRemoveEventListenerBreakpointArgs(eventName string) *DOMDebuggerRemoveEventListenerBreakpointArgs {
+	args := new(DOMDebuggerRemoveEventListenerBreakpointArgs)
+	args.EventName = eventName
+	return args
 }
 
 // SetTargetName sets the TargetName optional argument. EventTarget interface name.
@@ -807,31 +1343,66 @@ func (a *DOMDebuggerRemoveEventListenerBreakpointArgs) SetTargetName(targetName 
 	return a
 }
 
-// DOMDebuggerSetInstrumentationBreakpointArgs contains the arguments for domdebuggerSetInstrumentationBreakpoint.
+// DOMDebuggerSetInstrumentationBreakpointArgs represents the arguments for SetInstrumentationBreakpoint in the DOMDebugger domain.
 type DOMDebuggerSetInstrumentationBreakpointArgs struct {
 	EventName string `json:"eventName"` // Instrumentation name to stop on.
 }
 
-// DOMDebuggerRemoveInstrumentationBreakpointArgs contains the arguments for domdebuggerRemoveInstrumentationBreakpoint.
+// NewDOMDebuggerSetInstrumentationBreakpointArgs initializes DOMDebuggerSetInstrumentationBreakpointArgs with the required arguments.
+func NewDOMDebuggerSetInstrumentationBreakpointArgs(eventName string) *DOMDebuggerSetInstrumentationBreakpointArgs {
+	args := new(DOMDebuggerSetInstrumentationBreakpointArgs)
+	args.EventName = eventName
+	return args
+}
+
+// DOMDebuggerRemoveInstrumentationBreakpointArgs represents the arguments for RemoveInstrumentationBreakpoint in the DOMDebugger domain.
 type DOMDebuggerRemoveInstrumentationBreakpointArgs struct {
 	EventName string `json:"eventName"` // Instrumentation name to stop on.
 }
 
-// DOMDebuggerSetXHRBreakpointArgs contains the arguments for domdebuggerSetXHRBreakpoint.
+// NewDOMDebuggerRemoveInstrumentationBreakpointArgs initializes DOMDebuggerRemoveInstrumentationBreakpointArgs with the required arguments.
+func NewDOMDebuggerRemoveInstrumentationBreakpointArgs(eventName string) *DOMDebuggerRemoveInstrumentationBreakpointArgs {
+	args := new(DOMDebuggerRemoveInstrumentationBreakpointArgs)
+	args.EventName = eventName
+	return args
+}
+
+// DOMDebuggerSetXHRBreakpointArgs represents the arguments for SetXHRBreakpoint in the DOMDebugger domain.
 type DOMDebuggerSetXHRBreakpointArgs struct {
 	URL string `json:"url"` // Resource URL substring. All XHRs having this substring in the URL will get stopped upon.
 }
 
-// DOMDebuggerRemoveXHRBreakpointArgs contains the arguments for domdebuggerRemoveXHRBreakpoint.
+// NewDOMDebuggerSetXHRBreakpointArgs initializes DOMDebuggerSetXHRBreakpointArgs with the required arguments.
+func NewDOMDebuggerSetXHRBreakpointArgs(url string) *DOMDebuggerSetXHRBreakpointArgs {
+	args := new(DOMDebuggerSetXHRBreakpointArgs)
+	args.URL = url
+	return args
+}
+
+// DOMDebuggerRemoveXHRBreakpointArgs represents the arguments for RemoveXHRBreakpoint in the DOMDebugger domain.
 type DOMDebuggerRemoveXHRBreakpointArgs struct {
 	URL string `json:"url"` // Resource URL substring.
 }
 
-// DOMDebuggerGetEventListenersArgs contains the arguments for domdebuggerGetEventListeners.
+// NewDOMDebuggerRemoveXHRBreakpointArgs initializes DOMDebuggerRemoveXHRBreakpointArgs with the required arguments.
+func NewDOMDebuggerRemoveXHRBreakpointArgs(url string) *DOMDebuggerRemoveXHRBreakpointArgs {
+	args := new(DOMDebuggerRemoveXHRBreakpointArgs)
+	args.URL = url
+	return args
+}
+
+// DOMDebuggerGetEventListenersArgs represents the arguments for GetEventListeners in the DOMDebugger domain.
 type DOMDebuggerGetEventListenersArgs struct {
 	ObjectID cdptype.RuntimeRemoteObjectID `json:"objectId"`         // Identifier of the object to return listeners for.
 	Depth    *int                          `json:"depth,omitempty"`  // The maximum depth at which Node children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
 	Pierce   *bool                         `json:"pierce,omitempty"` // Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false). Reports listeners for all contexts if pierce is enabled.
+}
+
+// NewDOMDebuggerGetEventListenersArgs initializes DOMDebuggerGetEventListenersArgs with the required arguments.
+func NewDOMDebuggerGetEventListenersArgs(objectID cdptype.RuntimeRemoteObjectID) *DOMDebuggerGetEventListenersArgs {
+	args := new(DOMDebuggerGetEventListenersArgs)
+	args.ObjectID = objectID
+	return args
 }
 
 // SetDepth sets the Depth optional argument. The maximum depth at which Node children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
@@ -846,79 +1417,146 @@ func (a *DOMDebuggerGetEventListenersArgs) SetPierce(pierce bool) *DOMDebuggerGe
 	return a
 }
 
-// DOMDebuggerGetEventListenersReply contains the return values for domdebuggerGetEventListeners.
+// DOMDebuggerGetEventListenersReply represents the return values for GetEventListeners in the DOMDebugger domain.
 type DOMDebuggerGetEventListenersReply struct {
 	Listeners []cdptype.DOMDebuggerEventListener `json:"listeners"` // Array of relevant listeners.
 }
 
-// DOMStorageClearArgs contains the arguments for domstorageClear.
+// DOMStorageClearArgs represents the arguments for Clear in the DOMStorage domain.
 type DOMStorageClearArgs struct {
 	StorageID cdptype.DOMStorageStorageID `json:"storageId"` //
 }
 
-// DOMStorageGetDOMStorageItemsArgs contains the arguments for domstorageGetDOMStorageItems.
+// NewDOMStorageClearArgs initializes DOMStorageClearArgs with the required arguments.
+func NewDOMStorageClearArgs(storageID cdptype.DOMStorageStorageID) *DOMStorageClearArgs {
+	args := new(DOMStorageClearArgs)
+	args.StorageID = storageID
+	return args
+}
+
+// DOMStorageGetDOMStorageItemsArgs represents the arguments for GetDOMStorageItems in the DOMStorage domain.
 type DOMStorageGetDOMStorageItemsArgs struct {
 	StorageID cdptype.DOMStorageStorageID `json:"storageId"` //
 }
 
-// DOMStorageGetDOMStorageItemsReply contains the return values for domstorageGetDOMStorageItems.
+// NewDOMStorageGetDOMStorageItemsArgs initializes DOMStorageGetDOMStorageItemsArgs with the required arguments.
+func NewDOMStorageGetDOMStorageItemsArgs(storageID cdptype.DOMStorageStorageID) *DOMStorageGetDOMStorageItemsArgs {
+	args := new(DOMStorageGetDOMStorageItemsArgs)
+	args.StorageID = storageID
+	return args
+}
+
+// DOMStorageGetDOMStorageItemsReply represents the return values for GetDOMStorageItems in the DOMStorage domain.
 type DOMStorageGetDOMStorageItemsReply struct {
 	Entries []cdptype.DOMStorageItem `json:"entries"` //
 }
 
-// DOMStorageSetDOMStorageItemArgs contains the arguments for domstorageSetDOMStorageItem.
+// DOMStorageSetDOMStorageItemArgs represents the arguments for SetDOMStorageItem in the DOMStorage domain.
 type DOMStorageSetDOMStorageItemArgs struct {
 	StorageID cdptype.DOMStorageStorageID `json:"storageId"` //
 	Key       string                      `json:"key"`       //
 	Value     string                      `json:"value"`     //
 }
 
-// DOMStorageRemoveDOMStorageItemArgs contains the arguments for domstorageRemoveDOMStorageItem.
+// NewDOMStorageSetDOMStorageItemArgs initializes DOMStorageSetDOMStorageItemArgs with the required arguments.
+func NewDOMStorageSetDOMStorageItemArgs(storageID cdptype.DOMStorageStorageID, key string, value string) *DOMStorageSetDOMStorageItemArgs {
+	args := new(DOMStorageSetDOMStorageItemArgs)
+	args.StorageID = storageID
+	args.Key = key
+	args.Value = value
+	return args
+}
+
+// DOMStorageRemoveDOMStorageItemArgs represents the arguments for RemoveDOMStorageItem in the DOMStorage domain.
 type DOMStorageRemoveDOMStorageItemArgs struct {
 	StorageID cdptype.DOMStorageStorageID `json:"storageId"` //
 	Key       string                      `json:"key"`       //
 }
 
-// DatabaseGetDatabaseTableNamesArgs contains the arguments for databaseGetDatabaseTableNames.
+// NewDOMStorageRemoveDOMStorageItemArgs initializes DOMStorageRemoveDOMStorageItemArgs with the required arguments.
+func NewDOMStorageRemoveDOMStorageItemArgs(storageID cdptype.DOMStorageStorageID, key string) *DOMStorageRemoveDOMStorageItemArgs {
+	args := new(DOMStorageRemoveDOMStorageItemArgs)
+	args.StorageID = storageID
+	args.Key = key
+	return args
+}
+
+// DatabaseGetDatabaseTableNamesArgs represents the arguments for GetDatabaseTableNames in the Database domain.
 type DatabaseGetDatabaseTableNamesArgs struct {
 	DatabaseID cdptype.DatabaseID `json:"databaseId"` //
 }
 
-// DatabaseGetDatabaseTableNamesReply contains the return values for databaseGetDatabaseTableNames.
+// NewDatabaseGetDatabaseTableNamesArgs initializes DatabaseGetDatabaseTableNamesArgs with the required arguments.
+func NewDatabaseGetDatabaseTableNamesArgs(databaseID cdptype.DatabaseID) *DatabaseGetDatabaseTableNamesArgs {
+	args := new(DatabaseGetDatabaseTableNamesArgs)
+	args.DatabaseID = databaseID
+	return args
+}
+
+// DatabaseGetDatabaseTableNamesReply represents the return values for GetDatabaseTableNames in the Database domain.
 type DatabaseGetDatabaseTableNamesReply struct {
 	TableNames []string `json:"tableNames"` //
 }
 
-// DatabaseExecuteSQLArgs contains the arguments for databaseExecuteSQL.
+// DatabaseExecuteSQLArgs represents the arguments for ExecuteSQL in the Database domain.
 type DatabaseExecuteSQLArgs struct {
 	DatabaseID cdptype.DatabaseID `json:"databaseId"` //
 	Query      string             `json:"query"`      //
 }
 
-// DatabaseExecuteSQLReply contains the return values for databaseExecuteSQL.
+// NewDatabaseExecuteSQLArgs initializes DatabaseExecuteSQLArgs with the required arguments.
+func NewDatabaseExecuteSQLArgs(databaseID cdptype.DatabaseID, query string) *DatabaseExecuteSQLArgs {
+	args := new(DatabaseExecuteSQLArgs)
+	args.DatabaseID = databaseID
+	args.Query = query
+	return args
+}
+
+// DatabaseExecuteSQLReply represents the return values for ExecuteSQL in the Database domain.
 type DatabaseExecuteSQLReply struct {
 	ColumnNames []string               `json:"columnNames,omitempty"` //
 	Values      []json.RawMessage      `json:"values,omitempty"`      //
 	SQLError    *cdptype.DatabaseError `json:"sqlError,omitempty"`    //
 }
 
-// DebuggerSetBreakpointsActiveArgs contains the arguments for debuggerSetBreakpointsActive.
+// DebuggerSetBreakpointsActiveArgs represents the arguments for SetBreakpointsActive in the Debugger domain.
 type DebuggerSetBreakpointsActiveArgs struct {
 	Active bool `json:"active"` // New value for breakpoints active state.
 }
 
-// DebuggerSetSkipAllPausesArgs contains the arguments for debuggerSetSkipAllPauses.
+// NewDebuggerSetBreakpointsActiveArgs initializes DebuggerSetBreakpointsActiveArgs with the required arguments.
+func NewDebuggerSetBreakpointsActiveArgs(active bool) *DebuggerSetBreakpointsActiveArgs {
+	args := new(DebuggerSetBreakpointsActiveArgs)
+	args.Active = active
+	return args
+}
+
+// DebuggerSetSkipAllPausesArgs represents the arguments for SetSkipAllPauses in the Debugger domain.
 type DebuggerSetSkipAllPausesArgs struct {
 	Skip bool `json:"skip"` // New value for skip pauses state.
 }
 
-// DebuggerSetBreakpointByURLArgs contains the arguments for debuggerSetBreakpointByURL.
+// NewDebuggerSetSkipAllPausesArgs initializes DebuggerSetSkipAllPausesArgs with the required arguments.
+func NewDebuggerSetSkipAllPausesArgs(skip bool) *DebuggerSetSkipAllPausesArgs {
+	args := new(DebuggerSetSkipAllPausesArgs)
+	args.Skip = skip
+	return args
+}
+
+// DebuggerSetBreakpointByURLArgs represents the arguments for SetBreakpointByURL in the Debugger domain.
 type DebuggerSetBreakpointByURLArgs struct {
 	LineNumber   int     `json:"lineNumber"`             // Line number to set breakpoint at.
 	URL          *string `json:"url,omitempty"`          // URL of the resources to set breakpoint on.
 	URLRegex     *string `json:"urlRegex,omitempty"`     // Regex pattern for the URLs of the resources to set breakpoints on. Either url or urlRegex must be specified.
 	ColumnNumber *int    `json:"columnNumber,omitempty"` // Offset in the line to set breakpoint at.
 	Condition    *string `json:"condition,omitempty"`    // Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true.
+}
+
+// NewDebuggerSetBreakpointByURLArgs initializes DebuggerSetBreakpointByURLArgs with the required arguments.
+func NewDebuggerSetBreakpointByURLArgs(lineNumber int) *DebuggerSetBreakpointByURLArgs {
+	args := new(DebuggerSetBreakpointByURLArgs)
+	args.LineNumber = lineNumber
+	return args
 }
 
 // SetURL sets the URL optional argument. URL of the resources to set breakpoint on.
@@ -945,16 +1583,23 @@ func (a *DebuggerSetBreakpointByURLArgs) SetCondition(condition string) *Debugge
 	return a
 }
 
-// DebuggerSetBreakpointByURLReply contains the return values for debuggerSetBreakpointByURL.
+// DebuggerSetBreakpointByURLReply represents the return values for SetBreakpointByURL in the Debugger domain.
 type DebuggerSetBreakpointByURLReply struct {
 	BreakpointID cdptype.DebuggerBreakpointID `json:"breakpointId"` // Id of the created breakpoint for further reference.
 	Locations    []cdptype.DebuggerLocation   `json:"locations"`    // List of the locations this breakpoint resolved into upon addition.
 }
 
-// DebuggerSetBreakpointArgs contains the arguments for debuggerSetBreakpoint.
+// DebuggerSetBreakpointArgs represents the arguments for SetBreakpoint in the Debugger domain.
 type DebuggerSetBreakpointArgs struct {
 	Location  cdptype.DebuggerLocation `json:"location"`            // Location to set breakpoint in.
 	Condition *string                  `json:"condition,omitempty"` // Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true.
+}
+
+// NewDebuggerSetBreakpointArgs initializes DebuggerSetBreakpointArgs with the required arguments.
+func NewDebuggerSetBreakpointArgs(location cdptype.DebuggerLocation) *DebuggerSetBreakpointArgs {
+	args := new(DebuggerSetBreakpointArgs)
+	args.Location = location
+	return args
 }
 
 // SetCondition sets the Condition optional argument. Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true.
@@ -963,22 +1608,36 @@ func (a *DebuggerSetBreakpointArgs) SetCondition(condition string) *DebuggerSetB
 	return a
 }
 
-// DebuggerSetBreakpointReply contains the return values for debuggerSetBreakpoint.
+// DebuggerSetBreakpointReply represents the return values for SetBreakpoint in the Debugger domain.
 type DebuggerSetBreakpointReply struct {
 	BreakpointID   cdptype.DebuggerBreakpointID `json:"breakpointId"`   // Id of the created breakpoint for further reference.
 	ActualLocation cdptype.DebuggerLocation     `json:"actualLocation"` // Location this breakpoint resolved into.
 }
 
-// DebuggerRemoveBreakpointArgs contains the arguments for debuggerRemoveBreakpoint.
+// DebuggerRemoveBreakpointArgs represents the arguments for RemoveBreakpoint in the Debugger domain.
 type DebuggerRemoveBreakpointArgs struct {
 	BreakpointID cdptype.DebuggerBreakpointID `json:"breakpointId"` //
 }
 
-// DebuggerGetPossibleBreakpointsArgs contains the arguments for debuggerGetPossibleBreakpoints.
+// NewDebuggerRemoveBreakpointArgs initializes DebuggerRemoveBreakpointArgs with the required arguments.
+func NewDebuggerRemoveBreakpointArgs(breakpointID cdptype.DebuggerBreakpointID) *DebuggerRemoveBreakpointArgs {
+	args := new(DebuggerRemoveBreakpointArgs)
+	args.BreakpointID = breakpointID
+	return args
+}
+
+// DebuggerGetPossibleBreakpointsArgs represents the arguments for GetPossibleBreakpoints in the Debugger domain.
 type DebuggerGetPossibleBreakpointsArgs struct {
 	Start              cdptype.DebuggerLocation  `json:"start"`                        // Start of range to search possible breakpoint locations in.
 	End                *cdptype.DebuggerLocation `json:"end,omitempty"`                // End of range to search possible breakpoint locations in (excluding). When not specified, end of scripts is used as end of range.
 	RestrictToFunction *bool                     `json:"restrictToFunction,omitempty"` // Only consider locations which are in the same (non-nested) function as start.
+}
+
+// NewDebuggerGetPossibleBreakpointsArgs initializes DebuggerGetPossibleBreakpointsArgs with the required arguments.
+func NewDebuggerGetPossibleBreakpointsArgs(start cdptype.DebuggerLocation) *DebuggerGetPossibleBreakpointsArgs {
+	args := new(DebuggerGetPossibleBreakpointsArgs)
+	args.Start = start
+	return args
 }
 
 // SetEnd sets the End optional argument. End of range to search possible breakpoint locations in (excluding). When not specified, end of scripts is used as end of range.
@@ -993,22 +1652,37 @@ func (a *DebuggerGetPossibleBreakpointsArgs) SetRestrictToFunction(restrictToFun
 	return a
 }
 
-// DebuggerGetPossibleBreakpointsReply contains the return values for debuggerGetPossibleBreakpoints.
+// DebuggerGetPossibleBreakpointsReply represents the return values for GetPossibleBreakpoints in the Debugger domain.
 type DebuggerGetPossibleBreakpointsReply struct {
 	Locations []cdptype.DebuggerBreakLocation `json:"locations"` // List of the possible breakpoint locations.
 }
 
-// DebuggerContinueToLocationArgs contains the arguments for debuggerContinueToLocation.
+// DebuggerContinueToLocationArgs represents the arguments for ContinueToLocation in the Debugger domain.
 type DebuggerContinueToLocationArgs struct {
 	Location cdptype.DebuggerLocation `json:"location"` // Location to continue to.
 }
 
-// DebuggerSearchInContentArgs contains the arguments for debuggerSearchInContent.
+// NewDebuggerContinueToLocationArgs initializes DebuggerContinueToLocationArgs with the required arguments.
+func NewDebuggerContinueToLocationArgs(location cdptype.DebuggerLocation) *DebuggerContinueToLocationArgs {
+	args := new(DebuggerContinueToLocationArgs)
+	args.Location = location
+	return args
+}
+
+// DebuggerSearchInContentArgs represents the arguments for SearchInContent in the Debugger domain.
 type DebuggerSearchInContentArgs struct {
 	ScriptID      cdptype.RuntimeScriptID `json:"scriptId"`                // Id of the script to search in.
 	Query         string                  `json:"query"`                   // String to search for.
 	CaseSensitive *bool                   `json:"caseSensitive,omitempty"` // If true, search is case sensitive.
 	IsRegex       *bool                   `json:"isRegex,omitempty"`       // If true, treats string parameter as regex.
+}
+
+// NewDebuggerSearchInContentArgs initializes DebuggerSearchInContentArgs with the required arguments.
+func NewDebuggerSearchInContentArgs(scriptID cdptype.RuntimeScriptID, query string) *DebuggerSearchInContentArgs {
+	args := new(DebuggerSearchInContentArgs)
+	args.ScriptID = scriptID
+	args.Query = query
+	return args
 }
 
 // SetCaseSensitive sets the CaseSensitive optional argument. If true, search is case sensitive.
@@ -1023,16 +1697,24 @@ func (a *DebuggerSearchInContentArgs) SetIsRegex(isRegex bool) *DebuggerSearchIn
 	return a
 }
 
-// DebuggerSearchInContentReply contains the return values for debuggerSearchInContent.
+// DebuggerSearchInContentReply represents the return values for SearchInContent in the Debugger domain.
 type DebuggerSearchInContentReply struct {
 	Result []cdptype.DebuggerSearchMatch `json:"result"` // List of search matches.
 }
 
-// DebuggerSetScriptSourceArgs contains the arguments for debuggerSetScriptSource.
+// DebuggerSetScriptSourceArgs represents the arguments for SetScriptSource in the Debugger domain.
 type DebuggerSetScriptSourceArgs struct {
 	ScriptID     cdptype.RuntimeScriptID `json:"scriptId"`         // Id of the script to edit.
 	ScriptSource string                  `json:"scriptSource"`     // New content of the script.
 	DryRun       *bool                   `json:"dryRun,omitempty"` //  If true the change will not actually be applied. Dry run may be used to get result description without actually modifying the code.
+}
+
+// NewDebuggerSetScriptSourceArgs initializes DebuggerSetScriptSourceArgs with the required arguments.
+func NewDebuggerSetScriptSourceArgs(scriptID cdptype.RuntimeScriptID, scriptSource string) *DebuggerSetScriptSourceArgs {
+	args := new(DebuggerSetScriptSourceArgs)
+	args.ScriptID = scriptID
+	args.ScriptSource = scriptSource
+	return args
 }
 
 // SetDryRun sets the DryRun optional argument.  If true the change will not actually be applied. Dry run may be used to get result description without actually modifying the code.
@@ -1041,7 +1723,7 @@ func (a *DebuggerSetScriptSourceArgs) SetDryRun(dryRun bool) *DebuggerSetScriptS
 	return a
 }
 
-// DebuggerSetScriptSourceReply contains the return values for debuggerSetScriptSource.
+// DebuggerSetScriptSourceReply represents the return values for SetScriptSource in the Debugger domain.
 type DebuggerSetScriptSourceReply struct {
 	CallFrames       []cdptype.DebuggerCallFrame      `json:"callFrames,omitempty"`       // New stack trace in case editing has happened while VM was stopped.
 	StackChanged     *bool                            `json:"stackChanged,omitempty"`     // Whether current call stack  was modified after applying the changes.
@@ -1049,33 +1731,54 @@ type DebuggerSetScriptSourceReply struct {
 	ExceptionDetails *cdptype.RuntimeExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details if any.
 }
 
-// DebuggerRestartFrameArgs contains the arguments for debuggerRestartFrame.
+// DebuggerRestartFrameArgs represents the arguments for RestartFrame in the Debugger domain.
 type DebuggerRestartFrameArgs struct {
 	CallFrameID cdptype.DebuggerCallFrameID `json:"callFrameId"` // Call frame identifier to evaluate on.
 }
 
-// DebuggerRestartFrameReply contains the return values for debuggerRestartFrame.
+// NewDebuggerRestartFrameArgs initializes DebuggerRestartFrameArgs with the required arguments.
+func NewDebuggerRestartFrameArgs(callFrameID cdptype.DebuggerCallFrameID) *DebuggerRestartFrameArgs {
+	args := new(DebuggerRestartFrameArgs)
+	args.CallFrameID = callFrameID
+	return args
+}
+
+// DebuggerRestartFrameReply represents the return values for RestartFrame in the Debugger domain.
 type DebuggerRestartFrameReply struct {
 	CallFrames      []cdptype.DebuggerCallFrame `json:"callFrames"`                // New stack trace.
 	AsyncStackTrace *cdptype.RuntimeStackTrace  `json:"asyncStackTrace,omitempty"` // Async stack trace, if any.
 }
 
-// DebuggerGetScriptSourceArgs contains the arguments for debuggerGetScriptSource.
+// DebuggerGetScriptSourceArgs represents the arguments for GetScriptSource in the Debugger domain.
 type DebuggerGetScriptSourceArgs struct {
 	ScriptID cdptype.RuntimeScriptID `json:"scriptId"` // Id of the script to get source for.
 }
 
-// DebuggerGetScriptSourceReply contains the return values for debuggerGetScriptSource.
+// NewDebuggerGetScriptSourceArgs initializes DebuggerGetScriptSourceArgs with the required arguments.
+func NewDebuggerGetScriptSourceArgs(scriptID cdptype.RuntimeScriptID) *DebuggerGetScriptSourceArgs {
+	args := new(DebuggerGetScriptSourceArgs)
+	args.ScriptID = scriptID
+	return args
+}
+
+// DebuggerGetScriptSourceReply represents the return values for GetScriptSource in the Debugger domain.
 type DebuggerGetScriptSourceReply struct {
 	ScriptSource string `json:"scriptSource"` // Script source.
 }
 
-// DebuggerSetPauseOnExceptionsArgs contains the arguments for debuggerSetPauseOnExceptions.
+// DebuggerSetPauseOnExceptionsArgs represents the arguments for SetPauseOnExceptions in the Debugger domain.
 type DebuggerSetPauseOnExceptionsArgs struct {
 	State string `json:"state"` // Pause on exceptions mode.
 }
 
-// DebuggerEvaluateOnCallFrameArgs contains the arguments for debuggerEvaluateOnCallFrame.
+// NewDebuggerSetPauseOnExceptionsArgs initializes DebuggerSetPauseOnExceptionsArgs with the required arguments.
+func NewDebuggerSetPauseOnExceptionsArgs(state string) *DebuggerSetPauseOnExceptionsArgs {
+	args := new(DebuggerSetPauseOnExceptionsArgs)
+	args.State = state
+	return args
+}
+
+// DebuggerEvaluateOnCallFrameArgs represents the arguments for EvaluateOnCallFrame in the Debugger domain.
 type DebuggerEvaluateOnCallFrameArgs struct {
 	CallFrameID           cdptype.DebuggerCallFrameID `json:"callFrameId"`                     // Call frame identifier to evaluate on.
 	Expression            string                      `json:"expression"`                      // Expression to evaluate.
@@ -1085,6 +1788,14 @@ type DebuggerEvaluateOnCallFrameArgs struct {
 	ReturnByValue         *bool                       `json:"returnByValue,omitempty"`         // Whether the result is expected to be a JSON object that should be sent by value.
 	GeneratePreview       *bool                       `json:"generatePreview,omitempty"`       // Whether preview should be generated for the result.
 	ThrowOnSideEffect     *bool                       `json:"throwOnSideEffect,omitempty"`     // Whether to throw an exception if side effect cannot be ruled out during evaluation.
+}
+
+// NewDebuggerEvaluateOnCallFrameArgs initializes DebuggerEvaluateOnCallFrameArgs with the required arguments.
+func NewDebuggerEvaluateOnCallFrameArgs(callFrameID cdptype.DebuggerCallFrameID, expression string) *DebuggerEvaluateOnCallFrameArgs {
+	args := new(DebuggerEvaluateOnCallFrameArgs)
+	args.CallFrameID = callFrameID
+	args.Expression = expression
+	return args
 }
 
 // SetObjectGroup sets the ObjectGroup optional argument. String object group name to put result into (allows rapid releasing resulting object handles using releaseObjectGroup).
@@ -1123,13 +1834,13 @@ func (a *DebuggerEvaluateOnCallFrameArgs) SetThrowOnSideEffect(throwOnSideEffect
 	return a
 }
 
-// DebuggerEvaluateOnCallFrameReply contains the return values for debuggerEvaluateOnCallFrame.
+// DebuggerEvaluateOnCallFrameReply represents the return values for EvaluateOnCallFrame in the Debugger domain.
 type DebuggerEvaluateOnCallFrameReply struct {
 	Result           cdptype.RuntimeRemoteObject      `json:"result"`                     // Object wrapper for the evaluation result.
 	ExceptionDetails *cdptype.RuntimeExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details.
 }
 
-// DebuggerSetVariableValueArgs contains the arguments for debuggerSetVariableValue.
+// DebuggerSetVariableValueArgs represents the arguments for SetVariableValue in the Debugger domain.
 type DebuggerSetVariableValueArgs struct {
 	ScopeNumber  int                         `json:"scopeNumber"`  // 0-based number of scope as was listed in scope chain. Only 'local', 'closure' and 'catch' scope types are allowed. Other scopes could be manipulated manually.
 	VariableName string                      `json:"variableName"` // Variable name.
@@ -1137,30 +1848,71 @@ type DebuggerSetVariableValueArgs struct {
 	CallFrameID  cdptype.DebuggerCallFrameID `json:"callFrameId"`  // Id of callframe that holds variable.
 }
 
-// DebuggerSetAsyncCallStackDepthArgs contains the arguments for debuggerSetAsyncCallStackDepth.
+// NewDebuggerSetVariableValueArgs initializes DebuggerSetVariableValueArgs with the required arguments.
+func NewDebuggerSetVariableValueArgs(scopeNumber int, variableName string, newValue cdptype.RuntimeCallArgument, callFrameID cdptype.DebuggerCallFrameID) *DebuggerSetVariableValueArgs {
+	args := new(DebuggerSetVariableValueArgs)
+	args.ScopeNumber = scopeNumber
+	args.VariableName = variableName
+	args.NewValue = newValue
+	args.CallFrameID = callFrameID
+	return args
+}
+
+// DebuggerSetAsyncCallStackDepthArgs represents the arguments for SetAsyncCallStackDepth in the Debugger domain.
 type DebuggerSetAsyncCallStackDepthArgs struct {
 	MaxDepth int `json:"maxDepth"` // Maximum depth of async call stacks. Setting to 0 will effectively disable collecting async call stacks (default).
 }
 
-// DebuggerSetBlackboxPatternsArgs contains the arguments for debuggerSetBlackboxPatterns.
+// NewDebuggerSetAsyncCallStackDepthArgs initializes DebuggerSetAsyncCallStackDepthArgs with the required arguments.
+func NewDebuggerSetAsyncCallStackDepthArgs(maxDepth int) *DebuggerSetAsyncCallStackDepthArgs {
+	args := new(DebuggerSetAsyncCallStackDepthArgs)
+	args.MaxDepth = maxDepth
+	return args
+}
+
+// DebuggerSetBlackboxPatternsArgs represents the arguments for SetBlackboxPatterns in the Debugger domain.
 type DebuggerSetBlackboxPatternsArgs struct {
 	Patterns []string `json:"patterns"` // Array of regexps that will be used to check script url for blackbox state.
 }
 
-// DebuggerSetBlackboxedRangesArgs contains the arguments for debuggerSetBlackboxedRanges.
+// NewDebuggerSetBlackboxPatternsArgs initializes DebuggerSetBlackboxPatternsArgs with the required arguments.
+func NewDebuggerSetBlackboxPatternsArgs(patterns []string) *DebuggerSetBlackboxPatternsArgs {
+	args := new(DebuggerSetBlackboxPatternsArgs)
+	args.Patterns = patterns
+	return args
+}
+
+// DebuggerSetBlackboxedRangesArgs represents the arguments for SetBlackboxedRanges in the Debugger domain.
 type DebuggerSetBlackboxedRangesArgs struct {
 	ScriptID  cdptype.RuntimeScriptID          `json:"scriptId"`  // Id of the script.
 	Positions []cdptype.DebuggerScriptPosition `json:"positions"` //
 }
 
-// DeviceOrientationSetDeviceOrientationOverrideArgs contains the arguments for deviceorientationSetDeviceOrientationOverride.
+// NewDebuggerSetBlackboxedRangesArgs initializes DebuggerSetBlackboxedRangesArgs with the required arguments.
+func NewDebuggerSetBlackboxedRangesArgs(scriptID cdptype.RuntimeScriptID, positions []cdptype.DebuggerScriptPosition) *DebuggerSetBlackboxedRangesArgs {
+	args := new(DebuggerSetBlackboxedRangesArgs)
+	args.ScriptID = scriptID
+	args.Positions = positions
+	return args
+}
+
+// DeviceOrientationSetDeviceOrientationOverrideArgs represents the arguments for SetDeviceOrientationOverride in the DeviceOrientation domain.
 type DeviceOrientationSetDeviceOrientationOverrideArgs struct {
 	Alpha float64 `json:"alpha"` // Mock alpha
 	Beta  float64 `json:"beta"`  // Mock beta
 	Gamma float64 `json:"gamma"` // Mock gamma
 }
 
-// EmulationSetDeviceMetricsOverrideArgs contains the arguments for emulationSetDeviceMetricsOverride.
+// NewDeviceOrientationSetDeviceOrientationOverrideArgs initializes DeviceOrientationSetDeviceOrientationOverrideArgs with the required arguments.
+func NewDeviceOrientationSetDeviceOrientationOverrideArgs(alpha float64, beta float64, gamma float64) *DeviceOrientationSetDeviceOrientationOverrideArgs {
+	args := new(DeviceOrientationSetDeviceOrientationOverrideArgs)
+	args.Alpha = alpha
+	args.Beta = beta
+	args.Gamma = gamma
+	return args
+}
+
+// EmulationSetDeviceMetricsOverrideArgs represents the arguments for SetDeviceMetricsOverride in the Emulation domain.
 type EmulationSetDeviceMetricsOverrideArgs struct {
 	Width             int                                 `json:"width"`                       // Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
 	Height            int                                 `json:"height"`                      // Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
@@ -1175,6 +1927,17 @@ type EmulationSetDeviceMetricsOverrideArgs struct {
 	PositionX         *int                                `json:"positionX,omitempty"`         // Overriding view X position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
 	PositionY         *int                                `json:"positionY,omitempty"`         // Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
 	ScreenOrientation *cdptype.EmulationScreenOrientation `json:"screenOrientation,omitempty"` // Screen orientation override.
+}
+
+// NewEmulationSetDeviceMetricsOverrideArgs initializes EmulationSetDeviceMetricsOverrideArgs with the required arguments.
+func NewEmulationSetDeviceMetricsOverrideArgs(width int, height int, deviceScaleFactor float64, mobile bool, fitWindow bool) *EmulationSetDeviceMetricsOverrideArgs {
+	args := new(EmulationSetDeviceMetricsOverrideArgs)
+	args.Width = width
+	args.Height = height
+	args.DeviceScaleFactor = deviceScaleFactor
+	args.Mobile = mobile
+	args.FitWindow = fitWindow
+	return args
 }
 
 // SetScale sets the Scale optional argument. Scale to apply to resulting view image. Ignored in |fitWindow| mode.
@@ -1225,34 +1988,72 @@ func (a *EmulationSetDeviceMetricsOverrideArgs) SetScreenOrientation(screenOrien
 	return a
 }
 
-// EmulationForceViewportArgs contains the arguments for emulationForceViewport.
+// EmulationForceViewportArgs represents the arguments for ForceViewport in the Emulation domain.
 type EmulationForceViewportArgs struct {
 	X     float64 `json:"x"`     // X coordinate of top-left corner of the area (CSS pixels).
 	Y     float64 `json:"y"`     // Y coordinate of top-left corner of the area (CSS pixels).
 	Scale float64 `json:"scale"` // Scale to apply to the area (relative to a page scale of 1.0).
 }
 
-// EmulationSetPageScaleFactorArgs contains the arguments for emulationSetPageScaleFactor.
+// NewEmulationForceViewportArgs initializes EmulationForceViewportArgs with the required arguments.
+func NewEmulationForceViewportArgs(x float64, y float64, scale float64) *EmulationForceViewportArgs {
+	args := new(EmulationForceViewportArgs)
+	args.X = x
+	args.Y = y
+	args.Scale = scale
+	return args
+}
+
+// EmulationSetPageScaleFactorArgs represents the arguments for SetPageScaleFactor in the Emulation domain.
 type EmulationSetPageScaleFactorArgs struct {
 	PageScaleFactor float64 `json:"pageScaleFactor"` // Page scale factor.
 }
 
-// EmulationSetVisibleSizeArgs contains the arguments for emulationSetVisibleSize.
+// NewEmulationSetPageScaleFactorArgs initializes EmulationSetPageScaleFactorArgs with the required arguments.
+func NewEmulationSetPageScaleFactorArgs(pageScaleFactor float64) *EmulationSetPageScaleFactorArgs {
+	args := new(EmulationSetPageScaleFactorArgs)
+	args.PageScaleFactor = pageScaleFactor
+	return args
+}
+
+// EmulationSetVisibleSizeArgs represents the arguments for SetVisibleSize in the Emulation domain.
 type EmulationSetVisibleSizeArgs struct {
 	Width  int `json:"width"`  // Frame width (DIP).
 	Height int `json:"height"` // Frame height (DIP).
 }
 
-// EmulationSetScriptExecutionDisabledArgs contains the arguments for emulationSetScriptExecutionDisabled.
+// NewEmulationSetVisibleSizeArgs initializes EmulationSetVisibleSizeArgs with the required arguments.
+func NewEmulationSetVisibleSizeArgs(width int, height int) *EmulationSetVisibleSizeArgs {
+	args := new(EmulationSetVisibleSizeArgs)
+	args.Width = width
+	args.Height = height
+	return args
+}
+
+// EmulationSetScriptExecutionDisabledArgs represents the arguments for SetScriptExecutionDisabled in the Emulation domain.
 type EmulationSetScriptExecutionDisabledArgs struct {
 	Value bool `json:"value"` // Whether script execution should be disabled in the page.
 }
 
-// EmulationSetGeolocationOverrideArgs contains the arguments for emulationSetGeolocationOverride.
+// NewEmulationSetScriptExecutionDisabledArgs initializes EmulationSetScriptExecutionDisabledArgs with the required arguments.
+func NewEmulationSetScriptExecutionDisabledArgs(value bool) *EmulationSetScriptExecutionDisabledArgs {
+	args := new(EmulationSetScriptExecutionDisabledArgs)
+	args.Value = value
+	return args
+}
+
+// EmulationSetGeolocationOverrideArgs represents the arguments for SetGeolocationOverride in the Emulation domain.
 type EmulationSetGeolocationOverrideArgs struct {
 	Latitude  *float64 `json:"latitude,omitempty"`  // Mock latitude
 	Longitude *float64 `json:"longitude,omitempty"` // Mock longitude
 	Accuracy  *float64 `json:"accuracy,omitempty"`  // Mock accuracy
+}
+
+// NewEmulationSetGeolocationOverrideArgs initializes EmulationSetGeolocationOverrideArgs with the required arguments.
+func NewEmulationSetGeolocationOverrideArgs() *EmulationSetGeolocationOverrideArgs {
+	args := new(EmulationSetGeolocationOverrideArgs)
+
+	return args
 }
 
 // SetLatitude sets the Latitude optional argument. Mock latitude
@@ -1273,10 +2074,17 @@ func (a *EmulationSetGeolocationOverrideArgs) SetAccuracy(accuracy float64) *Emu
 	return a
 }
 
-// EmulationSetTouchEmulationEnabledArgs contains the arguments for emulationSetTouchEmulationEnabled.
+// EmulationSetTouchEmulationEnabledArgs represents the arguments for SetTouchEmulationEnabled in the Emulation domain.
 type EmulationSetTouchEmulationEnabledArgs struct {
 	Enabled       bool    `json:"enabled"`                 // Whether the touch event emulation should be enabled.
 	Configuration *string `json:"configuration,omitempty"` // Touch/gesture events configuration. Default: current platform.
+}
+
+// NewEmulationSetTouchEmulationEnabledArgs initializes EmulationSetTouchEmulationEnabledArgs with the required arguments.
+func NewEmulationSetTouchEmulationEnabledArgs(enabled bool) *EmulationSetTouchEmulationEnabledArgs {
+	args := new(EmulationSetTouchEmulationEnabledArgs)
+	args.Enabled = enabled
+	return args
 }
 
 // SetConfiguration sets the Configuration optional argument. Touch/gesture events configuration. Default: current platform.
@@ -1285,25 +2093,46 @@ func (a *EmulationSetTouchEmulationEnabledArgs) SetConfiguration(configuration s
 	return a
 }
 
-// EmulationSetEmulatedMediaArgs contains the arguments for emulationSetEmulatedMedia.
+// EmulationSetEmulatedMediaArgs represents the arguments for SetEmulatedMedia in the Emulation domain.
 type EmulationSetEmulatedMediaArgs struct {
 	Media string `json:"media"` // Media type to emulate. Empty string disables the override.
 }
 
-// EmulationSetCPUThrottlingRateArgs contains the arguments for emulationSetCPUThrottlingRate.
+// NewEmulationSetEmulatedMediaArgs initializes EmulationSetEmulatedMediaArgs with the required arguments.
+func NewEmulationSetEmulatedMediaArgs(media string) *EmulationSetEmulatedMediaArgs {
+	args := new(EmulationSetEmulatedMediaArgs)
+	args.Media = media
+	return args
+}
+
+// EmulationSetCPUThrottlingRateArgs represents the arguments for SetCPUThrottlingRate in the Emulation domain.
 type EmulationSetCPUThrottlingRateArgs struct {
 	Rate float64 `json:"rate"` // Throttling rate as a slowdown factor (1 is no throttle, 2 is 2x slowdown, etc).
 }
 
-// EmulationCanEmulateReply contains the return values for emulationCanEmulate.
+// NewEmulationSetCPUThrottlingRateArgs initializes EmulationSetCPUThrottlingRateArgs with the required arguments.
+func NewEmulationSetCPUThrottlingRateArgs(rate float64) *EmulationSetCPUThrottlingRateArgs {
+	args := new(EmulationSetCPUThrottlingRateArgs)
+	args.Rate = rate
+	return args
+}
+
+// EmulationCanEmulateReply represents the return values for CanEmulate in the Emulation domain.
 type EmulationCanEmulateReply struct {
 	Result bool `json:"result"` // True if emulation is supported.
 }
 
-// EmulationSetVirtualTimePolicyArgs contains the arguments for emulationSetVirtualTimePolicy.
+// EmulationSetVirtualTimePolicyArgs represents the arguments for SetVirtualTimePolicy in the Emulation domain.
 type EmulationSetVirtualTimePolicyArgs struct {
 	Policy cdptype.EmulationVirtualTimePolicy `json:"policy"`           //
 	Budget *int                               `json:"budget,omitempty"` // If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
+}
+
+// NewEmulationSetVirtualTimePolicyArgs initializes EmulationSetVirtualTimePolicyArgs with the required arguments.
+func NewEmulationSetVirtualTimePolicyArgs(policy cdptype.EmulationVirtualTimePolicy) *EmulationSetVirtualTimePolicyArgs {
+	args := new(EmulationSetVirtualTimePolicyArgs)
+	args.Policy = policy
+	return args
 }
 
 // SetBudget sets the Budget optional argument. If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
@@ -1312,9 +2141,16 @@ func (a *EmulationSetVirtualTimePolicyArgs) SetBudget(budget int) *EmulationSetV
 	return a
 }
 
-// EmulationSetDefaultBackgroundColorOverrideArgs contains the arguments for emulationSetDefaultBackgroundColorOverride.
+// EmulationSetDefaultBackgroundColorOverrideArgs represents the arguments for SetDefaultBackgroundColorOverride in the Emulation domain.
 type EmulationSetDefaultBackgroundColorOverrideArgs struct {
 	Color *cdptype.DOMRGBA `json:"color,omitempty"` // RGBA of the default background color. If not specified, any existing override will be cleared.
+}
+
+// NewEmulationSetDefaultBackgroundColorOverrideArgs initializes EmulationSetDefaultBackgroundColorOverrideArgs with the required arguments.
+func NewEmulationSetDefaultBackgroundColorOverrideArgs() *EmulationSetDefaultBackgroundColorOverrideArgs {
+	args := new(EmulationSetDefaultBackgroundColorOverrideArgs)
+
+	return args
 }
 
 // SetColor sets the Color optional argument. RGBA of the default background color. If not specified, any existing override will be cleared.
@@ -1323,9 +2159,16 @@ func (a *EmulationSetDefaultBackgroundColorOverrideArgs) SetColor(color cdptype.
 	return a
 }
 
-// HeapProfilerStartTrackingHeapObjectsArgs contains the arguments for heapprofilerStartTrackingHeapObjects.
+// HeapProfilerStartTrackingHeapObjectsArgs represents the arguments for StartTrackingHeapObjects in the HeapProfiler domain.
 type HeapProfilerStartTrackingHeapObjectsArgs struct {
 	TrackAllocations *bool `json:"trackAllocations,omitempty"` //
+}
+
+// NewHeapProfilerStartTrackingHeapObjectsArgs initializes HeapProfilerStartTrackingHeapObjectsArgs with the required arguments.
+func NewHeapProfilerStartTrackingHeapObjectsArgs() *HeapProfilerStartTrackingHeapObjectsArgs {
+	args := new(HeapProfilerStartTrackingHeapObjectsArgs)
+
+	return args
 }
 
 // SetTrackAllocations sets the TrackAllocations optional argument.
@@ -1334,9 +2177,16 @@ func (a *HeapProfilerStartTrackingHeapObjectsArgs) SetTrackAllocations(trackAllo
 	return a
 }
 
-// HeapProfilerStopTrackingHeapObjectsArgs contains the arguments for heapprofilerStopTrackingHeapObjects.
+// HeapProfilerStopTrackingHeapObjectsArgs represents the arguments for StopTrackingHeapObjects in the HeapProfiler domain.
 type HeapProfilerStopTrackingHeapObjectsArgs struct {
 	ReportProgress *bool `json:"reportProgress,omitempty"` // If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken when the tracking is stopped.
+}
+
+// NewHeapProfilerStopTrackingHeapObjectsArgs initializes HeapProfilerStopTrackingHeapObjectsArgs with the required arguments.
+func NewHeapProfilerStopTrackingHeapObjectsArgs() *HeapProfilerStopTrackingHeapObjectsArgs {
+	args := new(HeapProfilerStopTrackingHeapObjectsArgs)
+
+	return args
 }
 
 // SetReportProgress sets the ReportProgress optional argument. If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken when the tracking is stopped.
@@ -1345,9 +2195,16 @@ func (a *HeapProfilerStopTrackingHeapObjectsArgs) SetReportProgress(reportProgre
 	return a
 }
 
-// HeapProfilerTakeHeapSnapshotArgs contains the arguments for heapprofilerTakeHeapSnapshot.
+// HeapProfilerTakeHeapSnapshotArgs represents the arguments for TakeHeapSnapshot in the HeapProfiler domain.
 type HeapProfilerTakeHeapSnapshotArgs struct {
 	ReportProgress *bool `json:"reportProgress,omitempty"` // If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
+}
+
+// NewHeapProfilerTakeHeapSnapshotArgs initializes HeapProfilerTakeHeapSnapshotArgs with the required arguments.
+func NewHeapProfilerTakeHeapSnapshotArgs() *HeapProfilerTakeHeapSnapshotArgs {
+	args := new(HeapProfilerTakeHeapSnapshotArgs)
+
+	return args
 }
 
 // SetReportProgress sets the ReportProgress optional argument. If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
@@ -1356,10 +2213,17 @@ func (a *HeapProfilerTakeHeapSnapshotArgs) SetReportProgress(reportProgress bool
 	return a
 }
 
-// HeapProfilerGetObjectByHeapObjectIDArgs contains the arguments for heapprofilerGetObjectByHeapObjectID.
+// HeapProfilerGetObjectByHeapObjectIDArgs represents the arguments for GetObjectByHeapObjectID in the HeapProfiler domain.
 type HeapProfilerGetObjectByHeapObjectIDArgs struct {
 	ObjectID    cdptype.HeapProfilerHeapSnapshotObjectID `json:"objectId"`              //
 	ObjectGroup *string                                  `json:"objectGroup,omitempty"` // Symbolic group name that can be used to release multiple objects.
+}
+
+// NewHeapProfilerGetObjectByHeapObjectIDArgs initializes HeapProfilerGetObjectByHeapObjectIDArgs with the required arguments.
+func NewHeapProfilerGetObjectByHeapObjectIDArgs(objectID cdptype.HeapProfilerHeapSnapshotObjectID) *HeapProfilerGetObjectByHeapObjectIDArgs {
+	args := new(HeapProfilerGetObjectByHeapObjectIDArgs)
+	args.ObjectID = objectID
+	return args
 }
 
 // SetObjectGroup sets the ObjectGroup optional argument. Symbolic group name that can be used to release multiple objects.
@@ -1368,29 +2232,50 @@ func (a *HeapProfilerGetObjectByHeapObjectIDArgs) SetObjectGroup(objectGroup str
 	return a
 }
 
-// HeapProfilerGetObjectByHeapObjectIDReply contains the return values for heapprofilerGetObjectByHeapObjectID.
+// HeapProfilerGetObjectByHeapObjectIDReply represents the return values for GetObjectByHeapObjectID in the HeapProfiler domain.
 type HeapProfilerGetObjectByHeapObjectIDReply struct {
 	Result cdptype.RuntimeRemoteObject `json:"result"` // Evaluation result.
 }
 
-// HeapProfilerAddInspectedHeapObjectArgs contains the arguments for heapprofilerAddInspectedHeapObject.
+// HeapProfilerAddInspectedHeapObjectArgs represents the arguments for AddInspectedHeapObject in the HeapProfiler domain.
 type HeapProfilerAddInspectedHeapObjectArgs struct {
 	HeapObjectID cdptype.HeapProfilerHeapSnapshotObjectID `json:"heapObjectId"` // Heap snapshot object id to be accessible by means of $x command line API.
 }
 
-// HeapProfilerGetHeapObjectIDArgs contains the arguments for heapprofilerGetHeapObjectID.
+// NewHeapProfilerAddInspectedHeapObjectArgs initializes HeapProfilerAddInspectedHeapObjectArgs with the required arguments.
+func NewHeapProfilerAddInspectedHeapObjectArgs(heapObjectID cdptype.HeapProfilerHeapSnapshotObjectID) *HeapProfilerAddInspectedHeapObjectArgs {
+	args := new(HeapProfilerAddInspectedHeapObjectArgs)
+	args.HeapObjectID = heapObjectID
+	return args
+}
+
+// HeapProfilerGetHeapObjectIDArgs represents the arguments for GetHeapObjectID in the HeapProfiler domain.
 type HeapProfilerGetHeapObjectIDArgs struct {
 	ObjectID cdptype.RuntimeRemoteObjectID `json:"objectId"` // Identifier of the object to get heap object id for.
 }
 
-// HeapProfilerGetHeapObjectIDReply contains the return values for heapprofilerGetHeapObjectID.
+// NewHeapProfilerGetHeapObjectIDArgs initializes HeapProfilerGetHeapObjectIDArgs with the required arguments.
+func NewHeapProfilerGetHeapObjectIDArgs(objectID cdptype.RuntimeRemoteObjectID) *HeapProfilerGetHeapObjectIDArgs {
+	args := new(HeapProfilerGetHeapObjectIDArgs)
+	args.ObjectID = objectID
+	return args
+}
+
+// HeapProfilerGetHeapObjectIDReply represents the return values for GetHeapObjectID in the HeapProfiler domain.
 type HeapProfilerGetHeapObjectIDReply struct {
 	HeapSnapshotObjectID cdptype.HeapProfilerHeapSnapshotObjectID `json:"heapSnapshotObjectId"` // Id of the heap snapshot object corresponding to the passed remote object id.
 }
 
-// HeapProfilerStartSamplingArgs contains the arguments for heapprofilerStartSampling.
+// HeapProfilerStartSamplingArgs represents the arguments for StartSampling in the HeapProfiler domain.
 type HeapProfilerStartSamplingArgs struct {
 	SamplingInterval *float64 `json:"samplingInterval,omitempty"` // Average sample interval in bytes. Poisson distribution is used for the intervals. The default value is 32768 bytes.
+}
+
+// NewHeapProfilerStartSamplingArgs initializes HeapProfilerStartSamplingArgs with the required arguments.
+func NewHeapProfilerStartSamplingArgs() *HeapProfilerStartSamplingArgs {
+	args := new(HeapProfilerStartSamplingArgs)
+
+	return args
 }
 
 // SetSamplingInterval sets the SamplingInterval optional argument. Average sample interval in bytes. Poisson distribution is used for the intervals. The default value is 32768 bytes.
@@ -1399,16 +2284,23 @@ func (a *HeapProfilerStartSamplingArgs) SetSamplingInterval(samplingInterval flo
 	return a
 }
 
-// HeapProfilerStopSamplingReply contains the return values for heapprofilerStopSampling.
+// HeapProfilerStopSamplingReply represents the return values for StopSampling in the HeapProfiler domain.
 type HeapProfilerStopSamplingReply struct {
 	Profile cdptype.HeapProfilerSamplingHeapProfile `json:"profile"` // Recorded sampling heap profile.
 }
 
-// IOReadArgs contains the arguments for ioRead.
+// IOReadArgs represents the arguments for Read in the IO domain.
 type IOReadArgs struct {
 	Handle cdptype.IOStreamHandle `json:"handle"`           // Handle of the stream to read.
 	Offset *int                   `json:"offset,omitempty"` // Seek to the specified offset before reading (if not specificed, proceed with offset following the last read).
 	Size   *int                   `json:"size,omitempty"`   // Maximum number of bytes to read (left upon the agent discretion if not specified).
+}
+
+// NewIOReadArgs initializes IOReadArgs with the required arguments.
+func NewIOReadArgs(handle cdptype.IOStreamHandle) *IOReadArgs {
+	args := new(IOReadArgs)
+	args.Handle = handle
+	return args
 }
 
 // SetOffset sets the Offset optional argument. Seek to the specified offset before reading (if not specificed, proceed with offset following the last read).
@@ -1423,39 +2315,61 @@ func (a *IOReadArgs) SetSize(size int) *IOReadArgs {
 	return a
 }
 
-// IOReadReply contains the return values for ioRead.
+// IOReadReply represents the return values for Read in the IO domain.
 type IOReadReply struct {
 	Data string `json:"data"` // Data that were read.
 	EOF  bool   `json:"eof"`  // Set if the end-of-file condition occurred while reading.
 }
 
-// IOCloseArgs contains the arguments for ioClose.
+// IOCloseArgs represents the arguments for Close in the IO domain.
 type IOCloseArgs struct {
 	Handle cdptype.IOStreamHandle `json:"handle"` // Handle of the stream to close.
 }
 
-// IndexedDBRequestDatabaseNamesArgs contains the arguments for indexeddbRequestDatabaseNames.
+// NewIOCloseArgs initializes IOCloseArgs with the required arguments.
+func NewIOCloseArgs(handle cdptype.IOStreamHandle) *IOCloseArgs {
+	args := new(IOCloseArgs)
+	args.Handle = handle
+	return args
+}
+
+// IndexedDBRequestDatabaseNamesArgs represents the arguments for RequestDatabaseNames in the IndexedDB domain.
 type IndexedDBRequestDatabaseNamesArgs struct {
 	SecurityOrigin string `json:"securityOrigin"` // Security origin.
 }
 
-// IndexedDBRequestDatabaseNamesReply contains the return values for indexeddbRequestDatabaseNames.
+// NewIndexedDBRequestDatabaseNamesArgs initializes IndexedDBRequestDatabaseNamesArgs with the required arguments.
+func NewIndexedDBRequestDatabaseNamesArgs(securityOrigin string) *IndexedDBRequestDatabaseNamesArgs {
+	args := new(IndexedDBRequestDatabaseNamesArgs)
+	args.SecurityOrigin = securityOrigin
+	return args
+}
+
+// IndexedDBRequestDatabaseNamesReply represents the return values for RequestDatabaseNames in the IndexedDB domain.
 type IndexedDBRequestDatabaseNamesReply struct {
 	DatabaseNames []string `json:"databaseNames"` // Database names for origin.
 }
 
-// IndexedDBRequestDatabaseArgs contains the arguments for indexeddbRequestDatabase.
+// IndexedDBRequestDatabaseArgs represents the arguments for RequestDatabase in the IndexedDB domain.
 type IndexedDBRequestDatabaseArgs struct {
 	SecurityOrigin string `json:"securityOrigin"` // Security origin.
 	DatabaseName   string `json:"databaseName"`   // Database name.
 }
 
-// IndexedDBRequestDatabaseReply contains the return values for indexeddbRequestDatabase.
+// NewIndexedDBRequestDatabaseArgs initializes IndexedDBRequestDatabaseArgs with the required arguments.
+func NewIndexedDBRequestDatabaseArgs(securityOrigin string, databaseName string) *IndexedDBRequestDatabaseArgs {
+	args := new(IndexedDBRequestDatabaseArgs)
+	args.SecurityOrigin = securityOrigin
+	args.DatabaseName = databaseName
+	return args
+}
+
+// IndexedDBRequestDatabaseReply represents the return values for RequestDatabase in the IndexedDB domain.
 type IndexedDBRequestDatabaseReply struct {
 	DatabaseWithObjectStores cdptype.IndexedDBDatabaseWithObjectStores `json:"databaseWithObjectStores"` // Database with an array of object stores.
 }
 
-// IndexedDBRequestDataArgs contains the arguments for indexeddbRequestData.
+// IndexedDBRequestDataArgs represents the arguments for RequestData in the IndexedDB domain.
 type IndexedDBRequestDataArgs struct {
 	SecurityOrigin  string                     `json:"securityOrigin"`     // Security origin.
 	DatabaseName    string                     `json:"databaseName"`       // Database name.
@@ -1466,32 +2380,61 @@ type IndexedDBRequestDataArgs struct {
 	KeyRange        *cdptype.IndexedDBKeyRange `json:"keyRange,omitempty"` // Key range.
 }
 
+// NewIndexedDBRequestDataArgs initializes IndexedDBRequestDataArgs with the required arguments.
+func NewIndexedDBRequestDataArgs(securityOrigin string, databaseName string, objectStoreName string, indexName string, skipCount int, pageSize int) *IndexedDBRequestDataArgs {
+	args := new(IndexedDBRequestDataArgs)
+	args.SecurityOrigin = securityOrigin
+	args.DatabaseName = databaseName
+	args.ObjectStoreName = objectStoreName
+	args.IndexName = indexName
+	args.SkipCount = skipCount
+	args.PageSize = pageSize
+	return args
+}
+
 // SetKeyRange sets the KeyRange optional argument. Key range.
 func (a *IndexedDBRequestDataArgs) SetKeyRange(keyRange cdptype.IndexedDBKeyRange) *IndexedDBRequestDataArgs {
 	a.KeyRange = &keyRange
 	return a
 }
 
-// IndexedDBRequestDataReply contains the return values for indexeddbRequestData.
+// IndexedDBRequestDataReply represents the return values for RequestData in the IndexedDB domain.
 type IndexedDBRequestDataReply struct {
 	ObjectStoreDataEntries []cdptype.IndexedDBDataEntry `json:"objectStoreDataEntries"` // Array of object store data entries.
 	HasMore                bool                         `json:"hasMore"`                // If true, there are more entries to fetch in the given range.
 }
 
-// IndexedDBClearObjectStoreArgs contains the arguments for indexeddbClearObjectStore.
+// IndexedDBClearObjectStoreArgs represents the arguments for ClearObjectStore in the IndexedDB domain.
 type IndexedDBClearObjectStoreArgs struct {
 	SecurityOrigin  string `json:"securityOrigin"`  // Security origin.
 	DatabaseName    string `json:"databaseName"`    // Database name.
 	ObjectStoreName string `json:"objectStoreName"` // Object store name.
 }
 
-// IndexedDBDeleteDatabaseArgs contains the arguments for indexeddbDeleteDatabase.
+// NewIndexedDBClearObjectStoreArgs initializes IndexedDBClearObjectStoreArgs with the required arguments.
+func NewIndexedDBClearObjectStoreArgs(securityOrigin string, databaseName string, objectStoreName string) *IndexedDBClearObjectStoreArgs {
+	args := new(IndexedDBClearObjectStoreArgs)
+	args.SecurityOrigin = securityOrigin
+	args.DatabaseName = databaseName
+	args.ObjectStoreName = objectStoreName
+	return args
+}
+
+// IndexedDBDeleteDatabaseArgs represents the arguments for DeleteDatabase in the IndexedDB domain.
 type IndexedDBDeleteDatabaseArgs struct {
 	SecurityOrigin string `json:"securityOrigin"` // Security origin.
 	DatabaseName   string `json:"databaseName"`   // Database name.
 }
 
-// InputDispatchKeyEventArgs contains the arguments for inputDispatchKeyEvent.
+// NewIndexedDBDeleteDatabaseArgs initializes IndexedDBDeleteDatabaseArgs with the required arguments.
+func NewIndexedDBDeleteDatabaseArgs(securityOrigin string, databaseName string) *IndexedDBDeleteDatabaseArgs {
+	args := new(IndexedDBDeleteDatabaseArgs)
+	args.SecurityOrigin = securityOrigin
+	args.DatabaseName = databaseName
+	return args
+}
+
+// InputDispatchKeyEventArgs represents the arguments for DispatchKeyEvent in the Input domain.
 type InputDispatchKeyEventArgs struct {
 	Type                  string            `json:"type"`                            // Type of the key event.
 	Modifiers             *int              `json:"modifiers,omitempty"`             // Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
@@ -1506,6 +2449,13 @@ type InputDispatchKeyEventArgs struct {
 	AutoRepeat            *bool             `json:"autoRepeat,omitempty"`            // Whether the event was generated from auto repeat (default: false).
 	IsKeypad              *bool             `json:"isKeypad,omitempty"`              // Whether the event was generated from the keypad (default: false).
 	IsSystemKey           *bool             `json:"isSystemKey,omitempty"`           // Whether the event was a system key event (default: false).
+}
+
+// NewInputDispatchKeyEventArgs initializes InputDispatchKeyEventArgs with the required arguments.
+func NewInputDispatchKeyEventArgs(typ string) *InputDispatchKeyEventArgs {
+	args := new(InputDispatchKeyEventArgs)
+	args.Type = typ
+	return args
 }
 
 // SetModifiers sets the Modifiers optional argument. Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
@@ -1580,7 +2530,7 @@ func (a *InputDispatchKeyEventArgs) SetIsSystemKey(isSystemKey bool) *InputDispa
 	return a
 }
 
-// InputDispatchMouseEventArgs contains the arguments for inputDispatchMouseEvent.
+// InputDispatchMouseEventArgs represents the arguments for DispatchMouseEvent in the Input domain.
 type InputDispatchMouseEventArgs struct {
 	Type       string            `json:"type"`                 // Type of the mouse event.
 	X          int               `json:"x"`                    // X coordinate of the event relative to the main frame's viewport.
@@ -1589,6 +2539,15 @@ type InputDispatchMouseEventArgs struct {
 	Timestamp  cdptype.Timestamp `json:"timestamp,omitempty"`  // Time at which the event occurred. Measured in UTC time in seconds since January 1, 1970 (default: current time).
 	Button     *string           `json:"button,omitempty"`     // Mouse button (default: "none").
 	ClickCount *int              `json:"clickCount,omitempty"` // Number of times the mouse button was clicked (default: 0).
+}
+
+// NewInputDispatchMouseEventArgs initializes InputDispatchMouseEventArgs with the required arguments.
+func NewInputDispatchMouseEventArgs(typ string, x int, y int) *InputDispatchMouseEventArgs {
+	args := new(InputDispatchMouseEventArgs)
+	args.Type = typ
+	args.X = x
+	args.Y = y
+	return args
 }
 
 // SetModifiers sets the Modifiers optional argument. Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
@@ -1615,12 +2574,20 @@ func (a *InputDispatchMouseEventArgs) SetClickCount(clickCount int) *InputDispat
 	return a
 }
 
-// InputDispatchTouchEventArgs contains the arguments for inputDispatchTouchEvent.
+// InputDispatchTouchEventArgs represents the arguments for DispatchTouchEvent in the Input domain.
 type InputDispatchTouchEventArgs struct {
 	Type        string                    `json:"type"`                // Type of the touch event.
 	TouchPoints []cdptype.InputTouchPoint `json:"touchPoints"`         // Touch points.
 	Modifiers   *int                      `json:"modifiers,omitempty"` // Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
 	Timestamp   cdptype.Timestamp         `json:"timestamp,omitempty"` // Time at which the event occurred. Measured in UTC time in seconds since January 1, 1970 (default: current time).
+}
+
+// NewInputDispatchTouchEventArgs initializes InputDispatchTouchEventArgs with the required arguments.
+func NewInputDispatchTouchEventArgs(typ string, touchPoints []cdptype.InputTouchPoint) *InputDispatchTouchEventArgs {
+	args := new(InputDispatchTouchEventArgs)
+	args.Type = typ
+	args.TouchPoints = touchPoints
+	return args
 }
 
 // SetModifiers sets the Modifiers optional argument. Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
@@ -1635,7 +2602,7 @@ func (a *InputDispatchTouchEventArgs) SetTimestamp(timestamp cdptype.Timestamp) 
 	return a
 }
 
-// InputEmulateTouchFromMouseEventArgs contains the arguments for inputEmulateTouchFromMouseEvent.
+// InputEmulateTouchFromMouseEventArgs represents the arguments for EmulateTouchFromMouseEvent in the Input domain.
 type InputEmulateTouchFromMouseEventArgs struct {
 	Type       string            `json:"type"`                 // Type of the mouse event.
 	X          int               `json:"x"`                    // X coordinate of the mouse pointer in DIP.
@@ -1646,6 +2613,17 @@ type InputEmulateTouchFromMouseEventArgs struct {
 	DeltaY     *float64          `json:"deltaY,omitempty"`     // Y delta in DIP for mouse wheel event (default: 0).
 	Modifiers  *int              `json:"modifiers,omitempty"`  // Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
 	ClickCount *int              `json:"clickCount,omitempty"` // Number of times the mouse button was clicked (default: 0).
+}
+
+// NewInputEmulateTouchFromMouseEventArgs initializes InputEmulateTouchFromMouseEventArgs with the required arguments.
+func NewInputEmulateTouchFromMouseEventArgs(typ string, x int, y int, timestamp cdptype.Timestamp, button string) *InputEmulateTouchFromMouseEventArgs {
+	args := new(InputEmulateTouchFromMouseEventArgs)
+	args.Type = typ
+	args.X = x
+	args.Y = y
+	args.Timestamp = timestamp
+	args.Button = button
+	return args
 }
 
 // SetDeltaX sets the DeltaX optional argument. X delta in DIP for mouse wheel event (default: 0).
@@ -1672,13 +2650,22 @@ func (a *InputEmulateTouchFromMouseEventArgs) SetClickCount(clickCount int) *Inp
 	return a
 }
 
-// InputSynthesizePinchGestureArgs contains the arguments for inputSynthesizePinchGesture.
+// InputSynthesizePinchGestureArgs represents the arguments for SynthesizePinchGesture in the Input domain.
 type InputSynthesizePinchGestureArgs struct {
 	X                 int                            `json:"x"`                           // X coordinate of the start of the gesture in CSS pixels.
 	Y                 int                            `json:"y"`                           // Y coordinate of the start of the gesture in CSS pixels.
 	ScaleFactor       float64                        `json:"scaleFactor"`                 // Relative scale factor after zooming (>1.0 zooms in, <1.0 zooms out).
 	RelativeSpeed     *int                           `json:"relativeSpeed,omitempty"`     // Relative pointer speed in pixels per second (default: 800).
 	GestureSourceType cdptype.InputGestureSourceType `json:"gestureSourceType,omitempty"` // Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
+}
+
+// NewInputSynthesizePinchGestureArgs initializes InputSynthesizePinchGestureArgs with the required arguments.
+func NewInputSynthesizePinchGestureArgs(x int, y int, scaleFactor float64) *InputSynthesizePinchGestureArgs {
+	args := new(InputSynthesizePinchGestureArgs)
+	args.X = x
+	args.Y = y
+	args.ScaleFactor = scaleFactor
+	return args
 }
 
 // SetRelativeSpeed sets the RelativeSpeed optional argument. Relative pointer speed in pixels per second (default: 800).
@@ -1693,7 +2680,7 @@ func (a *InputSynthesizePinchGestureArgs) SetGestureSourceType(gestureSourceType
 	return a
 }
 
-// InputSynthesizeScrollGestureArgs contains the arguments for inputSynthesizeScrollGesture.
+// InputSynthesizeScrollGestureArgs represents the arguments for SynthesizeScrollGesture in the Input domain.
 type InputSynthesizeScrollGestureArgs struct {
 	X                     int                            `json:"x"`                               // X coordinate of the start of the gesture in CSS pixels.
 	Y                     int                            `json:"y"`                               // Y coordinate of the start of the gesture in CSS pixels.
@@ -1707,6 +2694,14 @@ type InputSynthesizeScrollGestureArgs struct {
 	RepeatCount           *int                           `json:"repeatCount,omitempty"`           // The number of times to repeat the gesture (default: 0).
 	RepeatDelayMs         *int                           `json:"repeatDelayMs,omitempty"`         // The number of milliseconds delay between each repeat. (default: 250).
 	InteractionMarkerName *string                        `json:"interactionMarkerName,omitempty"` // The name of the interaction markers to generate, if not empty (default: "").
+}
+
+// NewInputSynthesizeScrollGestureArgs initializes InputSynthesizeScrollGestureArgs with the required arguments.
+func NewInputSynthesizeScrollGestureArgs(x int, y int) *InputSynthesizeScrollGestureArgs {
+	args := new(InputSynthesizeScrollGestureArgs)
+	args.X = x
+	args.Y = y
+	return args
 }
 
 // SetXDistance sets the XDistance optional argument. The distance to scroll along the X axis (positive to scroll left).
@@ -1769,13 +2764,21 @@ func (a *InputSynthesizeScrollGestureArgs) SetInteractionMarkerName(interactionM
 	return a
 }
 
-// InputSynthesizeTapGestureArgs contains the arguments for inputSynthesizeTapGesture.
+// InputSynthesizeTapGestureArgs represents the arguments for SynthesizeTapGesture in the Input domain.
 type InputSynthesizeTapGestureArgs struct {
 	X                 int                            `json:"x"`                           // X coordinate of the start of the gesture in CSS pixels.
 	Y                 int                            `json:"y"`                           // Y coordinate of the start of the gesture in CSS pixels.
 	Duration          *int                           `json:"duration,omitempty"`          // Duration between touchdown and touchup events in ms (default: 50).
 	TapCount          *int                           `json:"tapCount,omitempty"`          // Number of times to perform the tap (e.g. 2 for double tap, default: 1).
 	GestureSourceType cdptype.InputGestureSourceType `json:"gestureSourceType,omitempty"` // Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
+}
+
+// NewInputSynthesizeTapGestureArgs initializes InputSynthesizeTapGestureArgs with the required arguments.
+func NewInputSynthesizeTapGestureArgs(x int, y int) *InputSynthesizeTapGestureArgs {
+	args := new(InputSynthesizeTapGestureArgs)
+	args.X = x
+	args.Y = y
+	return args
 }
 
 // SetDuration sets the Duration optional argument. Duration between touchdown and touchup events in ms (default: 50).
@@ -1796,47 +2799,82 @@ func (a *InputSynthesizeTapGestureArgs) SetGestureSourceType(gestureSourceType c
 	return a
 }
 
-// LayerTreeCompositingReasonsArgs contains the arguments for layertreeCompositingReasons.
+// LayerTreeCompositingReasonsArgs represents the arguments for CompositingReasons in the LayerTree domain.
 type LayerTreeCompositingReasonsArgs struct {
 	LayerID cdptype.LayerTreeLayerID `json:"layerId"` // The id of the layer for which we want to get the reasons it was composited.
 }
 
-// LayerTreeCompositingReasonsReply contains the return values for layertreeCompositingReasons.
+// NewLayerTreeCompositingReasonsArgs initializes LayerTreeCompositingReasonsArgs with the required arguments.
+func NewLayerTreeCompositingReasonsArgs(layerID cdptype.LayerTreeLayerID) *LayerTreeCompositingReasonsArgs {
+	args := new(LayerTreeCompositingReasonsArgs)
+	args.LayerID = layerID
+	return args
+}
+
+// LayerTreeCompositingReasonsReply represents the return values for CompositingReasons in the LayerTree domain.
 type LayerTreeCompositingReasonsReply struct {
 	CompositingReasons []string `json:"compositingReasons"` // A list of strings specifying reasons for the given layer to become composited.
 }
 
-// LayerTreeMakeSnapshotArgs contains the arguments for layertreeMakeSnapshot.
+// LayerTreeMakeSnapshotArgs represents the arguments for MakeSnapshot in the LayerTree domain.
 type LayerTreeMakeSnapshotArgs struct {
 	LayerID cdptype.LayerTreeLayerID `json:"layerId"` // The id of the layer.
 }
 
-// LayerTreeMakeSnapshotReply contains the return values for layertreeMakeSnapshot.
+// NewLayerTreeMakeSnapshotArgs initializes LayerTreeMakeSnapshotArgs with the required arguments.
+func NewLayerTreeMakeSnapshotArgs(layerID cdptype.LayerTreeLayerID) *LayerTreeMakeSnapshotArgs {
+	args := new(LayerTreeMakeSnapshotArgs)
+	args.LayerID = layerID
+	return args
+}
+
+// LayerTreeMakeSnapshotReply represents the return values for MakeSnapshot in the LayerTree domain.
 type LayerTreeMakeSnapshotReply struct {
 	SnapshotID cdptype.LayerTreeSnapshotID `json:"snapshotId"` // The id of the layer snapshot.
 }
 
-// LayerTreeLoadSnapshotArgs contains the arguments for layertreeLoadSnapshot.
+// LayerTreeLoadSnapshotArgs represents the arguments for LoadSnapshot in the LayerTree domain.
 type LayerTreeLoadSnapshotArgs struct {
 	Tiles []cdptype.LayerTreePictureTile `json:"tiles"` // An array of tiles composing the snapshot.
 }
 
-// LayerTreeLoadSnapshotReply contains the return values for layertreeLoadSnapshot.
+// NewLayerTreeLoadSnapshotArgs initializes LayerTreeLoadSnapshotArgs with the required arguments.
+func NewLayerTreeLoadSnapshotArgs(tiles []cdptype.LayerTreePictureTile) *LayerTreeLoadSnapshotArgs {
+	args := new(LayerTreeLoadSnapshotArgs)
+	args.Tiles = tiles
+	return args
+}
+
+// LayerTreeLoadSnapshotReply represents the return values for LoadSnapshot in the LayerTree domain.
 type LayerTreeLoadSnapshotReply struct {
 	SnapshotID cdptype.LayerTreeSnapshotID `json:"snapshotId"` // The id of the snapshot.
 }
 
-// LayerTreeReleaseSnapshotArgs contains the arguments for layertreeReleaseSnapshot.
+// LayerTreeReleaseSnapshotArgs represents the arguments for ReleaseSnapshot in the LayerTree domain.
 type LayerTreeReleaseSnapshotArgs struct {
 	SnapshotID cdptype.LayerTreeSnapshotID `json:"snapshotId"` // The id of the layer snapshot.
 }
 
-// LayerTreeProfileSnapshotArgs contains the arguments for layertreeProfileSnapshot.
+// NewLayerTreeReleaseSnapshotArgs initializes LayerTreeReleaseSnapshotArgs with the required arguments.
+func NewLayerTreeReleaseSnapshotArgs(snapshotID cdptype.LayerTreeSnapshotID) *LayerTreeReleaseSnapshotArgs {
+	args := new(LayerTreeReleaseSnapshotArgs)
+	args.SnapshotID = snapshotID
+	return args
+}
+
+// LayerTreeProfileSnapshotArgs represents the arguments for ProfileSnapshot in the LayerTree domain.
 type LayerTreeProfileSnapshotArgs struct {
 	SnapshotID     cdptype.LayerTreeSnapshotID `json:"snapshotId"`               // The id of the layer snapshot.
 	MinRepeatCount *int                        `json:"minRepeatCount,omitempty"` // The maximum number of times to replay the snapshot (1, if not specified).
 	MinDuration    *float64                    `json:"minDuration,omitempty"`    // The minimum duration (in seconds) to replay the snapshot.
 	ClipRect       *cdptype.DOMRect            `json:"clipRect,omitempty"`       // The clip rectangle to apply when replaying the snapshot.
+}
+
+// NewLayerTreeProfileSnapshotArgs initializes LayerTreeProfileSnapshotArgs with the required arguments.
+func NewLayerTreeProfileSnapshotArgs(snapshotID cdptype.LayerTreeSnapshotID) *LayerTreeProfileSnapshotArgs {
+	args := new(LayerTreeProfileSnapshotArgs)
+	args.SnapshotID = snapshotID
+	return args
 }
 
 // SetMinRepeatCount sets the MinRepeatCount optional argument. The maximum number of times to replay the snapshot (1, if not specified).
@@ -1857,17 +2895,24 @@ func (a *LayerTreeProfileSnapshotArgs) SetClipRect(clipRect cdptype.DOMRect) *La
 	return a
 }
 
-// LayerTreeProfileSnapshotReply contains the return values for layertreeProfileSnapshot.
+// LayerTreeProfileSnapshotReply represents the return values for ProfileSnapshot in the LayerTree domain.
 type LayerTreeProfileSnapshotReply struct {
 	Timings []cdptype.LayerTreePaintProfile `json:"timings"` // The array of paint profiles, one per run.
 }
 
-// LayerTreeReplaySnapshotArgs contains the arguments for layertreeReplaySnapshot.
+// LayerTreeReplaySnapshotArgs represents the arguments for ReplaySnapshot in the LayerTree domain.
 type LayerTreeReplaySnapshotArgs struct {
 	SnapshotID cdptype.LayerTreeSnapshotID `json:"snapshotId"`         // The id of the layer snapshot.
 	FromStep   *int                        `json:"fromStep,omitempty"` // The first step to replay from (replay from the very start if not specified).
 	ToStep     *int                        `json:"toStep,omitempty"`   // The last step to replay to (replay till the end if not specified).
 	Scale      *float64                    `json:"scale,omitempty"`    // The scale to apply while replaying (defaults to 1).
+}
+
+// NewLayerTreeReplaySnapshotArgs initializes LayerTreeReplaySnapshotArgs with the required arguments.
+func NewLayerTreeReplaySnapshotArgs(snapshotID cdptype.LayerTreeSnapshotID) *LayerTreeReplaySnapshotArgs {
+	args := new(LayerTreeReplaySnapshotArgs)
+	args.SnapshotID = snapshotID
+	return args
 }
 
 // SetFromStep sets the FromStep optional argument. The first step to replay from (replay from the very start if not specified).
@@ -1888,47 +2933,82 @@ func (a *LayerTreeReplaySnapshotArgs) SetScale(scale float64) *LayerTreeReplaySn
 	return a
 }
 
-// LayerTreeReplaySnapshotReply contains the return values for layertreeReplaySnapshot.
+// LayerTreeReplaySnapshotReply represents the return values for ReplaySnapshot in the LayerTree domain.
 type LayerTreeReplaySnapshotReply struct {
 	DataURL string `json:"dataURL"` // A data: URL for resulting image.
 }
 
-// LayerTreeSnapshotCommandLogArgs contains the arguments for layertreeSnapshotCommandLog.
+// LayerTreeSnapshotCommandLogArgs represents the arguments for SnapshotCommandLog in the LayerTree domain.
 type LayerTreeSnapshotCommandLogArgs struct {
 	SnapshotID cdptype.LayerTreeSnapshotID `json:"snapshotId"` // The id of the layer snapshot.
 }
 
-// LayerTreeSnapshotCommandLogReply contains the return values for layertreeSnapshotCommandLog.
+// NewLayerTreeSnapshotCommandLogArgs initializes LayerTreeSnapshotCommandLogArgs with the required arguments.
+func NewLayerTreeSnapshotCommandLogArgs(snapshotID cdptype.LayerTreeSnapshotID) *LayerTreeSnapshotCommandLogArgs {
+	args := new(LayerTreeSnapshotCommandLogArgs)
+	args.SnapshotID = snapshotID
+	return args
+}
+
+// LayerTreeSnapshotCommandLogReply represents the return values for SnapshotCommandLog in the LayerTree domain.
 type LayerTreeSnapshotCommandLogReply struct {
 	CommandLog []json.RawMessage `json:"commandLog"` // The array of canvas function calls.
 }
 
-// LogStartViolationsReportArgs contains the arguments for logStartViolationsReport.
+// LogStartViolationsReportArgs represents the arguments for StartViolationsReport in the Log domain.
 type LogStartViolationsReportArgs struct {
 	Config []cdptype.LogViolationSetting `json:"config"` // Configuration for violations.
 }
 
-// MemoryGetDOMCountersReply contains the return values for memoryGetDOMCounters.
+// NewLogStartViolationsReportArgs initializes LogStartViolationsReportArgs with the required arguments.
+func NewLogStartViolationsReportArgs(config []cdptype.LogViolationSetting) *LogStartViolationsReportArgs {
+	args := new(LogStartViolationsReportArgs)
+	args.Config = config
+	return args
+}
+
+// MemoryGetDOMCountersReply represents the return values for GetDOMCounters in the Memory domain.
 type MemoryGetDOMCountersReply struct {
 	Documents        int `json:"documents"`        //
 	Nodes            int `json:"nodes"`            //
 	JsEventListeners int `json:"jsEventListeners"` //
 }
 
-// MemorySetPressureNotificationsSuppressedArgs contains the arguments for memorySetPressureNotificationsSuppressed.
+// MemorySetPressureNotificationsSuppressedArgs represents the arguments for SetPressureNotificationsSuppressed in the Memory domain.
 type MemorySetPressureNotificationsSuppressedArgs struct {
 	Suppressed bool `json:"suppressed"` // If true, memory pressure notifications will be suppressed.
 }
 
-// MemorySimulatePressureNotificationArgs contains the arguments for memorySimulatePressureNotification.
+// NewMemorySetPressureNotificationsSuppressedArgs initializes MemorySetPressureNotificationsSuppressedArgs with the required arguments.
+func NewMemorySetPressureNotificationsSuppressedArgs(suppressed bool) *MemorySetPressureNotificationsSuppressedArgs {
+	args := new(MemorySetPressureNotificationsSuppressedArgs)
+	args.Suppressed = suppressed
+	return args
+}
+
+// MemorySimulatePressureNotificationArgs represents the arguments for SimulatePressureNotification in the Memory domain.
 type MemorySimulatePressureNotificationArgs struct {
 	Level cdptype.MemoryPressureLevel `json:"level"` // Memory pressure level of the notification.
 }
 
-// NetworkEnableArgs contains the arguments for networkEnable.
+// NewMemorySimulatePressureNotificationArgs initializes MemorySimulatePressureNotificationArgs with the required arguments.
+func NewMemorySimulatePressureNotificationArgs(level cdptype.MemoryPressureLevel) *MemorySimulatePressureNotificationArgs {
+	args := new(MemorySimulatePressureNotificationArgs)
+	args.Level = level
+	return args
+}
+
+// NetworkEnableArgs represents the arguments for Enable in the Network domain.
 type NetworkEnableArgs struct {
 	MaxTotalBufferSize    *int `json:"maxTotalBufferSize,omitempty"`    // Buffer size in bytes to use when preserving network payloads (XHRs, etc).
 	MaxResourceBufferSize *int `json:"maxResourceBufferSize,omitempty"` // Per-resource buffer size in bytes to use when preserving network payloads (XHRs, etc).
+}
+
+// NewNetworkEnableArgs initializes NetworkEnableArgs with the required arguments.
+func NewNetworkEnableArgs() *NetworkEnableArgs {
+	args := new(NetworkEnableArgs)
+
+	return args
 }
 
 // SetMaxTotalBufferSize sets the MaxTotalBufferSize optional argument. Buffer size in bytes to use when preserving network payloads (XHRs, etc).
@@ -1943,55 +3023,104 @@ func (a *NetworkEnableArgs) SetMaxResourceBufferSize(maxResourceBufferSize int) 
 	return a
 }
 
-// NetworkSetUserAgentOverrideArgs contains the arguments for networkSetUserAgentOverride.
+// NetworkSetUserAgentOverrideArgs represents the arguments for SetUserAgentOverride in the Network domain.
 type NetworkSetUserAgentOverrideArgs struct {
 	UserAgent string `json:"userAgent"` // User agent to use.
 }
 
-// NetworkSetExtraHTTPHeadersArgs contains the arguments for networkSetExtraHTTPHeaders.
+// NewNetworkSetUserAgentOverrideArgs initializes NetworkSetUserAgentOverrideArgs with the required arguments.
+func NewNetworkSetUserAgentOverrideArgs(userAgent string) *NetworkSetUserAgentOverrideArgs {
+	args := new(NetworkSetUserAgentOverrideArgs)
+	args.UserAgent = userAgent
+	return args
+}
+
+// NetworkSetExtraHTTPHeadersArgs represents the arguments for SetExtraHTTPHeaders in the Network domain.
 type NetworkSetExtraHTTPHeadersArgs struct {
 	Headers cdptype.NetworkHeaders `json:"headers"` // Map with extra HTTP headers.
 }
 
-// NetworkGetResponseBodyArgs contains the arguments for networkGetResponseBody.
+// NewNetworkSetExtraHTTPHeadersArgs initializes NetworkSetExtraHTTPHeadersArgs with the required arguments.
+func NewNetworkSetExtraHTTPHeadersArgs(headers cdptype.NetworkHeaders) *NetworkSetExtraHTTPHeadersArgs {
+	args := new(NetworkSetExtraHTTPHeadersArgs)
+	args.Headers = headers
+	return args
+}
+
+// NetworkGetResponseBodyArgs represents the arguments for GetResponseBody in the Network domain.
 type NetworkGetResponseBodyArgs struct {
 	RequestID cdptype.NetworkRequestID `json:"requestId"` // Identifier of the network request to get content for.
 }
 
-// NetworkGetResponseBodyReply contains the return values for networkGetResponseBody.
+// NewNetworkGetResponseBodyArgs initializes NetworkGetResponseBodyArgs with the required arguments.
+func NewNetworkGetResponseBodyArgs(requestID cdptype.NetworkRequestID) *NetworkGetResponseBodyArgs {
+	args := new(NetworkGetResponseBodyArgs)
+	args.RequestID = requestID
+	return args
+}
+
+// NetworkGetResponseBodyReply represents the return values for GetResponseBody in the Network domain.
 type NetworkGetResponseBodyReply struct {
 	Body          string `json:"body"`          // Response body.
 	Base64Encoded bool   `json:"base64Encoded"` // True, if content was sent as base64.
 }
 
-// NetworkSetBlockedURLsArgs contains the arguments for networkSetBlockedURLs.
+// NetworkSetBlockedURLsArgs represents the arguments for SetBlockedURLs in the Network domain.
 type NetworkSetBlockedURLsArgs struct {
 	Urls []string `json:"urls"` // URLs to block.
 }
 
-// NetworkReplayXHRArgs contains the arguments for networkReplayXHR.
+// NewNetworkSetBlockedURLsArgs initializes NetworkSetBlockedURLsArgs with the required arguments.
+func NewNetworkSetBlockedURLsArgs(urls []string) *NetworkSetBlockedURLsArgs {
+	args := new(NetworkSetBlockedURLsArgs)
+	args.Urls = urls
+	return args
+}
+
+// NetworkReplayXHRArgs represents the arguments for ReplayXHR in the Network domain.
 type NetworkReplayXHRArgs struct {
 	RequestID cdptype.NetworkRequestID `json:"requestId"` // Identifier of XHR to replay.
 }
 
-// NetworkSetMonitoringXHREnabledArgs contains the arguments for networkSetMonitoringXHREnabled.
+// NewNetworkReplayXHRArgs initializes NetworkReplayXHRArgs with the required arguments.
+func NewNetworkReplayXHRArgs(requestID cdptype.NetworkRequestID) *NetworkReplayXHRArgs {
+	args := new(NetworkReplayXHRArgs)
+	args.RequestID = requestID
+	return args
+}
+
+// NetworkSetMonitoringXHREnabledArgs represents the arguments for SetMonitoringXHREnabled in the Network domain.
 type NetworkSetMonitoringXHREnabledArgs struct {
 	Enabled bool `json:"enabled"` // Monitoring enabled state.
 }
 
-// NetworkCanClearBrowserCacheReply contains the return values for networkCanClearBrowserCache.
+// NewNetworkSetMonitoringXHREnabledArgs initializes NetworkSetMonitoringXHREnabledArgs with the required arguments.
+func NewNetworkSetMonitoringXHREnabledArgs(enabled bool) *NetworkSetMonitoringXHREnabledArgs {
+	args := new(NetworkSetMonitoringXHREnabledArgs)
+	args.Enabled = enabled
+	return args
+}
+
+// NetworkCanClearBrowserCacheReply represents the return values for CanClearBrowserCache in the Network domain.
 type NetworkCanClearBrowserCacheReply struct {
 	Result bool `json:"result"` // True if browser cache can be cleared.
 }
 
-// NetworkCanClearBrowserCookiesReply contains the return values for networkCanClearBrowserCookies.
+// NetworkCanClearBrowserCookiesReply represents the return values for CanClearBrowserCookies in the Network domain.
 type NetworkCanClearBrowserCookiesReply struct {
 	Result bool `json:"result"` // True if browser cookies can be cleared.
 }
 
-// NetworkGetCookiesArgs contains the arguments for networkGetCookies.
+// NetworkGetCookiesArgs represents the arguments for GetCookies in the Network domain.
 type NetworkGetCookiesArgs struct {
 	Urls []string `json:"urls,omitempty"` // The list of URLs for which applicable cookies will be fetched
+}
+
+// NewNetworkGetCookiesArgs initializes NetworkGetCookiesArgs with the required arguments.
+func NewNetworkGetCookiesArgs() *NetworkGetCookiesArgs {
+	args := new(NetworkGetCookiesArgs)
+
+	return args
 }
 
 // SetUrls sets the Urls optional argument. The list of URLs for which applicable cookies will be fetched
@@ -2000,23 +3129,31 @@ func (a *NetworkGetCookiesArgs) SetUrls(urls []string) *NetworkGetCookiesArgs {
 	return a
 }
 
-// NetworkGetCookiesReply contains the return values for networkGetCookies.
+// NetworkGetCookiesReply represents the return values for GetCookies in the Network domain.
 type NetworkGetCookiesReply struct {
 	Cookies []cdptype.NetworkCookie `json:"cookies"` // Array of cookie objects.
 }
 
-// NetworkGetAllCookiesReply contains the return values for networkGetAllCookies.
+// NetworkGetAllCookiesReply represents the return values for GetAllCookies in the Network domain.
 type NetworkGetAllCookiesReply struct {
 	Cookies []cdptype.NetworkCookie `json:"cookies"` // Array of cookie objects.
 }
 
-// NetworkDeleteCookieArgs contains the arguments for networkDeleteCookie.
+// NetworkDeleteCookieArgs represents the arguments for DeleteCookie in the Network domain.
 type NetworkDeleteCookieArgs struct {
 	CookieName string `json:"cookieName"` // Name of the cookie to remove.
 	URL        string `json:"url"`        // URL to match cooke domain and path.
 }
 
-// NetworkSetCookieArgs contains the arguments for networkSetCookie.
+// NewNetworkDeleteCookieArgs initializes NetworkDeleteCookieArgs with the required arguments.
+func NewNetworkDeleteCookieArgs(cookieName string, url string) *NetworkDeleteCookieArgs {
+	args := new(NetworkDeleteCookieArgs)
+	args.CookieName = cookieName
+	args.URL = url
+	return args
+}
+
+// NetworkSetCookieArgs represents the arguments for SetCookie in the Network domain.
 type NetworkSetCookieArgs struct {
 	URL            string                        `json:"url"`                      // The request-URI to associate with the setting of the cookie. This value can affect the default domain and path values of the created cookie.
 	Name           string                        `json:"name"`                     // The name of the cookie.
@@ -2027,6 +3164,15 @@ type NetworkSetCookieArgs struct {
 	HTTPOnly       *bool                         `json:"httpOnly,omitempty"`       // Defaults to false.
 	SameSite       cdptype.NetworkCookieSameSite `json:"sameSite,omitempty"`       // Defaults to browser default behavior.
 	ExpirationDate cdptype.NetworkTimestamp      `json:"expirationDate,omitempty"` // If omitted, the cookie becomes a session cookie.
+}
+
+// NewNetworkSetCookieArgs initializes NetworkSetCookieArgs with the required arguments.
+func NewNetworkSetCookieArgs(url string, name string, value string) *NetworkSetCookieArgs {
+	args := new(NetworkSetCookieArgs)
+	args.URL = url
+	args.Name = name
+	args.Value = value
+	return args
 }
 
 // SetDomain sets the Domain optional argument. If omitted, the cookie becomes a host-only cookie.
@@ -2065,17 +3211,17 @@ func (a *NetworkSetCookieArgs) SetExpirationDate(expirationDate cdptype.NetworkT
 	return a
 }
 
-// NetworkSetCookieReply contains the return values for networkSetCookie.
+// NetworkSetCookieReply represents the return values for SetCookie in the Network domain.
 type NetworkSetCookieReply struct {
 	Success bool `json:"success"` // True if successfully set cookie.
 }
 
-// NetworkCanEmulateNetworkConditionsReply contains the return values for networkCanEmulateNetworkConditions.
+// NetworkCanEmulateNetworkConditionsReply represents the return values for CanEmulateNetworkConditions in the Network domain.
 type NetworkCanEmulateNetworkConditionsReply struct {
 	Result bool `json:"result"` // True if emulation of network conditions is supported.
 }
 
-// NetworkEmulateNetworkConditionsArgs contains the arguments for networkEmulateNetworkConditions.
+// NetworkEmulateNetworkConditionsArgs represents the arguments for EmulateNetworkConditions in the Network domain.
 type NetworkEmulateNetworkConditionsArgs struct {
 	Offline            bool                          `json:"offline"`                  // True to emulate internet disconnection.
 	Latency            float64                       `json:"latency"`                  // Additional latency (ms).
@@ -2084,62 +3230,129 @@ type NetworkEmulateNetworkConditionsArgs struct {
 	ConnectionType     cdptype.NetworkConnectionType `json:"connectionType,omitempty"` // Connection type if known.
 }
 
+// NewNetworkEmulateNetworkConditionsArgs initializes NetworkEmulateNetworkConditionsArgs with the required arguments.
+func NewNetworkEmulateNetworkConditionsArgs(offline bool, latency float64, downloadThroughput float64, uploadThroughput float64) *NetworkEmulateNetworkConditionsArgs {
+	args := new(NetworkEmulateNetworkConditionsArgs)
+	args.Offline = offline
+	args.Latency = latency
+	args.DownloadThroughput = downloadThroughput
+	args.UploadThroughput = uploadThroughput
+	return args
+}
+
 // SetConnectionType sets the ConnectionType optional argument. Connection type if known.
 func (a *NetworkEmulateNetworkConditionsArgs) SetConnectionType(connectionType cdptype.NetworkConnectionType) *NetworkEmulateNetworkConditionsArgs {
 	a.ConnectionType = connectionType
 	return a
 }
 
-// NetworkSetCacheDisabledArgs contains the arguments for networkSetCacheDisabled.
+// NetworkSetCacheDisabledArgs represents the arguments for SetCacheDisabled in the Network domain.
 type NetworkSetCacheDisabledArgs struct {
 	CacheDisabled bool `json:"cacheDisabled"` // Cache disabled state.
 }
 
-// NetworkSetBypassServiceWorkerArgs contains the arguments for networkSetBypassServiceWorker.
+// NewNetworkSetCacheDisabledArgs initializes NetworkSetCacheDisabledArgs with the required arguments.
+func NewNetworkSetCacheDisabledArgs(cacheDisabled bool) *NetworkSetCacheDisabledArgs {
+	args := new(NetworkSetCacheDisabledArgs)
+	args.CacheDisabled = cacheDisabled
+	return args
+}
+
+// NetworkSetBypassServiceWorkerArgs represents the arguments for SetBypassServiceWorker in the Network domain.
 type NetworkSetBypassServiceWorkerArgs struct {
 	Bypass bool `json:"bypass"` // Bypass service worker and load from network.
 }
 
-// NetworkSetDataSizeLimitsForTestArgs contains the arguments for networkSetDataSizeLimitsForTest.
+// NewNetworkSetBypassServiceWorkerArgs initializes NetworkSetBypassServiceWorkerArgs with the required arguments.
+func NewNetworkSetBypassServiceWorkerArgs(bypass bool) *NetworkSetBypassServiceWorkerArgs {
+	args := new(NetworkSetBypassServiceWorkerArgs)
+	args.Bypass = bypass
+	return args
+}
+
+// NetworkSetDataSizeLimitsForTestArgs represents the arguments for SetDataSizeLimitsForTest in the Network domain.
 type NetworkSetDataSizeLimitsForTestArgs struct {
 	MaxTotalSize    int `json:"maxTotalSize"`    // Maximum total buffer size.
 	MaxResourceSize int `json:"maxResourceSize"` // Maximum per-resource size.
 }
 
-// NetworkGetCertificateArgs contains the arguments for networkGetCertificate.
+// NewNetworkSetDataSizeLimitsForTestArgs initializes NetworkSetDataSizeLimitsForTestArgs with the required arguments.
+func NewNetworkSetDataSizeLimitsForTestArgs(maxTotalSize int, maxResourceSize int) *NetworkSetDataSizeLimitsForTestArgs {
+	args := new(NetworkSetDataSizeLimitsForTestArgs)
+	args.MaxTotalSize = maxTotalSize
+	args.MaxResourceSize = maxResourceSize
+	return args
+}
+
+// NetworkGetCertificateArgs represents the arguments for GetCertificate in the Network domain.
 type NetworkGetCertificateArgs struct {
 	Origin string `json:"origin"` // Origin to get certificate for.
 }
 
-// NetworkGetCertificateReply contains the return values for networkGetCertificate.
+// NewNetworkGetCertificateArgs initializes NetworkGetCertificateArgs with the required arguments.
+func NewNetworkGetCertificateArgs(origin string) *NetworkGetCertificateArgs {
+	args := new(NetworkGetCertificateArgs)
+	args.Origin = origin
+	return args
+}
+
+// NetworkGetCertificateReply represents the return values for GetCertificate in the Network domain.
 type NetworkGetCertificateReply struct {
 	TableNames []string `json:"tableNames"` //
 }
 
-// PageAddScriptToEvaluateOnLoadArgs contains the arguments for pageAddScriptToEvaluateOnLoad.
+// PageAddScriptToEvaluateOnLoadArgs represents the arguments for AddScriptToEvaluateOnLoad in the Page domain.
 type PageAddScriptToEvaluateOnLoadArgs struct {
 	ScriptSource string `json:"scriptSource"` //
 }
 
-// PageAddScriptToEvaluateOnLoadReply contains the return values for pageAddScriptToEvaluateOnLoad.
+// NewPageAddScriptToEvaluateOnLoadArgs initializes PageAddScriptToEvaluateOnLoadArgs with the required arguments.
+func NewPageAddScriptToEvaluateOnLoadArgs(scriptSource string) *PageAddScriptToEvaluateOnLoadArgs {
+	args := new(PageAddScriptToEvaluateOnLoadArgs)
+	args.ScriptSource = scriptSource
+	return args
+}
+
+// PageAddScriptToEvaluateOnLoadReply represents the return values for AddScriptToEvaluateOnLoad in the Page domain.
 type PageAddScriptToEvaluateOnLoadReply struct {
 	Identifier cdptype.PageScriptIdentifier `json:"identifier"` // Identifier of the added script.
 }
 
-// PageRemoveScriptToEvaluateOnLoadArgs contains the arguments for pageRemoveScriptToEvaluateOnLoad.
+// PageRemoveScriptToEvaluateOnLoadArgs represents the arguments for RemoveScriptToEvaluateOnLoad in the Page domain.
 type PageRemoveScriptToEvaluateOnLoadArgs struct {
 	Identifier cdptype.PageScriptIdentifier `json:"identifier"` //
 }
 
-// PageSetAutoAttachToCreatedPagesArgs contains the arguments for pageSetAutoAttachToCreatedPages.
+// NewPageRemoveScriptToEvaluateOnLoadArgs initializes PageRemoveScriptToEvaluateOnLoadArgs with the required arguments.
+func NewPageRemoveScriptToEvaluateOnLoadArgs(identifier cdptype.PageScriptIdentifier) *PageRemoveScriptToEvaluateOnLoadArgs {
+	args := new(PageRemoveScriptToEvaluateOnLoadArgs)
+	args.Identifier = identifier
+	return args
+}
+
+// PageSetAutoAttachToCreatedPagesArgs represents the arguments for SetAutoAttachToCreatedPages in the Page domain.
 type PageSetAutoAttachToCreatedPagesArgs struct {
 	AutoAttach bool `json:"autoAttach"` // If true, browser will open a new inspector window for every page created from this one.
 }
 
-// PageReloadArgs contains the arguments for pageReload.
+// NewPageSetAutoAttachToCreatedPagesArgs initializes PageSetAutoAttachToCreatedPagesArgs with the required arguments.
+func NewPageSetAutoAttachToCreatedPagesArgs(autoAttach bool) *PageSetAutoAttachToCreatedPagesArgs {
+	args := new(PageSetAutoAttachToCreatedPagesArgs)
+	args.AutoAttach = autoAttach
+	return args
+}
+
+// PageReloadArgs represents the arguments for Reload in the Page domain.
 type PageReloadArgs struct {
 	IgnoreCache            *bool   `json:"ignoreCache,omitempty"`            // If true, browser cache is ignored (as if the user pressed Shift+refresh).
 	ScriptToEvaluateOnLoad *string `json:"scriptToEvaluateOnLoad,omitempty"` // If set, the script will be injected into all frames of the inspected page after reload.
+}
+
+// NewPageReloadArgs initializes PageReloadArgs with the required arguments.
+func NewPageReloadArgs() *PageReloadArgs {
+	args := new(PageReloadArgs)
+
+	return args
 }
 
 // SetIgnoreCache sets the IgnoreCache optional argument. If true, browser cache is ignored (as if the user pressed Shift+refresh).
@@ -2154,10 +3367,17 @@ func (a *PageReloadArgs) SetScriptToEvaluateOnLoad(scriptToEvaluateOnLoad string
 	return a
 }
 
-// PageNavigateArgs contains the arguments for pageNavigate.
+// PageNavigateArgs represents the arguments for Navigate in the Page domain.
 type PageNavigateArgs struct {
 	URL      string  `json:"url"`                // URL to navigate the page to.
 	Referrer *string `json:"referrer,omitempty"` // Referrer URL.
+}
+
+// NewPageNavigateArgs initializes PageNavigateArgs with the required arguments.
+func NewPageNavigateArgs(url string) *PageNavigateArgs {
+	args := new(PageNavigateArgs)
+	args.URL = url
+	return args
 }
 
 // SetReferrer sets the Referrer optional argument. Referrer URL.
@@ -2166,57 +3386,89 @@ func (a *PageNavigateArgs) SetReferrer(referrer string) *PageNavigateArgs {
 	return a
 }
 
-// PageNavigateReply contains the return values for pageNavigate.
+// PageNavigateReply represents the return values for Navigate in the Page domain.
 type PageNavigateReply struct {
 	FrameID cdptype.PageFrameID `json:"frameId"` // Frame id that will be navigated.
 }
 
-// PageGetNavigationHistoryReply contains the return values for pageGetNavigationHistory.
+// PageGetNavigationHistoryReply represents the return values for GetNavigationHistory in the Page domain.
 type PageGetNavigationHistoryReply struct {
 	CurrentIndex int                           `json:"currentIndex"` // Index of the current navigation history entry.
 	Entries      []cdptype.PageNavigationEntry `json:"entries"`      // Array of navigation history entries.
 }
 
-// PageNavigateToHistoryEntryArgs contains the arguments for pageNavigateToHistoryEntry.
+// PageNavigateToHistoryEntryArgs represents the arguments for NavigateToHistoryEntry in the Page domain.
 type PageNavigateToHistoryEntryArgs struct {
 	EntryID int `json:"entryId"` // Unique id of the entry to navigate to.
 }
 
-// PageGetCookiesReply contains the return values for pageGetCookies.
+// NewPageNavigateToHistoryEntryArgs initializes PageNavigateToHistoryEntryArgs with the required arguments.
+func NewPageNavigateToHistoryEntryArgs(entryID int) *PageNavigateToHistoryEntryArgs {
+	args := new(PageNavigateToHistoryEntryArgs)
+	args.EntryID = entryID
+	return args
+}
+
+// PageGetCookiesReply represents the return values for GetCookies in the Page domain.
 type PageGetCookiesReply struct {
 	Cookies []cdptype.NetworkCookie `json:"cookies"` // Array of cookie objects.
 }
 
-// PageDeleteCookieArgs contains the arguments for pageDeleteCookie.
+// PageDeleteCookieArgs represents the arguments for DeleteCookie in the Page domain.
 type PageDeleteCookieArgs struct {
 	CookieName string `json:"cookieName"` // Name of the cookie to remove.
 	URL        string `json:"url"`        // URL to match cooke domain and path.
 }
 
-// PageGetResourceTreeReply contains the return values for pageGetResourceTree.
+// NewPageDeleteCookieArgs initializes PageDeleteCookieArgs with the required arguments.
+func NewPageDeleteCookieArgs(cookieName string, url string) *PageDeleteCookieArgs {
+	args := new(PageDeleteCookieArgs)
+	args.CookieName = cookieName
+	args.URL = url
+	return args
+}
+
+// PageGetResourceTreeReply represents the return values for GetResourceTree in the Page domain.
 type PageGetResourceTreeReply struct {
 	FrameTree cdptype.PageFrameResourceTree `json:"frameTree"` // Present frame / resource tree structure.
 }
 
-// PageGetResourceContentArgs contains the arguments for pageGetResourceContent.
+// PageGetResourceContentArgs represents the arguments for GetResourceContent in the Page domain.
 type PageGetResourceContentArgs struct {
 	FrameID cdptype.PageFrameID `json:"frameId"` // Frame id to get resource for.
 	URL     string              `json:"url"`     // URL of the resource to get content for.
 }
 
-// PageGetResourceContentReply contains the return values for pageGetResourceContent.
+// NewPageGetResourceContentArgs initializes PageGetResourceContentArgs with the required arguments.
+func NewPageGetResourceContentArgs(frameID cdptype.PageFrameID, url string) *PageGetResourceContentArgs {
+	args := new(PageGetResourceContentArgs)
+	args.FrameID = frameID
+	args.URL = url
+	return args
+}
+
+// PageGetResourceContentReply represents the return values for GetResourceContent in the Page domain.
 type PageGetResourceContentReply struct {
 	Content       string `json:"content"`       // Resource content.
 	Base64Encoded bool   `json:"base64Encoded"` // True, if content was served as base64.
 }
 
-// PageSearchInResourceArgs contains the arguments for pageSearchInResource.
+// PageSearchInResourceArgs represents the arguments for SearchInResource in the Page domain.
 type PageSearchInResourceArgs struct {
 	FrameID       cdptype.PageFrameID `json:"frameId"`                 // Frame id for resource to search in.
 	URL           string              `json:"url"`                     // URL of the resource to search in.
 	Query         string              `json:"query"`                   // String to search for.
 	CaseSensitive *bool               `json:"caseSensitive,omitempty"` // If true, search is case sensitive.
 	IsRegex       *bool               `json:"isRegex,omitempty"`       // If true, treats string parameter as regex.
+}
+
+// NewPageSearchInResourceArgs initializes PageSearchInResourceArgs with the required arguments.
+func NewPageSearchInResourceArgs(frameID cdptype.PageFrameID, url string, query string) *PageSearchInResourceArgs {
+	args := new(PageSearchInResourceArgs)
+	args.FrameID = frameID
+	args.URL = url
+	args.Query = query
+	return args
 }
 
 // SetCaseSensitive sets the CaseSensitive optional argument. If true, search is case sensitive.
@@ -2231,18 +3483,26 @@ func (a *PageSearchInResourceArgs) SetIsRegex(isRegex bool) *PageSearchInResourc
 	return a
 }
 
-// PageSearchInResourceReply contains the return values for pageSearchInResource.
+// PageSearchInResourceReply represents the return values for SearchInResource in the Page domain.
 type PageSearchInResourceReply struct {
 	Result []cdptype.DebuggerSearchMatch `json:"result"` // List of search matches.
 }
 
-// PageSetDocumentContentArgs contains the arguments for pageSetDocumentContent.
+// PageSetDocumentContentArgs represents the arguments for SetDocumentContent in the Page domain.
 type PageSetDocumentContentArgs struct {
 	FrameID cdptype.PageFrameID `json:"frameId"` // Frame id to set HTML for.
 	HTML    string              `json:"html"`    // HTML content to set.
 }
 
-// PageSetDeviceMetricsOverrideArgs contains the arguments for pageSetDeviceMetricsOverride.
+// NewPageSetDocumentContentArgs initializes PageSetDocumentContentArgs with the required arguments.
+func NewPageSetDocumentContentArgs(frameID cdptype.PageFrameID, html string) *PageSetDocumentContentArgs {
+	args := new(PageSetDocumentContentArgs)
+	args.FrameID = frameID
+	args.HTML = html
+	return args
+}
+
+// PageSetDeviceMetricsOverrideArgs represents the arguments for SetDeviceMetricsOverride in the Page domain.
 type PageSetDeviceMetricsOverrideArgs struct {
 	Width             int                                 `json:"width"`                       // Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
 	Height            int                                 `json:"height"`                      // Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
@@ -2257,6 +3517,17 @@ type PageSetDeviceMetricsOverrideArgs struct {
 	PositionX         *int                                `json:"positionX,omitempty"`         // Overriding view X position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
 	PositionY         *int                                `json:"positionY,omitempty"`         // Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
 	ScreenOrientation *cdptype.EmulationScreenOrientation `json:"screenOrientation,omitempty"` // Screen orientation override.
+}
+
+// NewPageSetDeviceMetricsOverrideArgs initializes PageSetDeviceMetricsOverrideArgs with the required arguments.
+func NewPageSetDeviceMetricsOverrideArgs(width int, height int, deviceScaleFactor float64, mobile bool, fitWindow bool) *PageSetDeviceMetricsOverrideArgs {
+	args := new(PageSetDeviceMetricsOverrideArgs)
+	args.Width = width
+	args.Height = height
+	args.DeviceScaleFactor = deviceScaleFactor
+	args.Mobile = mobile
+	args.FitWindow = fitWindow
+	return args
 }
 
 // SetScale sets the Scale optional argument. Scale to apply to resulting view image. Ignored in |fitWindow| mode.
@@ -2307,11 +3578,18 @@ func (a *PageSetDeviceMetricsOverrideArgs) SetScreenOrientation(screenOrientatio
 	return a
 }
 
-// PageSetGeolocationOverrideArgs contains the arguments for pageSetGeolocationOverride.
+// PageSetGeolocationOverrideArgs represents the arguments for SetGeolocationOverride in the Page domain.
 type PageSetGeolocationOverrideArgs struct {
 	Latitude  *float64 `json:"latitude,omitempty"`  // Mock latitude
 	Longitude *float64 `json:"longitude,omitempty"` // Mock longitude
 	Accuracy  *float64 `json:"accuracy,omitempty"`  // Mock accuracy
+}
+
+// NewPageSetGeolocationOverrideArgs initializes PageSetGeolocationOverrideArgs with the required arguments.
+func NewPageSetGeolocationOverrideArgs() *PageSetGeolocationOverrideArgs {
+	args := new(PageSetGeolocationOverrideArgs)
+
+	return args
 }
 
 // SetLatitude sets the Latitude optional argument. Mock latitude
@@ -2332,17 +3610,33 @@ func (a *PageSetGeolocationOverrideArgs) SetAccuracy(accuracy float64) *PageSetG
 	return a
 }
 
-// PageSetDeviceOrientationOverrideArgs contains the arguments for pageSetDeviceOrientationOverride.
+// PageSetDeviceOrientationOverrideArgs represents the arguments for SetDeviceOrientationOverride in the Page domain.
 type PageSetDeviceOrientationOverrideArgs struct {
 	Alpha float64 `json:"alpha"` // Mock alpha
 	Beta  float64 `json:"beta"`  // Mock beta
 	Gamma float64 `json:"gamma"` // Mock gamma
 }
 
-// PageSetTouchEmulationEnabledArgs contains the arguments for pageSetTouchEmulationEnabled.
+// NewPageSetDeviceOrientationOverrideArgs initializes PageSetDeviceOrientationOverrideArgs with the required arguments.
+func NewPageSetDeviceOrientationOverrideArgs(alpha float64, beta float64, gamma float64) *PageSetDeviceOrientationOverrideArgs {
+	args := new(PageSetDeviceOrientationOverrideArgs)
+	args.Alpha = alpha
+	args.Beta = beta
+	args.Gamma = gamma
+	return args
+}
+
+// PageSetTouchEmulationEnabledArgs represents the arguments for SetTouchEmulationEnabled in the Page domain.
 type PageSetTouchEmulationEnabledArgs struct {
 	Enabled       bool    `json:"enabled"`                 // Whether the touch event emulation should be enabled.
 	Configuration *string `json:"configuration,omitempty"` // Touch/gesture events configuration. Default: current platform.
+}
+
+// NewPageSetTouchEmulationEnabledArgs initializes PageSetTouchEmulationEnabledArgs with the required arguments.
+func NewPageSetTouchEmulationEnabledArgs(enabled bool) *PageSetTouchEmulationEnabledArgs {
+	args := new(PageSetTouchEmulationEnabledArgs)
+	args.Enabled = enabled
+	return args
 }
 
 // SetConfiguration sets the Configuration optional argument. Touch/gesture events configuration. Default: current platform.
@@ -2351,11 +3645,18 @@ func (a *PageSetTouchEmulationEnabledArgs) SetConfiguration(configuration string
 	return a
 }
 
-// PageCaptureScreenshotArgs contains the arguments for pageCaptureScreenshot.
+// PageCaptureScreenshotArgs represents the arguments for CaptureScreenshot in the Page domain.
 type PageCaptureScreenshotArgs struct {
 	Format      *string `json:"format,omitempty"`      // Image compression format (defaults to png).
 	Quality     *int    `json:"quality,omitempty"`     // Compression quality from range [0..100] (jpeg only).
 	FromSurface *bool   `json:"fromSurface,omitempty"` // Capture the screenshot from the surface, rather than the view. Defaults to false.
+}
+
+// NewPageCaptureScreenshotArgs initializes PageCaptureScreenshotArgs with the required arguments.
+func NewPageCaptureScreenshotArgs() *PageCaptureScreenshotArgs {
+	args := new(PageCaptureScreenshotArgs)
+
+	return args
 }
 
 // SetFormat sets the Format optional argument. Image compression format (defaults to png).
@@ -2376,23 +3677,30 @@ func (a *PageCaptureScreenshotArgs) SetFromSurface(fromSurface bool) *PageCaptur
 	return a
 }
 
-// PageCaptureScreenshotReply contains the return values for pageCaptureScreenshot.
+// PageCaptureScreenshotReply represents the return values for CaptureScreenshot in the Page domain.
 type PageCaptureScreenshotReply struct {
 	Data []byte `json:"data"` // Base64-encoded image data.
 }
 
-// PagePrintToPDFReply contains the return values for pagePrintToPDF.
+// PagePrintToPDFReply represents the return values for PrintToPDF in the Page domain.
 type PagePrintToPDFReply struct {
 	Data []byte `json:"data"` // Base64-encoded pdf data.
 }
 
-// PageStartScreencastArgs contains the arguments for pageStartScreencast.
+// PageStartScreencastArgs represents the arguments for StartScreencast in the Page domain.
 type PageStartScreencastArgs struct {
 	Format        *string `json:"format,omitempty"`        // Image compression format.
 	Quality       *int    `json:"quality,omitempty"`       // Compression quality from range [0..100].
 	MaxWidth      *int    `json:"maxWidth,omitempty"`      // Maximum screenshot width.
 	MaxHeight     *int    `json:"maxHeight,omitempty"`     // Maximum screenshot height.
 	EveryNthFrame *int    `json:"everyNthFrame,omitempty"` // Send every n-th frame.
+}
+
+// NewPageStartScreencastArgs initializes PageStartScreencastArgs with the required arguments.
+func NewPageStartScreencastArgs() *PageStartScreencastArgs {
+	args := new(PageStartScreencastArgs)
+
+	return args
 }
 
 // SetFormat sets the Format optional argument. Image compression format.
@@ -2425,15 +3733,29 @@ func (a *PageStartScreencastArgs) SetEveryNthFrame(everyNthFrame int) *PageStart
 	return a
 }
 
-// PageScreencastFrameAckArgs contains the arguments for pageScreencastFrameAck.
+// PageScreencastFrameAckArgs represents the arguments for ScreencastFrameAck in the Page domain.
 type PageScreencastFrameAckArgs struct {
 	SessionID int `json:"sessionId"` // Frame number.
 }
 
-// PageHandleJavaScriptDialogArgs contains the arguments for pageHandleJavaScriptDialog.
+// NewPageScreencastFrameAckArgs initializes PageScreencastFrameAckArgs with the required arguments.
+func NewPageScreencastFrameAckArgs(sessionID int) *PageScreencastFrameAckArgs {
+	args := new(PageScreencastFrameAckArgs)
+	args.SessionID = sessionID
+	return args
+}
+
+// PageHandleJavaScriptDialogArgs represents the arguments for HandleJavaScriptDialog in the Page domain.
 type PageHandleJavaScriptDialogArgs struct {
 	Accept     bool    `json:"accept"`               // Whether to accept or dismiss the dialog.
 	PromptText *string `json:"promptText,omitempty"` // The text to enter into the dialog prompt before accepting. Used only if this is a prompt dialog.
+}
+
+// NewPageHandleJavaScriptDialogArgs initializes PageHandleJavaScriptDialogArgs with the required arguments.
+func NewPageHandleJavaScriptDialogArgs(accept bool) *PageHandleJavaScriptDialogArgs {
+	args := new(PageHandleJavaScriptDialogArgs)
+	args.Accept = accept
+	return args
 }
 
 // SetPromptText sets the PromptText optional argument. The text to enter into the dialog prompt before accepting. Used only if this is a prompt dialog.
@@ -2442,15 +3764,29 @@ func (a *PageHandleJavaScriptDialogArgs) SetPromptText(promptText string) *PageH
 	return a
 }
 
-// PageSetColorPickerEnabledArgs contains the arguments for pageSetColorPickerEnabled.
+// PageSetColorPickerEnabledArgs represents the arguments for SetColorPickerEnabled in the Page domain.
 type PageSetColorPickerEnabledArgs struct {
 	Enabled bool `json:"enabled"` // Shows / hides color picker
 }
 
-// PageConfigureOverlayArgs contains the arguments for pageConfigureOverlay.
+// NewPageSetColorPickerEnabledArgs initializes PageSetColorPickerEnabledArgs with the required arguments.
+func NewPageSetColorPickerEnabledArgs(enabled bool) *PageSetColorPickerEnabledArgs {
+	args := new(PageSetColorPickerEnabledArgs)
+	args.Enabled = enabled
+	return args
+}
+
+// PageConfigureOverlayArgs represents the arguments for ConfigureOverlay in the Page domain.
 type PageConfigureOverlayArgs struct {
 	Suspended *bool   `json:"suspended,omitempty"` // Whether overlay should be suspended and not consume any resources.
 	Message   *string `json:"message,omitempty"`   // Overlay message to display.
+}
+
+// NewPageConfigureOverlayArgs initializes PageConfigureOverlayArgs with the required arguments.
+func NewPageConfigureOverlayArgs() *PageConfigureOverlayArgs {
+	args := new(PageConfigureOverlayArgs)
+
+	return args
 }
 
 // SetSuspended sets the Suspended optional argument. Whether overlay should be suspended and not consume any resources.
@@ -2465,77 +3801,134 @@ func (a *PageConfigureOverlayArgs) SetMessage(message string) *PageConfigureOver
 	return a
 }
 
-// PageGetAppManifestReply contains the return values for pageGetAppManifest.
+// PageGetAppManifestReply represents the return values for GetAppManifest in the Page domain.
 type PageGetAppManifestReply struct {
 	URL    string                         `json:"url"`            // Manifest location.
 	Errors []cdptype.PageAppManifestError `json:"errors"`         //
 	Data   *string                        `json:"data,omitempty"` // Manifest content.
 }
 
-// PageSetControlNavigationsArgs contains the arguments for pageSetControlNavigations.
+// PageSetControlNavigationsArgs represents the arguments for SetControlNavigations in the Page domain.
 type PageSetControlNavigationsArgs struct {
 	Enabled bool `json:"enabled"` //
 }
 
-// PageProcessNavigationArgs contains the arguments for pageProcessNavigation.
+// NewPageSetControlNavigationsArgs initializes PageSetControlNavigationsArgs with the required arguments.
+func NewPageSetControlNavigationsArgs(enabled bool) *PageSetControlNavigationsArgs {
+	args := new(PageSetControlNavigationsArgs)
+	args.Enabled = enabled
+	return args
+}
+
+// PageProcessNavigationArgs represents the arguments for ProcessNavigation in the Page domain.
 type PageProcessNavigationArgs struct {
 	Response     cdptype.PageNavigationResponse `json:"response"`     //
 	NavigationID int                            `json:"navigationId"` //
 }
 
-// PageGetLayoutMetricsReply contains the return values for pageGetLayoutMetrics.
+// NewPageProcessNavigationArgs initializes PageProcessNavigationArgs with the required arguments.
+func NewPageProcessNavigationArgs(response cdptype.PageNavigationResponse, navigationID int) *PageProcessNavigationArgs {
+	args := new(PageProcessNavigationArgs)
+	args.Response = response
+	args.NavigationID = navigationID
+	return args
+}
+
+// PageGetLayoutMetricsReply represents the return values for GetLayoutMetrics in the Page domain.
 type PageGetLayoutMetricsReply struct {
 	LayoutViewport cdptype.PageLayoutViewport `json:"layoutViewport"` // Metrics relating to the layout viewport.
 	VisualViewport cdptype.PageVisualViewport `json:"visualViewport"` // Metrics relating to the visual viewport.
 	ContentSize    cdptype.DOMRect            `json:"contentSize"`    // Size of scrollable area.
 }
 
-// ProfilerSetSamplingIntervalArgs contains the arguments for profilerSetSamplingInterval.
+// ProfilerSetSamplingIntervalArgs represents the arguments for SetSamplingInterval in the Profiler domain.
 type ProfilerSetSamplingIntervalArgs struct {
 	Interval int `json:"interval"` // New sampling interval in microseconds.
 }
 
-// ProfilerStopReply contains the return values for profilerStop.
+// NewProfilerSetSamplingIntervalArgs initializes ProfilerSetSamplingIntervalArgs with the required arguments.
+func NewProfilerSetSamplingIntervalArgs(interval int) *ProfilerSetSamplingIntervalArgs {
+	args := new(ProfilerSetSamplingIntervalArgs)
+	args.Interval = interval
+	return args
+}
+
+// ProfilerStopReply represents the return values for Stop in the Profiler domain.
 type ProfilerStopReply struct {
 	Profile cdptype.ProfilerProfile `json:"profile"` // Recorded profile.
 }
 
-// ProfilerTakePreciseCoverageReply contains the return values for profilerTakePreciseCoverage.
+// ProfilerTakePreciseCoverageReply represents the return values for TakePreciseCoverage in the Profiler domain.
 type ProfilerTakePreciseCoverageReply struct {
 	Result []cdptype.ProfilerScriptCoverage `json:"result"` // Coverage data for the current isolate.
 }
 
-// ProfilerGetBestEffortCoverageReply contains the return values for profilerGetBestEffortCoverage.
+// ProfilerGetBestEffortCoverageReply represents the return values for GetBestEffortCoverage in the Profiler domain.
 type ProfilerGetBestEffortCoverageReply struct {
 	Result []cdptype.ProfilerScriptCoverage `json:"result"` // Coverage data for the current isolate.
 }
 
-// RenderingSetShowPaintRectsArgs contains the arguments for renderingSetShowPaintRects.
+// RenderingSetShowPaintRectsArgs represents the arguments for SetShowPaintRects in the Rendering domain.
 type RenderingSetShowPaintRectsArgs struct {
 	Result bool `json:"result"` // True for showing paint rectangles
 }
 
-// RenderingSetShowDebugBordersArgs contains the arguments for renderingSetShowDebugBorders.
+// NewRenderingSetShowPaintRectsArgs initializes RenderingSetShowPaintRectsArgs with the required arguments.
+func NewRenderingSetShowPaintRectsArgs(result bool) *RenderingSetShowPaintRectsArgs {
+	args := new(RenderingSetShowPaintRectsArgs)
+	args.Result = result
+	return args
+}
+
+// RenderingSetShowDebugBordersArgs represents the arguments for SetShowDebugBorders in the Rendering domain.
 type RenderingSetShowDebugBordersArgs struct {
 	Show bool `json:"show"` // True for showing debug borders
 }
 
-// RenderingSetShowFPSCounterArgs contains the arguments for renderingSetShowFPSCounter.
+// NewRenderingSetShowDebugBordersArgs initializes RenderingSetShowDebugBordersArgs with the required arguments.
+func NewRenderingSetShowDebugBordersArgs(show bool) *RenderingSetShowDebugBordersArgs {
+	args := new(RenderingSetShowDebugBordersArgs)
+	args.Show = show
+	return args
+}
+
+// RenderingSetShowFPSCounterArgs represents the arguments for SetShowFPSCounter in the Rendering domain.
 type RenderingSetShowFPSCounterArgs struct {
 	Show bool `json:"show"` // True for showing the FPS counter
 }
 
-// RenderingSetShowScrollBottleneckRectsArgs contains the arguments for renderingSetShowScrollBottleneckRects.
+// NewRenderingSetShowFPSCounterArgs initializes RenderingSetShowFPSCounterArgs with the required arguments.
+func NewRenderingSetShowFPSCounterArgs(show bool) *RenderingSetShowFPSCounterArgs {
+	args := new(RenderingSetShowFPSCounterArgs)
+	args.Show = show
+	return args
+}
+
+// RenderingSetShowScrollBottleneckRectsArgs represents the arguments for SetShowScrollBottleneckRects in the Rendering domain.
 type RenderingSetShowScrollBottleneckRectsArgs struct {
 	Show bool `json:"show"` // True for showing scroll bottleneck rects
 }
 
-// RenderingSetShowViewportSizeOnResizeArgs contains the arguments for renderingSetShowViewportSizeOnResize.
+// NewRenderingSetShowScrollBottleneckRectsArgs initializes RenderingSetShowScrollBottleneckRectsArgs with the required arguments.
+func NewRenderingSetShowScrollBottleneckRectsArgs(show bool) *RenderingSetShowScrollBottleneckRectsArgs {
+	args := new(RenderingSetShowScrollBottleneckRectsArgs)
+	args.Show = show
+	return args
+}
+
+// RenderingSetShowViewportSizeOnResizeArgs represents the arguments for SetShowViewportSizeOnResize in the Rendering domain.
 type RenderingSetShowViewportSizeOnResizeArgs struct {
 	Show bool `json:"show"` // Whether to paint size or not.
 }
 
-// RuntimeEvaluateArgs contains the arguments for runtimeEvaluate.
+// NewRenderingSetShowViewportSizeOnResizeArgs initializes RenderingSetShowViewportSizeOnResizeArgs with the required arguments.
+func NewRenderingSetShowViewportSizeOnResizeArgs(show bool) *RenderingSetShowViewportSizeOnResizeArgs {
+	args := new(RenderingSetShowViewportSizeOnResizeArgs)
+	args.Show = show
+	return args
+}
+
+// RuntimeEvaluateArgs represents the arguments for Evaluate in the Runtime domain.
 type RuntimeEvaluateArgs struct {
 	Expression            string                             `json:"expression"`                      // Expression to evaluate.
 	ObjectGroup           *string                            `json:"objectGroup,omitempty"`           // Symbolic group name that can be used to release multiple objects.
@@ -2546,6 +3939,13 @@ type RuntimeEvaluateArgs struct {
 	GeneratePreview       *bool                              `json:"generatePreview,omitempty"`       // Whether preview should be generated for the result.
 	UserGesture           *bool                              `json:"userGesture,omitempty"`           // Whether execution should be treated as initiated by user in the UI.
 	AwaitPromise          *bool                              `json:"awaitPromise,omitempty"`          // Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
+}
+
+// NewRuntimeEvaluateArgs initializes RuntimeEvaluateArgs with the required arguments.
+func NewRuntimeEvaluateArgs(expression string) *RuntimeEvaluateArgs {
+	args := new(RuntimeEvaluateArgs)
+	args.Expression = expression
+	return args
 }
 
 // SetObjectGroup sets the ObjectGroup optional argument. Symbolic group name that can be used to release multiple objects.
@@ -2596,17 +3996,24 @@ func (a *RuntimeEvaluateArgs) SetAwaitPromise(awaitPromise bool) *RuntimeEvaluat
 	return a
 }
 
-// RuntimeEvaluateReply contains the return values for runtimeEvaluate.
+// RuntimeEvaluateReply represents the return values for Evaluate in the Runtime domain.
 type RuntimeEvaluateReply struct {
 	Result           cdptype.RuntimeRemoteObject      `json:"result"`                     // Evaluation result.
 	ExceptionDetails *cdptype.RuntimeExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details.
 }
 
-// RuntimeAwaitPromiseArgs contains the arguments for runtimeAwaitPromise.
+// RuntimeAwaitPromiseArgs represents the arguments for AwaitPromise in the Runtime domain.
 type RuntimeAwaitPromiseArgs struct {
 	PromiseObjectID cdptype.RuntimeRemoteObjectID `json:"promiseObjectId"`           // Identifier of the promise.
 	ReturnByValue   *bool                         `json:"returnByValue,omitempty"`   // Whether the result is expected to be a JSON object that should be sent by value.
 	GeneratePreview *bool                         `json:"generatePreview,omitempty"` // Whether preview should be generated for the result.
+}
+
+// NewRuntimeAwaitPromiseArgs initializes RuntimeAwaitPromiseArgs with the required arguments.
+func NewRuntimeAwaitPromiseArgs(promiseObjectID cdptype.RuntimeRemoteObjectID) *RuntimeAwaitPromiseArgs {
+	args := new(RuntimeAwaitPromiseArgs)
+	args.PromiseObjectID = promiseObjectID
+	return args
 }
 
 // SetReturnByValue sets the ReturnByValue optional argument. Whether the result is expected to be a JSON object that should be sent by value.
@@ -2621,13 +4028,13 @@ func (a *RuntimeAwaitPromiseArgs) SetGeneratePreview(generatePreview bool) *Runt
 	return a
 }
 
-// RuntimeAwaitPromiseReply contains the return values for runtimeAwaitPromise.
+// RuntimeAwaitPromiseReply represents the return values for AwaitPromise in the Runtime domain.
 type RuntimeAwaitPromiseReply struct {
 	Result           cdptype.RuntimeRemoteObject      `json:"result"`                     // Promise result. Will contain rejected value if promise was rejected.
 	ExceptionDetails *cdptype.RuntimeExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details if stack strace is available.
 }
 
-// RuntimeCallFunctionOnArgs contains the arguments for runtimeCallFunctionOn.
+// RuntimeCallFunctionOnArgs represents the arguments for CallFunctionOn in the Runtime domain.
 type RuntimeCallFunctionOnArgs struct {
 	ObjectID            cdptype.RuntimeRemoteObjectID `json:"objectId"`                  // Identifier of the object to call function on.
 	FunctionDeclaration string                        `json:"functionDeclaration"`       // Declaration of the function to call.
@@ -2637,6 +4044,14 @@ type RuntimeCallFunctionOnArgs struct {
 	GeneratePreview     *bool                         `json:"generatePreview,omitempty"` // Whether preview should be generated for the result.
 	UserGesture         *bool                         `json:"userGesture,omitempty"`     // Whether execution should be treated as initiated by user in the UI.
 	AwaitPromise        *bool                         `json:"awaitPromise,omitempty"`    // Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
+}
+
+// NewRuntimeCallFunctionOnArgs initializes RuntimeCallFunctionOnArgs with the required arguments.
+func NewRuntimeCallFunctionOnArgs(objectID cdptype.RuntimeRemoteObjectID, functionDeclaration string) *RuntimeCallFunctionOnArgs {
+	args := new(RuntimeCallFunctionOnArgs)
+	args.ObjectID = objectID
+	args.FunctionDeclaration = functionDeclaration
+	return args
 }
 
 // SetArguments sets the Arguments optional argument. Call arguments. All call arguments must belong to the same JavaScript world as the target object.
@@ -2675,18 +4090,25 @@ func (a *RuntimeCallFunctionOnArgs) SetAwaitPromise(awaitPromise bool) *RuntimeC
 	return a
 }
 
-// RuntimeCallFunctionOnReply contains the return values for runtimeCallFunctionOn.
+// RuntimeCallFunctionOnReply represents the return values for CallFunctionOn in the Runtime domain.
 type RuntimeCallFunctionOnReply struct {
 	Result           cdptype.RuntimeRemoteObject      `json:"result"`                     // Call result.
 	ExceptionDetails *cdptype.RuntimeExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details.
 }
 
-// RuntimeGetPropertiesArgs contains the arguments for runtimeGetProperties.
+// RuntimeGetPropertiesArgs represents the arguments for GetProperties in the Runtime domain.
 type RuntimeGetPropertiesArgs struct {
 	ObjectID               cdptype.RuntimeRemoteObjectID `json:"objectId"`                         // Identifier of the object to return properties for.
 	OwnProperties          *bool                         `json:"ownProperties,omitempty"`          // If true, returns properties belonging only to the element itself, not to its prototype chain.
 	AccessorPropertiesOnly *bool                         `json:"accessorPropertiesOnly,omitempty"` // If true, returns accessor properties (with getter/setter) only; internal properties are not returned either.
 	GeneratePreview        *bool                         `json:"generatePreview,omitempty"`        // Whether preview should be generated for the results.
+}
+
+// NewRuntimeGetPropertiesArgs initializes RuntimeGetPropertiesArgs with the required arguments.
+func NewRuntimeGetPropertiesArgs(objectID cdptype.RuntimeRemoteObjectID) *RuntimeGetPropertiesArgs {
+	args := new(RuntimeGetPropertiesArgs)
+	args.ObjectID = objectID
+	return args
 }
 
 // SetOwnProperties sets the OwnProperties optional argument. If true, returns properties belonging only to the element itself, not to its prototype chain.
@@ -2707,34 +4129,64 @@ func (a *RuntimeGetPropertiesArgs) SetGeneratePreview(generatePreview bool) *Run
 	return a
 }
 
-// RuntimeGetPropertiesReply contains the return values for runtimeGetProperties.
+// RuntimeGetPropertiesReply represents the return values for GetProperties in the Runtime domain.
 type RuntimeGetPropertiesReply struct {
 	Result             []cdptype.RuntimePropertyDescriptor         `json:"result"`                       // Object properties.
 	InternalProperties []cdptype.RuntimeInternalPropertyDescriptor `json:"internalProperties,omitempty"` // Internal object properties (only of the element itself).
 	ExceptionDetails   *cdptype.RuntimeExceptionDetails            `json:"exceptionDetails,omitempty"`   // Exception details.
 }
 
-// RuntimeReleaseObjectArgs contains the arguments for runtimeReleaseObject.
+// RuntimeReleaseObjectArgs represents the arguments for ReleaseObject in the Runtime domain.
 type RuntimeReleaseObjectArgs struct {
 	ObjectID cdptype.RuntimeRemoteObjectID `json:"objectId"` // Identifier of the object to release.
 }
 
-// RuntimeReleaseObjectGroupArgs contains the arguments for runtimeReleaseObjectGroup.
+// NewRuntimeReleaseObjectArgs initializes RuntimeReleaseObjectArgs with the required arguments.
+func NewRuntimeReleaseObjectArgs(objectID cdptype.RuntimeRemoteObjectID) *RuntimeReleaseObjectArgs {
+	args := new(RuntimeReleaseObjectArgs)
+	args.ObjectID = objectID
+	return args
+}
+
+// RuntimeReleaseObjectGroupArgs represents the arguments for ReleaseObjectGroup in the Runtime domain.
 type RuntimeReleaseObjectGroupArgs struct {
 	ObjectGroup string `json:"objectGroup"` // Symbolic object group name.
 }
 
-// RuntimeSetCustomObjectFormatterEnabledArgs contains the arguments for runtimeSetCustomObjectFormatterEnabled.
+// NewRuntimeReleaseObjectGroupArgs initializes RuntimeReleaseObjectGroupArgs with the required arguments.
+func NewRuntimeReleaseObjectGroupArgs(objectGroup string) *RuntimeReleaseObjectGroupArgs {
+	args := new(RuntimeReleaseObjectGroupArgs)
+	args.ObjectGroup = objectGroup
+	return args
+}
+
+// RuntimeSetCustomObjectFormatterEnabledArgs represents the arguments for SetCustomObjectFormatterEnabled in the Runtime domain.
 type RuntimeSetCustomObjectFormatterEnabledArgs struct {
 	Enabled bool `json:"enabled"` //
 }
 
-// RuntimeCompileScriptArgs contains the arguments for runtimeCompileScript.
+// NewRuntimeSetCustomObjectFormatterEnabledArgs initializes RuntimeSetCustomObjectFormatterEnabledArgs with the required arguments.
+func NewRuntimeSetCustomObjectFormatterEnabledArgs(enabled bool) *RuntimeSetCustomObjectFormatterEnabledArgs {
+	args := new(RuntimeSetCustomObjectFormatterEnabledArgs)
+	args.Enabled = enabled
+	return args
+}
+
+// RuntimeCompileScriptArgs represents the arguments for CompileScript in the Runtime domain.
 type RuntimeCompileScriptArgs struct {
 	Expression         string                             `json:"expression"`                   // Expression to compile.
 	SourceURL          string                             `json:"sourceURL"`                    // Source url to be set for the script.
 	PersistScript      bool                               `json:"persistScript"`                // Specifies whether the compiled script should be persisted.
 	ExecutionContextID *cdptype.RuntimeExecutionContextID `json:"executionContextId,omitempty"` // Specifies in which execution context to perform script run. If the parameter is omitted the evaluation will be performed in the context of the inspected page.
+}
+
+// NewRuntimeCompileScriptArgs initializes RuntimeCompileScriptArgs with the required arguments.
+func NewRuntimeCompileScriptArgs(expression string, sourceURL string, persistScript bool) *RuntimeCompileScriptArgs {
+	args := new(RuntimeCompileScriptArgs)
+	args.Expression = expression
+	args.SourceURL = sourceURL
+	args.PersistScript = persistScript
+	return args
 }
 
 // SetExecutionContextID sets the ExecutionContextID optional argument. Specifies in which execution context to perform script run. If the parameter is omitted the evaluation will be performed in the context of the inspected page.
@@ -2743,13 +4195,13 @@ func (a *RuntimeCompileScriptArgs) SetExecutionContextID(executionContextID cdpt
 	return a
 }
 
-// RuntimeCompileScriptReply contains the return values for runtimeCompileScript.
+// RuntimeCompileScriptReply represents the return values for CompileScript in the Runtime domain.
 type RuntimeCompileScriptReply struct {
 	ScriptID         *cdptype.RuntimeScriptID         `json:"scriptId,omitempty"`         // Id of the script.
 	ExceptionDetails *cdptype.RuntimeExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details.
 }
 
-// RuntimeRunScriptArgs contains the arguments for runtimeRunScript.
+// RuntimeRunScriptArgs represents the arguments for RunScript in the Runtime domain.
 type RuntimeRunScriptArgs struct {
 	ScriptID              cdptype.RuntimeScriptID            `json:"scriptId"`                        // Id of the script to run.
 	ExecutionContextID    *cdptype.RuntimeExecutionContextID `json:"executionContextId,omitempty"`    // Specifies in which execution context to perform script run. If the parameter is omitted the evaluation will be performed in the context of the inspected page.
@@ -2759,6 +4211,13 @@ type RuntimeRunScriptArgs struct {
 	ReturnByValue         *bool                              `json:"returnByValue,omitempty"`         // Whether the result is expected to be a JSON object which should be sent by value.
 	GeneratePreview       *bool                              `json:"generatePreview,omitempty"`       // Whether preview should be generated for the result.
 	AwaitPromise          *bool                              `json:"awaitPromise,omitempty"`          // Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
+}
+
+// NewRuntimeRunScriptArgs initializes RuntimeRunScriptArgs with the required arguments.
+func NewRuntimeRunScriptArgs(scriptID cdptype.RuntimeScriptID) *RuntimeRunScriptArgs {
+	args := new(RuntimeRunScriptArgs)
+	args.ScriptID = scriptID
+	return args
 }
 
 // SetExecutionContextID sets the ExecutionContextID optional argument. Specifies in which execution context to perform script run. If the parameter is omitted the evaluation will be performed in the context of the inspected page.
@@ -2803,71 +4262,144 @@ func (a *RuntimeRunScriptArgs) SetAwaitPromise(awaitPromise bool) *RuntimeRunScr
 	return a
 }
 
-// RuntimeRunScriptReply contains the return values for runtimeRunScript.
+// RuntimeRunScriptReply represents the return values for RunScript in the Runtime domain.
 type RuntimeRunScriptReply struct {
 	Result           cdptype.RuntimeRemoteObject      `json:"result"`                     // Run result.
 	ExceptionDetails *cdptype.RuntimeExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details.
 }
 
-// SchemaGetDomainsReply contains the return values for schemaGetDomains.
+// SchemaGetDomainsReply represents the return values for GetDomains in the Schema domain.
 type SchemaGetDomainsReply struct {
 	Domains []cdptype.SchemaDomain `json:"domains"` // List of supported domains.
 }
 
-// SecurityHandleCertificateErrorArgs contains the arguments for securityHandleCertificateError.
+// SecurityHandleCertificateErrorArgs represents the arguments for HandleCertificateError in the Security domain.
 type SecurityHandleCertificateErrorArgs struct {
 	EventID int                                    `json:"eventId"` // The ID of the event.
 	Action  cdptype.SecurityCertificateErrorAction `json:"action"`  // The action to take on the certificate error.
 }
 
-// SecuritySetOverrideCertificateErrorsArgs contains the arguments for securitySetOverrideCertificateErrors.
+// NewSecurityHandleCertificateErrorArgs initializes SecurityHandleCertificateErrorArgs with the required arguments.
+func NewSecurityHandleCertificateErrorArgs(eventID int, action cdptype.SecurityCertificateErrorAction) *SecurityHandleCertificateErrorArgs {
+	args := new(SecurityHandleCertificateErrorArgs)
+	args.EventID = eventID
+	args.Action = action
+	return args
+}
+
+// SecuritySetOverrideCertificateErrorsArgs represents the arguments for SetOverrideCertificateErrors in the Security domain.
 type SecuritySetOverrideCertificateErrorsArgs struct {
 	Override bool `json:"override"` // If true, certificate errors will be overridden.
 }
 
-// ServiceWorkerUnregisterArgs contains the arguments for serviceworkerUnregister.
+// NewSecuritySetOverrideCertificateErrorsArgs initializes SecuritySetOverrideCertificateErrorsArgs with the required arguments.
+func NewSecuritySetOverrideCertificateErrorsArgs(override bool) *SecuritySetOverrideCertificateErrorsArgs {
+	args := new(SecuritySetOverrideCertificateErrorsArgs)
+	args.Override = override
+	return args
+}
+
+// ServiceWorkerUnregisterArgs represents the arguments for Unregister in the ServiceWorker domain.
 type ServiceWorkerUnregisterArgs struct {
 	ScopeURL string `json:"scopeURL"` //
 }
 
-// ServiceWorkerUpdateRegistrationArgs contains the arguments for serviceworkerUpdateRegistration.
+// NewServiceWorkerUnregisterArgs initializes ServiceWorkerUnregisterArgs with the required arguments.
+func NewServiceWorkerUnregisterArgs(scopeURL string) *ServiceWorkerUnregisterArgs {
+	args := new(ServiceWorkerUnregisterArgs)
+	args.ScopeURL = scopeURL
+	return args
+}
+
+// ServiceWorkerUpdateRegistrationArgs represents the arguments for UpdateRegistration in the ServiceWorker domain.
 type ServiceWorkerUpdateRegistrationArgs struct {
 	ScopeURL string `json:"scopeURL"` //
 }
 
-// ServiceWorkerStartWorkerArgs contains the arguments for serviceworkerStartWorker.
+// NewServiceWorkerUpdateRegistrationArgs initializes ServiceWorkerUpdateRegistrationArgs with the required arguments.
+func NewServiceWorkerUpdateRegistrationArgs(scopeURL string) *ServiceWorkerUpdateRegistrationArgs {
+	args := new(ServiceWorkerUpdateRegistrationArgs)
+	args.ScopeURL = scopeURL
+	return args
+}
+
+// ServiceWorkerStartWorkerArgs represents the arguments for StartWorker in the ServiceWorker domain.
 type ServiceWorkerStartWorkerArgs struct {
 	ScopeURL string `json:"scopeURL"` //
 }
 
-// ServiceWorkerSkipWaitingArgs contains the arguments for serviceworkerSkipWaiting.
+// NewServiceWorkerStartWorkerArgs initializes ServiceWorkerStartWorkerArgs with the required arguments.
+func NewServiceWorkerStartWorkerArgs(scopeURL string) *ServiceWorkerStartWorkerArgs {
+	args := new(ServiceWorkerStartWorkerArgs)
+	args.ScopeURL = scopeURL
+	return args
+}
+
+// ServiceWorkerSkipWaitingArgs represents the arguments for SkipWaiting in the ServiceWorker domain.
 type ServiceWorkerSkipWaitingArgs struct {
 	ScopeURL string `json:"scopeURL"` //
 }
 
-// ServiceWorkerStopWorkerArgs contains the arguments for serviceworkerStopWorker.
+// NewServiceWorkerSkipWaitingArgs initializes ServiceWorkerSkipWaitingArgs with the required arguments.
+func NewServiceWorkerSkipWaitingArgs(scopeURL string) *ServiceWorkerSkipWaitingArgs {
+	args := new(ServiceWorkerSkipWaitingArgs)
+	args.ScopeURL = scopeURL
+	return args
+}
+
+// ServiceWorkerStopWorkerArgs represents the arguments for StopWorker in the ServiceWorker domain.
 type ServiceWorkerStopWorkerArgs struct {
 	VersionID string `json:"versionId"` //
 }
 
-// ServiceWorkerInspectWorkerArgs contains the arguments for serviceworkerInspectWorker.
+// NewServiceWorkerStopWorkerArgs initializes ServiceWorkerStopWorkerArgs with the required arguments.
+func NewServiceWorkerStopWorkerArgs(versionID string) *ServiceWorkerStopWorkerArgs {
+	args := new(ServiceWorkerStopWorkerArgs)
+	args.VersionID = versionID
+	return args
+}
+
+// ServiceWorkerInspectWorkerArgs represents the arguments for InspectWorker in the ServiceWorker domain.
 type ServiceWorkerInspectWorkerArgs struct {
 	VersionID string `json:"versionId"` //
 }
 
-// ServiceWorkerSetForceUpdateOnPageLoadArgs contains the arguments for serviceworkerSetForceUpdateOnPageLoad.
+// NewServiceWorkerInspectWorkerArgs initializes ServiceWorkerInspectWorkerArgs with the required arguments.
+func NewServiceWorkerInspectWorkerArgs(versionID string) *ServiceWorkerInspectWorkerArgs {
+	args := new(ServiceWorkerInspectWorkerArgs)
+	args.VersionID = versionID
+	return args
+}
+
+// ServiceWorkerSetForceUpdateOnPageLoadArgs represents the arguments for SetForceUpdateOnPageLoad in the ServiceWorker domain.
 type ServiceWorkerSetForceUpdateOnPageLoadArgs struct {
 	ForceUpdateOnPageLoad bool `json:"forceUpdateOnPageLoad"` //
 }
 
-// ServiceWorkerDeliverPushMessageArgs contains the arguments for serviceworkerDeliverPushMessage.
+// NewServiceWorkerSetForceUpdateOnPageLoadArgs initializes ServiceWorkerSetForceUpdateOnPageLoadArgs with the required arguments.
+func NewServiceWorkerSetForceUpdateOnPageLoadArgs(forceUpdateOnPageLoad bool) *ServiceWorkerSetForceUpdateOnPageLoadArgs {
+	args := new(ServiceWorkerSetForceUpdateOnPageLoadArgs)
+	args.ForceUpdateOnPageLoad = forceUpdateOnPageLoad
+	return args
+}
+
+// ServiceWorkerDeliverPushMessageArgs represents the arguments for DeliverPushMessage in the ServiceWorker domain.
 type ServiceWorkerDeliverPushMessageArgs struct {
 	Origin         string `json:"origin"`         //
 	RegistrationID string `json:"registrationId"` //
 	Data           string `json:"data"`           //
 }
 
-// ServiceWorkerDispatchSyncEventArgs contains the arguments for serviceworkerDispatchSyncEvent.
+// NewServiceWorkerDeliverPushMessageArgs initializes ServiceWorkerDeliverPushMessageArgs with the required arguments.
+func NewServiceWorkerDeliverPushMessageArgs(origin string, registrationID string, data string) *ServiceWorkerDeliverPushMessageArgs {
+	args := new(ServiceWorkerDeliverPushMessageArgs)
+	args.Origin = origin
+	args.RegistrationID = registrationID
+	args.Data = data
+	return args
+}
+
+// ServiceWorkerDispatchSyncEventArgs represents the arguments for DispatchSyncEvent in the ServiceWorker domain.
 type ServiceWorkerDispatchSyncEventArgs struct {
 	Origin         string `json:"origin"`         //
 	RegistrationID string `json:"registrationId"` //
@@ -2875,107 +4407,211 @@ type ServiceWorkerDispatchSyncEventArgs struct {
 	LastChance     bool   `json:"lastChance"`     //
 }
 
-// StorageClearDataForOriginArgs contains the arguments for storageClearDataForOrigin.
+// NewServiceWorkerDispatchSyncEventArgs initializes ServiceWorkerDispatchSyncEventArgs with the required arguments.
+func NewServiceWorkerDispatchSyncEventArgs(origin string, registrationID string, tag string, lastChance bool) *ServiceWorkerDispatchSyncEventArgs {
+	args := new(ServiceWorkerDispatchSyncEventArgs)
+	args.Origin = origin
+	args.RegistrationID = registrationID
+	args.Tag = tag
+	args.LastChance = lastChance
+	return args
+}
+
+// StorageClearDataForOriginArgs represents the arguments for ClearDataForOrigin in the Storage domain.
 type StorageClearDataForOriginArgs struct {
 	Origin       string `json:"origin"`       // Security origin.
 	StorageTypes string `json:"storageTypes"` // Comma separated origin names.
 }
 
-// SystemInfoGetInfoReply contains the return values for systeminfoGetInfo.
+// NewStorageClearDataForOriginArgs initializes StorageClearDataForOriginArgs with the required arguments.
+func NewStorageClearDataForOriginArgs(origin string, storageTypes string) *StorageClearDataForOriginArgs {
+	args := new(StorageClearDataForOriginArgs)
+	args.Origin = origin
+	args.StorageTypes = storageTypes
+	return args
+}
+
+// SystemInfoGetInfoReply represents the return values for GetInfo in the SystemInfo domain.
 type SystemInfoGetInfoReply struct {
 	GPU          cdptype.SystemInfoGPUInfo `json:"gpu"`          // Information about the GPUs on the system.
 	ModelName    string                    `json:"modelName"`    // A platform-dependent description of the model of the machine. On Mac OS, this is, for example, 'MacBookPro'. Will be the empty string if not supported.
 	ModelVersion string                    `json:"modelVersion"` // A platform-dependent description of the version of the machine. On Mac OS, this is, for example, '10.1'. Will be the empty string if not supported.
 }
 
-// TargetSetDiscoverTargetsArgs contains the arguments for targetSetDiscoverTargets.
+// TargetSetDiscoverTargetsArgs represents the arguments for SetDiscoverTargets in the Target domain.
 type TargetSetDiscoverTargetsArgs struct {
 	Discover bool `json:"discover"` // Whether to discover available targets.
 }
 
-// TargetSetAutoAttachArgs contains the arguments for targetSetAutoAttach.
+// NewTargetSetDiscoverTargetsArgs initializes TargetSetDiscoverTargetsArgs with the required arguments.
+func NewTargetSetDiscoverTargetsArgs(discover bool) *TargetSetDiscoverTargetsArgs {
+	args := new(TargetSetDiscoverTargetsArgs)
+	args.Discover = discover
+	return args
+}
+
+// TargetSetAutoAttachArgs represents the arguments for SetAutoAttach in the Target domain.
 type TargetSetAutoAttachArgs struct {
 	AutoAttach             bool `json:"autoAttach"`             // Whether to auto-attach to related targets.
 	WaitForDebuggerOnStart bool `json:"waitForDebuggerOnStart"` // Whether to pause new targets when attaching to them. Use Runtime.runIfWaitingForDebugger to run paused targets.
 }
 
-// TargetSetAttachToFramesArgs contains the arguments for targetSetAttachToFrames.
+// NewTargetSetAutoAttachArgs initializes TargetSetAutoAttachArgs with the required arguments.
+func NewTargetSetAutoAttachArgs(autoAttach bool, waitForDebuggerOnStart bool) *TargetSetAutoAttachArgs {
+	args := new(TargetSetAutoAttachArgs)
+	args.AutoAttach = autoAttach
+	args.WaitForDebuggerOnStart = waitForDebuggerOnStart
+	return args
+}
+
+// TargetSetAttachToFramesArgs represents the arguments for SetAttachToFrames in the Target domain.
 type TargetSetAttachToFramesArgs struct {
 	Value bool `json:"value"` // Whether to attach to frames.
 }
 
-// TargetSetRemoteLocationsArgs contains the arguments for targetSetRemoteLocations.
+// NewTargetSetAttachToFramesArgs initializes TargetSetAttachToFramesArgs with the required arguments.
+func NewTargetSetAttachToFramesArgs(value bool) *TargetSetAttachToFramesArgs {
+	args := new(TargetSetAttachToFramesArgs)
+	args.Value = value
+	return args
+}
+
+// TargetSetRemoteLocationsArgs represents the arguments for SetRemoteLocations in the Target domain.
 type TargetSetRemoteLocationsArgs struct {
 	Locations []cdptype.TargetRemoteLocation `json:"locations"` // List of remote locations.
 }
 
-// TargetSendMessageToTargetArgs contains the arguments for targetSendMessageToTarget.
+// NewTargetSetRemoteLocationsArgs initializes TargetSetRemoteLocationsArgs with the required arguments.
+func NewTargetSetRemoteLocationsArgs(locations []cdptype.TargetRemoteLocation) *TargetSetRemoteLocationsArgs {
+	args := new(TargetSetRemoteLocationsArgs)
+	args.Locations = locations
+	return args
+}
+
+// TargetSendMessageToTargetArgs represents the arguments for SendMessageToTarget in the Target domain.
 type TargetSendMessageToTargetArgs struct {
 	TargetID string `json:"targetId"` //
 	Message  string `json:"message"`  //
 }
 
-// TargetGetTargetInfoArgs contains the arguments for targetGetTargetInfo.
+// NewTargetSendMessageToTargetArgs initializes TargetSendMessageToTargetArgs with the required arguments.
+func NewTargetSendMessageToTargetArgs(targetID string, message string) *TargetSendMessageToTargetArgs {
+	args := new(TargetSendMessageToTargetArgs)
+	args.TargetID = targetID
+	args.Message = message
+	return args
+}
+
+// TargetGetTargetInfoArgs represents the arguments for GetTargetInfo in the Target domain.
 type TargetGetTargetInfoArgs struct {
 	TargetID cdptype.TargetID `json:"targetId"` //
 }
 
-// TargetGetTargetInfoReply contains the return values for targetGetTargetInfo.
+// NewTargetGetTargetInfoArgs initializes TargetGetTargetInfoArgs with the required arguments.
+func NewTargetGetTargetInfoArgs(targetID cdptype.TargetID) *TargetGetTargetInfoArgs {
+	args := new(TargetGetTargetInfoArgs)
+	args.TargetID = targetID
+	return args
+}
+
+// TargetGetTargetInfoReply represents the return values for GetTargetInfo in the Target domain.
 type TargetGetTargetInfoReply struct {
 	TargetInfo cdptype.TargetInfo `json:"targetInfo"` //
 }
 
-// TargetActivateTargetArgs contains the arguments for targetActivateTarget.
+// TargetActivateTargetArgs represents the arguments for ActivateTarget in the Target domain.
 type TargetActivateTargetArgs struct {
 	TargetID cdptype.TargetID `json:"targetId"` //
 }
 
-// TargetCloseTargetArgs contains the arguments for targetCloseTarget.
+// NewTargetActivateTargetArgs initializes TargetActivateTargetArgs with the required arguments.
+func NewTargetActivateTargetArgs(targetID cdptype.TargetID) *TargetActivateTargetArgs {
+	args := new(TargetActivateTargetArgs)
+	args.TargetID = targetID
+	return args
+}
+
+// TargetCloseTargetArgs represents the arguments for CloseTarget in the Target domain.
 type TargetCloseTargetArgs struct {
 	TargetID cdptype.TargetID `json:"targetId"` //
 }
 
-// TargetCloseTargetReply contains the return values for targetCloseTarget.
+// NewTargetCloseTargetArgs initializes TargetCloseTargetArgs with the required arguments.
+func NewTargetCloseTargetArgs(targetID cdptype.TargetID) *TargetCloseTargetArgs {
+	args := new(TargetCloseTargetArgs)
+	args.TargetID = targetID
+	return args
+}
+
+// TargetCloseTargetReply represents the return values for CloseTarget in the Target domain.
 type TargetCloseTargetReply struct {
 	Success bool `json:"success"` //
 }
 
-// TargetAttachToTargetArgs contains the arguments for targetAttachToTarget.
+// TargetAttachToTargetArgs represents the arguments for AttachToTarget in the Target domain.
 type TargetAttachToTargetArgs struct {
 	TargetID cdptype.TargetID `json:"targetId"` //
 }
 
-// TargetAttachToTargetReply contains the return values for targetAttachToTarget.
+// NewTargetAttachToTargetArgs initializes TargetAttachToTargetArgs with the required arguments.
+func NewTargetAttachToTargetArgs(targetID cdptype.TargetID) *TargetAttachToTargetArgs {
+	args := new(TargetAttachToTargetArgs)
+	args.TargetID = targetID
+	return args
+}
+
+// TargetAttachToTargetReply represents the return values for AttachToTarget in the Target domain.
 type TargetAttachToTargetReply struct {
 	Success bool `json:"success"` // Whether attach succeeded.
 }
 
-// TargetDetachFromTargetArgs contains the arguments for targetDetachFromTarget.
+// TargetDetachFromTargetArgs represents the arguments for DetachFromTarget in the Target domain.
 type TargetDetachFromTargetArgs struct {
 	TargetID cdptype.TargetID `json:"targetId"` //
 }
 
-// TargetCreateBrowserContextReply contains the return values for targetCreateBrowserContext.
+// NewTargetDetachFromTargetArgs initializes TargetDetachFromTargetArgs with the required arguments.
+func NewTargetDetachFromTargetArgs(targetID cdptype.TargetID) *TargetDetachFromTargetArgs {
+	args := new(TargetDetachFromTargetArgs)
+	args.TargetID = targetID
+	return args
+}
+
+// TargetCreateBrowserContextReply represents the return values for CreateBrowserContext in the Target domain.
 type TargetCreateBrowserContextReply struct {
 	BrowserContextID cdptype.TargetBrowserContextID `json:"browserContextId"` // The id of the context created.
 }
 
-// TargetDisposeBrowserContextArgs contains the arguments for targetDisposeBrowserContext.
+// TargetDisposeBrowserContextArgs represents the arguments for DisposeBrowserContext in the Target domain.
 type TargetDisposeBrowserContextArgs struct {
 	BrowserContextID cdptype.TargetBrowserContextID `json:"browserContextId"` //
 }
 
-// TargetDisposeBrowserContextReply contains the return values for targetDisposeBrowserContext.
+// NewTargetDisposeBrowserContextArgs initializes TargetDisposeBrowserContextArgs with the required arguments.
+func NewTargetDisposeBrowserContextArgs(browserContextID cdptype.TargetBrowserContextID) *TargetDisposeBrowserContextArgs {
+	args := new(TargetDisposeBrowserContextArgs)
+	args.BrowserContextID = browserContextID
+	return args
+}
+
+// TargetDisposeBrowserContextReply represents the return values for DisposeBrowserContext in the Target domain.
 type TargetDisposeBrowserContextReply struct {
 	Success bool `json:"success"` //
 }
 
-// TargetCreateTargetArgs contains the arguments for targetCreateTarget.
+// TargetCreateTargetArgs represents the arguments for CreateTarget in the Target domain.
 type TargetCreateTargetArgs struct {
 	URL              string                          `json:"url"`                        // The initial URL the page will be navigated to.
 	Width            *int                            `json:"width,omitempty"`            // Frame width in DIP (headless chrome only).
 	Height           *int                            `json:"height,omitempty"`           // Frame height in DIP (headless chrome only).
 	BrowserContextID *cdptype.TargetBrowserContextID `json:"browserContextId,omitempty"` // The browser context to create the page in (headless chrome only).
+}
+
+// NewTargetCreateTargetArgs initializes TargetCreateTargetArgs with the required arguments.
+func NewTargetCreateTargetArgs(url string) *TargetCreateTargetArgs {
+	args := new(TargetCreateTargetArgs)
+	args.URL = url
+	return args
 }
 
 // SetWidth sets the Width optional argument. Frame width in DIP (headless chrome only).
@@ -2996,33 +4632,54 @@ func (a *TargetCreateTargetArgs) SetBrowserContextID(browserContextID cdptype.Ta
 	return a
 }
 
-// TargetCreateTargetReply contains the return values for targetCreateTarget.
+// TargetCreateTargetReply represents the return values for CreateTarget in the Target domain.
 type TargetCreateTargetReply struct {
 	TargetID cdptype.TargetID `json:"targetId"` // The id of the page opened.
 }
 
-// TargetGetTargetsReply contains the return values for targetGetTargets.
+// TargetGetTargetsReply represents the return values for GetTargets in the Target domain.
 type TargetGetTargetsReply struct {
 	TargetInfos []cdptype.TargetInfo `json:"targetInfos"` // The list of targets.
 }
 
-// TetheringBindArgs contains the arguments for tetheringBind.
+// TetheringBindArgs represents the arguments for Bind in the Tethering domain.
 type TetheringBindArgs struct {
 	Port int `json:"port"` // Port number to bind.
 }
 
-// TetheringUnbindArgs contains the arguments for tetheringUnbind.
+// NewTetheringBindArgs initializes TetheringBindArgs with the required arguments.
+func NewTetheringBindArgs(port int) *TetheringBindArgs {
+	args := new(TetheringBindArgs)
+	args.Port = port
+	return args
+}
+
+// TetheringUnbindArgs represents the arguments for Unbind in the Tethering domain.
 type TetheringUnbindArgs struct {
 	Port int `json:"port"` // Port number to unbind.
 }
 
-// TracingStartArgs contains the arguments for tracingStart.
+// NewTetheringUnbindArgs initializes TetheringUnbindArgs with the required arguments.
+func NewTetheringUnbindArgs(port int) *TetheringUnbindArgs {
+	args := new(TetheringUnbindArgs)
+	args.Port = port
+	return args
+}
+
+// TracingStartArgs represents the arguments for Start in the Tracing domain.
 type TracingStartArgs struct {
 	Categories                   *string                     `json:"categories,omitempty"`                   // Category/tag filter
 	Options                      *string                     `json:"options,omitempty"`                      // Tracing options
 	BufferUsageReportingInterval *float64                    `json:"bufferUsageReportingInterval,omitempty"` // If set, the agent will issue bufferUsage events at this interval, specified in milliseconds
 	TransferMode                 *string                     `json:"transferMode,omitempty"`                 // Whether to report trace events as series of dataCollected events or to save trace to a stream (defaults to ReportEvents).
 	TraceConfig                  *cdptype.TracingTraceConfig `json:"traceConfig,omitempty"`                  //
+}
+
+// NewTracingStartArgs initializes TracingStartArgs with the required arguments.
+func NewTracingStartArgs() *TracingStartArgs {
+	args := new(TracingStartArgs)
+
+	return args
 }
 
 // SetCategories sets the Categories optional argument. Category/tag filter
@@ -3055,18 +4712,25 @@ func (a *TracingStartArgs) SetTraceConfig(traceConfig cdptype.TracingTraceConfig
 	return a
 }
 
-// TracingGetCategoriesReply contains the return values for tracingGetCategories.
+// TracingGetCategoriesReply represents the return values for GetCategories in the Tracing domain.
 type TracingGetCategoriesReply struct {
 	Categories []string `json:"categories"` // A list of supported tracing categories.
 }
 
-// TracingRequestMemoryDumpReply contains the return values for tracingRequestMemoryDump.
+// TracingRequestMemoryDumpReply represents the return values for RequestMemoryDump in the Tracing domain.
 type TracingRequestMemoryDumpReply struct {
 	DumpGUID string `json:"dumpGuid"` // GUID of the resulting global memory dump.
 	Success  bool   `json:"success"`  // True iff the global memory dump succeeded.
 }
 
-// TracingRecordClockSyncMarkerArgs contains the arguments for tracingRecordClockSyncMarker.
+// TracingRecordClockSyncMarkerArgs represents the arguments for RecordClockSyncMarker in the Tracing domain.
 type TracingRecordClockSyncMarkerArgs struct {
 	SyncID string `json:"syncId"` // The ID of this clock sync marker
+}
+
+// NewTracingRecordClockSyncMarkerArgs initializes TracingRecordClockSyncMarkerArgs with the required arguments.
+func NewTracingRecordClockSyncMarkerArgs(syncID string) *TracingRecordClockSyncMarkerArgs {
+	args := new(TracingRecordClockSyncMarkerArgs)
+	args.SyncID = syncID
+	return args
 }
