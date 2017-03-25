@@ -35,11 +35,11 @@ func (cw *wsNetConn) RemoteAddr() net.Addr               { return cw.conn.Remote
 func (cw *wsNetConn) SetReadDeadline(t time.Time) error  { return cw.conn.SetReadDeadline(t) }
 func (cw *wsNetConn) SetWriteDeadline(t time.Time) error { return cw.conn.SetWriteDeadline(t) }
 func (cw *wsNetConn) SetDeadline(t time.Time) error {
-	err := cw.conn.SetReadDeadline(t)
+	err := cw.SetReadDeadline(t)
 	if err != nil {
 		return err
 	}
-	return cw.conn.SetWriteDeadline(t)
+	return cw.SetWriteDeadline(t)
 }
 
 // Read calls Read on the WebSocket Reader and requests the NextReader
