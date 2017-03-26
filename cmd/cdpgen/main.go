@@ -397,6 +397,54 @@ func (d *%[2]s) %[1]s(ctx context.Context%[3]s) %[4]s {`, c.Name(), d.Name(), re
 }
 `, c.CmdName(d, true), invokeReply, d.Name(), c.Name())
 		}
+
+		// Generate method tests.
+		g.TestPrintf(`
+func Test%[1]s_%[2]s(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := New%[1]s(conn)
+	var err error
+`, d.Name(), c.Name())
+		assign := "err"
+		if len(c.Returns) > 0 {
+			assign = "_, err"
+		}
+		if len(c.Parameters) > 0 {
+			g.TestPrintf(`
+	// Test nil args.
+	%[1]s = dom.%[2]s(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	%[1]s = dom.%[2]s(nil, &cdpcmd.%[3]s{})`, assign, c.Name(), c.ArgsName(d))
+		} else {
+			g.TestPrintf(`
+	%[1]s = dom.%[2]s(nil)`, assign, c.Name())
+		}
+		g.TestPrintf(`
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")`)
+		if len(c.Parameters) > 0 {
+			g.TestPrintf(`
+	%[1]s = dom.%[2]s(nil, &cdpcmd.%[3]s{})`, assign, c.Name(), c.ArgsName(d))
+		} else {
+			g.TestPrintf(`
+	%[1]s = dom.%[2]s(nil)`, assign, c.Name())
+		}
+		g.TestPrintf(`
+	if err == nil || err.(*OpError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %%v, want bad request", err)
+	}`)
+		g.TestPrintf(`
+}
+`)
 	}
 	for _, e := range d.Events {
 		eventClient := fmt.Sprintf("%sClient", e.EventName(d))
@@ -428,6 +476,43 @@ func (c *%[4]s) Recv() (*cdpevent.%[3]s, error) {
 }
 `, eventClient, "", e.ReplyName(d), eventClient, d.Name(), e.Name())
 
+		// Generate event tests.
+		g.TestPrintf(`
+func Test%[1]s_%[2]s(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := New%[1]s(conn)
+
+	stream, err := dom.%[2]s(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer stream.Close()
+
+	codec.event = cdpevent.%[3]s.String()
+	codec.conn <- nil
+	_, err = stream.Recv()
+	if err != nil {
+		t.Error(err)
+	}
+
+	codec.eventArgs = []byte("invalid json")
+	codec.conn <- nil
+	_, err = stream.Recv()
+	if err, ok := err.(*OpError); !ok {
+		t.Errorf("Recv() got %v, want OpError", err)
+	}
+
+	conn.Close()
+	stream, err = dom.%[2]s(nil)
+	if err == nil {
+		t.Errorf("Open stream: got nil, want error")
+	}
+`, d.Name(), e.Name(), e.EventName(d))
+		g.TestPrintf(`
+}
+`)
 	}
 }
 
