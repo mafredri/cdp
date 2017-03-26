@@ -1,0 +1,16 @@
+language: go
+
+go:
+  - 1.8
+  - tip
+
+before_install:
+  - go get github.com/mattn/goveralls
+
+script:
+  - go list -f '{{if len .TestGoFiles}} {{.ImportPath}}{{end}}' ./... | xargs go test
+  - go test -race ./rpcc
+  - goveralls -service=travis-ci -ignore 'cmd/cdpgen/*,cmd/cdpgen/*/*'
+
+matrix:
+  fast_finish: true
