@@ -23,11 +23,11 @@ func (c *LogCodec) WriteRequest(req *rpcc.Request) error {
 	if err := json.NewEncoder(&buf).Encode(req); err != nil {
 		return err
 	}
+	fmt.Printf("SEND: %s", buf.Bytes())
 	_, err := c.conn.Write(buf.Bytes())
 	if err != nil {
 		return err
 	}
-	fmt.Printf("SEND: %s", buf.Bytes())
 	return nil
 }
 
