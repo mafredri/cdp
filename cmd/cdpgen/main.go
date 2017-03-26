@@ -501,7 +501,7 @@ func Test%[1]s_%[2]s(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %v, want OpError", err)
+		t.Errorf("Recv() got %%v, want OpError", err)
 	}
 
 	conn.Close()

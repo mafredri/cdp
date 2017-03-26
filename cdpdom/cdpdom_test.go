@@ -300,7 +300,7 @@ func TestAnimation_AnimationCreated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -334,7 +334,7 @@ func TestAnimation_AnimationStarted(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -368,7 +368,7 @@ func TestAnimation_AnimationCanceled(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -494,7 +494,7 @@ func TestApplicationCache_ApplicationCacheStatusUpdated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -528,7 +528,7 @@ func TestApplicationCache_NetworkStateUpdated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -1124,7 +1124,7 @@ func TestCSS_MediaQueryResultChanged(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -1158,7 +1158,7 @@ func TestCSS_FontsUpdated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -1192,7 +1192,7 @@ func TestCSS_StyleSheetChanged(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -1226,7 +1226,7 @@ func TestCSS_StyleSheetAdded(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -1260,7 +1260,7 @@ func TestCSS_StyleSheetRemoved(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -1458,7 +1458,7 @@ func TestConsole_MessageAdded(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2548,7 +2548,7 @@ func TestDOM_DocumentUpdated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2582,7 +2582,7 @@ func TestDOM_InspectNodeRequested(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2616,7 +2616,7 @@ func TestDOM_SetChildNodes(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2650,7 +2650,7 @@ func TestDOM_AttributeModified(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2684,7 +2684,7 @@ func TestDOM_AttributeRemoved(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2718,7 +2718,7 @@ func TestDOM_InlineStyleInvalidated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2752,7 +2752,7 @@ func TestDOM_CharacterDataModified(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2786,7 +2786,7 @@ func TestDOM_ChildNodeCountUpdated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2820,7 +2820,7 @@ func TestDOM_ChildNodeInserted(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2854,7 +2854,7 @@ func TestDOM_ChildNodeRemoved(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2888,7 +2888,7 @@ func TestDOM_ShadowRootPushed(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2922,7 +2922,7 @@ func TestDOM_ShadowRootPopped(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2956,7 +2956,7 @@ func TestDOM_PseudoElementAdded(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -2990,7 +2990,7 @@ func TestDOM_PseudoElementRemoved(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -3024,7 +3024,7 @@ func TestDOM_DistributedNodesUpdated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -3058,7 +3058,7 @@ func TestDOM_NodeHighlightRequested(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -3470,7 +3470,7 @@ func TestDOMStorage_DOMStorageItemsCleared(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -3504,7 +3504,7 @@ func TestDOMStorage_DOMStorageItemRemoved(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -3538,7 +3538,7 @@ func TestDOMStorage_DOMStorageItemAdded(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -3572,7 +3572,7 @@ func TestDOMStorage_DOMStorageItemUpdated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -3698,7 +3698,7 @@ func TestDatabase_AddDatabase(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -4334,7 +4334,7 @@ func TestDebugger_ScriptParsed(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -4368,7 +4368,7 @@ func TestDebugger_ScriptFailedToParse(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -4402,7 +4402,7 @@ func TestDebugger_BreakpointResolved(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -4436,7 +4436,7 @@ func TestDebugger_Paused(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -4470,7 +4470,7 @@ func TestDebugger_Resumed(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -4936,7 +4936,7 @@ func TestEmulation_VirtualTimeBudgetExpired(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -5232,7 +5232,7 @@ func TestHeapProfiler_AddHeapSnapshotChunk(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -5266,7 +5266,7 @@ func TestHeapProfiler_ResetProfiles(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -5300,7 +5300,7 @@ func TestHeapProfiler_ReportHeapSnapshotProgress(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -5334,7 +5334,7 @@ func TestHeapProfiler_LastSeenObjectID(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -5368,7 +5368,7 @@ func TestHeapProfiler_HeapStatsUpdate(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -5846,7 +5846,7 @@ func TestInspector_Detached(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -5880,7 +5880,7 @@ func TestInspector_TargetCrashed(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -6136,7 +6136,7 @@ func TestLayerTree_LayerTreeDidChange(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -6170,7 +6170,7 @@ func TestLayerTree_LayerPainted(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -6310,7 +6310,7 @@ func TestLog_EntryAdded(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -6946,7 +6946,7 @@ func TestNetwork_ResourceChangedPriority(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -6980,7 +6980,7 @@ func TestNetwork_RequestWillBeSent(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7014,7 +7014,7 @@ func TestNetwork_RequestServedFromCache(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7048,7 +7048,7 @@ func TestNetwork_ResponseReceived(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7082,7 +7082,7 @@ func TestNetwork_DataReceived(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7116,7 +7116,7 @@ func TestNetwork_LoadingFinished(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7150,7 +7150,7 @@ func TestNetwork_LoadingFailed(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7184,7 +7184,7 @@ func TestNetwork_WebSocketWillSendHandshakeRequest(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7218,7 +7218,7 @@ func TestNetwork_WebSocketHandshakeResponseReceived(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7252,7 +7252,7 @@ func TestNetwork_WebSocketCreated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7286,7 +7286,7 @@ func TestNetwork_WebSocketClosed(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7320,7 +7320,7 @@ func TestNetwork_WebSocketFrameReceived(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7354,7 +7354,7 @@ func TestNetwork_WebSocketFrameError(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7388,7 +7388,7 @@ func TestNetwork_WebSocketFrameSent(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -7422,7 +7422,7 @@ func TestNetwork_EventSourceMessageReceived(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8308,7 +8308,7 @@ func TestPage_DOMContentEventFired(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8342,7 +8342,7 @@ func TestPage_LoadEventFired(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8376,7 +8376,7 @@ func TestPage_FrameAttached(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8410,7 +8410,7 @@ func TestPage_FrameNavigated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8444,7 +8444,7 @@ func TestPage_FrameDetached(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8478,7 +8478,7 @@ func TestPage_FrameStartedLoading(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8512,7 +8512,7 @@ func TestPage_FrameStoppedLoading(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8546,7 +8546,7 @@ func TestPage_FrameScheduledNavigation(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8580,7 +8580,7 @@ func TestPage_FrameClearedScheduledNavigation(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8614,7 +8614,7 @@ func TestPage_FrameResized(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8648,7 +8648,7 @@ func TestPage_JavascriptDialogOpening(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8682,7 +8682,7 @@ func TestPage_JavascriptDialogClosed(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8716,7 +8716,7 @@ func TestPage_ScreencastFrame(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8750,7 +8750,7 @@ func TestPage_ScreencastVisibilityChanged(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8784,7 +8784,7 @@ func TestPage_ColorPicked(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8818,7 +8818,7 @@ func TestPage_InterstitialShown(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8852,7 +8852,7 @@ func TestPage_InterstitialHidden(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -8886,7 +8886,7 @@ func TestPage_NavigationRequested(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -9112,7 +9112,7 @@ func TestProfiler_ConsoleProfileStarted(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -9146,7 +9146,7 @@ func TestProfiler_ConsoleProfileFinished(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -9624,7 +9624,7 @@ func TestRuntime_ExecutionContextCreated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -9658,7 +9658,7 @@ func TestRuntime_ExecutionContextDestroyed(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -9692,7 +9692,7 @@ func TestRuntime_ExecutionContextsCleared(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -9726,7 +9726,7 @@ func TestRuntime_ExceptionThrown(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -9760,7 +9760,7 @@ func TestRuntime_ExceptionRevoked(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -9794,7 +9794,7 @@ func TestRuntime_ConsoleAPICalled(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -9828,7 +9828,7 @@ func TestRuntime_InspectRequested(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -9994,7 +9994,7 @@ func TestSecurity_SecurityStateChanged(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -10028,7 +10028,7 @@ func TestSecurity_CertificateError(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -10336,7 +10336,7 @@ func TestServiceWorker_WorkerRegistrationUpdated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -10370,7 +10370,7 @@ func TestServiceWorker_WorkerVersionUpdated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -10404,7 +10404,7 @@ func TestServiceWorker_WorkerErrorReported(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -10836,7 +10836,7 @@ func TestTarget_TargetCreated(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -10870,7 +10870,7 @@ func TestTarget_TargetDestroyed(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -10904,7 +10904,7 @@ func TestTarget_AttachedToTarget(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -10938,7 +10938,7 @@ func TestTarget_DetachedFromTarget(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -10972,7 +10972,7 @@ func TestTarget_ReceivedMessageFromTarget(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -11058,7 +11058,7 @@ func TestTethering_Accepted(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -11204,7 +11204,7 @@ func TestTracing_DataCollected(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -11238,7 +11238,7 @@ func TestTracing_TracingComplete(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
@@ -11272,7 +11272,7 @@ func TestTracing_BufferUsage(t *testing.T) {
 	codec.conn <- nil
 	_, err = stream.Recv()
 	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %!v(MISSING), want OpError", err)
+		t.Errorf("Recv() got %v, want OpError", err)
 	}
 
 	conn.Close()
