@@ -25,13 +25,15 @@ func (tc *testSocketServer) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	switch r.RequestURI {
 	case "/example_logging":
-		_, _, err := conn.ReadMessage()
-		if err != nil {
-			return
-		}
-		err = conn.WriteMessage(websocket.TextMessage, []byte(`{"id":1,"result":{}}`))
-		if err != nil {
-			return
+		for {
+			_, _, err := conn.ReadMessage()
+			if err != nil {
+				return
+			}
+			err = conn.WriteMessage(websocket.TextMessage, []byte(`{"id":1,"result":{}}`))
+			if err != nil {
+				return
+			}
 		}
 	}
 }
