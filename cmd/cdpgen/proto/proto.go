@@ -108,7 +108,8 @@ func (c Command) ArgsSignature(d Domain) string {
 		if name == "range" || name == "type" {
 			name = name[0 : len(name)-1]
 		}
-		args = append(args, name+" "+arg.GoType("cdp", d))
+		name += " "
+		args = append(args, name+arg.GoType("cdp", d))
 	}
 	return strings.Join(args, ", ")
 }

@@ -890,6 +890,20 @@ func New%[1]s(%[2]s) *%[1]s {
 }
 `, c.ArgsName(d), c.ArgsSignature(d), c.ArgsAssign("args", d), c.ArgsName(d))
 
+	// Test the new arguments.
+	testInit := ""
+	if c.ArgsSignature(d) != "" {
+		testInit = fmt.Sprintf("func() (%s) { return }()", c.ArgsSignature(d))
+	}
+	g.TestPrintf(`
+func TestNew%[1]s(t *testing.T) {
+	args := New%[1]s(%[2]s)
+	if args == nil {
+		t.Errorf("New%[1]s returned nil args")
+	}
+}
+`, c.ArgsName(d), testInit)
+
 	for _, arg := range c.Parameters {
 		if !arg.Optional {
 			continue
