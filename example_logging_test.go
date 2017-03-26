@@ -53,6 +53,8 @@ func Example_logging() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	defer conn.Close()
+
 	c := cdp.NewClient(conn)
 
 	if err = c.Network.Enable(ctx, nil); err != nil {
