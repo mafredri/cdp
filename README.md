@@ -1,6 +1,6 @@
 # cdp
 
-[![Build Status](https://travis-ci.org/mafredri/cdp.svg)](https://travis-ci.org/mafredri/cdp) [![Coverage Status](https://coveralls.io/repos/mafredri/cdp/badge.svg?branch=master&service=github)] [![GoDoc](https://godoc.org/mafredri/cdp?status.svg)](https://godoc.org/mafredri/cdp)
+[![Build Status](https://travis-ci.org/mafredri/cdp.svg)](https://travis-ci.org/mafredri/cdp) [![Coverage Status](https://coveralls.io/repos/github/mafredri/cdp/badge.svg?branch=master)](https://coveralls.io/github/mafredri/cdp?branch=master) [![GoDoc](https://godoc.org/mafredri/cdp?status.svg)](https://godoc.org/mafredri/cdp)
 
 Package `cdp` provides type-safe bindings for the [Chrome Debugging Protocol](https://developer.chrome.com/devtools/docs/debugger-protocol) (CDP), written in the Go programming language. The bindings are generated with the latest [js_protocol.json](https://chromium.googlesource.com/chromium/src/+/master/third_party/WebKit/Source/core/inspector/browser_protocol.json) and [browser_protocol.json](https://chromium.googlesource.com/v8/v8.git/+/master/src/inspector/js_protocol.json) from the Chromium repository using [cmd/cdpgen](https://github.com/mafredri/cdp/blob/master/cmd/cdpgen). These bindings can be used with any debug target that implements the protocol.
 
