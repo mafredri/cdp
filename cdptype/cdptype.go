@@ -2471,8 +2471,8 @@ type PageFrameID string
 
 // PageFrame Information about the Frame on the page.
 type PageFrame struct {
-	ID             string          `json:"id"`                 // Frame unique identifier.
-	ParentID       *string         `json:"parentId,omitempty"` // Parent frame identifier.
+	ID             PageFrameID     `json:"id"`                 // Frame unique identifier.
+	ParentID       *PageFrameID    `json:"parentId,omitempty"` // Parent frame identifier.
 	LoaderID       NetworkLoaderID `json:"loaderId"`           // Identifier of the loader associated with this frame.
 	Name           *string         `json:"name,omitempty"`     // Frame's name as specified in the tag.
 	URL            string          `json:"url"`                // Frame document's URL.
