@@ -96,7 +96,7 @@ func main() {
 	}
 	cmdgen.imports = []string{typegen.dir}
 	eventgen.imports = []string{typegen.dir}
-	domgen.imports = []string{typegen.dir}
+	domgen.imports = []string{typegen.dir, cmdgen.dir, eventgen.dir}
 
 	// Define the cdp Client.
 	cdpgen.PackageHeader()
@@ -113,14 +113,26 @@ func main() {
 	eventgen.EventType(protocol.Domains)
 	eventgen.writeFile("event.go")
 
-	for _, d := range protocol.Domains {
-		for _, t := range d.Types {
+	for i, d := range protocol.Domains {
+		for ii, t := range d.Types {
 			nam := t.Name(d)
 			if isNonPointer(typegen.pkg, d, t) {
 				nonPtrMap[nam] = true
 				nonPtrMap[typegen.pkg+"."+nam] = true
 			}
+
+			// Reference the FrameId in the Frame type.
+			if d.Domain == "Page" && t.IDName == "Frame" {
+				for iii, p := range t.Properties {
+					if p.NameName == "id" || p.NameName == "parentId" {
+						p.Ref = "FrameId"
+						t.Properties[iii] = p
+					}
+				}
+			}
+			d.Types[ii] = t
 		}
+		protocol.Domains[i] = d
 	}
 	nonPtrMap["Timestamp"] = true
 	nonPtrMap[typegen.pkg+"."+"Timestamp"] = true
