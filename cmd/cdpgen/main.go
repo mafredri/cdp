@@ -29,6 +29,12 @@ var (
 	nonPtrMap = make(map[string]bool)
 )
 
+func panicErr(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 func main() {
 	var (
 		destPkg          string
@@ -47,21 +53,16 @@ func main() {
 
 	var protocol, jsProtocol proto.Protocol
 	protocolData, err := ioutil.ReadFile(browserProtoJSON)
-	if err != nil {
-		panic(err)
-	}
+	panicErr(err)
+
 	err = json.Unmarshal(protocolData, &protocol)
-	if err != nil {
-		panic(err)
-	}
+	panicErr(err)
+
 	jsProtocolData, err := ioutil.ReadFile(jsProtoFileJSON)
-	if err != nil {
-		panic(err)
-	}
+	panicErr(err)
+
 	err = json.Unmarshal(jsProtocolData, &jsProtocol)
-	if err != nil {
-		panic(err)
-	}
+	panicErr(err)
 
 	protocol.Domains = append(protocol.Domains, jsProtocol.Domains...)
 	sort.Slice(protocol.Domains, func(i, j int) bool {
@@ -72,23 +73,28 @@ func main() {
 
 	cdpgen.dir = destPkg
 	cdpgen.pkg = "cdp"
-	os.Mkdir(cdpgen.path(), 0755)
+	err = os.Mkdir(cdpgen.path(), 0755)
+	panicErr(err)
 
 	typegen.pkg = "cdptype"
 	typegen.dir = path.Join(cdpgen.dir, typegen.pkg)
-	os.Mkdir(typegen.path(), 0755)
+	err = os.Mkdir(typegen.path(), 0755)
+	panicErr(err)
 
 	cmdgen.pkg = "cdpcmd"
 	cmdgen.dir = path.Join(cdpgen.dir, cmdgen.pkg)
-	os.Mkdir(cmdgen.path(), 0755)
+	err = os.Mkdir(cmdgen.path(), 0755)
+	panicErr(err)
 
 	eventgen.pkg = "cdpevent"
 	eventgen.dir = path.Join(cdpgen.dir, eventgen.pkg)
-	os.Mkdir(eventgen.path(), 0755)
+	err = os.Mkdir(eventgen.path(), 0755)
+	panicErr(err)
 
 	domgen.pkg = "cdpdom"
 	domgen.dir = path.Join(cdpgen.dir, domgen.pkg)
-	os.Mkdir(domgen.path(), 0755)
+	err = os.Mkdir(domgen.path(), 0755)
+	panicErr(err)
 
 	cdpgen.imports = []string{
 		"github.com/mafredri/cdp/rpcc",
@@ -164,13 +170,6 @@ func main() {
 				eventgen.DomainEvent(d, e)
 			}
 		}
-
-		// Write dom definitions into separate files.
-		// domfile := fmt.Sprintf("%s.go", strings.ToLower(d.Domain))
-		// tg.writeFile(domfile)
-		// cg.writeFile(domfile)
-		// eg.writeFile(domfile)
-		// g.writeFile(domfile)
 	}
 
 	// Add a custom Timestamp type.
