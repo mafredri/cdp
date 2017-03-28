@@ -40,9 +40,8 @@ func WithDialer(f func(ctx context.Context, addr string) (net.Conn, error)) Dial
 }
 
 type dialOptions struct {
-	codec       func(io.ReadWriter) Codec
-	dialer      func(context.Context, string) (net.Conn, error)
-	interceptor func(conn io.ReadWriteCloser) io.ReadWriteCloser
+	codec  func(io.ReadWriter) Codec
+	dialer func(context.Context, string) (net.Conn, error)
 }
 
 // Dial connects to target and returns an active connection.
