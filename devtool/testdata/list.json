@@ -1,0 +1,17 @@
+[ {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/4bae5c92-f550-4538-aafb-4263b4e6c9b2",
+   "id": "4bae5c92-f550-4538-aafb-4263b4e6c9b2",
+   "title": "about:blank",
+   "type": "page",
+   "url": "about:blank",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/4bae5c92-f550-4538-aafb-4263b4e6c9b2"
+}, {
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/a36bf2bf-f50d-4e26-95ea-e71b679ddf5c",
+   "id": "a36bf2bf-f50d-4e26-95ea-e71b679ddf5c",
+   "title": "about:blank",
+   "type": "page",
+   "url": "about:blank",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/a36bf2bf-f50d-4e26-95ea-e71b679ddf5c"
+} ]

@@ -1,0 +1,9 @@
+{
+   "description": "",
+   "devtoolsFrontendUrl": "/devtools/inspector.html?ws=localhost:9222/devtools/page/ded68f91-23c0-4d15-b644-c10c3d06ec32",
+   "id": "ded68f91-23c0-4d15-b644-c10c3d06ec32",
+   "title": "",
+   "type": "page",
+   "url": "about:blank",
+   "webSocketDebuggerUrl": "ws://localhost:9222/devtools/page/ded68f91-23c0-4d15-b644-c10c3d06ec32"
+}
