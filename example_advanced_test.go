@@ -65,60 +65,24 @@ func Example_advanced() {
 		}
 	}()
 
-	// Listen to exceptions so we can abort as soon as one is encountered.
-	exceptionThrown, err := c.Runtime.ExceptionThrown(ctx)
-	if err != nil {
-		// Connection is closed.
+	// Setup event handlers early because domain events can be sent as
+	// soon as Enable is called on the domain.
+	if err = catchExceptionThrown(ctx, c.Runtime, abort); err != nil {
 		fmt.Println(err)
 		return
 	}
-	go func() {
-		defer exceptionThrown.Close() // Cleanup.
-		for {
-			ev, err := exceptionThrown.Recv()
-			if err != nil {
-				// This could be any one of: connection closed,
-				// context deadline or unmarshal failed.
-				abort <- err
-				return
-			}
-
-			// Ruh-roh! Let the caller know something went wrong.
-			abort <- ev.ExceptionDetails
-		}
-	}()
-
-	// Check for non-canceled resources that failed to load.
-	loadingFailed, err := c.Network.LoadingFailed(ctx)
-	if err != nil {
+	if err = catchLoadingFailed(ctx, c.Network, abort); err != nil {
 		fmt.Println(err)
 		return
 	}
-	go func() {
-		defer loadingFailed.Close()
-		for {
-			ev, err := loadingFailed.Recv()
-			if err != nil {
-				abort <- err
-				return
-			}
 
-			// For now, most optional fields are pointers and must be
-			// checked for nil.
-			canceled := ev.Canceled != nil && *ev.Canceled
-
-			if !canceled {
-				abort <- fmt.Errorf("request %s failed: %s", ev.RequestID, ev.ErrorText)
-			}
-		}
-	}()
-
-	// Enable all the domain events that we're interested in.
 	if err = runBatch(
+		// Enable all the domain events that we're interested in.
 		func() error { return c.DOM.Enable(ctx) },
 		func() error { return c.Network.Enable(ctx, nil) },
 		func() error { return c.Page.Enable(ctx) },
 		func() error { return c.Runtime.Enable(ctx) },
+
 		func() error { return setCookies(c.Network, Cookies...) },
 	); err != nil {
 		fmt.Println(err)
@@ -176,23 +140,62 @@ func Example_advanced() {
 	}
 }
 
-// runBatchFunc is the function signature for runBatch.
-type runBatchFunc func() error
-
-// runBatch runs all functions simultaneously and waits until
-// execution has completed or an error is encountered.
-func runBatch(fn ...runBatchFunc) error {
-	eg := errgroup.Group{}
-	for _, f := range fn {
-		eg.Go(f)
+func catchExceptionThrown(ctx context.Context, runtime cdp.Runtime, abort chan<- error) error {
+	// Listen to exceptions so we can abort as soon as one is encountered.
+	exceptionThrown, err := runtime.ExceptionThrown(ctx)
+	if err != nil {
+		// Connection is closed.
+		return err
 	}
-	return eg.Wait()
+	go func() {
+		defer exceptionThrown.Close() // Cleanup.
+		for {
+			ev, err := exceptionThrown.Recv()
+			if err != nil {
+				// This could be any one of: connection closed,
+				// context deadline or unmarshal failed.
+				abort <- err
+				return
+			}
+
+			// Ruh-roh! Let the caller know something went wrong.
+			abort <- ev.ExceptionDetails
+		}
+	}()
+	return nil
+}
+
+func catchLoadingFailed(ctx context.Context, net cdp.Network, abort chan<- error) error {
+	// Check for non-canceled resources that failed to load.
+	loadingFailed, err := net.LoadingFailed(ctx)
+	if err != nil {
+		return err
+	}
+	go func() {
+		defer loadingFailed.Close()
+		for {
+			ev, err := loadingFailed.Recv()
+			if err != nil {
+				abort <- err
+				return
+			}
+
+			// For now, most optional fields are pointers and must be
+			// checked for nil.
+			canceled := ev.Canceled != nil && *ev.Canceled
+
+			if !canceled {
+				abort <- fmt.Errorf("request %s failed: %s", ev.RequestID, ev.ErrorText)
+			}
+		}
+	}()
+	return nil
 }
 
 // setCookies sets all the provided cookies.
-func setCookies(net cdp.Network, cookie ...Cookie) error {
+func setCookies(net cdp.Network, cookies ...Cookie) error {
 	var cmds []runBatchFunc
-	for _, c := range cookie {
+	for _, c := range cookies {
 		args := cdpcmd.NewNetworkSetCookieArgs(c.URL, c.Name, c.Value)
 		cmds = append(cmds, func() error {
 			reply, err := net.SetCookie(nil, args)
@@ -227,27 +230,34 @@ func navigate(ctx context.Context, page cdp.Page, url string, timeout time.Durat
 	}
 	defer domContentEventFired.Close()
 
-	// args := cdpcmd.NewPageNavigateArgs(url)
-	nav, err := page.Navigate(ctx, (&cdpcmd.PageNavigateArgs{
-		URL: url,
-	}))
+	nav, err := page.Navigate(ctx, cdpcmd.NewPageNavigateArgs(url))
 	if err != nil {
 		return frame, err
 	}
 
-	if _, err = domContentEventFired.Recv(); err != nil {
-		return frame, err
-	}
-
-	return nav.FrameID, nil
+	_, err = domContentEventFired.Recv()
+	return nav.FrameID, err
 }
 
 // removeNodes deletes all provided nodeIDs from the DOM.
-func removeNodes(dom cdp.DOM, node ...cdptype.DOMNodeID) error {
+func removeNodes(dom cdp.DOM, nodes ...cdptype.DOMNodeID) error {
 	var rmNodes []runBatchFunc
-	for _, id := range node {
+	for _, id := range nodes {
 		arg := cdpcmd.NewDOMRemoveNodeArgs(id)
 		rmNodes = append(rmNodes, func() error { return dom.RemoveNode(nil, arg) })
 	}
 	return runBatch(rmNodes...)
+}
+
+// runBatchFunc is the function signature for runBatch.
+type runBatchFunc func() error
+
+// runBatch runs all functions simultaneously and waits until
+// execution has completed or an error is encountered.
+func runBatch(fn ...runBatchFunc) error {
+	eg := errgroup.Group{}
+	for _, f := range fn {
+		eg.Go(f)
+	}
+	return eg.Wait()
 }

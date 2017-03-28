@@ -91,8 +91,8 @@ func navigate(page cdp.Page, url string, timeout time.Duration) (frame cdptype.P
 	defer cancel()
 
 	// Enable the Page domain events.
-	if err := page.Enable(ctx); err != nil {
-		panic(err)
+	if err = page.Enable(ctx); err != nil {
+		return frame, err
 	}
 
 	// Open client for DOMContentEventFired to pause execution until
@@ -108,9 +108,6 @@ func navigate(page cdp.Page, url string, timeout time.Duration) (frame cdptype.P
 		return frame, err
 	}
 
-	if _, err = domContentEventFired.Recv(); err != nil {
-		return frame, err
-	}
-
-	return nav.FrameID, nil
+	_, err = domContentEventFired.Recv()
+	return nav.FrameID, err
 }
