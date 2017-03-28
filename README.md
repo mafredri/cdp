@@ -32,7 +32,7 @@ See [API documentation](https://godoc.org/github.com/mafredri/cdp) for package, 
 
 The main packages are `cdp` and `rpcc`, the former provides the CDP bindings and the latter handles the RPC communication with the debugging target.
 
-To connect to a debug target, a WebSocket debugger URL is needed. For example, if Chrome is running with `--remote-debugging-port=9222` the debugger URL can be found at [localhost:9222/json](http://localhost:9222/json) (see `webSocketDebuggerUrl`). This functionality might be provided in the future by either a separate package or a subpackage.
+To connect to a debug target, a WebSocket debugger URL is needed. For example, if Chrome is running with `--remote-debugging-port=9222` the debugger URL can be found at [localhost:9222/json](http://localhost:9222/json). The `devtool` package can also be used to query the DevTools JSON API (see example below).
 
 Here is an example of using `cdp`:
 
@@ -47,6 +47,7 @@ import (
 
     "github.com/mafredri/cdp"
     "github.com/mafredri/cdpcmd"
+    "github.com/mafredri/cdp/devtool"
     "github.com/mafredri/cdp/rpcc"
 )
 
@@ -54,9 +55,18 @@ func main() {
     ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
     defer cancel()
 
-    // Connect to Chrome Debugging Protocol target (webSocketDebuggerUrl).
-    wsURL := "ws://localhost:9222/devtools/page/45a887ba-c92a-4cff-9194-d9398cc87e2c"
-    conn, err := rpcc.DialContext(ctx, wsURL)
+    // Use the DevTools json API to get the current page.
+    devt := devtool.New("http://127.0.0.1:9222")
+    page, err := devt.Get(ctx, devtool.Page)
+    if err != nil {
+        page, err = devt.Create(ctx)
+        if err != nil {
+            panic(err)
+        }
+    }
+
+    // Connect to Chrome Debugging Protocol target.
+    conn, err := rpcc.DialContext(ctx, page.WebSocketDebuggerURL)
     if err != nil {
         panic(err)
     }

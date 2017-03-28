@@ -13,6 +13,16 @@ The cdp Client requires an rpcc connection (*rpcc.Conn):
 	c := cdp.NewClient(conn)
 	// ...
 
+The devtool package can be used for finding the websocket URL:
+
+	devt := devtool.New("http://127.0.0.1:9222")
+	page, err := devtool.Get(nil, devtool.Page)
+	if err != nil {
+		// Handle error.
+	}
+	conn, err := rpcc.Dial(page.WebSocketDebuggerURL)
+	// ...
+
 Domain methods
 
 Methods can be invoked from the Client:

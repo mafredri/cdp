@@ -8,6 +8,7 @@ import (
 
 	"github.com/mafredri/cdp"
 	"github.com/mafredri/cdp/cdpcmd"
+	"github.com/mafredri/cdp/devtool"
 	"github.com/mafredri/cdp/rpcc"
 )
 
@@ -15,9 +16,18 @@ func Example() {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	// Connect to Chrome Debugging Protocol target (webSocketDebuggerUrl).
-	wsURL := "ws://localhost:9222/devtools/page/45a887ba-c92a-4cff-9194-d9398cc87e2c"
-	conn, err := rpcc.DialContext(ctx, wsURL)
+	// Use the DevTools json API to get the current page.
+	devt := devtool.New("http://127.0.0.1:9222")
+	page, err := devt.Get(ctx, devtool.Page)
+	if err != nil {
+		page, err = devt.Create(ctx)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	// Connect to Chrome Debugging Protocol target.
+	conn, err := rpcc.DialContext(ctx, page.WebSocketDebuggerURL)
 	if err != nil {
 		panic(err)
 	}
