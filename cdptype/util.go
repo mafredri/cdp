@@ -13,15 +13,6 @@ func (n NetworkHeaders) Map() (map[string]string, error) {
 	return m, err
 }
 
-// MustMap panics if the headers cannot be decoded into a map.
-func (n NetworkHeaders) MustMap() map[string]string {
-	m := make(map[string]string)
-	if err := json.Unmarshal(n, &m); err != nil {
-		panic(err)
-	}
-	return m
-}
-
 // Error implements error for RuntimeExceptionDetails.
 func (r RuntimeExceptionDetails) Error() string {
 	var desc string
