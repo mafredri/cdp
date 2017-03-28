@@ -123,7 +123,7 @@ func (d *DevTools) List(ctx context.Context) ([]*Target, error) {
 
 // Activate brings focus to the Target.
 func (d *DevTools) Activate(ctx context.Context, t *Target) error {
-	resp, err := d.httpGet(ctx, "/json/activate/"+string(t.ID))
+	resp, err := d.httpGet(ctx, "/json/activate/"+t.ID)
 	if err != nil {
 		return err
 	}
@@ -138,7 +138,7 @@ func (d *DevTools) Activate(ctx context.Context, t *Target) error {
 
 // Close the Target.
 func (d *DevTools) Close(ctx context.Context, t *Target) error {
-	resp, err := d.httpGet(ctx, "/json/close/"+string(t.ID))
+	resp, err := d.httpGet(ctx, "/json/close/"+t.ID)
 	if err != nil {
 		return err
 	}
