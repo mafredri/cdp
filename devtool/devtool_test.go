@@ -19,6 +19,7 @@ var update = flag.Bool("update", false, "update .golden files")
 type testHandler struct {
 	status int
 	body   []byte
+	buf    *bytes.Buffer
 }
 
 func (h *testHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -27,7 +28,9 @@ func (h *testHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Only /json endpoint is supported!"))
 		return
 	}
-
+	if h.buf != nil {
+		fmt.Fprintln(h.buf, r.Method, r.RequestURI)
+	}
 	w.WriteHeader(h.status)
 	w.Write(h.body)
 }
@@ -56,6 +59,7 @@ func TestDevTools(t *testing.T) {
 	devt := New(srv.URL)
 
 	var buf bytes.Buffer
+	th.buf = &buf
 
 	tests := []struct {
 		name   string
@@ -63,6 +67,10 @@ func TestDevTools(t *testing.T) {
 		body   []byte
 		fn     func() (interface{}, error)
 	}{
+		{"CreateURL", http.StatusOK, read(t, filepath.Join("testdata", "new.json")), func() (interface{}, error) {
+			target, err := devt.CreateURL(nil, "https://www.google.com")
+			return target, err
+		}},
 		{"Create", http.StatusOK, read(t, filepath.Join("testdata", "new.json")), func() (interface{}, error) {
 			target, err := devt.Create(nil)
 			return target, err
@@ -171,6 +179,43 @@ func TestDevTools_Error(t *testing.T) {
 		}
 		t.Error("output does not match golden file")
 		showDiff(t, got, want)
+	}
+}
+
+func TestDevTools_InvalidURL(t *testing.T) {
+	tests := []struct {
+		name string
+		url  string
+		fn   func(devt *DevTools) error
+	}{
+		{"Create", "", func(devt *DevTools) (err error) {
+			_, err = devt.Create(nil)
+			return
+		}},
+		{"Get", "", func(devt *DevTools) (err error) {
+			_, err = devt.Get(nil, Page)
+			return
+		}},
+		{"Close", "", func(devt *DevTools) (err error) {
+			return devt.Close(nil, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
+		}},
+		{"Activate", "", func(devt *DevTools) (err error) {
+			return devt.Activate(nil, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
+		}},
+		{"Version", "", func(devt *DevTools) (err error) {
+			_, err = devt.Version(nil)
+			return
+		}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			devt := New(tt.url)
+			err := tt.fn(devt)
+			if err == nil {
+				t.Errorf("want error, got nil")
+			}
+		})
 	}
 }
 

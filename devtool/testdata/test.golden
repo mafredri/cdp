@@ -1,5 +1,12 @@
+GET /json/new?https%3A%2F%2Fwww.google.com
+CreateURL: &{ /devtools/inspector.html?ws=localhost:9222/devtools/page/ded68f91-23c0-4d15-b644-c10c3d06ec32 ded68f91-23c0-4d15-b644-c10c3d06ec32  page about:blank ws://localhost:9222/devtools/page/ded68f91-23c0-4d15-b644-c10c3d06ec32} <nil>
+GET /json/new
 Create: &{ /devtools/inspector.html?ws=localhost:9222/devtools/page/ded68f91-23c0-4d15-b644-c10c3d06ec32 ded68f91-23c0-4d15-b644-c10c3d06ec32  page about:blank ws://localhost:9222/devtools/page/ded68f91-23c0-4d15-b644-c10c3d06ec32} <nil>
+GET /json/list
 Get: &{ /devtools/inspector.html?ws=localhost:9222/devtools/page/4bae5c92-f550-4538-aafb-4263b4e6c9b2 4bae5c92-f550-4538-aafb-4263b4e6c9b2 about:blank page about:blank ws://localhost:9222/devtools/page/4bae5c92-f550-4538-aafb-4263b4e6c9b2} <nil>
+GET /json/close/ddd908ca-4d8c-4783-a089-c9456c463eef
 Close: <nil> <nil>
+GET /json/activate/ddd908ca-4d8c-4783-a089-c9456c463eef
 Activate: <nil> <nil>
+GET /json/version
 Version: &{Chrome/59.0.3040.0 1.2 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3040.0 Safari/537.36 5.9.35 537.36 (@c020f6a22577978ce1fe89fc1a397f2a651c48a8) } <nil>
