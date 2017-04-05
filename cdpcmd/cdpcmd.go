@@ -3079,13 +3079,13 @@ type NetworkGetResponseBodyReply struct {
 
 // NetworkSetBlockedURLsArgs represents the arguments for SetBlockedURLs in the Network domain.
 type NetworkSetBlockedURLsArgs struct {
-	Urls []string `json:"urls"` // URL patterns to block. Wildcards ('*') are allowed.
+	URLs []string `json:"urls"` // URL patterns to block. Wildcards ('*') are allowed.
 }
 
 // NewNetworkSetBlockedURLsArgs initializes NetworkSetBlockedURLsArgs with the required arguments.
 func NewNetworkSetBlockedURLsArgs(urls []string) *NetworkSetBlockedURLsArgs {
 	args := new(NetworkSetBlockedURLsArgs)
-	args.Urls = urls
+	args.URLs = urls
 	return args
 }
 
@@ -3125,7 +3125,7 @@ type NetworkCanClearBrowserCookiesReply struct {
 
 // NetworkGetCookiesArgs represents the arguments for GetCookies in the Network domain.
 type NetworkGetCookiesArgs struct {
-	Urls []string `json:"urls,omitempty"` // The list of URLs for which applicable cookies will be fetched
+	URLs []string `json:"urls,omitempty"` // The list of URLs for which applicable cookies will be fetched
 }
 
 // NewNetworkGetCookiesArgs initializes NetworkGetCookiesArgs with the required arguments.
@@ -3135,9 +3135,9 @@ func NewNetworkGetCookiesArgs() *NetworkGetCookiesArgs {
 	return args
 }
 
-// SetUrls sets the Urls optional argument. The list of URLs for which applicable cookies will be fetched
-func (a *NetworkGetCookiesArgs) SetUrls(urls []string) *NetworkGetCookiesArgs {
-	a.Urls = urls
+// SetURLs sets the URLs optional argument. The list of URLs for which applicable cookies will be fetched
+func (a *NetworkGetCookiesArgs) SetURLs(urls []string) *NetworkGetCookiesArgs {
+	a.URLs = urls
 	return a
 }
 
