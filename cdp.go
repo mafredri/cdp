@@ -1318,7 +1318,7 @@ type Network interface {
 
 	// Command SetBlockedURLs
 	//
-	// Blocks specific URL from loading.
+	// Blocks URLs from loading.
 	SetBlockedURLs(context.Context, *cdpcmd.NetworkSetBlockedURLsArgs) error
 
 	// Command ReplayXHR

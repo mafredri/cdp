@@ -2180,6 +2180,7 @@ type NetworkRequest struct {
 	MixedContentType *string                 `json:"mixedContentType,omitempty"` // The mixed content status of the request, as defined in http://www.w3.org/TR/mixed-content/
 	InitialPriority  NetworkResourcePriority `json:"initialPriority"`            // Priority of the resource request at the time request is sent.
 	ReferrerPolicy   string                  `json:"referrerPolicy"`             // The referrer policy of the request, as defined in https://www.w3.org/TR/referrer-policy/
+	IsLinkPreload    *bool                   `json:"isLinkPreload,omitempty"`    // Whether is loaded via link preload.
 }
 
 // NetworkSignedCertificateTimestamp Details of a signed certificate timestamp (SCT).
@@ -3032,6 +3033,7 @@ type SecurityStateExplanation struct {
 type SecurityInsecureContentStatus struct {
 	RanMixedContent                bool          `json:"ranMixedContent"`                // True if the page was loaded over HTTPS and ran mixed (HTTP) content such as scripts.
 	DisplayedMixedContent          bool          `json:"displayedMixedContent"`          // True if the page was loaded over HTTPS and displayed mixed (HTTP) content such as images.
+	ContainedMixedForm             bool          `json:"containedMixedForm"`             // True if the page was loaded over HTTPS and contained a form targeting an insecure url.
 	RanContentWithCertErrors       bool          `json:"ranContentWithCertErrors"`       // True if the page was loaded over HTTPS without certificate errors, and ran content such as scripts that were loaded with certificate errors.
 	DisplayedContentWithCertErrors bool          `json:"displayedContentWithCertErrors"` // True if the page was loaded over HTTPS without certificate errors, and displayed content such as images that were loaded with certificate errors.
 	RanInsecureContentStyle        SecurityState `json:"ranInsecureContentStyle"`        // Security state representing a page that ran insecure content.

@@ -3079,7 +3079,7 @@ type NetworkGetResponseBodyReply struct {
 
 // NetworkSetBlockedURLsArgs represents the arguments for SetBlockedURLs in the Network domain.
 type NetworkSetBlockedURLsArgs struct {
-	Urls []string `json:"urls"` // URLs to block.
+	Urls []string `json:"urls"` // URL patterns to block. Wildcards ('*') are allowed.
 }
 
 // NewNetworkSetBlockedURLsArgs initializes NetworkSetBlockedURLsArgs with the required arguments.

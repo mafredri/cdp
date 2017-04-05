@@ -902,6 +902,7 @@
                 "properties": [
                     { "name": "ranMixedContent", "type": "boolean", "description": "True if the page was loaded over HTTPS and ran mixed (HTTP) content such as scripts." },
                     { "name": "displayedMixedContent", "type": "boolean", "description": "True if the page was loaded over HTTPS and displayed mixed (HTTP) content such as images." },
+                    { "name": "containedMixedForm", "type": "boolean", "description": "True if the page was loaded over HTTPS and contained a form targeting an insecure url." },
                     { "name": "ranContentWithCertErrors", "type": "boolean", "description": "True if the page was loaded over HTTPS without certificate errors, and ran content such as scripts that were loaded with certificate errors." },
                     { "name": "displayedContentWithCertErrors", "type": "boolean", "description": "True if the page was loaded over HTTPS without certificate errors, and displayed content such as images that were loaded with certificate errors." },
                     { "name": "ranInsecureContentStyle", "$ref": "SecurityState", "description": "Security state representing a page that ran insecure content." },
@@ -1045,7 +1046,8 @@
                     { "name": "postData", "type": "string", "optional": true, "description": "HTTP POST request data." },
                     { "name": "mixedContentType", "optional": true, "type": "string", "enum": ["blockable", "optionally-blockable", "none"], "description": "The mixed content status of the request, as defined in http://www.w3.org/TR/mixed-content/" },
                     { "name": "initialPriority", "$ref": "ResourcePriority", "description": "Priority of the resource request at the time request is sent."},
-                    { "name": "referrerPolicy", "type": "string", "enum": [ "unsafe-url", "no-referrer-when-downgrade", "no-referrer", "origin", "origin-when-cross-origin", "no-referrer-when-downgrade-origin-when-cross-origin" ], "description": "The referrer policy of the request, as defined in https://www.w3.org/TR/referrer-policy/" }
+                    { "name": "referrerPolicy", "type": "string", "enum": [ "unsafe-url", "no-referrer-when-downgrade", "no-referrer", "origin", "origin-when-cross-origin", "no-referrer-when-downgrade-origin-when-cross-origin" ], "description": "The referrer policy of the request, as defined in https://www.w3.org/TR/referrer-policy/" },
+                    { "name": "isLinkPreload", "type": "boolean", "optional": true, "description": "Whether is loaded via link preload." }
                 ]
             },
             {
@@ -1230,9 +1232,9 @@
             },
             {
                 "name": "setBlockedURLs",
-                "description": "Blocks specific URL from loading.",
+                "description": "Blocks URLs from loading.",
                 "parameters": [
-                    { "name": "urls", "type": "array", "items": { "type": "string" }, "description": "URLs to block." }
+                    { "name": "urls", "type": "array", "items": { "type": "string" }, "description": "URL patterns to block. Wildcards ('*') are allowed." }
                 ],
                 "experimental": true
             },

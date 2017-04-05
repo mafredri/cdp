@@ -3703,7 +3703,7 @@ func (d *Network) GetResponseBody(ctx context.Context, args *cdpcmd.NetworkGetRe
 	return
 }
 
-// SetBlockedURLs invokes the Network method. Blocks specific URL from loading.
+// SetBlockedURLs invokes the Network method. Blocks URLs from loading.
 func (d *Network) SetBlockedURLs(ctx context.Context, args *cdpcmd.NetworkSetBlockedURLsArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, cdpcmd.NetworkSetBlockedURLs.String(), args, nil, d.conn)

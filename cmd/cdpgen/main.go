@@ -35,6 +35,14 @@ func panicErr(err error) {
 	}
 }
 
+func mkdir(name string) error {
+	err := os.Mkdir(name, 0755)
+	if os.IsExist(err) {
+		return nil
+	}
+	return err
+}
+
 func main() {
 	var (
 		destPkg          string
@@ -73,27 +81,27 @@ func main() {
 
 	cdpgen.dir = destPkg
 	cdpgen.pkg = "cdp"
-	err = os.Mkdir(cdpgen.path(), 0755)
+	err = mkdir(cdpgen.path())
 	panicErr(err)
 
 	typegen.pkg = "cdptype"
 	typegen.dir = path.Join(cdpgen.dir, typegen.pkg)
-	err = os.Mkdir(typegen.path(), 0755)
+	err = mkdir(typegen.path())
 	panicErr(err)
 
 	cmdgen.pkg = "cdpcmd"
 	cmdgen.dir = path.Join(cdpgen.dir, cmdgen.pkg)
-	err = os.Mkdir(cmdgen.path(), 0755)
+	err = mkdir(cmdgen.path())
 	panicErr(err)
 
 	eventgen.pkg = "cdpevent"
 	eventgen.dir = path.Join(cdpgen.dir, eventgen.pkg)
-	err = os.Mkdir(eventgen.path(), 0755)
+	err = mkdir(eventgen.path())
 	panicErr(err)
 
 	domgen.pkg = "cdpdom"
 	domgen.dir = path.Join(cdpgen.dir, domgen.pkg)
-	err = os.Mkdir(domgen.path(), 0755)
+	err = mkdir(domgen.path())
 	panicErr(err)
 
 	cdpgen.imports = []string{
