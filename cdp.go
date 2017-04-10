@@ -118,6 +118,24 @@ type ApplicationCache interface {
 	NetworkStateUpdated(context.Context) (cdpevent.ApplicationCacheNetworkStateUpdatedClient, error)
 }
 
+// The Browser domain. The Browser domain defines methods and events for browser managing.
+type Browser interface {
+	// Command GetWindowForTarget
+	//
+	// Get the browser window that contains the devtools target.
+	GetWindowForTarget(context.Context, *cdpcmd.BrowserGetWindowForTargetArgs) (*cdpcmd.BrowserGetWindowForTargetReply, error)
+
+	// Command SetWindowBounds
+	//
+	// Set position and/or size of the browser window.
+	SetWindowBounds(context.Context, *cdpcmd.BrowserSetWindowBoundsArgs) error
+
+	// Command GetWindowBounds
+	//
+	// Get position and size of the browser window.
+	GetWindowBounds(context.Context, *cdpcmd.BrowserGetWindowBoundsArgs) (*cdpcmd.BrowserGetWindowBoundsReply, error)
+}
+
 // The CSS domain. This domain exposes CSS read/write operations. All CSS objects (stylesheets, rules, and styles) have an associated id used in subsequent operations on the related object. Each object type has a specific id structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the get*ForNode() calls (which accept a DOM node id). A client can also discover all the existing stylesheets with the getAllStyleSheets() method (or keeping track of the styleSheetAdded/styleSheetRemoved events) and subsequently load the required stylesheet contents using the getStyleSheet[Text]() methods.
 type CSS interface {
 	// Command Enable

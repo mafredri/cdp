@@ -797,6 +797,81 @@ type ApplicationCacheFrameWithManifest struct {
 	Status      int         `json:"status"`      // Application cache status.
 }
 
+// BrowserWindowID
+type BrowserWindowID int
+
+// BrowserWindowState The state of the browser window.
+type BrowserWindowState int
+
+// BrowserWindowState as enums.
+const (
+	BrowserWindowStateNotSet BrowserWindowState = iota
+	BrowserWindowStateNormal
+	BrowserWindowStateMinimized
+	BrowserWindowStateMaximized
+	BrowserWindowStateFullscreen
+)
+
+// Valid returns true if enum is set.
+func (e BrowserWindowState) Valid() bool {
+	return e >= 1 && e <= 4
+}
+
+func (e BrowserWindowState) String() string {
+	switch e {
+	case 0:
+		return "BrowserWindowStateNotSet"
+	case 1:
+		return "normal"
+	case 2:
+		return "minimized"
+	case 3:
+		return "maximized"
+	case 4:
+		return "fullscreen"
+	}
+	return fmt.Sprintf("BrowserWindowState(%d)", e)
+}
+
+// MarshalJSON encodes enum into a string or null when not set.
+func (e BrowserWindowState) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.BrowserWindowState: MarshalJSON on bad enum value: " + e.String())
+	}
+	return json.Marshal(e.String())
+}
+
+// UnmarshalJSON decodes a string value into a enum.
+func (e *BrowserWindowState) UnmarshalJSON(data []byte) error {
+	switch string(data) {
+	case "null":
+		*e = 0
+	case "\"normal\"":
+		*e = 1
+	case "\"minimized\"":
+		*e = 2
+	case "\"maximized\"":
+		*e = 3
+	case "\"fullscreen\"":
+		*e = 4
+	default:
+		return fmt.Errorf("cdptype.BrowserWindowState: UnmarshalJSON on bad input: %s", data)
+	}
+	return nil
+}
+
+// BrowserBounds Browser window bounds information
+type BrowserBounds struct {
+	Left        *int               `json:"left,omitempty"`        // The offset from the left edge of the screen to the window in pixels.
+	Top         *int               `json:"top,omitempty"`         // The offset from the top edge of the screen to the window in pixels.
+	Width       *int               `json:"width,omitempty"`       // The window width in pixels.
+	Height      *int               `json:"height,omitempty"`      // The window height in pixels.
+	WindowState BrowserWindowState `json:"windowState,omitempty"` // The window state. Default to normal.
+}
+
 // CSSStyleSheetID
 type CSSStyleSheetID string
 

@@ -1361,6 +1361,103 @@ func TestAccessibilityAXRelationshipAttributes_Marshal(t *testing.T) {
 
 }
 
+func TestBrowserWindowState_Marshal(t *testing.T) {
+	var v BrowserWindowState
+
+	// Test empty.
+	b, err := json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if string(b) != "null" {
+		t.Errorf("Marshal() got %s, want null", b)
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+
+	// Test bad input.
+	v = 9001
+	_, err = json.Marshal(&v)
+	if err == nil {
+		t.Error("Marshal(9001) got no error, want error")
+	}
+	err = json.Unmarshal([]byte("9001"), &v)
+	if err == nil {
+		t.Error("Unmarshal(9001) got no error, want error")
+	}
+
+	// Test Normal.
+	v = 1
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 1 {
+		t.Errorf("Unmarshal(1): v == %d, want 1", v)
+	}
+
+	// Test Minimized.
+	v = 2
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 2 {
+		t.Errorf("Unmarshal(2): v == %d, want 2", v)
+	}
+
+	// Test Maximized.
+	v = 3
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 3 {
+		t.Errorf("Unmarshal(3): v == %d, want 3", v)
+	}
+
+	// Test Fullscreen.
+	v = 4
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 4 {
+		t.Errorf("Unmarshal(4): v == %d, want 4", v)
+	}
+
+}
+
 func TestCSSStyleSheetOrigin_Marshal(t *testing.T) {
 	var v CSSStyleSheetOrigin
 

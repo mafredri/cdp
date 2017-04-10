@@ -539,6 +539,84 @@ func TestApplicationCache_NetworkStateUpdated(t *testing.T) {
 
 }
 
+func TestBrowser_GetWindowForTarget(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewBrowser(conn)
+	var err error
+
+	// Test nil args.
+	_, err = dom.GetWindowForTarget(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	_, err = dom.GetWindowForTarget(nil, &cdpcmd.BrowserGetWindowForTargetArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	_, err = dom.GetWindowForTarget(nil, &cdpcmd.BrowserGetWindowForTargetArgs{})
+	if err == nil || err.(*OpError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestBrowser_SetWindowBounds(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewBrowser(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.SetWindowBounds(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.SetWindowBounds(nil, &cdpcmd.BrowserSetWindowBoundsArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.SetWindowBounds(nil, &cdpcmd.BrowserSetWindowBoundsArgs{})
+	if err == nil || err.(*OpError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestBrowser_GetWindowBounds(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewBrowser(conn)
+	var err error
+
+	// Test nil args.
+	_, err = dom.GetWindowBounds(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	_, err = dom.GetWindowBounds(nil, &cdpcmd.BrowserGetWindowBoundsArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	_, err = dom.GetWindowBounds(nil, &cdpcmd.BrowserGetWindowBoundsArgs{})
+	if err == nil || err.(*OpError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
 func TestCSS_Enable(t *testing.T) {
 	conn, codec, cleanup := newTestConn(t)
 	defer cleanup()

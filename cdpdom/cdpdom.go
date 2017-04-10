@@ -326,6 +326,55 @@ func (c *ApplicationCacheNetworkStateUpdatedClient) Recv() (*cdpevent.Applicatio
 	return event, nil
 }
 
+// The Browser domain. The Browser domain defines methods and events for browser managing.
+type Browser struct{ conn *rpcc.Conn }
+
+// NewBrowser returns the domain with the connection set to conn.
+func NewBrowser(conn *rpcc.Conn) *Browser {
+	return &Browser{conn: conn}
+}
+
+// GetWindowForTarget invokes the Browser method. Get the browser window that contains the devtools target.
+func (d *Browser) GetWindowForTarget(ctx context.Context, args *cdpcmd.BrowserGetWindowForTargetArgs) (reply *cdpcmd.BrowserGetWindowForTargetReply, err error) {
+	reply = new(cdpcmd.BrowserGetWindowForTargetReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.BrowserGetWindowForTarget.String(), args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.BrowserGetWindowForTarget.String(), nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &OpError{Domain: "Browser", Op: "GetWindowForTarget", Err: err}
+	}
+	return
+}
+
+// SetWindowBounds invokes the Browser method. Set position and/or size of the browser window.
+func (d *Browser) SetWindowBounds(ctx context.Context, args *cdpcmd.BrowserSetWindowBoundsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.BrowserSetWindowBounds.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.BrowserSetWindowBounds.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &OpError{Domain: "Browser", Op: "SetWindowBounds", Err: err}
+	}
+	return
+}
+
+// GetWindowBounds invokes the Browser method. Get position and size of the browser window.
+func (d *Browser) GetWindowBounds(ctx context.Context, args *cdpcmd.BrowserGetWindowBoundsArgs) (reply *cdpcmd.BrowserGetWindowBoundsReply, err error) {
+	reply = new(cdpcmd.BrowserGetWindowBoundsReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.BrowserGetWindowBounds.String(), args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.BrowserGetWindowBounds.String(), nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &OpError{Domain: "Browser", Op: "GetWindowBounds", Err: err}
+	}
+	return
+}
+
 // The CSS domain. This domain exposes CSS read/write operations. All CSS objects (stylesheets, rules, and styles) have an associated id used in subsequent operations on the related object. Each object type has a specific id structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the get*ForNode() calls (which accept a DOM node id). A client can also discover all the existing stylesheets with the getAllStyleSheets() method (or keeping track of the styleSheetAdded/styleSheetRemoved events) and subsequently load the required stylesheet contents using the getStyleSheet[Text]() methods.
 type CSS struct{ conn *rpcc.Conn }
 

@@ -14,6 +14,7 @@ type Client struct {
 	Accessibility     Accessibility
 	Animation         Animation
 	ApplicationCache  ApplicationCache
+	Browser           Browser
 	CSS               CSS
 	CacheStorage      CacheStorage
 	Console           Console
@@ -53,6 +54,7 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Accessibility:     cdpdom.NewAccessibility(conn),
 		Animation:         cdpdom.NewAnimation(conn),
 		ApplicationCache:  cdpdom.NewApplicationCache(conn),
+		Browser:           cdpdom.NewBrowser(conn),
 		CSS:               cdpdom.NewCSS(conn),
 		CacheStorage:      cdpdom.NewCacheStorage(conn),
 		Console:           cdpdom.NewConsole(conn),

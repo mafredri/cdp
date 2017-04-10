@@ -76,6 +76,27 @@ func TestNewApplicationCacheGetApplicationCacheForFrameArgs(t *testing.T) {
 	}
 }
 
+func TestNewBrowserGetWindowForTargetArgs(t *testing.T) {
+	args := NewBrowserGetWindowForTargetArgs(func() (targetID cdptype.TargetID) { return }())
+	if args == nil {
+		t.Errorf("NewBrowserGetWindowForTargetArgs returned nil args")
+	}
+}
+
+func TestNewBrowserSetWindowBoundsArgs(t *testing.T) {
+	args := NewBrowserSetWindowBoundsArgs(func() (windowID cdptype.BrowserWindowID, bounds cdptype.BrowserBounds) { return }())
+	if args == nil {
+		t.Errorf("NewBrowserSetWindowBoundsArgs returned nil args")
+	}
+}
+
+func TestNewBrowserGetWindowBoundsArgs(t *testing.T) {
+	args := NewBrowserGetWindowBoundsArgs(func() (windowID cdptype.BrowserWindowID) { return }())
+	if args == nil {
+		t.Errorf("NewBrowserGetWindowBoundsArgs returned nil args")
+	}
+}
+
 func TestNewCSSGetMatchedStylesForNodeArgs(t *testing.T) {
 	args := NewCSSGetMatchedStylesForNodeArgs(func() (nodeID cdptype.DOMNodeID) { return }())
 	if args == nil {
@@ -1490,7 +1511,7 @@ func TestNewTargetSetRemoteLocationsArgs(t *testing.T) {
 }
 
 func TestNewTargetSendMessageToTargetArgs(t *testing.T) {
-	args := NewTargetSendMessageToTargetArgs(func() (targetID string, message string) { return }())
+	args := NewTargetSendMessageToTargetArgs(func() (targetID cdptype.TargetID, message string) { return }())
 	if args == nil {
 		t.Errorf("NewTargetSendMessageToTargetArgs returned nil args")
 	}

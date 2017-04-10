@@ -178,6 +178,55 @@ type ApplicationCacheGetApplicationCacheForFrameReply struct {
 	ApplicationCache cdptype.ApplicationCache `json:"applicationCache"` // Relevant application cache data for the document in given frame.
 }
 
+// BrowserGetWindowForTargetArgs represents the arguments for GetWindowForTarget in the Browser domain.
+type BrowserGetWindowForTargetArgs struct {
+	TargetID cdptype.TargetID `json:"targetId"` // Devtools agent host id.
+}
+
+// NewBrowserGetWindowForTargetArgs initializes BrowserGetWindowForTargetArgs with the required arguments.
+func NewBrowserGetWindowForTargetArgs(targetID cdptype.TargetID) *BrowserGetWindowForTargetArgs {
+	args := new(BrowserGetWindowForTargetArgs)
+	args.TargetID = targetID
+	return args
+}
+
+// BrowserGetWindowForTargetReply represents the return values for GetWindowForTarget in the Browser domain.
+type BrowserGetWindowForTargetReply struct {
+	WindowID cdptype.BrowserWindowID `json:"windowId"` // Browser window id.
+	Bounds   cdptype.BrowserBounds   `json:"bounds"`   // Bounds information of the window. When window state is 'minimized', the restored window position and size are returned.
+}
+
+// BrowserSetWindowBoundsArgs represents the arguments for SetWindowBounds in the Browser domain.
+type BrowserSetWindowBoundsArgs struct {
+	WindowID cdptype.BrowserWindowID `json:"windowId"` // Browser window id.
+	Bounds   cdptype.BrowserBounds   `json:"bounds"`   // New window bounds. The 'minimized', 'maximized' and 'fullscreen' states cannot be combined with 'left', 'top', 'width' or 'height'. Leaves unspecified fields unchanged.
+}
+
+// NewBrowserSetWindowBoundsArgs initializes BrowserSetWindowBoundsArgs with the required arguments.
+func NewBrowserSetWindowBoundsArgs(windowID cdptype.BrowserWindowID, bounds cdptype.BrowserBounds) *BrowserSetWindowBoundsArgs {
+	args := new(BrowserSetWindowBoundsArgs)
+	args.WindowID = windowID
+	args.Bounds = bounds
+	return args
+}
+
+// BrowserGetWindowBoundsArgs represents the arguments for GetWindowBounds in the Browser domain.
+type BrowserGetWindowBoundsArgs struct {
+	WindowID cdptype.BrowserWindowID `json:"windowId"` // Browser window id.
+}
+
+// NewBrowserGetWindowBoundsArgs initializes BrowserGetWindowBoundsArgs with the required arguments.
+func NewBrowserGetWindowBoundsArgs(windowID cdptype.BrowserWindowID) *BrowserGetWindowBoundsArgs {
+	args := new(BrowserGetWindowBoundsArgs)
+	args.WindowID = windowID
+	return args
+}
+
+// BrowserGetWindowBoundsReply represents the return values for GetWindowBounds in the Browser domain.
+type BrowserGetWindowBoundsReply struct {
+	Bounds cdptype.BrowserBounds `json:"bounds"` // Bounds information of the window. When window state is 'minimized', the restored window position and size are returned.
+}
+
 // CSSGetMatchedStylesForNodeArgs represents the arguments for GetMatchedStylesForNode in the CSS domain.
 type CSSGetMatchedStylesForNodeArgs struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` //
@@ -4520,12 +4569,12 @@ func NewTargetSetRemoteLocationsArgs(locations []cdptype.TargetRemoteLocation) *
 
 // TargetSendMessageToTargetArgs represents the arguments for SendMessageToTarget in the Target domain.
 type TargetSendMessageToTargetArgs struct {
-	TargetID string `json:"targetId"` //
-	Message  string `json:"message"`  //
+	TargetID cdptype.TargetID `json:"targetId"` //
+	Message  string           `json:"message"`  //
 }
 
 // NewTargetSendMessageToTargetArgs initializes TargetSendMessageToTargetArgs with the required arguments.
-func NewTargetSendMessageToTargetArgs(targetID string, message string) *TargetSendMessageToTargetArgs {
+func NewTargetSendMessageToTargetArgs(targetID cdptype.TargetID, message string) *TargetSendMessageToTargetArgs {
 	args := new(TargetSendMessageToTargetArgs)
 	args.TargetID = targetID
 	args.Message = message
