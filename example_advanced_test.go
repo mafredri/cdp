@@ -83,7 +83,7 @@ func Example_advanced() {
 		func() error { return c.Page.Enable(ctx) },
 		func() error { return c.Runtime.Enable(ctx) },
 
-		func() error { return setCookies(c.Network, Cookies...) },
+		func() error { return setCookies(ctx, c.Network, Cookies...) },
 	); err != nil {
 		fmt.Println(err)
 		return
@@ -134,7 +134,7 @@ func Example_advanced() {
 		return
 	}
 
-	if err = removeNodes(c.DOM, scriptIDs.NodeIDs...); err != nil {
+	if err = removeNodes(ctx, c.DOM, scriptIDs.NodeIDs...); err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -193,12 +193,12 @@ func catchLoadingFailed(ctx context.Context, net cdp.Network, abort chan<- error
 }
 
 // setCookies sets all the provided cookies.
-func setCookies(net cdp.Network, cookies ...Cookie) error {
+func setCookies(ctx context.Context, net cdp.Network, cookies ...Cookie) error {
 	var cmds []runBatchFunc
 	for _, c := range cookies {
 		args := cdpcmd.NewNetworkSetCookieArgs(c.URL, c.Name, c.Value)
 		cmds = append(cmds, func() error {
-			reply, err := net.SetCookie(nil, args)
+			reply, err := net.SetCookie(ctx, args)
 			if err != nil {
 				return err
 			}
@@ -240,11 +240,11 @@ func navigate(ctx context.Context, page cdp.Page, url string, timeout time.Durat
 }
 
 // removeNodes deletes all provided nodeIDs from the DOM.
-func removeNodes(dom cdp.DOM, nodes ...cdptype.DOMNodeID) error {
+func removeNodes(ctx context.Context, dom cdp.DOM, nodes ...cdptype.DOMNodeID) error {
 	var rmNodes []runBatchFunc
 	for _, id := range nodes {
 		arg := cdpcmd.NewDOMRemoveNodeArgs(id)
-		rmNodes = append(rmNodes, func() error { return dom.RemoveNode(nil, arg) })
+		rmNodes = append(rmNodes, func() error { return dom.RemoveNode(ctx, arg) })
 	}
 	return runBatch(rmNodes...)
 }

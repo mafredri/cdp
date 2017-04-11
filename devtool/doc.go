@@ -17,9 +17,9 @@ Create a new DevTools instance that interacts with the given URL:
 Get the active page or create a new one:
 
 	devt := devtool.New("http://127.0.0.1:9222")
-	page, err := devt.Get(nil, devtool.Page)
+	page, err := devt.Get(context.Background(), devtool.Page)
 	if err != nil {
-		page, err = devt.Create(nil)
+		page, err = devt.Create(context.Background())
 		if err != nil {
 			// Handle error.
 		}
