@@ -38,10 +38,8 @@ func (b *messageBuffer) load() {
 	if len(b.queue) > 0 {
 		select {
 		case b.ch <- b.queue[0]:
-			// Pop from queue and ensure references are freed.
-			copied := copy(b.queue, b.queue[1:])
-			b.queue[copied] = nil
-			b.queue = b.queue[:copied]
+			b.queue[0] = nil // Remove reference from underlying array.
+			b.queue = b.queue[1:]
 		default:
 		}
 	}
