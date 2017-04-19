@@ -2,6 +2,7 @@ package rpcc
 
 import (
 	"context"
+	"strconv"
 	"testing"
 )
 
@@ -74,5 +75,30 @@ func TestStream_RecvAfterConnClose(t *testing.T) {
 	err = s.RecvMsg(nil)
 	if err != ErrConnClosing {
 		t.Errorf("err got %v, want ErrConnClosing", err)
+	}
+}
+
+func TestMessageBuffer(t *testing.T) {
+	n := 1000
+	b := &messageBuffer{
+		ch: make(chan []byte, 1),
+	}
+
+	go func() {
+		for i := 0; i < n; i++ {
+			b.store([]byte(strconv.Itoa(i)))
+		}
+	}()
+
+	i := 0
+	for bi := range b.get() {
+		b.load()
+		if strconv.Itoa(i) != string(bi) {
+			t.Errorf("Got n = %s, want %d", bi, i)
+		}
+		i++
+		if i >= n {
+			break
+		}
 	}
 }

@@ -22,7 +22,7 @@ type messageBuffer struct {
 func (b *messageBuffer) store(m []byte) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
-	if len(b.ch) == 0 {
+	if len(b.ch) == 0 && len(b.queue) == 0 {
 		select {
 		case b.ch <- m:
 			return
