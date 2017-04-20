@@ -3150,18 +3150,6 @@ func NewNetworkReplayXHRArgs(requestID cdptype.NetworkRequestID) *NetworkReplayX
 	return args
 }
 
-// NetworkSetMonitoringXHREnabledArgs represents the arguments for SetMonitoringXHREnabled in the Network domain.
-type NetworkSetMonitoringXHREnabledArgs struct {
-	Enabled bool `json:"enabled"` // Monitoring enabled state.
-}
-
-// NewNetworkSetMonitoringXHREnabledArgs initializes NetworkSetMonitoringXHREnabledArgs with the required arguments.
-func NewNetworkSetMonitoringXHREnabledArgs(enabled bool) *NetworkSetMonitoringXHREnabledArgs {
-	args := new(NetworkSetMonitoringXHREnabledArgs)
-	args.Enabled = enabled
-	return args
-}
-
 // NetworkCanClearBrowserCacheReply represents the return values for CanClearBrowserCache in the Network domain.
 type NetworkCanClearBrowserCacheReply struct {
 	Result bool `json:"result"` // True if browser cache can be cleared.
@@ -3823,18 +3811,6 @@ func NewPageHandleJavaScriptDialogArgs(accept bool) *PageHandleJavaScriptDialogA
 func (a *PageHandleJavaScriptDialogArgs) SetPromptText(promptText string) *PageHandleJavaScriptDialogArgs {
 	a.PromptText = &promptText
 	return a
-}
-
-// PageSetColorPickerEnabledArgs represents the arguments for SetColorPickerEnabled in the Page domain.
-type PageSetColorPickerEnabledArgs struct {
-	Enabled bool `json:"enabled"` // Shows / hides color picker
-}
-
-// NewPageSetColorPickerEnabledArgs initializes PageSetColorPickerEnabledArgs with the required arguments.
-func NewPageSetColorPickerEnabledArgs(enabled bool) *PageSetColorPickerEnabledArgs {
-	args := new(PageSetColorPickerEnabledArgs)
-	args.Enabled = enabled
-	return args
 }
 
 // PageConfigureOverlayArgs represents the arguments for ConfigureOverlay in the Page domain.

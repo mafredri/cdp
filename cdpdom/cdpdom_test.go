@@ -6647,32 +6647,6 @@ func TestNetwork_ReplayXHR(t *testing.T) {
 	}
 }
 
-func TestNetwork_SetMonitoringXHREnabled(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewNetwork(conn)
-	var err error
-
-	// Test nil args.
-	err = dom.SetMonitoringXHREnabled(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.SetMonitoringXHREnabled(nil, &cdpcmd.NetworkSetMonitoringXHREnabledArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	err = dom.SetMonitoringXHREnabled(nil, &cdpcmd.NetworkSetMonitoringXHREnabledArgs{})
-	if err == nil || err.(*OpError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
-}
-
 func TestNetwork_CanClearBrowserCache(t *testing.T) {
 	conn, codec, cleanup := newTestConn(t)
 	defer cleanup()
@@ -8199,32 +8173,6 @@ func TestPage_HandleJavaScriptDialog(t *testing.T) {
 	}
 }
 
-func TestPage_SetColorPickerEnabled(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewPage(conn)
-	var err error
-
-	// Test nil args.
-	err = dom.SetColorPickerEnabled(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.SetColorPickerEnabled(nil, &cdpcmd.PageSetColorPickerEnabledArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	err = dom.SetColorPickerEnabled(nil, &cdpcmd.PageSetColorPickerEnabledArgs{})
-	if err == nil || err.(*OpError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
-}
-
 func TestPage_ConfigureOverlay(t *testing.T) {
 	conn, codec, cleanup := newTestConn(t)
 	defer cleanup()
@@ -8833,40 +8781,6 @@ func TestPage_ScreencastVisibilityChanged(t *testing.T) {
 
 	conn.Close()
 	stream, err = dom.ScreencastVisibilityChanged(nil)
-	if err == nil {
-		t.Errorf("Open stream: got nil, want error")
-	}
-
-}
-
-func TestPage_ColorPicked(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewPage(conn)
-
-	stream, err := dom.ColorPicked(nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer stream.Close()
-
-	codec.event = cdpevent.PageColorPicked.String()
-	codec.conn <- nil
-	_, err = stream.Recv()
-	if err != nil {
-		t.Error(err)
-	}
-
-	codec.eventArgs = []byte("invalid json")
-	codec.conn <- nil
-	_, err = stream.Recv()
-	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %v, want OpError", err)
-	}
-
-	conn.Close()
-	stream, err = dom.ColorPicked(nil)
 	if err == nil {
 		t.Errorf("Open stream: got nil, want error")
 	}

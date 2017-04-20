@@ -3778,19 +3778,6 @@ func (d *Network) ReplayXHR(ctx context.Context, args *cdpcmd.NetworkReplayXHRAr
 	return
 }
 
-// SetMonitoringXHREnabled invokes the Network method. Toggles monitoring of XMLHttpRequest. If true, console will receive messages upon each XHR issued.
-func (d *Network) SetMonitoringXHREnabled(ctx context.Context, args *cdpcmd.NetworkSetMonitoringXHREnabledArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.NetworkSetMonitoringXHREnabled.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.NetworkSetMonitoringXHREnabled.String(), nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &OpError{Domain: "Network", Op: "SetMonitoringXHREnabled", Err: err}
-	}
-	return
-}
-
 // CanClearBrowserCache invokes the Network method. Tells whether clearing browser cache is supported.
 func (d *Network) CanClearBrowserCache(ctx context.Context) (reply *cdpcmd.NetworkCanClearBrowserCacheReply, err error) {
 	reply = new(cdpcmd.NetworkCanClearBrowserCacheReply)
@@ -4636,19 +4623,6 @@ func (d *Page) HandleJavaScriptDialog(ctx context.Context, args *cdpcmd.PageHand
 	return
 }
 
-// SetColorPickerEnabled invokes the Page method. Shows / hides color picker
-func (d *Page) SetColorPickerEnabled(ctx context.Context, args *cdpcmd.PageSetColorPickerEnabledArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.PageSetColorPickerEnabled.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.PageSetColorPickerEnabled.String(), nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &OpError{Domain: "Page", Op: "SetColorPickerEnabled", Err: err}
-	}
-	return
-}
-
 // ConfigureOverlay invokes the Page method. Configures overlay.
 func (d *Page) ConfigureOverlay(ctx context.Context, args *cdpcmd.PageConfigureOverlayArgs) (err error) {
 	if args != nil {
@@ -5021,28 +4995,6 @@ func (c *PageScreencastVisibilityChangedClient) Recv() (*cdpevent.PageScreencast
 	event := new(cdpevent.PageScreencastVisibilityChangedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &OpError{Domain: "Page", Op: "ScreencastVisibilityChanged Recv", Err: err}
-	}
-	return event, nil
-}
-
-// ColorPicked creates the event client. Fired when a color has been picked.
-func (d *Page) ColorPicked(ctx context.Context) (cdpevent.PageColorPickedClient, error) {
-	s, err := rpcc.NewStream(ctx, cdpevent.PageColorPicked.String(), d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &PageColorPickedClient{Stream: s}, nil
-}
-
-// PageColorPickedClient implements cdpevent.PageColorPickedClient.
-type PageColorPickedClient struct{ rpcc.Stream }
-
-// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-// triggered, context canceled or connection closed.
-func (c *PageColorPickedClient) Recv() (*cdpevent.PageColorPickedReply, error) {
-	event := new(cdpevent.PageColorPickedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &OpError{Domain: "Page", Op: "ColorPicked Recv", Err: err}
 	}
 	return event, nil
 }

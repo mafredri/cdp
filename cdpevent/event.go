@@ -88,7 +88,6 @@ const (
 	PageJavascriptDialogClosed                EventType = "Page.javascriptDialogClosed"
 	PageScreencastFrame                       EventType = "Page.screencastFrame"
 	PageScreencastVisibilityChanged           EventType = "Page.screencastVisibilityChanged"
-	PageColorPicked                           EventType = "Page.colorPicked"
 	PageInterstitialShown                     EventType = "Page.interstitialShown"
 	PageInterstitialHidden                    EventType = "Page.interstitialHidden"
 	PageNavigationRequested                   EventType = "Page.navigationRequested"

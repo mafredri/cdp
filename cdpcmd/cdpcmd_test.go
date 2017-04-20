@@ -1069,13 +1069,6 @@ func TestNewNetworkReplayXHRArgs(t *testing.T) {
 	}
 }
 
-func TestNewNetworkSetMonitoringXHREnabledArgs(t *testing.T) {
-	args := NewNetworkSetMonitoringXHREnabledArgs(func() (enabled bool) { return }())
-	if args == nil {
-		t.Errorf("NewNetworkSetMonitoringXHREnabledArgs returned nil args")
-	}
-}
-
 func TestNewNetworkGetCookiesArgs(t *testing.T) {
 	args := NewNetworkGetCookiesArgs()
 	if args == nil {
@@ -1255,13 +1248,6 @@ func TestNewPageHandleJavaScriptDialogArgs(t *testing.T) {
 	args := NewPageHandleJavaScriptDialogArgs(func() (accept bool) { return }())
 	if args == nil {
 		t.Errorf("NewPageHandleJavaScriptDialogArgs returned nil args")
-	}
-}
-
-func TestNewPageSetColorPickerEnabledArgs(t *testing.T) {
-	args := NewPageSetColorPickerEnabledArgs(func() (enabled bool) { return }())
-	if args == nil {
-		t.Errorf("NewPageSetColorPickerEnabledArgs returned nil args")
 	}
 }
 

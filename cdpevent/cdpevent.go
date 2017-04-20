@@ -1102,19 +1102,6 @@ type PageScreencastVisibilityChangedReply struct {
 	Visible bool `json:"visible"` // True if the page is visible.
 }
 
-// PageColorPickedClient receives ColorPicked events.
-type PageColorPickedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*PageColorPickedReply, error)
-	rpcc.Stream
-}
-
-// PageColorPickedReply fired when a color has been picked.
-type PageColorPickedReply struct {
-	Color cdptype.DOMRGBA `json:"color"` // RGBA of the picked color.
-}
-
 // PageInterstitialShownClient receives InterstitialShown events.
 type PageInterstitialShownClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is

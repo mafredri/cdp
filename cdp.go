@@ -1344,11 +1344,6 @@ type Network interface {
 	// This method sends a new XMLHttpRequest which is identical to the original one. The following parameters should be identical: method, url, async, request body, extra headers, withCredentials attribute, user, password.
 	ReplayXHR(context.Context, *cdpcmd.NetworkReplayXHRArgs) error
 
-	// Command SetMonitoringXHREnabled
-	//
-	// Toggles monitoring of XMLHttpRequest. If true, console will receive messages upon each XHR issued.
-	SetMonitoringXHREnabled(context.Context, *cdpcmd.NetworkSetMonitoringXHREnabledArgs) error
-
 	// Command CanClearBrowserCache
 	//
 	// Tells whether clearing browser cache is supported.
@@ -1642,11 +1637,6 @@ type Page interface {
 	// Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).
 	HandleJavaScriptDialog(context.Context, *cdpcmd.PageHandleJavaScriptDialogArgs) error
 
-	// Command SetColorPickerEnabled
-	//
-	// Shows / hides color picker
-	SetColorPickerEnabled(context.Context, *cdpcmd.PageSetColorPickerEnabledArgs) error
-
 	// Command ConfigureOverlay
 	//
 	// Configures overlay.
@@ -1746,11 +1736,6 @@ type Page interface {
 	//
 	// Fired when the page with currently enabled screencast was shown or hidden .
 	ScreencastVisibilityChanged(context.Context) (cdpevent.PageScreencastVisibilityChangedClient, error)
-
-	// Event ColorPicked
-	//
-	// Fired when a color has been picked.
-	ColorPicked(context.Context) (cdpevent.PageColorPickedClient, error)
 
 	// Event InterstitialShown
 	//
