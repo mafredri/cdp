@@ -5,12 +5,12 @@ go:
   - tip
 
 before_install:
-  - go get github.com/mattn/goveralls
+  - go get github.com/mattn/goveralls || true
 
 script:
   - go list -f '{{if len .TestGoFiles}} {{.ImportPath}}{{end}}' ./... | xargs go test
   - go test -race ./rpcc
-  - goveralls -service=travis-ci -ignore 'cmd/cdpgen/*,cmd/cdpgen/*/*'
+  - goveralls -service=travis-ci -ignore 'cmd/cdpgen/*,cmd/cdpgen/*/*' || true
 
 matrix:
   fast_finish: true
