@@ -17,7 +17,7 @@ func (o opError) Error() string {
 	return o.err.Error()
 }
 
-func TestErrorCauser(t *testing.T) {
+func TestErrorCause(t *testing.T) {
 	err1 := errors.New("trigger")
 
 	tests := []struct {
@@ -32,7 +32,7 @@ func TestErrorCauser(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := ErrorCauser(tt.err)
+			got := ErrorCause(tt.err)
 			if got != tt.want {
 				t.Errorf("got %v, want %v", got, tt.want)
 			}

@@ -4,9 +4,9 @@ type causer interface {
 	Cause() error
 }
 
-// ErrorCauser returns the error that caused this error.
+// ErrorCause returns the error that caused this error.
 // Returns err if it is not a cdpdom OpError.
-func ErrorCauser(err error) error {
+func ErrorCause(err error) error {
 	if err == nil {
 		return nil
 	}
