@@ -4,8 +4,8 @@ type causer interface {
 	Cause() error
 }
 
-// ErrorCause returns the error that caused this error.
-// Returns err if it is not a cdpdom OpError.
+// ErrorCause returns the underlying cause for this error, if possible.
+// If err does not implement causer.Cause(), then err is returned.
 func ErrorCause(err error) error {
 	if err == nil {
 		return nil

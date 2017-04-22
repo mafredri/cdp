@@ -307,7 +307,8 @@ type Client struct {
 	%s
 }
 
-// NewClient returns a new Client.
+// NewClient returns a new Client that uses conn
+// for communication with the debugging target.
 func NewClient(conn *rpcc.Conn) *Client {
 	return &Client{
 		%s

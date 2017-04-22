@@ -48,7 +48,8 @@ type Client struct {
 	Tracing           Tracing
 }
 
-// NewClient returns a new Client.
+// NewClient returns a new Client that uses conn
+// for communication with the debugging target.
 func NewClient(conn *rpcc.Conn) *Client {
 	return &Client{
 		Accessibility:     cdpdom.NewAccessibility(conn),
