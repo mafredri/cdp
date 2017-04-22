@@ -8,7 +8,7 @@ import (
 
 func TestOpError_ErrorContainsErrorCauser(t *testing.T) {
 	causer := errors.New("error causer")
-	err := &OpError{
+	err := &opError{
 		Domain: "Test",
 		Op:     "Method",
 		Err:    causer,

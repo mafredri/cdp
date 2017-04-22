@@ -401,7 +401,7 @@ func (d *%[2]s) %[1]s(ctx context.Context%[3]s) %[4]s {`, c.Name(), d.Name(), re
 		err = rpcc.Invoke(ctx, cdpcmd.%[1]s.String(), nil, %[2]s, d.conn)
 	}
 	if err != nil {
-		err = &OpError{Domain: %[3]q, Op: %[4]q, Err: err}
+		err = &opError{Domain: %[3]q, Op: %[4]q, Err: err}
 	}
 	return
 }
@@ -410,7 +410,7 @@ func (d *%[2]s) %[1]s(ctx context.Context%[3]s) %[4]s {`, c.Name(), d.Name(), re
 			g.Printf(`
 	err = rpcc.Invoke(ctx, cdpcmd.%s.String(), nil, %s, d.conn)
 	if err != nil {
-		err = &OpError{Domain: %q, Op: %q, Err: err}
+		err = &opError{Domain: %q, Op: %q, Err: err}
 	}
 	return
 }
@@ -458,7 +458,7 @@ func Test%[1]s_%[2]s(t *testing.T) {
 	%[1]s = dom.%[2]s(nil)`, assign, c.Name())
 		}
 		g.TestPrintf(`
-	if err == nil || err.(*OpError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
 		t.Errorf("unexpected error; got: %%v, want bad request", err)
 	}`)
 		g.TestPrintf(`
@@ -489,7 +489,7 @@ type %[4]s struct { rpcc.Stream }
 func (c *%[4]s) Recv() (*cdpevent.%[3]s, error) {
 	event := new(cdpevent.%[3]s)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &OpError{Domain: %[5]q, Op: "%[6]s Recv", Err: err}
+		return nil, &opError{Domain: %[5]q, Op: "%[6]s Recv", Err: err}
 	}
 	return event, nil
 }
@@ -519,8 +519,8 @@ func Test%[1]s_%[2]s(t *testing.T) {
 	codec.eventArgs = []byte("invalid json")
 	codec.conn <- nil
 	_, err = stream.Recv()
-	if err, ok := err.(*OpError); !ok {
-		t.Errorf("Recv() got %%v, want OpError", err)
+	if err, ok := err.(*opError); !ok {
+		t.Errorf("Recv() got %%v, want opError", err)
 	}
 
 	conn.Close()

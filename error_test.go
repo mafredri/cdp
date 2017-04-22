@@ -3,9 +3,19 @@ package cdp
 import (
 	"errors"
 	"testing"
-
-	"github.com/mafredri/cdp/cdpdom"
 )
+
+type opError struct {
+	err error
+}
+
+func (o *opError) Cause() error {
+	return o.err
+}
+
+func (o opError) Error() string {
+	return o.err.Error()
+}
 
 func TestErrorCauser(t *testing.T) {
 	err1 := errors.New("trigger")
@@ -15,7 +25,7 @@ func TestErrorCauser(t *testing.T) {
 		err  error
 		want error
 	}{
-		{"Returns underlying error", &cdpdom.OpError{Err: err1}, err1},
+		{"Returns underlying error", &opError{err: err1}, err1},
 		{"Returns original error", err1, err1},
 		{"Returns nil", nil, nil},
 	}
