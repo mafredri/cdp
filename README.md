@@ -46,7 +46,7 @@ import (
     "time"
 
     "github.com/mafredri/cdp"
-    "github.com/mafredri/cdpcmd"
+    "github.com/mafredri/cdp/cdpcmd"
     "github.com/mafredri/cdp/devtool"
     "github.com/mafredri/cdp/rpcc"
 )
