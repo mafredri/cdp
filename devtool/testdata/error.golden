@@ -1,6 +1,6 @@
-Create: <nil> target CreateURL: Not found
-Get: <nil> target List: Not found
-Get ServiceWorker: <nil> target Get: could not find target of type: service_worker
-Close: <nil> target Close: Could not close target id: ddd908ca-4d8c-4783-a089-c9456c463eef
-Activate: <nil> target Activate: Could not close target id: ddd908ca-4d8c-4783-a089-c9456c463eef
-Version: <nil> target Version: Not found
+Create: <nil> devtool: CreateURL: Not found
+Get: <nil> devtool: List: Not found
+Get ServiceWorker: <nil> devtool: Get: could not find target of type: service_worker
+Close: <nil> devtool: Close: Could not close target id: ddd908ca-4d8c-4783-a089-c9456c463eef
+Activate: <nil> devtool: Activate: Could not close target id: ddd908ca-4d8c-4783-a089-c9456c463eef
+Version: <nil> devtool: Version: Not found
