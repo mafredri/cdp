@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"regexp"
 )
 
 // DevToolsOption represents a function that sets a DevTools option.
@@ -68,25 +69,39 @@ func (d *DevTools) Create(ctx context.Context) (*Target, error) {
 	return d.CreateURL(ctx, "")
 }
 
+var httpRe = regexp.MustCompile("^https?://")
+
 // CreateURL is like Create but opens the provided URL. The URL must be
 // valid and begin with "http://" or "https://".
 func (d *DevTools) CreateURL(ctx context.Context, openURL string) (*Target, error) {
+	var escapedQueryURL string
+
 	if openURL != "" {
-		openURL = "?" + url.QueryEscape(openURL)
+		if !httpRe.MatchString(openURL) {
+			return nil, errors.New("devtool: CreateURL: invalid openURL: " + openURL)
+		}
+		escapedQueryURL = "?" + url.QueryEscape(openURL)
 	}
 
-	resp, err := d.httpGet(ctx, "/json/new"+openURL)
+	resp, err := d.httpGet(ctx, "/json/new"+escapedQueryURL)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, parseError("target CreateURL", resp.Body)
-	}
+	switch resp.StatusCode {
+	// Returned by Headless Chrome that does
+	// not support the "/json/new" endpoint.
+	case http.StatusInternalServerError:
+		return headlessCreateURL(ctx, d, openURL)
 
-	t := new(Target)
-	return t, json.NewDecoder(resp.Body).Decode(t)
+	case http.StatusOK:
+		t := new(Target)
+		return t, json.NewDecoder(resp.Body).Decode(t)
+
+	default:
+		return nil, parseError("CreateURL", resp.Body)
+	}
 }
 
 // Get the first Target that matches Type.
