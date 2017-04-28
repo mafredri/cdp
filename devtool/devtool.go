@@ -117,7 +117,7 @@ func (d *DevTools) Get(ctx context.Context, typ Type) (*Target, error) {
 		}
 	}
 
-	return nil, errors.New("target Get: could not find target of type: " + string(typ))
+	return nil, errors.New("devtool: Get: could not find target of type: " + string(typ))
 }
 
 // List returns a list with all devtools Targets.
@@ -129,7 +129,7 @@ func (d *DevTools) List(ctx context.Context) ([]*Target, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, parseError("target List", resp.Body)
+		return nil, parseError("List", resp.Body)
 	}
 
 	var t []*Target
@@ -145,7 +145,7 @@ func (d *DevTools) Activate(ctx context.Context, t *Target) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return parseError("target Activate", resp.Body)
+		return parseError("Activate", resp.Body)
 	}
 
 	return nil
@@ -160,7 +160,7 @@ func (d *DevTools) Close(ctx context.Context, t *Target) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return parseError("target Close", resp.Body)
+		return parseError("Close", resp.Body)
 	}
 
 	return nil
@@ -190,7 +190,7 @@ func (d *DevTools) Version(ctx context.Context) (*Version, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, parseError("target Version", resp.Body)
+		return nil, parseError("Version", resp.Body)
 	}
 
 	v := new(Version)
@@ -215,5 +215,5 @@ func parseError(from string, r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	return errors.New(from + ": " + string(m))
+	return errors.New("devtool: " + from + ": " + string(m))
 }
