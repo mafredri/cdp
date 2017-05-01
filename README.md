@@ -142,6 +142,7 @@ The Go implementation of gRPC ([grpc-go](https://github.com/grpc/grpc-go)) has b
 
 * [Chrome DevTools Documentation: Chrome Debugging Protocol](https://developer.chrome.com/devtools/docs/debugger-protocol)
 * [Chrome Debugging Protocol Viewer](https://chromedevtools.github.io/debugger-protocol-viewer/) lists all the domains, methods, events and types used in the protocol
+* [Getting Started with Headless Chrome](https://developers.google.com/web/updates/2017/04/headless-chrome)
 * [RemoteDebug](http://remotedebug.org/) is an initiative to bring remote debugging (e.g. CDP) to all modern browsers
 * [RemoteDebug Protocol Compatibility Tables](https://compatibility.remotedebug.org/)
 
