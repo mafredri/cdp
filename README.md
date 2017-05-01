@@ -136,7 +136,16 @@ For more information, consult the [documentation](#documentation).
 
 The Go implementation of gRPC ([grpc-go](https://github.com/grpc/grpc-go)) has been a source of inspiration for some of the design descisions made in the `cdp` and `rpcc` packages. Some ideas have also been borrowed from the `net/rpc` package from the standard library.
 
-## Other work
+## Links
+
+### Chrome Debugging Protocol
+
+* [Chrome DevTools Documentation: Chrome Debugging Protocol](https://developer.chrome.com/devtools/docs/debugger-protocol)
+* [Chrome Debugging Protocol Viewer](https://chromedevtools.github.io/debugger-protocol-viewer/) lists all the domains, methods, events and types used in the protocol
+* [RemoteDebug](http://remotedebug.org/) is an initiative to bring remote debugging (e.g. CDP) to all modern browsers
+* [RemoteDebug Protocol Compatibility Tables](https://compatibility.remotedebug.org/)
+
+### Other work
 
 These are alternative implementations of the Chrome Debugging Protocol, written in Go:
 
