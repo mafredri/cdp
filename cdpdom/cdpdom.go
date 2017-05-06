@@ -1177,76 +1177,29 @@ func (d *DOM) RequestNode(ctx context.Context, args *cdpcmd.DOMRequestNodeArgs) 
 	return
 }
 
-// SetInspectMode invokes the DOM method. Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspectNodeRequested' event upon element selection.
-func (d *DOM) SetInspectMode(ctx context.Context, args *cdpcmd.DOMSetInspectModeArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.DOMSetInspectMode.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.DOMSetInspectMode.String(), nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &opError{Domain: "DOM", Op: "SetInspectMode", Err: err}
-	}
-	return
-}
-
-// HighlightRect invokes the DOM method. Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.
-func (d *DOM) HighlightRect(ctx context.Context, args *cdpcmd.DOMHighlightRectArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightRect.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightRect.String(), nil, nil, d.conn)
-	}
+// HighlightRect invokes the DOM method. Highlights given rectangle.
+func (d *DOM) HighlightRect(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightRect.String(), nil, nil, d.conn)
 	if err != nil {
 		err = &opError{Domain: "DOM", Op: "HighlightRect", Err: err}
 	}
 	return
 }
 
-// HighlightQuad invokes the DOM method. Highlights given quad. Coordinates are absolute with respect to the main frame viewport.
-func (d *DOM) HighlightQuad(ctx context.Context, args *cdpcmd.DOMHighlightQuadArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightQuad.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightQuad.String(), nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &opError{Domain: "DOM", Op: "HighlightQuad", Err: err}
-	}
-	return
-}
-
-// HighlightNode invokes the DOM method. Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified.
-func (d *DOM) HighlightNode(ctx context.Context, args *cdpcmd.DOMHighlightNodeArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightNode.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightNode.String(), nil, nil, d.conn)
-	}
+// HighlightNode invokes the DOM method. Highlights DOM node.
+func (d *DOM) HighlightNode(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightNode.String(), nil, nil, d.conn)
 	if err != nil {
 		err = &opError{Domain: "DOM", Op: "HighlightNode", Err: err}
 	}
 	return
 }
 
-// HideHighlight invokes the DOM method. Hides DOM node highlight.
+// HideHighlight invokes the DOM method. Hides any highlight.
 func (d *DOM) HideHighlight(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.DOMHideHighlight.String(), nil, nil, d.conn)
 	if err != nil {
 		err = &opError{Domain: "DOM", Op: "HideHighlight", Err: err}
-	}
-	return
-}
-
-// HighlightFrame invokes the DOM method. Highlights owner element of the frame with given id.
-func (d *DOM) HighlightFrame(ctx context.Context, args *cdpcmd.DOMHighlightFrameArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightFrame.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.DOMHighlightFrame.String(), nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &opError{Domain: "DOM", Op: "HighlightFrame", Err: err}
 	}
 	return
 }
@@ -1443,20 +1396,6 @@ func (d *DOM) GetRelayoutBoundary(ctx context.Context, args *cdpcmd.DOMGetRelayo
 	return
 }
 
-// GetHighlightObjectForTest invokes the DOM method. For testing.
-func (d *DOM) GetHighlightObjectForTest(ctx context.Context, args *cdpcmd.DOMGetHighlightObjectForTestArgs) (reply *cdpcmd.DOMGetHighlightObjectForTestReply, err error) {
-	reply = new(cdpcmd.DOMGetHighlightObjectForTestReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.DOMGetHighlightObjectForTest.String(), args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.DOMGetHighlightObjectForTest.String(), nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &opError{Domain: "DOM", Op: "GetHighlightObjectForTest", Err: err}
-	}
-	return
-}
-
 // DocumentUpdated creates the event client. Fired when Document has been totally updated. Node ids are no longer valid.
 func (d *DOM) DocumentUpdated(ctx context.Context) (cdpevent.DOMDocumentUpdatedClient, error) {
 	s, err := rpcc.NewStream(ctx, cdpevent.DOMDocumentUpdated.String(), d.conn)
@@ -1475,28 +1414,6 @@ func (c *DOMDocumentUpdatedClient) Recv() (*cdpevent.DOMDocumentUpdatedReply, er
 	event := new(cdpevent.DOMDocumentUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &opError{Domain: "DOM", Op: "DocumentUpdated Recv", Err: err}
-	}
-	return event, nil
-}
-
-// InspectNodeRequested creates the event client. Fired when the node should be inspected. This happens after call to setInspectMode.
-func (d *DOM) InspectNodeRequested(ctx context.Context) (cdpevent.DOMInspectNodeRequestedClient, error) {
-	s, err := rpcc.NewStream(ctx, cdpevent.DOMInspectNodeRequested.String(), d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &DOMInspectNodeRequestedClient{Stream: s}, nil
-}
-
-// DOMInspectNodeRequestedClient implements cdpevent.DOMInspectNodeRequestedClient.
-type DOMInspectNodeRequestedClient struct{ rpcc.Stream }
-
-// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-// triggered, context canceled or connection closed.
-func (c *DOMInspectNodeRequestedClient) Recv() (*cdpevent.DOMInspectNodeRequestedReply, error) {
-	event := new(cdpevent.DOMInspectNodeRequestedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &opError{Domain: "DOM", Op: "InspectNodeRequested Recv", Err: err}
 	}
 	return event, nil
 }
@@ -1783,28 +1700,6 @@ func (c *DOMDistributedNodesUpdatedClient) Recv() (*cdpevent.DOMDistributedNodes
 	event := new(cdpevent.DOMDistributedNodesUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &opError{Domain: "DOM", Op: "DistributedNodesUpdated Recv", Err: err}
-	}
-	return event, nil
-}
-
-// NodeHighlightRequested creates the event client.
-func (d *DOM) NodeHighlightRequested(ctx context.Context) (cdpevent.DOMNodeHighlightRequestedClient, error) {
-	s, err := rpcc.NewStream(ctx, cdpevent.DOMNodeHighlightRequested.String(), d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &DOMNodeHighlightRequestedClient{Stream: s}, nil
-}
-
-// DOMNodeHighlightRequestedClient implements cdpevent.DOMNodeHighlightRequestedClient.
-type DOMNodeHighlightRequestedClient struct{ rpcc.Stream }
-
-// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-// triggered, context canceled or connection closed.
-func (c *DOMNodeHighlightRequestedClient) Recv() (*cdpevent.DOMNodeHighlightRequestedReply, error) {
-	event := new(cdpevent.DOMNodeHighlightRequestedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &opError{Domain: "DOM", Op: "NodeHighlightRequested Recv", Err: err}
 	}
 	return event, nil
 }
@@ -4273,6 +4168,255 @@ func (c *NetworkEventSourceMessageReceivedClient) Recv() (*cdpevent.NetworkEvent
 	return event, nil
 }
 
+// The Overlay domain. This domain provides various functionality related to drawing atop the inspected page.
+type Overlay struct{ conn *rpcc.Conn }
+
+// NewOverlay returns the domain with the connection set to conn.
+func NewOverlay(conn *rpcc.Conn) *Overlay {
+	return &Overlay{conn: conn}
+}
+
+// Enable invokes the Overlay method. Enables domain notifications.
+func (d *Overlay) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, cdpcmd.OverlayEnable.String(), nil, nil, d.conn)
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "Enable", Err: err}
+	}
+	return
+}
+
+// Disable invokes the Overlay method. Disables domain notifications.
+func (d *Overlay) Disable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, cdpcmd.OverlayDisable.String(), nil, nil, d.conn)
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "Disable", Err: err}
+	}
+	return
+}
+
+// SetShowPaintRects invokes the Overlay method. Requests that backend shows paint rectangles
+func (d *Overlay) SetShowPaintRects(ctx context.Context, args *cdpcmd.OverlaySetShowPaintRectsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetShowPaintRects.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetShowPaintRects.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "SetShowPaintRects", Err: err}
+	}
+	return
+}
+
+// SetShowDebugBorders invokes the Overlay method. Requests that backend shows debug borders on layers
+func (d *Overlay) SetShowDebugBorders(ctx context.Context, args *cdpcmd.OverlaySetShowDebugBordersArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetShowDebugBorders.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetShowDebugBorders.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "SetShowDebugBorders", Err: err}
+	}
+	return
+}
+
+// SetShowFPSCounter invokes the Overlay method. Requests that backend shows the FPS counter
+func (d *Overlay) SetShowFPSCounter(ctx context.Context, args *cdpcmd.OverlaySetShowFPSCounterArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetShowFPSCounter.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetShowFPSCounter.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "SetShowFPSCounter", Err: err}
+	}
+	return
+}
+
+// SetShowScrollBottleneckRects invokes the Overlay method. Requests that backend shows scroll bottleneck rects
+func (d *Overlay) SetShowScrollBottleneckRects(ctx context.Context, args *cdpcmd.OverlaySetShowScrollBottleneckRectsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetShowScrollBottleneckRects.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetShowScrollBottleneckRects.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "SetShowScrollBottleneckRects", Err: err}
+	}
+	return
+}
+
+// SetShowViewportSizeOnResize invokes the Overlay method. Paints viewport size upon main frame resize.
+func (d *Overlay) SetShowViewportSizeOnResize(ctx context.Context, args *cdpcmd.OverlaySetShowViewportSizeOnResizeArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetShowViewportSizeOnResize.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetShowViewportSizeOnResize.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "SetShowViewportSizeOnResize", Err: err}
+	}
+	return
+}
+
+// SetPausedInDebuggerMessage invokes the Overlay method.
+func (d *Overlay) SetPausedInDebuggerMessage(ctx context.Context, args *cdpcmd.OverlaySetPausedInDebuggerMessageArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetPausedInDebuggerMessage.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetPausedInDebuggerMessage.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "SetPausedInDebuggerMessage", Err: err}
+	}
+	return
+}
+
+// SetSuspended invokes the Overlay method.
+func (d *Overlay) SetSuspended(ctx context.Context, args *cdpcmd.OverlaySetSuspendedArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetSuspended.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetSuspended.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "SetSuspended", Err: err}
+	}
+	return
+}
+
+// SetInspectMode invokes the Overlay method. Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspectNodeRequested' event upon element selection.
+func (d *Overlay) SetInspectMode(ctx context.Context, args *cdpcmd.OverlaySetInspectModeArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetInspectMode.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlaySetInspectMode.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "SetInspectMode", Err: err}
+	}
+	return
+}
+
+// HighlightRect invokes the Overlay method. Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.
+func (d *Overlay) HighlightRect(ctx context.Context, args *cdpcmd.OverlayHighlightRectArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlayHighlightRect.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlayHighlightRect.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "HighlightRect", Err: err}
+	}
+	return
+}
+
+// HighlightQuad invokes the Overlay method. Highlights given quad. Coordinates are absolute with respect to the main frame viewport.
+func (d *Overlay) HighlightQuad(ctx context.Context, args *cdpcmd.OverlayHighlightQuadArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlayHighlightQuad.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlayHighlightQuad.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "HighlightQuad", Err: err}
+	}
+	return
+}
+
+// HighlightNode invokes the Overlay method. Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified.
+func (d *Overlay) HighlightNode(ctx context.Context, args *cdpcmd.OverlayHighlightNodeArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlayHighlightNode.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlayHighlightNode.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "HighlightNode", Err: err}
+	}
+	return
+}
+
+// HighlightFrame invokes the Overlay method. Highlights owner element of the frame with given id.
+func (d *Overlay) HighlightFrame(ctx context.Context, args *cdpcmd.OverlayHighlightFrameArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlayHighlightFrame.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlayHighlightFrame.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "HighlightFrame", Err: err}
+	}
+	return
+}
+
+// HideHighlight invokes the Overlay method. Hides any highlight.
+func (d *Overlay) HideHighlight(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, cdpcmd.OverlayHideHighlight.String(), nil, nil, d.conn)
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "HideHighlight", Err: err}
+	}
+	return
+}
+
+// GetHighlightObjectForTest invokes the Overlay method. For testing.
+func (d *Overlay) GetHighlightObjectForTest(ctx context.Context, args *cdpcmd.OverlayGetHighlightObjectForTestArgs) (reply *cdpcmd.OverlayGetHighlightObjectForTestReply, err error) {
+	reply = new(cdpcmd.OverlayGetHighlightObjectForTestReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlayGetHighlightObjectForTest.String(), args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.OverlayGetHighlightObjectForTest.String(), nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Overlay", Op: "GetHighlightObjectForTest", Err: err}
+	}
+	return
+}
+
+// NodeHighlightRequested creates the event client. Fired when the node should be highlighted. This happens after call to setInspectMode.
+func (d *Overlay) NodeHighlightRequested(ctx context.Context) (cdpevent.OverlayNodeHighlightRequestedClient, error) {
+	s, err := rpcc.NewStream(ctx, cdpevent.OverlayNodeHighlightRequested.String(), d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &OverlayNodeHighlightRequestedClient{Stream: s}, nil
+}
+
+// OverlayNodeHighlightRequestedClient implements cdpevent.OverlayNodeHighlightRequestedClient.
+type OverlayNodeHighlightRequestedClient struct{ rpcc.Stream }
+
+// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+// triggered, context canceled or connection closed.
+func (c *OverlayNodeHighlightRequestedClient) Recv() (*cdpevent.OverlayNodeHighlightRequestedReply, error) {
+	event := new(cdpevent.OverlayNodeHighlightRequestedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &opError{Domain: "Overlay", Op: "NodeHighlightRequested Recv", Err: err}
+	}
+	return event, nil
+}
+
+// InspectNodeRequested creates the event client. Fired when the node should be inspected. This happens after call to setInspectMode or when user manually inspects an element.
+func (d *Overlay) InspectNodeRequested(ctx context.Context) (cdpevent.OverlayInspectNodeRequestedClient, error) {
+	s, err := rpcc.NewStream(ctx, cdpevent.OverlayInspectNodeRequested.String(), d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &OverlayInspectNodeRequestedClient{Stream: s}, nil
+}
+
+// OverlayInspectNodeRequestedClient implements cdpevent.OverlayInspectNodeRequestedClient.
+type OverlayInspectNodeRequestedClient struct{ rpcc.Stream }
+
+// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+// triggered, context canceled or connection closed.
+func (c *OverlayInspectNodeRequestedClient) Recv() (*cdpevent.OverlayInspectNodeRequestedReply, error) {
+	event := new(cdpevent.OverlayInspectNodeRequestedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &opError{Domain: "Overlay", Op: "InspectNodeRequested Recv", Err: err}
+	}
+	return event, nil
+}
+
 // The Page domain. Actions and events related to the inspected page belong to the page domain.
 type Page struct{ conn *rpcc.Conn }
 
@@ -4619,19 +4763,6 @@ func (d *Page) HandleJavaScriptDialog(ctx context.Context, args *cdpcmd.PageHand
 	}
 	if err != nil {
 		err = &opError{Domain: "Page", Op: "HandleJavaScriptDialog", Err: err}
-	}
-	return
-}
-
-// ConfigureOverlay invokes the Page method. Configures overlay.
-func (d *Page) ConfigureOverlay(ctx context.Context, args *cdpcmd.PageConfigureOverlayArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.PageConfigureOverlay.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.PageConfigureOverlay.String(), nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &opError{Domain: "Page", Op: "ConfigureOverlay", Err: err}
 	}
 	return
 }
@@ -5165,7 +5296,7 @@ func (d *Profiler) GetBestEffortCoverage(ctx context.Context) (reply *cdpcmd.Pro
 	return
 }
 
-// ConsoleProfileStarted creates the event client. Sent when new profile recodring is started using console.profile() call.
+// ConsoleProfileStarted creates the event client. Sent when new profile recording is started using console.profile() call.
 func (d *Profiler) ConsoleProfileStarted(ctx context.Context) (cdpevent.ProfilerConsoleProfileStartedClient, error) {
 	s, err := rpcc.NewStream(ctx, cdpevent.ProfilerConsoleProfileStarted.String(), d.conn)
 	if err != nil {
@@ -5207,79 +5338,6 @@ func (c *ProfilerConsoleProfileFinishedClient) Recv() (*cdpevent.ProfilerConsole
 		return nil, &opError{Domain: "Profiler", Op: "ConsoleProfileFinished Recv", Err: err}
 	}
 	return event, nil
-}
-
-// The Rendering domain. This domain allows to control rendering of the page.
-type Rendering struct{ conn *rpcc.Conn }
-
-// NewRendering returns the domain with the connection set to conn.
-func NewRendering(conn *rpcc.Conn) *Rendering {
-	return &Rendering{conn: conn}
-}
-
-// SetShowPaintRects invokes the Rendering method. Requests that backend shows paint rectangles
-func (d *Rendering) SetShowPaintRects(ctx context.Context, args *cdpcmd.RenderingSetShowPaintRectsArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowPaintRects.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowPaintRects.String(), nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &opError{Domain: "Rendering", Op: "SetShowPaintRects", Err: err}
-	}
-	return
-}
-
-// SetShowDebugBorders invokes the Rendering method. Requests that backend shows debug borders on layers
-func (d *Rendering) SetShowDebugBorders(ctx context.Context, args *cdpcmd.RenderingSetShowDebugBordersArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowDebugBorders.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowDebugBorders.String(), nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &opError{Domain: "Rendering", Op: "SetShowDebugBorders", Err: err}
-	}
-	return
-}
-
-// SetShowFPSCounter invokes the Rendering method. Requests that backend shows the FPS counter
-func (d *Rendering) SetShowFPSCounter(ctx context.Context, args *cdpcmd.RenderingSetShowFPSCounterArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowFPSCounter.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowFPSCounter.String(), nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &opError{Domain: "Rendering", Op: "SetShowFPSCounter", Err: err}
-	}
-	return
-}
-
-// SetShowScrollBottleneckRects invokes the Rendering method. Requests that backend shows scroll bottleneck rects
-func (d *Rendering) SetShowScrollBottleneckRects(ctx context.Context, args *cdpcmd.RenderingSetShowScrollBottleneckRectsArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowScrollBottleneckRects.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowScrollBottleneckRects.String(), nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &opError{Domain: "Rendering", Op: "SetShowScrollBottleneckRects", Err: err}
-	}
-	return
-}
-
-// SetShowViewportSizeOnResize invokes the Rendering method. Paints viewport size upon main frame resize.
-func (d *Rendering) SetShowViewportSizeOnResize(ctx context.Context, args *cdpcmd.RenderingSetShowViewportSizeOnResizeArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowViewportSizeOnResize.String(), args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.RenderingSetShowViewportSizeOnResize.String(), nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &opError{Domain: "Rendering", Op: "SetShowViewportSizeOnResize", Err: err}
-	}
-	return
 }
 
 // The Runtime domain. Runtime domain exposes JavaScript runtime by means of remote evaluation and mirror objects. Evaluation results are returned as mirror object that expose object type, string representation and unique identifier that can be used for further object reference. Original objects are maintained in memory unless they are either explicitly released or are released along with the other objects in their object group.

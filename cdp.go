@@ -429,35 +429,20 @@ type DOM interface {
 	// Requests that the node is sent to the caller given the JavaScript node object reference. All nodes that form the path from the node to the root are also sent to the client as a series of setChildNodes notifications.
 	RequestNode(context.Context, *cdpcmd.DOMRequestNodeArgs) (*cdpcmd.DOMRequestNodeReply, error)
 
-	// Command SetInspectMode
-	//
-	// Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspectNodeRequested' event upon element selection.
-	SetInspectMode(context.Context, *cdpcmd.DOMSetInspectModeArgs) error
-
 	// Command HighlightRect
 	//
-	// Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.
-	HighlightRect(context.Context, *cdpcmd.DOMHighlightRectArgs) error
-
-	// Command HighlightQuad
-	//
-	// Highlights given quad. Coordinates are absolute with respect to the main frame viewport.
-	HighlightQuad(context.Context, *cdpcmd.DOMHighlightQuadArgs) error
+	// Highlights given rectangle.
+	HighlightRect(context.Context) error
 
 	// Command HighlightNode
 	//
-	// Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified.
-	HighlightNode(context.Context, *cdpcmd.DOMHighlightNodeArgs) error
+	// Highlights DOM node.
+	HighlightNode(context.Context) error
 
 	// Command HideHighlight
 	//
-	// Hides DOM node highlight.
+	// Hides any highlight.
 	HideHighlight(context.Context) error
-
-	// Command HighlightFrame
-	//
-	// Highlights owner element of the frame with given id.
-	HighlightFrame(context.Context, *cdpcmd.DOMHighlightFrameArgs) error
 
 	// Command PushNodeByPathToFrontend
 	//
@@ -534,20 +519,10 @@ type DOM interface {
 	// Returns the id of the nearest ancestor that is a relayout boundary.
 	GetRelayoutBoundary(context.Context, *cdpcmd.DOMGetRelayoutBoundaryArgs) (*cdpcmd.DOMGetRelayoutBoundaryReply, error)
 
-	// Command GetHighlightObjectForTest
-	//
-	// For testing.
-	GetHighlightObjectForTest(context.Context, *cdpcmd.DOMGetHighlightObjectForTestArgs) (*cdpcmd.DOMGetHighlightObjectForTestReply, error)
-
 	// Event DocumentUpdated
 	//
 	// Fired when Document has been totally updated. Node ids are no longer valid.
 	DocumentUpdated(context.Context) (cdpevent.DOMDocumentUpdatedClient, error)
-
-	// Event InspectNodeRequested
-	//
-	// Fired when the node should be inspected. This happens after call to setInspectMode.
-	InspectNodeRequested(context.Context) (cdpevent.DOMInspectNodeRequestedClient, error)
 
 	// Event SetChildNodes
 	//
@@ -613,11 +588,6 @@ type DOM interface {
 	//
 	// Called when distribution is changed.
 	DistributedNodesUpdated(context.Context) (cdpevent.DOMDistributedNodesUpdatedClient, error)
-
-	// Event NodeHighlightRequested
-	//
-	//
-	NodeHighlightRequested(context.Context) (cdpevent.DOMNodeHighlightRequestedClient, error)
 }
 
 // The DOMDebugger domain. DOM debugging allows setting breakpoints on particular DOM operations and events. JavaScript execution will stop on these operations as if there was a regular breakpoint set.
@@ -1490,6 +1460,99 @@ type Network interface {
 	EventSourceMessageReceived(context.Context) (cdpevent.NetworkEventSourceMessageReceivedClient, error)
 }
 
+// The Overlay domain. This domain provides various functionality related to drawing atop the inspected page.
+type Overlay interface {
+	// Command Enable
+	//
+	// Enables domain notifications.
+	Enable(context.Context) error
+
+	// Command Disable
+	//
+	// Disables domain notifications.
+	Disable(context.Context) error
+
+	// Command SetShowPaintRects
+	//
+	// Requests that backend shows paint rectangles
+	SetShowPaintRects(context.Context, *cdpcmd.OverlaySetShowPaintRectsArgs) error
+
+	// Command SetShowDebugBorders
+	//
+	// Requests that backend shows debug borders on layers
+	SetShowDebugBorders(context.Context, *cdpcmd.OverlaySetShowDebugBordersArgs) error
+
+	// Command SetShowFPSCounter
+	//
+	// Requests that backend shows the FPS counter
+	SetShowFPSCounter(context.Context, *cdpcmd.OverlaySetShowFPSCounterArgs) error
+
+	// Command SetShowScrollBottleneckRects
+	//
+	// Requests that backend shows scroll bottleneck rects
+	SetShowScrollBottleneckRects(context.Context, *cdpcmd.OverlaySetShowScrollBottleneckRectsArgs) error
+
+	// Command SetShowViewportSizeOnResize
+	//
+	// Paints viewport size upon main frame resize.
+	SetShowViewportSizeOnResize(context.Context, *cdpcmd.OverlaySetShowViewportSizeOnResizeArgs) error
+
+	// Command SetPausedInDebuggerMessage
+	//
+	//
+	SetPausedInDebuggerMessage(context.Context, *cdpcmd.OverlaySetPausedInDebuggerMessageArgs) error
+
+	// Command SetSuspended
+	//
+	//
+	SetSuspended(context.Context, *cdpcmd.OverlaySetSuspendedArgs) error
+
+	// Command SetInspectMode
+	//
+	// Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspectNodeRequested' event upon element selection.
+	SetInspectMode(context.Context, *cdpcmd.OverlaySetInspectModeArgs) error
+
+	// Command HighlightRect
+	//
+	// Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.
+	HighlightRect(context.Context, *cdpcmd.OverlayHighlightRectArgs) error
+
+	// Command HighlightQuad
+	//
+	// Highlights given quad. Coordinates are absolute with respect to the main frame viewport.
+	HighlightQuad(context.Context, *cdpcmd.OverlayHighlightQuadArgs) error
+
+	// Command HighlightNode
+	//
+	// Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified.
+	HighlightNode(context.Context, *cdpcmd.OverlayHighlightNodeArgs) error
+
+	// Command HighlightFrame
+	//
+	// Highlights owner element of the frame with given id.
+	HighlightFrame(context.Context, *cdpcmd.OverlayHighlightFrameArgs) error
+
+	// Command HideHighlight
+	//
+	// Hides any highlight.
+	HideHighlight(context.Context) error
+
+	// Command GetHighlightObjectForTest
+	//
+	// For testing.
+	GetHighlightObjectForTest(context.Context, *cdpcmd.OverlayGetHighlightObjectForTestArgs) (*cdpcmd.OverlayGetHighlightObjectForTestReply, error)
+
+	// Event NodeHighlightRequested
+	//
+	// Fired when the node should be highlighted. This happens after call to setInspectMode.
+	NodeHighlightRequested(context.Context) (cdpevent.OverlayNodeHighlightRequestedClient, error)
+
+	// Event InspectNodeRequested
+	//
+	// Fired when the node should be inspected. This happens after call to setInspectMode or when user manually inspects an element.
+	InspectNodeRequested(context.Context) (cdpevent.OverlayInspectNodeRequestedClient, error)
+}
+
 // The Page domain. Actions and events related to the inspected page belong to the page domain.
 type Page interface {
 	// Command Enable
@@ -1636,11 +1699,6 @@ type Page interface {
 	//
 	// Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).
 	HandleJavaScriptDialog(context.Context, *cdpcmd.PageHandleJavaScriptDialogArgs) error
-
-	// Command ConfigureOverlay
-	//
-	// Configures overlay.
-	ConfigureOverlay(context.Context, *cdpcmd.PageConfigureOverlayArgs) error
 
 	// Command GetAppManifest
 	//
@@ -1802,41 +1860,13 @@ type Profiler interface {
 
 	// Event ConsoleProfileStarted
 	//
-	// Sent when new profile recodring is started using console.profile() call.
+	// Sent when new profile recording is started using console.profile() call.
 	ConsoleProfileStarted(context.Context) (cdpevent.ProfilerConsoleProfileStartedClient, error)
 
 	// Event ConsoleProfileFinished
 	//
 	//
 	ConsoleProfileFinished(context.Context) (cdpevent.ProfilerConsoleProfileFinishedClient, error)
-}
-
-// The Rendering domain. This domain allows to control rendering of the page.
-type Rendering interface {
-	// Command SetShowPaintRects
-	//
-	// Requests that backend shows paint rectangles
-	SetShowPaintRects(context.Context, *cdpcmd.RenderingSetShowPaintRectsArgs) error
-
-	// Command SetShowDebugBorders
-	//
-	// Requests that backend shows debug borders on layers
-	SetShowDebugBorders(context.Context, *cdpcmd.RenderingSetShowDebugBordersArgs) error
-
-	// Command SetShowFPSCounter
-	//
-	// Requests that backend shows the FPS counter
-	SetShowFPSCounter(context.Context, *cdpcmd.RenderingSetShowFPSCounterArgs) error
-
-	// Command SetShowScrollBottleneckRects
-	//
-	// Requests that backend shows scroll bottleneck rects
-	SetShowScrollBottleneckRects(context.Context, *cdpcmd.RenderingSetShowScrollBottleneckRectsArgs) error
-
-	// Command SetShowViewportSizeOnResize
-	//
-	// Paints viewport size upon main frame resize.
-	SetShowViewportSizeOnResize(context.Context, *cdpcmd.RenderingSetShowViewportSizeOnResizeArgs) error
 }
 
 // The Runtime domain. Runtime domain exposes JavaScript runtime by means of remote evaluation and mirror objects. Evaluation results are returned as mirror object that expose object type, string representation and unique identifier that can be used for further object reference. Original objects are maintained in memory unless they are either explicitly released or are released along with the other objects in their object group.

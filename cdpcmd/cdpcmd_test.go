@@ -372,41 +372,6 @@ func TestNewDOMRequestNodeArgs(t *testing.T) {
 	}
 }
 
-func TestNewDOMSetInspectModeArgs(t *testing.T) {
-	args := NewDOMSetInspectModeArgs(func() (mode cdptype.DOMInspectMode) { return }())
-	if args == nil {
-		t.Errorf("NewDOMSetInspectModeArgs returned nil args")
-	}
-}
-
-func TestNewDOMHighlightRectArgs(t *testing.T) {
-	args := NewDOMHighlightRectArgs(func() (x int, y int, width int, height int) { return }())
-	if args == nil {
-		t.Errorf("NewDOMHighlightRectArgs returned nil args")
-	}
-}
-
-func TestNewDOMHighlightQuadArgs(t *testing.T) {
-	args := NewDOMHighlightQuadArgs(func() (quad cdptype.DOMQuad) { return }())
-	if args == nil {
-		t.Errorf("NewDOMHighlightQuadArgs returned nil args")
-	}
-}
-
-func TestNewDOMHighlightNodeArgs(t *testing.T) {
-	args := NewDOMHighlightNodeArgs(func() (highlightConfig cdptype.DOMHighlightConfig) { return }())
-	if args == nil {
-		t.Errorf("NewDOMHighlightNodeArgs returned nil args")
-	}
-}
-
-func TestNewDOMHighlightFrameArgs(t *testing.T) {
-	args := NewDOMHighlightFrameArgs(func() (frameID cdptype.PageFrameID) { return }())
-	if args == nil {
-		t.Errorf("NewDOMHighlightFrameArgs returned nil args")
-	}
-}
-
 func TestNewDOMPushNodeByPathToFrontendArgs(t *testing.T) {
 	args := NewDOMPushNodeByPathToFrontendArgs(func() (path string) { return }())
 	if args == nil {
@@ -488,13 +453,6 @@ func TestNewDOMGetRelayoutBoundaryArgs(t *testing.T) {
 	args := NewDOMGetRelayoutBoundaryArgs(func() (nodeID cdptype.DOMNodeID) { return }())
 	if args == nil {
 		t.Errorf("NewDOMGetRelayoutBoundaryArgs returned nil args")
-	}
-}
-
-func TestNewDOMGetHighlightObjectForTestArgs(t *testing.T) {
-	args := NewDOMGetHighlightObjectForTestArgs(func() (nodeID cdptype.DOMNodeID) { return }())
-	if args == nil {
-		t.Errorf("NewDOMGetHighlightObjectForTestArgs returned nil args")
 	}
 }
 
@@ -1125,6 +1083,97 @@ func TestNewNetworkGetCertificateArgs(t *testing.T) {
 	}
 }
 
+func TestNewOverlaySetShowPaintRectsArgs(t *testing.T) {
+	args := NewOverlaySetShowPaintRectsArgs(func() (result bool) { return }())
+	if args == nil {
+		t.Errorf("NewOverlaySetShowPaintRectsArgs returned nil args")
+	}
+}
+
+func TestNewOverlaySetShowDebugBordersArgs(t *testing.T) {
+	args := NewOverlaySetShowDebugBordersArgs(func() (show bool) { return }())
+	if args == nil {
+		t.Errorf("NewOverlaySetShowDebugBordersArgs returned nil args")
+	}
+}
+
+func TestNewOverlaySetShowFPSCounterArgs(t *testing.T) {
+	args := NewOverlaySetShowFPSCounterArgs(func() (show bool) { return }())
+	if args == nil {
+		t.Errorf("NewOverlaySetShowFPSCounterArgs returned nil args")
+	}
+}
+
+func TestNewOverlaySetShowScrollBottleneckRectsArgs(t *testing.T) {
+	args := NewOverlaySetShowScrollBottleneckRectsArgs(func() (show bool) { return }())
+	if args == nil {
+		t.Errorf("NewOverlaySetShowScrollBottleneckRectsArgs returned nil args")
+	}
+}
+
+func TestNewOverlaySetShowViewportSizeOnResizeArgs(t *testing.T) {
+	args := NewOverlaySetShowViewportSizeOnResizeArgs(func() (show bool) { return }())
+	if args == nil {
+		t.Errorf("NewOverlaySetShowViewportSizeOnResizeArgs returned nil args")
+	}
+}
+
+func TestNewOverlaySetPausedInDebuggerMessageArgs(t *testing.T) {
+	args := NewOverlaySetPausedInDebuggerMessageArgs()
+	if args == nil {
+		t.Errorf("NewOverlaySetPausedInDebuggerMessageArgs returned nil args")
+	}
+}
+
+func TestNewOverlaySetSuspendedArgs(t *testing.T) {
+	args := NewOverlaySetSuspendedArgs(func() (suspended bool) { return }())
+	if args == nil {
+		t.Errorf("NewOverlaySetSuspendedArgs returned nil args")
+	}
+}
+
+func TestNewOverlaySetInspectModeArgs(t *testing.T) {
+	args := NewOverlaySetInspectModeArgs(func() (mode cdptype.OverlayInspectMode) { return }())
+	if args == nil {
+		t.Errorf("NewOverlaySetInspectModeArgs returned nil args")
+	}
+}
+
+func TestNewOverlayHighlightRectArgs(t *testing.T) {
+	args := NewOverlayHighlightRectArgs(func() (x int, y int, width int, height int) { return }())
+	if args == nil {
+		t.Errorf("NewOverlayHighlightRectArgs returned nil args")
+	}
+}
+
+func TestNewOverlayHighlightQuadArgs(t *testing.T) {
+	args := NewOverlayHighlightQuadArgs(func() (quad cdptype.DOMQuad) { return }())
+	if args == nil {
+		t.Errorf("NewOverlayHighlightQuadArgs returned nil args")
+	}
+}
+
+func TestNewOverlayHighlightNodeArgs(t *testing.T) {
+	args := NewOverlayHighlightNodeArgs(func() (highlightConfig cdptype.OverlayHighlightConfig) { return }())
+	if args == nil {
+		t.Errorf("NewOverlayHighlightNodeArgs returned nil args")
+	}
+}
+
+func TestNewOverlayHighlightFrameArgs(t *testing.T) {
+	args := NewOverlayHighlightFrameArgs(func() (frameID cdptype.PageFrameID) { return }())
+	if args == nil {
+		t.Errorf("NewOverlayHighlightFrameArgs returned nil args")
+	}
+}
+
+func TestNewOverlayGetHighlightObjectForTestArgs(t *testing.T) {
+	args := NewOverlayGetHighlightObjectForTestArgs(func() (nodeID cdptype.DOMNodeID) { return }())
+	if args == nil {
+		t.Errorf("NewOverlayGetHighlightObjectForTestArgs returned nil args")
+	}
+}
+
 func TestNewPageAddScriptToEvaluateOnLoadArgs(t *testing.T) {
 	args := NewPageAddScriptToEvaluateOnLoadArgs(func() (scriptSource string) { return }())
 	if args == nil {
@@ -1251,13 +1300,6 @@ func TestNewPageHandleJavaScriptDialogArgs(t *testing.T) {
 	}
 }
 
-func TestNewPageConfigureOverlayArgs(t *testing.T) {
-	args := NewPageConfigureOverlayArgs()
-	if args == nil {
-		t.Errorf("NewPageConfigureOverlayArgs returned nil args")
-	}
-}
-
 func TestNewPageSetControlNavigationsArgs(t *testing.T) {
 	args := NewPageSetControlNavigationsArgs(func() (enabled bool) { return }())
 	if args == nil {
@@ -1283,41 +1325,6 @@ func TestNewProfilerStartPreciseCoverageArgs(t *testing.T) {
 	args := NewProfilerStartPreciseCoverageArgs()
 	if args == nil {
 		t.Errorf("NewProfilerStartPreciseCoverageArgs returned nil args")
-	}
-}
-
-func TestNewRenderingSetShowPaintRectsArgs(t *testing.T) {
-	args := NewRenderingSetShowPaintRectsArgs(func() (result bool) { return }())
-	if args == nil {
-		t.Errorf("NewRenderingSetShowPaintRectsArgs returned nil args")
-	}
-}
-
-func TestNewRenderingSetShowDebugBordersArgs(t *testing.T) {
-	args := NewRenderingSetShowDebugBordersArgs(func() (show bool) { return }())
-	if args == nil {
-		t.Errorf("NewRenderingSetShowDebugBordersArgs returned nil args")
-	}
-}
-
-func TestNewRenderingSetShowFPSCounterArgs(t *testing.T) {
-	args := NewRenderingSetShowFPSCounterArgs(func() (show bool) { return }())
-	if args == nil {
-		t.Errorf("NewRenderingSetShowFPSCounterArgs returned nil args")
-	}
-}
-
-func TestNewRenderingSetShowScrollBottleneckRectsArgs(t *testing.T) {
-	args := NewRenderingSetShowScrollBottleneckRectsArgs(func() (show bool) { return }())
-	if args == nil {
-		t.Errorf("NewRenderingSetShowScrollBottleneckRectsArgs returned nil args")
-	}
-}
-
-func TestNewRenderingSetShowViewportSizeOnResizeArgs(t *testing.T) {
-	args := NewRenderingSetShowViewportSizeOnResizeArgs(func() (show bool) { return }())
-	if args == nil {
-		t.Errorf("NewRenderingSetShowViewportSizeOnResizeArgs returned nil args")
 	}
 }
 

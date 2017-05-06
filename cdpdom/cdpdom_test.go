@@ -2055,32 +2055,6 @@ func TestDOM_RequestNode(t *testing.T) {
 	}
 }
 
-func TestDOM_SetInspectMode(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewDOM(conn)
-	var err error
-
-	// Test nil args.
-	err = dom.SetInspectMode(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.SetInspectMode(nil, &cdpcmd.DOMSetInspectModeArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	err = dom.SetInspectMode(nil, &cdpcmd.DOMSetInspectModeArgs{})
-	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
-}
-
 func TestDOM_HighlightRect(t *testing.T) {
 	conn, codec, cleanup := newTestConn(t)
 	defer cleanup()
@@ -2088,46 +2062,14 @@ func TestDOM_HighlightRect(t *testing.T) {
 	dom := NewDOM(conn)
 	var err error
 
-	// Test nil args.
-	err = dom.HighlightRect(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.HighlightRect(nil, &cdpcmd.DOMHighlightRectArgs{})
+	err = dom.HighlightRect(nil)
 	if err != nil {
 		t.Error(err)
 	}
 
 	// Test error.
 	codec.respErr = errors.New("bad request")
-	err = dom.HighlightRect(nil, &cdpcmd.DOMHighlightRectArgs{})
-	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
-}
-
-func TestDOM_HighlightQuad(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewDOM(conn)
-	var err error
-
-	// Test nil args.
-	err = dom.HighlightQuad(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.HighlightQuad(nil, &cdpcmd.DOMHighlightQuadArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	err = dom.HighlightQuad(nil, &cdpcmd.DOMHighlightQuadArgs{})
+	err = dom.HighlightRect(nil)
 	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
 		t.Errorf("unexpected error; got: %v, want bad request", err)
 	}
@@ -2140,20 +2082,14 @@ func TestDOM_HighlightNode(t *testing.T) {
 	dom := NewDOM(conn)
 	var err error
 
-	// Test nil args.
-	err = dom.HighlightNode(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.HighlightNode(nil, &cdpcmd.DOMHighlightNodeArgs{})
+	err = dom.HighlightNode(nil)
 	if err != nil {
 		t.Error(err)
 	}
 
 	// Test error.
 	codec.respErr = errors.New("bad request")
-	err = dom.HighlightNode(nil, &cdpcmd.DOMHighlightNodeArgs{})
+	err = dom.HighlightNode(nil)
 	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
 		t.Errorf("unexpected error; got: %v, want bad request", err)
 	}
@@ -2174,32 +2110,6 @@ func TestDOM_HideHighlight(t *testing.T) {
 	// Test error.
 	codec.respErr = errors.New("bad request")
 	err = dom.HideHighlight(nil)
-	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
-}
-
-func TestDOM_HighlightFrame(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewDOM(conn)
-	var err error
-
-	// Test nil args.
-	err = dom.HighlightFrame(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.HighlightFrame(nil, &cdpcmd.DOMHighlightFrameArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	err = dom.HighlightFrame(nil, &cdpcmd.DOMHighlightFrameArgs{})
 	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
 		t.Errorf("unexpected error; got: %v, want bad request", err)
 	}
@@ -2577,32 +2487,6 @@ func TestDOM_GetRelayoutBoundary(t *testing.T) {
 	}
 }
 
-func TestDOM_GetHighlightObjectForTest(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewDOM(conn)
-	var err error
-
-	// Test nil args.
-	_, err = dom.GetHighlightObjectForTest(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	_, err = dom.GetHighlightObjectForTest(nil, &cdpcmd.DOMGetHighlightObjectForTestArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	_, err = dom.GetHighlightObjectForTest(nil, &cdpcmd.DOMGetHighlightObjectForTestArgs{})
-	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
-}
-
 func TestDOM_DocumentUpdated(t *testing.T) {
 	conn, codec, cleanup := newTestConn(t)
 	defer cleanup()
@@ -2631,40 +2515,6 @@ func TestDOM_DocumentUpdated(t *testing.T) {
 
 	conn.Close()
 	stream, err = dom.DocumentUpdated(nil)
-	if err == nil {
-		t.Errorf("Open stream: got nil, want error")
-	}
-
-}
-
-func TestDOM_InspectNodeRequested(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewDOM(conn)
-
-	stream, err := dom.InspectNodeRequested(nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer stream.Close()
-
-	codec.event = cdpevent.DOMInspectNodeRequested.String()
-	codec.conn <- nil
-	_, err = stream.Recv()
-	if err != nil {
-		t.Error(err)
-	}
-
-	codec.eventArgs = []byte("invalid json")
-	codec.conn <- nil
-	_, err = stream.Recv()
-	if err, ok := err.(*opError); !ok {
-		t.Errorf("Recv() got %v, want opError", err)
-	}
-
-	conn.Close()
-	stream, err = dom.InspectNodeRequested(nil)
 	if err == nil {
 		t.Errorf("Open stream: got nil, want error")
 	}
@@ -3107,40 +2957,6 @@ func TestDOM_DistributedNodesUpdated(t *testing.T) {
 
 	conn.Close()
 	stream, err = dom.DistributedNodesUpdated(nil)
-	if err == nil {
-		t.Errorf("Open stream: got nil, want error")
-	}
-
-}
-
-func TestDOM_NodeHighlightRequested(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewDOM(conn)
-
-	stream, err := dom.NodeHighlightRequested(nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-	defer stream.Close()
-
-	codec.event = cdpevent.DOMNodeHighlightRequested.String()
-	codec.conn <- nil
-	_, err = stream.Recv()
-	if err != nil {
-		t.Error(err)
-	}
-
-	codec.eventArgs = []byte("invalid json")
-	codec.conn <- nil
-	_, err = stream.Recv()
-	if err, ok := err.(*opError); !ok {
-		t.Errorf("Recv() got %v, want opError", err)
-	}
-
-	conn.Close()
-	stream, err = dom.NodeHighlightRequested(nil)
 	if err == nil {
 		t.Errorf("Open stream: got nil, want error")
 	}
@@ -7485,6 +7301,472 @@ func TestNetwork_EventSourceMessageReceived(t *testing.T) {
 
 }
 
+func TestOverlay_Enable(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	err = dom.Enable(nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.Enable(nil)
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_Disable(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	err = dom.Disable(nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.Disable(nil)
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_SetShowPaintRects(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.SetShowPaintRects(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.SetShowPaintRects(nil, &cdpcmd.OverlaySetShowPaintRectsArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.SetShowPaintRects(nil, &cdpcmd.OverlaySetShowPaintRectsArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_SetShowDebugBorders(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.SetShowDebugBorders(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.SetShowDebugBorders(nil, &cdpcmd.OverlaySetShowDebugBordersArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.SetShowDebugBorders(nil, &cdpcmd.OverlaySetShowDebugBordersArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_SetShowFPSCounter(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.SetShowFPSCounter(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.SetShowFPSCounter(nil, &cdpcmd.OverlaySetShowFPSCounterArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.SetShowFPSCounter(nil, &cdpcmd.OverlaySetShowFPSCounterArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_SetShowScrollBottleneckRects(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.SetShowScrollBottleneckRects(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.SetShowScrollBottleneckRects(nil, &cdpcmd.OverlaySetShowScrollBottleneckRectsArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.SetShowScrollBottleneckRects(nil, &cdpcmd.OverlaySetShowScrollBottleneckRectsArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_SetShowViewportSizeOnResize(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.SetShowViewportSizeOnResize(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.SetShowViewportSizeOnResize(nil, &cdpcmd.OverlaySetShowViewportSizeOnResizeArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.SetShowViewportSizeOnResize(nil, &cdpcmd.OverlaySetShowViewportSizeOnResizeArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_SetPausedInDebuggerMessage(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.SetPausedInDebuggerMessage(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.SetPausedInDebuggerMessage(nil, &cdpcmd.OverlaySetPausedInDebuggerMessageArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.SetPausedInDebuggerMessage(nil, &cdpcmd.OverlaySetPausedInDebuggerMessageArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_SetSuspended(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.SetSuspended(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.SetSuspended(nil, &cdpcmd.OverlaySetSuspendedArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.SetSuspended(nil, &cdpcmd.OverlaySetSuspendedArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_SetInspectMode(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.SetInspectMode(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.SetInspectMode(nil, &cdpcmd.OverlaySetInspectModeArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.SetInspectMode(nil, &cdpcmd.OverlaySetInspectModeArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_HighlightRect(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.HighlightRect(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.HighlightRect(nil, &cdpcmd.OverlayHighlightRectArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.HighlightRect(nil, &cdpcmd.OverlayHighlightRectArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_HighlightQuad(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.HighlightQuad(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.HighlightQuad(nil, &cdpcmd.OverlayHighlightQuadArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.HighlightQuad(nil, &cdpcmd.OverlayHighlightQuadArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_HighlightNode(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.HighlightNode(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.HighlightNode(nil, &cdpcmd.OverlayHighlightNodeArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.HighlightNode(nil, &cdpcmd.OverlayHighlightNodeArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_HighlightFrame(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.HighlightFrame(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.HighlightFrame(nil, &cdpcmd.OverlayHighlightFrameArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.HighlightFrame(nil, &cdpcmd.OverlayHighlightFrameArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_HideHighlight(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	err = dom.HideHighlight(nil)
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.HideHighlight(nil)
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_GetHighlightObjectForTest(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+	var err error
+
+	// Test nil args.
+	_, err = dom.GetHighlightObjectForTest(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	_, err = dom.GetHighlightObjectForTest(nil, &cdpcmd.OverlayGetHighlightObjectForTestArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	_, err = dom.GetHighlightObjectForTest(nil, &cdpcmd.OverlayGetHighlightObjectForTestArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestOverlay_NodeHighlightRequested(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+
+	stream, err := dom.NodeHighlightRequested(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer stream.Close()
+
+	codec.event = cdpevent.OverlayNodeHighlightRequested.String()
+	codec.conn <- nil
+	_, err = stream.Recv()
+	if err != nil {
+		t.Error(err)
+	}
+
+	codec.eventArgs = []byte("invalid json")
+	codec.conn <- nil
+	_, err = stream.Recv()
+	if err, ok := err.(*opError); !ok {
+		t.Errorf("Recv() got %v, want opError", err)
+	}
+
+	conn.Close()
+	stream, err = dom.NodeHighlightRequested(nil)
+	if err == nil {
+		t.Errorf("Open stream: got nil, want error")
+	}
+
+}
+
+func TestOverlay_InspectNodeRequested(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewOverlay(conn)
+
+	stream, err := dom.InspectNodeRequested(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer stream.Close()
+
+	codec.event = cdpevent.OverlayInspectNodeRequested.String()
+	codec.conn <- nil
+	_, err = stream.Recv()
+	if err != nil {
+		t.Error(err)
+	}
+
+	codec.eventArgs = []byte("invalid json")
+	codec.conn <- nil
+	_, err = stream.Recv()
+	if err, ok := err.(*opError); !ok {
+		t.Errorf("Recv() got %v, want opError", err)
+	}
+
+	conn.Close()
+	stream, err = dom.InspectNodeRequested(nil)
+	if err == nil {
+		t.Errorf("Open stream: got nil, want error")
+	}
+
+}
+
 func TestPage_Enable(t *testing.T) {
 	conn, codec, cleanup := newTestConn(t)
 	defer cleanup()
@@ -8168,32 +8450,6 @@ func TestPage_HandleJavaScriptDialog(t *testing.T) {
 	// Test error.
 	codec.respErr = errors.New("bad request")
 	err = dom.HandleJavaScriptDialog(nil, &cdpcmd.PageHandleJavaScriptDialogArgs{})
-	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
-}
-
-func TestPage_ConfigureOverlay(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewPage(conn)
-	var err error
-
-	// Test nil args.
-	err = dom.ConfigureOverlay(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.ConfigureOverlay(nil, &cdpcmd.PageConfigureOverlayArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	err = dom.ConfigureOverlay(nil, &cdpcmd.PageConfigureOverlayArgs{})
 	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
 		t.Errorf("unexpected error; got: %v, want bad request", err)
 	}
@@ -9147,136 +9403,6 @@ func TestProfiler_ConsoleProfileFinished(t *testing.T) {
 		t.Errorf("Open stream: got nil, want error")
 	}
 
-}
-
-func TestRendering_SetShowPaintRects(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewRendering(conn)
-	var err error
-
-	// Test nil args.
-	err = dom.SetShowPaintRects(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.SetShowPaintRects(nil, &cdpcmd.RenderingSetShowPaintRectsArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	err = dom.SetShowPaintRects(nil, &cdpcmd.RenderingSetShowPaintRectsArgs{})
-	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
-}
-
-func TestRendering_SetShowDebugBorders(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewRendering(conn)
-	var err error
-
-	// Test nil args.
-	err = dom.SetShowDebugBorders(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.SetShowDebugBorders(nil, &cdpcmd.RenderingSetShowDebugBordersArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	err = dom.SetShowDebugBorders(nil, &cdpcmd.RenderingSetShowDebugBordersArgs{})
-	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
-}
-
-func TestRendering_SetShowFPSCounter(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewRendering(conn)
-	var err error
-
-	// Test nil args.
-	err = dom.SetShowFPSCounter(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.SetShowFPSCounter(nil, &cdpcmd.RenderingSetShowFPSCounterArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	err = dom.SetShowFPSCounter(nil, &cdpcmd.RenderingSetShowFPSCounterArgs{})
-	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
-}
-
-func TestRendering_SetShowScrollBottleneckRects(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewRendering(conn)
-	var err error
-
-	// Test nil args.
-	err = dom.SetShowScrollBottleneckRects(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.SetShowScrollBottleneckRects(nil, &cdpcmd.RenderingSetShowScrollBottleneckRectsArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	err = dom.SetShowScrollBottleneckRects(nil, &cdpcmd.RenderingSetShowScrollBottleneckRectsArgs{})
-	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
-}
-
-func TestRendering_SetShowViewportSizeOnResize(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewRendering(conn)
-	var err error
-
-	// Test nil args.
-	err = dom.SetShowViewportSizeOnResize(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	err = dom.SetShowViewportSizeOnResize(nil, &cdpcmd.RenderingSetShowViewportSizeOnResizeArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	err = dom.SetShowViewportSizeOnResize(nil, &cdpcmd.RenderingSetShowViewportSizeOnResizeArgs{})
-	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
 }
 
 func TestRuntime_Evaluate(t *testing.T) {

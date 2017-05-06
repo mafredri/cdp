@@ -34,9 +34,9 @@ type Client struct {
 	Log               Log
 	Memory            Memory
 	Network           Network
+	Overlay           Overlay
 	Page              Page
 	Profiler          Profiler
-	Rendering         Rendering
 	Runtime           Runtime
 	Schema            Schema
 	Security          Security
@@ -75,9 +75,9 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Log:               cdpdom.NewLog(conn),
 		Memory:            cdpdom.NewMemory(conn),
 		Network:           cdpdom.NewNetwork(conn),
+		Overlay:           cdpdom.NewOverlay(conn),
 		Page:              cdpdom.NewPage(conn),
 		Profiler:          cdpdom.NewProfiler(conn),
-		Rendering:         cdpdom.NewRendering(conn),
 		Runtime:           cdpdom.NewRuntime(conn),
 		Schema:            cdpdom.NewSchema(conn),
 		Security:          cdpdom.NewSecurity(conn),

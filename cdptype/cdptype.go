@@ -1402,80 +1402,6 @@ type DOMRect struct {
 	Height float64 `json:"height"` // Rectangle height
 }
 
-// DOMHighlightConfig Configuration data for the highlighting of page elements.
-type DOMHighlightConfig struct {
-	ShowInfo           *bool    `json:"showInfo,omitempty"`           // Whether the node info tooltip should be shown (default: false).
-	ShowRulers         *bool    `json:"showRulers,omitempty"`         // Whether the rulers should be shown (default: false).
-	ShowExtensionLines *bool    `json:"showExtensionLines,omitempty"` // Whether the extension lines from node to the rulers should be shown (default: false).
-	DisplayAsMaterial  *bool    `json:"displayAsMaterial,omitempty"`  //
-	ContentColor       *DOMRGBA `json:"contentColor,omitempty"`       // The content box highlight fill color (default: transparent).
-	PaddingColor       *DOMRGBA `json:"paddingColor,omitempty"`       // The padding highlight fill color (default: transparent).
-	BorderColor        *DOMRGBA `json:"borderColor,omitempty"`        // The border highlight fill color (default: transparent).
-	MarginColor        *DOMRGBA `json:"marginColor,omitempty"`        // The margin highlight fill color (default: transparent).
-	EventTargetColor   *DOMRGBA `json:"eventTargetColor,omitempty"`   // The event target element highlight fill color (default: transparent).
-	ShapeColor         *DOMRGBA `json:"shapeColor,omitempty"`         // The shape outside fill color (default: transparent).
-	ShapeMarginColor   *DOMRGBA `json:"shapeMarginColor,omitempty"`   // The shape margin fill color (default: transparent).
-	SelectorList       *string  `json:"selectorList,omitempty"`       // Selectors to highlight relevant nodes.
-}
-
-// DOMInspectMode
-type DOMInspectMode int
-
-// DOMInspectMode as enums.
-const (
-	DOMInspectModeNotSet DOMInspectMode = iota
-	DOMInspectModeSearchForNode
-	DOMInspectModeSearchForUAShadowDOM
-	DOMInspectModeNone
-)
-
-// Valid returns true if enum is set.
-func (e DOMInspectMode) Valid() bool {
-	return e >= 1 && e <= 3
-}
-
-func (e DOMInspectMode) String() string {
-	switch e {
-	case 0:
-		return "DOMInspectModeNotSet"
-	case 1:
-		return "searchForNode"
-	case 2:
-		return "searchForUAShadowDOM"
-	case 3:
-		return "none"
-	}
-	return fmt.Sprintf("DOMInspectMode(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e DOMInspectMode) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("cdptype.DOMInspectMode: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *DOMInspectMode) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"searchForNode\"":
-		*e = 1
-	case "\"searchForUAShadowDOM\"":
-		*e = 2
-	case "\"none\"":
-		*e = 3
-	default:
-		return fmt.Errorf("cdptype.DOMInspectMode: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
-}
-
 // DOMDebuggerDOMBreakpointType DOM breakpoint type.
 type DOMDebuggerDOMBreakpointType int
 
@@ -2432,6 +2358,80 @@ type NetworkCookie struct {
 	Secure   bool                  `json:"secure"`             // True if cookie is secure.
 	Session  bool                  `json:"session"`            // True in case of session cookie.
 	SameSite NetworkCookieSameSite `json:"sameSite,omitempty"` // Cookie SameSite type.
+}
+
+// OverlayHighlightConfig Configuration data for the highlighting of page elements.
+type OverlayHighlightConfig struct {
+	ShowInfo           *bool    `json:"showInfo,omitempty"`           // Whether the node info tooltip should be shown (default: false).
+	ShowRulers         *bool    `json:"showRulers,omitempty"`         // Whether the rulers should be shown (default: false).
+	ShowExtensionLines *bool    `json:"showExtensionLines,omitempty"` // Whether the extension lines from node to the rulers should be shown (default: false).
+	DisplayAsMaterial  *bool    `json:"displayAsMaterial,omitempty"`  //
+	ContentColor       *DOMRGBA `json:"contentColor,omitempty"`       // The content box highlight fill color (default: transparent).
+	PaddingColor       *DOMRGBA `json:"paddingColor,omitempty"`       // The padding highlight fill color (default: transparent).
+	BorderColor        *DOMRGBA `json:"borderColor,omitempty"`        // The border highlight fill color (default: transparent).
+	MarginColor        *DOMRGBA `json:"marginColor,omitempty"`        // The margin highlight fill color (default: transparent).
+	EventTargetColor   *DOMRGBA `json:"eventTargetColor,omitempty"`   // The event target element highlight fill color (default: transparent).
+	ShapeColor         *DOMRGBA `json:"shapeColor,omitempty"`         // The shape outside fill color (default: transparent).
+	ShapeMarginColor   *DOMRGBA `json:"shapeMarginColor,omitempty"`   // The shape margin fill color (default: transparent).
+	SelectorList       *string  `json:"selectorList,omitempty"`       // Selectors to highlight relevant nodes.
+}
+
+// OverlayInspectMode
+type OverlayInspectMode int
+
+// OverlayInspectMode as enums.
+const (
+	OverlayInspectModeNotSet OverlayInspectMode = iota
+	OverlayInspectModeSearchForNode
+	OverlayInspectModeSearchForUAShadowDOM
+	OverlayInspectModeNone
+)
+
+// Valid returns true if enum is set.
+func (e OverlayInspectMode) Valid() bool {
+	return e >= 1 && e <= 3
+}
+
+func (e OverlayInspectMode) String() string {
+	switch e {
+	case 0:
+		return "OverlayInspectModeNotSet"
+	case 1:
+		return "searchForNode"
+	case 2:
+		return "searchForUAShadowDOM"
+	case 3:
+		return "none"
+	}
+	return fmt.Sprintf("OverlayInspectMode(%d)", e)
+}
+
+// MarshalJSON encodes enum into a string or null when not set.
+func (e OverlayInspectMode) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.OverlayInspectMode: MarshalJSON on bad enum value: " + e.String())
+	}
+	return json.Marshal(e.String())
+}
+
+// UnmarshalJSON decodes a string value into a enum.
+func (e *OverlayInspectMode) UnmarshalJSON(data []byte) error {
+	switch string(data) {
+	case "null":
+		*e = 0
+	case "\"searchForNode\"":
+		*e = 1
+	case "\"searchForUAShadowDOM\"":
+		*e = 2
+	case "\"none\"":
+		*e = 3
+	default:
+		return fmt.Errorf("cdptype.OverlayInspectMode: UnmarshalJSON on bad input: %s", data)
+	}
+	return nil
 }
 
 // PageResourceType Resource type as it was perceived by the rendering engine.

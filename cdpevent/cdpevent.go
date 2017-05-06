@@ -161,19 +161,6 @@ type DOMDocumentUpdatedClient interface {
 // DOMDocumentUpdatedReply fired when Document has been totally updated. Node ids are no longer valid.
 type DOMDocumentUpdatedReply struct{}
 
-// DOMInspectNodeRequestedClient receives InspectNodeRequested events.
-type DOMInspectNodeRequestedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*DOMInspectNodeRequestedReply, error)
-	rpcc.Stream
-}
-
-// DOMInspectNodeRequestedReply fired when the node should be inspected. This happens after call to setInspectMode.
-type DOMInspectNodeRequestedReply struct {
-	BackendNodeID cdptype.DOMBackendNodeID `json:"backendNodeId"` // Id of the node to inspect.
-}
-
 // DOMSetChildNodesClient receives SetChildNodes events.
 type DOMSetChildNodesClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
@@ -355,19 +342,6 @@ type DOMDistributedNodesUpdatedClient interface {
 type DOMDistributedNodesUpdatedReply struct {
 	InsertionPointID cdptype.DOMNodeID        `json:"insertionPointId"` // Insertion point where distributed nodes were updated.
 	DistributedNodes []cdptype.DOMBackendNode `json:"distributedNodes"` // Distributed nodes for given insertion point.
-}
-
-// DOMNodeHighlightRequestedClient receives NodeHighlightRequested events.
-type DOMNodeHighlightRequestedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*DOMNodeHighlightRequestedReply, error)
-	rpcc.Stream
-}
-
-// DOMNodeHighlightRequestedReply
-type DOMNodeHighlightRequestedReply struct {
-	NodeID cdptype.DOMNodeID `json:"nodeId"` //
 }
 
 // DOMStorageItemsClearedClient receives DOMStorageItemsCleared events.
@@ -916,6 +890,32 @@ type NetworkEventSourceMessageReceivedReply struct {
 	Data      string                   `json:"data"`      // Message content.
 }
 
+// OverlayNodeHighlightRequestedClient receives NodeHighlightRequested events.
+type OverlayNodeHighlightRequestedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*OverlayNodeHighlightRequestedReply, error)
+	rpcc.Stream
+}
+
+// OverlayNodeHighlightRequestedReply fired when the node should be highlighted. This happens after call to setInspectMode.
+type OverlayNodeHighlightRequestedReply struct {
+	NodeID cdptype.DOMNodeID `json:"nodeId"` //
+}
+
+// OverlayInspectNodeRequestedClient receives InspectNodeRequested events.
+type OverlayInspectNodeRequestedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*OverlayInspectNodeRequestedReply, error)
+	rpcc.Stream
+}
+
+// OverlayInspectNodeRequestedReply fired when the node should be inspected. This happens after call to setInspectMode or when user manually inspects an element.
+type OverlayInspectNodeRequestedReply struct {
+	BackendNodeID cdptype.DOMBackendNodeID `json:"backendNodeId"` // Id of the node to inspect.
+}
+
 // PageDOMContentEventFiredClient receives DOMContentEventFired events.
 type PageDOMContentEventFiredClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
@@ -1148,7 +1148,7 @@ type ProfilerConsoleProfileStartedClient interface {
 	rpcc.Stream
 }
 
-// ProfilerConsoleProfileStartedReply sent when new profile recodring is started using console.profile() call.
+// ProfilerConsoleProfileStartedReply sent when new profile recording is started using console.profile() call.
 type ProfilerConsoleProfileStartedReply struct {
 	ID       string                   `json:"id"`              //
 	Location cdptype.DebuggerLocation `json:"location"`        // Location of console.profile().
@@ -1181,7 +1181,7 @@ type RuntimeExecutionContextCreatedClient interface {
 
 // RuntimeExecutionContextCreatedReply issued when new execution context is created.
 type RuntimeExecutionContextCreatedReply struct {
-	Context cdptype.RuntimeExecutionContextDescription `json:"context"` // A newly created execution contex.
+	Context cdptype.RuntimeExecutionContextDescription `json:"context"` // A newly created execution context.
 }
 
 // RuntimeExecutionContextDestroyedClient receives ExecutionContextDestroyed events.

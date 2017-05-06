@@ -960,142 +960,6 @@ type DOMRequestNodeReply struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Node id for given object.
 }
 
-// DOMSetInspectModeArgs represents the arguments for SetInspectMode in the DOM domain.
-type DOMSetInspectModeArgs struct {
-	Mode            cdptype.DOMInspectMode      `json:"mode"`                      // Set an inspection mode.
-	HighlightConfig *cdptype.DOMHighlightConfig `json:"highlightConfig,omitempty"` // A descriptor for the highlight appearance of hovered-over nodes. May be omitted if enabled == false.
-}
-
-// NewDOMSetInspectModeArgs initializes DOMSetInspectModeArgs with the required arguments.
-func NewDOMSetInspectModeArgs(mode cdptype.DOMInspectMode) *DOMSetInspectModeArgs {
-	args := new(DOMSetInspectModeArgs)
-	args.Mode = mode
-	return args
-}
-
-// SetHighlightConfig sets the HighlightConfig optional argument. A descriptor for the highlight appearance of hovered-over nodes. May be omitted if enabled == false.
-func (a *DOMSetInspectModeArgs) SetHighlightConfig(highlightConfig cdptype.DOMHighlightConfig) *DOMSetInspectModeArgs {
-	a.HighlightConfig = &highlightConfig
-	return a
-}
-
-// DOMHighlightRectArgs represents the arguments for HighlightRect in the DOM domain.
-type DOMHighlightRectArgs struct {
-	X            int              `json:"x"`                      // X coordinate
-	Y            int              `json:"y"`                      // Y coordinate
-	Width        int              `json:"width"`                  // Rectangle width
-	Height       int              `json:"height"`                 // Rectangle height
-	Color        *cdptype.DOMRGBA `json:"color,omitempty"`        // The highlight fill color (default: transparent).
-	OutlineColor *cdptype.DOMRGBA `json:"outlineColor,omitempty"` // The highlight outline color (default: transparent).
-}
-
-// NewDOMHighlightRectArgs initializes DOMHighlightRectArgs with the required arguments.
-func NewDOMHighlightRectArgs(x int, y int, width int, height int) *DOMHighlightRectArgs {
-	args := new(DOMHighlightRectArgs)
-	args.X = x
-	args.Y = y
-	args.Width = width
-	args.Height = height
-	return args
-}
-
-// SetColor sets the Color optional argument. The highlight fill color (default: transparent).
-func (a *DOMHighlightRectArgs) SetColor(color cdptype.DOMRGBA) *DOMHighlightRectArgs {
-	a.Color = &color
-	return a
-}
-
-// SetOutlineColor sets the OutlineColor optional argument. The highlight outline color (default: transparent).
-func (a *DOMHighlightRectArgs) SetOutlineColor(outlineColor cdptype.DOMRGBA) *DOMHighlightRectArgs {
-	a.OutlineColor = &outlineColor
-	return a
-}
-
-// DOMHighlightQuadArgs represents the arguments for HighlightQuad in the DOM domain.
-type DOMHighlightQuadArgs struct {
-	Quad         cdptype.DOMQuad  `json:"quad"`                   // Quad to highlight
-	Color        *cdptype.DOMRGBA `json:"color,omitempty"`        // The highlight fill color (default: transparent).
-	OutlineColor *cdptype.DOMRGBA `json:"outlineColor,omitempty"` // The highlight outline color (default: transparent).
-}
-
-// NewDOMHighlightQuadArgs initializes DOMHighlightQuadArgs with the required arguments.
-func NewDOMHighlightQuadArgs(quad cdptype.DOMQuad) *DOMHighlightQuadArgs {
-	args := new(DOMHighlightQuadArgs)
-	args.Quad = quad
-	return args
-}
-
-// SetColor sets the Color optional argument. The highlight fill color (default: transparent).
-func (a *DOMHighlightQuadArgs) SetColor(color cdptype.DOMRGBA) *DOMHighlightQuadArgs {
-	a.Color = &color
-	return a
-}
-
-// SetOutlineColor sets the OutlineColor optional argument. The highlight outline color (default: transparent).
-func (a *DOMHighlightQuadArgs) SetOutlineColor(outlineColor cdptype.DOMRGBA) *DOMHighlightQuadArgs {
-	a.OutlineColor = &outlineColor
-	return a
-}
-
-// DOMHighlightNodeArgs represents the arguments for HighlightNode in the DOM domain.
-type DOMHighlightNodeArgs struct {
-	HighlightConfig cdptype.DOMHighlightConfig     `json:"highlightConfig"`         // A descriptor for the highlight appearance.
-	NodeID          *cdptype.DOMNodeID             `json:"nodeId,omitempty"`        // Identifier of the node to highlight.
-	BackendNodeID   *cdptype.DOMBackendNodeID      `json:"backendNodeId,omitempty"` // Identifier of the backend node to highlight.
-	ObjectID        *cdptype.RuntimeRemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node to be highlighted.
-}
-
-// NewDOMHighlightNodeArgs initializes DOMHighlightNodeArgs with the required arguments.
-func NewDOMHighlightNodeArgs(highlightConfig cdptype.DOMHighlightConfig) *DOMHighlightNodeArgs {
-	args := new(DOMHighlightNodeArgs)
-	args.HighlightConfig = highlightConfig
-	return args
-}
-
-// SetNodeID sets the NodeID optional argument. Identifier of the node to highlight.
-func (a *DOMHighlightNodeArgs) SetNodeID(nodeID cdptype.DOMNodeID) *DOMHighlightNodeArgs {
-	a.NodeID = &nodeID
-	return a
-}
-
-// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node to highlight.
-func (a *DOMHighlightNodeArgs) SetBackendNodeID(backendNodeID cdptype.DOMBackendNodeID) *DOMHighlightNodeArgs {
-	a.BackendNodeID = &backendNodeID
-	return a
-}
-
-// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node to be highlighted.
-func (a *DOMHighlightNodeArgs) SetObjectID(objectID cdptype.RuntimeRemoteObjectID) *DOMHighlightNodeArgs {
-	a.ObjectID = &objectID
-	return a
-}
-
-// DOMHighlightFrameArgs represents the arguments for HighlightFrame in the DOM domain.
-type DOMHighlightFrameArgs struct {
-	FrameID             cdptype.PageFrameID `json:"frameId"`                       // Identifier of the frame to highlight.
-	ContentColor        *cdptype.DOMRGBA    `json:"contentColor,omitempty"`        // The content box highlight fill color (default: transparent).
-	ContentOutlineColor *cdptype.DOMRGBA    `json:"contentOutlineColor,omitempty"` // The content box highlight outline color (default: transparent).
-}
-
-// NewDOMHighlightFrameArgs initializes DOMHighlightFrameArgs with the required arguments.
-func NewDOMHighlightFrameArgs(frameID cdptype.PageFrameID) *DOMHighlightFrameArgs {
-	args := new(DOMHighlightFrameArgs)
-	args.FrameID = frameID
-	return args
-}
-
-// SetContentColor sets the ContentColor optional argument. The content box highlight fill color (default: transparent).
-func (a *DOMHighlightFrameArgs) SetContentColor(contentColor cdptype.DOMRGBA) *DOMHighlightFrameArgs {
-	a.ContentColor = &contentColor
-	return a
-}
-
-// SetContentOutlineColor sets the ContentOutlineColor optional argument. The content box highlight outline color (default: transparent).
-func (a *DOMHighlightFrameArgs) SetContentOutlineColor(contentOutlineColor cdptype.DOMRGBA) *DOMHighlightFrameArgs {
-	a.ContentOutlineColor = &contentOutlineColor
-	return a
-}
-
 // DOMPushNodeByPathToFrontendArgs represents the arguments for PushNodeByPathToFrontend in the DOM domain.
 type DOMPushNodeByPathToFrontendArgs struct {
 	Path string `json:"path"` // Path to node in the proprietary format.
@@ -1319,23 +1183,6 @@ func NewDOMGetRelayoutBoundaryArgs(nodeID cdptype.DOMNodeID) *DOMGetRelayoutBoun
 // DOMGetRelayoutBoundaryReply represents the return values for GetRelayoutBoundary in the DOM domain.
 type DOMGetRelayoutBoundaryReply struct {
 	NodeID cdptype.DOMNodeID `json:"nodeId"` // Relayout boundary node id for the given node.
-}
-
-// DOMGetHighlightObjectForTestArgs represents the arguments for GetHighlightObjectForTest in the DOM domain.
-type DOMGetHighlightObjectForTestArgs struct {
-	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node to get highlight object for.
-}
-
-// NewDOMGetHighlightObjectForTestArgs initializes DOMGetHighlightObjectForTestArgs with the required arguments.
-func NewDOMGetHighlightObjectForTestArgs(nodeID cdptype.DOMNodeID) *DOMGetHighlightObjectForTestArgs {
-	args := new(DOMGetHighlightObjectForTestArgs)
-	args.NodeID = nodeID
-	return args
-}
-
-// DOMGetHighlightObjectForTestReply represents the return values for GetHighlightObjectForTest in the DOM domain.
-type DOMGetHighlightObjectForTestReply struct {
-	Highlight json.RawMessage `json:"highlight"` // Highlight data for the node.
 }
 
 // DOMDebuggerSetDOMBreakpointArgs represents the arguments for SetDOMBreakpoint in the DOMDebugger domain.
@@ -3350,6 +3197,249 @@ type NetworkGetCertificateReply struct {
 	TableNames []string `json:"tableNames"` //
 }
 
+// OverlaySetShowPaintRectsArgs represents the arguments for SetShowPaintRects in the Overlay domain.
+type OverlaySetShowPaintRectsArgs struct {
+	Result bool `json:"result"` // True for showing paint rectangles
+}
+
+// NewOverlaySetShowPaintRectsArgs initializes OverlaySetShowPaintRectsArgs with the required arguments.
+func NewOverlaySetShowPaintRectsArgs(result bool) *OverlaySetShowPaintRectsArgs {
+	args := new(OverlaySetShowPaintRectsArgs)
+	args.Result = result
+	return args
+}
+
+// OverlaySetShowDebugBordersArgs represents the arguments for SetShowDebugBorders in the Overlay domain.
+type OverlaySetShowDebugBordersArgs struct {
+	Show bool `json:"show"` // True for showing debug borders
+}
+
+// NewOverlaySetShowDebugBordersArgs initializes OverlaySetShowDebugBordersArgs with the required arguments.
+func NewOverlaySetShowDebugBordersArgs(show bool) *OverlaySetShowDebugBordersArgs {
+	args := new(OverlaySetShowDebugBordersArgs)
+	args.Show = show
+	return args
+}
+
+// OverlaySetShowFPSCounterArgs represents the arguments for SetShowFPSCounter in the Overlay domain.
+type OverlaySetShowFPSCounterArgs struct {
+	Show bool `json:"show"` // True for showing the FPS counter
+}
+
+// NewOverlaySetShowFPSCounterArgs initializes OverlaySetShowFPSCounterArgs with the required arguments.
+func NewOverlaySetShowFPSCounterArgs(show bool) *OverlaySetShowFPSCounterArgs {
+	args := new(OverlaySetShowFPSCounterArgs)
+	args.Show = show
+	return args
+}
+
+// OverlaySetShowScrollBottleneckRectsArgs represents the arguments for SetShowScrollBottleneckRects in the Overlay domain.
+type OverlaySetShowScrollBottleneckRectsArgs struct {
+	Show bool `json:"show"` // True for showing scroll bottleneck rects
+}
+
+// NewOverlaySetShowScrollBottleneckRectsArgs initializes OverlaySetShowScrollBottleneckRectsArgs with the required arguments.
+func NewOverlaySetShowScrollBottleneckRectsArgs(show bool) *OverlaySetShowScrollBottleneckRectsArgs {
+	args := new(OverlaySetShowScrollBottleneckRectsArgs)
+	args.Show = show
+	return args
+}
+
+// OverlaySetShowViewportSizeOnResizeArgs represents the arguments for SetShowViewportSizeOnResize in the Overlay domain.
+type OverlaySetShowViewportSizeOnResizeArgs struct {
+	Show bool `json:"show"` // Whether to paint size or not.
+}
+
+// NewOverlaySetShowViewportSizeOnResizeArgs initializes OverlaySetShowViewportSizeOnResizeArgs with the required arguments.
+func NewOverlaySetShowViewportSizeOnResizeArgs(show bool) *OverlaySetShowViewportSizeOnResizeArgs {
+	args := new(OverlaySetShowViewportSizeOnResizeArgs)
+	args.Show = show
+	return args
+}
+
+// OverlaySetPausedInDebuggerMessageArgs represents the arguments for SetPausedInDebuggerMessage in the Overlay domain.
+type OverlaySetPausedInDebuggerMessageArgs struct {
+	Message *string `json:"message,omitempty"` // The message to display, also triggers resume and step over controls.
+}
+
+// NewOverlaySetPausedInDebuggerMessageArgs initializes OverlaySetPausedInDebuggerMessageArgs with the required arguments.
+func NewOverlaySetPausedInDebuggerMessageArgs() *OverlaySetPausedInDebuggerMessageArgs {
+	args := new(OverlaySetPausedInDebuggerMessageArgs)
+
+	return args
+}
+
+// SetMessage sets the Message optional argument. The message to display, also triggers resume and step over controls.
+func (a *OverlaySetPausedInDebuggerMessageArgs) SetMessage(message string) *OverlaySetPausedInDebuggerMessageArgs {
+	a.Message = &message
+	return a
+}
+
+// OverlaySetSuspendedArgs represents the arguments for SetSuspended in the Overlay domain.
+type OverlaySetSuspendedArgs struct {
+	Suspended bool `json:"suspended"` // Whether overlay should be suspended and not consume any resources until resumed.
+}
+
+// NewOverlaySetSuspendedArgs initializes OverlaySetSuspendedArgs with the required arguments.
+func NewOverlaySetSuspendedArgs(suspended bool) *OverlaySetSuspendedArgs {
+	args := new(OverlaySetSuspendedArgs)
+	args.Suspended = suspended
+	return args
+}
+
+// OverlaySetInspectModeArgs represents the arguments for SetInspectMode in the Overlay domain.
+type OverlaySetInspectModeArgs struct {
+	Mode            cdptype.OverlayInspectMode      `json:"mode"`                      // Set an inspection mode.
+	HighlightConfig *cdptype.OverlayHighlightConfig `json:"highlightConfig,omitempty"` // A descriptor for the highlight appearance of hovered-over nodes. May be omitted if enabled == false.
+}
+
+// NewOverlaySetInspectModeArgs initializes OverlaySetInspectModeArgs with the required arguments.
+func NewOverlaySetInspectModeArgs(mode cdptype.OverlayInspectMode) *OverlaySetInspectModeArgs {
+	args := new(OverlaySetInspectModeArgs)
+	args.Mode = mode
+	return args
+}
+
+// SetHighlightConfig sets the HighlightConfig optional argument. A descriptor for the highlight appearance of hovered-over nodes. May be omitted if enabled == false.
+func (a *OverlaySetInspectModeArgs) SetHighlightConfig(highlightConfig cdptype.OverlayHighlightConfig) *OverlaySetInspectModeArgs {
+	a.HighlightConfig = &highlightConfig
+	return a
+}
+
+// OverlayHighlightRectArgs represents the arguments for HighlightRect in the Overlay domain.
+type OverlayHighlightRectArgs struct {
+	X            int              `json:"x"`                      // X coordinate
+	Y            int              `json:"y"`                      // Y coordinate
+	Width        int              `json:"width"`                  // Rectangle width
+	Height       int              `json:"height"`                 // Rectangle height
+	Color        *cdptype.DOMRGBA `json:"color,omitempty"`        // The highlight fill color (default: transparent).
+	OutlineColor *cdptype.DOMRGBA `json:"outlineColor,omitempty"` // The highlight outline color (default: transparent).
+}
+
+// NewOverlayHighlightRectArgs initializes OverlayHighlightRectArgs with the required arguments.
+func NewOverlayHighlightRectArgs(x int, y int, width int, height int) *OverlayHighlightRectArgs {
+	args := new(OverlayHighlightRectArgs)
+	args.X = x
+	args.Y = y
+	args.Width = width
+	args.Height = height
+	return args
+}
+
+// SetColor sets the Color optional argument. The highlight fill color (default: transparent).
+func (a *OverlayHighlightRectArgs) SetColor(color cdptype.DOMRGBA) *OverlayHighlightRectArgs {
+	a.Color = &color
+	return a
+}
+
+// SetOutlineColor sets the OutlineColor optional argument. The highlight outline color (default: transparent).
+func (a *OverlayHighlightRectArgs) SetOutlineColor(outlineColor cdptype.DOMRGBA) *OverlayHighlightRectArgs {
+	a.OutlineColor = &outlineColor
+	return a
+}
+
+// OverlayHighlightQuadArgs represents the arguments for HighlightQuad in the Overlay domain.
+type OverlayHighlightQuadArgs struct {
+	Quad         cdptype.DOMQuad  `json:"quad"`                   // Quad to highlight
+	Color        *cdptype.DOMRGBA `json:"color,omitempty"`        // The highlight fill color (default: transparent).
+	OutlineColor *cdptype.DOMRGBA `json:"outlineColor,omitempty"` // The highlight outline color (default: transparent).
+}
+
+// NewOverlayHighlightQuadArgs initializes OverlayHighlightQuadArgs with the required arguments.
+func NewOverlayHighlightQuadArgs(quad cdptype.DOMQuad) *OverlayHighlightQuadArgs {
+	args := new(OverlayHighlightQuadArgs)
+	args.Quad = quad
+	return args
+}
+
+// SetColor sets the Color optional argument. The highlight fill color (default: transparent).
+func (a *OverlayHighlightQuadArgs) SetColor(color cdptype.DOMRGBA) *OverlayHighlightQuadArgs {
+	a.Color = &color
+	return a
+}
+
+// SetOutlineColor sets the OutlineColor optional argument. The highlight outline color (default: transparent).
+func (a *OverlayHighlightQuadArgs) SetOutlineColor(outlineColor cdptype.DOMRGBA) *OverlayHighlightQuadArgs {
+	a.OutlineColor = &outlineColor
+	return a
+}
+
+// OverlayHighlightNodeArgs represents the arguments for HighlightNode in the Overlay domain.
+type OverlayHighlightNodeArgs struct {
+	HighlightConfig cdptype.OverlayHighlightConfig `json:"highlightConfig"`         // A descriptor for the highlight appearance.
+	NodeID          *cdptype.DOMNodeID             `json:"nodeId,omitempty"`        // Identifier of the node to highlight.
+	BackendNodeID   *cdptype.DOMBackendNodeID      `json:"backendNodeId,omitempty"` // Identifier of the backend node to highlight.
+	ObjectID        *cdptype.RuntimeRemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node to be highlighted.
+}
+
+// NewOverlayHighlightNodeArgs initializes OverlayHighlightNodeArgs with the required arguments.
+func NewOverlayHighlightNodeArgs(highlightConfig cdptype.OverlayHighlightConfig) *OverlayHighlightNodeArgs {
+	args := new(OverlayHighlightNodeArgs)
+	args.HighlightConfig = highlightConfig
+	return args
+}
+
+// SetNodeID sets the NodeID optional argument. Identifier of the node to highlight.
+func (a *OverlayHighlightNodeArgs) SetNodeID(nodeID cdptype.DOMNodeID) *OverlayHighlightNodeArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node to highlight.
+func (a *OverlayHighlightNodeArgs) SetBackendNodeID(backendNodeID cdptype.DOMBackendNodeID) *OverlayHighlightNodeArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
+}
+
+// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node to be highlighted.
+func (a *OverlayHighlightNodeArgs) SetObjectID(objectID cdptype.RuntimeRemoteObjectID) *OverlayHighlightNodeArgs {
+	a.ObjectID = &objectID
+	return a
+}
+
+// OverlayHighlightFrameArgs represents the arguments for HighlightFrame in the Overlay domain.
+type OverlayHighlightFrameArgs struct {
+	FrameID             cdptype.PageFrameID `json:"frameId"`                       // Identifier of the frame to highlight.
+	ContentColor        *cdptype.DOMRGBA    `json:"contentColor,omitempty"`        // The content box highlight fill color (default: transparent).
+	ContentOutlineColor *cdptype.DOMRGBA    `json:"contentOutlineColor,omitempty"` // The content box highlight outline color (default: transparent).
+}
+
+// NewOverlayHighlightFrameArgs initializes OverlayHighlightFrameArgs with the required arguments.
+func NewOverlayHighlightFrameArgs(frameID cdptype.PageFrameID) *OverlayHighlightFrameArgs {
+	args := new(OverlayHighlightFrameArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// SetContentColor sets the ContentColor optional argument. The content box highlight fill color (default: transparent).
+func (a *OverlayHighlightFrameArgs) SetContentColor(contentColor cdptype.DOMRGBA) *OverlayHighlightFrameArgs {
+	a.ContentColor = &contentColor
+	return a
+}
+
+// SetContentOutlineColor sets the ContentOutlineColor optional argument. The content box highlight outline color (default: transparent).
+func (a *OverlayHighlightFrameArgs) SetContentOutlineColor(contentOutlineColor cdptype.DOMRGBA) *OverlayHighlightFrameArgs {
+	a.ContentOutlineColor = &contentOutlineColor
+	return a
+}
+
+// OverlayGetHighlightObjectForTestArgs represents the arguments for GetHighlightObjectForTest in the Overlay domain.
+type OverlayGetHighlightObjectForTestArgs struct {
+	NodeID cdptype.DOMNodeID `json:"nodeId"` // Id of the node to get highlight object for.
+}
+
+// NewOverlayGetHighlightObjectForTestArgs initializes OverlayGetHighlightObjectForTestArgs with the required arguments.
+func NewOverlayGetHighlightObjectForTestArgs(nodeID cdptype.DOMNodeID) *OverlayGetHighlightObjectForTestArgs {
+	args := new(OverlayGetHighlightObjectForTestArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// OverlayGetHighlightObjectForTestReply represents the return values for GetHighlightObjectForTest in the Overlay domain.
+type OverlayGetHighlightObjectForTestReply struct {
+	Highlight json.RawMessage `json:"highlight"` // Highlight data for the node.
+}
+
 // PageAddScriptToEvaluateOnLoadArgs represents the arguments for AddScriptToEvaluateOnLoad in the Page domain.
 type PageAddScriptToEvaluateOnLoadArgs struct {
 	ScriptSource string `json:"scriptSource"` //
@@ -3813,31 +3903,6 @@ func (a *PageHandleJavaScriptDialogArgs) SetPromptText(promptText string) *PageH
 	return a
 }
 
-// PageConfigureOverlayArgs represents the arguments for ConfigureOverlay in the Page domain.
-type PageConfigureOverlayArgs struct {
-	Suspended *bool   `json:"suspended,omitempty"` // Whether overlay should be suspended and not consume any resources.
-	Message   *string `json:"message,omitempty"`   // Overlay message to display.
-}
-
-// NewPageConfigureOverlayArgs initializes PageConfigureOverlayArgs with the required arguments.
-func NewPageConfigureOverlayArgs() *PageConfigureOverlayArgs {
-	args := new(PageConfigureOverlayArgs)
-
-	return args
-}
-
-// SetSuspended sets the Suspended optional argument. Whether overlay should be suspended and not consume any resources.
-func (a *PageConfigureOverlayArgs) SetSuspended(suspended bool) *PageConfigureOverlayArgs {
-	a.Suspended = &suspended
-	return a
-}
-
-// SetMessage sets the Message optional argument. Overlay message to display.
-func (a *PageConfigureOverlayArgs) SetMessage(message string) *PageConfigureOverlayArgs {
-	a.Message = &message
-	return a
-}
-
 // PageGetAppManifestReply represents the return values for GetAppManifest in the Page domain.
 type PageGetAppManifestReply struct {
 	URL    string                         `json:"url"`            // Manifest location.
@@ -3921,66 +3986,6 @@ type ProfilerTakePreciseCoverageReply struct {
 // ProfilerGetBestEffortCoverageReply represents the return values for GetBestEffortCoverage in the Profiler domain.
 type ProfilerGetBestEffortCoverageReply struct {
 	Result []cdptype.ProfilerScriptCoverage `json:"result"` // Coverage data for the current isolate.
-}
-
-// RenderingSetShowPaintRectsArgs represents the arguments for SetShowPaintRects in the Rendering domain.
-type RenderingSetShowPaintRectsArgs struct {
-	Result bool `json:"result"` // True for showing paint rectangles
-}
-
-// NewRenderingSetShowPaintRectsArgs initializes RenderingSetShowPaintRectsArgs with the required arguments.
-func NewRenderingSetShowPaintRectsArgs(result bool) *RenderingSetShowPaintRectsArgs {
-	args := new(RenderingSetShowPaintRectsArgs)
-	args.Result = result
-	return args
-}
-
-// RenderingSetShowDebugBordersArgs represents the arguments for SetShowDebugBorders in the Rendering domain.
-type RenderingSetShowDebugBordersArgs struct {
-	Show bool `json:"show"` // True for showing debug borders
-}
-
-// NewRenderingSetShowDebugBordersArgs initializes RenderingSetShowDebugBordersArgs with the required arguments.
-func NewRenderingSetShowDebugBordersArgs(show bool) *RenderingSetShowDebugBordersArgs {
-	args := new(RenderingSetShowDebugBordersArgs)
-	args.Show = show
-	return args
-}
-
-// RenderingSetShowFPSCounterArgs represents the arguments for SetShowFPSCounter in the Rendering domain.
-type RenderingSetShowFPSCounterArgs struct {
-	Show bool `json:"show"` // True for showing the FPS counter
-}
-
-// NewRenderingSetShowFPSCounterArgs initializes RenderingSetShowFPSCounterArgs with the required arguments.
-func NewRenderingSetShowFPSCounterArgs(show bool) *RenderingSetShowFPSCounterArgs {
-	args := new(RenderingSetShowFPSCounterArgs)
-	args.Show = show
-	return args
-}
-
-// RenderingSetShowScrollBottleneckRectsArgs represents the arguments for SetShowScrollBottleneckRects in the Rendering domain.
-type RenderingSetShowScrollBottleneckRectsArgs struct {
-	Show bool `json:"show"` // True for showing scroll bottleneck rects
-}
-
-// NewRenderingSetShowScrollBottleneckRectsArgs initializes RenderingSetShowScrollBottleneckRectsArgs with the required arguments.
-func NewRenderingSetShowScrollBottleneckRectsArgs(show bool) *RenderingSetShowScrollBottleneckRectsArgs {
-	args := new(RenderingSetShowScrollBottleneckRectsArgs)
-	args.Show = show
-	return args
-}
-
-// RenderingSetShowViewportSizeOnResizeArgs represents the arguments for SetShowViewportSizeOnResize in the Rendering domain.
-type RenderingSetShowViewportSizeOnResizeArgs struct {
-	Show bool `json:"show"` // Whether to paint size or not.
-}
-
-// NewRenderingSetShowViewportSizeOnResizeArgs initializes RenderingSetShowViewportSizeOnResizeArgs with the required arguments.
-func NewRenderingSetShowViewportSizeOnResizeArgs(show bool) *RenderingSetShowViewportSizeOnResizeArgs {
-	args := new(RenderingSetShowViewportSizeOnResizeArgs)
-	args.Show = show
-	return args
 }
 
 // RuntimeEvaluateArgs represents the arguments for Evaluate in the Runtime domain.

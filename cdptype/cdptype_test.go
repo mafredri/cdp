@@ -1919,86 +1919,6 @@ func TestDOMShadowRootType_Marshal(t *testing.T) {
 
 }
 
-func TestDOMInspectMode_Marshal(t *testing.T) {
-	var v DOMInspectMode
-
-	// Test empty.
-	b, err := json.Marshal(&v)
-	if err != nil {
-		t.Errorf("Marshal() got %v, want no error", err)
-	}
-	if string(b) != "null" {
-		t.Errorf("Marshal() got %s, want null", b)
-	}
-	err = json.Unmarshal(b, &v)
-	if err != nil {
-		t.Errorf("Unmarshal() got %v, want no error", err)
-	}
-
-	// Test bad input.
-	v = 9001
-	_, err = json.Marshal(&v)
-	if err == nil {
-		t.Error("Marshal(9001) got no error, want error")
-	}
-	err = json.Unmarshal([]byte("9001"), &v)
-	if err == nil {
-		t.Error("Unmarshal(9001) got no error, want error")
-	}
-
-	// Test SearchForNode.
-	v = 1
-	b, err = json.Marshal(&v)
-	if err != nil {
-		t.Errorf("Marshal() got %v, want no error", err)
-	}
-	if strings.Contains(v.String(), string(b)) {
-		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
-	}
-	err = json.Unmarshal(b, &v)
-	if err != nil {
-		t.Errorf("Unmarshal() got %v, want no error", err)
-	}
-	if v != 1 {
-		t.Errorf("Unmarshal(1): v == %d, want 1", v)
-	}
-
-	// Test SearchForUAShadowDOM.
-	v = 2
-	b, err = json.Marshal(&v)
-	if err != nil {
-		t.Errorf("Marshal() got %v, want no error", err)
-	}
-	if strings.Contains(v.String(), string(b)) {
-		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
-	}
-	err = json.Unmarshal(b, &v)
-	if err != nil {
-		t.Errorf("Unmarshal() got %v, want no error", err)
-	}
-	if v != 2 {
-		t.Errorf("Unmarshal(2): v == %d, want 2", v)
-	}
-
-	// Test None.
-	v = 3
-	b, err = json.Marshal(&v)
-	if err != nil {
-		t.Errorf("Marshal() got %v, want no error", err)
-	}
-	if strings.Contains(v.String(), string(b)) {
-		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
-	}
-	err = json.Unmarshal(b, &v)
-	if err != nil {
-		t.Errorf("Unmarshal() got %v, want no error", err)
-	}
-	if v != 3 {
-		t.Errorf("Unmarshal(3): v == %d, want 3", v)
-	}
-
-}
-
 func TestDOMDebuggerDOMBreakpointType_Marshal(t *testing.T) {
 	var v DOMDebuggerDOMBreakpointType
 
@@ -2854,6 +2774,86 @@ func TestNetworkBlockedReason_Marshal(t *testing.T) {
 	}
 	if v != 6 {
 		t.Errorf("Unmarshal(6): v == %d, want 6", v)
+	}
+
+}
+
+func TestOverlayInspectMode_Marshal(t *testing.T) {
+	var v OverlayInspectMode
+
+	// Test empty.
+	b, err := json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if string(b) != "null" {
+		t.Errorf("Marshal() got %s, want null", b)
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+
+	// Test bad input.
+	v = 9001
+	_, err = json.Marshal(&v)
+	if err == nil {
+		t.Error("Marshal(9001) got no error, want error")
+	}
+	err = json.Unmarshal([]byte("9001"), &v)
+	if err == nil {
+		t.Error("Unmarshal(9001) got no error, want error")
+	}
+
+	// Test SearchForNode.
+	v = 1
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 1 {
+		t.Errorf("Unmarshal(1): v == %d, want 1", v)
+	}
+
+	// Test SearchForUAShadowDOM.
+	v = 2
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 2 {
+		t.Errorf("Unmarshal(2): v == %d, want 2", v)
+	}
+
+	// Test None.
+	v = 3
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 3 {
+		t.Errorf("Unmarshal(3): v == %d, want 3", v)
 	}
 
 }
