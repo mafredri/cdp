@@ -4,6 +4,9 @@ coverage:
   precision: 1
 
   status:
-    project: yes
+    project:
+      default:
+        enabled: yes
+        threshold: 2%
     patch: no
     changes: no
