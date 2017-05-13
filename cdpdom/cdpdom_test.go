@@ -8344,14 +8344,20 @@ func TestPage_PrintToPDF(t *testing.T) {
 	dom := NewPage(conn)
 	var err error
 
-	_, err = dom.PrintToPDF(nil)
+	// Test nil args.
+	_, err = dom.PrintToPDF(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	_, err = dom.PrintToPDF(nil, &cdpcmd.PagePrintToPDFArgs{})
 	if err != nil {
 		t.Error(err)
 	}
 
 	// Test error.
 	codec.respErr = errors.New("bad request")
-	_, err = dom.PrintToPDF(nil)
+	_, err = dom.PrintToPDF(nil, &cdpcmd.PagePrintToPDFArgs{})
 	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
 		t.Errorf("unexpected error; got: %v, want bad request", err)
 	}
@@ -8562,6 +8568,32 @@ func TestPage_GetLayoutMetrics(t *testing.T) {
 	// Test error.
 	codec.respErr = errors.New("bad request")
 	_, err = dom.GetLayoutMetrics(nil)
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestPage_CreateIsolatedWorld(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewPage(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.CreateIsolatedWorld(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.CreateIsolatedWorld(nil, &cdpcmd.PageCreateIsolatedWorldArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.CreateIsolatedWorld(nil, &cdpcmd.PageCreateIsolatedWorldArgs{})
 	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
 		t.Errorf("unexpected error; got: %v, want bad request", err)
 	}

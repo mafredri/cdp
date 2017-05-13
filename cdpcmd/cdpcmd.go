@@ -3821,6 +3821,94 @@ type PageCaptureScreenshotReply struct {
 	Data []byte `json:"data"` // Base64-encoded image data.
 }
 
+// PagePrintToPDFArgs represents the arguments for PrintToPDF in the Page domain.
+type PagePrintToPDFArgs struct {
+	Landscape           *bool    `json:"landscape,omitempty"`           // Paper orientation. Defaults to false.
+	DisplayHeaderFooter *bool    `json:"displayHeaderFooter,omitempty"` // Display header and footer. Defaults to false.
+	PrintBackground     *bool    `json:"printBackground,omitempty"`     // Print background graphics. Defaults to false.
+	Scale               *float64 `json:"scale,omitempty"`               // Scale of the webpage rendering. Defaults to 1.
+	PaperWidth          *float64 `json:"paperWidth,omitempty"`          // Paper width in inches. Defaults to 8.5 inches.
+	PaperHeight         *float64 `json:"paperHeight,omitempty"`         // Paper height in inches. Defaults to 11 inches.
+	MarginTop           *float64 `json:"marginTop,omitempty"`           // Top margin in inches. Defaults to 1cm (~0.4 inches).
+	MarginBottom        *float64 `json:"marginBottom,omitempty"`        // Bottom margin in inches. Defaults to 1cm (~0.4 inches).
+	MarginLeft          *float64 `json:"marginLeft,omitempty"`          // Left margin in inches. Defaults to 1cm (~0.4 inches).
+	MarginRight         *float64 `json:"marginRight,omitempty"`         // Right margin in inches. Defaults to 1cm (~0.4 inches).
+	PageRanges          *string  `json:"pageRanges,omitempty"`          // Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.
+}
+
+// NewPagePrintToPDFArgs initializes PagePrintToPDFArgs with the required arguments.
+func NewPagePrintToPDFArgs() *PagePrintToPDFArgs {
+	args := new(PagePrintToPDFArgs)
+
+	return args
+}
+
+// SetLandscape sets the Landscape optional argument. Paper orientation. Defaults to false.
+func (a *PagePrintToPDFArgs) SetLandscape(landscape bool) *PagePrintToPDFArgs {
+	a.Landscape = &landscape
+	return a
+}
+
+// SetDisplayHeaderFooter sets the DisplayHeaderFooter optional argument. Display header and footer. Defaults to false.
+func (a *PagePrintToPDFArgs) SetDisplayHeaderFooter(displayHeaderFooter bool) *PagePrintToPDFArgs {
+	a.DisplayHeaderFooter = &displayHeaderFooter
+	return a
+}
+
+// SetPrintBackground sets the PrintBackground optional argument. Print background graphics. Defaults to false.
+func (a *PagePrintToPDFArgs) SetPrintBackground(printBackground bool) *PagePrintToPDFArgs {
+	a.PrintBackground = &printBackground
+	return a
+}
+
+// SetScale sets the Scale optional argument. Scale of the webpage rendering. Defaults to 1.
+func (a *PagePrintToPDFArgs) SetScale(scale float64) *PagePrintToPDFArgs {
+	a.Scale = &scale
+	return a
+}
+
+// SetPaperWidth sets the PaperWidth optional argument. Paper width in inches. Defaults to 8.5 inches.
+func (a *PagePrintToPDFArgs) SetPaperWidth(paperWidth float64) *PagePrintToPDFArgs {
+	a.PaperWidth = &paperWidth
+	return a
+}
+
+// SetPaperHeight sets the PaperHeight optional argument. Paper height in inches. Defaults to 11 inches.
+func (a *PagePrintToPDFArgs) SetPaperHeight(paperHeight float64) *PagePrintToPDFArgs {
+	a.PaperHeight = &paperHeight
+	return a
+}
+
+// SetMarginTop sets the MarginTop optional argument. Top margin in inches. Defaults to 1cm (~0.4 inches).
+func (a *PagePrintToPDFArgs) SetMarginTop(marginTop float64) *PagePrintToPDFArgs {
+	a.MarginTop = &marginTop
+	return a
+}
+
+// SetMarginBottom sets the MarginBottom optional argument. Bottom margin in inches. Defaults to 1cm (~0.4 inches).
+func (a *PagePrintToPDFArgs) SetMarginBottom(marginBottom float64) *PagePrintToPDFArgs {
+	a.MarginBottom = &marginBottom
+	return a
+}
+
+// SetMarginLeft sets the MarginLeft optional argument. Left margin in inches. Defaults to 1cm (~0.4 inches).
+func (a *PagePrintToPDFArgs) SetMarginLeft(marginLeft float64) *PagePrintToPDFArgs {
+	a.MarginLeft = &marginLeft
+	return a
+}
+
+// SetMarginRight sets the MarginRight optional argument. Right margin in inches. Defaults to 1cm (~0.4 inches).
+func (a *PagePrintToPDFArgs) SetMarginRight(marginRight float64) *PagePrintToPDFArgs {
+	a.MarginRight = &marginRight
+	return a
+}
+
+// SetPageRanges sets the PageRanges optional argument. Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.
+func (a *PagePrintToPDFArgs) SetPageRanges(pageRanges string) *PagePrintToPDFArgs {
+	a.PageRanges = &pageRanges
+	return a
+}
+
 // PagePrintToPDFReply represents the return values for PrintToPDF in the Page domain.
 type PagePrintToPDFReply struct {
 	Data []byte `json:"data"` // Base64-encoded pdf data.
@@ -3941,6 +4029,32 @@ type PageGetLayoutMetricsReply struct {
 	LayoutViewport cdptype.PageLayoutViewport `json:"layoutViewport"` // Metrics relating to the layout viewport.
 	VisualViewport cdptype.PageVisualViewport `json:"visualViewport"` // Metrics relating to the visual viewport.
 	ContentSize    cdptype.DOMRect            `json:"contentSize"`    // Size of scrollable area.
+}
+
+// PageCreateIsolatedWorldArgs represents the arguments for CreateIsolatedWorld in the Page domain.
+type PageCreateIsolatedWorldArgs struct {
+	FrameID             cdptype.PageFrameID `json:"frameId"`                       // Id of the frame in which the isolated world should be created.
+	WorldName           *string             `json:"worldName,omitempty"`           // An optional name which is reported in the Execution Context.
+	GrantUniveralAccess *bool               `json:"grantUniveralAccess,omitempty"` // Whether or not universal access should be granted to the isolated world. This is a powerful option, use with caution.
+}
+
+// NewPageCreateIsolatedWorldArgs initializes PageCreateIsolatedWorldArgs with the required arguments.
+func NewPageCreateIsolatedWorldArgs(frameID cdptype.PageFrameID) *PageCreateIsolatedWorldArgs {
+	args := new(PageCreateIsolatedWorldArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// SetWorldName sets the WorldName optional argument. An optional name which is reported in the Execution Context.
+func (a *PageCreateIsolatedWorldArgs) SetWorldName(worldName string) *PageCreateIsolatedWorldArgs {
+	a.WorldName = &worldName
+	return a
+}
+
+// SetGrantUniveralAccess sets the GrantUniveralAccess optional argument. Whether or not universal access should be granted to the isolated world. This is a powerful option, use with caution.
+func (a *PageCreateIsolatedWorldArgs) SetGrantUniveralAccess(grantUniveralAccess bool) *PageCreateIsolatedWorldArgs {
+	a.GrantUniveralAccess = &grantUniveralAccess
+	return a
 }
 
 // ProfilerSetSamplingIntervalArgs represents the arguments for SetSamplingInterval in the Profiler domain.

@@ -4709,10 +4709,14 @@ func (d *Page) CaptureScreenshot(ctx context.Context, args *cdpcmd.PageCaptureSc
 	return
 }
 
-// PrintToPDF invokes the Page method. Print page as pdf.
-func (d *Page) PrintToPDF(ctx context.Context) (reply *cdpcmd.PagePrintToPDFReply, err error) {
+// PrintToPDF invokes the Page method. Print page as PDF.
+func (d *Page) PrintToPDF(ctx context.Context, args *cdpcmd.PagePrintToPDFArgs) (reply *cdpcmd.PagePrintToPDFReply, err error) {
 	reply = new(cdpcmd.PagePrintToPDFReply)
-	err = rpcc.Invoke(ctx, cdpcmd.PagePrintToPDF.String(), nil, reply, d.conn)
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.PagePrintToPDF.String(), args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.PagePrintToPDF.String(), nil, reply, d.conn)
+	}
 	if err != nil {
 		err = &opError{Domain: "Page", Op: "PrintToPDF", Err: err}
 	}
@@ -4818,6 +4822,19 @@ func (d *Page) GetLayoutMetrics(ctx context.Context) (reply *cdpcmd.PageGetLayou
 	err = rpcc.Invoke(ctx, cdpcmd.PageGetLayoutMetrics.String(), nil, reply, d.conn)
 	if err != nil {
 		err = &opError{Domain: "Page", Op: "GetLayoutMetrics", Err: err}
+	}
+	return
+}
+
+// CreateIsolatedWorld invokes the Page method. Creates an isolated world for the given frame.
+func (d *Page) CreateIsolatedWorld(ctx context.Context, args *cdpcmd.PageCreateIsolatedWorldArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.PageCreateIsolatedWorld.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.PageCreateIsolatedWorld.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Page", Op: "CreateIsolatedWorld", Err: err}
 	}
 	return
 }

@@ -1677,8 +1677,8 @@ type Page interface {
 
 	// Command PrintToPDF
 	//
-	// Print page as pdf.
-	PrintToPDF(context.Context) (*cdpcmd.PagePrintToPDFReply, error)
+	// Print page as PDF.
+	PrintToPDF(context.Context, *cdpcmd.PagePrintToPDFArgs) (*cdpcmd.PagePrintToPDFReply, error)
 
 	// Command StartScreencast
 	//
@@ -1724,6 +1724,11 @@ type Page interface {
 	//
 	// Returns metrics relating to the layouting of the page, such as viewport bounds/scale.
 	GetLayoutMetrics(context.Context) (*cdpcmd.PageGetLayoutMetricsReply, error)
+
+	// Command CreateIsolatedWorld
+	//
+	// Creates an isolated world for the given frame.
+	CreateIsolatedWorld(context.Context, *cdpcmd.PageCreateIsolatedWorldArgs) error
 
 	// Event DOMContentEventFired
 	//

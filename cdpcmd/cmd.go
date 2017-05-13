@@ -276,6 +276,7 @@ const (
 	PageSetControlNavigations                       CmdType = "Page.setControlNavigations"
 	PageProcessNavigation                           CmdType = "Page.processNavigation"
 	PageGetLayoutMetrics                            CmdType = "Page.getLayoutMetrics"
+	PageCreateIsolatedWorld                         CmdType = "Page.createIsolatedWorld"
 	ProfilerEnable                                  CmdType = "Profiler.enable"
 	ProfilerDisable                                 CmdType = "Profiler.disable"
 	ProfilerSetSamplingInterval                     CmdType = "Profiler.setSamplingInterval"

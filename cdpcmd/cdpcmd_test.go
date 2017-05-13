@@ -1279,6 +1279,13 @@ func TestNewPageCaptureScreenshotArgs(t *testing.T) {
 	}
 }
 
+func TestNewPagePrintToPDFArgs(t *testing.T) {
+	args := NewPagePrintToPDFArgs()
+	if args == nil {
+		t.Errorf("NewPagePrintToPDFArgs returned nil args")
+	}
+}
+
 func TestNewPageStartScreencastArgs(t *testing.T) {
 	args := NewPageStartScreencastArgs()
 	if args == nil {
@@ -1311,6 +1318,13 @@ func TestNewPageProcessNavigationArgs(t *testing.T) {
 	args := NewPageProcessNavigationArgs(func() (response cdptype.PageNavigationResponse, navigationID int) { return }())
 	if args == nil {
 		t.Errorf("NewPageProcessNavigationArgs returned nil args")
+	}
+}
+
+func TestNewPageCreateIsolatedWorldArgs(t *testing.T) {
+	args := NewPageCreateIsolatedWorldArgs(func() (frameID cdptype.PageFrameID) { return }())
+	if args == nil {
+		t.Errorf("NewPageCreateIsolatedWorldArgs returned nil args")
 	}
 }
 
