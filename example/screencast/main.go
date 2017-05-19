@@ -58,6 +58,7 @@ func run() error {
 		return err
 	}
 
+	// Start listening to ScreencastFrame events.
 	screencastFrame, err := c.Page.ScreencastFrame(ctx)
 	if err != nil {
 		return err
@@ -66,7 +67,6 @@ func run() error {
 	go func() {
 		defer screencastFrame.Close()
 
-		frameN := 0
 		for {
 			ev, err := screencastFrame.Recv()
 			if err != nil {
@@ -81,9 +81,8 @@ func run() error {
 				return
 			}
 
-			// Write to screencast_frame-00000N.png.
-			name := fmt.Sprintf("screencast_frame-%06d.png", frameN)
-			frameN++
+			// Write to screencast_frame-[timestamp].png.
+			name := fmt.Sprintf("screencast_frame-%d.png", ev.Metadata.Timestamp.Time().Unix())
 
 			// Write the frame to file (without blocking).
 			go func() {
@@ -95,7 +94,9 @@ func run() error {
 		}
 	}()
 
-	screencastArgs := cdpcmd.NewPageStartScreencastArgs().SetEveryNthFrame(1).SetFormat("png")
+	screencastArgs := cdpcmd.NewPageStartScreencastArgs().
+		SetEveryNthFrame(1).
+		SetFormat("png")
 	err = c.Page.StartScreencast(ctx, screencastArgs)
 	if err != nil {
 		return err
