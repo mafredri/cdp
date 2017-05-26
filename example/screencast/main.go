@@ -34,6 +34,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	defer conn.Close()
 
 	c := cdp.NewClient(conn)
 
@@ -57,6 +58,7 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	loadEventFired.Close()
 
 	// Start listening to ScreencastFrame events.
 	screencastFrame, err := c.Page.ScreencastFrame(ctx)
