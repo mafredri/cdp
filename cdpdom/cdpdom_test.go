@@ -5495,6 +5495,32 @@ func TestIndexedDB_DeleteDatabase(t *testing.T) {
 	}
 }
 
+func TestInput_SetIgnoreInputEvents(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewInput(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.SetIgnoreInputEvents(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.SetIgnoreInputEvents(nil, &cdpcmd.InputSetIgnoreInputEventsArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.SetIgnoreInputEvents(nil, &cdpcmd.InputSetIgnoreInputEventsArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
 func TestInput_DispatchKeyEvent(t *testing.T) {
 	conn, codec, cleanup := newTestConn(t)
 	defer cleanup()

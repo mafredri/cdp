@@ -3108,6 +3108,239 @@ func TestPageResourceType_Marshal(t *testing.T) {
 
 }
 
+func TestPageTransitionType_Marshal(t *testing.T) {
+	var v PageTransitionType
+
+	// Test empty.
+	b, err := json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if string(b) != "null" {
+		t.Errorf("Marshal() got %s, want null", b)
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+
+	// Test bad input.
+	v = 9001
+	_, err = json.Marshal(&v)
+	if err == nil {
+		t.Error("Marshal(9001) got no error, want error")
+	}
+	err = json.Unmarshal([]byte("9001"), &v)
+	if err == nil {
+		t.Error("Unmarshal(9001) got no error, want error")
+	}
+
+	// Test Link.
+	v = 1
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 1 {
+		t.Errorf("Unmarshal(1): v == %d, want 1", v)
+	}
+
+	// Test Typed.
+	v = 2
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 2 {
+		t.Errorf("Unmarshal(2): v == %d, want 2", v)
+	}
+
+	// Test AutoBookmark.
+	v = 3
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 3 {
+		t.Errorf("Unmarshal(3): v == %d, want 3", v)
+	}
+
+	// Test AutoSubframe.
+	v = 4
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 4 {
+		t.Errorf("Unmarshal(4): v == %d, want 4", v)
+	}
+
+	// Test ManualSubframe.
+	v = 5
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 5 {
+		t.Errorf("Unmarshal(5): v == %d, want 5", v)
+	}
+
+	// Test Generated.
+	v = 6
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 6 {
+		t.Errorf("Unmarshal(6): v == %d, want 6", v)
+	}
+
+	// Test AutoToplevel.
+	v = 7
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 7 {
+		t.Errorf("Unmarshal(7): v == %d, want 7", v)
+	}
+
+	// Test FormSubmit.
+	v = 8
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 8 {
+		t.Errorf("Unmarshal(8): v == %d, want 8", v)
+	}
+
+	// Test Reload.
+	v = 9
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 9 {
+		t.Errorf("Unmarshal(9): v == %d, want 9", v)
+	}
+
+	// Test Keyword.
+	v = 10
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 10 {
+		t.Errorf("Unmarshal(10): v == %d, want 10", v)
+	}
+
+	// Test KeywordGenerated.
+	v = 11
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 11 {
+		t.Errorf("Unmarshal(11): v == %d, want 11", v)
+	}
+
+	// Test Other.
+	v = 12
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 12 {
+		t.Errorf("Unmarshal(12): v == %d, want 12", v)
+	}
+
+}
+
 func TestPageDialogType_Marshal(t *testing.T) {
 	var v PageDialogType
 

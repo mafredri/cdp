@@ -1109,6 +1109,11 @@ type IndexedDB interface {
 
 // The Input domain.
 type Input interface {
+	// Command SetIgnoreInputEvents
+	//
+	// Ignores input events (useful while auditing page).
+	SetIgnoreInputEvents(context.Context, *cdpcmd.InputSetIgnoreInputEventsArgs) error
+
 	// Command DispatchKeyEvent
 	//
 	// Dispatches a key event to the page.

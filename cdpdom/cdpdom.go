@@ -3126,6 +3126,19 @@ func NewInput(conn *rpcc.Conn) *Input {
 	return &Input{conn: conn}
 }
 
+// SetIgnoreInputEvents invokes the Input method. Ignores input events (useful while auditing page).
+func (d *Input) SetIgnoreInputEvents(ctx context.Context, args *cdpcmd.InputSetIgnoreInputEventsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.InputSetIgnoreInputEvents.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.InputSetIgnoreInputEvents.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Input", Op: "SetIgnoreInputEvents", Err: err}
+	}
+	return
+}
+
 // DispatchKeyEvent invokes the Input method. Dispatches a key event to the page.
 func (d *Input) DispatchKeyEvent(ctx context.Context, args *cdpcmd.InputDispatchKeyEventArgs) (err error) {
 	if args != nil {

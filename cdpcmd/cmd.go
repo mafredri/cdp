@@ -179,6 +179,7 @@ const (
 	IndexedDBRequestData                            CmdType = "IndexedDB.requestData"
 	IndexedDBClearObjectStore                       CmdType = "IndexedDB.clearObjectStore"
 	IndexedDBDeleteDatabase                         CmdType = "IndexedDB.deleteDatabase"
+	InputSetIgnoreInputEvents                       CmdType = "Input.setIgnoreInputEvents"
 	InputDispatchKeyEvent                           CmdType = "Input.dispatchKeyEvent"
 	InputDispatchMouseEvent                         CmdType = "Input.dispatchMouseEvent"
 	InputDispatchTouchEvent                         CmdType = "Input.dispatchTouchEvent"

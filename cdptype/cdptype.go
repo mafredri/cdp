@@ -2577,11 +2577,116 @@ type PageFrameResourceTree struct {
 // PageScriptIdentifier Unique script identifier.
 type PageScriptIdentifier string
 
+// PageTransitionType Transition type.
+type PageTransitionType int
+
+// PageTransitionType as enums.
+const (
+	PageTransitionTypeNotSet PageTransitionType = iota
+	PageTransitionTypeLink
+	PageTransitionTypeTyped
+	PageTransitionTypeAutoBookmark
+	PageTransitionTypeAutoSubframe
+	PageTransitionTypeManualSubframe
+	PageTransitionTypeGenerated
+	PageTransitionTypeAutoToplevel
+	PageTransitionTypeFormSubmit
+	PageTransitionTypeReload
+	PageTransitionTypeKeyword
+	PageTransitionTypeKeywordGenerated
+	PageTransitionTypeOther
+)
+
+// Valid returns true if enum is set.
+func (e PageTransitionType) Valid() bool {
+	return e >= 1 && e <= 12
+}
+
+func (e PageTransitionType) String() string {
+	switch e {
+	case 0:
+		return "PageTransitionTypeNotSet"
+	case 1:
+		return "link"
+	case 2:
+		return "typed"
+	case 3:
+		return "auto_bookmark"
+	case 4:
+		return "auto_subframe"
+	case 5:
+		return "manual_subframe"
+	case 6:
+		return "generated"
+	case 7:
+		return "auto_toplevel"
+	case 8:
+		return "form_submit"
+	case 9:
+		return "reload"
+	case 10:
+		return "keyword"
+	case 11:
+		return "keyword_generated"
+	case 12:
+		return "other"
+	}
+	return fmt.Sprintf("PageTransitionType(%d)", e)
+}
+
+// MarshalJSON encodes enum into a string or null when not set.
+func (e PageTransitionType) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.PageTransitionType: MarshalJSON on bad enum value: " + e.String())
+	}
+	return json.Marshal(e.String())
+}
+
+// UnmarshalJSON decodes a string value into a enum.
+func (e *PageTransitionType) UnmarshalJSON(data []byte) error {
+	switch string(data) {
+	case "null":
+		*e = 0
+	case "\"link\"":
+		*e = 1
+	case "\"typed\"":
+		*e = 2
+	case "\"auto_bookmark\"":
+		*e = 3
+	case "\"auto_subframe\"":
+		*e = 4
+	case "\"manual_subframe\"":
+		*e = 5
+	case "\"generated\"":
+		*e = 6
+	case "\"auto_toplevel\"":
+		*e = 7
+	case "\"form_submit\"":
+		*e = 8
+	case "\"reload\"":
+		*e = 9
+	case "\"keyword\"":
+		*e = 10
+	case "\"keyword_generated\"":
+		*e = 11
+	case "\"other\"":
+		*e = 12
+	default:
+		return fmt.Errorf("cdptype.PageTransitionType: UnmarshalJSON on bad input: %s", data)
+	}
+	return nil
+}
+
 // PageNavigationEntry Navigation history entry.
 type PageNavigationEntry struct {
-	ID    int    `json:"id"`    // Unique id of the navigation history entry.
-	URL   string `json:"url"`   // URL of the navigation history entry.
-	Title string `json:"title"` // Title of the navigation history entry.
+	ID             int                `json:"id"`             // Unique id of the navigation history entry.
+	URL            string             `json:"url"`            // URL of the navigation history entry.
+	UserTypedURL   string             `json:"userTypedURL"`   // URL that the user typed in the url bar.
+	Title          string             `json:"title"`          // Title of the navigation history entry.
+	TransitionType PageTransitionType `json:"transitionType"` // Transition type.
 }
 
 // PageScreencastFrameMetadata Screencast frame metadata.

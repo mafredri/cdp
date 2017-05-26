@@ -866,6 +866,13 @@ func TestNewIndexedDBDeleteDatabaseArgs(t *testing.T) {
 	}
 }
 
+func TestNewInputSetIgnoreInputEventsArgs(t *testing.T) {
+	args := NewInputSetIgnoreInputEventsArgs(func() (ignore bool) { return }())
+	if args == nil {
+		t.Errorf("NewInputSetIgnoreInputEventsArgs returned nil args")
+	}
+}
+
 func TestNewInputDispatchKeyEventArgs(t *testing.T) {
 	args := NewInputDispatchKeyEventArgs(func() (typ string) { return }())
 	if args == nil {

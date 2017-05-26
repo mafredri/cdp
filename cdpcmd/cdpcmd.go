@@ -1567,7 +1567,8 @@ type DebuggerGetPossibleBreakpointsReply struct {
 
 // DebuggerContinueToLocationArgs represents the arguments for ContinueToLocation in the Debugger domain.
 type DebuggerContinueToLocationArgs struct {
-	Location cdptype.DebuggerLocation `json:"location"` // Location to continue to.
+	Location         cdptype.DebuggerLocation `json:"location"`                   // Location to continue to.
+	TargetCallFrames *string                  `json:"targetCallFrames,omitempty"` //
 }
 
 // NewDebuggerContinueToLocationArgs initializes DebuggerContinueToLocationArgs with the required arguments.
@@ -1575,6 +1576,12 @@ func NewDebuggerContinueToLocationArgs(location cdptype.DebuggerLocation) *Debug
 	args := new(DebuggerContinueToLocationArgs)
 	args.Location = location
 	return args
+}
+
+// SetTargetCallFrames sets the TargetCallFrames optional argument.
+func (a *DebuggerContinueToLocationArgs) SetTargetCallFrames(targetCallFrames string) *DebuggerContinueToLocationArgs {
+	a.TargetCallFrames = &targetCallFrames
+	return a
 }
 
 // DebuggerSearchInContentArgs represents the arguments for SearchInContent in the Debugger domain.
@@ -2339,6 +2346,18 @@ func NewIndexedDBDeleteDatabaseArgs(securityOrigin string, databaseName string) 
 	args := new(IndexedDBDeleteDatabaseArgs)
 	args.SecurityOrigin = securityOrigin
 	args.DatabaseName = databaseName
+	return args
+}
+
+// InputSetIgnoreInputEventsArgs represents the arguments for SetIgnoreInputEvents in the Input domain.
+type InputSetIgnoreInputEventsArgs struct {
+	Ignore bool `json:"ignore"` // Ignores input events processing when set to true.
+}
+
+// NewInputSetIgnoreInputEventsArgs initializes InputSetIgnoreInputEventsArgs with the required arguments.
+func NewInputSetIgnoreInputEventsArgs(ignore bool) *InputSetIgnoreInputEventsArgs {
+	args := new(InputSetIgnoreInputEventsArgs)
+	args.Ignore = ignore
 	return args
 }
 
@@ -3508,8 +3527,9 @@ func (a *PageReloadArgs) SetScriptToEvaluateOnLoad(scriptToEvaluateOnLoad string
 
 // PageNavigateArgs represents the arguments for Navigate in the Page domain.
 type PageNavigateArgs struct {
-	URL      string  `json:"url"`                // URL to navigate the page to.
-	Referrer *string `json:"referrer,omitempty"` // Referrer URL.
+	URL            string                     `json:"url"`                      // URL to navigate the page to.
+	Referrer       *string                    `json:"referrer,omitempty"`       // Referrer URL.
+	TransitionType cdptype.PageTransitionType `json:"transitionType,omitempty"` // Intended transition type.
 }
 
 // NewPageNavigateArgs initializes PageNavigateArgs with the required arguments.
@@ -3522,6 +3542,12 @@ func NewPageNavigateArgs(url string) *PageNavigateArgs {
 // SetReferrer sets the Referrer optional argument. Referrer URL.
 func (a *PageNavigateArgs) SetReferrer(referrer string) *PageNavigateArgs {
 	a.Referrer = &referrer
+	return a
+}
+
+// SetTransitionType sets the TransitionType optional argument. Intended transition type.
+func (a *PageNavigateArgs) SetTransitionType(transitionType cdptype.PageTransitionType) *PageNavigateArgs {
+	a.TransitionType = transitionType
 	return a
 }
 
@@ -3788,7 +3814,7 @@ func (a *PageSetTouchEmulationEnabledArgs) SetConfiguration(configuration string
 type PageCaptureScreenshotArgs struct {
 	Format      *string `json:"format,omitempty"`      // Image compression format (defaults to png).
 	Quality     *int    `json:"quality,omitempty"`     // Compression quality from range [0..100] (jpeg only).
-	FromSurface *bool   `json:"fromSurface,omitempty"` // Capture the screenshot from the surface, rather than the view. Defaults to false.
+	FromSurface *bool   `json:"fromSurface,omitempty"` // Capture the screenshot from the surface, rather than the view. Defaults to true.
 }
 
 // NewPageCaptureScreenshotArgs initializes PageCaptureScreenshotArgs with the required arguments.
@@ -3810,7 +3836,7 @@ func (a *PageCaptureScreenshotArgs) SetQuality(quality int) *PageCaptureScreensh
 	return a
 }
 
-// SetFromSurface sets the FromSurface optional argument. Capture the screenshot from the surface, rather than the view. Defaults to false.
+// SetFromSurface sets the FromSurface optional argument. Capture the screenshot from the surface, rather than the view. Defaults to true.
 func (a *PageCaptureScreenshotArgs) SetFromSurface(fromSurface bool) *PageCaptureScreenshotArgs {
 	a.FromSurface = &fromSurface
 	return a
@@ -4610,6 +4636,7 @@ type SystemInfoGetInfoReply struct {
 	GPU          cdptype.SystemInfoGPUInfo `json:"gpu"`          // Information about the GPUs on the system.
 	ModelName    string                    `json:"modelName"`    // A platform-dependent description of the model of the machine. On Mac OS, this is, for example, 'MacBookPro'. Will be the empty string if not supported.
 	ModelVersion string                    `json:"modelVersion"` // A platform-dependent description of the version of the machine. On Mac OS, this is, for example, '10.1'. Will be the empty string if not supported.
+	CommandLine  string                    `json:"commandLine"`  // The command line string used to launch the browser. Will be the empty string if not supported.
 }
 
 // TargetSetDiscoverTargetsArgs represents the arguments for SetDiscoverTargets in the Target domain.
