@@ -99,14 +99,15 @@ func main() {
 	err = mkdir(eventgen.path())
 	panicErr(err)
 
+	internal := path.Join(cdpgen.dir, "internal")
 	domgen.pkg = "cdpdom"
-	domgen.dir = path.Join(cdpgen.dir, domgen.pkg)
+	domgen.dir = path.Join(internal, domgen.pkg)
 	err = mkdir(domgen.path())
 	panicErr(err)
 
 	cdpgen.imports = []string{
 		"github.com/mafredri/cdp/rpcc",
-		typegen.dir, cmdgen.dir, eventgen.dir,
+		typegen.dir, cmdgen.dir, eventgen.dir, domgen.dir,
 	}
 	cmdgen.imports = []string{typegen.dir}
 	eventgen.imports = []string{typegen.dir}

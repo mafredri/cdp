@@ -3,7 +3,7 @@
 package cdp
 
 import (
-	"github.com/mafredri/cdp/cdpdom"
+	"github.com/mafredri/cdp/internal/cdpdom"
 	"github.com/mafredri/cdp/rpcc"
 )
 
