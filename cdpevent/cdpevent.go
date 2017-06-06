@@ -890,6 +890,23 @@ type NetworkEventSourceMessageReceivedReply struct {
 	Data      string                   `json:"data"`      // Message content.
 }
 
+// NetworkRequestInterceptedClient receives RequestIntercepted events.
+type NetworkRequestInterceptedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*NetworkRequestInterceptedReply, error)
+	rpcc.Stream
+}
+
+// NetworkRequestInterceptedReply details of an intercepted HTTP request, which must be either allowed, blocked, modified or mocked.
+type NetworkRequestInterceptedReply struct {
+	InterceptionID     cdptype.NetworkInterceptionID `json:"InterceptionId"`               // Each request the page makes will have a unique id, however if any redirects are encountered while processing that fetch, they will be reported with the same id as the original fetch.
+	Request            cdptype.NetworkRequest        `json:"request"`                      //
+	RedirectHeaders    cdptype.NetworkHeaders        `json:"redirectHeaders,omitempty"`    // HTTP response headers, only sent if a redirect was intercepted.
+	RedirectStatusCode *int                          `json:"redirectStatusCode,omitempty"` // HTTP response code, only sent if a redirect was intercepted.
+	RedirectURL        *string                       `json:"redirectUrl,omitempty"`        // Redirect location, only sent if a redirect was intercepted.
+}
+
 // OverlayNodeHighlightRequestedClient receives NodeHighlightRequested events.
 type OverlayNodeHighlightRequestedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is

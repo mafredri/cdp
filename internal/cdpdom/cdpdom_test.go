@@ -6817,6 +6817,58 @@ func TestNetwork_GetCertificate(t *testing.T) {
 	}
 }
 
+func TestNetwork_EnableRequestInterception(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewNetwork(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.EnableRequestInterception(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.EnableRequestInterception(nil, &cdpcmd.NetworkEnableRequestInterceptionArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.EnableRequestInterception(nil, &cdpcmd.NetworkEnableRequestInterceptionArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestNetwork_ContinueInterceptedRequest(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewNetwork(conn)
+	var err error
+
+	// Test nil args.
+	err = dom.ContinueInterceptedRequest(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	err = dom.ContinueInterceptedRequest(nil, &cdpcmd.NetworkContinueInterceptedRequestArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	err = dom.ContinueInterceptedRequest(nil, &cdpcmd.NetworkContinueInterceptedRequestArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
 func TestNetwork_ResourceChangedPriority(t *testing.T) {
 	conn, codec, cleanup := newTestConn(t)
 	defer cleanup()
@@ -7321,6 +7373,40 @@ func TestNetwork_EventSourceMessageReceived(t *testing.T) {
 
 	conn.Close()
 	stream, err = dom.EventSourceMessageReceived(nil)
+	if err == nil {
+		t.Errorf("Open stream: got nil, want error")
+	}
+
+}
+
+func TestNetwork_RequestIntercepted(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewNetwork(conn)
+
+	stream, err := dom.RequestIntercepted(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer stream.Close()
+
+	codec.event = cdpevent.NetworkRequestIntercepted.String()
+	codec.conn <- nil
+	_, err = stream.Recv()
+	if err != nil {
+		t.Error(err)
+	}
+
+	codec.eventArgs = []byte("invalid json")
+	codec.conn <- nil
+	_, err = stream.Recv()
+	if err, ok := err.(*opError); !ok {
+		t.Errorf("Recv() got %v, want opError", err)
+	}
+
+	conn.Close()
+	stream, err = dom.RequestIntercepted(nil)
 	if err == nil {
 		t.Errorf("Open stream: got nil, want error")
 	}

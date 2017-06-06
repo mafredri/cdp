@@ -1090,6 +1090,20 @@ func TestNewNetworkGetCertificateArgs(t *testing.T) {
 	}
 }
 
+func TestNewNetworkEnableRequestInterceptionArgs(t *testing.T) {
+	args := NewNetworkEnableRequestInterceptionArgs(func() (enabled bool) { return }())
+	if args == nil {
+		t.Errorf("NewNetworkEnableRequestInterceptionArgs returned nil args")
+	}
+}
+
+func TestNewNetworkContinueInterceptedRequestArgs(t *testing.T) {
+	args := NewNetworkContinueInterceptedRequestArgs(func() (interceptionID cdptype.NetworkInterceptionID) { return }())
+	if args == nil {
+		t.Errorf("NewNetworkContinueInterceptedRequestArgs returned nil args")
+	}
+}
+
 func TestNewOverlaySetShowPaintRectsArgs(t *testing.T) {
 	args := NewOverlaySetShowPaintRectsArgs(func() (result bool) { return }())
 	if args == nil {

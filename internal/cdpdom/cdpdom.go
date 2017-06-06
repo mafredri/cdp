@@ -3851,6 +3851,32 @@ func (d *Network) GetCertificate(ctx context.Context, args *cdpcmd.NetworkGetCer
 	return
 }
 
+// EnableRequestInterception invokes the Network method.
+func (d *Network) EnableRequestInterception(ctx context.Context, args *cdpcmd.NetworkEnableRequestInterceptionArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.NetworkEnableRequestInterception.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.NetworkEnableRequestInterception.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Network", Op: "EnableRequestInterception", Err: err}
+	}
+	return
+}
+
+// ContinueInterceptedRequest invokes the Network method. Response to Network.requestIntercepted which either modifies the request to continue with any modifications, or blocks it, or completes it with the provided response bytes. If a network fetch occurs as a result which encounters a redirect an additional Network.requestIntercepted event will be sent with the same InterceptionId.
+func (d *Network) ContinueInterceptedRequest(ctx context.Context, args *cdpcmd.NetworkContinueInterceptedRequestArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.NetworkContinueInterceptedRequest.String(), args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.NetworkContinueInterceptedRequest.String(), nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Network", Op: "ContinueInterceptedRequest", Err: err}
+	}
+	return
+}
+
 // ResourceChangedPriority creates the event client. Fired when resource loading priority is changed
 func (d *Network) ResourceChangedPriority(ctx context.Context) (cdpevent.NetworkResourceChangedPriorityClient, error) {
 	s, err := rpcc.NewStream(ctx, cdpevent.NetworkResourceChangedPriority.String(), d.conn)
@@ -4177,6 +4203,28 @@ func (c *NetworkEventSourceMessageReceivedClient) Recv() (*cdpevent.NetworkEvent
 	event := new(cdpevent.NetworkEventSourceMessageReceivedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &opError{Domain: "Network", Op: "EventSourceMessageReceived Recv", Err: err}
+	}
+	return event, nil
+}
+
+// RequestIntercepted creates the event client. Details of an intercepted HTTP request, which must be either allowed, blocked, modified or mocked.
+func (d *Network) RequestIntercepted(ctx context.Context) (cdpevent.NetworkRequestInterceptedClient, error) {
+	s, err := rpcc.NewStream(ctx, cdpevent.NetworkRequestIntercepted.String(), d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &NetworkRequestInterceptedClient{Stream: s}, nil
+}
+
+// NetworkRequestInterceptedClient implements cdpevent.NetworkRequestInterceptedClient.
+type NetworkRequestInterceptedClient struct{ rpcc.Stream }
+
+// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+// triggered, context canceled or connection closed.
+func (c *NetworkRequestInterceptedClient) Recv() (*cdpevent.NetworkRequestInterceptedReply, error) {
+	event := new(cdpevent.NetworkRequestInterceptedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &opError{Domain: "Network", Op: "RequestIntercepted Recv", Err: err}
 	}
 	return event, nil
 }

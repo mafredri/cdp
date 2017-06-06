@@ -72,6 +72,7 @@ const (
 	NetworkWebSocketFrameError                EventType = "Network.webSocketFrameError"
 	NetworkWebSocketFrameSent                 EventType = "Network.webSocketFrameSent"
 	NetworkEventSourceMessageReceived         EventType = "Network.eventSourceMessageReceived"
+	NetworkRequestIntercepted                 EventType = "Network.requestIntercepted"
 	OverlayNodeHighlightRequested             EventType = "Overlay.nodeHighlightRequested"
 	OverlayInspectNodeRequested               EventType = "Overlay.inspectNodeRequested"
 	PageDOMContentEventFired                  EventType = "Page.domContentEventFired"

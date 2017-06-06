@@ -1878,6 +1878,112 @@ type NetworkLoaderID string
 // NetworkRequestID Unique request identifier.
 type NetworkRequestID string
 
+// NetworkInterceptionID Unique intercepted request identifier.
+type NetworkInterceptionID string
+
+// NetworkErrorReason Network level fetch failure reason.
+type NetworkErrorReason int
+
+// NetworkErrorReason as enums.
+const (
+	NetworkErrorReasonNotSet NetworkErrorReason = iota
+	NetworkErrorReasonFailed
+	NetworkErrorReasonAborted
+	NetworkErrorReasonTimedOut
+	NetworkErrorReasonAccessDenied
+	NetworkErrorReasonConnectionClosed
+	NetworkErrorReasonConnectionReset
+	NetworkErrorReasonConnectionRefused
+	NetworkErrorReasonConnectionAborted
+	NetworkErrorReasonConnectionFailed
+	NetworkErrorReasonNameNotResolved
+	NetworkErrorReasonInternetDisconnected
+	NetworkErrorReasonAddressUnreachable
+)
+
+// Valid returns true if enum is set.
+func (e NetworkErrorReason) Valid() bool {
+	return e >= 1 && e <= 12
+}
+
+func (e NetworkErrorReason) String() string {
+	switch e {
+	case 0:
+		return "NetworkErrorReasonNotSet"
+	case 1:
+		return "Failed"
+	case 2:
+		return "Aborted"
+	case 3:
+		return "TimedOut"
+	case 4:
+		return "AccessDenied"
+	case 5:
+		return "ConnectionClosed"
+	case 6:
+		return "ConnectionReset"
+	case 7:
+		return "ConnectionRefused"
+	case 8:
+		return "ConnectionAborted"
+	case 9:
+		return "ConnectionFailed"
+	case 10:
+		return "NameNotResolved"
+	case 11:
+		return "InternetDisconnected"
+	case 12:
+		return "AddressUnreachable"
+	}
+	return fmt.Sprintf("NetworkErrorReason(%d)", e)
+}
+
+// MarshalJSON encodes enum into a string or null when not set.
+func (e NetworkErrorReason) MarshalJSON() ([]byte, error) {
+	if e == 0 {
+		return []byte("null"), nil
+	}
+	if !e.Valid() {
+		return nil, errors.New("cdptype.NetworkErrorReason: MarshalJSON on bad enum value: " + e.String())
+	}
+	return json.Marshal(e.String())
+}
+
+// UnmarshalJSON decodes a string value into a enum.
+func (e *NetworkErrorReason) UnmarshalJSON(data []byte) error {
+	switch string(data) {
+	case "null":
+		*e = 0
+	case "\"Failed\"":
+		*e = 1
+	case "\"Aborted\"":
+		*e = 2
+	case "\"TimedOut\"":
+		*e = 3
+	case "\"AccessDenied\"":
+		*e = 4
+	case "\"ConnectionClosed\"":
+		*e = 5
+	case "\"ConnectionReset\"":
+		*e = 6
+	case "\"ConnectionRefused\"":
+		*e = 7
+	case "\"ConnectionAborted\"":
+		*e = 8
+	case "\"ConnectionFailed\"":
+		*e = 9
+	case "\"NameNotResolved\"":
+		*e = 10
+	case "\"InternetDisconnected\"":
+		*e = 11
+	case "\"AddressUnreachable\"":
+		*e = 12
+	default:
+		return fmt.Errorf("cdptype.NetworkErrorReason: UnmarshalJSON on bad input: %s", data)
+	}
+	return nil
+}
+
 // NetworkTimestamp Number of seconds since epoch.
 type NetworkTimestamp float64
 

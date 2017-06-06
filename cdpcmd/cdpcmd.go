@@ -3216,6 +3216,72 @@ type NetworkGetCertificateReply struct {
 	TableNames []string `json:"tableNames"` //
 }
 
+// NetworkEnableRequestInterceptionArgs represents the arguments for EnableRequestInterception in the Network domain.
+type NetworkEnableRequestInterceptionArgs struct {
+	Enabled bool `json:"enabled"` // Whether or not HTTP requests should be intercepted and Network.requestIntercepted events sent.
+}
+
+// NewNetworkEnableRequestInterceptionArgs initializes NetworkEnableRequestInterceptionArgs with the required arguments.
+func NewNetworkEnableRequestInterceptionArgs(enabled bool) *NetworkEnableRequestInterceptionArgs {
+	args := new(NetworkEnableRequestInterceptionArgs)
+	args.Enabled = enabled
+	return args
+}
+
+// NetworkContinueInterceptedRequestArgs represents the arguments for ContinueInterceptedRequest in the Network domain.
+type NetworkContinueInterceptedRequestArgs struct {
+	InterceptionID cdptype.NetworkInterceptionID `json:"interceptionId"`        //
+	ErrorReason    cdptype.NetworkErrorReason    `json:"errorReason,omitempty"` // If set this causes the request to fail with the given reason.
+	RawResponse    *string                       `json:"rawResponse,omitempty"` // If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc...
+	URL            *string                       `json:"url,omitempty"`         // If set the request url will be modified in a way that's not observable by page.
+	Method         *string                       `json:"method,omitempty"`      // If set this allows the request method to be overridden.
+	PostData       *string                       `json:"postData,omitempty"`    // If set this allows postData to be set.
+	Headers        cdptype.NetworkHeaders        `json:"headers,omitempty"`     // If set this allows the request headers to be changed.
+}
+
+// NewNetworkContinueInterceptedRequestArgs initializes NetworkContinueInterceptedRequestArgs with the required arguments.
+func NewNetworkContinueInterceptedRequestArgs(interceptionID cdptype.NetworkInterceptionID) *NetworkContinueInterceptedRequestArgs {
+	args := new(NetworkContinueInterceptedRequestArgs)
+	args.InterceptionID = interceptionID
+	return args
+}
+
+// SetErrorReason sets the ErrorReason optional argument. If set this causes the request to fail with the given reason.
+func (a *NetworkContinueInterceptedRequestArgs) SetErrorReason(errorReason cdptype.NetworkErrorReason) *NetworkContinueInterceptedRequestArgs {
+	a.ErrorReason = errorReason
+	return a
+}
+
+// SetRawResponse sets the RawResponse optional argument. If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc...
+func (a *NetworkContinueInterceptedRequestArgs) SetRawResponse(rawResponse string) *NetworkContinueInterceptedRequestArgs {
+	a.RawResponse = &rawResponse
+	return a
+}
+
+// SetURL sets the URL optional argument. If set the request url will be modified in a way that's not observable by page.
+func (a *NetworkContinueInterceptedRequestArgs) SetURL(url string) *NetworkContinueInterceptedRequestArgs {
+	a.URL = &url
+	return a
+}
+
+// SetMethod sets the Method optional argument. If set this allows the request method to be overridden.
+func (a *NetworkContinueInterceptedRequestArgs) SetMethod(method string) *NetworkContinueInterceptedRequestArgs {
+	a.Method = &method
+	return a
+}
+
+// SetPostData sets the PostData optional argument. If set this allows postData to be set.
+func (a *NetworkContinueInterceptedRequestArgs) SetPostData(postData string) *NetworkContinueInterceptedRequestArgs {
+	a.PostData = &postData
+	return a
+}
+
+// SetHeaders sets the Headers optional argument. If set this allows the request headers to be changed.
+func (a *NetworkContinueInterceptedRequestArgs) SetHeaders(headers cdptype.NetworkHeaders) *NetworkContinueInterceptedRequestArgs {
+	a.Headers = headers
+	return a
+}
+
 // OverlaySetShowPaintRectsArgs represents the arguments for SetShowPaintRects in the Overlay domain.
 type OverlaySetShowPaintRectsArgs struct {
 	Result bool `json:"result"` // True for showing paint rectangles

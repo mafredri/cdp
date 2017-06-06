@@ -227,6 +227,8 @@ const (
 	NetworkSetBypassServiceWorker                   CmdType = "Network.setBypassServiceWorker"
 	NetworkSetDataSizeLimitsForTest                 CmdType = "Network.setDataSizeLimitsForTest"
 	NetworkGetCertificate                           CmdType = "Network.getCertificate"
+	NetworkEnableRequestInterception                CmdType = "Network.enableRequestInterception"
+	NetworkContinueInterceptedRequest               CmdType = "Network.continueInterceptedRequest"
 	OverlayEnable                                   CmdType = "Overlay.enable"
 	OverlayDisable                                  CmdType = "Overlay.disable"
 	OverlaySetShowPaintRects                        CmdType = "Overlay.setShowPaintRects"

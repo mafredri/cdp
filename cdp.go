@@ -1389,6 +1389,16 @@ type Network interface {
 	// Returns the DER-encoded certificate.
 	GetCertificate(context.Context, *cdpcmd.NetworkGetCertificateArgs) (*cdpcmd.NetworkGetCertificateReply, error)
 
+	// Command EnableRequestInterception
+	//
+	//
+	EnableRequestInterception(context.Context, *cdpcmd.NetworkEnableRequestInterceptionArgs) error
+
+	// Command ContinueInterceptedRequest
+	//
+	// Response to Network.requestIntercepted which either modifies the request to continue with any modifications, or blocks it, or completes it with the provided response bytes. If a network fetch occurs as a result which encounters a redirect an additional Network.requestIntercepted event will be sent with the same InterceptionId.
+	ContinueInterceptedRequest(context.Context, *cdpcmd.NetworkContinueInterceptedRequestArgs) error
+
 	// Event ResourceChangedPriority
 	//
 	// Fired when resource loading priority is changed
@@ -1463,6 +1473,11 @@ type Network interface {
 	//
 	// Fired when EventSource message is received.
 	EventSourceMessageReceived(context.Context) (cdpevent.NetworkEventSourceMessageReceivedClient, error)
+
+	// Event RequestIntercepted
+	//
+	// Details of an intercepted HTTP request, which must be either allowed, blocked, modified or mocked.
+	RequestIntercepted(context.Context) (cdpevent.NetworkRequestInterceptedClient, error)
 }
 
 // The Overlay domain. This domain provides various functionality related to drawing atop the inspected page.
