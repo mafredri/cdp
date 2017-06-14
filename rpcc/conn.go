@@ -39,9 +39,27 @@ func WithDialer(f func(ctx context.Context, addr string) (net.Conn, error)) Dial
 	}
 }
 
+// WithWriteBufferSize returns a DialOption that sets the size of the write
+// buffer for the underlying websocket connection. Messages larger than this
+// size are fragmented according to the websocket specification.
+func WithWriteBufferSize(n int) DialOption {
+	return func(o *dialOptions) {
+		o.wsDialer.WriteBufferSize = n
+	}
+}
+
+// WithCompression returns a DialOption that enables compression for the
+// underlying websocket connection.
+func WithCompression() DialOption {
+	return func(o *dialOptions) {
+		o.wsDialer.EnableCompression = true
+	}
+}
+
 type dialOptions struct {
-	codec  func(io.ReadWriter) Codec
-	dialer func(context.Context, string) (net.Conn, error)
+	codec    func(io.ReadWriter) Codec
+	dialer   func(context.Context, string) (net.Conn, error)
+	wsDialer websocket.Dialer
 }
 
 // Dial connects to target and returns an active connection.
@@ -82,14 +100,13 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	netDial := c.dialOpts.dialer
 	if netDial == nil {
 		netDial = func(ctx context.Context, addr string) (net.Conn, error) {
-			d := websocket.Dialer{
-				// Set NetDial to dial with context, this action will
-				// override the HandshakeTimeout setting.
-				NetDial: func(network, addr string) (net.Conn, error) {
-					return (&net.Dialer{}).DialContext(ctx, network, addr)
-				},
+			ws := &c.dialOpts.wsDialer
+			// Set NetDial to dial with context, this action will
+			// override the HandshakeTimeout setting.
+			ws.NetDial = func(network, addr string) (net.Conn, error) {
+				return (&net.Dialer{}).DialContext(ctx, network, addr)
 			}
-			wsConn, _, err := d.Dial(addr, nil)
+			wsConn, _, err := ws.Dial(addr, nil)
 			if err != nil {
 				return nil, err
 			}
