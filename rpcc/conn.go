@@ -153,13 +153,13 @@ type Conn struct {
 
 	dialOpts dialOptions
 	conn     net.Conn
-	closed   bool
 
 	// Codec encodes and decodes JSON onto conn. There is only one
 	// active decoder (recv) and encoder (guaranteed via reqMu).
 	codec Codec
 
 	mu      sync.Mutex // Protects following.
+	closed  bool
 	reqSeq  uint64
 	pending map[uint64]*rpcCall
 
@@ -287,6 +287,10 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 	}()
 
 	c.mu.Lock()
+	if c.closed {
+		c.mu.Unlock()
+		return ErrConnClosing
+	}
 	c.reqSeq++
 	reqID := c.reqSeq
 	c.pending[reqID] = call
@@ -308,8 +312,6 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 
 	// Abort on user or connection cancellation.
 	select {
-	case <-c.ctx.Done():
-		err = ErrConnClosing
 	case <-ctx.Done():
 		err = ctx.Err()
 	case err = <-done:
@@ -361,11 +363,6 @@ func (c *Conn) listen(method string, client *streamClient) (func(), error) {
 
 // Close closes the connection.
 func (c *Conn) close(err error) error {
-	// Stop sending on all streams.
-	c.streamMu.Lock()
-	c.streams = nil
-	c.streamMu.Unlock()
-
 	c.cancel()
 
 	c.mu.Lock()
@@ -382,6 +379,11 @@ func (c *Conn) close(err error) error {
 		call.done(err)
 	}
 	c.mu.Unlock()
+
+	// Stop sending on all streams.
+	c.streamMu.Lock()
+	c.streams = nil
+	c.streamMu.Unlock()
 
 	// Conn can be nil if DialContext did not complete.
 	if c.conn != nil {
