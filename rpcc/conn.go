@@ -19,6 +19,17 @@ var (
 	ErrConnClosing = errors.New("rpcc: the connection is closing")
 )
 
+const (
+	defaultWriteBufferSize = 4096
+
+	// Fixed header size used by gorilla/websocket.
+	websocketMaxHeaderSize = 2 + 8 + 4
+
+	// Maximum message size accepted by Chrome is 1MB. It silently
+	// drops the websocket connection for larger messages.
+	chromeMessageSizeLimit = 1024 * 1024
+)
+
 // DialOption represents a dial option passed to Dial.
 type DialOption func(*dialOptions)
 
@@ -101,11 +112,30 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	if netDial == nil {
 		netDial = func(ctx context.Context, addr string) (net.Conn, error) {
 			ws := &c.dialOpts.wsDialer
+
+			if ws.WriteBufferSize == 0 {
+				// Set the default size for use in writeLimiter.
+				ws.WriteBufferSize = defaultWriteBufferSize
+			}
+
+			// Base writeLimit on the buffer size allocated by the
+			// websocket package, we assume a message of this size
+			// is fragmented and subtract one.
+			writeLimit := ws.WriteBufferSize + websocketMaxHeaderSize - 1
+			if writeLimit > chromeMessageSizeLimit {
+				writeLimit = chromeMessageSizeLimit
+			}
+
 			// Set NetDial to dial with context, this action will
 			// override the HandshakeTimeout setting.
 			ws.NetDial = func(network, addr string) (net.Conn, error) {
-				return (&net.Dialer{}).DialContext(ctx, network, addr)
+				conn, err := (&net.Dialer{}).DialContext(ctx, network, addr)
+				return &writeLimiter{
+					limit: writeLimit,
+					Conn:  conn,
+				}, err
 			}
+
 			wsConn, _, err := ws.Dial(addr, nil)
 			if err != nil {
 				return nil, err
@@ -145,6 +175,29 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	}()
 
 	return c, nil
+}
+
+// writeLimiter wraps a net.Conn and prevents writes of greater length
+// than limit. Works around Chrome's lack of support for large or
+// fragmented websocket messages and prevents sudden termination of the
+// websocket connection. Gives the user an actionable error message when
+// writes exceed limit.
+type writeLimiter struct {
+	limit int
+	net.Conn
+}
+
+// BUG(mafredri): Chrome does not support websocket fragmentation
+// (continuation messages) or messages that exceed 1 MB in size.
+// See https://github.com/mafredri/cdp/issues/4.
+func (c *writeLimiter) Write(b []byte) (n int, err error) {
+	if len(b) > c.limit {
+		return 0, errors.New("rpcc: message too large (increase write buffer size or enable compression)")
+	}
+	return c.Conn.Write(b)
+}
+func (c *writeLimiter) Read(b []byte) (n int, err error) {
+	return c.Conn.Read(b)
 }
 
 // Codec is used by recv and dispatcher to
