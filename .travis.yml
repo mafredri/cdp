@@ -1,14 +1,26 @@
 language: go
 
+# Use Trusty (beta) for Chrome addon.
+dist: trusty
+sudo: false
+
+addons:
+  chrome: beta
+
 go:
   - 1.8.x
   - tip
 
+before_install:
+  - google-chrome-beta --headless --disable-gpu --remote-debugging-port=9222 about:blank &
+
 script:
+  - go test -browser
   - go list -f '{{if len .TestGoFiles}}-coverprofile={{.Name}}_coverage.out {{.ImportPath}}{{end}}' ./... | xargs -L1 go test -race -covermode=atomic
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - killall google-chrome-beta
 
 matrix:
   fast_finish: true
