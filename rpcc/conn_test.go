@@ -1,6 +1,7 @@
 package rpcc
 
 import (
+	"compress/flate"
 	"context"
 	"encoding/json"
 	"errors"
@@ -33,12 +34,13 @@ func newTestServer(t testing.TB, respond func(*websocket.Conn, *Request) error) 
 	var err error
 	ts := &testServer{}
 	upgrader := &websocket.Upgrader{
-		HandshakeTimeout: timeout,
+		HandshakeTimeout:  timeout,
+		EnableCompression: true,
 	}
 
 	setupDone := make(chan struct{})
 	ts.srv = httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		conn, err := upgrader.Upgrade(w, r, r.Header)
+		conn, err := upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -63,10 +65,11 @@ func newTestServer(t testing.TB, respond func(*websocket.Conn, *Request) error) 
 		}
 	}))
 
-	ts.conn, err = Dial("ws" + strings.TrimPrefix(ts.srv.URL, "http"))
+	ts.conn, err = Dial("ws"+strings.TrimPrefix(ts.srv.URL, "http"), WithCompression())
 	if err != nil {
 		t.Fatal(err)
 	}
+	ts.conn.SetCompressionLevel(flate.BestSpeed)
 
 	<-setupDone
 	return ts
