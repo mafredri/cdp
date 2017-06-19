@@ -60,7 +60,8 @@ func WithWriteBufferSize(n int) DialOption {
 }
 
 // WithCompression returns a DialOption that enables compression for the
-// underlying websocket connection.
+// underlying websocket connection. Use SetCompressionLevel on Conn to
+// change the default compression level for subsequent writes.
 func WithCompression() DialOption {
 	return func(o *dialOptions) {
 		o.wsDialer.EnableCompression = true
@@ -140,6 +141,11 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 			if err != nil {
 				return nil, err
 			}
+
+			if ws.EnableCompression {
+				c.compressionLevel = wsConn.SetCompressionLevel
+			}
+
 			return &wsNetConn{conn: wsConn}, nil
 		}
 	}
@@ -224,9 +230,7 @@ type Conn struct {
 	dialOpts dialOptions
 	conn     net.Conn
 
-	// Codec encodes and decodes JSON onto conn. There is only one
-	// active decoder (recv) and encoder (guaranteed via reqMu).
-	codec Codec
+	compressionLevel func(level int) error
 
 	mu      sync.Mutex // Protects following.
 	closed  bool
@@ -235,6 +239,9 @@ type Conn struct {
 
 	reqMu sync.Mutex // Protects following.
 	req   Request
+	// Encodes and decodes JSON onto conn. Encoding is
+	// guarded by mutex and decoding is done by recv.
+	codec Codec
 
 	streamMu sync.Mutex // Protects following.
 	streams  map[string]*streamClients
@@ -461,6 +468,16 @@ func (c *Conn) close(err error) error {
 	}
 
 	return err
+}
+
+// SetCompressionLevel sets the flate compressions level for writes. Valid level
+// range is [-2, 9]. Returns error if compression is not eanbled for Conn. See
+// package compress/flate for a description of compression levels.
+func (c *Conn) SetCompressionLevel(level int) error {
+	if c.compressionLevel == nil {
+		return errors.New("rpcc: compression is not enabled for Conn")
+	}
+	return c.compressionLevel(level)
 }
 
 // Close closes the connection.
