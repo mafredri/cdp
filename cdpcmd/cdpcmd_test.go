@@ -211,13 +211,6 @@ func TestNewCSSGetBackgroundColorsArgs(t *testing.T) {
 	}
 }
 
-func TestNewCSSGetLayoutTreeAndStylesArgs(t *testing.T) {
-	args := NewCSSGetLayoutTreeAndStylesArgs(func() (computedStyleWhitelist []string) { return }())
-	if args == nil {
-		t.Errorf("NewCSSGetLayoutTreeAndStylesArgs returned nil args")
-	}
-}
-
 func TestNewCacheStorageRequestCacheNamesArgs(t *testing.T) {
 	args := NewCacheStorageRequestCacheNamesArgs(func() (securityOrigin string) { return }())
 	if args == nil {
@@ -516,6 +509,13 @@ func TestNewDOMDebuggerGetEventListenersArgs(t *testing.T) {
 	args := NewDOMDebuggerGetEventListenersArgs(func() (objectID cdptype.RuntimeRemoteObjectID) { return }())
 	if args == nil {
 		t.Errorf("NewDOMDebuggerGetEventListenersArgs returned nil args")
+	}
+}
+
+func TestNewDOMSnapshotGetSnapshotArgs(t *testing.T) {
+	args := NewDOMSnapshotGetSnapshotArgs(func() (computedStyleWhitelist []string) { return }())
+	if args == nil {
+		t.Errorf("NewDOMSnapshotGetSnapshotArgs returned nil args")
 	}
 }
 
@@ -1507,6 +1507,13 @@ func TestNewStorageClearDataForOriginArgs(t *testing.T) {
 	args := NewStorageClearDataForOriginArgs(func() (origin string, storageTypes string) { return }())
 	if args == nil {
 		t.Errorf("NewStorageClearDataForOriginArgs returned nil args")
+	}
+}
+
+func TestNewStorageGetUsageAndQuotaArgs(t *testing.T) {
+	args := NewStorageGetUsageAndQuotaArgs(func() (origin string) { return }())
+	if args == nil {
+		t.Errorf("NewStorageGetUsageAndQuotaArgs returned nil args")
 	}
 }
 

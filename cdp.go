@@ -233,11 +233,6 @@ type CSS interface {
 	//
 	GetBackgroundColors(context.Context, *cdpcmd.CSSGetBackgroundColorsArgs) (*cdpcmd.CSSGetBackgroundColorsReply, error)
 
-	// Command GetLayoutTreeAndStyles
-	//
-	// For the main document and any content documents, return the LayoutTreeNodes and a whitelisted subset of the computed style. It only returns pushed nodes, on way to pull all nodes is to call DOM.getDocument with a depth of -1.
-	GetLayoutTreeAndStyles(context.Context, *cdpcmd.CSSGetLayoutTreeAndStylesArgs) (*cdpcmd.CSSGetLayoutTreeAndStylesReply, error)
-
 	// Command StartRuleUsageTracking
 	//
 	// Enables the selector recording.
@@ -636,6 +631,14 @@ type DOMDebugger interface {
 	//
 	// Returns event listeners of the given object.
 	GetEventListeners(context.Context, *cdpcmd.DOMDebuggerGetEventListenersArgs) (*cdpcmd.DOMDebuggerGetEventListenersReply, error)
+}
+
+// The DOMSnapshot domain. This domain facilitates obtaining document snapshots with DOM, layout, and style information.
+type DOMSnapshot interface {
+	// Command GetSnapshot
+	//
+	// Returns a document snapshot, including the full DOM tree of the root node (including iframes, template contents, and imported documents) in a flattened array, as well as layout and white-listed computed style information for the nodes. Shadow DOM in the returned DOM tree is flattened.
+	GetSnapshot(context.Context, *cdpcmd.DOMSnapshotGetSnapshotArgs) (*cdpcmd.DOMSnapshotGetSnapshotReply, error)
 }
 
 // The DOMStorage domain. Query and modify DOM storage.
@@ -2122,6 +2125,11 @@ type Storage interface {
 	//
 	// Clears storage for origin.
 	ClearDataForOrigin(context.Context, *cdpcmd.StorageClearDataForOriginArgs) error
+
+	// Command GetUsageAndQuota
+	//
+	// Returns usage and quota in bytes.
+	GetUsageAndQuota(context.Context, *cdpcmd.StorageGetUsageAndQuotaArgs) (*cdpcmd.StorageGetUsageAndQuotaReply, error)
 }
 
 // The SystemInfo domain. The SystemInfo domain defines methods and events for querying low-level system information.

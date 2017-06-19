@@ -20,6 +20,7 @@ type Client struct {
 	Console           Console
 	DOM               DOM
 	DOMDebugger       DOMDebugger
+	DOMSnapshot       DOMSnapshot
 	DOMStorage        DOMStorage
 	Database          Database
 	Debugger          Debugger
@@ -61,6 +62,7 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Console:           cdpdom.NewConsole(conn),
 		DOM:               cdpdom.NewDOM(conn),
 		DOMDebugger:       cdpdom.NewDOMDebugger(conn),
+		DOMSnapshot:       cdpdom.NewDOMSnapshot(conn),
 		DOMStorage:        cdpdom.NewDOMStorage(conn),
 		Database:          cdpdom.NewDatabase(conn),
 		Debugger:          cdpdom.NewDebugger(conn),

@@ -900,11 +900,13 @@ type NetworkRequestInterceptedClient interface {
 
 // NetworkRequestInterceptedReply details of an intercepted HTTP request, which must be either allowed, blocked, modified or mocked.
 type NetworkRequestInterceptedReply struct {
-	InterceptionID     cdptype.NetworkInterceptionID `json:"InterceptionId"`               // Each request the page makes will have a unique id, however if any redirects are encountered while processing that fetch, they will be reported with the same id as the original fetch.
+	InterceptionID     cdptype.NetworkInterceptionID `json:"interceptionId"`               // Each request the page makes will have a unique id, however if any redirects are encountered while processing that fetch, they will be reported with the same id as the original fetch. Likewise if HTTP authentication is needed then the same fetch id will be used.
 	Request            cdptype.NetworkRequest        `json:"request"`                      //
+	ResourceType       cdptype.PageResourceType      `json:"resourceType"`                 // How the requested resource will be used.
 	RedirectHeaders    cdptype.NetworkHeaders        `json:"redirectHeaders,omitempty"`    // HTTP response headers, only sent if a redirect was intercepted.
 	RedirectStatusCode *int                          `json:"redirectStatusCode,omitempty"` // HTTP response code, only sent if a redirect was intercepted.
 	RedirectURL        *string                       `json:"redirectUrl,omitempty"`        // Redirect location, only sent if a redirect was intercepted.
+	AuthChallenge      *cdptype.NetworkAuthChallenge `json:"authChallenge,omitempty"`      // Details of the Authorization Challenge encountered. If this is set then continueInterceptedRequest must contain an authChallengeResponse.
 }
 
 // OverlayNodeHighlightRequestedClient receives NodeHighlightRequested events.
@@ -1268,6 +1270,7 @@ type RuntimeConsoleAPICalledReply struct {
 	ExecutionContextID cdptype.RuntimeExecutionContextID `json:"executionContextId"`   // Identifier of the context where the call was made.
 	Timestamp          cdptype.RuntimeTimestamp          `json:"timestamp"`            // Call timestamp.
 	StackTrace         *cdptype.RuntimeStackTrace        `json:"stackTrace,omitempty"` // Stack trace captured when the call was made.
+	Context            *string                           `json:"context,omitempty"`    // Console context descriptor for calls on non-default console context (not console.*): 'anonymous#unique-logger-id' for call on unnamed context, 'name#unique-logger-id' for call on named context.
 }
 
 // RuntimeInspectRequestedClient receives InspectRequested events.

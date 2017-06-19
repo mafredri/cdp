@@ -1104,27 +1104,14 @@ type CSSInlineTextBox struct {
 	NumCharacters       int     `json:"numCharacters"`       // The number of characters in this post layout textbox substring.
 }
 
-// CSSLayoutTreeNode Details of an element in the DOM tree with a LayoutObject.
-type CSSLayoutTreeNode struct {
-	NodeID          DOMNodeID          `json:"nodeId"`                    // The id of the related DOM node matching one from DOM.GetDocument.
-	BoundingBox     DOMRect            `json:"boundingBox"`               // The absolute position bounding box.
-	LayoutText      *string            `json:"layoutText,omitempty"`      // Contents of the LayoutText if any
-	InlineTextNodes []CSSInlineTextBox `json:"inlineTextNodes,omitempty"` // The post layout inline text nodes, if any.
-	StyleIndex      *int               `json:"styleIndex,omitempty"`      // Index into the computedStyles array returned by getLayoutTreeAndStyles.
-}
-
-// CSSComputedStyle A subset of the full ComputedStyle as defined by the request whitelist.
-type CSSComputedStyle struct {
-	Properties []CSSComputedStyleProperty `json:"properties"` //
-}
-
 // CacheStorageCacheID Unique identifier of the Cache object.
 type CacheStorageCacheID string
 
 // CacheStorageDataEntry Data entry.
 type CacheStorageDataEntry struct {
-	Request  string `json:"request"`  // Request url spec.
-	Response string `json:"response"` // Response stataus text.
+	Request      string  `json:"request"`      // Request url spec.
+	Response     string  `json:"response"`     // Response status text.
+	ResponseTime float64 `json:"responseTime"` // Number of seconds since epoch.
 }
 
 // CacheStorageCache Cache identifier.
@@ -1472,6 +1459,47 @@ type DOMDebuggerEventListener struct {
 	Handler         *RuntimeRemoteObject `json:"handler,omitempty"`         // Event handler function value.
 	OriginalHandler *RuntimeRemoteObject `json:"originalHandler,omitempty"` // Event original handler function value.
 	BackendNodeID   *DOMBackendNodeID    `json:"backendNodeId,omitempty"`   // Node the listener is added to (if any).
+}
+
+// DOMSnapshotDOMNode A Node in the DOM tree.
+type DOMSnapshotDOMNode struct {
+	NodeType              int                    `json:"nodeType"`                        // Node's nodeType.
+	NodeName              string                 `json:"nodeName"`                        // Node's nodeName.
+	NodeValue             string                 `json:"nodeValue"`                       // Node's nodeValue.
+	BackendNodeID         DOMBackendNodeID       `json:"backendNodeId"`                   // Node's id, corresponds to DOM.Node.backendNodeId.
+	ChildNodeIndexes      []int                  `json:"childNodeIndexes,omitempty"`      // The indexes of the node's child nodes in the domNodes array returned by getSnapshot, if any.
+	Attributes            []DOMSnapshotNameValue `json:"attributes,omitempty"`            // Attributes of an Element node.
+	PseudoElementIndexes  []int                  `json:"pseudoElementIndexes,omitempty"`  // Indexes of pseudo elements associated with this node in the domNodes array returned by getSnapshot, if any.
+	LayoutNodeIndex       *int                   `json:"layoutNodeIndex,omitempty"`       // The index of the node's related layout tree node in the layoutTreeNodes array returned by getSnapshot, if any.
+	DocumentURL           *string                `json:"documentURL,omitempty"`           // Document URL that Document or FrameOwner node points to.
+	BaseURL               *string                `json:"baseURL,omitempty"`               // Base URL that Document or FrameOwner node uses for URL completion.
+	PublicID              *string                `json:"publicId,omitempty"`              // DocumentType node's publicId.
+	SystemID              *string                `json:"systemId,omitempty"`              // DocumentType node's systemId.
+	FrameID               *PageFrameID           `json:"frameId,omitempty"`               // Frame ID for frame owner elements.
+	ContentDocumentIndex  *int                   `json:"contentDocumentIndex,omitempty"`  // The index of a frame owner element's content document in the domNodes array returned by getSnapshot, if any.
+	ImportedDocumentIndex *int                   `json:"importedDocumentIndex,omitempty"` // Index of the imported document's node of a link element in the domNodes array returned by getSnapshot, if any.
+	TemplateContentIndex  *int                   `json:"templateContentIndex,omitempty"`  // Index of the content node of a template element in the domNodes array returned by getSnapshot.
+	PseudoType            DOMPseudoType          `json:"pseudoType,omitempty"`            // Type of a pseudo element node.
+}
+
+// DOMSnapshotLayoutTreeNode Details of an element in the DOM tree with a LayoutObject.
+type DOMSnapshotLayoutTreeNode struct {
+	DOMNodeIndex    int                `json:"domNodeIndex"`              // The index of the related DOM node in the domNodes array returned by getSnapshot.
+	BoundingBox     DOMRect            `json:"boundingBox"`               // The absolute position bounding box.
+	LayoutText      *string            `json:"layoutText,omitempty"`      // Contents of the LayoutText, if any.
+	InlineTextNodes []CSSInlineTextBox `json:"inlineTextNodes,omitempty"` // The post-layout inline text nodes, if any.
+	StyleIndex      *int               `json:"styleIndex,omitempty"`      // Index into the computedStyles array returned by getSnapshot.
+}
+
+// DOMSnapshotComputedStyle A subset of the full ComputedStyle as defined by the request whitelist.
+type DOMSnapshotComputedStyle struct {
+	Properties []DOMSnapshotNameValue `json:"properties"` // Name/value pairs of computed style properties.
+}
+
+// DOMSnapshotNameValue A name/value pair.
+type DOMSnapshotNameValue struct {
+	Name  string `json:"name"`  // Attribute/property name.
+	Value string `json:"value"` // Attribute/property value.
 }
 
 // DOMStorageStorageID DOM Storage identifier.
@@ -2464,6 +2492,21 @@ type NetworkCookie struct {
 	Secure   bool                  `json:"secure"`             // True if cookie is secure.
 	Session  bool                  `json:"session"`            // True in case of session cookie.
 	SameSite NetworkCookieSameSite `json:"sameSite,omitempty"` // Cookie SameSite type.
+}
+
+// NetworkAuthChallenge Authorization challenge for HTTP status code 401 or 407.
+type NetworkAuthChallenge struct {
+	Source *string `json:"source,omitempty"` // Source of the authentication challenge.
+	Origin string  `json:"origin"`           // Origin of the challenger.
+	Scheme string  `json:"scheme"`           // The authentication scheme used, such as basic or digest
+	Realm  string  `json:"realm"`            // The realm of the challenge. May be empty.
+}
+
+// NetworkAuthChallengeResponse Response to an AuthChallenge.
+type NetworkAuthChallengeResponse struct {
+	Response string  `json:"response"`           // The decision on what to do in response to the authorization challenge.  Default means deferring to the default behavior of the net stack, which will likely either the Cancel authentication or display a popup dialog box.
+	Username *string `json:"username,omitempty"` // The username to provide, possibly empty. Should only be set if response is ProvideCredentials.
+	Password *string `json:"password,omitempty"` // The password to provide, possibly empty. Should only be set if response is ProvideCredentials.
 }
 
 // OverlayHighlightConfig Configuration data for the highlighting of page elements.

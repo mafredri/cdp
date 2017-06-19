@@ -1093,32 +1093,6 @@ func TestCSS_GetBackgroundColors(t *testing.T) {
 	}
 }
 
-func TestCSS_GetLayoutTreeAndStyles(t *testing.T) {
-	conn, codec, cleanup := newTestConn(t)
-	defer cleanup()
-
-	dom := NewCSS(conn)
-	var err error
-
-	// Test nil args.
-	_, err = dom.GetLayoutTreeAndStyles(nil, nil)
-	if err != nil {
-		t.Error(err)
-	}
-	// Test args.
-	_, err = dom.GetLayoutTreeAndStyles(nil, &cdpcmd.CSSGetLayoutTreeAndStylesArgs{})
-	if err != nil {
-		t.Error(err)
-	}
-
-	// Test error.
-	codec.respErr = errors.New("bad request")
-	_, err = dom.GetLayoutTreeAndStyles(nil, &cdpcmd.CSSGetLayoutTreeAndStylesArgs{})
-	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
-		t.Errorf("unexpected error; got: %v, want bad request", err)
-	}
-}
-
 func TestCSS_StartRuleUsageTracking(t *testing.T) {
 	conn, codec, cleanup := newTestConn(t)
 	defer cleanup()
@@ -3192,6 +3166,32 @@ func TestDOMDebugger_GetEventListeners(t *testing.T) {
 	// Test error.
 	codec.respErr = errors.New("bad request")
 	_, err = dom.GetEventListeners(nil, &cdpcmd.DOMDebuggerGetEventListenersArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestDOMSnapshot_GetSnapshot(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewDOMSnapshot(conn)
+	var err error
+
+	// Test nil args.
+	_, err = dom.GetSnapshot(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	_, err = dom.GetSnapshot(nil, &cdpcmd.DOMSnapshotGetSnapshotArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	_, err = dom.GetSnapshot(nil, &cdpcmd.DOMSnapshotGetSnapshotArgs{})
 	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
 		t.Errorf("unexpected error; got: %v, want bad request", err)
 	}
@@ -10698,6 +10698,32 @@ func TestStorage_ClearDataForOrigin(t *testing.T) {
 	// Test error.
 	codec.respErr = errors.New("bad request")
 	err = dom.ClearDataForOrigin(nil, &cdpcmd.StorageClearDataForOriginArgs{})
+	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
+		t.Errorf("unexpected error; got: %v, want bad request", err)
+	}
+}
+
+func TestStorage_GetUsageAndQuota(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewStorage(conn)
+	var err error
+
+	// Test nil args.
+	_, err = dom.GetUsageAndQuota(nil, nil)
+	if err != nil {
+		t.Error(err)
+	}
+	// Test args.
+	_, err = dom.GetUsageAndQuota(nil, &cdpcmd.StorageGetUsageAndQuotaArgs{})
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Test error.
+	codec.respErr = errors.New("bad request")
+	_, err = dom.GetUsageAndQuota(nil, &cdpcmd.StorageGetUsageAndQuotaArgs{})
 	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
 		t.Errorf("unexpected error; got: %v, want bad request", err)
 	}

@@ -633,20 +633,6 @@ func (d *CSS) GetBackgroundColors(ctx context.Context, args *cdpcmd.CSSGetBackgr
 	return
 }
 
-// GetLayoutTreeAndStyles invokes the CSS method. For the main document and any content documents, return the LayoutTreeNodes and a whitelisted subset of the computed style. It only returns pushed nodes, on way to pull all nodes is to call DOM.getDocument with a depth of -1.
-func (d *CSS) GetLayoutTreeAndStyles(ctx context.Context, args *cdpcmd.CSSGetLayoutTreeAndStylesArgs) (reply *cdpcmd.CSSGetLayoutTreeAndStylesReply, err error) {
-	reply = new(cdpcmd.CSSGetLayoutTreeAndStylesReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.CSSGetLayoutTreeAndStyles.String(), args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.CSSGetLayoutTreeAndStyles.String(), nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &opError{Domain: "CSS", Op: "GetLayoutTreeAndStyles", Err: err}
-	}
-	return
-}
-
 // StartRuleUsageTracking invokes the CSS method. Enables the selector recording.
 func (d *CSS) StartRuleUsageTracking(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, cdpcmd.CSSStartRuleUsageTracking.String(), nil, nil, d.conn)
@@ -1826,6 +1812,28 @@ func (d *DOMDebugger) GetEventListeners(ctx context.Context, args *cdpcmd.DOMDeb
 	}
 	if err != nil {
 		err = &opError{Domain: "DOMDebugger", Op: "GetEventListeners", Err: err}
+	}
+	return
+}
+
+// The DOMSnapshot domain. This domain facilitates obtaining document snapshots with DOM, layout, and style information.
+type DOMSnapshot struct{ conn *rpcc.Conn }
+
+// NewDOMSnapshot returns the domain with the connection set to conn.
+func NewDOMSnapshot(conn *rpcc.Conn) *DOMSnapshot {
+	return &DOMSnapshot{conn: conn}
+}
+
+// GetSnapshot invokes the DOMSnapshot method. Returns a document snapshot, including the full DOM tree of the root node (including iframes, template contents, and imported documents) in a flattened array, as well as layout and white-listed computed style information for the nodes. Shadow DOM in the returned DOM tree is flattened.
+func (d *DOMSnapshot) GetSnapshot(ctx context.Context, args *cdpcmd.DOMSnapshotGetSnapshotArgs) (reply *cdpcmd.DOMSnapshotGetSnapshotReply, err error) {
+	reply = new(cdpcmd.DOMSnapshotGetSnapshotReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.DOMSnapshotGetSnapshot.String(), args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.DOMSnapshotGetSnapshot.String(), nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "DOMSnapshot", Op: "GetSnapshot", Err: err}
 	}
 	return
 }
@@ -6088,6 +6096,20 @@ func (d *Storage) ClearDataForOrigin(ctx context.Context, args *cdpcmd.StorageCl
 	}
 	if err != nil {
 		err = &opError{Domain: "Storage", Op: "ClearDataForOrigin", Err: err}
+	}
+	return
+}
+
+// GetUsageAndQuota invokes the Storage method. Returns usage and quota in bytes.
+func (d *Storage) GetUsageAndQuota(ctx context.Context, args *cdpcmd.StorageGetUsageAndQuotaArgs) (reply *cdpcmd.StorageGetUsageAndQuotaReply, err error) {
+	reply = new(cdpcmd.StorageGetUsageAndQuotaReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, cdpcmd.StorageGetUsageAndQuota.String(), args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, cdpcmd.StorageGetUsageAndQuota.String(), nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &opError{Domain: "Storage", Op: "GetUsageAndQuota", Err: err}
 	}
 	return
 }

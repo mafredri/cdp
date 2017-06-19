@@ -524,24 +524,6 @@ type CSSGetBackgroundColorsReply struct {
 	BackgroundColors []string `json:"backgroundColors,omitempty"` // The range of background colors behind this element, if it contains any visible text. If no visible text is present, this will be undefined. In the case of a flat background color, this will consist of simply that color. In the case of a gradient, this will consist of each of the color stops. For anything more complicated, this will be an empty array. Images will be ignored (as if the image had failed to load).
 }
 
-// CSSGetLayoutTreeAndStylesArgs represents the arguments for GetLayoutTreeAndStyles in the CSS domain.
-type CSSGetLayoutTreeAndStylesArgs struct {
-	ComputedStyleWhitelist []string `json:"computedStyleWhitelist"` // Whitelist of computed styles to return.
-}
-
-// NewCSSGetLayoutTreeAndStylesArgs initializes CSSGetLayoutTreeAndStylesArgs with the required arguments.
-func NewCSSGetLayoutTreeAndStylesArgs(computedStyleWhitelist []string) *CSSGetLayoutTreeAndStylesArgs {
-	args := new(CSSGetLayoutTreeAndStylesArgs)
-	args.ComputedStyleWhitelist = computedStyleWhitelist
-	return args
-}
-
-// CSSGetLayoutTreeAndStylesReply represents the return values for GetLayoutTreeAndStyles in the CSS domain.
-type CSSGetLayoutTreeAndStylesReply struct {
-	LayoutTreeNodes []cdptype.CSSLayoutTreeNode `json:"layoutTreeNodes"` //
-	ComputedStyles  []cdptype.CSSComputedStyle  `json:"computedStyles"`  //
-}
-
 // CSSTakeCoverageDeltaReply represents the return values for TakeCoverageDelta in the CSS domain.
 type CSSTakeCoverageDeltaReply struct {
 	Coverage []cdptype.CSSRuleUsage `json:"coverage"` //
@@ -1328,6 +1310,25 @@ func (a *DOMDebuggerGetEventListenersArgs) SetPierce(pierce bool) *DOMDebuggerGe
 // DOMDebuggerGetEventListenersReply represents the return values for GetEventListeners in the DOMDebugger domain.
 type DOMDebuggerGetEventListenersReply struct {
 	Listeners []cdptype.DOMDebuggerEventListener `json:"listeners"` // Array of relevant listeners.
+}
+
+// DOMSnapshotGetSnapshotArgs represents the arguments for GetSnapshot in the DOMSnapshot domain.
+type DOMSnapshotGetSnapshotArgs struct {
+	ComputedStyleWhitelist []string `json:"computedStyleWhitelist"` // Whitelist of computed styles to return.
+}
+
+// NewDOMSnapshotGetSnapshotArgs initializes DOMSnapshotGetSnapshotArgs with the required arguments.
+func NewDOMSnapshotGetSnapshotArgs(computedStyleWhitelist []string) *DOMSnapshotGetSnapshotArgs {
+	args := new(DOMSnapshotGetSnapshotArgs)
+	args.ComputedStyleWhitelist = computedStyleWhitelist
+	return args
+}
+
+// DOMSnapshotGetSnapshotReply represents the return values for GetSnapshot in the DOMSnapshot domain.
+type DOMSnapshotGetSnapshotReply struct {
+	DOMNodes        []cdptype.DOMSnapshotDOMNode        `json:"domNodes"`        // The nodes in the DOM tree. The DOMNode at index 0 corresponds to the root document.
+	LayoutTreeNodes []cdptype.DOMSnapshotLayoutTreeNode `json:"layoutTreeNodes"` // The nodes in the layout tree.
+	ComputedStyles  []cdptype.DOMSnapshotComputedStyle  `json:"computedStyles"`  // Whitelisted ComputedStyle properties for each node in the layout tree.
 }
 
 // DOMStorageClearArgs represents the arguments for Clear in the DOMStorage domain.
@@ -3230,13 +3231,14 @@ func NewNetworkEnableRequestInterceptionArgs(enabled bool) *NetworkEnableRequest
 
 // NetworkContinueInterceptedRequestArgs represents the arguments for ContinueInterceptedRequest in the Network domain.
 type NetworkContinueInterceptedRequestArgs struct {
-	InterceptionID cdptype.NetworkInterceptionID `json:"interceptionId"`        //
-	ErrorReason    cdptype.NetworkErrorReason    `json:"errorReason,omitempty"` // If set this causes the request to fail with the given reason.
-	RawResponse    *string                       `json:"rawResponse,omitempty"` // If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc...
-	URL            *string                       `json:"url,omitempty"`         // If set the request url will be modified in a way that's not observable by page.
-	Method         *string                       `json:"method,omitempty"`      // If set this allows the request method to be overridden.
-	PostData       *string                       `json:"postData,omitempty"`    // If set this allows postData to be set.
-	Headers        cdptype.NetworkHeaders        `json:"headers,omitempty"`     // If set this allows the request headers to be changed.
+	InterceptionID        cdptype.NetworkInterceptionID         `json:"interceptionId"`                  //
+	ErrorReason           cdptype.NetworkErrorReason            `json:"errorReason,omitempty"`           // If set this causes the request to fail with the given reason. Must not be set in response to an authChallenge.
+	RawResponse           *string                               `json:"rawResponse,omitempty"`           // If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc... Must not be set in response to an authChallenge.
+	URL                   *string                               `json:"url,omitempty"`                   // If set the request url will be modified in a way that's not observable by page. Must not be set in response to an authChallenge.
+	Method                *string                               `json:"method,omitempty"`                // If set this allows the request method to be overridden. Must not be set in response to an authChallenge.
+	PostData              *string                               `json:"postData,omitempty"`              // If set this allows postData to be set. Must not be set in response to an authChallenge.
+	Headers               cdptype.NetworkHeaders                `json:"headers,omitempty"`               // If set this allows the request headers to be changed. Must not be set in response to an authChallenge.
+	AuthChallengeResponse *cdptype.NetworkAuthChallengeResponse `json:"authChallengeResponse,omitempty"` // Response to a requestIntercepted with an authChallenge. Must not be set otherwise.
 }
 
 // NewNetworkContinueInterceptedRequestArgs initializes NetworkContinueInterceptedRequestArgs with the required arguments.
@@ -3246,39 +3248,45 @@ func NewNetworkContinueInterceptedRequestArgs(interceptionID cdptype.NetworkInte
 	return args
 }
 
-// SetErrorReason sets the ErrorReason optional argument. If set this causes the request to fail with the given reason.
+// SetErrorReason sets the ErrorReason optional argument. If set this causes the request to fail with the given reason. Must not be set in response to an authChallenge.
 func (a *NetworkContinueInterceptedRequestArgs) SetErrorReason(errorReason cdptype.NetworkErrorReason) *NetworkContinueInterceptedRequestArgs {
 	a.ErrorReason = errorReason
 	return a
 }
 
-// SetRawResponse sets the RawResponse optional argument. If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc...
+// SetRawResponse sets the RawResponse optional argument. If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc... Must not be set in response to an authChallenge.
 func (a *NetworkContinueInterceptedRequestArgs) SetRawResponse(rawResponse string) *NetworkContinueInterceptedRequestArgs {
 	a.RawResponse = &rawResponse
 	return a
 }
 
-// SetURL sets the URL optional argument. If set the request url will be modified in a way that's not observable by page.
+// SetURL sets the URL optional argument. If set the request url will be modified in a way that's not observable by page. Must not be set in response to an authChallenge.
 func (a *NetworkContinueInterceptedRequestArgs) SetURL(url string) *NetworkContinueInterceptedRequestArgs {
 	a.URL = &url
 	return a
 }
 
-// SetMethod sets the Method optional argument. If set this allows the request method to be overridden.
+// SetMethod sets the Method optional argument. If set this allows the request method to be overridden. Must not be set in response to an authChallenge.
 func (a *NetworkContinueInterceptedRequestArgs) SetMethod(method string) *NetworkContinueInterceptedRequestArgs {
 	a.Method = &method
 	return a
 }
 
-// SetPostData sets the PostData optional argument. If set this allows postData to be set.
+// SetPostData sets the PostData optional argument. If set this allows postData to be set. Must not be set in response to an authChallenge.
 func (a *NetworkContinueInterceptedRequestArgs) SetPostData(postData string) *NetworkContinueInterceptedRequestArgs {
 	a.PostData = &postData
 	return a
 }
 
-// SetHeaders sets the Headers optional argument. If set this allows the request headers to be changed.
+// SetHeaders sets the Headers optional argument. If set this allows the request headers to be changed. Must not be set in response to an authChallenge.
 func (a *NetworkContinueInterceptedRequestArgs) SetHeaders(headers cdptype.NetworkHeaders) *NetworkContinueInterceptedRequestArgs {
 	a.Headers = headers
+	return a
+}
+
+// SetAuthChallengeResponse sets the AuthChallengeResponse optional argument. Response to a requestIntercepted with an authChallenge. Must not be set otherwise.
+func (a *NetworkContinueInterceptedRequestArgs) SetAuthChallengeResponse(authChallengeResponse cdptype.NetworkAuthChallengeResponse) *NetworkContinueInterceptedRequestArgs {
+	a.AuthChallengeResponse = &authChallengeResponse
 	return a
 }
 
@@ -4695,6 +4703,24 @@ func NewStorageClearDataForOriginArgs(origin string, storageTypes string) *Stora
 	args.Origin = origin
 	args.StorageTypes = storageTypes
 	return args
+}
+
+// StorageGetUsageAndQuotaArgs represents the arguments for GetUsageAndQuota in the Storage domain.
+type StorageGetUsageAndQuotaArgs struct {
+	Origin string `json:"origin"` // Security origin.
+}
+
+// NewStorageGetUsageAndQuotaArgs initializes StorageGetUsageAndQuotaArgs with the required arguments.
+func NewStorageGetUsageAndQuotaArgs(origin string) *StorageGetUsageAndQuotaArgs {
+	args := new(StorageGetUsageAndQuotaArgs)
+	args.Origin = origin
+	return args
+}
+
+// StorageGetUsageAndQuotaReply represents the return values for GetUsageAndQuota in the Storage domain.
+type StorageGetUsageAndQuotaReply struct {
+	Usage float64 `json:"usage"` // Storage usage (bytes).
+	Quota float64 `json:"quota"` // Storage quota (bytes).
 }
 
 // SystemInfoGetInfoReply represents the return values for GetInfo in the SystemInfo domain.
