@@ -8693,19 +8693,19 @@ func TestPage_CreateIsolatedWorld(t *testing.T) {
 	var err error
 
 	// Test nil args.
-	err = dom.CreateIsolatedWorld(nil, nil)
+	_, err = dom.CreateIsolatedWorld(nil, nil)
 	if err != nil {
 		t.Error(err)
 	}
 	// Test args.
-	err = dom.CreateIsolatedWorld(nil, &cdpcmd.PageCreateIsolatedWorldArgs{})
+	_, err = dom.CreateIsolatedWorld(nil, &cdpcmd.PageCreateIsolatedWorldArgs{})
 	if err != nil {
 		t.Error(err)
 	}
 
 	// Test error.
 	codec.respErr = errors.New("bad request")
-	err = dom.CreateIsolatedWorld(nil, &cdpcmd.PageCreateIsolatedWorldArgs{})
+	_, err = dom.CreateIsolatedWorld(nil, &cdpcmd.PageCreateIsolatedWorldArgs{})
 	if err == nil || err.(*opError).Err.(*rpcc.ResponseError).Message != codec.respErr.Error() {
 		t.Errorf("unexpected error; got: %v, want bad request", err)
 	}
@@ -11129,6 +11129,40 @@ func TestTarget_TargetCreated(t *testing.T) {
 
 	conn.Close()
 	stream, err = dom.TargetCreated(nil)
+	if err == nil {
+		t.Errorf("Open stream: got nil, want error")
+	}
+
+}
+
+func TestTarget_TargetInfoChanged(t *testing.T) {
+	conn, codec, cleanup := newTestConn(t)
+	defer cleanup()
+
+	dom := NewTarget(conn)
+
+	stream, err := dom.TargetInfoChanged(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer stream.Close()
+
+	codec.event = cdpevent.TargetInfoChanged.String()
+	codec.conn <- nil
+	_, err = stream.Recv()
+	if err != nil {
+		t.Error(err)
+	}
+
+	codec.eventArgs = []byte("invalid json")
+	codec.conn <- nil
+	_, err = stream.Recv()
+	if err, ok := err.(*opError); !ok {
+		t.Errorf("Recv() got %v, want opError", err)
+	}
+
+	conn.Close()
+	stream, err = dom.TargetInfoChanged(nil)
 	if err == nil {
 		t.Errorf("Open stream: got nil, want error")
 	}

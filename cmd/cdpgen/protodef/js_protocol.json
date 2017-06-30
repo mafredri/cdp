@@ -539,6 +539,9 @@
                     { "name": "frameId", "$ref": "FrameId", "description": "Id of the frame in which the isolated world should be created." },
                     { "name": "worldName", "type": "string", "optional": true, "description": "An optional name which is reported in the Execution Context." },
                     { "name": "grantUniveralAccess", "type": "boolean", "optional": true, "description": "Whether or not universal access should be granted to the isolated world. This is a powerful option, use with caution." }
+                ],
+                "returns": [
+                    {  "name": "executionContextId", "$ref": "Runtime.ExecutionContextId", "description": "Execution context of the isolated world." }
                 ]
             }
         ],
@@ -1317,8 +1320,8 @@
                 "properties": [
                     { "name": "type", "type": "string", "enum": ["parser", "script", "preload", "other"], "description": "Type of this initiator." },
                     { "name": "stack", "$ref": "Runtime.StackTrace", "optional": true, "description": "Initiator JavaScript stack trace, set for Script only." },
-                    { "name": "url", "type": "string", "optional": true, "description": "Initiator URL, set for Parser type only." },
-                    { "name": "lineNumber", "type": "number", "optional": true, "description": "Initiator line number, set for Parser type only (0-based)." }
+                    { "name": "url", "type": "string", "optional": true, "description": "Initiator URL, set for Parser type or for Script type (when script is importing module)." },
+                    { "name": "lineNumber", "type": "number", "optional": true, "description": "Initiator line number, set for Parser type or for Script type (when script is importing module) (0-based)." }
                 ]
             },
             {
@@ -2831,7 +2834,7 @@
     {
         "domain": "CSS",
         "experimental": true,
-        "description": "This domain exposes CSS read/write operations. All CSS objects (stylesheets, rules, and styles) have an associated <code>id</code> used in subsequent operations on the related object. Each object type has a specific <code>id</code> structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the <code>get*ForNode()</code> calls (which accept a DOM node id). A client can also discover all the existing stylesheets with the <code>getAllStyleSheets()</code> method (or keeping track of the <code>styleSheetAdded</code>/<code>styleSheetRemoved</code> events) and subsequently load the required stylesheet contents using the <code>getStyleSheet[Text]()</code> methods.",
+        "description": "This domain exposes CSS read/write operations. All CSS objects (stylesheets, rules, and styles) have an associated <code>id</code> used in subsequent operations on the related object. Each object type has a specific <code>id</code> structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the <code>get*ForNode()</code> calls (which accept a DOM node id). A client can also keep track of stylesheets via the <code>styleSheetAdded</code>/<code>styleSheetRemoved</code> events and subsequently load the required stylesheet contents using the <code>getStyleSheet[Text]()</code> methods.",
         "dependencies": ["DOM"],
         "types": [
             {
@@ -3343,13 +3346,15 @@
                     { "name": "layoutNodeIndex", "type": "integer", "optional": true, "description": "The index of the node's related layout tree node in the <code>layoutTreeNodes</code> array returned by <code>getSnapshot</code>, if any." },
                     { "name": "documentURL", "type": "string", "optional": true, "description": "Document URL that <code>Document</code> or <code>FrameOwner</code> node points to." },
                     { "name": "baseURL", "type": "string", "optional": true, "description": "Base URL that <code>Document</code> or <code>FrameOwner</code> node uses for URL completion." },
+                    { "name": "contentLanguage", "type": "string", "optional": true, "description": "Only set for documents, contains the document's content language." },
                     { "name": "publicId", "type": "string", "optional": true, "description": "<code>DocumentType</code> node's publicId." },
                     { "name": "systemId", "type": "string", "optional": true, "description": "<code>DocumentType</code> node's systemId." },
                     { "name": "frameId", "$ref": "Page.FrameId", "optional": true, "description": "Frame ID for frame owner elements." },
                     { "name": "contentDocumentIndex", "type": "integer", "optional": true, "description": "The index of a frame owner element's content document in the <code>domNodes</code> array returned by <code>getSnapshot</code>, if any." },
                     { "name": "importedDocumentIndex", "type": "integer", "optional": true, "description": "Index of the imported document's node of a link element in the <code>domNodes</code> array returned by <code>getSnapshot</code>, if any." },
                     { "name": "templateContentIndex", "type": "integer", "optional": true, "description": "Index of the content node of a template element in the <code>domNodes</code> array returned by <code>getSnapshot</code>." },
-                    { "name": "pseudoType", "$ref": "DOM.PseudoType", "optional": true, "description": "Type of a pseudo element node." }
+                    { "name": "pseudoType", "$ref": "DOM.PseudoType", "optional": true, "description": "Type of a pseudo element node." },
+                    { "name": "isClickable", "type": "boolean", "optional": true, "description": "Whether this DOM node responds to mouse clicks. This includes nodes that have had click event listeners attached via JavaScript as well as anchor tags that naturally navigate when clicked." }
                 ],
                 "description": "A Node in the DOM tree."
             },
@@ -3559,7 +3564,8 @@
                     { "name": "targetId", "$ref": "TargetID" },
                     { "name": "type", "type": "string" },
                     { "name": "title", "type": "string" },
-                    { "name": "url", "type": "string" }
+                    { "name": "url", "type": "string" },
+                    { "name": "attached", "type": "boolean", "description": "Whether the target has an attached client." }
                 ]
             },
             {
@@ -3574,7 +3580,7 @@
         "commands": [
             {
                 "name": "setDiscoverTargets",
-                "description": "Controls whether to discover available targets and notify via <code>targetCreated/targetDestroyed</code> events.",
+                "description": "Controls whether to discover available targets and notify via <code>targetCreated/targetInfoChanged/targetDestroyed</code> events.",
                 "parameters": [
                     { "name": "discover", "type": "boolean", "description": "Whether to discover available targets." }
                 ]
@@ -3694,6 +3700,13 @@
             {
                 "name": "targetCreated",
                 "description": "Issued when a possible inspection target is created.",
+                "parameters": [
+                    { "name": "targetInfo", "$ref": "TargetInfo" }
+                ]
+            },
+            {
+                "name": "targetInfoChanged",
+                "description": "Issued when some information about a target has changed. This only happens between <code>targetCreated</code> and <code>targetDestroyed</code>.",
                 "parameters": [
                     { "name": "targetInfo", "$ref": "TargetInfo" }
                 ]
@@ -4593,9 +4606,19 @@
                     "websql",
                     "service_workers",
                     "cache_storage",
-                    "all"
+                    "all",
+                    "other"
                 ],
                 "description": "Enum of possible storage types."
+            },
+            {
+                "id": "UsageForType",
+                "type": "object",
+                "description": "Usage for a storage type.",
+                "properties": [
+                    { "name": "storageType", "$ref": "StorageType", "description": "Name of storage type." },
+                    { "name": "usage", "type": "number", "description": "Storage usage (bytes)." }
+                ]
             }
         ],
         "commands": [
@@ -4614,7 +4637,8 @@
                 ],
                 "returns": [
                     { "name": "usage", "type": "number", "description": "Storage usage (bytes)." },
-                    { "name": "quota", "type": "number", "description": "Storage quota (bytes)." }
+                    { "name": "quota", "type": "number", "description": "Storage quota (bytes)." },
+                    { "name": "usageBreakdown", "type": "array", "items": { "$ref": "UsageForType" }, "description": "Storage usage per type (bytes)." }
                 ],
                 "description": "Returns usage and quota in bytes."
             }

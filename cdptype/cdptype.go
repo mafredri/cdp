@@ -1473,6 +1473,7 @@ type DOMSnapshotDOMNode struct {
 	LayoutNodeIndex       *int                   `json:"layoutNodeIndex,omitempty"`       // The index of the node's related layout tree node in the layoutTreeNodes array returned by getSnapshot, if any.
 	DocumentURL           *string                `json:"documentURL,omitempty"`           // Document URL that Document or FrameOwner node points to.
 	BaseURL               *string                `json:"baseURL,omitempty"`               // Base URL that Document or FrameOwner node uses for URL completion.
+	ContentLanguage       *string                `json:"contentLanguage,omitempty"`       // Only set for documents, contains the document's content language.
 	PublicID              *string                `json:"publicId,omitempty"`              // DocumentType node's publicId.
 	SystemID              *string                `json:"systemId,omitempty"`              // DocumentType node's systemId.
 	FrameID               *PageFrameID           `json:"frameId,omitempty"`               // Frame ID for frame owner elements.
@@ -1480,6 +1481,7 @@ type DOMSnapshotDOMNode struct {
 	ImportedDocumentIndex *int                   `json:"importedDocumentIndex,omitempty"` // Index of the imported document's node of a link element in the domNodes array returned by getSnapshot, if any.
 	TemplateContentIndex  *int                   `json:"templateContentIndex,omitempty"`  // Index of the content node of a template element in the domNodes array returned by getSnapshot.
 	PseudoType            DOMPseudoType          `json:"pseudoType,omitempty"`            // Type of a pseudo element node.
+	IsClickable           *bool                  `json:"isClickable,omitempty"`           // Whether this DOM node responds to mouse clicks. This includes nodes that have had click event listeners attached via JavaScript as well as anchor tags that naturally navigate when clicked.
 }
 
 // DOMSnapshotLayoutTreeNode Details of an element in the DOM tree with a LayoutObject.
@@ -2476,8 +2478,8 @@ type NetworkCachedResource struct {
 type NetworkInitiator struct {
 	Type       string             `json:"type"`                 // Type of this initiator.
 	Stack      *RuntimeStackTrace `json:"stack,omitempty"`      // Initiator JavaScript stack trace, set for Script only.
-	URL        *string            `json:"url,omitempty"`        // Initiator URL, set for Parser type only.
-	LineNumber *float64           `json:"lineNumber,omitempty"` // Initiator line number, set for Parser type only (0-based).
+	URL        *string            `json:"url,omitempty"`        // Initiator URL, set for Parser type or for Script type (when script is importing module).
+	LineNumber *float64           `json:"lineNumber,omitempty"` // Initiator line number, set for Parser type or for Script type (when script is importing module) (0-based).
 }
 
 // NetworkCookie Cookie object
@@ -3031,8 +3033,9 @@ type ProfilerCoverageRange struct {
 
 // ProfilerFunctionCoverage Coverage data for a JavaScript function.
 type ProfilerFunctionCoverage struct {
-	FunctionName string                  `json:"functionName"` // JavaScript function name.
-	Ranges       []ProfilerCoverageRange `json:"ranges"`       // Source ranges inside the function with coverage data.
+	FunctionName    string                  `json:"functionName"`    // JavaScript function name.
+	Ranges          []ProfilerCoverageRange `json:"ranges"`          // Source ranges inside the function with coverage data.
+	IsBlockCoverage bool                    `json:"isBlockCoverage"` // Whether coverage data for this function has block granularity.
 }
 
 // ProfilerScriptCoverage Coverage data for a JavaScript script.
@@ -3604,11 +3607,12 @@ const (
 	StorageTypeServiceWorkers
 	StorageTypeCacheStorage
 	StorageTypeAll
+	StorageTypeOther
 )
 
 // Valid returns true if enum is set.
 func (e StorageType) Valid() bool {
-	return e >= 1 && e <= 10
+	return e >= 1 && e <= 11
 }
 
 func (e StorageType) String() string {
@@ -3635,6 +3639,8 @@ func (e StorageType) String() string {
 		return "cache_storage"
 	case 10:
 		return "all"
+	case 11:
+		return "other"
 	}
 	return fmt.Sprintf("StorageType(%d)", e)
 }
@@ -3675,10 +3681,18 @@ func (e *StorageType) UnmarshalJSON(data []byte) error {
 		*e = 9
 	case "\"all\"":
 		*e = 10
+	case "\"other\"":
+		*e = 11
 	default:
 		return fmt.Errorf("cdptype.StorageType: UnmarshalJSON on bad input: %s", data)
 	}
 	return nil
+}
+
+// StorageUsageForType Usage for a storage type.
+type StorageUsageForType struct {
+	StorageType StorageType `json:"storageType"` // Name of storage type.
+	Usage       float64     `json:"usage"`       // Storage usage (bytes).
 }
 
 // SystemInfoGPUDevice Describes a single graphics processor (GPU).
@@ -3709,6 +3723,7 @@ type TargetInfo struct {
 	Type     string   `json:"type"`     //
 	Title    string   `json:"title"`    //
 	URL      string   `json:"url"`      //
+	Attached bool     `json:"attached"` // Whether the target has an attached client.
 }
 
 // TargetRemoteLocation

@@ -4498,6 +4498,23 @@ func TestStorageType_Marshal(t *testing.T) {
 		t.Errorf("Unmarshal(10): v == %d, want 10", v)
 	}
 
+	// Test Other.
+	v = 11
+	b, err = json.Marshal(&v)
+	if err != nil {
+		t.Errorf("Marshal() got %v, want no error", err)
+	}
+	if strings.Contains(v.String(), string(b)) {
+		t.Errorf("Marshal() got %s, want ~~ %s", b, v.String())
+	}
+	err = json.Unmarshal(b, &v)
+	if err != nil {
+		t.Errorf("Unmarshal() got %v, want no error", err)
+	}
+	if v != 11 {
+		t.Errorf("Unmarshal(11): v == %d, want 11", v)
+	}
+
 }
 
 func TestTracingMemoryDumpConfig_Marshal(t *testing.T) {

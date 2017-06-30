@@ -375,7 +375,7 @@ func (d *Browser) GetWindowBounds(ctx context.Context, args *cdpcmd.BrowserGetWi
 	return
 }
 
-// The CSS domain. This domain exposes CSS read/write operations. All CSS objects (stylesheets, rules, and styles) have an associated id used in subsequent operations on the related object. Each object type has a specific id structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the get*ForNode() calls (which accept a DOM node id). A client can also discover all the existing stylesheets with the getAllStyleSheets() method (or keeping track of the styleSheetAdded/styleSheetRemoved events) and subsequently load the required stylesheet contents using the getStyleSheet[Text]() methods.
+// The CSS domain. This domain exposes CSS read/write operations. All CSS objects (stylesheets, rules, and styles) have an associated id used in subsequent operations on the related object. Each object type has a specific id structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the get*ForNode() calls (which accept a DOM node id). A client can also keep track of stylesheets via the styleSheetAdded/styleSheetRemoved events and subsequently load the required stylesheet contents using the getStyleSheet[Text]() methods.
 type CSS struct{ conn *rpcc.Conn }
 
 // NewCSS returns the domain with the connection set to conn.
@@ -4896,11 +4896,12 @@ func (d *Page) GetLayoutMetrics(ctx context.Context) (reply *cdpcmd.PageGetLayou
 }
 
 // CreateIsolatedWorld invokes the Page method. Creates an isolated world for the given frame.
-func (d *Page) CreateIsolatedWorld(ctx context.Context, args *cdpcmd.PageCreateIsolatedWorldArgs) (err error) {
+func (d *Page) CreateIsolatedWorld(ctx context.Context, args *cdpcmd.PageCreateIsolatedWorldArgs) (reply *cdpcmd.PageCreateIsolatedWorldReply, err error) {
+	reply = new(cdpcmd.PageCreateIsolatedWorldReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, cdpcmd.PageCreateIsolatedWorld.String(), args, nil, d.conn)
+		err = rpcc.Invoke(ctx, cdpcmd.PageCreateIsolatedWorld.String(), args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, cdpcmd.PageCreateIsolatedWorld.String(), nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, cdpcmd.PageCreateIsolatedWorld.String(), nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &opError{Domain: "Page", Op: "CreateIsolatedWorld", Err: err}
@@ -6140,7 +6141,7 @@ func NewTarget(conn *rpcc.Conn) *Target {
 	return &Target{conn: conn}
 }
 
-// SetDiscoverTargets invokes the Target method. Controls whether to discover available targets and notify via targetCreated/targetDestroyed events.
+// SetDiscoverTargets invokes the Target method. Controls whether to discover available targets and notify via targetCreated/targetInfoChanged/targetDestroyed events.
 func (d *Target) SetDiscoverTargets(ctx context.Context, args *cdpcmd.TargetSetDiscoverTargetsArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, cdpcmd.TargetSetDiscoverTargets.String(), args, nil, d.conn)
@@ -6339,6 +6340,28 @@ func (c *TargetCreatedClient) Recv() (*cdpevent.TargetCreatedReply, error) {
 	event := new(cdpevent.TargetCreatedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &opError{Domain: "Target", Op: "TargetCreated Recv", Err: err}
+	}
+	return event, nil
+}
+
+// TargetInfoChanged creates the event client. Issued when some information about a target has changed. This only happens between targetCreated and targetDestroyed.
+func (d *Target) TargetInfoChanged(ctx context.Context) (cdpevent.TargetInfoChangedClient, error) {
+	s, err := rpcc.NewStream(ctx, cdpevent.TargetInfoChanged.String(), d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &TargetInfoChangedClient{Stream: s}, nil
+}
+
+// TargetInfoChangedClient implements cdpevent.TargetInfoChangedClient.
+type TargetInfoChangedClient struct{ rpcc.Stream }
+
+// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+// triggered, context canceled or connection closed.
+func (c *TargetInfoChangedClient) Recv() (*cdpevent.TargetInfoChangedReply, error) {
+	event := new(cdpevent.TargetInfoChangedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &opError{Domain: "Target", Op: "TargetInfoChanged Recv", Err: err}
 	}
 	return event, nil
 }

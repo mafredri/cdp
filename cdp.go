@@ -136,7 +136,7 @@ type Browser interface {
 	GetWindowBounds(context.Context, *cdpcmd.BrowserGetWindowBoundsArgs) (*cdpcmd.BrowserGetWindowBoundsReply, error)
 }
 
-// The CSS domain. This domain exposes CSS read/write operations. All CSS objects (stylesheets, rules, and styles) have an associated id used in subsequent operations on the related object. Each object type has a specific id structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the get*ForNode() calls (which accept a DOM node id). A client can also discover all the existing stylesheets with the getAllStyleSheets() method (or keeping track of the styleSheetAdded/styleSheetRemoved events) and subsequently load the required stylesheet contents using the getStyleSheet[Text]() methods.
+// The CSS domain. This domain exposes CSS read/write operations. All CSS objects (stylesheets, rules, and styles) have an associated id used in subsequent operations on the related object. Each object type has a specific id structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the get*ForNode() calls (which accept a DOM node id). A client can also keep track of stylesheets via the styleSheetAdded/styleSheetRemoved events and subsequently load the required stylesheet contents using the getStyleSheet[Text]() methods.
 type CSS interface {
 	// Command Enable
 	//
@@ -1751,7 +1751,7 @@ type Page interface {
 	// Command CreateIsolatedWorld
 	//
 	// Creates an isolated world for the given frame.
-	CreateIsolatedWorld(context.Context, *cdpcmd.PageCreateIsolatedWorldArgs) error
+	CreateIsolatedWorld(context.Context, *cdpcmd.PageCreateIsolatedWorldArgs) (*cdpcmd.PageCreateIsolatedWorldReply, error)
 
 	// Event DOMContentEventFired
 	//
@@ -2144,7 +2144,7 @@ type SystemInfo interface {
 type Target interface {
 	// Command SetDiscoverTargets
 	//
-	// Controls whether to discover available targets and notify via targetCreated/targetDestroyed events.
+	// Controls whether to discover available targets and notify via targetCreated/targetInfoChanged/targetDestroyed events.
 	SetDiscoverTargets(context.Context, *cdpcmd.TargetSetDiscoverTargetsArgs) error
 
 	// Command SetAutoAttach
@@ -2216,6 +2216,11 @@ type Target interface {
 	//
 	// Issued when a possible inspection target is created.
 	TargetCreated(context.Context) (cdpevent.TargetCreatedClient, error)
+
+	// Event TargetInfoChanged
+	//
+	// Issued when some information about a target has changed. This only happens between targetCreated and targetDestroyed.
+	TargetInfoChanged(context.Context) (cdpevent.TargetInfoChangedClient, error)
 
 	// Event TargetDestroyed
 	//

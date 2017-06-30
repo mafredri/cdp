@@ -107,6 +107,7 @@ const (
 	ServiceWorkerWorkerVersionUpdated         EventType = "ServiceWorker.workerVersionUpdated"
 	ServiceWorkerWorkerErrorReported          EventType = "ServiceWorker.workerErrorReported"
 	TargetCreated                             EventType = "Target.targetCreated"
+	TargetInfoChanged                         EventType = "Target.targetInfoChanged"
 	TargetDestroyed                           EventType = "Target.targetDestroyed"
 	TargetAttachedToTarget                    EventType = "Target.attachedToTarget"
 	TargetDetachedFromTarget                  EventType = "Target.detachedFromTarget"

@@ -4157,6 +4157,11 @@ func (a *PageCreateIsolatedWorldArgs) SetGrantUniveralAccess(grantUniveralAccess
 	return a
 }
 
+// PageCreateIsolatedWorldReply represents the return values for CreateIsolatedWorld in the Page domain.
+type PageCreateIsolatedWorldReply struct {
+	ExecutionContextID cdptype.RuntimeExecutionContextID `json:"executionContextId"` // Execution context of the isolated world.
+}
+
 // ProfilerSetSamplingIntervalArgs represents the arguments for SetSamplingInterval in the Profiler domain.
 type ProfilerSetSamplingIntervalArgs struct {
 	Interval int `json:"interval"` // New sampling interval in microseconds.
@@ -4719,8 +4724,9 @@ func NewStorageGetUsageAndQuotaArgs(origin string) *StorageGetUsageAndQuotaArgs 
 
 // StorageGetUsageAndQuotaReply represents the return values for GetUsageAndQuota in the Storage domain.
 type StorageGetUsageAndQuotaReply struct {
-	Usage float64 `json:"usage"` // Storage usage (bytes).
-	Quota float64 `json:"quota"` // Storage quota (bytes).
+	Usage          float64                       `json:"usage"`          // Storage usage (bytes).
+	Quota          float64                       `json:"quota"`          // Storage quota (bytes).
+	UsageBreakdown []cdptype.StorageUsageForType `json:"usageBreakdown"` // Storage usage per type (bytes).
 }
 
 // SystemInfoGetInfoReply represents the return values for GetInfo in the SystemInfo domain.

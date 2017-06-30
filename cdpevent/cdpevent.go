@@ -1371,6 +1371,19 @@ type TargetCreatedReply struct {
 	TargetInfo cdptype.TargetInfo `json:"targetInfo"` //
 }
 
+// TargetInfoChangedClient receives TargetInfoChanged events.
+type TargetInfoChangedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*TargetInfoChangedReply, error)
+	rpcc.Stream
+}
+
+// TargetInfoChangedReply issued when some information about a target has changed. This only happens between targetCreated and targetDestroyed.
+type TargetInfoChangedReply struct {
+	TargetInfo cdptype.TargetInfo `json:"targetInfo"` //
+}
+
 // TargetDestroyedClient receives TargetDestroyed events.
 type TargetDestroyedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
