@@ -92,12 +92,12 @@ func (c Command) CmdName(d Domain, export bool) string {
 
 // ArgsName returns the name of command arguments.
 func (c Command) ArgsName(d Domain) string {
-	return d.Name() + "" + c.Name() + "Args"
+	return c.Name() + "Args"
 }
 
 // ReplyName returns the name of the command reply.
 func (c Command) ReplyName(d Domain) string {
-	return d.Name() + "" + c.Name() + "Reply"
+	return c.Name() + "Reply"
 }
 
 // ArgsSignature returns the signature (for use as function parameters).
@@ -261,50 +261,36 @@ func (at AnyType) Recvr(d Domain) string {
 }
 
 func nameInDomain(d Domain, name, sep string) string {
-	// Used _ to separate the domain name from the type, e.g. DOM_NodeID.
-	// if sep == "" {
-	// 	sep = "_"
-	// }
 	name = lint.Name(strings.Title(name))
-	if name == d.Name() || strings.Index(name, d.Name()) == 0 {
+	if name != d.Name() && strings.Index(name, d.Name()) == 0 {
 		name = strings.Replace(name, d.Name(), "", 1)
 		if name == "" {
 			sep = ""
 		}
 	}
-	return d.Name() + sep + name
+	return name
 }
 
 // GoType returns the Go representation for a protocol type.
 func (at AnyType) GoType(pkg string, d Domain) string {
 	if at.Ref != "" {
-		prefix := "cdptype."
-		if pkg == "cdptype" {
-			prefix = ""
-		}
+		var prefix string
 		if strings.ContainsRune(at.Ref, '.') {
 			s := strings.Split(at.Ref, ".")
+			prefix = strings.ToLower(s[0]) + "."
 			s[0] = lint.Name(strings.Title(s[0]))
 			s[1] = lint.Name(strings.Title(s[1]))
 			// Remove stutter, e.g. SecuritySecurityState.
 			if strings.Index(s[1], s[0]) == 0 || s[1] == s[0] {
 				s[1] = strings.Replace(s[1], s[0], "", 1)
 			}
-			return prefix + strings.Title(lint.Name(s[0])) + "" + strings.Title(lint.Name(s[1]))
+			return prefix + strings.Title(lint.Name(s[1]))
 		}
 		return prefix + nameInDomain(d, at.Ref, "")
 	}
 
-	// Special handling for parameters names "timestamp".
-	if at.NameName == "timestamp" && at.Type == "number" {
-		prefix := "cdptype."
-		if pkg == "cdptype" {
-			prefix = ""
-		}
-		return prefix + "Timestamp"
-	}
 	// Special handling for domain types named "Timestamp".
-	if at.IDName == "Timestamp" && at.Type == "number" {
+	if (at.IDName == "Timestamp" || at.IDName == "TimeSinceEpoch" || at.IDName == "MonotonicTime") && at.Type == "number" {
 		return "time.Time"
 	}
 
