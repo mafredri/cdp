@@ -165,20 +165,15 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	}
 	c.codec = newCodec(c.conn)
 
-	recvDone := make(chan error, 1)
+	recvDone := func(err error) {
+		// When we receive Inspector.detached the remote will close
+		// the connection afterwards and recvDone will return. Maybe
+		// we could give the user time to react to the event before
+		// closing?
+		// TODO(mafredri): Do we want to close here, like this?
+		c.close(err)
+	}
 	go c.recv(c.notify, recvDone)
-	go func() {
-		select {
-		case <-c.ctx.Done():
-		case err := <-recvDone:
-			// When we receive Inspector.detached the remote will close
-			// the connection afterwards and recvDone will return. Maybe
-			// we could give the user time to react to the event before
-			// closing?
-			// TODO: Do we want to close here, like this?
-			c.close(err)
-		}
-	}()
 
 	return c, nil
 }
@@ -299,13 +294,13 @@ var (
 // recv decodes and handles RPC responses. Responses to RPC requests
 // are forwarded to the pending call, if any. RPC Notifications are
 // forwarded by calling notify, synchronously.
-func (c *Conn) recv(notify func(string, []byte), done chan<- error) {
+func (c *Conn) recv(notify func(string, []byte), done func(error)) {
 	var resp Response
 	var err error
 	for {
 		resp.reset()
 		if err = c.codec.ReadResponse(&resp); err != nil {
-			done <- err
+			done(err)
 			return
 		}
 
