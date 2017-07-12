@@ -204,7 +204,13 @@ func (c *writeLimiter) Read(b []byte) (n int, err error) {
 // Codec is used by recv and dispatcher to
 // send and receive RPC communication.
 type Codec interface {
+	// WriteRequest encodes and writes the request onto the
+	// underlying connection. Request is re-used between writes and
+	// references to it should not be kept.
 	WriteRequest(*Request) error
+	// ReadResponse decodes a response from the underlying
+	// connection. Response is re-used between reads and references
+	// to it should not be kept.
 	ReadResponse(*Response) error
 }
 
