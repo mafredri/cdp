@@ -190,7 +190,7 @@ type SetDeviceMetricsOverrideArgs struct {
 	Height            int                          `json:"height"`                      // Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
 	DeviceScaleFactor float64                      `json:"deviceScaleFactor"`           // Overriding device scale factor value. 0 disables the override.
 	Mobile            bool                         `json:"mobile"`                      // Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more.
-	FitWindow         bool                         `json:"fitWindow"`                   // Whether a view that exceeds the available browser window area should be scaled down to fit.
+	FitWindow         *bool                        `json:"fitWindow,omitempty"`         // Whether a view that exceeds the available browser window area should be scaled down to fit.
 	Scale             *float64                     `json:"scale,omitempty"`             // Scale to apply to resulting view image. Ignored in |fitWindow| mode.
 	OffsetX           *float64                     `json:"offsetX,omitempty"`           // X offset to shift resulting view image by. Ignored in |fitWindow| mode.
 	OffsetY           *float64                     `json:"offsetY,omitempty"`           // Y offset to shift resulting view image by. Ignored in |fitWindow| mode.
@@ -202,14 +202,19 @@ type SetDeviceMetricsOverrideArgs struct {
 }
 
 // NewSetDeviceMetricsOverrideArgs initializes SetDeviceMetricsOverrideArgs with the required arguments.
-func NewSetDeviceMetricsOverrideArgs(width int, height int, deviceScaleFactor float64, mobile bool, fitWindow bool) *SetDeviceMetricsOverrideArgs {
+func NewSetDeviceMetricsOverrideArgs(width int, height int, deviceScaleFactor float64, mobile bool) *SetDeviceMetricsOverrideArgs {
 	args := new(SetDeviceMetricsOverrideArgs)
 	args.Width = width
 	args.Height = height
 	args.DeviceScaleFactor = deviceScaleFactor
 	args.Mobile = mobile
-	args.FitWindow = fitWindow
 	return args
+}
+
+// SetFitWindow sets the FitWindow optional argument. Whether a view that exceeds the available browser window area should be scaled down to fit.
+func (a *SetDeviceMetricsOverrideArgs) SetFitWindow(fitWindow bool) *SetDeviceMetricsOverrideArgs {
+	a.FitWindow = &fitWindow
+	return a
 }
 
 // SetScale sets the Scale optional argument. Scale to apply to resulting view image. Ignored in |fitWindow| mode.
@@ -329,9 +334,10 @@ func (a *SetTouchEmulationEnabledArgs) SetConfiguration(configuration string) *S
 
 // CaptureScreenshotArgs represents the arguments for CaptureScreenshot in the Page domain.
 type CaptureScreenshotArgs struct {
-	Format      *string `json:"format,omitempty"`      // Image compression format (defaults to png).
-	Quality     *int    `json:"quality,omitempty"`     // Compression quality from range [0..100] (jpeg only).
-	FromSurface *bool   `json:"fromSurface,omitempty"` // Capture the screenshot from the surface, rather than the view. Defaults to true.
+	Format      *string   `json:"format,omitempty"`      // Image compression format (defaults to png).
+	Quality     *int      `json:"quality,omitempty"`     // Compression quality from range [0..100] (jpeg only).
+	Clip        *Viewport `json:"clip,omitempty"`        // Capture the screenshot of a given region only.
+	FromSurface *bool     `json:"fromSurface,omitempty"` // Capture the screenshot from the surface, rather than the view. Defaults to true.
 }
 
 // NewCaptureScreenshotArgs initializes CaptureScreenshotArgs with the required arguments.
@@ -350,6 +356,12 @@ func (a *CaptureScreenshotArgs) SetFormat(format string) *CaptureScreenshotArgs 
 // SetQuality sets the Quality optional argument. Compression quality from range [0..100] (jpeg only).
 func (a *CaptureScreenshotArgs) SetQuality(quality int) *CaptureScreenshotArgs {
 	a.Quality = &quality
+	return a
+}
+
+// SetClip sets the Clip optional argument. Capture the screenshot of a given region only.
+func (a *CaptureScreenshotArgs) SetClip(clip Viewport) *CaptureScreenshotArgs {
+	a.Clip = &clip
 	return a
 }
 

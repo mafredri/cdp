@@ -40,28 +40,6 @@ func (d *domainClient) ClearDeviceMetricsOverride(ctx context.Context) (err erro
 	return
 }
 
-// ForceViewport invokes the Emulation method. Overrides the visible area of the page. The change is hidden from the page, i.e. the observable scroll position and page scale does not change. In effect, the command moves the specified area of the page into the top-left corner of the frame.
-func (d *domainClient) ForceViewport(ctx context.Context, args *ForceViewportArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.forceViewport", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Emulation.forceViewport", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Emulation", Op: "ForceViewport", Err: err}
-	}
-	return
-}
-
-// ResetViewport invokes the Emulation method. Resets the visible area of the page to the original viewport, undoing any effects of the forceViewport command.
-func (d *domainClient) ResetViewport(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Emulation.resetViewport", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Emulation", Op: "ResetViewport", Err: err}
-	}
-	return
-}
-
 // ResetPageScaleFactor invokes the Emulation method. Requests that page scale factor is reset to initial values.
 func (d *domainClient) ResetPageScaleFactor(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Emulation.resetPageScaleFactor", nil, nil, d.conn)
@@ -84,7 +62,7 @@ func (d *domainClient) SetPageScaleFactor(ctx context.Context, args *SetPageScal
 	return
 }
 
-// SetVisibleSize invokes the Emulation method. Resizes the frame/viewport of the page. Note that this does not affect the frame's container (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported on Android.
+// SetVisibleSize invokes the Emulation method. Deprecated, does nothing. Please use setDeviceMetricsOverride instead.
 func (d *domainClient) SetVisibleSize(ctx context.Context, args *SetVisibleSizeArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Emulation.setVisibleSize", args, nil, d.conn)

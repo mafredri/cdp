@@ -12,7 +12,7 @@ type SetDeviceMetricsOverrideArgs struct {
 	Height            int                `json:"height"`                      // Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
 	DeviceScaleFactor float64            `json:"deviceScaleFactor"`           // Overriding device scale factor value. 0 disables the override.
 	Mobile            bool               `json:"mobile"`                      // Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more.
-	FitWindow         bool               `json:"fitWindow"`                   // Whether a view that exceeds the available browser window area should be scaled down to fit.
+	FitWindow         *bool              `json:"fitWindow,omitempty"`         // Whether a view that exceeds the available browser window area should be scaled down to fit.
 	Scale             *float64           `json:"scale,omitempty"`             // Scale to apply to resulting view image. Ignored in |fitWindow| mode.
 	OffsetX           *float64           `json:"offsetX,omitempty"`           // Not used.
 	OffsetY           *float64           `json:"offsetY,omitempty"`           // Not used.
@@ -24,14 +24,19 @@ type SetDeviceMetricsOverrideArgs struct {
 }
 
 // NewSetDeviceMetricsOverrideArgs initializes SetDeviceMetricsOverrideArgs with the required arguments.
-func NewSetDeviceMetricsOverrideArgs(width int, height int, deviceScaleFactor float64, mobile bool, fitWindow bool) *SetDeviceMetricsOverrideArgs {
+func NewSetDeviceMetricsOverrideArgs(width int, height int, deviceScaleFactor float64, mobile bool) *SetDeviceMetricsOverrideArgs {
 	args := new(SetDeviceMetricsOverrideArgs)
 	args.Width = width
 	args.Height = height
 	args.DeviceScaleFactor = deviceScaleFactor
 	args.Mobile = mobile
-	args.FitWindow = fitWindow
 	return args
+}
+
+// SetFitWindow sets the FitWindow optional argument. Whether a view that exceeds the available browser window area should be scaled down to fit.
+func (a *SetDeviceMetricsOverrideArgs) SetFitWindow(fitWindow bool) *SetDeviceMetricsOverrideArgs {
+	a.FitWindow = &fitWindow
+	return a
 }
 
 // SetScale sets the Scale optional argument. Scale to apply to resulting view image. Ignored in |fitWindow| mode.
@@ -80,22 +85,6 @@ func (a *SetDeviceMetricsOverrideArgs) SetPositionY(positionY int) *SetDeviceMet
 func (a *SetDeviceMetricsOverrideArgs) SetScreenOrientation(screenOrientation ScreenOrientation) *SetDeviceMetricsOverrideArgs {
 	a.ScreenOrientation = &screenOrientation
 	return a
-}
-
-// ForceViewportArgs represents the arguments for ForceViewport in the Emulation domain.
-type ForceViewportArgs struct {
-	X     float64 `json:"x"`     // X coordinate of top-left corner of the area (CSS pixels).
-	Y     float64 `json:"y"`     // Y coordinate of top-left corner of the area (CSS pixels).
-	Scale float64 `json:"scale"` // Scale to apply to the area (relative to a page scale of 1.0).
-}
-
-// NewForceViewportArgs initializes ForceViewportArgs with the required arguments.
-func NewForceViewportArgs(x float64, y float64, scale float64) *ForceViewportArgs {
-	args := new(ForceViewportArgs)
-	args.X = x
-	args.Y = y
-	args.Scale = scale
-	return args
 }
 
 // SetPageScaleFactorArgs represents the arguments for SetPageScaleFactor in the Emulation domain.

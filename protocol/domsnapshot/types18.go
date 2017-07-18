@@ -14,6 +14,10 @@ type DOMNode struct {
 	NodeType              int                   `json:"nodeType"`                        // Node's nodeType.
 	NodeName              string                `json:"nodeName"`                        // Node's nodeName.
 	NodeValue             string                `json:"nodeValue"`                       // Node's nodeValue.
+	TextValue             *string               `json:"textValue,omitempty"`             // Only set for textarea elements, contains the text value.
+	InputValue            *string               `json:"inputValue,omitempty"`            // Only set for input elements, contains the input's associated text value.
+	InputChecked          *bool                 `json:"inputChecked,omitempty"`          // Only set for radio and checkbox input elements, indicates if the element has been checked
+	OptionSelected        *bool                 `json:"optionSelected,omitempty"`        // Only set for option elements, indicates if the element has been selected
 	BackendNodeID         dom.BackendNodeID     `json:"backendNodeId"`                   // Node's id, corresponds to DOM.Node.backendNodeId.
 	ChildNodeIndexes      []int                 `json:"childNodeIndexes,omitempty"`      // The indexes of the node's child nodes in the domNodes array returned by getSnapshot, if any.
 	Attributes            []NameValue           `json:"attributes,omitempty"`            // Attributes of an Element node.

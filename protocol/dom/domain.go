@@ -352,7 +352,7 @@ func (d *domainClient) SetInspectedNode(ctx context.Context, args *SetInspectedN
 	return
 }
 
-// ResolveNode invokes the DOM method. Resolves JavaScript node object for given node id.
+// ResolveNode invokes the DOM method. Resolves the JavaScript node object for a given NodeId or BackendNodeId.
 func (d *domainClient) ResolveNode(ctx context.Context, args *ResolveNodeArgs) (reply *ResolveNodeReply, err error) {
 	reply = new(ResolveNodeReply)
 	if args != nil {

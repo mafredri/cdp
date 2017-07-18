@@ -113,8 +113,8 @@ func (a *DispatchKeyEventArgs) SetIsSystemKey(isSystemKey bool) *DispatchKeyEven
 // DispatchMouseEventArgs represents the arguments for DispatchMouseEvent in the Input domain.
 type DispatchMouseEventArgs struct {
 	Type       string         `json:"type"`                 // Type of the mouse event.
-	X          int            `json:"x"`                    // X coordinate of the event relative to the main frame's viewport.
-	Y          int            `json:"y"`                    // Y coordinate of the event relative to the main frame's viewport. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport.
+	X          float64        `json:"x"`                    // X coordinate of the event relative to the main frame's viewport in CSS pixels.
+	Y          float64        `json:"y"`                    // Y coordinate of the event relative to the main frame's viewport in CSS pixels. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport.
 	Modifiers  *int           `json:"modifiers,omitempty"`  // Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
 	Timestamp  TimeSinceEpoch `json:"timestamp,omitempty"`  // Time at which the event occurred.
 	Button     *string        `json:"button,omitempty"`     // Mouse button (default: "none").
@@ -122,7 +122,7 @@ type DispatchMouseEventArgs struct {
 }
 
 // NewDispatchMouseEventArgs initializes DispatchMouseEventArgs with the required arguments.
-func NewDispatchMouseEventArgs(typ string, x int, y int) *DispatchMouseEventArgs {
+func NewDispatchMouseEventArgs(typ string, x float64, y float64) *DispatchMouseEventArgs {
 	args := new(DispatchMouseEventArgs)
 	args.Type = typ
 	args.X = x
@@ -232,15 +232,15 @@ func (a *EmulateTouchFromMouseEventArgs) SetClickCount(clickCount int) *EmulateT
 
 // SynthesizePinchGestureArgs represents the arguments for SynthesizePinchGesture in the Input domain.
 type SynthesizePinchGestureArgs struct {
-	X                 int               `json:"x"`                           // X coordinate of the start of the gesture in CSS pixels.
-	Y                 int               `json:"y"`                           // Y coordinate of the start of the gesture in CSS pixels.
+	X                 float64           `json:"x"`                           // X coordinate of the start of the gesture in CSS pixels.
+	Y                 float64           `json:"y"`                           // Y coordinate of the start of the gesture in CSS pixels.
 	ScaleFactor       float64           `json:"scaleFactor"`                 // Relative scale factor after zooming (>1.0 zooms in, <1.0 zooms out).
 	RelativeSpeed     *int              `json:"relativeSpeed,omitempty"`     // Relative pointer speed in pixels per second (default: 800).
 	GestureSourceType GestureSourceType `json:"gestureSourceType,omitempty"` // Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
 }
 
 // NewSynthesizePinchGestureArgs initializes SynthesizePinchGestureArgs with the required arguments.
-func NewSynthesizePinchGestureArgs(x int, y int, scaleFactor float64) *SynthesizePinchGestureArgs {
+func NewSynthesizePinchGestureArgs(x float64, y float64, scaleFactor float64) *SynthesizePinchGestureArgs {
 	args := new(SynthesizePinchGestureArgs)
 	args.X = x
 	args.Y = y
@@ -262,12 +262,12 @@ func (a *SynthesizePinchGestureArgs) SetGestureSourceType(gestureSourceType Gest
 
 // SynthesizeScrollGestureArgs represents the arguments for SynthesizeScrollGesture in the Input domain.
 type SynthesizeScrollGestureArgs struct {
-	X                     int               `json:"x"`                               // X coordinate of the start of the gesture in CSS pixels.
-	Y                     int               `json:"y"`                               // Y coordinate of the start of the gesture in CSS pixels.
-	XDistance             *int              `json:"xDistance,omitempty"`             // The distance to scroll along the X axis (positive to scroll left).
-	YDistance             *int              `json:"yDistance,omitempty"`             // The distance to scroll along the Y axis (positive to scroll up).
-	XOverscroll           *int              `json:"xOverscroll,omitempty"`           // The number of additional pixels to scroll back along the X axis, in addition to the given distance.
-	YOverscroll           *int              `json:"yOverscroll,omitempty"`           // The number of additional pixels to scroll back along the Y axis, in addition to the given distance.
+	X                     float64           `json:"x"`                               // X coordinate of the start of the gesture in CSS pixels.
+	Y                     float64           `json:"y"`                               // Y coordinate of the start of the gesture in CSS pixels.
+	XDistance             *float64          `json:"xDistance,omitempty"`             // The distance to scroll along the X axis (positive to scroll left).
+	YDistance             *float64          `json:"yDistance,omitempty"`             // The distance to scroll along the Y axis (positive to scroll up).
+	XOverscroll           *float64          `json:"xOverscroll,omitempty"`           // The number of additional pixels to scroll back along the X axis, in addition to the given distance.
+	YOverscroll           *float64          `json:"yOverscroll,omitempty"`           // The number of additional pixels to scroll back along the Y axis, in addition to the given distance.
 	PreventFling          *bool             `json:"preventFling,omitempty"`          // Prevent fling (default: true).
 	Speed                 *int              `json:"speed,omitempty"`                 // Swipe speed in pixels per second (default: 800).
 	GestureSourceType     GestureSourceType `json:"gestureSourceType,omitempty"`     // Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
@@ -277,7 +277,7 @@ type SynthesizeScrollGestureArgs struct {
 }
 
 // NewSynthesizeScrollGestureArgs initializes SynthesizeScrollGestureArgs with the required arguments.
-func NewSynthesizeScrollGestureArgs(x int, y int) *SynthesizeScrollGestureArgs {
+func NewSynthesizeScrollGestureArgs(x float64, y float64) *SynthesizeScrollGestureArgs {
 	args := new(SynthesizeScrollGestureArgs)
 	args.X = x
 	args.Y = y
@@ -285,25 +285,25 @@ func NewSynthesizeScrollGestureArgs(x int, y int) *SynthesizeScrollGestureArgs {
 }
 
 // SetXDistance sets the XDistance optional argument. The distance to scroll along the X axis (positive to scroll left).
-func (a *SynthesizeScrollGestureArgs) SetXDistance(xDistance int) *SynthesizeScrollGestureArgs {
+func (a *SynthesizeScrollGestureArgs) SetXDistance(xDistance float64) *SynthesizeScrollGestureArgs {
 	a.XDistance = &xDistance
 	return a
 }
 
 // SetYDistance sets the YDistance optional argument. The distance to scroll along the Y axis (positive to scroll up).
-func (a *SynthesizeScrollGestureArgs) SetYDistance(yDistance int) *SynthesizeScrollGestureArgs {
+func (a *SynthesizeScrollGestureArgs) SetYDistance(yDistance float64) *SynthesizeScrollGestureArgs {
 	a.YDistance = &yDistance
 	return a
 }
 
 // SetXOverscroll sets the XOverscroll optional argument. The number of additional pixels to scroll back along the X axis, in addition to the given distance.
-func (a *SynthesizeScrollGestureArgs) SetXOverscroll(xOverscroll int) *SynthesizeScrollGestureArgs {
+func (a *SynthesizeScrollGestureArgs) SetXOverscroll(xOverscroll float64) *SynthesizeScrollGestureArgs {
 	a.XOverscroll = &xOverscroll
 	return a
 }
 
 // SetYOverscroll sets the YOverscroll optional argument. The number of additional pixels to scroll back along the Y axis, in addition to the given distance.
-func (a *SynthesizeScrollGestureArgs) SetYOverscroll(yOverscroll int) *SynthesizeScrollGestureArgs {
+func (a *SynthesizeScrollGestureArgs) SetYOverscroll(yOverscroll float64) *SynthesizeScrollGestureArgs {
 	a.YOverscroll = &yOverscroll
 	return a
 }
@@ -346,15 +346,15 @@ func (a *SynthesizeScrollGestureArgs) SetInteractionMarkerName(interactionMarker
 
 // SynthesizeTapGestureArgs represents the arguments for SynthesizeTapGesture in the Input domain.
 type SynthesizeTapGestureArgs struct {
-	X                 int               `json:"x"`                           // X coordinate of the start of the gesture in CSS pixels.
-	Y                 int               `json:"y"`                           // Y coordinate of the start of the gesture in CSS pixels.
+	X                 float64           `json:"x"`                           // X coordinate of the start of the gesture in CSS pixels.
+	Y                 float64           `json:"y"`                           // Y coordinate of the start of the gesture in CSS pixels.
 	Duration          *int              `json:"duration,omitempty"`          // Duration between touchdown and touchup events in ms (default: 50).
 	TapCount          *int              `json:"tapCount,omitempty"`          // Number of times to perform the tap (e.g. 2 for double tap, default: 1).
 	GestureSourceType GestureSourceType `json:"gestureSourceType,omitempty"` // Which type of input events to be generated (default: 'default', which queries the platform for the preferred input type).
 }
 
 // NewSynthesizeTapGestureArgs initializes SynthesizeTapGestureArgs with the required arguments.
-func NewSynthesizeTapGestureArgs(x int, y int) *SynthesizeTapGestureArgs {
+func NewSynthesizeTapGestureArgs(x float64, y float64) *SynthesizeTapGestureArgs {
 	args := new(SynthesizeTapGestureArgs)
 	args.X = x
 	args.Y = y

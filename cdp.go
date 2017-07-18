@@ -490,7 +490,7 @@ type DOM interface {
 
 	// Command ResolveNode
 	//
-	// Resolves JavaScript node object for given node id.
+	// Resolves the JavaScript node object for a given NodeId or BackendNodeId.
 	ResolveNode(context.Context, *dom.ResolveNodeArgs) (*dom.ResolveNodeReply, error)
 
 	// Command GetAttributes
@@ -934,16 +934,6 @@ type Emulation interface {
 	// Clears the overridden device metrics.
 	ClearDeviceMetricsOverride(context.Context) error
 
-	// Command ForceViewport
-	//
-	// Overrides the visible area of the page. The change is hidden from the page, i.e. the observable scroll position and page scale does not change. In effect, the command moves the specified area of the page into the top-left corner of the frame.
-	ForceViewport(context.Context, *emulation.ForceViewportArgs) error
-
-	// Command ResetViewport
-	//
-	// Resets the visible area of the page to the original viewport, undoing any effects of the forceViewport command.
-	ResetViewport(context.Context) error
-
 	// Command ResetPageScaleFactor
 	//
 	// Requests that page scale factor is reset to initial values.
@@ -956,7 +946,7 @@ type Emulation interface {
 
 	// Command SetVisibleSize
 	//
-	// Resizes the frame/viewport of the page. Note that this does not affect the frame's container (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported on Android.
+	// Deprecated, does nothing. Please use setDeviceMetricsOverride instead.
 	SetVisibleSize(context.Context, *emulation.SetVisibleSizeArgs) error
 
 	// Command SetScriptExecutionDisabled

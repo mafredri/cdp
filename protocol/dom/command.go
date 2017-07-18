@@ -397,15 +397,28 @@ func NewSetInspectedNodeArgs(nodeID NodeID) *SetInspectedNodeArgs {
 
 // ResolveNodeArgs represents the arguments for ResolveNode in the DOM domain.
 type ResolveNodeArgs struct {
-	NodeID      NodeID  `json:"nodeId"`                // Id of the node to resolve.
-	ObjectGroup *string `json:"objectGroup,omitempty"` // Symbolic group name that can be used to release multiple objects.
+	NodeID        *NodeID        `json:"nodeId,omitempty"`        // Id of the node to resolve.
+	BackendNodeID *BackendNodeID `json:"backendNodeId,omitempty"` // Backend identifier of the node to resolve.
+	ObjectGroup   *string        `json:"objectGroup,omitempty"`   // Symbolic group name that can be used to release multiple objects.
 }
 
 // NewResolveNodeArgs initializes ResolveNodeArgs with the required arguments.
-func NewResolveNodeArgs(nodeID NodeID) *ResolveNodeArgs {
+func NewResolveNodeArgs() *ResolveNodeArgs {
 	args := new(ResolveNodeArgs)
-	args.NodeID = nodeID
+
 	return args
+}
+
+// SetNodeID sets the NodeID optional argument. Id of the node to resolve.
+func (a *ResolveNodeArgs) SetNodeID(nodeID NodeID) *ResolveNodeArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument. Backend identifier of the node to resolve.
+func (a *ResolveNodeArgs) SetBackendNodeID(backendNodeID BackendNodeID) *ResolveNodeArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
 }
 
 // SetObjectGroup sets the ObjectGroup optional argument. Symbolic group name that can be used to release multiple objects.
@@ -490,40 +503,99 @@ type MoveToReply struct {
 
 // FocusArgs represents the arguments for Focus in the DOM domain.
 type FocusArgs struct {
-	NodeID NodeID `json:"nodeId"` // Id of the node to focus.
+	NodeID        *NodeID                 `json:"nodeId,omitempty"`        // Identifier of the node.
+	BackendNodeID *BackendNodeID          `json:"backendNodeId,omitempty"` // Identifier of the backend node.
+	ObjectID      *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node wrapper.
 }
 
 // NewFocusArgs initializes FocusArgs with the required arguments.
-func NewFocusArgs(nodeID NodeID) *FocusArgs {
+func NewFocusArgs() *FocusArgs {
 	args := new(FocusArgs)
-	args.NodeID = nodeID
+
 	return args
+}
+
+// SetNodeID sets the NodeID optional argument. Identifier of the node.
+func (a *FocusArgs) SetNodeID(nodeID NodeID) *FocusArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node.
+func (a *FocusArgs) SetBackendNodeID(backendNodeID BackendNodeID) *FocusArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
+}
+
+// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node wrapper.
+func (a *FocusArgs) SetObjectID(objectID runtime.RemoteObjectID) *FocusArgs {
+	a.ObjectID = &objectID
+	return a
 }
 
 // SetFileInputFilesArgs represents the arguments for SetFileInputFiles in the DOM domain.
 type SetFileInputFilesArgs struct {
-	NodeID NodeID   `json:"nodeId"` // Id of the file input node to set files for.
-	Files  []string `json:"files"`  // Array of file paths to set.
+	Files         []string                `json:"files"`                   // Array of file paths to set.
+	NodeID        *NodeID                 `json:"nodeId,omitempty"`        // Identifier of the node.
+	BackendNodeID *BackendNodeID          `json:"backendNodeId,omitempty"` // Identifier of the backend node.
+	ObjectID      *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node wrapper.
 }
 
 // NewSetFileInputFilesArgs initializes SetFileInputFilesArgs with the required arguments.
-func NewSetFileInputFilesArgs(nodeID NodeID, files []string) *SetFileInputFilesArgs {
+func NewSetFileInputFilesArgs(files []string) *SetFileInputFilesArgs {
 	args := new(SetFileInputFilesArgs)
-	args.NodeID = nodeID
 	args.Files = files
 	return args
 }
 
+// SetNodeID sets the NodeID optional argument. Identifier of the node.
+func (a *SetFileInputFilesArgs) SetNodeID(nodeID NodeID) *SetFileInputFilesArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node.
+func (a *SetFileInputFilesArgs) SetBackendNodeID(backendNodeID BackendNodeID) *SetFileInputFilesArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
+}
+
+// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node wrapper.
+func (a *SetFileInputFilesArgs) SetObjectID(objectID runtime.RemoteObjectID) *SetFileInputFilesArgs {
+	a.ObjectID = &objectID
+	return a
+}
+
 // GetBoxModelArgs represents the arguments for GetBoxModel in the DOM domain.
 type GetBoxModelArgs struct {
-	NodeID NodeID `json:"nodeId"` // Id of the node to get box model for.
+	NodeID        *NodeID                 `json:"nodeId,omitempty"`        // Identifier of the node.
+	BackendNodeID *BackendNodeID          `json:"backendNodeId,omitempty"` // Identifier of the backend node.
+	ObjectID      *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node wrapper.
 }
 
 // NewGetBoxModelArgs initializes GetBoxModelArgs with the required arguments.
-func NewGetBoxModelArgs(nodeID NodeID) *GetBoxModelArgs {
+func NewGetBoxModelArgs() *GetBoxModelArgs {
 	args := new(GetBoxModelArgs)
-	args.NodeID = nodeID
+
 	return args
+}
+
+// SetNodeID sets the NodeID optional argument. Identifier of the node.
+func (a *GetBoxModelArgs) SetNodeID(nodeID NodeID) *GetBoxModelArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node.
+func (a *GetBoxModelArgs) SetBackendNodeID(backendNodeID BackendNodeID) *GetBoxModelArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
+}
+
+// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node wrapper.
+func (a *GetBoxModelArgs) SetObjectID(objectID runtime.RemoteObjectID) *GetBoxModelArgs {
+	a.ObjectID = &objectID
+	return a
 }
 
 // GetBoxModelReply represents the return values for GetBoxModel in the DOM domain.
