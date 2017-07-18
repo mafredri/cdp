@@ -1,4 +1,4 @@
-// +build go1.9
+// +build !go1.9
 
 package cdp_test
 
@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/mafredri/cdp"
+	"github.com/mafredri/cdp/protocol"
 	"github.com/mafredri/cdp/protocol/dom"
 	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/page"
@@ -217,7 +218,7 @@ func setCookies(ctx context.Context, net cdp.Network, cookies ...Cookie) error {
 
 // navigate to the URL and wait for DOMContentEventFired. An error is
 // returned if timeout happens before DOMContentEventFired.
-func navigate(ctx context.Context, pageClient cdp.Page, url string, timeout time.Duration) (frame page.FrameID, err error) {
+func navigate(ctx context.Context, pageClient cdp.Page, url string, timeout time.Duration) (frame protocol.PageFrameID, err error) {
 	var cancel context.CancelFunc
 	ctx, cancel = context.WithTimeout(ctx, timeout)
 	defer cancel()

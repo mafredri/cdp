@@ -7,8 +7,9 @@ import (
 	"time"
 
 	"github.com/mafredri/cdp"
-	"github.com/mafredri/cdp/cdpcmd"
 	"github.com/mafredri/cdp/devtool"
+	"github.com/mafredri/cdp/protocol/dom"
+	"github.com/mafredri/cdp/protocol/page"
 	"github.com/mafredri/cdp/rpcc"
 )
 
@@ -18,16 +19,16 @@ func Example() {
 
 	// Use the DevTools json API to get the current page.
 	devt := devtool.New("http://127.0.0.1:9222")
-	page, err := devt.Get(ctx, devtool.Page)
+	pageTarget, err := devt.Get(ctx, devtool.Page)
 	if err != nil {
-		page, err = devt.Create(ctx)
+		pageTarget, err = devt.Create(ctx)
 		if err != nil {
 			panic(err)
 		}
 	}
 
 	// Connect to Chrome Debugging Protocol target.
-	conn, err := rpcc.DialContext(ctx, page.WebSocketDebuggerURL)
+	conn, err := rpcc.DialContext(ctx, pageTarget.WebSocketDebuggerURL)
 	if err != nil {
 		panic(err)
 	}
@@ -50,7 +51,7 @@ func Example() {
 	defer domContentEventFired.Close()
 
 	// Create the Navigate arguments with the optional Referrer field set.
-	navArgs := cdpcmd.NewPageNavigateArgs("https://www.google.com").SetReferrer("https://duckduckgo.com")
+	navArgs := page.NewNavigateArgs("https://www.google.com").SetReferrer("https://duckduckgo.com")
 	nav, err := c.Page.Navigate(ctx, navArgs)
 	if err != nil {
 		panic(err)
@@ -71,7 +72,7 @@ func Example() {
 	}
 
 	// Get the outer HTML for the page.
-	result, err := c.DOM.GetOuterHTML(ctx, cdpcmd.NewDOMGetOuterHTMLArgs(doc.Root.NodeID))
+	result, err := c.DOM.GetOuterHTML(ctx, dom.NewGetOuterHTMLArgs(doc.Root.NodeID))
 	if err != nil {
 		panic(err)
 	}
@@ -80,7 +81,10 @@ func Example() {
 
 	// Capture a screenshot of the current page.
 	screenshotName := "screenshot.jpg"
-	screenshot, err := c.Page.CaptureScreenshot(ctx, cdpcmd.NewPageCaptureScreenshotArgs().SetFormat("jpeg").SetQuality(80))
+	screenshotArgs := page.NewCaptureScreenshotArgs().
+		SetFormat("jpeg").
+		SetQuality(80)
+	screenshot, err := c.Page.CaptureScreenshot(ctx, screenshotArgs)
 	if err != nil {
 		panic(err)
 	}
