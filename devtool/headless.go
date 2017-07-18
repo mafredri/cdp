@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/mafredri/cdp"
-	"github.com/mafredri/cdp/cdpcmd"
+	"github.com/mafredri/cdp/protocol/target"
 	"github.com/mafredri/cdp/rpcc"
 )
 
@@ -31,7 +31,7 @@ func headlessCreateURL(ctx context.Context, d *DevTools, openURL string) (*Targe
 	defer conn.Close()
 
 	c := cdp.NewClient(conn)
-	t, err := c.Target.CreateTarget(ctx, cdpcmd.NewTargetCreateTargetArgs(openURL))
+	t, err := c.Target.CreateTarget(ctx, target.NewCreateTargetArgs(openURL))
 	if err != nil {
 		return nil, err
 	}
