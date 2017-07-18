@@ -282,6 +282,12 @@ func (at AnyType) GoType(pkg string, d Domain) string {
 			if strings.Index(s[1], s[0]) == 0 || s[1] == s[0] {
 				s[1] = strings.Replace(s[1], s[0], "", 1)
 			}
+
+			// Fix types that reference their own domain.
+			if s[0] == d.Name() {
+				prefix = ""
+				at.Ref = s[1]
+			}
 			return prefix + strings.Title(lint.Name(s[1]))
 		}
 		return prefix + nameInDomain(d, at.Ref, "")
