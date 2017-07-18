@@ -260,13 +260,10 @@ func (at AnyType) Recvr(d Domain) string {
 	return strings.ToLower(at.Name(d)[0:1])
 }
 
-func nameInDomain(d Domain, name, sep string) string {
+func nameInDomain(d Domain, name, _ string) string {
 	name = lint.Name(strings.Title(name))
 	if name != d.Name() && strings.Index(name, d.Name()) == 0 {
 		name = strings.Replace(name, d.Name(), "", 1)
-		if name == "" {
-			sep = ""
-		}
 	}
 	return name
 }
@@ -280,6 +277,7 @@ func (at AnyType) GoType(pkg string, d Domain) string {
 			prefix = strings.ToLower(s[0]) + "."
 			s[0] = lint.Name(strings.Title(s[0]))
 			s[1] = lint.Name(strings.Title(s[1]))
+
 			// Remove stutter, e.g. SecuritySecurityState.
 			if strings.Index(s[1], s[0]) == 0 || s[1] == s[0] {
 				s[1] = strings.Replace(s[1], s[0], "", 1)
