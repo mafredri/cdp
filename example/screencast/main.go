@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/mafredri/cdp"
-	"github.com/mafredri/cdp/cdpcmd"
 	"github.com/mafredri/cdp/devtool"
+	"github.com/mafredri/cdp/protocol/page"
 	"github.com/mafredri/cdp/rpcc"
 )
 
@@ -25,12 +25,12 @@ func run() error {
 
 	devt := devtool.New("http://localhost:9222")
 
-	page, err := devt.Get(ctx, devtool.Page)
+	pageTarget, err := devt.Get(ctx, devtool.Page)
 	if err != nil {
 		return err
 	}
 
-	conn, err := rpcc.DialContext(ctx, page.WebSocketDebuggerURL)
+	conn, err := rpcc.DialContext(ctx, pageTarget.WebSocketDebuggerURL)
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func run() error {
 		return err
 	}
 
-	_, err = c.Page.Navigate(ctx, cdpcmd.NewPageNavigateArgs("https://github.com"))
+	_, err = c.Page.Navigate(ctx, page.NewNavigateArgs("https://github.com"))
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func run() error {
 			}
 			log.Printf("Got frame with sessionID: %d: %+v", ev.SessionID, ev.Metadata)
 
-			err = c.Page.ScreencastFrameAck(ctx, cdpcmd.NewPageScreencastFrameAckArgs(ev.SessionID))
+			err = c.Page.ScreencastFrameAck(ctx, page.NewScreencastFrameAckArgs(ev.SessionID))
 			if err != nil {
 				log.Printf("Failed to ack ScreencastFrame: %v", err)
 				return
@@ -96,7 +96,7 @@ func run() error {
 		}
 	}()
 
-	screencastArgs := cdpcmd.NewPageStartScreencastArgs().
+	screencastArgs := page.NewStartScreencastArgs().
 		SetEveryNthFrame(1).
 		SetFormat("png")
 	err = c.Page.StartScreencast(ctx, screencastArgs)

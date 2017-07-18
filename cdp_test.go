@@ -14,8 +14,9 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/mafredri/cdp"
-	"github.com/mafredri/cdp/cdpcmd"
 	"github.com/mafredri/cdp/devtool"
+	"github.com/mafredri/cdp/protocol/page"
+	"github.com/mafredri/cdp/protocol/runtime"
 	"github.com/mafredri/cdp/rpcc"
 )
 
@@ -56,12 +57,12 @@ func TestBrowser_RemoteDebuggingProtocol(t *testing.T) {
 	defer cancel()
 
 	devt := devtool.New(fmt.Sprintf("http://localhost:%d", *remoteDebuggingPort))
-	page, err := devt.Get(ctx, devtool.Page)
+	pt, err := devt.Get(ctx, devtool.Page)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	conn, err := rpcc.DialContext(ctx, page.WebSocketDebuggerURL)
+	conn, err := rpcc.DialContext(ctx, pt.WebSocketDebuggerURL)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -83,7 +84,7 @@ func TestBrowser_RemoteDebuggingProtocol(t *testing.T) {
 	defer domContentEventFired.Close()
 
 	// TODO(mafredri): Create a testdata HTML instead of relying on google.com.
-	_, err = c.Page.Navigate(ctx, cdpcmd.NewPageNavigateArgs("https://www.google.com"))
+	_, err = c.Page.Navigate(ctx, page.NewNavigateArgs("https://www.google.com"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -93,7 +94,7 @@ func TestBrowser_RemoteDebuggingProtocol(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	eval, err := c.Runtime.Evaluate(ctx, cdpcmd.NewRuntimeEvaluateArgs("document.title"))
+	eval, err := c.Runtime.Evaluate(ctx, runtime.NewEvaluateArgs("document.title"))
 	if err != nil {
 		t.Fatal(err)
 	}

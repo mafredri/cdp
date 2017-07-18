@@ -16,11 +16,11 @@ The cdp Client requires an rpcc connection (*rpcc.Conn):
 The devtool package can be used for finding the websocket URL:
 
 	devt := devtool.New("http://127.0.0.1:9222")
-	page, err := devtool.Get(context.Background(), devtool.Page)
+	pageTarget, err := devtool.Get(context.Background(), devtool.Page)
 	if err != nil {
 		// Handle error.
 	}
-	conn, err := rpcc.Dial(page.WebSocketDebuggerURL)
+	conn, err := rpcc.Dial(pageTarget.WebSocketDebuggerURL)
 	// ...
 
 Domain methods
@@ -31,7 +31,7 @@ Methods can be invoked from the Client:
 	defer cancel()
 
 	c := cdp.NewClient(conn)
-	nav, err := c.Page.Navigate(ctx, cdpcmd.NewPageNavigateArgs("https://www.google.com"))
+	nav, err := c.Page.Navigate(ctx, page.NewNavigateArgs("https://www.google.com"))
 	if err != nil {
 		// Handle error.
 	}
