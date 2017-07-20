@@ -9,36 +9,49 @@ import (
 	"time"
 
 	"github.com/mafredri/cdp"
-	"github.com/mafredri/cdp/cdpcmd"
-	"github.com/mafredri/cdp/cdptype"
+	"github.com/mafredri/cdp/devtool"
+	"github.com/mafredri/cdp/protocol/page"
 	"github.com/mafredri/cdp/rpcc"
 )
 
 func main() {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	chromium := "ws://localhost:9222/devtools/page/45a887ba-c92a-4cff-9194-d9398cc87e2c"
-	conn, err := rpcc.Dial(chromium)
-	if err != nil {
-		panic(err)
+	if err := run(context.TODO(), dir); err != nil {
+		log.Fatal(err)
 	}
+}
+
+func run(ctx context.Context, dir string) error {
+	var cancel context.CancelFunc
+	ctx, cancel = context.WithTimeout(ctx, 10*time.Second)
+	defer cancel()
+
+	devt := devtool.New("http://localhost:9222")
+	pt, err := devt.Get(ctx, devtool.Page)
+	if err != nil {
+		return err
+	}
+
+	conn, err := rpcc.Dial(pt.WebSocketDebuggerURL)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
 	c := cdp.NewClient(conn)
 
 	input, err := os.Create(filepath.Join(dir, "log.input"))
 	if err != nil {
-		panic(err)
+		return err
 	}
-	defer input.Close()
 
 	consoleAPICalled, err := c.Runtime.ConsoleAPICalled(ctx)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	go func() {
 		defer consoleAPICalled.Close()
@@ -56,7 +69,8 @@ func main() {
 				ev.Args[i] = arg
 			}
 			if err = json.NewEncoder(input).Encode(ev); err != nil {
-				panic(err)
+				log.Println(err)
+				return
 			}
 		}
 	}()
@@ -65,49 +79,53 @@ func main() {
 
 	// First page load is to trigger console log behavior without object
 	// previews.
-	_, err = navigate(c.Page, "file:///"+dir+"/log.html", domLoadTimeout)
-	if err != nil {
-		panic(err)
+	if err := navigate(c.Page, "file:///"+dir+"/log.html", domLoadTimeout); err != nil {
+		return err
 	}
 
 	// Enable console log events.
-	if err = c.Runtime.Enable(ctx); err != nil {
-		panic(err)
+	if err := c.Runtime.Enable(ctx); err != nil {
+		return err
 	}
 
 	// Re-load the page to receive console logs with previews.
-	_, err = navigate(c.Page, "file:///"+dir+"/log.html", domLoadTimeout)
-	if err != nil {
-		panic(err)
+	if err := navigate(c.Page, "file:///"+dir+"/log.html", domLoadTimeout); err != nil {
+		return err
 	}
 
 	time.Sleep(250 * time.Millisecond)
+
+	if err := input.Close(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // navigate to the URL and wait for DOMContentEventFired. An error is
 // returned if timeout happens before DOMContentEventFired.
-func navigate(page cdp.Page, url string, timeout time.Duration) (frame cdptype.PageFrameID, err error) {
+func navigate(pc cdp.Page, url string, timeout time.Duration) error {
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
 
 	// Enable the Page domain events.
-	if err = page.Enable(ctx); err != nil {
-		return frame, err
+	if err := pc.Enable(ctx); err != nil {
+		return err
 	}
 
 	// Open client for DOMContentEventFired to pause execution until
 	// DOM has fully loaded.
-	domContentEventFired, err := page.DOMContentEventFired(ctx)
+	domContentEventFired, err := pc.DOMContentEventFired(ctx)
 	if err != nil {
-		return frame, err
+		return err
 	}
 	defer domContentEventFired.Close()
 
-	nav, err := page.Navigate(ctx, cdpcmd.NewPageNavigateArgs(url))
+	_, err = pc.Navigate(ctx, page.NewNavigateArgs(url))
 	if err != nil {
-		return frame, err
+		return err
 	}
 
 	_, err = domContentEventFired.Recv()
-	return nav.FrameID, err
+	return err
 }
