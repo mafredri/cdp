@@ -36,8 +36,12 @@ func WithCodec(f func(conn io.ReadWriter) Codec) DialOption {
 }
 
 // WithDialer returns a DialOption that sets the dialer for the underlying
-// net.Conn. This option overrides the default WebSocket dialer.
-func WithDialer(f func(ctx context.Context, addr string) (net.Conn, error)) DialOption {
+// connection. It can be used to replace the WebSocket library used by this
+// package or to communicate over a different protocol.
+//
+// This option overrides the default WebSocket dialer and both
+// WithWriteBufferSize and WithCompression become no-op.
+func WithDialer(f func(ctx context.Context, addr string) (io.ReadWriteCloser, error)) DialOption {
 	return func(o *dialOptions) {
 		o.dialer = f
 	}
@@ -67,7 +71,7 @@ func WithCompression() DialOption {
 
 type dialOptions struct {
 	codec    func(io.ReadWriter) Codec
-	dialer   func(context.Context, string) (net.Conn, error)
+	dialer   func(context.Context, string) (io.ReadWriteCloser, error)
 	wsDialer websocket.Dialer
 }
 
@@ -108,7 +112,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 
 	netDial := c.dialOpts.dialer
 	if netDial == nil {
-		netDial = func(ctx context.Context, addr string) (net.Conn, error) {
+		netDial = func(ctx context.Context, addr string) (io.ReadWriteCloser, error) {
 			ws := &c.dialOpts.wsDialer
 
 			if ws.WriteBufferSize == 0 {
@@ -140,7 +144,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 				c.compressionLevel = wsConn.SetCompressionLevel
 			}
 
-			return &wsNetConn{conn: wsConn}, nil
+			return &wsReadWriteCloser{wsConn: wsConn}, nil
 		}
 	}
 
@@ -223,7 +227,7 @@ type Conn struct {
 	cancel context.CancelFunc
 
 	dialOpts dialOptions
-	conn     net.Conn
+	conn     io.ReadWriteCloser
 
 	compressionLevel func(level int) error
 
