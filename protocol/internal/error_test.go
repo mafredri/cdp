@@ -18,4 +18,8 @@ func TestOpError_ErrorContainsErrorCauser(t *testing.T) {
 	if !strings.Contains(got, causer.Error()) {
 		t.Errorf("Error() should contain error causer, got: %s", got)
 	}
+
+	if err.Cause() != causer {
+		t.Errorf("Cause() got: %v, want: %v", err.Cause(), causer)
+	}
 }

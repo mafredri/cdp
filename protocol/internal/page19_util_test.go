@@ -11,8 +11,7 @@ func TestFrameID_UnmarshalJSON(t *testing.T) {
 	var id PageFrameID
 
 	// Unmarshals string.
-	err := json.Unmarshal([]byte(`"1000.1"`), &id)
-	if err != nil {
+	if err := json.Unmarshal([]byte(`"1000.1"`), &id); err != nil {
 		t.Error(err)
 	}
 	if id != "1000.1" {
@@ -20,11 +19,15 @@ func TestFrameID_UnmarshalJSON(t *testing.T) {
 	}
 
 	// Also unmarshals float.
-	err = json.Unmarshal([]byte(`2000.1`), &id)
-	if err != nil {
+	if err := json.Unmarshal([]byte(`2000.1`), &id); err != nil {
 		t.Error(err)
 	}
 	if id != "2000.1" {
 		t.Errorf("Unmarshal float got %q; want %q", id, "2000.1")
+	}
+
+	// Returns an error for bad input.
+	if err := json.Unmarshal([]byte(`[]`), &id); err == nil {
+		t.Errorf("Unmarshal string, want error, got nil")
 	}
 }
