@@ -13,7 +13,7 @@ type wsConn interface {
 }
 
 // wsReadWriteCloser wraps a gorilla/websocket connection
-// and implements the net.Conn interface.
+// and implements io.Reader and io.Writer.
 type wsReadWriteCloser struct {
 	wsConn
 	r io.Reader
