@@ -45,13 +45,14 @@ type FrameID = internal.PageFrameID
 
 // Frame Information about the Frame on the page.
 type Frame struct {
-	ID             FrameID          `json:"id"`                 // Frame unique identifier.
-	ParentID       *FrameID         `json:"parentId,omitempty"` // Parent frame identifier.
-	LoaderID       network.LoaderID `json:"loaderId"`           // Identifier of the loader associated with this frame.
-	Name           *string          `json:"name,omitempty"`     // Frame's name as specified in the tag.
-	URL            string           `json:"url"`                // Frame document's URL.
-	SecurityOrigin string           `json:"securityOrigin"`     // Frame document's security origin.
-	MimeType       string           `json:"mimeType"`           // Frame document's mimeType as determined by the browser.
+	ID             FrameID          `json:"id"`                       // Frame unique identifier.
+	ParentID       *FrameID         `json:"parentId,omitempty"`       // Parent frame identifier.
+	LoaderID       network.LoaderID `json:"loaderId"`                 // Identifier of the loader associated with this frame.
+	Name           *string          `json:"name,omitempty"`           // Frame's name as specified in the tag.
+	URL            string           `json:"url"`                      // Frame document's URL.
+	SecurityOrigin string           `json:"securityOrigin"`           // Frame document's security origin.
+	MimeType       string           `json:"mimeType"`                 // Frame document's mimeType as determined by the browser.
+	UnreachableURL *string          `json:"unreachableUrl,omitempty"` // If the frame failed to load, this contains the URL that could not be loaded.
 }
 
 // FrameResource Information about the Resource on the page.

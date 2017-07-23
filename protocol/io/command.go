@@ -2,6 +2,10 @@
 
 package io
 
+import (
+	"github.com/mafredri/cdp/protocol/runtime"
+)
+
 // ReadArgs represents the arguments for Read in the IO domain.
 type ReadArgs struct {
 	Handle StreamHandle `json:"handle"`           // Handle of the stream to read.
@@ -30,8 +34,9 @@ func (a *ReadArgs) SetSize(size int) *ReadArgs {
 
 // ReadReply represents the return values for Read in the IO domain.
 type ReadReply struct {
-	Data string `json:"data"` // Data that were read.
-	EOF  bool   `json:"eof"`  // Set if the end-of-file condition occurred while reading.
+	Base64Encoded *bool  `json:"base64Encoded,omitempty"` // Set if the data is base64-encoded
+	Data          string `json:"data"`                    // Data that were read.
+	EOF           bool   `json:"eof"`                     // Set if the end-of-file condition occurred while reading.
 }
 
 // CloseArgs represents the arguments for Close in the IO domain.
@@ -44,4 +49,21 @@ func NewCloseArgs(handle StreamHandle) *CloseArgs {
 	args := new(CloseArgs)
 	args.Handle = handle
 	return args
+}
+
+// ResolveBlobArgs represents the arguments for ResolveBlob in the IO domain.
+type ResolveBlobArgs struct {
+	ObjectID runtime.RemoteObjectID `json:"objectId"` // Object id of a Blob object wrapper.
+}
+
+// NewResolveBlobArgs initializes ResolveBlobArgs with the required arguments.
+func NewResolveBlobArgs(objectID runtime.RemoteObjectID) *ResolveBlobArgs {
+	args := new(ResolveBlobArgs)
+	args.ObjectID = objectID
+	return args
+}
+
+// ResolveBlobReply represents the return values for ResolveBlob in the IO domain.
+type ResolveBlobReply struct {
+	UUID string `json:"uuid"` // UUID of the specified Blob.
 }

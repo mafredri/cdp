@@ -186,19 +186,17 @@ type SearchInResourceReply struct {
 
 // SetDeviceMetricsOverrideArgs represents the arguments for SetDeviceMetricsOverride in the Page domain.
 type SetDeviceMetricsOverrideArgs struct {
-	Width             int                          `json:"width"`                       // Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
-	Height            int                          `json:"height"`                      // Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
-	DeviceScaleFactor float64                      `json:"deviceScaleFactor"`           // Overriding device scale factor value. 0 disables the override.
-	Mobile            bool                         `json:"mobile"`                      // Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more.
-	FitWindow         *bool                        `json:"fitWindow,omitempty"`         // Whether a view that exceeds the available browser window area should be scaled down to fit.
-	Scale             *float64                     `json:"scale,omitempty"`             // Scale to apply to resulting view image. Ignored in |fitWindow| mode.
-	OffsetX           *float64                     `json:"offsetX,omitempty"`           // X offset to shift resulting view image by. Ignored in |fitWindow| mode.
-	OffsetY           *float64                     `json:"offsetY,omitempty"`           // Y offset to shift resulting view image by. Ignored in |fitWindow| mode.
-	ScreenWidth       *int                         `json:"screenWidth,omitempty"`       // Overriding screen width value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-	ScreenHeight      *int                         `json:"screenHeight,omitempty"`      // Overriding screen height value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-	PositionX         *int                         `json:"positionX,omitempty"`         // Overriding view X position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-	PositionY         *int                         `json:"positionY,omitempty"`         // Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-	ScreenOrientation *emulation.ScreenOrientation `json:"screenOrientation,omitempty"` // Screen orientation override.
+	Width              int                          `json:"width"`                        // Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
+	Height             int                          `json:"height"`                       // Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
+	DeviceScaleFactor  float64                      `json:"deviceScaleFactor"`            // Overriding device scale factor value. 0 disables the override.
+	Mobile             bool                         `json:"mobile"`                       // Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more.
+	Scale              *float64                     `json:"scale,omitempty"`              // Scale to apply to resulting view image. Ignored in |fitWindow| mode.
+	ScreenWidth        *int                         `json:"screenWidth,omitempty"`        // Overriding screen width value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+	ScreenHeight       *int                         `json:"screenHeight,omitempty"`       // Overriding screen height value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+	PositionX          *int                         `json:"positionX,omitempty"`          // Overriding view X position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+	PositionY          *int                         `json:"positionY,omitempty"`          // Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+	DontSetVisibleSize *bool                        `json:"dontSetVisibleSize,omitempty"` // Do not set visible view size, rely upon explicit setVisibleSize call.
+	ScreenOrientation  *emulation.ScreenOrientation `json:"screenOrientation,omitempty"`  // Screen orientation override.
 }
 
 // NewSetDeviceMetricsOverrideArgs initializes SetDeviceMetricsOverrideArgs with the required arguments.
@@ -211,27 +209,9 @@ func NewSetDeviceMetricsOverrideArgs(width int, height int, deviceScaleFactor fl
 	return args
 }
 
-// SetFitWindow sets the FitWindow optional argument. Whether a view that exceeds the available browser window area should be scaled down to fit.
-func (a *SetDeviceMetricsOverrideArgs) SetFitWindow(fitWindow bool) *SetDeviceMetricsOverrideArgs {
-	a.FitWindow = &fitWindow
-	return a
-}
-
 // SetScale sets the Scale optional argument. Scale to apply to resulting view image. Ignored in |fitWindow| mode.
 func (a *SetDeviceMetricsOverrideArgs) SetScale(scale float64) *SetDeviceMetricsOverrideArgs {
 	a.Scale = &scale
-	return a
-}
-
-// SetOffsetX sets the OffsetX optional argument. X offset to shift resulting view image by. Ignored in |fitWindow| mode.
-func (a *SetDeviceMetricsOverrideArgs) SetOffsetX(offsetX float64) *SetDeviceMetricsOverrideArgs {
-	a.OffsetX = &offsetX
-	return a
-}
-
-// SetOffsetY sets the OffsetY optional argument. Y offset to shift resulting view image by. Ignored in |fitWindow| mode.
-func (a *SetDeviceMetricsOverrideArgs) SetOffsetY(offsetY float64) *SetDeviceMetricsOverrideArgs {
-	a.OffsetY = &offsetY
 	return a
 }
 
@@ -256,6 +236,12 @@ func (a *SetDeviceMetricsOverrideArgs) SetPositionX(positionX int) *SetDeviceMet
 // SetPositionY sets the PositionY optional argument. Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
 func (a *SetDeviceMetricsOverrideArgs) SetPositionY(positionY int) *SetDeviceMetricsOverrideArgs {
 	a.PositionY = &positionY
+	return a
+}
+
+// SetDontSetVisibleSize sets the DontSetVisibleSize optional argument. Do not set visible view size, rely upon explicit setVisibleSize call.
+func (a *SetDeviceMetricsOverrideArgs) SetDontSetVisibleSize(dontSetVisibleSize bool) *SetDeviceMetricsOverrideArgs {
+	a.DontSetVisibleSize = &dontSetVisibleSize
 	return a
 }
 
@@ -378,17 +364,18 @@ type CaptureScreenshotReply struct {
 
 // PrintToPDFArgs represents the arguments for PrintToPDF in the Page domain.
 type PrintToPDFArgs struct {
-	Landscape           *bool    `json:"landscape,omitempty"`           // Paper orientation. Defaults to false.
-	DisplayHeaderFooter *bool    `json:"displayHeaderFooter,omitempty"` // Display header and footer. Defaults to false.
-	PrintBackground     *bool    `json:"printBackground,omitempty"`     // Print background graphics. Defaults to false.
-	Scale               *float64 `json:"scale,omitempty"`               // Scale of the webpage rendering. Defaults to 1.
-	PaperWidth          *float64 `json:"paperWidth,omitempty"`          // Paper width in inches. Defaults to 8.5 inches.
-	PaperHeight         *float64 `json:"paperHeight,omitempty"`         // Paper height in inches. Defaults to 11 inches.
-	MarginTop           *float64 `json:"marginTop,omitempty"`           // Top margin in inches. Defaults to 1cm (~0.4 inches).
-	MarginBottom        *float64 `json:"marginBottom,omitempty"`        // Bottom margin in inches. Defaults to 1cm (~0.4 inches).
-	MarginLeft          *float64 `json:"marginLeft,omitempty"`          // Left margin in inches. Defaults to 1cm (~0.4 inches).
-	MarginRight         *float64 `json:"marginRight,omitempty"`         // Right margin in inches. Defaults to 1cm (~0.4 inches).
-	PageRanges          *string  `json:"pageRanges,omitempty"`          // Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.
+	Landscape               *bool    `json:"landscape,omitempty"`               // Paper orientation. Defaults to false.
+	DisplayHeaderFooter     *bool    `json:"displayHeaderFooter,omitempty"`     // Display header and footer. Defaults to false.
+	PrintBackground         *bool    `json:"printBackground,omitempty"`         // Print background graphics. Defaults to false.
+	Scale                   *float64 `json:"scale,omitempty"`                   // Scale of the webpage rendering. Defaults to 1.
+	PaperWidth              *float64 `json:"paperWidth,omitempty"`              // Paper width in inches. Defaults to 8.5 inches.
+	PaperHeight             *float64 `json:"paperHeight,omitempty"`             // Paper height in inches. Defaults to 11 inches.
+	MarginTop               *float64 `json:"marginTop,omitempty"`               // Top margin in inches. Defaults to 1cm (~0.4 inches).
+	MarginBottom            *float64 `json:"marginBottom,omitempty"`            // Bottom margin in inches. Defaults to 1cm (~0.4 inches).
+	MarginLeft              *float64 `json:"marginLeft,omitempty"`              // Left margin in inches. Defaults to 1cm (~0.4 inches).
+	MarginRight             *float64 `json:"marginRight,omitempty"`             // Right margin in inches. Defaults to 1cm (~0.4 inches).
+	PageRanges              *string  `json:"pageRanges,omitempty"`              // Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.
+	IgnoreInvalidPageRanges *bool    `json:"ignoreInvalidPageRanges,omitempty"` // Whether to silently ignore invalid but successfully parsed page ranges, such as '3-2'. Defaults to false.
 }
 
 // NewPrintToPDFArgs initializes PrintToPDFArgs with the required arguments.
@@ -461,6 +448,12 @@ func (a *PrintToPDFArgs) SetMarginRight(marginRight float64) *PrintToPDFArgs {
 // SetPageRanges sets the PageRanges optional argument. Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.
 func (a *PrintToPDFArgs) SetPageRanges(pageRanges string) *PrintToPDFArgs {
 	a.PageRanges = &pageRanges
+	return a
+}
+
+// SetIgnoreInvalidPageRanges sets the IgnoreInvalidPageRanges optional argument. Whether to silently ignore invalid but successfully parsed page ranges, such as '3-2'. Defaults to false.
+func (a *PrintToPDFArgs) SetIgnoreInvalidPageRanges(ignoreInvalidPageRanges bool) *PrintToPDFArgs {
+	a.IgnoreInvalidPageRanges = &ignoreInvalidPageRanges
 	return a
 }
 

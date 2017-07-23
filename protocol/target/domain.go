@@ -70,7 +70,7 @@ func (d *domainClient) SetRemoteLocations(ctx context.Context, args *SetRemoteLo
 	return
 }
 
-// SendMessageToTarget invokes the Target method. Sends protocol message to the target with given id.
+// SendMessageToTarget invokes the Target method. Sends protocol message over session with given id.
 func (d *domainClient) SendMessageToTarget(ctx context.Context, args *SendMessageToTargetArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Target.sendMessageToTarget", args, nil, d.conn)
@@ -138,7 +138,7 @@ func (d *domainClient) AttachToTarget(ctx context.Context, args *AttachToTargetA
 	return
 }
 
-// DetachFromTarget invokes the Target method. Detaches from the target with given id.
+// DetachFromTarget invokes the Target method. Detaches session with given id.
 func (d *domainClient) DetachFromTarget(ctx context.Context, args *DetachFromTargetArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Target.detachFromTarget", args, nil, d.conn)

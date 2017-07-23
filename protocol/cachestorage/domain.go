@@ -71,3 +71,17 @@ func (d *domainClient) DeleteEntry(ctx context.Context, args *DeleteEntryArgs) (
 	}
 	return
 }
+
+// RequestCachedResponse invokes the CacheStorage method. Fetches cache entry.
+func (d *domainClient) RequestCachedResponse(ctx context.Context, args *RequestCachedResponseArgs) (reply *RequestCachedResponseReply, err error) {
+	reply = new(RequestCachedResponseReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CacheStorage.requestCachedResponse", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CacheStorage.requestCachedResponse", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CacheStorage", Op: "RequestCachedResponse", Err: err}
+	}
+	return
+}

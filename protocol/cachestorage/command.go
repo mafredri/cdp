@@ -66,3 +66,22 @@ func NewDeleteEntryArgs(cacheID CacheID, request string) *DeleteEntryArgs {
 	args.Request = request
 	return args
 }
+
+// RequestCachedResponseArgs represents the arguments for RequestCachedResponse in the CacheStorage domain.
+type RequestCachedResponseArgs struct {
+	CacheID    CacheID `json:"cacheId"`    // Id of cache that contains the enty.
+	RequestURL string  `json:"requestURL"` // URL spec of the request.
+}
+
+// NewRequestCachedResponseArgs initializes RequestCachedResponseArgs with the required arguments.
+func NewRequestCachedResponseArgs(cacheID CacheID, requestURL string) *RequestCachedResponseArgs {
+	args := new(RequestCachedResponseArgs)
+	args.CacheID = cacheID
+	args.RequestURL = requestURL
+	return args
+}
+
+// RequestCachedResponseReply represents the return values for RequestCachedResponse in the CacheStorage domain.
+type RequestCachedResponseReply struct {
+	Response CachedResponse `json:"response"` // Response read from the cache.
+}

@@ -44,3 +44,17 @@ func (d *domainClient) Close(ctx context.Context, args *CloseArgs) (err error) {
 	}
 	return
 }
+
+// ResolveBlob invokes the IO method. Return UUID of Blob object specified by a remote object id.
+func (d *domainClient) ResolveBlob(ctx context.Context, args *ResolveBlobArgs) (reply *ResolveBlobReply, err error) {
+	reply = new(ResolveBlobReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "IO.resolveBlob", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "IO.resolveBlob", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "IO", Op: "ResolveBlob", Err: err}
+	}
+	return
+}

@@ -5,6 +5,9 @@ package target
 // ID
 type ID string
 
+// SessionID Unique identifier of attached debugging session.
+type SessionID string
+
 // BrowserContextID
 type BrowserContextID string
 

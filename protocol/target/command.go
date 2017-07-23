@@ -54,16 +54,28 @@ func NewSetRemoteLocationsArgs(locations []RemoteLocation) *SetRemoteLocationsAr
 
 // SendMessageToTargetArgs represents the arguments for SendMessageToTarget in the Target domain.
 type SendMessageToTargetArgs struct {
-	TargetID ID     `json:"targetId"` //
-	Message  string `json:"message"`  //
+	Message   string     `json:"message"`             //
+	SessionID *SessionID `json:"sessionId,omitempty"` // Identifier of the session.
+	TargetID  *ID        `json:"targetId,omitempty"`  // Deprecated.
 }
 
 // NewSendMessageToTargetArgs initializes SendMessageToTargetArgs with the required arguments.
-func NewSendMessageToTargetArgs(targetID ID, message string) *SendMessageToTargetArgs {
+func NewSendMessageToTargetArgs(message string) *SendMessageToTargetArgs {
 	args := new(SendMessageToTargetArgs)
-	args.TargetID = targetID
 	args.Message = message
 	return args
+}
+
+// SetSessionID sets the SessionID optional argument. Identifier of the session.
+func (a *SendMessageToTargetArgs) SetSessionID(sessionID SessionID) *SendMessageToTargetArgs {
+	a.SessionID = &sessionID
+	return a
+}
+
+// SetTargetID sets the TargetID optional argument. Deprecated.
+func (a *SendMessageToTargetArgs) SetTargetID(targetID ID) *SendMessageToTargetArgs {
+	a.TargetID = &targetID
+	return a
 }
 
 // GetTargetInfoArgs represents the arguments for GetTargetInfo in the Target domain.
@@ -126,19 +138,32 @@ func NewAttachToTargetArgs(targetID ID) *AttachToTargetArgs {
 
 // AttachToTargetReply represents the return values for AttachToTarget in the Target domain.
 type AttachToTargetReply struct {
-	Success bool `json:"success"` // Whether attach succeeded.
+	SessionID SessionID `json:"sessionId"` // Id assigned to the session.
 }
 
 // DetachFromTargetArgs represents the arguments for DetachFromTarget in the Target domain.
 type DetachFromTargetArgs struct {
-	TargetID ID `json:"targetId"` //
+	SessionID *SessionID `json:"sessionId,omitempty"` // Session to detach.
+	TargetID  *ID        `json:"targetId,omitempty"`  // Deprecated.
 }
 
 // NewDetachFromTargetArgs initializes DetachFromTargetArgs with the required arguments.
-func NewDetachFromTargetArgs(targetID ID) *DetachFromTargetArgs {
+func NewDetachFromTargetArgs() *DetachFromTargetArgs {
 	args := new(DetachFromTargetArgs)
-	args.TargetID = targetID
+
 	return args
+}
+
+// SetSessionID sets the SessionID optional argument. Session to detach.
+func (a *DetachFromTargetArgs) SetSessionID(sessionID SessionID) *DetachFromTargetArgs {
+	a.SessionID = &sessionID
+	return a
+}
+
+// SetTargetID sets the TargetID optional argument. Deprecated.
+func (a *DetachFromTargetArgs) SetTargetID(targetID ID) *DetachFromTargetArgs {
+	a.TargetID = &targetID
+	return a
 }
 
 // CreateBrowserContextReply represents the return values for CreateBrowserContext in the Target domain.

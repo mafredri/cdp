@@ -329,6 +329,11 @@ type CacheStorage interface {
 	//
 	// Deletes a cache entry.
 	DeleteEntry(context.Context, *cachestorage.DeleteEntryArgs) error
+
+	// Command RequestCachedResponse
+	//
+	// Fetches cache entry.
+	RequestCachedResponse(context.Context, *cachestorage.RequestCachedResponseArgs) (*cachestorage.RequestCachedResponseReply, error)
 }
 
 // The Console domain. This domain is deprecated - use Runtime or Log instead.
@@ -946,7 +951,7 @@ type Emulation interface {
 
 	// Command SetVisibleSize
 	//
-	// Deprecated, does nothing. Please use setDeviceMetricsOverride instead.
+	// Resizes the frame/viewport of the page. Note that this does not affect the frame's container (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported on Android.
 	SetVisibleSize(context.Context, *emulation.SetVisibleSizeArgs) error
 
 	// Command SetScriptExecutionDisabled
@@ -1094,6 +1099,11 @@ type IO interface {
 	//
 	// Close the stream, discard any temporary backing storage.
 	Close(context.Context, *io.CloseArgs) error
+
+	// Command ResolveBlob
+	//
+	// Return UUID of Blob object specified by a remote object id.
+	ResolveBlob(context.Context, *io.ResolveBlobArgs) (*io.ResolveBlobReply, error)
 }
 
 // The IndexedDB domain.
@@ -2198,7 +2208,7 @@ type Target interface {
 
 	// Command SendMessageToTarget
 	//
-	// Sends protocol message to the target with given id.
+	// Sends protocol message over session with given id.
 	SendMessageToTarget(context.Context, *target.SendMessageToTargetArgs) error
 
 	// Command GetTargetInfo
@@ -2223,7 +2233,7 @@ type Target interface {
 
 	// Command DetachFromTarget
 	//
-	// Detaches from the target with given id.
+	// Detaches session with given id.
 	DetachFromTarget(context.Context, *target.DetachFromTargetArgs) error
 
 	// Command CreateBrowserContext
@@ -2268,12 +2278,12 @@ type Target interface {
 
 	// Event DetachedFromTarget
 	//
-	// Issued when detached from target for any reason (including detachFromTarget command).
+	// Issued when detached from target for any reason (including detachFromTarget command). Can be issued multiple times per target if multiple sessions have been attached to it.
 	DetachedFromTarget(context.Context) (target.DetachedFromTargetClient, error)
 
 	// Event ReceivedMessageFromTarget
 	//
-	// Notifies about new protocol message from attached target.
+	// Notifies about a new protocol message received from the session (as reported in attachedToTarget event).
 	ReceivedMessageFromTarget(context.Context) (target.ReceivedMessageFromTargetClient, error)
 }
 

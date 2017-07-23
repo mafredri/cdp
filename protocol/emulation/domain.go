@@ -62,7 +62,7 @@ func (d *domainClient) SetPageScaleFactor(ctx context.Context, args *SetPageScal
 	return
 }
 
-// SetVisibleSize invokes the Emulation method. Deprecated, does nothing. Please use setDeviceMetricsOverride instead.
+// SetVisibleSize invokes the Emulation method. Resizes the frame/viewport of the page. Note that this does not affect the frame's container (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported on Android.
 func (d *domainClient) SetVisibleSize(ctx context.Context, args *SetVisibleSizeArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Emulation.setVisibleSize", args, nil, d.conn)

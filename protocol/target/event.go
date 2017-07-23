@@ -55,11 +55,12 @@ type AttachedToTargetClient interface {
 
 // AttachedToTargetReply is the reply for AttachedToTarget events.
 type AttachedToTargetReply struct {
-	TargetInfo         Info `json:"targetInfo"`         //
-	WaitingForDebugger bool `json:"waitingForDebugger"` //
+	SessionID          SessionID `json:"sessionId"`          // Identifier assigned to the session used to send/receive messages.
+	TargetInfo         Info      `json:"targetInfo"`         //
+	WaitingForDebugger bool      `json:"waitingForDebugger"` //
 }
 
-// DetachedFromTargetClient is a client for DetachedFromTarget events. Issued when detached from target for any reason (including detachFromTarget command).
+// DetachedFromTargetClient is a client for DetachedFromTarget events. Issued when detached from target for any reason (including detachFromTarget command). Can be issued multiple times per target if multiple sessions have been attached to it.
 type DetachedFromTargetClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -69,10 +70,11 @@ type DetachedFromTargetClient interface {
 
 // DetachedFromTargetReply is the reply for DetachedFromTarget events.
 type DetachedFromTargetReply struct {
-	TargetID ID `json:"targetId"` //
+	SessionID SessionID `json:"sessionId"`          // Detached session identifier.
+	TargetID  *ID       `json:"targetId,omitempty"` // Deprecated.
 }
 
-// ReceivedMessageFromTargetClient is a client for ReceivedMessageFromTarget events. Notifies about new protocol message from attached target.
+// ReceivedMessageFromTargetClient is a client for ReceivedMessageFromTarget events. Notifies about a new protocol message received from the session (as reported in attachedToTarget event).
 type ReceivedMessageFromTargetClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -82,6 +84,7 @@ type ReceivedMessageFromTargetClient interface {
 
 // ReceivedMessageFromTargetReply is the reply for ReceivedMessageFromTarget events.
 type ReceivedMessageFromTargetReply struct {
-	TargetID ID     `json:"targetId"` //
-	Message  string `json:"message"`  //
+	SessionID SessionID `json:"sessionId"`          // Identifier of a session which sends a message.
+	Message   string    `json:"message"`            //
+	TargetID  *ID       `json:"targetId,omitempty"` // Deprecated.
 }

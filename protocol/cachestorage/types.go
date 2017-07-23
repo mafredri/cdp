@@ -2,6 +2,10 @@
 
 package cachestorage
 
+import (
+	"encoding/json"
+)
+
 // CacheID Unique identifier of the Cache object.
 type CacheID string
 
@@ -17,4 +21,10 @@ type Cache struct {
 	CacheID        CacheID `json:"cacheId"`        // An opaque unique id of the cache.
 	SecurityOrigin string  `json:"securityOrigin"` // Security origin of the cache.
 	CacheName      string  `json:"cacheName"`      // The name of the cache.
+}
+
+// CachedResponse Cached response
+type CachedResponse struct {
+	Headers json.RawMessage `json:"headers"` // Response headers
+	Body    string          `json:"body"`    // Entry content, base64-encoded.
 }
