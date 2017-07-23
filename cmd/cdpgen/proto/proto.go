@@ -354,12 +354,21 @@ func lowerFirst(d string) string {
 	return strings.Join(desc, " ")
 }
 func cleanDescription(d string) string {
-	d = strings.Replace(d, "<code>", "", -1)
-	d = strings.Replace(d, "</code>", "", -1)
+	replace := []struct {
+		old string
+		new string
+	}{
+		{"<code>", ""}, {"</code>", ""},
+		// <p> is only used by DOM description.
+		{"<p>", "\n//\n// "}, {"</p>", ""},
+		{"&lt;", "<"}, {"&gt;", ">"},
+		// Fix typo...
+		{"&gt ", "> "},
+	}
 
-	// <p> is only used by DOM description.
-	d = strings.Replace(d, "<p>", "\n//\n// ", -1)
-	d = strings.Replace(d, "</p>", "", -1)
+	for _, r := range replace {
+		d = strings.Replace(d, r.old, r.new, -1)
+	}
 
 	d, _ = misspellReplacer.Replace(d)
 	return d
