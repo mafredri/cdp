@@ -24,10 +24,6 @@ const (
 
 	// Fixed header size used by gorilla/websocket.
 	websocketMaxHeaderSize = 2 + 8 + 4
-
-	// Maximum message size accepted by Chrome is 1MB. It silently
-	// drops the websocket connection for larger messages.
-	chromeMessageSizeLimit = 1024 * 1024
 )
 
 // DialOption represents a dial option passed to Dial.
@@ -53,6 +49,10 @@ func WithDialer(f func(ctx context.Context, addr string) (net.Conn, error)) Dial
 // WithWriteBufferSize returns a DialOption that sets the size of the write
 // buffer for the underlying websocket connection. Messages larger than this
 // size are fragmented according to the websocket specification.
+//
+// The maximum buffer size for recent versions of Chrome is 104857586 (~100MB),
+// for older versions a maximum of 1048562 (~1MB) can be used. This is because
+// Chrome does not support websocket fragmentation.
 func WithWriteBufferSize(n int) DialOption {
 	return func(o *dialOptions) {
 		o.wsDialer.WriteBufferSize = n
@@ -123,9 +123,6 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 			// websocket package, we assume a message of this size
 			// is fragmented and subtract one.
 			writeLimit := ws.WriteBufferSize + websocketMaxHeaderSize - 1
-			if writeLimit > chromeMessageSizeLimit {
-				writeLimit = chromeMessageSizeLimit
-			}
 
 			// Set NetDial to dial with context, this action will
 			// override the HandshakeTimeout setting.
@@ -189,8 +186,11 @@ type writeLimiter struct {
 }
 
 // BUG(mafredri): Chrome does not support websocket fragmentation
-// (continuation messages) or messages that exceed 1 MB in size.
-// See https://github.com/mafredri/cdp/issues/4.
+// (continuation messages) or messages that exceed 1MB in size.
+// This limit was bumped in more recent versions of Chrome which can
+// receive messages up to 100MB in size.
+// See https://github.com/mafredri/cdp/issues/4 and
+// https://github.com/ChromeDevTools/devtools-protocol/issues/24.
 func (c *writeLimiter) Write(b []byte) (n int, err error) {
 	if len(b) > c.limit {
 		return 0, errors.New("rpcc: message too large (increase write buffer size or enable compression)")
