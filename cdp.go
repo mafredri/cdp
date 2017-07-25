@@ -336,7 +336,9 @@ type CacheStorage interface {
 	RequestCachedResponse(context.Context, *cachestorage.RequestCachedResponseArgs) (*cachestorage.RequestCachedResponseReply, error)
 }
 
-// The Console domain. This domain is deprecated - use Runtime or Log instead.
+// The Console domain.
+//
+// Deprecated: This domain is deprecated - use Runtime or Log instead.
 type Console interface {
 	// Command Enable
 	//
@@ -951,7 +953,7 @@ type Emulation interface {
 
 	// Command SetVisibleSize
 	//
-	// Resizes the frame/viewport of the page. Note that this does not affect the frame's container (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported on Android.
+	// Deprecated: Resizes the frame/viewport of the page. Note that this does not affect the frame's container (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported on Android.
 	SetVisibleSize(context.Context, *emulation.SetVisibleSizeArgs) error
 
 	// Command SetScriptExecutionDisabled
@@ -1624,12 +1626,12 @@ type Page interface {
 
 	// Command AddScriptToEvaluateOnLoad
 	//
-	// Deprecated, please use addScriptToEvaluateOnNewDocument instead.
+	// Deprecated: Please use addScriptToEvaluateOnNewDocument instead.
 	AddScriptToEvaluateOnLoad(context.Context, *page.AddScriptToEvaluateOnLoadArgs) (*page.AddScriptToEvaluateOnLoadReply, error)
 
 	// Command RemoveScriptToEvaluateOnLoad
 	//
-	// Deprecated, please use removeScriptToEvaluateOnNewDocument instead.
+	// Deprecated: Please use removeScriptToEvaluateOnNewDocument instead.
 	RemoveScriptToEvaluateOnLoad(context.Context, *page.RemoveScriptToEvaluateOnLoadArgs) error
 
 	// Command AddScriptToEvaluateOnNewDocument

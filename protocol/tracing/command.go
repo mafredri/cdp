@@ -4,8 +4,8 @@ package tracing
 
 // StartArgs represents the arguments for Start in the Tracing domain.
 type StartArgs struct {
-	Categories                   *string      `json:"categories,omitempty"`                   // Category/tag filter
-	Options                      *string      `json:"options,omitempty"`                      // Tracing options
+	Categories                   *string      `json:"categories,omitempty"`                   // Deprecated: Category/tag filter
+	Options                      *string      `json:"options,omitempty"`                      // Deprecated: Tracing options
 	BufferUsageReportingInterval *float64     `json:"bufferUsageReportingInterval,omitempty"` // If set, the agent will issue bufferUsage events at this interval, specified in milliseconds
 	TransferMode                 *string      `json:"transferMode,omitempty"`                 // Whether to report trace events as series of dataCollected events or to save trace to a stream (defaults to ReportEvents).
 	TraceConfig                  *TraceConfig `json:"traceConfig,omitempty"`                  //

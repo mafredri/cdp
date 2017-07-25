@@ -71,7 +71,7 @@ type DetachedFromTargetClient interface {
 // DetachedFromTargetReply is the reply for DetachedFromTarget events.
 type DetachedFromTargetReply struct {
 	SessionID SessionID `json:"sessionId"`          // Detached session identifier.
-	TargetID  *ID       `json:"targetId,omitempty"` // Deprecated.
+	TargetID  *ID       `json:"targetId,omitempty"` // Deprecated: Deprecated.
 }
 
 // ReceivedMessageFromTargetClient is a client for ReceivedMessageFromTarget events. Notifies about a new protocol message received from the session (as reported in attachedToTarget event).
@@ -86,5 +86,5 @@ type ReceivedMessageFromTargetClient interface {
 type ReceivedMessageFromTargetReply struct {
 	SessionID SessionID `json:"sessionId"`          // Identifier of a session which sends a message.
 	Message   string    `json:"message"`            //
-	TargetID  *ID       `json:"targetId,omitempty"` // Deprecated.
+	TargetID  *ID       `json:"targetId,omitempty"` // Deprecated: Deprecated.
 }

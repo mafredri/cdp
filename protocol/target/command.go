@@ -56,7 +56,7 @@ func NewSetRemoteLocationsArgs(locations []RemoteLocation) *SetRemoteLocationsAr
 type SendMessageToTargetArgs struct {
 	Message   string     `json:"message"`             //
 	SessionID *SessionID `json:"sessionId,omitempty"` // Identifier of the session.
-	TargetID  *ID        `json:"targetId,omitempty"`  // Deprecated.
+	TargetID  *ID        `json:"targetId,omitempty"`  // Deprecated: Deprecated.
 }
 
 // NewSendMessageToTargetArgs initializes SendMessageToTargetArgs with the required arguments.
@@ -144,7 +144,7 @@ type AttachToTargetReply struct {
 // DetachFromTargetArgs represents the arguments for DetachFromTarget in the Target domain.
 type DetachFromTargetArgs struct {
 	SessionID *SessionID `json:"sessionId,omitempty"` // Session to detach.
-	TargetID  *ID        `json:"targetId,omitempty"`  // Deprecated.
+	TargetID  *ID        `json:"targetId,omitempty"`  // Deprecated: Deprecated.
 }
 
 // NewDetachFromTargetArgs initializes DetachFromTargetArgs with the required arguments.
