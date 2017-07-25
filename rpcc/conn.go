@@ -469,7 +469,7 @@ func (c *Conn) close(err error) error {
 }
 
 // SetCompressionLevel sets the flate compressions level for writes. Valid level
-// range is [-2, 9]. Returns error if compression is not eanbled for Conn. See
+// range is [-2, 9]. Returns error if compression is not enabled for Conn. See
 // package compress/flate for a description of compression levels.
 func (c *Conn) SetCompressionLevel(level int) error {
 	if c.compressionLevel == nil {
