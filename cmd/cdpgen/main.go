@@ -156,7 +156,9 @@ func main() {
 			g.PackageHeader("")
 			for _, t := range d.Types {
 				if t.Name(d) == "FrameID" || t.Name(d) == "ResourceType" {
+					idName := t.Name(d)
 					t.IDName = "Page" + t.IDName
+					t.Description = fmt.Sprintf("%s\n//\n// This type cannot be used directly. Use page.%s instead.", t.Description, idName)
 					g.DomainType(d, t)
 				}
 			}
@@ -695,7 +697,7 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 			g.markCircularType()
 			if g.pkg == "network" || g.pkg == "dom" {
 				// Domain-local type (alias) for go1.9.
-				ptype19 = strings.Replace(ptype19, "page.", "", 1)
+				ptype19 = strings.Replace(ptype19, "page.", "internal.Page", 1)
 			}
 			ptype18 = strings.Replace(ptype18, ".", "", 1)
 			ptype18 = "protocol." + strings.Title(ptype18)

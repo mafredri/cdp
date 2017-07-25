@@ -11,6 +11,8 @@ import (
 )
 
 // PageResourceType Resource type as it was perceived by the rendering engine.
+//
+// This type cannot be used directly. Use page.ResourceType instead.
 type PageResourceType int
 
 // Valid returns true if enum is set.
@@ -101,4 +103,6 @@ func (e *PageResourceType) UnmarshalJSON(data []byte) error {
 }
 
 // PageFrameID Unique frame identifier.
+//
+// This type cannot be used directly. Use page.FrameID instead.
 type PageFrameID string
