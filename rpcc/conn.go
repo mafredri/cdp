@@ -197,9 +197,6 @@ func (c *writeLimiter) Write(b []byte) (n int, err error) {
 	}
 	return c.Conn.Write(b)
 }
-func (c *writeLimiter) Read(b []byte) (n int, err error) {
-	return c.Conn.Read(b)
-}
 
 // Codec is used by recv and dispatcher to
 // send and receive RPC communication.
