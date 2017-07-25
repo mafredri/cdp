@@ -66,6 +66,7 @@ type Command struct {
 	Experimental bool      `json:"experimental,omitempty"`
 	Redirect     string    `json:"redirect,omitempty"`
 	Handlers     []string  `json:"handlers,omitempty"`
+	Deprecated   bool      `json:"deprecated,omitempty"`
 }
 
 // Name rturns the linted command name.
@@ -177,6 +178,7 @@ type Event struct {
 	Description  string    `json:"description,omitempty"`
 	Parameters   []AnyType `json:"parameters,omitempty"`
 	Experimental bool      `json:"experimental,omitempty"`
+	Deprecated   bool      `json:"deprecated,omitempty"`
 }
 
 // Name returns the name of the event.

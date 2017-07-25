@@ -436,9 +436,13 @@ import (
 func (g *Generator) DomainInterface(d proto.Domain) {
 	g.hasContent = true
 
+	desc := d.Desc()
+	if d.Deprecated {
+		desc = "\n//\n// Deprecated: " + desc
+	}
 	g.Printf(`
 // The %[1]s domain. %[2]s
-type %[1]s interface{`, d.Name(), d.Desc())
+type %[1]s interface{`, d.Name(), desc)
 	for _, c := range d.Commands {
 		request := ""
 		reply := "error"
@@ -448,11 +452,21 @@ type %[1]s interface{`, d.Name(), d.Desc())
 		if len(c.Returns) > 0 {
 			reply = fmt.Sprintf("(*%s.%s, error)", strings.ToLower(d.Name()), c.ReplyName(d))
 		}
-		g.Printf("\n\t// Command %s\n\t//\n\t// %s\n\t%s(context.Context%s) %s\n", c.Name(), c.Desc(true), c.Name(), request, reply)
+		desc := c.Desc(true)
+		if c.Deprecated {
+			desc = strings.Replace(desc, "Deprecated, ", "", 1)
+			desc = "Deprecated: " + strings.ToUpper(desc[0:1]) + desc[1:]
+		}
+		g.Printf("\n\t// Command %s\n\t//\n\t// %s\n\t%s(context.Context%s) %s\n", c.Name(), desc, c.Name(), request, reply)
 	}
 	for _, e := range d.Events {
 		eventClient := fmt.Sprintf("%sClient", e.EventName(d))
-		g.Printf("\n\t// Event %s\n\t//\n\t// %s\n\t%s(context.Context) (%s.%s, error)\n", e.Name(), e.Desc(true), e.Name(), strings.ToLower(d.Name()), eventClient)
+		desc := e.Desc(true)
+		if e.Deprecated {
+			desc = strings.Replace(desc, "Deprecated, ", "", 1)
+			desc = "Deprecated: " + strings.ToUpper(desc[0:1]) + desc[1:]
+		}
+		g.Printf("\n\t// Event %s\n\t//\n\t// %s\n\t%s(context.Context) (%s.%s, error)\n", e.Name(), desc, e.Name(), strings.ToLower(d.Name()), eventClient)
 	}
 	g.Printf("}\n")
 }
@@ -645,9 +659,13 @@ func (g *Generator) DomainType(d proto.Domain, t proto.AnyType) {
 type %[1]s = internal.Page%[1]s
 `, t.Name(d), t.Desc())
 	}
+	desc := t.Desc()
+	if t.Deprecated {
+		desc = "\n//\n// Deprecated: " + desc
+	}
 	g.Printf(`
 // %[1]s %[2]s
-%[3]stype %[1]s `, t.Name(d), t.Desc(), comment)
+%[3]stype %[1]s `, t.Name(d), desc, comment)
 
 	typ := t.GoType(g.pkg, d)
 	switch typ {
@@ -709,11 +727,16 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 			exportedName = OptionalPropPrefix + exportedName
 		}
 
+		desc := prop.Desc()
+		if prop.Deprecated {
+			desc = "Deprecated: " + desc
+		}
+
 		if !g.isCircularType {
-			g.Printf("\t%s %s `json:\"%s\"` // %s\n", exportedName, ptype, jsontag, prop.Desc())
+			g.Printf("\t%s %s `json:\"%s\"` // %s\n", exportedName, ptype, jsontag, desc)
 		} else {
-			g.Printf19("\t%s %s `json:\"%s\"` // %s\n", exportedName, ptype19, jsontag, prop.Desc())
-			g.Printf18("\t%s %s `json:\"%s\"` // %s\n", exportedName, ptype18, jsontag, prop.Desc())
+			g.Printf19("\t%s %s `json:\"%s\"` // %s\n", exportedName, ptype19, jsontag, desc)
+			g.Printf18("\t%s %s `json:\"%s\"` // %s\n", exportedName, ptype18, jsontag, desc)
 		}
 	}
 }
