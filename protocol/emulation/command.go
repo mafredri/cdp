@@ -8,17 +8,32 @@ import (
 
 // SetDeviceMetricsOverrideArgs represents the arguments for SetDeviceMetricsOverride in the Emulation domain.
 type SetDeviceMetricsOverrideArgs struct {
-	Width              int                `json:"width"`                        // Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
-	Height             int                `json:"height"`                       // Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
-	DeviceScaleFactor  float64            `json:"deviceScaleFactor"`            // Overriding device scale factor value. 0 disables the override.
-	Mobile             bool               `json:"mobile"`                       // Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more.
-	Scale              *float64           `json:"scale,omitempty"`              // Scale to apply to resulting view image. Ignored in |fitWindow| mode.
-	ScreenWidth        *int               `json:"screenWidth,omitempty"`        // Overriding screen width value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-	ScreenHeight       *int               `json:"screenHeight,omitempty"`       // Overriding screen height value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-	PositionX          *int               `json:"positionX,omitempty"`          // Overriding view X position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-	PositionY          *int               `json:"positionY,omitempty"`          // Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-	DontSetVisibleSize *bool              `json:"dontSetVisibleSize,omitempty"` // Do not set visible view size, rely upon explicit setVisibleSize call.
-	ScreenOrientation  *ScreenOrientation `json:"screenOrientation,omitempty"`  // Screen orientation override.
+	Width             int      `json:"width"`             // Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
+	Height            int      `json:"height"`            // Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
+	DeviceScaleFactor float64  `json:"deviceScaleFactor"` // Overriding device scale factor value. 0 disables the override.
+	Mobile            bool     `json:"mobile"`            // Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more.
+	Scale             *float64 `json:"scale,omitempty"`   // Scale to apply to resulting view image. Ignored in |fitWindow| mode.
+	// ScreenWidth Overriding screen width value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+	//
+	// Note: This property is experimental.
+	ScreenWidth *int `json:"screenWidth,omitempty"`
+	// ScreenHeight Overriding screen height value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+	//
+	// Note: This property is experimental.
+	ScreenHeight *int `json:"screenHeight,omitempty"`
+	// PositionX Overriding view X position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+	//
+	// Note: This property is experimental.
+	PositionX *int `json:"positionX,omitempty"`
+	// PositionY Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+	//
+	// Note: This property is experimental.
+	PositionY *int `json:"positionY,omitempty"`
+	// DontSetVisibleSize Do not set visible view size, rely upon explicit setVisibleSize call.
+	//
+	// Note: This property is experimental.
+	DontSetVisibleSize *bool              `json:"dontSetVisibleSize,omitempty"`
+	ScreenOrientation  *ScreenOrientation `json:"screenOrientation,omitempty"` // Screen orientation override.
 }
 
 // NewSetDeviceMetricsOverrideArgs initializes SetDeviceMetricsOverrideArgs with the required arguments.
@@ -38,30 +53,40 @@ func (a *SetDeviceMetricsOverrideArgs) SetScale(scale float64) *SetDeviceMetrics
 }
 
 // SetScreenWidth sets the ScreenWidth optional argument. Overriding screen width value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+//
+// Note: This argument is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetScreenWidth(screenWidth int) *SetDeviceMetricsOverrideArgs {
 	a.ScreenWidth = &screenWidth
 	return a
 }
 
 // SetScreenHeight sets the ScreenHeight optional argument. Overriding screen height value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+//
+// Note: This argument is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetScreenHeight(screenHeight int) *SetDeviceMetricsOverrideArgs {
 	a.ScreenHeight = &screenHeight
 	return a
 }
 
 // SetPositionX sets the PositionX optional argument. Overriding view X position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+//
+// Note: This argument is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetPositionX(positionX int) *SetDeviceMetricsOverrideArgs {
 	a.PositionX = &positionX
 	return a
 }
 
 // SetPositionY sets the PositionY optional argument. Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+//
+// Note: This argument is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetPositionY(positionY int) *SetDeviceMetricsOverrideArgs {
 	a.PositionY = &positionY
 	return a
 }
 
 // SetDontSetVisibleSize sets the DontSetVisibleSize optional argument. Do not set visible view size, rely upon explicit setVisibleSize call.
+//
+// Note: This argument is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetDontSetVisibleSize(dontSetVisibleSize bool) *SetDeviceMetricsOverrideArgs {
 	a.DontSetVisibleSize = &dontSetVisibleSize
 	return a
@@ -145,8 +170,11 @@ func (a *SetGeolocationOverrideArgs) SetAccuracy(accuracy float64) *SetGeolocati
 
 // SetTouchEmulationEnabledArgs represents the arguments for SetTouchEmulationEnabled in the Emulation domain.
 type SetTouchEmulationEnabledArgs struct {
-	Enabled       bool    `json:"enabled"`                 // Whether the touch event emulation should be enabled.
-	Configuration *string `json:"configuration,omitempty"` // Touch/gesture events configuration. Default: current platform.
+	Enabled bool `json:"enabled"` // Whether the touch event emulation should be enabled.
+	// Configuration Touch/gesture events configuration. Default: current platform.
+	//
+	// Values: "mobile", "desktop".
+	Configuration *string `json:"configuration,omitempty"`
 }
 
 // NewSetTouchEmulationEnabledArgs initializes SetTouchEmulationEnabledArgs with the required arguments.
@@ -157,6 +185,8 @@ func NewSetTouchEmulationEnabledArgs(enabled bool) *SetTouchEmulationEnabledArgs
 }
 
 // SetConfiguration sets the Configuration optional argument. Touch/gesture events configuration. Default: current platform.
+//
+// Values: "mobile", "desktop".
 func (a *SetTouchEmulationEnabledArgs) SetConfiguration(configuration string) *SetTouchEmulationEnabledArgs {
 	a.Configuration = &configuration
 	return a

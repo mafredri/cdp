@@ -116,6 +116,8 @@ type Rule struct {
 }
 
 // RuleUsage CSS coverage information.
+//
+// Note: This type is experimental.
 type RuleUsage struct {
 	StyleSheetID StyleSheetID `json:"styleSheetId"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
 	StartOffset  float64      `json:"startOffset"`  // Offset of the start of the rule (including selector) from the beginning of the stylesheet.
@@ -167,21 +169,31 @@ type Property struct {
 
 // Media CSS media rule descriptor.
 type Media struct {
-	Text         string        `json:"text"`                   // Media query text.
-	Source       string        `json:"source"`                 // Source of the media query: "mediaRule" if specified by a @media rule, "importRule" if specified by an @import rule, "linkedSheet" if specified by a "media" attribute in a linked stylesheet's LINK tag, "inlineSheet" if specified by a "media" attribute in an inline stylesheet's STYLE tag.
+	Text string `json:"text"` // Media query text.
+	// Source Source of the media query: "mediaRule" if specified by a @media rule, "importRule" if specified by an @import rule, "linkedSheet" if specified by a "media" attribute in a linked stylesheet's LINK tag, "inlineSheet" if specified by a "media" attribute in an inline stylesheet's STYLE tag.
+	//
+	// Values: "mediaRule", "importRule", "linkedSheet", "inlineSheet".
+	Source       string        `json:"source"`
 	SourceURL    *string       `json:"sourceURL,omitempty"`    // URL of the document containing the media query description.
 	Range        *SourceRange  `json:"range,omitempty"`        // The associated rule (@media or @import) header range in the enclosing stylesheet (if available).
 	StyleSheetID *StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
-	MediaList    []MediaQuery  `json:"mediaList,omitempty"`    // Array of media queries.
+	// MediaList Array of media queries.
+	//
+	// Note: This property is experimental.
+	MediaList []MediaQuery `json:"mediaList,omitempty"`
 }
 
 // MediaQuery Media query descriptor.
+//
+// Note: This type is experimental.
 type MediaQuery struct {
 	Expressions []MediaQueryExpression `json:"expressions"` // Array of media query expressions.
 	Active      bool                   `json:"active"`      // Whether the media query condition is satisfied.
 }
 
 // MediaQueryExpression Media query expression descriptor.
+//
+// Note: This type is experimental.
 type MediaQueryExpression struct {
 	Value          float64      `json:"value"`                    // Media query expression value.
 	Unit           string       `json:"unit"`                     // Media query expression units.
@@ -191,6 +203,8 @@ type MediaQueryExpression struct {
 }
 
 // PlatformFontUsage Information about amount of glyphs that were rendered with given font.
+//
+// Note: This type is experimental.
 type PlatformFontUsage struct {
 	FamilyName   string  `json:"familyName"`   // Font's family name reported by platform.
 	IsCustomFont bool    `json:"isCustomFont"` // Indicates if the font was downloaded or resolved locally.
@@ -219,6 +233,8 @@ type StyleDeclarationEdit struct {
 }
 
 // InlineTextBox Details of post layout rendered text positions. The exact layout should not be regarded as stable and may change between versions.
+//
+// Note: This type is experimental.
 type InlineTextBox struct {
 	BoundingBox         dom.Rect `json:"boundingBox"`         // The absolute position bounding box.
 	StartCharacterIndex int      `json:"startCharacterIndex"` // The starting index in characters, for this post layout textbox substring.

@@ -4,11 +4,20 @@ package tracing
 
 // StartArgs represents the arguments for Start in the Tracing domain.
 type StartArgs struct {
-	Categories                   *string      `json:"categories,omitempty"`                   // Deprecated: Category/tag filter
-	Options                      *string      `json:"options,omitempty"`                      // Deprecated: Tracing options
-	BufferUsageReportingInterval *float64     `json:"bufferUsageReportingInterval,omitempty"` // If set, the agent will issue bufferUsage events at this interval, specified in milliseconds
-	TransferMode                 *string      `json:"transferMode,omitempty"`                 // Whether to report trace events as series of dataCollected events or to save trace to a stream (defaults to ReportEvents).
-	TraceConfig                  *TraceConfig `json:"traceConfig,omitempty"`                  //
+	// Categories is deprecated.
+	//
+	// Deprecated: Category/tag filter
+	Categories *string `json:"categories,omitempty"`
+	// Options is deprecated.
+	//
+	// Deprecated: Tracing options
+	Options                      *string  `json:"options,omitempty"`
+	BufferUsageReportingInterval *float64 `json:"bufferUsageReportingInterval,omitempty"` // If set, the agent will issue bufferUsage events at this interval, specified in milliseconds
+	// TransferMode Whether to report trace events as series of dataCollected events or to save trace to a stream (defaults to ReportEvents).
+	//
+	// Values: "ReportEvents", "ReturnAsStream".
+	TransferMode *string      `json:"transferMode,omitempty"`
+	TraceConfig  *TraceConfig `json:"traceConfig,omitempty"` //
 }
 
 // NewStartArgs initializes StartArgs with the required arguments.
@@ -18,13 +27,17 @@ func NewStartArgs() *StartArgs {
 	return args
 }
 
-// SetCategories sets the Categories optional argument. Category/tag filter
+// SetCategories sets the Categories optional argument.
+//
+// Deprecated: Category/tag filter
 func (a *StartArgs) SetCategories(categories string) *StartArgs {
 	a.Categories = &categories
 	return a
 }
 
-// SetOptions sets the Options optional argument. Tracing options
+// SetOptions sets the Options optional argument.
+//
+// Deprecated: Tracing options
 func (a *StartArgs) SetOptions(options string) *StartArgs {
 	a.Options = &options
 	return a
@@ -37,6 +50,8 @@ func (a *StartArgs) SetBufferUsageReportingInterval(bufferUsageReportingInterval
 }
 
 // SetTransferMode sets the TransferMode optional argument. Whether to report trace events as series of dataCollected events or to save trace to a stream (defaults to ReportEvents).
+//
+// Values: "ReportEvents", "ReturnAsStream".
 func (a *StartArgs) SetTransferMode(transferMode string) *StartArgs {
 	a.TransferMode = &transferMode
 	return a

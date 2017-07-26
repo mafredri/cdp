@@ -6,7 +6,10 @@ package page
 
 // NavigateReply represents the return values for Navigate in the Page domain.
 type NavigateReply struct {
-	FrameID FrameID `json:"frameId"` // Frame id that will be navigated.
+	// FrameID Frame id that will be navigated.
+	//
+	// Note: This property is experimental.
+	FrameID FrameID `json:"frameId"`
 }
 
 // GetResourceContentArgs represents the arguments for GetResourceContent in the Page domain.

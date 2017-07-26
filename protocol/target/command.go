@@ -56,7 +56,10 @@ func NewSetRemoteLocationsArgs(locations []RemoteLocation) *SetRemoteLocationsAr
 type SendMessageToTargetArgs struct {
 	Message   string     `json:"message"`             //
 	SessionID *SessionID `json:"sessionId,omitempty"` // Identifier of the session.
-	TargetID  *ID        `json:"targetId,omitempty"`  // Deprecated: Deprecated.
+	// TargetID is deprecated.
+	//
+	// Deprecated: Deprecated.
+	TargetID *ID `json:"targetId,omitempty"`
 }
 
 // NewSendMessageToTargetArgs initializes SendMessageToTargetArgs with the required arguments.
@@ -72,7 +75,9 @@ func (a *SendMessageToTargetArgs) SetSessionID(sessionID SessionID) *SendMessage
 	return a
 }
 
-// SetTargetID sets the TargetID optional argument. Deprecated.
+// SetTargetID sets the TargetID optional argument.
+//
+// Deprecated: Deprecated.
 func (a *SendMessageToTargetArgs) SetTargetID(targetID ID) *SendMessageToTargetArgs {
 	a.TargetID = &targetID
 	return a
@@ -144,7 +149,10 @@ type AttachToTargetReply struct {
 // DetachFromTargetArgs represents the arguments for DetachFromTarget in the Target domain.
 type DetachFromTargetArgs struct {
 	SessionID *SessionID `json:"sessionId,omitempty"` // Session to detach.
-	TargetID  *ID        `json:"targetId,omitempty"`  // Deprecated: Deprecated.
+	// TargetID is deprecated.
+	//
+	// Deprecated: Deprecated.
+	TargetID *ID `json:"targetId,omitempty"`
 }
 
 // NewDetachFromTargetArgs initializes DetachFromTargetArgs with the required arguments.
@@ -160,7 +168,9 @@ func (a *DetachFromTargetArgs) SetSessionID(sessionID SessionID) *DetachFromTarg
 	return a
 }
 
-// SetTargetID sets the TargetID optional argument. Deprecated.
+// SetTargetID sets the TargetID optional argument.
+//
+// Deprecated: Deprecated.
 func (a *DetachFromTargetArgs) SetTargetID(targetID ID) *DetachFromTargetArgs {
 	a.TargetID = &targetID
 	return a

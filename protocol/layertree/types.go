@@ -15,7 +15,10 @@ type SnapshotID string
 // ScrollRect Rectangle where scrolling happens on the main thread.
 type ScrollRect struct {
 	Rect dom.Rect `json:"rect"` // Rectangle itself.
-	Type string   `json:"type"` // Reason for rectangle to force scrolling on the main thread
+	// Type Reason for rectangle to force scrolling on the main thread
+	//
+	// Values: "RepaintsOnScroll", "TouchEventHandler", "WheelEventHandler".
+	Type string `json:"type"`
 }
 
 // PictureTile Serialized fragment of layer picture along with its offset within the layer.

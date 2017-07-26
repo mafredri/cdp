@@ -10,9 +10,15 @@ type EvaluateArgs struct {
 	Silent                *bool               `json:"silent,omitempty"`                // In silent mode exceptions thrown during evaluation are not reported and do not pause execution. Overrides setPauseOnException state.
 	ContextID             *ExecutionContextID `json:"contextId,omitempty"`             // Specifies in which execution context to perform evaluation. If the parameter is omitted the evaluation will be performed in the context of the inspected page.
 	ReturnByValue         *bool               `json:"returnByValue,omitempty"`         // Whether the result is expected to be a JSON object that should be sent by value.
-	GeneratePreview       *bool               `json:"generatePreview,omitempty"`       // Whether preview should be generated for the result.
-	UserGesture           *bool               `json:"userGesture,omitempty"`           // Whether execution should be treated as initiated by user in the UI.
-	AwaitPromise          *bool               `json:"awaitPromise,omitempty"`          // Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
+	// GeneratePreview Whether preview should be generated for the result.
+	//
+	// Note: This property is experimental.
+	GeneratePreview *bool `json:"generatePreview,omitempty"`
+	// UserGesture Whether execution should be treated as initiated by user in the UI.
+	//
+	// Note: This property is experimental.
+	UserGesture  *bool `json:"userGesture,omitempty"`
+	AwaitPromise *bool `json:"awaitPromise,omitempty"` // Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
 }
 
 // NewEvaluateArgs initializes EvaluateArgs with the required arguments.
@@ -53,12 +59,16 @@ func (a *EvaluateArgs) SetReturnByValue(returnByValue bool) *EvaluateArgs {
 }
 
 // SetGeneratePreview sets the GeneratePreview optional argument. Whether preview should be generated for the result.
+//
+// Note: This argument is experimental.
 func (a *EvaluateArgs) SetGeneratePreview(generatePreview bool) *EvaluateArgs {
 	a.GeneratePreview = &generatePreview
 	return a
 }
 
 // SetUserGesture sets the UserGesture optional argument. Whether execution should be treated as initiated by user in the UI.
+//
+// Note: This argument is experimental.
 func (a *EvaluateArgs) SetUserGesture(userGesture bool) *EvaluateArgs {
 	a.UserGesture = &userGesture
 	return a
@@ -110,14 +120,20 @@ type AwaitPromiseReply struct {
 
 // CallFunctionOnArgs represents the arguments for CallFunctionOn in the Runtime domain.
 type CallFunctionOnArgs struct {
-	ObjectID            RemoteObjectID `json:"objectId"`                  // Identifier of the object to call function on.
-	FunctionDeclaration string         `json:"functionDeclaration"`       // Declaration of the function to call.
-	Arguments           []CallArgument `json:"arguments,omitempty"`       // Call arguments. All call arguments must belong to the same JavaScript world as the target object.
-	Silent              *bool          `json:"silent,omitempty"`          // In silent mode exceptions thrown during evaluation are not reported and do not pause execution. Overrides setPauseOnException state.
-	ReturnByValue       *bool          `json:"returnByValue,omitempty"`   // Whether the result is expected to be a JSON object which should be sent by value.
-	GeneratePreview     *bool          `json:"generatePreview,omitempty"` // Whether preview should be generated for the result.
-	UserGesture         *bool          `json:"userGesture,omitempty"`     // Whether execution should be treated as initiated by user in the UI.
-	AwaitPromise        *bool          `json:"awaitPromise,omitempty"`    // Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
+	ObjectID            RemoteObjectID `json:"objectId"`                // Identifier of the object to call function on.
+	FunctionDeclaration string         `json:"functionDeclaration"`     // Declaration of the function to call.
+	Arguments           []CallArgument `json:"arguments,omitempty"`     // Call arguments. All call arguments must belong to the same JavaScript world as the target object.
+	Silent              *bool          `json:"silent,omitempty"`        // In silent mode exceptions thrown during evaluation are not reported and do not pause execution. Overrides setPauseOnException state.
+	ReturnByValue       *bool          `json:"returnByValue,omitempty"` // Whether the result is expected to be a JSON object which should be sent by value.
+	// GeneratePreview Whether preview should be generated for the result.
+	//
+	// Note: This property is experimental.
+	GeneratePreview *bool `json:"generatePreview,omitempty"`
+	// UserGesture Whether execution should be treated as initiated by user in the UI.
+	//
+	// Note: This property is experimental.
+	UserGesture  *bool `json:"userGesture,omitempty"`
+	AwaitPromise *bool `json:"awaitPromise,omitempty"` // Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
 }
 
 // NewCallFunctionOnArgs initializes CallFunctionOnArgs with the required arguments.
@@ -147,12 +163,16 @@ func (a *CallFunctionOnArgs) SetReturnByValue(returnByValue bool) *CallFunctionO
 }
 
 // SetGeneratePreview sets the GeneratePreview optional argument. Whether preview should be generated for the result.
+//
+// Note: This argument is experimental.
 func (a *CallFunctionOnArgs) SetGeneratePreview(generatePreview bool) *CallFunctionOnArgs {
 	a.GeneratePreview = &generatePreview
 	return a
 }
 
 // SetUserGesture sets the UserGesture optional argument. Whether execution should be treated as initiated by user in the UI.
+//
+// Note: This argument is experimental.
 func (a *CallFunctionOnArgs) SetUserGesture(userGesture bool) *CallFunctionOnArgs {
 	a.UserGesture = &userGesture
 	return a
@@ -172,10 +192,16 @@ type CallFunctionOnReply struct {
 
 // GetPropertiesArgs represents the arguments for GetProperties in the Runtime domain.
 type GetPropertiesArgs struct {
-	ObjectID               RemoteObjectID `json:"objectId"`                         // Identifier of the object to return properties for.
-	OwnProperties          *bool          `json:"ownProperties,omitempty"`          // If true, returns properties belonging only to the element itself, not to its prototype chain.
-	AccessorPropertiesOnly *bool          `json:"accessorPropertiesOnly,omitempty"` // If true, returns accessor properties (with getter/setter) only; internal properties are not returned either.
-	GeneratePreview        *bool          `json:"generatePreview,omitempty"`        // Whether preview should be generated for the results.
+	ObjectID      RemoteObjectID `json:"objectId"`                // Identifier of the object to return properties for.
+	OwnProperties *bool          `json:"ownProperties,omitempty"` // If true, returns properties belonging only to the element itself, not to its prototype chain.
+	// AccessorPropertiesOnly If true, returns accessor properties (with getter/setter) only; internal properties are not returned either.
+	//
+	// Note: This property is experimental.
+	AccessorPropertiesOnly *bool `json:"accessorPropertiesOnly,omitempty"`
+	// GeneratePreview Whether preview should be generated for the results.
+	//
+	// Note: This property is experimental.
+	GeneratePreview *bool `json:"generatePreview,omitempty"`
 }
 
 // NewGetPropertiesArgs initializes GetPropertiesArgs with the required arguments.
@@ -192,12 +218,16 @@ func (a *GetPropertiesArgs) SetOwnProperties(ownProperties bool) *GetPropertiesA
 }
 
 // SetAccessorPropertiesOnly sets the AccessorPropertiesOnly optional argument. If true, returns accessor properties (with getter/setter) only; internal properties are not returned either.
+//
+// Note: This argument is experimental.
 func (a *GetPropertiesArgs) SetAccessorPropertiesOnly(accessorPropertiesOnly bool) *GetPropertiesArgs {
 	a.AccessorPropertiesOnly = &accessorPropertiesOnly
 	return a
 }
 
 // SetGeneratePreview sets the GeneratePreview optional argument. Whether preview should be generated for the results.
+//
+// Note: This argument is experimental.
 func (a *GetPropertiesArgs) SetGeneratePreview(generatePreview bool) *GetPropertiesArgs {
 	a.GeneratePreview = &generatePreview
 	return a

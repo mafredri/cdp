@@ -11,9 +11,12 @@ import (
 
 // FrameAttachedReply is the reply for FrameAttached events.
 type FrameAttachedReply struct {
-	FrameID       FrameID             `json:"frameId"`         // Id of the frame that has been attached.
-	ParentFrameID FrameID             `json:"parentFrameId"`   // Parent frame identifier.
-	Stack         *runtime.StackTrace `json:"stack,omitempty"` // JavaScript stack trace of when frame was attached, only set if frame initiated from script.
+	FrameID       FrameID `json:"frameId"`       // Id of the frame that has been attached.
+	ParentFrameID FrameID `json:"parentFrameId"` // Parent frame identifier.
+	// Stack JavaScript stack trace of when frame was attached, only set if frame initiated from script.
+	//
+	// Note: This property is experimental.
+	Stack *runtime.StackTrace `json:"stack,omitempty"`
 }
 
 // FrameNavigatedClient is a client for FrameNavigated events. Fired once navigation of the frame has completed. Frame is now associated with the new loader.
@@ -67,6 +70,12 @@ type FrameScheduledNavigationClient interface {
 type FrameScheduledNavigationReply struct {
 	FrameID FrameID `json:"frameId"` // Id of the frame that has scheduled a navigation.
 	Delay   float64 `json:"delay"`   // Delay (in seconds) until the navigation is scheduled to begin. The navigation is not guaranteed to start.
+	// Reason The reason for the navigation.
+	//
+	// Values: "formSubmission", "httpHeaderRefresh", "scriptInitiated", "metaTagRefresh", "pageBlockInterstitial", "reload".
+	//
+	// Note: This property is experimental.
+	Reason string `json:"reason"`
 }
 
 // FrameClearedScheduledNavigationClient is a client for FrameClearedScheduledNavigation events. Fired when frame no longer has a scheduled navigation.

@@ -7,20 +7,30 @@ import (
 )
 
 // Animation Animation instance.
+//
+// Note: This type is experimental.
 type Animation struct {
-	ID           string  `json:"id"`              // Animation's id.
-	Name         string  `json:"name"`            // Animation's name.
-	PausedState  bool    `json:"pausedState"`     // Animation's internal paused state.
-	PlayState    string  `json:"playState"`       // Animation's play state.
-	PlaybackRate float64 `json:"playbackRate"`    // Animation's playback rate.
-	StartTime    float64 `json:"startTime"`       // Animation's start time.
-	CurrentTime  float64 `json:"currentTime"`     // Animation's current time.
-	Source       Effect  `json:"source"`          // Animation's source animation node.
-	Type         string  `json:"type"`            // Animation type of Animation.
-	CSSID        *string `json:"cssId,omitempty"` // A unique ID for Animation representing the sources that triggered this CSS animation/transition.
+	ID   string `json:"id"`   // Animation's id.
+	Name string `json:"name"` // Animation's name.
+	// PausedState Animation's internal paused state.
+	//
+	// Note: This property is experimental.
+	PausedState  bool    `json:"pausedState"`
+	PlayState    string  `json:"playState"`    // Animation's play state.
+	PlaybackRate float64 `json:"playbackRate"` // Animation's playback rate.
+	StartTime    float64 `json:"startTime"`    // Animation's start time.
+	CurrentTime  float64 `json:"currentTime"`  // Animation's current time.
+	Source       Effect  `json:"source"`       // Animation's source animation node.
+	// Type Animation type of Animation.
+	//
+	// Values: "CSSTransition", "CSSAnimation", "WebAnimation".
+	Type  string  `json:"type"`
+	CSSID *string `json:"cssId,omitempty"` // A unique ID for Animation representing the sources that triggered this CSS animation/transition.
 }
 
 // Effect AnimationEffect instance
+//
+// Note: This type is experimental.
 type Effect struct {
 	Delay          float64           `json:"delay"`                   // AnimationEffect's delay.
 	EndDelay       float64           `json:"endDelay"`                // AnimationEffect's end delay.

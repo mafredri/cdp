@@ -3,10 +3,14 @@
 package domstorage
 
 // StorageID DOM Storage identifier.
+//
+// Note: This type is experimental.
 type StorageID struct {
 	SecurityOrigin string `json:"securityOrigin"` // Security origin for the storage.
 	IsLocalStorage bool   `json:"isLocalStorage"` // Whether the storage is local storage (not session storage).
 }
 
 // Item DOM Storage item.
+//
+// Note: This type is experimental.
 type Item []string

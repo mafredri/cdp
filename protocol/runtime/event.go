@@ -82,13 +82,18 @@ type ConsoleAPICalledClient interface {
 }
 
 // ConsoleAPICalledReply is the reply for ConsoleAPICalled events.
-type ConsoleAPICalledReply struct {
-	Type               string             `json:"type"`                 // Type of the call.
+type ConsoleAPICalledReply struct { // Type Type of the call.
+	//
+	// Values: "log", "debug", "info", "error", "warning", "dir", "dirxml", "table", "trace", "clear", "startGroup", "startGroupCollapsed", "endGroup", "assert", "profile", "profileEnd", "count", "timeEnd".
+	Type               string             `json:"type"`
 	Args               []RemoteObject     `json:"args"`                 // Call arguments.
 	ExecutionContextID ExecutionContextID `json:"executionContextId"`   // Identifier of the context where the call was made.
 	Timestamp          Timestamp          `json:"timestamp"`            // Call timestamp.
 	StackTrace         *StackTrace        `json:"stackTrace,omitempty"` // Stack trace captured when the call was made.
-	Context            *string            `json:"context,omitempty"`    // Console context descriptor for calls on non-default console context (not console.*): 'anonymous#unique-logger-id' for call on unnamed context, 'name#unique-logger-id' for call on named context.
+	// Context Console context descriptor for calls on non-default console context (not console.*): 'anonymous#unique-logger-id' for call on unnamed context, 'name#unique-logger-id' for call on named context.
+	//
+	// Note: This property is experimental.
+	Context *string `json:"context,omitempty"`
 }
 
 // InspectRequestedClient is a client for InspectRequested events. Issued when object should be inspected (for example, as a result of inspect() command line API call).

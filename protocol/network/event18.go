@@ -11,16 +11,25 @@ import (
 
 // RequestWillBeSentReply is the reply for RequestWillBeSent events.
 type RequestWillBeSentReply struct {
-	RequestID        RequestID                  `json:"requestId"`                  // Request identifier.
-	LoaderID         LoaderID                   `json:"loaderId"`                   // Loader identifier. Empty string if the request is fetched form worker.
-	DocumentURL      string                     `json:"documentURL"`                // URL of the document this request is loaded for.
-	Request          Request                    `json:"request"`                    // Request data.
-	Timestamp        MonotonicTime              `json:"timestamp"`                  // Timestamp.
-	WallTime         TimeSinceEpoch             `json:"wallTime"`                   // Timestamp.
-	Initiator        Initiator                  `json:"initiator"`                  // Request initiator.
-	RedirectResponse *Response                  `json:"redirectResponse,omitempty"` // Redirect response data.
-	Type             *protocol.PageResourceType `json:"type,omitempty"`             // Type of this resource.
-	FrameID          *protocol.PageFrameID      `json:"frameId,omitempty"`          // Frame identifier.
+	RequestID   RequestID     `json:"requestId"`   // Request identifier.
+	LoaderID    LoaderID      `json:"loaderId"`    // Loader identifier. Empty string if the request is fetched form worker.
+	DocumentURL string        `json:"documentURL"` // URL of the document this request is loaded for.
+	Request     Request       `json:"request"`     // Request data.
+	Timestamp   MonotonicTime `json:"timestamp"`   // Timestamp.
+	// WallTime Timestamp.
+	//
+	// Note: This property is experimental.
+	WallTime         TimeSinceEpoch `json:"wallTime"`
+	Initiator        Initiator      `json:"initiator"`                  // Request initiator.
+	RedirectResponse *Response      `json:"redirectResponse,omitempty"` // Redirect response data.
+	// Type Type of this resource.
+	//
+	// Note: This property is experimental.
+	Type *protocol.PageResourceType `json:"type,omitempty"`
+	// FrameID Frame identifier.
+	//
+	// Note: This property is experimental.
+	FrameID *protocol.PageFrameID `json:"frameId,omitempty"`
 }
 
 // RequestServedFromCacheClient is a client for RequestServedFromCache events. Fired if request ended up loading from cache.
@@ -33,12 +42,15 @@ type RequestServedFromCacheClient interface {
 
 // ResponseReceivedReply is the reply for ResponseReceived events.
 type ResponseReceivedReply struct {
-	RequestID RequestID                 `json:"requestId"`         // Request identifier.
-	LoaderID  LoaderID                  `json:"loaderId"`          // Loader identifier. Empty string if the request is fetched form worker.
-	Timestamp MonotonicTime             `json:"timestamp"`         // Timestamp.
-	Type      protocol.PageResourceType `json:"type"`              // Resource type.
-	Response  Response                  `json:"response"`          // Response data.
-	FrameID   *protocol.PageFrameID     `json:"frameId,omitempty"` // Frame identifier.
+	RequestID RequestID                 `json:"requestId"` // Request identifier.
+	LoaderID  LoaderID                  `json:"loaderId"`  // Loader identifier. Empty string if the request is fetched form worker.
+	Timestamp MonotonicTime             `json:"timestamp"` // Timestamp.
+	Type      protocol.PageResourceType `json:"type"`      // Resource type.
+	Response  Response                  `json:"response"`  // Response data.
+	// FrameID Frame identifier.
+	//
+	// Note: This property is experimental.
+	FrameID *protocol.PageFrameID `json:"frameId,omitempty"`
 }
 
 // DataReceivedClient is a client for DataReceived events. Fired when data chunk was received over the network.
@@ -51,12 +63,15 @@ type DataReceivedClient interface {
 
 // LoadingFailedReply is the reply for LoadingFailed events.
 type LoadingFailedReply struct {
-	RequestID     RequestID                 `json:"requestId"`               // Request identifier.
-	Timestamp     MonotonicTime             `json:"timestamp"`               // Timestamp.
-	Type          protocol.PageResourceType `json:"type"`                    // Resource type.
-	ErrorText     string                    `json:"errorText"`               // User friendly error message.
-	Canceled      *bool                     `json:"canceled,omitempty"`      // True if loading was canceled.
-	BlockedReason BlockedReason             `json:"blockedReason,omitempty"` // The reason why loading was blocked, if any.
+	RequestID RequestID                 `json:"requestId"`          // Request identifier.
+	Timestamp MonotonicTime             `json:"timestamp"`          // Timestamp.
+	Type      protocol.PageResourceType `json:"type"`               // Resource type.
+	ErrorText string                    `json:"errorText"`          // User friendly error message.
+	Canceled  *bool                     `json:"canceled,omitempty"` // True if loading was canceled.
+	// BlockedReason The reason why loading was blocked, if any.
+	//
+	// Note: This property is experimental.
+	BlockedReason BlockedReason `json:"blockedReason,omitempty"`
 }
 
 // WebSocketWillSendHandshakeRequestClient is a client for WebSocketWillSendHandshakeRequest events. Fired when WebSocket is about to initiate handshake.

@@ -107,9 +107,15 @@ func (a *ReloadArgs) SetScriptToEvaluateOnLoad(scriptToEvaluateOnLoad string) *R
 
 // NavigateArgs represents the arguments for Navigate in the Page domain.
 type NavigateArgs struct {
-	URL            string         `json:"url"`                      // URL to navigate the page to.
-	Referrer       *string        `json:"referrer,omitempty"`       // Referrer URL.
-	TransitionType TransitionType `json:"transitionType,omitempty"` // Intended transition type.
+	URL string `json:"url"` // URL to navigate the page to.
+	// Referrer Referrer URL.
+	//
+	// Note: This property is experimental.
+	Referrer *string `json:"referrer,omitempty"`
+	// TransitionType Intended transition type.
+	//
+	// Note: This property is experimental.
+	TransitionType TransitionType `json:"transitionType,omitempty"`
 }
 
 // NewNavigateArgs initializes NavigateArgs with the required arguments.
@@ -120,12 +126,16 @@ func NewNavigateArgs(url string) *NavigateArgs {
 }
 
 // SetReferrer sets the Referrer optional argument. Referrer URL.
+//
+// Note: This argument is experimental.
 func (a *NavigateArgs) SetReferrer(referrer string) *NavigateArgs {
 	a.Referrer = &referrer
 	return a
 }
 
 // SetTransitionType sets the TransitionType optional argument. Intended transition type.
+//
+// Note: This argument is experimental.
 func (a *NavigateArgs) SetTransitionType(transitionType TransitionType) *NavigateArgs {
 	a.TransitionType = transitionType
 	return a
@@ -301,8 +311,11 @@ func NewSetDeviceOrientationOverrideArgs(alpha float64, beta float64, gamma floa
 
 // SetTouchEmulationEnabledArgs represents the arguments for SetTouchEmulationEnabled in the Page domain.
 type SetTouchEmulationEnabledArgs struct {
-	Enabled       bool    `json:"enabled"`                 // Whether the touch event emulation should be enabled.
-	Configuration *string `json:"configuration,omitempty"` // Touch/gesture events configuration. Default: current platform.
+	Enabled bool `json:"enabled"` // Whether the touch event emulation should be enabled.
+	// Configuration Touch/gesture events configuration. Default: current platform.
+	//
+	// Values: "mobile", "desktop".
+	Configuration *string `json:"configuration,omitempty"`
 }
 
 // NewSetTouchEmulationEnabledArgs initializes SetTouchEmulationEnabledArgs with the required arguments.
@@ -313,6 +326,8 @@ func NewSetTouchEmulationEnabledArgs(enabled bool) *SetTouchEmulationEnabledArgs
 }
 
 // SetConfiguration sets the Configuration optional argument. Touch/gesture events configuration. Default: current platform.
+//
+// Values: "mobile", "desktop".
 func (a *SetTouchEmulationEnabledArgs) SetConfiguration(configuration string) *SetTouchEmulationEnabledArgs {
 	a.Configuration = &configuration
 	return a
@@ -320,10 +335,19 @@ func (a *SetTouchEmulationEnabledArgs) SetConfiguration(configuration string) *S
 
 // CaptureScreenshotArgs represents the arguments for CaptureScreenshot in the Page domain.
 type CaptureScreenshotArgs struct {
-	Format      *string   `json:"format,omitempty"`      // Image compression format (defaults to png).
-	Quality     *int      `json:"quality,omitempty"`     // Compression quality from range [0..100] (jpeg only).
-	Clip        *Viewport `json:"clip,omitempty"`        // Capture the screenshot of a given region only.
-	FromSurface *bool     `json:"fromSurface,omitempty"` // Capture the screenshot from the surface, rather than the view. Defaults to true.
+	// Format Image compression format (defaults to png).
+	//
+	// Values: "jpeg", "png".
+	Format  *string `json:"format,omitempty"`
+	Quality *int    `json:"quality,omitempty"` // Compression quality from range [0..100] (jpeg only).
+	// Clip Capture the screenshot of a given region only.
+	//
+	// Note: This property is experimental.
+	Clip *Viewport `json:"clip,omitempty"`
+	// FromSurface Capture the screenshot from the surface, rather than the view. Defaults to true.
+	//
+	// Note: This property is experimental.
+	FromSurface *bool `json:"fromSurface,omitempty"`
 }
 
 // NewCaptureScreenshotArgs initializes CaptureScreenshotArgs with the required arguments.
@@ -334,6 +358,8 @@ func NewCaptureScreenshotArgs() *CaptureScreenshotArgs {
 }
 
 // SetFormat sets the Format optional argument. Image compression format (defaults to png).
+//
+// Values: "jpeg", "png".
 func (a *CaptureScreenshotArgs) SetFormat(format string) *CaptureScreenshotArgs {
 	a.Format = &format
 	return a
@@ -346,12 +372,16 @@ func (a *CaptureScreenshotArgs) SetQuality(quality int) *CaptureScreenshotArgs {
 }
 
 // SetClip sets the Clip optional argument. Capture the screenshot of a given region only.
+//
+// Note: This argument is experimental.
 func (a *CaptureScreenshotArgs) SetClip(clip Viewport) *CaptureScreenshotArgs {
 	a.Clip = &clip
 	return a
 }
 
 // SetFromSurface sets the FromSurface optional argument. Capture the screenshot from the surface, rather than the view. Defaults to true.
+//
+// Note: This argument is experimental.
 func (a *CaptureScreenshotArgs) SetFromSurface(fromSurface bool) *CaptureScreenshotArgs {
 	a.FromSurface = &fromSurface
 	return a
@@ -464,7 +494,10 @@ type PrintToPDFReply struct {
 
 // StartScreencastArgs represents the arguments for StartScreencast in the Page domain.
 type StartScreencastArgs struct {
-	Format        *string `json:"format,omitempty"`        // Image compression format.
+	// Format Image compression format.
+	//
+	// Values: "jpeg", "png".
+	Format        *string `json:"format,omitempty"`
 	Quality       *int    `json:"quality,omitempty"`       // Compression quality from range [0..100].
 	MaxWidth      *int    `json:"maxWidth,omitempty"`      // Maximum screenshot width.
 	MaxHeight     *int    `json:"maxHeight,omitempty"`     // Maximum screenshot height.
@@ -479,6 +512,8 @@ func NewStartScreencastArgs() *StartScreencastArgs {
 }
 
 // SetFormat sets the Format optional argument. Image compression format.
+//
+// Values: "jpeg", "png".
 func (a *StartScreencastArgs) SetFormat(format string) *StartScreencastArgs {
 	a.Format = &format
 	return a

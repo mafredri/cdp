@@ -31,7 +31,10 @@ type ObjectStoreIndex struct {
 
 // Key Key.
 type Key struct {
-	Type   string   `json:"type"`             // Key type.
+	// Type Key type.
+	//
+	// Values: "number", "string", "date", "array".
+	Type   string   `json:"type"`
 	Number *float64 `json:"number,omitempty"` // Number value.
 	String *string  `json:"string,omitempty"` // String value.
 	Date   *float64 `json:"date,omitempty"`   // Date value.
@@ -55,7 +58,10 @@ type DataEntry struct {
 
 // KeyPath Key path.
 type KeyPath struct {
-	Type   string   `json:"type"`             // Key path type.
+	// Type Key path type.
+	//
+	// Values: "null", "string", "array".
+	Type   string   `json:"type"`
 	String *string  `json:"string,omitempty"` // String value.
 	Array  []string `json:"array,omitempty"`  // Array value.
 }

@@ -4,8 +4,14 @@ package network
 
 // EnableArgs represents the arguments for Enable in the Network domain.
 type EnableArgs struct {
-	MaxTotalBufferSize    *int `json:"maxTotalBufferSize,omitempty"`    // Buffer size in bytes to use when preserving network payloads (XHRs, etc).
-	MaxResourceBufferSize *int `json:"maxResourceBufferSize,omitempty"` // Per-resource buffer size in bytes to use when preserving network payloads (XHRs, etc).
+	// MaxTotalBufferSize Buffer size in bytes to use when preserving network payloads (XHRs, etc).
+	//
+	// Note: This property is experimental.
+	MaxTotalBufferSize *int `json:"maxTotalBufferSize,omitempty"`
+	// MaxResourceBufferSize Per-resource buffer size in bytes to use when preserving network payloads (XHRs, etc).
+	//
+	// Note: This property is experimental.
+	MaxResourceBufferSize *int `json:"maxResourceBufferSize,omitempty"`
 }
 
 // NewEnableArgs initializes EnableArgs with the required arguments.
@@ -16,12 +22,16 @@ func NewEnableArgs() *EnableArgs {
 }
 
 // SetMaxTotalBufferSize sets the MaxTotalBufferSize optional argument. Buffer size in bytes to use when preserving network payloads (XHRs, etc).
+//
+// Note: This argument is experimental.
 func (a *EnableArgs) SetMaxTotalBufferSize(maxTotalBufferSize int) *EnableArgs {
 	a.MaxTotalBufferSize = &maxTotalBufferSize
 	return a
 }
 
 // SetMaxResourceBufferSize sets the MaxResourceBufferSize optional argument. Per-resource buffer size in bytes to use when preserving network payloads (XHRs, etc).
+//
+// Note: This argument is experimental.
 func (a *EnableArgs) SetMaxResourceBufferSize(maxResourceBufferSize int) *EnableArgs {
 	a.MaxResourceBufferSize = &maxResourceBufferSize
 	return a

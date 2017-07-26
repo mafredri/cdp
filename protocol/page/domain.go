@@ -460,6 +460,15 @@ func (d *domainClient) CreateIsolatedWorld(ctx context.Context, args *CreateIsol
 	return
 }
 
+// BringToFront invokes the Page method. Brings page to front (activates tab).
+func (d *domainClient) BringToFront(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Page.bringToFront", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "BringToFront", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) DOMContentEventFired(ctx context.Context) (DOMContentEventFiredClient, error) {
 	s, err := rpcc.NewStream(ctx, "Page.domContentEventFired", d.conn)
 	if err != nil {

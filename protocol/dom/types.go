@@ -12,9 +12,13 @@ import (
 type NodeID int
 
 // BackendNodeID Unique DOM node identifier used to reference a node that may not have been pushed to the front-end.
+//
+// Note: This type is experimental.
 type BackendNodeID int
 
 // BackendNode Backend node with a friendly name.
+//
+// Note: This type is experimental.
 type BackendNode struct {
 	NodeType      int           `json:"nodeType"`      // Node's nodeType.
 	NodeName      string        `json:"nodeName"`      // Node's nodeName.
@@ -206,9 +210,13 @@ type RGBA struct {
 }
 
 // Quad An array of quad vertices, x immediately followed by y for each point, points clock-wise.
+//
+// Note: This type is experimental.
 type Quad []float64
 
 // BoxModel Box model.
+//
+// Note: This type is experimental.
 type BoxModel struct {
 	Content      Quad              `json:"content"`                // Content box
 	Padding      Quad              `json:"padding"`                // Padding box
@@ -220,6 +228,8 @@ type BoxModel struct {
 }
 
 // ShapeOutsideInfo CSS Shape Outside details.
+//
+// Note: This type is experimental.
 type ShapeOutsideInfo struct {
 	Bounds      Quad              `json:"bounds"`      // Shape bounds
 	Shape       []json.RawMessage `json:"shape"`       // Shape coordinate details
@@ -227,6 +237,8 @@ type ShapeOutsideInfo struct {
 }
 
 // Rect Rectangle.
+//
+// Note: This type is experimental.
 type Rect struct {
 	X      float64 `json:"x"`      // X coordinate
 	Y      float64 `json:"y"`      // Y coordinate

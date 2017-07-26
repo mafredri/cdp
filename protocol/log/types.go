@@ -9,8 +9,14 @@ import (
 
 // Entry Log entry.
 type Entry struct {
-	Source           string              `json:"source"`                     // Log entry source.
-	Level            string              `json:"level"`                      // Log entry severity.
+	// Source Log entry source.
+	//
+	// Values: "xml", "javascript", "network", "storage", "appcache", "rendering", "security", "deprecation", "worker", "violation", "intervention", "other".
+	Source string `json:"source"`
+	// Level Log entry severity.
+	//
+	// Values: "verbose", "info", "warning", "error".
+	Level            string              `json:"level"`
 	Text             string              `json:"text"`                       // Logged text.
 	Timestamp        runtime.Timestamp   `json:"timestamp"`                  // Timestamp when this entry was added.
 	URL              *string             `json:"url,omitempty"`              // URL of the resource if known.
@@ -22,6 +28,9 @@ type Entry struct {
 
 // ViolationSetting Violation configuration setting.
 type ViolationSetting struct {
-	Name      string  `json:"name"`      // Violation type.
+	// Name Violation type.
+	//
+	// Values: "longTask", "longLayout", "blockedEvent", "blockedParser", "discouragedAPIUse", "handler", "recurringHandler".
+	Name      string  `json:"name"`
 	Threshold float64 `json:"threshold"` // Time threshold to trigger upon.
 }

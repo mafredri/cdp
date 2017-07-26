@@ -10,8 +10,13 @@ import (
 )
 
 // TouchPoint
+//
+// Note: This type is experimental.
 type TouchPoint struct {
-	State         string   `json:"state"`                   // State of the touch point.
+	// State State of the touch point.
+	//
+	// Values: "touchPressed", "touchReleased", "touchMoved", "touchStationary", "touchCancelled".
+	State         string   `json:"state"`
 	X             int      `json:"x"`                       // X coordinate of the event relative to the main frame's viewport.
 	Y             int      `json:"y"`                       // Y coordinate of the event relative to the main frame's viewport. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport.
 	RadiusX       *int     `json:"radiusX,omitempty"`       // X radius of the touch area (default: 1).
@@ -22,6 +27,8 @@ type TouchPoint struct {
 }
 
 // GestureSourceType
+//
+// Note: This type is experimental.
 type GestureSourceType int
 
 // GestureSourceType as enums.

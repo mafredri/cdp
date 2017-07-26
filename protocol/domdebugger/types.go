@@ -70,6 +70,8 @@ func (e *DOMBreakpointType) UnmarshalJSON(data []byte) error {
 }
 
 // EventListener Object event listener.
+//
+// Note: This type is experimental.
 type EventListener struct {
 	Type            string                `json:"type"`                      // EventListener's type.
 	UseCapture      bool                  `json:"useCapture"`                // EventListener's useCapture.

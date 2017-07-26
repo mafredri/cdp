@@ -32,7 +32,10 @@ var _ json.Unmarshaler = (*MemoryDumpConfig)(nil)
 
 // TraceConfig
 type TraceConfig struct {
-	RecordMode           *string          `json:"recordMode,omitempty"`           // Controls how the trace buffer stores data.
+	// RecordMode Controls how the trace buffer stores data.
+	//
+	// Values: "recordUntilFull", "recordContinuously", "recordAsMuchAsPossible", "echoToConsole".
+	RecordMode           *string          `json:"recordMode,omitempty"`
 	EnableSampling       *bool            `json:"enableSampling,omitempty"`       // Turns on JavaScript stack sampling.
 	EnableSystrace       *bool            `json:"enableSystrace,omitempty"`       // Turns on system tracing.
 	EnableArgumentFilter *bool            `json:"enableArgumentFilter,omitempty"` // Turns on argument filter.

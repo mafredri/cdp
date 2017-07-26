@@ -8,8 +8,14 @@ import (
 
 // GetDocumentArgs represents the arguments for GetDocument in the DOM domain.
 type GetDocumentArgs struct {
-	Depth  *int  `json:"depth,omitempty"`  // The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
-	Pierce *bool `json:"pierce,omitempty"` // Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+	// Depth The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+	//
+	// Note: This property is experimental.
+	Depth *int `json:"depth,omitempty"`
+	// Pierce Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+	//
+	// Note: This property is experimental.
+	Pierce *bool `json:"pierce,omitempty"`
 }
 
 // NewGetDocumentArgs initializes GetDocumentArgs with the required arguments.
@@ -20,12 +26,16 @@ func NewGetDocumentArgs() *GetDocumentArgs {
 }
 
 // SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+//
+// Note: This argument is experimental.
 func (a *GetDocumentArgs) SetDepth(depth int) *GetDocumentArgs {
 	a.Depth = &depth
 	return a
 }
 
 // SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+//
+// Note: This argument is experimental.
 func (a *GetDocumentArgs) SetPierce(pierce bool) *GetDocumentArgs {
 	a.Pierce = &pierce
 	return a
@@ -38,8 +48,14 @@ type GetDocumentReply struct {
 
 // GetFlattenedDocumentArgs represents the arguments for GetFlattenedDocument in the DOM domain.
 type GetFlattenedDocumentArgs struct {
-	Depth  *int  `json:"depth,omitempty"`  // The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
-	Pierce *bool `json:"pierce,omitempty"` // Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+	// Depth The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+	//
+	// Note: This property is experimental.
+	Depth *int `json:"depth,omitempty"`
+	// Pierce Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+	//
+	// Note: This property is experimental.
+	Pierce *bool `json:"pierce,omitempty"`
 }
 
 // NewGetFlattenedDocumentArgs initializes GetFlattenedDocumentArgs with the required arguments.
@@ -50,12 +66,16 @@ func NewGetFlattenedDocumentArgs() *GetFlattenedDocumentArgs {
 }
 
 // SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+//
+// Note: This argument is experimental.
 func (a *GetFlattenedDocumentArgs) SetDepth(depth int) *GetFlattenedDocumentArgs {
 	a.Depth = &depth
 	return a
 }
 
 // SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+//
+// Note: This argument is experimental.
 func (a *GetFlattenedDocumentArgs) SetPierce(pierce bool) *GetFlattenedDocumentArgs {
 	a.Pierce = &pierce
 	return a
@@ -85,9 +105,15 @@ type CollectClassNamesFromSubtreeReply struct {
 
 // RequestChildNodesArgs represents the arguments for RequestChildNodes in the DOM domain.
 type RequestChildNodesArgs struct {
-	NodeID NodeID `json:"nodeId"`           // Id of the node to get children for.
-	Depth  *int   `json:"depth,omitempty"`  // The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
-	Pierce *bool  `json:"pierce,omitempty"` // Whether or not iframes and shadow roots should be traversed when returning the sub-tree (default is false).
+	NodeID NodeID `json:"nodeId"` // Id of the node to get children for.
+	// Depth The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+	//
+	// Note: This property is experimental.
+	Depth *int `json:"depth,omitempty"`
+	// Pierce Whether or not iframes and shadow roots should be traversed when returning the sub-tree (default is false).
+	//
+	// Note: This property is experimental.
+	Pierce *bool `json:"pierce,omitempty"`
 }
 
 // NewRequestChildNodesArgs initializes RequestChildNodesArgs with the required arguments.
@@ -98,12 +124,16 @@ func NewRequestChildNodesArgs(nodeID NodeID) *RequestChildNodesArgs {
 }
 
 // SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+//
+// Note: This argument is experimental.
 func (a *RequestChildNodesArgs) SetDepth(depth int) *RequestChildNodesArgs {
 	a.Depth = &depth
 	return a
 }
 
 // SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the sub-tree (default is false).
+//
+// Note: This argument is experimental.
 func (a *RequestChildNodesArgs) SetPierce(pierce bool) *RequestChildNodesArgs {
 	a.Pierce = &pierce
 	return a
@@ -276,8 +306,11 @@ func NewSetOuterHTMLArgs(nodeID NodeID, outerHTML string) *SetOuterHTMLArgs {
 
 // PerformSearchArgs represents the arguments for PerformSearch in the DOM domain.
 type PerformSearchArgs struct {
-	Query                     string `json:"query"`                               // Plain text or query selector or XPath search query.
-	IncludeUserAgentShadowDOM *bool  `json:"includeUserAgentShadowDOM,omitempty"` // True to search in user agent shadow DOM.
+	Query string `json:"query"` // Plain text or query selector or XPath search query.
+	// IncludeUserAgentShadowDOM True to search in user agent shadow DOM.
+	//
+	// Note: This property is experimental.
+	IncludeUserAgentShadowDOM *bool `json:"includeUserAgentShadowDOM,omitempty"`
 }
 
 // NewPerformSearchArgs initializes PerformSearchArgs with the required arguments.
@@ -288,6 +321,8 @@ func NewPerformSearchArgs(query string) *PerformSearchArgs {
 }
 
 // SetIncludeUserAgentShadowDOM sets the IncludeUserAgentShadowDOM optional argument. True to search in user agent shadow DOM.
+//
+// Note: This argument is experimental.
 func (a *PerformSearchArgs) SetIncludeUserAgentShadowDOM(includeUserAgentShadowDOM bool) *PerformSearchArgs {
 	a.IncludeUserAgentShadowDOM = &includeUserAgentShadowDOM
 	return a

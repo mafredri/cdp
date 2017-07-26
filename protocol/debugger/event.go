@@ -28,12 +28,27 @@ type ScriptParsedReply struct {
 	ExecutionContextID      runtime.ExecutionContextID `json:"executionContextId"`                // Specifies script creation context.
 	Hash                    string                     `json:"hash"`                              // Content hash of the script.
 	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
-	IsLiveEdit              *bool                      `json:"isLiveEdit,omitempty"`              // True, if this script is generated as a result of the live edit operation.
-	SourceMapURL            *string                    `json:"sourceMapURL,omitempty"`            // URL of source map associated with script (if any).
-	HasSourceURL            *bool                      `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
-	IsModule                *bool                      `json:"isModule,omitempty"`                // True, if this script is ES6 module.
-	Length                  *int                       `json:"length,omitempty"`                  // This script length.
-	StackTrace              *runtime.StackTrace        `json:"stackTrace,omitempty"`              // JavaScript top stack frame of where the script parsed event was triggered if available.
+	// IsLiveEdit True, if this script is generated as a result of the live edit operation.
+	//
+	// Note: This property is experimental.
+	IsLiveEdit   *bool   `json:"isLiveEdit,omitempty"`
+	SourceMapURL *string `json:"sourceMapURL,omitempty"` // URL of source map associated with script (if any).
+	// HasSourceURL True, if this script has sourceURL.
+	//
+	// Note: This property is experimental.
+	HasSourceURL *bool `json:"hasSourceURL,omitempty"`
+	// IsModule True, if this script is ES6 module.
+	//
+	// Note: This property is experimental.
+	IsModule *bool `json:"isModule,omitempty"`
+	// Length This script length.
+	//
+	// Note: This property is experimental.
+	Length *int `json:"length,omitempty"`
+	// StackTrace JavaScript top stack frame of where the script parsed event was triggered if available.
+	//
+	// Note: This property is experimental.
+	StackTrace *runtime.StackTrace `json:"stackTrace,omitempty"`
 }
 
 // ScriptFailedToParseClient is a client for ScriptFailedToParse events. Fired when virtual machine fails to parse the script.
@@ -56,10 +71,22 @@ type ScriptFailedToParseReply struct {
 	Hash                    string                     `json:"hash"`                              // Content hash of the script.
 	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
 	SourceMapURL            *string                    `json:"sourceMapURL,omitempty"`            // URL of source map associated with script (if any).
-	HasSourceURL            *bool                      `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
-	IsModule                *bool                      `json:"isModule,omitempty"`                // True, if this script is ES6 module.
-	Length                  *int                       `json:"length,omitempty"`                  // This script length.
-	StackTrace              *runtime.StackTrace        `json:"stackTrace,omitempty"`              // JavaScript top stack frame of where the script parsed event was triggered if available.
+	// HasSourceURL True, if this script has sourceURL.
+	//
+	// Note: This property is experimental.
+	HasSourceURL *bool `json:"hasSourceURL,omitempty"`
+	// IsModule True, if this script is ES6 module.
+	//
+	// Note: This property is experimental.
+	IsModule *bool `json:"isModule,omitempty"`
+	// Length This script length.
+	//
+	// Note: This property is experimental.
+	Length *int `json:"length,omitempty"`
+	// StackTrace JavaScript top stack frame of where the script parsed event was triggered if available.
+	//
+	// Note: This property is experimental.
+	StackTrace *runtime.StackTrace `json:"stackTrace,omitempty"`
 }
 
 // BreakpointResolvedClient is a client for BreakpointResolved events. Fired when breakpoint is resolved to an actual script and location.
@@ -86,8 +113,11 @@ type PausedClient interface {
 
 // PausedReply is the reply for Paused events.
 type PausedReply struct {
-	CallFrames      []CallFrame         `json:"callFrames"`                // Call stack the virtual machine stopped on.
-	Reason          string              `json:"reason"`                    // Pause reason.
+	CallFrames []CallFrame `json:"callFrames"` // Call stack the virtual machine stopped on.
+	// Reason Pause reason.
+	//
+	// Values: "XHR", "DOM", "EventListener", "exception", "assert", "debugCommand", "promiseRejection", "OOM", "other", "ambiguous".
+	Reason          string              `json:"reason"`
 	Data            json.RawMessage     `json:"data,omitempty"`            // Object containing break-specific auxiliary properties.
 	HitBreakpoints  []string            `json:"hitBreakpoints,omitempty"`  // Hit breakpoints IDs
 	AsyncStackTrace *runtime.StackTrace `json:"asyncStackTrace,omitempty"` // Async stack trace, if any.

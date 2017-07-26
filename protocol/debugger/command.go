@@ -146,8 +146,13 @@ type GetPossibleBreakpointsReply struct {
 
 // ContinueToLocationArgs represents the arguments for ContinueToLocation in the Debugger domain.
 type ContinueToLocationArgs struct {
-	Location         Location `json:"location"`                   // Location to continue to.
-	TargetCallFrames *string  `json:"targetCallFrames,omitempty"` //
+	Location Location `json:"location"` // Location to continue to.
+	// TargetCallFrames
+	//
+	// Values: "any", "current".
+	//
+	// Note: This property is experimental.
+	TargetCallFrames *string `json:"targetCallFrames,omitempty"`
 }
 
 // NewContinueToLocationArgs initializes ContinueToLocationArgs with the required arguments.
@@ -158,6 +163,10 @@ func NewContinueToLocationArgs(location Location) *ContinueToLocationArgs {
 }
 
 // SetTargetCallFrames sets the TargetCallFrames optional argument.
+//
+// Values: "any", "current".
+//
+// Note: This argument is experimental.
 func (a *ContinueToLocationArgs) SetTargetCallFrames(targetCallFrames string) *ContinueToLocationArgs {
 	a.TargetCallFrames = &targetCallFrames
 	return a
@@ -262,7 +271,10 @@ type GetScriptSourceReply struct {
 
 // SetPauseOnExceptionsArgs represents the arguments for SetPauseOnExceptions in the Debugger domain.
 type SetPauseOnExceptionsArgs struct {
-	State string `json:"state"` // Pause on exceptions mode.
+	// State Pause on exceptions mode.
+	//
+	// Values: "none", "uncaught", "all".
+	State string `json:"state"`
 }
 
 // NewSetPauseOnExceptionsArgs initializes SetPauseOnExceptionsArgs with the required arguments.
@@ -280,8 +292,14 @@ type EvaluateOnCallFrameArgs struct {
 	IncludeCommandLineAPI *bool       `json:"includeCommandLineAPI,omitempty"` // Specifies whether command line API should be available to the evaluated expression, defaults to false.
 	Silent                *bool       `json:"silent,omitempty"`                // In silent mode exceptions thrown during evaluation are not reported and do not pause execution. Overrides setPauseOnException state.
 	ReturnByValue         *bool       `json:"returnByValue,omitempty"`         // Whether the result is expected to be a JSON object that should be sent by value.
-	GeneratePreview       *bool       `json:"generatePreview,omitempty"`       // Whether preview should be generated for the result.
-	ThrowOnSideEffect     *bool       `json:"throwOnSideEffect,omitempty"`     // Whether to throw an exception if side effect cannot be ruled out during evaluation.
+	// GeneratePreview Whether preview should be generated for the result.
+	//
+	// Note: This property is experimental.
+	GeneratePreview *bool `json:"generatePreview,omitempty"`
+	// ThrowOnSideEffect Whether to throw an exception if side effect cannot be ruled out during evaluation.
+	//
+	// Note: This property is experimental.
+	ThrowOnSideEffect *bool `json:"throwOnSideEffect,omitempty"`
 }
 
 // NewEvaluateOnCallFrameArgs initializes EvaluateOnCallFrameArgs with the required arguments.
@@ -317,12 +335,16 @@ func (a *EvaluateOnCallFrameArgs) SetReturnByValue(returnByValue bool) *Evaluate
 }
 
 // SetGeneratePreview sets the GeneratePreview optional argument. Whether preview should be generated for the result.
+//
+// Note: This argument is experimental.
 func (a *EvaluateOnCallFrameArgs) SetGeneratePreview(generatePreview bool) *EvaluateOnCallFrameArgs {
 	a.GeneratePreview = &generatePreview
 	return a
 }
 
 // SetThrowOnSideEffect sets the ThrowOnSideEffect optional argument. Whether to throw an exception if side effect cannot be ruled out during evaluation.
+//
+// Note: This argument is experimental.
 func (a *EvaluateOnCallFrameArgs) SetThrowOnSideEffect(throwOnSideEffect bool) *EvaluateOnCallFrameArgs {
 	a.ThrowOnSideEffect = &throwOnSideEffect
 	return a

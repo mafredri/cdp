@@ -374,21 +374,33 @@ func (e *CookieSameSite) UnmarshalJSON(data []byte) error {
 
 // ResourceTiming Timing information for the request.
 type ResourceTiming struct {
-	RequestTime       float64 `json:"requestTime"`       // Timing's requestTime is a baseline in seconds, while the other numbers are ticks in milliseconds relatively to this requestTime.
-	ProxyStart        float64 `json:"proxyStart"`        // Started resolving proxy.
-	ProxyEnd          float64 `json:"proxyEnd"`          // Finished resolving proxy.
-	DNSStart          float64 `json:"dnsStart"`          // Started DNS address resolve.
-	DNSEnd            float64 `json:"dnsEnd"`            // Finished DNS address resolve.
-	ConnectStart      float64 `json:"connectStart"`      // Started connecting to the remote host.
-	ConnectEnd        float64 `json:"connectEnd"`        // Connected to the remote host.
-	SslStart          float64 `json:"sslStart"`          // Started SSL handshake.
-	SslEnd            float64 `json:"sslEnd"`            // Finished SSL handshake.
-	WorkerStart       float64 `json:"workerStart"`       // Started running ServiceWorker.
-	WorkerReady       float64 `json:"workerReady"`       // Finished Starting ServiceWorker.
-	SendStart         float64 `json:"sendStart"`         // Started sending request.
-	SendEnd           float64 `json:"sendEnd"`           // Finished sending request.
-	PushStart         float64 `json:"pushStart"`         // Time the server started pushing request.
-	PushEnd           float64 `json:"pushEnd"`           // Time the server finished pushing request.
+	RequestTime  float64 `json:"requestTime"`  // Timing's requestTime is a baseline in seconds, while the other numbers are ticks in milliseconds relatively to this requestTime.
+	ProxyStart   float64 `json:"proxyStart"`   // Started resolving proxy.
+	ProxyEnd     float64 `json:"proxyEnd"`     // Finished resolving proxy.
+	DNSStart     float64 `json:"dnsStart"`     // Started DNS address resolve.
+	DNSEnd       float64 `json:"dnsEnd"`       // Finished DNS address resolve.
+	ConnectStart float64 `json:"connectStart"` // Started connecting to the remote host.
+	ConnectEnd   float64 `json:"connectEnd"`   // Connected to the remote host.
+	SslStart     float64 `json:"sslStart"`     // Started SSL handshake.
+	SslEnd       float64 `json:"sslEnd"`       // Finished SSL handshake.
+	// WorkerStart Started running ServiceWorker.
+	//
+	// Note: This property is experimental.
+	WorkerStart float64 `json:"workerStart"`
+	// WorkerReady Finished Starting ServiceWorker.
+	//
+	// Note: This property is experimental.
+	WorkerReady float64 `json:"workerReady"`
+	SendStart   float64 `json:"sendStart"` // Started sending request.
+	SendEnd     float64 `json:"sendEnd"`   // Finished sending request.
+	// PushStart Time the server started pushing request.
+	//
+	// Note: This property is experimental.
+	PushStart float64 `json:"pushStart"`
+	// PushEnd Time the server finished pushing request.
+	//
+	// Note: This property is experimental.
+	PushEnd           float64 `json:"pushEnd"`
 	ReceiveHeadersEnd float64 `json:"receiveHeadersEnd"` // Finished receiving response headers.
 }
 
@@ -468,8 +480,11 @@ type Request struct {
 	PostData         *string                    `json:"postData,omitempty"`         // HTTP POST request data.
 	MixedContentType *security.MixedContentType `json:"mixedContentType,omitempty"` // The mixed content type of the request.
 	InitialPriority  ResourcePriority           `json:"initialPriority"`            // Priority of the resource request at the time request is sent.
-	ReferrerPolicy   string                     `json:"referrerPolicy"`             // The referrer policy of the request, as defined in https://www.w3.org/TR/referrer-policy/
-	IsLinkPreload    *bool                      `json:"isLinkPreload,omitempty"`    // Whether is loaded via link preload.
+	// ReferrerPolicy The referrer policy of the request, as defined in https://www.w3.org/TR/referrer-policy/
+	//
+	// Values: "unsafe-url", "no-referrer-when-downgrade", "no-referrer", "origin", "origin-when-cross-origin", "same-origin", "strict-origin", "strict-origin-when-cross-origin".
+	ReferrerPolicy string `json:"referrerPolicy"`
+	IsLinkPreload  *bool  `json:"isLinkPreload,omitempty"` // Whether is loaded via link preload.
 }
 
 // SignedCertificateTimestamp Details of a signed certificate timestamp (SCT).
@@ -501,6 +516,8 @@ type SecurityDetails struct {
 }
 
 // BlockedReason The reason why request was blocked.
+//
+// Note: This type is experimental.
 type BlockedReason int
 
 // BlockedReason as enums.
@@ -575,33 +592,43 @@ func (e *BlockedReason) UnmarshalJSON(data []byte) error {
 
 // Response HTTP response data.
 type Response struct {
-	URL                string           `json:"url"`                          // Response URL. This URL can be different from CachedResource.url in case of redirect.
-	Status             float64          `json:"status"`                       // HTTP response status code.
-	StatusText         string           `json:"statusText"`                   // HTTP response status text.
-	Headers            Headers          `json:"headers"`                      // HTTP response headers.
-	HeadersText        *string          `json:"headersText,omitempty"`        // HTTP response headers text.
-	MimeType           string           `json:"mimeType"`                     // Resource mimeType as determined by the browser.
-	RequestHeaders     Headers          `json:"requestHeaders,omitempty"`     // Refined HTTP request headers that were actually transmitted over the network.
-	RequestHeadersText *string          `json:"requestHeadersText,omitempty"` // HTTP request headers text.
-	ConnectionReused   bool             `json:"connectionReused"`             // Specifies whether physical connection was actually reused for this request.
-	ConnectionID       float64          `json:"connectionId"`                 // Physical connection id that was actually used for this request.
-	RemoteIPAddress    *string          `json:"remoteIPAddress,omitempty"`    // Remote IP address.
-	RemotePort         *int             `json:"remotePort,omitempty"`         // Remote port.
-	FromDiskCache      *bool            `json:"fromDiskCache,omitempty"`      // Specifies that the request was served from the disk cache.
-	FromServiceWorker  *bool            `json:"fromServiceWorker,omitempty"`  // Specifies that the request was served from the ServiceWorker.
-	EncodedDataLength  float64          `json:"encodedDataLength"`            // Total number of bytes received for this request so far.
-	Timing             *ResourceTiming  `json:"timing,omitempty"`             // Timing information for the given request.
-	Protocol           *string          `json:"protocol,omitempty"`           // Protocol used to fetch this request.
-	SecurityState      security.State   `json:"securityState"`                // Security state of the request resource.
-	SecurityDetails    *SecurityDetails `json:"securityDetails,omitempty"`    // Security details for the request.
+	URL                string  `json:"url"`                          // Response URL. This URL can be different from CachedResource.url in case of redirect.
+	Status             float64 `json:"status"`                       // HTTP response status code.
+	StatusText         string  `json:"statusText"`                   // HTTP response status text.
+	Headers            Headers `json:"headers"`                      // HTTP response headers.
+	HeadersText        *string `json:"headersText,omitempty"`        // HTTP response headers text.
+	MimeType           string  `json:"mimeType"`                     // Resource mimeType as determined by the browser.
+	RequestHeaders     Headers `json:"requestHeaders,omitempty"`     // Refined HTTP request headers that were actually transmitted over the network.
+	RequestHeadersText *string `json:"requestHeadersText,omitempty"` // HTTP request headers text.
+	ConnectionReused   bool    `json:"connectionReused"`             // Specifies whether physical connection was actually reused for this request.
+	ConnectionID       float64 `json:"connectionId"`                 // Physical connection id that was actually used for this request.
+	// RemoteIPAddress Remote IP address.
+	//
+	// Note: This property is experimental.
+	RemoteIPAddress *string `json:"remoteIPAddress,omitempty"`
+	// RemotePort Remote port.
+	//
+	// Note: This property is experimental.
+	RemotePort        *int             `json:"remotePort,omitempty"`
+	FromDiskCache     *bool            `json:"fromDiskCache,omitempty"`     // Specifies that the request was served from the disk cache.
+	FromServiceWorker *bool            `json:"fromServiceWorker,omitempty"` // Specifies that the request was served from the ServiceWorker.
+	EncodedDataLength float64          `json:"encodedDataLength"`           // Total number of bytes received for this request so far.
+	Timing            *ResourceTiming  `json:"timing,omitempty"`            // Timing information for the given request.
+	Protocol          *string          `json:"protocol,omitempty"`          // Protocol used to fetch this request.
+	SecurityState     security.State   `json:"securityState"`               // Security state of the request resource.
+	SecurityDetails   *SecurityDetails `json:"securityDetails,omitempty"`   // Security details for the request.
 }
 
 // WebSocketRequest WebSocket request data.
+//
+// Note: This type is experimental.
 type WebSocketRequest struct {
 	Headers Headers `json:"headers"` // HTTP request headers.
 }
 
 // WebSocketResponse WebSocket response data.
+//
+// Note: This type is experimental.
 type WebSocketResponse struct {
 	Status             float64 `json:"status"`                       // HTTP response status code.
 	StatusText         string  `json:"statusText"`                   // HTTP response status text.
@@ -612,6 +639,8 @@ type WebSocketResponse struct {
 }
 
 // WebSocketFrame WebSocket frame data.
+//
+// Note: This type is experimental.
 type WebSocketFrame struct {
 	Opcode      float64 `json:"opcode"`      // WebSocket frame opcode.
 	Mask        bool    `json:"mask"`        // WebSocke frame mask.
@@ -620,13 +649,18 @@ type WebSocketFrame struct {
 
 // Initiator Information about the request initiator.
 type Initiator struct {
-	Type       string              `json:"type"`                 // Type of this initiator.
+	// Type Type of this initiator.
+	//
+	// Values: "parser", "script", "preload", "other".
+	Type       string              `json:"type"`
 	Stack      *runtime.StackTrace `json:"stack,omitempty"`      // Initiator JavaScript stack trace, set for Script only.
 	URL        *string             `json:"url,omitempty"`        // Initiator URL, set for Parser type or for Script type (when script is importing module).
 	LineNumber *float64            `json:"lineNumber,omitempty"` // Initiator line number, set for Parser type or for Script type (when script is importing module) (0-based).
 }
 
 // Cookie Cookie object
+//
+// Note: This type is experimental.
 type Cookie struct {
 	Name     string         `json:"name"`               // Cookie name.
 	Value    string         `json:"value"`              // Cookie value.
@@ -641,16 +675,26 @@ type Cookie struct {
 }
 
 // AuthChallenge Authorization challenge for HTTP status code 401 or 407.
+//
+// Note: This type is experimental.
 type AuthChallenge struct {
-	Source *string `json:"source,omitempty"` // Source of the authentication challenge.
-	Origin string  `json:"origin"`           // Origin of the challenger.
-	Scheme string  `json:"scheme"`           // The authentication scheme used, such as basic or digest
-	Realm  string  `json:"realm"`            // The realm of the challenge. May be empty.
+	// Source Source of the authentication challenge.
+	//
+	// Values: "Server", "Proxy".
+	Source *string `json:"source,omitempty"`
+	Origin string  `json:"origin"` // Origin of the challenger.
+	Scheme string  `json:"scheme"` // The authentication scheme used, such as basic or digest
+	Realm  string  `json:"realm"`  // The realm of the challenge. May be empty.
 }
 
 // AuthChallengeResponse Response to an AuthChallenge.
+//
+// Note: This type is experimental.
 type AuthChallengeResponse struct {
-	Response string  `json:"response"`           // The decision on what to do in response to the authorization challenge.  Default means deferring to the default behavior of the net stack, which will likely either the Cancel authentication or display a popup dialog box.
+	// Response The decision on what to do in response to the authorization challenge.  Default means deferring to the default behavior of the net stack, which will likely either the Cancel authentication or display a popup dialog box.
+	//
+	// Values: "Default", "CancelAuth", "ProvideCredentials".
+	Response string  `json:"response"`
 	Username *string `json:"username,omitempty"` // The username to provide, possibly empty. Should only be set if response is ProvideCredentials.
 	Password *string `json:"password,omitempty"` // The password to provide, possibly empty. Should only be set if response is ProvideCredentials.
 }

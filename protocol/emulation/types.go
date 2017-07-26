@@ -10,11 +10,16 @@ import (
 
 // ScreenOrientation Screen orientation.
 type ScreenOrientation struct {
-	Type  string `json:"type"`  // Orientation type.
+	// Type Orientation type.
+	//
+	// Values: "portraitPrimary", "portraitSecondary", "landscapePrimary", "landscapeSecondary".
+	Type  string `json:"type"`
 	Angle int    `json:"angle"` // Orientation angle.
 }
 
 // VirtualTimePolicy advance: If the scheduler runs out of immediate work, the virtual time base may fast forward to allow the next delayed task (if any) to run; pause: The virtual time base may not advance; pauseIfNetworkFetchesPending: The virtual time base may not advance if there are any pending resource fetches.
+//
+// Note: This type is experimental.
 type VirtualTimePolicy int
 
 // VirtualTimePolicy as enums.

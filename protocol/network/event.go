@@ -75,10 +75,13 @@ type LoadingFailedClient interface {
 
 // WebSocketWillSendHandshakeRequestReply is the reply for WebSocketWillSendHandshakeRequest events.
 type WebSocketWillSendHandshakeRequestReply struct {
-	RequestID RequestID        `json:"requestId"` // Request identifier.
-	Timestamp MonotonicTime    `json:"timestamp"` // Timestamp.
-	WallTime  TimeSinceEpoch   `json:"wallTime"`  // UTC Timestamp.
-	Request   WebSocketRequest `json:"request"`   // WebSocket request data.
+	RequestID RequestID     `json:"requestId"` // Request identifier.
+	Timestamp MonotonicTime `json:"timestamp"` // Timestamp.
+	// WallTime UTC Timestamp.
+	//
+	// Note: This property is experimental.
+	WallTime TimeSinceEpoch   `json:"wallTime"`
+	Request  WebSocketRequest `json:"request"` // WebSocket request data.
 }
 
 // WebSocketHandshakeResponseReceivedClient is a client for WebSocketHandshakeResponseReceived events. Fired when WebSocket handshake response becomes available.

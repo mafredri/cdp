@@ -80,18 +80,32 @@ func (e *UnserializableValue) UnmarshalJSON(data []byte) error {
 
 // RemoteObject Mirror object referencing original JavaScript object.
 type RemoteObject struct {
-	Type                string              `json:"type"`                          // Object type.
-	Subtype             *string             `json:"subtype,omitempty"`             // Object subtype hint. Specified for object type values only.
+	// Type Object type.
+	//
+	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol".
+	Type string `json:"type"`
+	// Subtype Object subtype hint. Specified for object type values only.
+	//
+	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray".
+	Subtype             *string             `json:"subtype,omitempty"`
 	ClassName           *string             `json:"className,omitempty"`           // Object class (constructor) name. Specified for object type values only.
 	Value               json.RawMessage     `json:"value,omitempty"`               // Remote object value in case of primitive values or JSON values (if it was requested).
 	UnserializableValue UnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified does not have value, but gets this property.
 	Description         *string             `json:"description,omitempty"`         // String representation of the object.
 	ObjectID            *RemoteObjectID     `json:"objectId,omitempty"`            // Unique object identifier (for non-primitive values).
-	Preview             *ObjectPreview      `json:"preview,omitempty"`             // Preview containing abbreviated property values. Specified for object type values only.
-	CustomPreview       *CustomPreview      `json:"customPreview,omitempty"`       //
+	// Preview Preview containing abbreviated property values. Specified for object type values only.
+	//
+	// Note: This property is experimental.
+	Preview *ObjectPreview `json:"preview,omitempty"`
+	// CustomPreview
+	//
+	// Note: This property is experimental.
+	CustomPreview *CustomPreview `json:"customPreview,omitempty"`
 }
 
 // CustomPreview
+//
+// Note: This type is experimental.
 type CustomPreview struct {
 	Header                     string          `json:"header"`                     //
 	HasBody                    bool            `json:"hasBody"`                    //
@@ -101,9 +115,17 @@ type CustomPreview struct {
 }
 
 // ObjectPreview Object containing abbreviated remote object value.
+//
+// Note: This type is experimental.
 type ObjectPreview struct {
-	Type        string            `json:"type"`                  // Object type.
-	Subtype     *string           `json:"subtype,omitempty"`     // Object subtype hint. Specified for object type values only.
+	// Type Object type.
+	//
+	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol".
+	Type string `json:"type"`
+	// Subtype Object subtype hint. Specified for object type values only.
+	//
+	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error".
+	Subtype     *string           `json:"subtype,omitempty"`
 	Description *string           `json:"description,omitempty"` // String representation of the object.
 	Overflow    bool              `json:"overflow"`              // True iff some of the properties or entries of the original object did not fit.
 	Properties  []PropertyPreview `json:"properties"`            // List of the properties.
@@ -111,15 +133,25 @@ type ObjectPreview struct {
 }
 
 // PropertyPreview
+//
+// Note: This type is experimental.
 type PropertyPreview struct {
-	Name         string         `json:"name"`                   // Property name.
-	Type         string         `json:"type"`                   // Object type. Accessor means that the property itself is an accessor property.
+	Name string `json:"name"` // Property name.
+	// Type Object type. Accessor means that the property itself is an accessor property.
+	//
+	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol", "accessor".
+	Type         string         `json:"type"`
 	Value        *string        `json:"value,omitempty"`        // User-friendly property value string.
 	ValuePreview *ObjectPreview `json:"valuePreview,omitempty"` // Nested value preview.
-	Subtype      *string        `json:"subtype,omitempty"`      // Object subtype hint. Specified for object type values only.
+	// Subtype Object subtype hint. Specified for object type values only.
+	//
+	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error".
+	Subtype *string `json:"subtype,omitempty"`
 }
 
 // EntryPreview
+//
+// Note: This type is experimental.
 type EntryPreview struct {
 	Key   *ObjectPreview `json:"key,omitempty"` // Preview of the key. Specified for map-like collection entries.
 	Value ObjectPreview  `json:"value"`         // Preview of the value.
@@ -229,8 +261,11 @@ type CallFrame struct {
 
 // StackTrace Call frames for assertions or error messages.
 type StackTrace struct {
-	Description          *string     `json:"description,omitempty"`          // String label of this stack trace. For async traces this may be a name of the function that initiated the async call.
-	CallFrames           []CallFrame `json:"callFrames"`                     // JavaScript function name.
-	Parent               *StackTrace `json:"parent,omitempty"`               // Asynchronous JavaScript stack trace that preceded this stack, if available.
-	PromiseCreationFrame *CallFrame  `json:"promiseCreationFrame,omitempty"` // Creation frame of the Promise which produced the next synchronous trace when resolved, if available.
+	Description *string     `json:"description,omitempty"` // String label of this stack trace. For async traces this may be a name of the function that initiated the async call.
+	CallFrames  []CallFrame `json:"callFrames"`            // JavaScript function name.
+	Parent      *StackTrace `json:"parent,omitempty"`      // Asynchronous JavaScript stack trace that preceded this stack, if available.
+	// PromiseCreationFrame Creation frame of the Promise which produced the next synchronous trace when resolved, if available.
+	//
+	// Note: This property is experimental.
+	PromiseCreationFrame *CallFrame `json:"promiseCreationFrame,omitempty"`
 }
