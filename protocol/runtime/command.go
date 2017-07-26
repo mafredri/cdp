@@ -266,7 +266,7 @@ func NewReleaseObjectGroupArgs(objectGroup string) *ReleaseObjectGroupArgs {
 
 // SetCustomObjectFormatterEnabledArgs represents the arguments for SetCustomObjectFormatterEnabled in the Runtime domain.
 type SetCustomObjectFormatterEnabledArgs struct {
-	Enabled bool `json:"enabled"` //
+	Enabled bool `json:"enabled"` // No description.
 }
 
 // NewSetCustomObjectFormatterEnabledArgs initializes SetCustomObjectFormatterEnabledArgs with the required arguments.

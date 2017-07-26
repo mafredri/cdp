@@ -765,6 +765,9 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 		if deprecated != "" || localEnum != "" || experimental != "" {
 			preDesc = "// " + exportedName + " " + desc + "\n" + deprecated + localEnum + experimental
 		} else {
+			if desc == "" {
+				desc = "No description."
+			}
 			postDesc = "// " + desc
 		}
 

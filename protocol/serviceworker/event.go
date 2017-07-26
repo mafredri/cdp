@@ -16,7 +16,7 @@ type WorkerRegistrationUpdatedClient interface {
 
 // WorkerRegistrationUpdatedReply is the reply for WorkerRegistrationUpdated events.
 type WorkerRegistrationUpdatedReply struct {
-	Registrations []Registration `json:"registrations"` //
+	Registrations []Registration `json:"registrations"` // No description.
 }
 
 // WorkerVersionUpdatedClient is a client for WorkerVersionUpdated events.
@@ -29,7 +29,7 @@ type WorkerVersionUpdatedClient interface {
 
 // WorkerVersionUpdatedReply is the reply for WorkerVersionUpdated events.
 type WorkerVersionUpdatedReply struct {
-	Versions []Version `json:"versions"` //
+	Versions []Version `json:"versions"` // No description.
 }
 
 // WorkerErrorReportedClient is a client for WorkerErrorReported events.
@@ -42,5 +42,5 @@ type WorkerErrorReportedClient interface {
 
 // WorkerErrorReportedReply is the reply for WorkerErrorReported events.
 type WorkerErrorReportedReply struct {
-	ErrorMessage ErrorMessage `json:"errorMessage"` //
+	ErrorMessage ErrorMessage `json:"errorMessage"` // No description.
 }

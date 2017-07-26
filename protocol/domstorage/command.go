@@ -4,7 +4,7 @@ package domstorage
 
 // ClearArgs represents the arguments for Clear in the DOMStorage domain.
 type ClearArgs struct {
-	StorageID StorageID `json:"storageId"` //
+	StorageID StorageID `json:"storageId"` // No description.
 }
 
 // NewClearArgs initializes ClearArgs with the required arguments.
@@ -16,7 +16,7 @@ func NewClearArgs(storageID StorageID) *ClearArgs {
 
 // GetDOMStorageItemsArgs represents the arguments for GetDOMStorageItems in the DOMStorage domain.
 type GetDOMStorageItemsArgs struct {
-	StorageID StorageID `json:"storageId"` //
+	StorageID StorageID `json:"storageId"` // No description.
 }
 
 // NewGetDOMStorageItemsArgs initializes GetDOMStorageItemsArgs with the required arguments.
@@ -28,14 +28,14 @@ func NewGetDOMStorageItemsArgs(storageID StorageID) *GetDOMStorageItemsArgs {
 
 // GetDOMStorageItemsReply represents the return values for GetDOMStorageItems in the DOMStorage domain.
 type GetDOMStorageItemsReply struct {
-	Entries []Item `json:"entries"` //
+	Entries []Item `json:"entries"` // No description.
 }
 
 // SetDOMStorageItemArgs represents the arguments for SetDOMStorageItem in the DOMStorage domain.
 type SetDOMStorageItemArgs struct {
-	StorageID StorageID `json:"storageId"` //
-	Key       string    `json:"key"`       //
-	Value     string    `json:"value"`     //
+	StorageID StorageID `json:"storageId"` // No description.
+	Key       string    `json:"key"`       // No description.
+	Value     string    `json:"value"`     // No description.
 }
 
 // NewSetDOMStorageItemArgs initializes SetDOMStorageItemArgs with the required arguments.
@@ -49,8 +49,8 @@ func NewSetDOMStorageItemArgs(storageID StorageID, key string, value string) *Se
 
 // RemoveDOMStorageItemArgs represents the arguments for RemoveDOMStorageItem in the DOMStorage domain.
 type RemoveDOMStorageItemArgs struct {
-	StorageID StorageID `json:"storageId"` //
-	Key       string    `json:"key"`       //
+	StorageID StorageID `json:"storageId"` // No description.
+	Key       string    `json:"key"`       // No description.
 }
 
 // NewRemoveDOMStorageItemArgs initializes RemoveDOMStorageItemArgs with the required arguments.

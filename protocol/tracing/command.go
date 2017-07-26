@@ -17,7 +17,7 @@ type StartArgs struct {
 	//
 	// Values: "ReportEvents", "ReturnAsStream".
 	TransferMode *string      `json:"transferMode,omitempty"`
-	TraceConfig  *TraceConfig `json:"traceConfig,omitempty"` //
+	TraceConfig  *TraceConfig `json:"traceConfig,omitempty"` // No description.
 }
 
 // NewStartArgs initializes StartArgs with the required arguments.

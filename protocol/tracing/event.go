@@ -19,7 +19,7 @@ type DataCollectedClient interface {
 
 // DataCollectedReply is the reply for DataCollected events.
 type DataCollectedReply struct {
-	Value []json.RawMessage `json:"value"` //
+	Value []json.RawMessage `json:"value"` // No description.
 }
 
 // CompleteClient is a client for TracingComplete events. Signals that tracing is stopped and there is no trace buffers pending flush, all data were delivered via dataCollected events.

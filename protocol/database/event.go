@@ -16,5 +16,5 @@ type AddDatabaseClient interface {
 
 // AddDatabaseReply is the reply for AddDatabase events.
 type AddDatabaseReply struct {
-	Database Database `json:"database"` //
+	Database Database `json:"database"` // No description.
 }

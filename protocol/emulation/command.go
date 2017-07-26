@@ -223,7 +223,7 @@ type CanEmulateReply struct {
 
 // SetVirtualTimePolicyArgs represents the arguments for SetVirtualTimePolicy in the Emulation domain.
 type SetVirtualTimePolicyArgs struct {
-	Policy VirtualTimePolicy `json:"policy"`           //
+	Policy VirtualTimePolicy `json:"policy"`           // No description.
 	Budget *int              `json:"budget,omitempty"` // If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
 }
 

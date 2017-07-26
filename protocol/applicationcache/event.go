@@ -16,5 +16,5 @@ type StatusUpdatedClient interface {
 
 // NetworkStateUpdatedReply is the reply for NetworkStateUpdated events.
 type NetworkStateUpdatedReply struct {
-	IsNowOnline bool `json:"isNowOnline"` //
+	IsNowOnline bool `json:"isNowOnline"` // No description.
 }

@@ -23,8 +23,8 @@ type Location struct {
 //
 // Note: This type is experimental.
 type ScriptPosition struct {
-	LineNumber   int `json:"lineNumber"`   //
-	ColumnNumber int `json:"columnNumber"` //
+	LineNumber   int `json:"lineNumber"`   // No description.
+	ColumnNumber int `json:"columnNumber"` // No description.
 }
 
 // CallFrame JavaScript call frame. Array of call frames form the call stack.
@@ -48,7 +48,7 @@ type Scope struct {
 	// Values: "global", "local", "with", "closure", "catch", "block", "script", "eval", "module".
 	Type          string               `json:"type"`
 	Object        runtime.RemoteObject `json:"object"`                  // Object representing the scope. For global and with scopes it represents the actual object; for the rest of the scopes, it is artificial transient object enumerating scope variables as its properties.
-	Name          *string              `json:"name,omitempty"`          //
+	Name          *string              `json:"name,omitempty"`          // No description.
 	StartLocation *Location            `json:"startLocation,omitempty"` // Location in the source code where scope starts
 	EndLocation   *Location            `json:"endLocation,omitempty"`   // Location in the source code where scope ends
 }

@@ -18,5 +18,5 @@ type SamplingHeapProfileNode struct {
 
 // SamplingHeapProfile Profile.
 type SamplingHeapProfile struct {
-	Head SamplingHeapProfileNode `json:"head"` //
+	Head SamplingHeapProfileNode `json:"head"` // No description.
 }

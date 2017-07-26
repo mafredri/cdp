@@ -85,7 +85,7 @@ type WebSocketWillSendHandshakeRequestClient interface {
 // RequestInterceptedReply is the reply for RequestIntercepted events.
 type RequestInterceptedReply struct {
 	InterceptionID     InterceptionID            `json:"interceptionId"`               // Each request the page makes will have a unique id, however if any redirects are encountered while processing that fetch, they will be reported with the same id as the original fetch. Likewise if HTTP authentication is needed then the same fetch id will be used.
-	Request            Request                   `json:"request"`                      //
+	Request            Request                   `json:"request"`                      // No description.
 	ResourceType       protocol.PageResourceType `json:"resourceType"`                 // How the requested resource will be used.
 	RedirectHeaders    Headers                   `json:"redirectHeaders,omitempty"`    // HTTP response headers, only sent if a redirect was intercepted.
 	RedirectStatusCode *int                      `json:"redirectStatusCode,omitempty"` // HTTP response code, only sent if a redirect was intercepted.

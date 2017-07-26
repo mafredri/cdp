@@ -56,7 +56,7 @@ type ExceptionThrownClient interface {
 // ExceptionThrownReply is the reply for ExceptionThrown events.
 type ExceptionThrownReply struct {
 	Timestamp        Timestamp        `json:"timestamp"`        // Timestamp of the exception.
-	ExceptionDetails ExceptionDetails `json:"exceptionDetails"` //
+	ExceptionDetails ExceptionDetails `json:"exceptionDetails"` // No description.
 }
 
 // ExceptionRevokedClient is a client for ExceptionRevoked events. Issued when unhandled exception was revoked.
@@ -106,6 +106,6 @@ type InspectRequestedClient interface {
 
 // InspectRequestedReply is the reply for InspectRequested events.
 type InspectRequestedReply struct {
-	Object RemoteObject    `json:"object"` //
-	Hints  json.RawMessage `json:"hints"`  //
+	Object RemoteObject    `json:"object"` // No description.
+	Hints  json.RawMessage `json:"hints"`  // No description.
 }

@@ -107,11 +107,11 @@ type RemoteObject struct {
 //
 // Note: This type is experimental.
 type CustomPreview struct {
-	Header                     string          `json:"header"`                     //
-	HasBody                    bool            `json:"hasBody"`                    //
-	FormatterObjectID          RemoteObjectID  `json:"formatterObjectId"`          //
-	BindRemoteObjectFunctionID RemoteObjectID  `json:"bindRemoteObjectFunctionId"` //
-	ConfigObjectID             *RemoteObjectID `json:"configObjectId,omitempty"`   //
+	Header                     string          `json:"header"`                     // No description.
+	HasBody                    bool            `json:"hasBody"`                    // No description.
+	FormatterObjectID          RemoteObjectID  `json:"formatterObjectId"`          // No description.
+	BindRemoteObjectFunctionID RemoteObjectID  `json:"bindRemoteObjectFunctionId"` // No description.
+	ConfigObjectID             *RemoteObjectID `json:"configObjectId,omitempty"`   // No description.
 }
 
 // ObjectPreview Object containing abbreviated remote object value.

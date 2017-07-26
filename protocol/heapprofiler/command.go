@@ -8,7 +8,7 @@ import (
 
 // StartTrackingHeapObjectsArgs represents the arguments for StartTrackingHeapObjects in the HeapProfiler domain.
 type StartTrackingHeapObjectsArgs struct {
-	TrackAllocations *bool `json:"trackAllocations,omitempty"` //
+	TrackAllocations *bool `json:"trackAllocations,omitempty"` // No description.
 }
 
 // NewStartTrackingHeapObjectsArgs initializes StartTrackingHeapObjectsArgs with the required arguments.
@@ -62,7 +62,7 @@ func (a *TakeHeapSnapshotArgs) SetReportProgress(reportProgress bool) *TakeHeapS
 
 // GetObjectByHeapObjectIDArgs represents the arguments for GetObjectByHeapObjectID in the HeapProfiler domain.
 type GetObjectByHeapObjectIDArgs struct {
-	ObjectID    HeapSnapshotObjectID `json:"objectId"`              //
+	ObjectID    HeapSnapshotObjectID `json:"objectId"`              // No description.
 	ObjectGroup *string              `json:"objectGroup,omitempty"` // Symbolic group name that can be used to release multiple objects.
 }
 

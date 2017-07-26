@@ -54,7 +54,7 @@ func NewSetRemoteLocationsArgs(locations []RemoteLocation) *SetRemoteLocationsAr
 
 // SendMessageToTargetArgs represents the arguments for SendMessageToTarget in the Target domain.
 type SendMessageToTargetArgs struct {
-	Message   string     `json:"message"`             //
+	Message   string     `json:"message"`             // No description.
 	SessionID *SessionID `json:"sessionId,omitempty"` // Identifier of the session.
 	// TargetID is deprecated.
 	//
@@ -85,7 +85,7 @@ func (a *SendMessageToTargetArgs) SetTargetID(targetID ID) *SendMessageToTargetA
 
 // GetTargetInfoArgs represents the arguments for GetTargetInfo in the Target domain.
 type GetTargetInfoArgs struct {
-	TargetID ID `json:"targetId"` //
+	TargetID ID `json:"targetId"` // No description.
 }
 
 // NewGetTargetInfoArgs initializes GetTargetInfoArgs with the required arguments.
@@ -97,12 +97,12 @@ func NewGetTargetInfoArgs(targetID ID) *GetTargetInfoArgs {
 
 // GetTargetInfoReply represents the return values for GetTargetInfo in the Target domain.
 type GetTargetInfoReply struct {
-	TargetInfo Info `json:"targetInfo"` //
+	TargetInfo Info `json:"targetInfo"` // No description.
 }
 
 // ActivateTargetArgs represents the arguments for ActivateTarget in the Target domain.
 type ActivateTargetArgs struct {
-	TargetID ID `json:"targetId"` //
+	TargetID ID `json:"targetId"` // No description.
 }
 
 // NewActivateTargetArgs initializes ActivateTargetArgs with the required arguments.
@@ -114,7 +114,7 @@ func NewActivateTargetArgs(targetID ID) *ActivateTargetArgs {
 
 // CloseTargetArgs represents the arguments for CloseTarget in the Target domain.
 type CloseTargetArgs struct {
-	TargetID ID `json:"targetId"` //
+	TargetID ID `json:"targetId"` // No description.
 }
 
 // NewCloseTargetArgs initializes CloseTargetArgs with the required arguments.
@@ -126,12 +126,12 @@ func NewCloseTargetArgs(targetID ID) *CloseTargetArgs {
 
 // CloseTargetReply represents the return values for CloseTarget in the Target domain.
 type CloseTargetReply struct {
-	Success bool `json:"success"` //
+	Success bool `json:"success"` // No description.
 }
 
 // AttachToTargetArgs represents the arguments for AttachToTarget in the Target domain.
 type AttachToTargetArgs struct {
-	TargetID ID `json:"targetId"` //
+	TargetID ID `json:"targetId"` // No description.
 }
 
 // NewAttachToTargetArgs initializes AttachToTargetArgs with the required arguments.
@@ -183,7 +183,7 @@ type CreateBrowserContextReply struct {
 
 // DisposeBrowserContextArgs represents the arguments for DisposeBrowserContext in the Target domain.
 type DisposeBrowserContextArgs struct {
-	BrowserContextID BrowserContextID `json:"browserContextId"` //
+	BrowserContextID BrowserContextID `json:"browserContextId"` // No description.
 }
 
 // NewDisposeBrowserContextArgs initializes DisposeBrowserContextArgs with the required arguments.
@@ -195,7 +195,7 @@ func NewDisposeBrowserContextArgs(browserContextID BrowserContextID) *DisposeBro
 
 // DisposeBrowserContextReply represents the return values for DisposeBrowserContext in the Target domain.
 type DisposeBrowserContextReply struct {
-	Success bool `json:"success"` //
+	Success bool `json:"success"` // No description.
 }
 
 // CreateTargetArgs represents the arguments for CreateTarget in the Target domain.

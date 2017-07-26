@@ -17,7 +17,7 @@ type NodeHighlightRequestedClient interface {
 
 // NodeHighlightRequestedReply is the reply for NodeHighlightRequested events.
 type NodeHighlightRequestedReply struct {
-	NodeID dom.NodeID `json:"nodeId"` //
+	NodeID dom.NodeID `json:"nodeId"` // No description.
 }
 
 // InspectNodeRequestedClient is a client for InspectNodeRequested events. Fired when the node should be inspected. This happens after call to setInspectMode or when user manually inspects an element.

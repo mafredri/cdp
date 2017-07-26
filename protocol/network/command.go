@@ -300,7 +300,7 @@ func NewGetCertificateArgs(origin string) *GetCertificateArgs {
 
 // GetCertificateReply represents the return values for GetCertificate in the Network domain.
 type GetCertificateReply struct {
-	TableNames []string `json:"tableNames"` //
+	TableNames []string `json:"tableNames"` // No description.
 }
 
 // SetRequestInterceptionEnabledArgs represents the arguments for SetRequestInterceptionEnabled in the Network domain.
@@ -317,7 +317,7 @@ func NewSetRequestInterceptionEnabledArgs(enabled bool) *SetRequestInterceptionE
 
 // ContinueInterceptedRequestArgs represents the arguments for ContinueInterceptedRequest in the Network domain.
 type ContinueInterceptedRequestArgs struct {
-	InterceptionID        InterceptionID         `json:"interceptionId"`                  //
+	InterceptionID        InterceptionID         `json:"interceptionId"`                  // No description.
 	ErrorReason           ErrorReason            `json:"errorReason,omitempty"`           // If set this causes the request to fail with the given reason. Must not be set in response to an authChallenge.
 	RawResponse           *string                `json:"rawResponse,omitempty"`           // If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc... Must not be set in response to an authChallenge.
 	URL                   *string                `json:"url,omitempty"`                   // If set the request url will be modified in a way that's not observable by page. Must not be set in response to an authChallenge.

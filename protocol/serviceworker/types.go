@@ -12,9 +12,9 @@ import (
 
 // Registration ServiceWorker registration.
 type Registration struct {
-	RegistrationID string `json:"registrationId"` //
-	ScopeURL       string `json:"scopeURL"`       //
-	IsDeleted      bool   `json:"isDeleted"`      //
+	RegistrationID string `json:"registrationId"` // No description.
+	ScopeURL       string `json:"scopeURL"`       // No description.
+	IsDeleted      bool   `json:"isDeleted"`      // No description.
 }
 
 // VersionRunningStatus
@@ -155,23 +155,23 @@ func (e *VersionStatus) UnmarshalJSON(data []byte) error {
 
 // Version ServiceWorker version.
 type Version struct {
-	VersionID          string               `json:"versionId"`                    //
-	RegistrationID     string               `json:"registrationId"`               //
-	ScriptURL          string               `json:"scriptURL"`                    //
-	RunningStatus      VersionRunningStatus `json:"runningStatus"`                //
-	Status             VersionStatus        `json:"status"`                       //
+	VersionID          string               `json:"versionId"`                    // No description.
+	RegistrationID     string               `json:"registrationId"`               // No description.
+	ScriptURL          string               `json:"scriptURL"`                    // No description.
+	RunningStatus      VersionRunningStatus `json:"runningStatus"`                // No description.
+	Status             VersionStatus        `json:"status"`                       // No description.
 	ScriptLastModified *float64             `json:"scriptLastModified,omitempty"` // The Last-Modified header value of the main script.
 	ScriptResponseTime *float64             `json:"scriptResponseTime,omitempty"` // The time at which the response headers of the main script were received from the server.  For cached script it is the last time the cache entry was validated.
-	ControlledClients  []target.ID          `json:"controlledClients,omitempty"`  //
-	TargetID           *target.ID           `json:"targetId,omitempty"`           //
+	ControlledClients  []target.ID          `json:"controlledClients,omitempty"`  // No description.
+	TargetID           *target.ID           `json:"targetId,omitempty"`           // No description.
 }
 
 // ErrorMessage ServiceWorker error message.
 type ErrorMessage struct {
-	ErrorMessage   string `json:"errorMessage"`   //
-	RegistrationID string `json:"registrationId"` //
-	VersionID      string `json:"versionId"`      //
-	SourceURL      string `json:"sourceURL"`      //
-	LineNumber     int    `json:"lineNumber"`     //
-	ColumnNumber   int    `json:"columnNumber"`   //
+	ErrorMessage   string `json:"errorMessage"`   // No description.
+	RegistrationID string `json:"registrationId"` // No description.
+	VersionID      string `json:"versionId"`      // No description.
+	SourceURL      string `json:"sourceURL"`      // No description.
+	LineNumber     int    `json:"lineNumber"`     // No description.
+	ColumnNumber   int    `json:"columnNumber"`   // No description.
 }

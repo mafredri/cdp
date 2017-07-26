@@ -15,7 +15,7 @@ type HighlightConfig struct {
 	ShowInfo           *bool     `json:"showInfo,omitempty"`           // Whether the node info tooltip should be shown (default: false).
 	ShowRulers         *bool     `json:"showRulers,omitempty"`         // Whether the rulers should be shown (default: false).
 	ShowExtensionLines *bool     `json:"showExtensionLines,omitempty"` // Whether the extension lines from node to the rulers should be shown (default: false).
-	DisplayAsMaterial  *bool     `json:"displayAsMaterial,omitempty"`  //
+	DisplayAsMaterial  *bool     `json:"displayAsMaterial,omitempty"`  // No description.
 	ContentColor       *dom.RGBA `json:"contentColor,omitempty"`       // The content box highlight fill color (default: transparent).
 	PaddingColor       *dom.RGBA `json:"paddingColor,omitempty"`       // The padding highlight fill color (default: transparent).
 	BorderColor        *dom.RGBA `json:"borderColor,omitempty"`        // The border highlight fill color (default: transparent).

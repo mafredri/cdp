@@ -8,7 +8,7 @@ import (
 
 // GetMatchedStylesForNodeArgs represents the arguments for GetMatchedStylesForNode in the CSS domain.
 type GetMatchedStylesForNodeArgs struct {
-	NodeID dom.NodeID `json:"nodeId"` //
+	NodeID dom.NodeID `json:"nodeId"` // No description.
 }
 
 // NewGetMatchedStylesForNodeArgs initializes GetMatchedStylesForNodeArgs with the required arguments.
@@ -30,7 +30,7 @@ type GetMatchedStylesForNodeReply struct {
 
 // GetInlineStylesForNodeArgs represents the arguments for GetInlineStylesForNode in the CSS domain.
 type GetInlineStylesForNodeArgs struct {
-	NodeID dom.NodeID `json:"nodeId"` //
+	NodeID dom.NodeID `json:"nodeId"` // No description.
 }
 
 // NewGetInlineStylesForNodeArgs initializes GetInlineStylesForNodeArgs with the required arguments.
@@ -48,7 +48,7 @@ type GetInlineStylesForNodeReply struct {
 
 // GetComputedStyleForNodeArgs represents the arguments for GetComputedStyleForNode in the CSS domain.
 type GetComputedStyleForNodeArgs struct {
-	NodeID dom.NodeID `json:"nodeId"` //
+	NodeID dom.NodeID `json:"nodeId"` // No description.
 }
 
 // NewGetComputedStyleForNodeArgs initializes GetComputedStyleForNodeArgs with the required arguments.
@@ -65,7 +65,7 @@ type GetComputedStyleForNodeReply struct {
 
 // GetPlatformFontsForNodeArgs represents the arguments for GetPlatformFontsForNode in the CSS domain.
 type GetPlatformFontsForNodeArgs struct {
-	NodeID dom.NodeID `json:"nodeId"` //
+	NodeID dom.NodeID `json:"nodeId"` // No description.
 }
 
 // NewGetPlatformFontsForNodeArgs initializes GetPlatformFontsForNodeArgs with the required arguments.
@@ -82,7 +82,7 @@ type GetPlatformFontsForNodeReply struct {
 
 // GetStyleSheetTextArgs represents the arguments for GetStyleSheetText in the CSS domain.
 type GetStyleSheetTextArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` //
+	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
 }
 
 // NewGetStyleSheetTextArgs initializes GetStyleSheetTextArgs with the required arguments.
@@ -99,7 +99,7 @@ type GetStyleSheetTextReply struct {
 
 // CollectClassNamesArgs represents the arguments for CollectClassNames in the CSS domain.
 type CollectClassNamesArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` //
+	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
 }
 
 // NewCollectClassNamesArgs initializes CollectClassNamesArgs with the required arguments.
@@ -116,8 +116,8 @@ type CollectClassNamesReply struct {
 
 // SetStyleSheetTextArgs represents the arguments for SetStyleSheetText in the CSS domain.
 type SetStyleSheetTextArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` //
-	Text         string       `json:"text"`         //
+	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
+	Text         string       `json:"text"`         // No description.
 }
 
 // NewSetStyleSheetTextArgs initializes SetStyleSheetTextArgs with the required arguments.
@@ -135,9 +135,9 @@ type SetStyleSheetTextReply struct {
 
 // SetRuleSelectorArgs represents the arguments for SetRuleSelector in the CSS domain.
 type SetRuleSelectorArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` //
-	Range        SourceRange  `json:"range"`        //
-	Selector     string       `json:"selector"`     //
+	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange  `json:"range"`        // No description.
+	Selector     string       `json:"selector"`     // No description.
 }
 
 // NewSetRuleSelectorArgs initializes SetRuleSelectorArgs with the required arguments.
@@ -156,9 +156,9 @@ type SetRuleSelectorReply struct {
 
 // SetKeyframeKeyArgs represents the arguments for SetKeyframeKey in the CSS domain.
 type SetKeyframeKeyArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` //
-	Range        SourceRange  `json:"range"`        //
-	KeyText      string       `json:"keyText"`      //
+	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange  `json:"range"`        // No description.
+	KeyText      string       `json:"keyText"`      // No description.
 }
 
 // NewSetKeyframeKeyArgs initializes SetKeyframeKeyArgs with the required arguments.
@@ -177,7 +177,7 @@ type SetKeyframeKeyReply struct {
 
 // SetStyleTextsArgs represents the arguments for SetStyleTexts in the CSS domain.
 type SetStyleTextsArgs struct {
-	Edits []StyleDeclarationEdit `json:"edits"` //
+	Edits []StyleDeclarationEdit `json:"edits"` // No description.
 }
 
 // NewSetStyleTextsArgs initializes SetStyleTextsArgs with the required arguments.
@@ -194,9 +194,9 @@ type SetStyleTextsReply struct {
 
 // SetMediaTextArgs represents the arguments for SetMediaText in the CSS domain.
 type SetMediaTextArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` //
-	Range        SourceRange  `json:"range"`        //
-	Text         string       `json:"text"`         //
+	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange  `json:"range"`        // No description.
+	Text         string       `json:"text"`         // No description.
 }
 
 // NewSetMediaTextArgs initializes SetMediaTextArgs with the required arguments.
@@ -255,14 +255,14 @@ func NewForcePseudoStateArgs(nodeID dom.NodeID, forcedPseudoClasses []string) *F
 
 // GetMediaQueriesReply represents the return values for GetMediaQueries in the CSS domain.
 type GetMediaQueriesReply struct {
-	Medias []Media `json:"medias"` //
+	Medias []Media `json:"medias"` // No description.
 }
 
 // SetEffectivePropertyValueForNodeArgs represents the arguments for SetEffectivePropertyValueForNode in the CSS domain.
 type SetEffectivePropertyValueForNodeArgs struct {
 	NodeID       dom.NodeID `json:"nodeId"`       // The element id for which to set property.
-	PropertyName string     `json:"propertyName"` //
-	Value        string     `json:"value"`        //
+	PropertyName string     `json:"propertyName"` // No description.
+	Value        string     `json:"value"`        // No description.
 }
 
 // NewSetEffectivePropertyValueForNodeArgs initializes SetEffectivePropertyValueForNodeArgs with the required arguments.
@@ -293,10 +293,10 @@ type GetBackgroundColorsReply struct {
 
 // TakeCoverageDeltaReply represents the return values for TakeCoverageDelta in the CSS domain.
 type TakeCoverageDeltaReply struct {
-	Coverage []RuleUsage `json:"coverage"` //
+	Coverage []RuleUsage `json:"coverage"` // No description.
 }
 
 // StopRuleUsageTrackingReply represents the return values for StopRuleUsageTracking in the CSS domain.
 type StopRuleUsageTrackingReply struct {
-	RuleUsage []RuleUsage `json:"ruleUsage"` //
+	RuleUsage []RuleUsage `json:"ruleUsage"` // No description.
 }

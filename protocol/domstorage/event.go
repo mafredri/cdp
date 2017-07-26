@@ -16,7 +16,7 @@ type ItemsClearedClient interface {
 
 // ItemsClearedReply is the reply for DOMStorageItemsCleared events.
 type ItemsClearedReply struct {
-	StorageID StorageID `json:"storageId"` //
+	StorageID StorageID `json:"storageId"` // No description.
 }
 
 // ItemRemovedClient is a client for DOMStorageItemRemoved events.
@@ -29,8 +29,8 @@ type ItemRemovedClient interface {
 
 // ItemRemovedReply is the reply for DOMStorageItemRemoved events.
 type ItemRemovedReply struct {
-	StorageID StorageID `json:"storageId"` //
-	Key       string    `json:"key"`       //
+	StorageID StorageID `json:"storageId"` // No description.
+	Key       string    `json:"key"`       // No description.
 }
 
 // ItemAddedClient is a client for DOMStorageItemAdded events.
@@ -43,9 +43,9 @@ type ItemAddedClient interface {
 
 // ItemAddedReply is the reply for DOMStorageItemAdded events.
 type ItemAddedReply struct {
-	StorageID StorageID `json:"storageId"` //
-	Key       string    `json:"key"`       //
-	NewValue  string    `json:"newValue"`  //
+	StorageID StorageID `json:"storageId"` // No description.
+	Key       string    `json:"key"`       // No description.
+	NewValue  string    `json:"newValue"`  // No description.
 }
 
 // ItemUpdatedClient is a client for DOMStorageItemUpdated events.
@@ -58,8 +58,8 @@ type ItemUpdatedClient interface {
 
 // ItemUpdatedReply is the reply for DOMStorageItemUpdated events.
 type ItemUpdatedReply struct {
-	StorageID StorageID `json:"storageId"` //
-	Key       string    `json:"key"`       //
-	OldValue  string    `json:"oldValue"`  //
-	NewValue  string    `json:"newValue"`  //
+	StorageID StorageID `json:"storageId"` // No description.
+	Key       string    `json:"key"`       // No description.
+	OldValue  string    `json:"oldValue"`  // No description.
+	NewValue  string    `json:"newValue"`  // No description.
 }

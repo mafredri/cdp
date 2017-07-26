@@ -17,7 +17,7 @@ type ConsoleProfileStartedClient interface {
 
 // ConsoleProfileStartedReply is the reply for ConsoleProfileStarted events.
 type ConsoleProfileStartedReply struct {
-	ID       string            `json:"id"`              //
+	ID       string            `json:"id"`              // No description.
 	Location debugger.Location `json:"location"`        // Location of console.profile().
 	Title    *string           `json:"title,omitempty"` // Profile title passed as an argument to console.profile().
 }
@@ -32,8 +32,8 @@ type ConsoleProfileFinishedClient interface {
 
 // ConsoleProfileFinishedReply is the reply for ConsoleProfileFinished events.
 type ConsoleProfileFinishedReply struct {
-	ID       string            `json:"id"`              //
+	ID       string            `json:"id"`              // No description.
 	Location debugger.Location `json:"location"`        // Location of console.profileEnd().
-	Profile  Profile           `json:"profile"`         //
+	Profile  Profile           `json:"profile"`         // No description.
 	Title    *string           `json:"title,omitempty"` // Profile title passed as an argument to console.profile().
 }

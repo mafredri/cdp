@@ -4,7 +4,7 @@ package serviceworker
 
 // UnregisterArgs represents the arguments for Unregister in the ServiceWorker domain.
 type UnregisterArgs struct {
-	ScopeURL string `json:"scopeURL"` //
+	ScopeURL string `json:"scopeURL"` // No description.
 }
 
 // NewUnregisterArgs initializes UnregisterArgs with the required arguments.
@@ -16,7 +16,7 @@ func NewUnregisterArgs(scopeURL string) *UnregisterArgs {
 
 // UpdateRegistrationArgs represents the arguments for UpdateRegistration in the ServiceWorker domain.
 type UpdateRegistrationArgs struct {
-	ScopeURL string `json:"scopeURL"` //
+	ScopeURL string `json:"scopeURL"` // No description.
 }
 
 // NewUpdateRegistrationArgs initializes UpdateRegistrationArgs with the required arguments.
@@ -28,7 +28,7 @@ func NewUpdateRegistrationArgs(scopeURL string) *UpdateRegistrationArgs {
 
 // StartWorkerArgs represents the arguments for StartWorker in the ServiceWorker domain.
 type StartWorkerArgs struct {
-	ScopeURL string `json:"scopeURL"` //
+	ScopeURL string `json:"scopeURL"` // No description.
 }
 
 // NewStartWorkerArgs initializes StartWorkerArgs with the required arguments.
@@ -40,7 +40,7 @@ func NewStartWorkerArgs(scopeURL string) *StartWorkerArgs {
 
 // SkipWaitingArgs represents the arguments for SkipWaiting in the ServiceWorker domain.
 type SkipWaitingArgs struct {
-	ScopeURL string `json:"scopeURL"` //
+	ScopeURL string `json:"scopeURL"` // No description.
 }
 
 // NewSkipWaitingArgs initializes SkipWaitingArgs with the required arguments.
@@ -52,7 +52,7 @@ func NewSkipWaitingArgs(scopeURL string) *SkipWaitingArgs {
 
 // StopWorkerArgs represents the arguments for StopWorker in the ServiceWorker domain.
 type StopWorkerArgs struct {
-	VersionID string `json:"versionId"` //
+	VersionID string `json:"versionId"` // No description.
 }
 
 // NewStopWorkerArgs initializes StopWorkerArgs with the required arguments.
@@ -64,7 +64,7 @@ func NewStopWorkerArgs(versionID string) *StopWorkerArgs {
 
 // InspectWorkerArgs represents the arguments for InspectWorker in the ServiceWorker domain.
 type InspectWorkerArgs struct {
-	VersionID string `json:"versionId"` //
+	VersionID string `json:"versionId"` // No description.
 }
 
 // NewInspectWorkerArgs initializes InspectWorkerArgs with the required arguments.
@@ -76,7 +76,7 @@ func NewInspectWorkerArgs(versionID string) *InspectWorkerArgs {
 
 // SetForceUpdateOnPageLoadArgs represents the arguments for SetForceUpdateOnPageLoad in the ServiceWorker domain.
 type SetForceUpdateOnPageLoadArgs struct {
-	ForceUpdateOnPageLoad bool `json:"forceUpdateOnPageLoad"` //
+	ForceUpdateOnPageLoad bool `json:"forceUpdateOnPageLoad"` // No description.
 }
 
 // NewSetForceUpdateOnPageLoadArgs initializes SetForceUpdateOnPageLoadArgs with the required arguments.
@@ -88,9 +88,9 @@ func NewSetForceUpdateOnPageLoadArgs(forceUpdateOnPageLoad bool) *SetForceUpdate
 
 // DeliverPushMessageArgs represents the arguments for DeliverPushMessage in the ServiceWorker domain.
 type DeliverPushMessageArgs struct {
-	Origin         string `json:"origin"`         //
-	RegistrationID string `json:"registrationId"` //
-	Data           string `json:"data"`           //
+	Origin         string `json:"origin"`         // No description.
+	RegistrationID string `json:"registrationId"` // No description.
+	Data           string `json:"data"`           // No description.
 }
 
 // NewDeliverPushMessageArgs initializes DeliverPushMessageArgs with the required arguments.
@@ -104,10 +104,10 @@ func NewDeliverPushMessageArgs(origin string, registrationID string, data string
 
 // DispatchSyncEventArgs represents the arguments for DispatchSyncEvent in the ServiceWorker domain.
 type DispatchSyncEventArgs struct {
-	Origin         string `json:"origin"`         //
-	RegistrationID string `json:"registrationId"` //
-	Tag            string `json:"tag"`            //
-	LastChance     bool   `json:"lastChance"`     //
+	Origin         string `json:"origin"`         // No description.
+	RegistrationID string `json:"registrationId"` // No description.
+	Tag            string `json:"tag"`            // No description.
+	LastChance     bool   `json:"lastChance"`     // No description.
 }
 
 // NewDispatchSyncEventArgs initializes DispatchSyncEventArgs with the required arguments.

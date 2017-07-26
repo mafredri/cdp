@@ -103,7 +103,7 @@ type SetBreakpointReply struct {
 
 // RemoveBreakpointArgs represents the arguments for RemoveBreakpoint in the Debugger domain.
 type RemoveBreakpointArgs struct {
-	BreakpointID BreakpointID `json:"breakpointId"` //
+	BreakpointID BreakpointID `json:"breakpointId"` // No description.
 }
 
 // NewRemoveBreakpointArgs initializes RemoveBreakpointArgs with the required arguments.
@@ -401,7 +401,7 @@ func NewSetBlackboxPatternsArgs(patterns []string) *SetBlackboxPatternsArgs {
 // SetBlackboxedRangesArgs represents the arguments for SetBlackboxedRanges in the Debugger domain.
 type SetBlackboxedRangesArgs struct {
 	ScriptID  runtime.ScriptID `json:"scriptId"`  // Id of the script.
-	Positions []ScriptPosition `json:"positions"` //
+	Positions []ScriptPosition `json:"positions"` // No description.
 }
 
 // NewSetBlackboxedRangesArgs initializes SetBlackboxedRangesArgs with the required arguments.

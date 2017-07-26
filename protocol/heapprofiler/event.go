@@ -16,7 +16,7 @@ type AddHeapSnapshotChunkClient interface {
 
 // AddHeapSnapshotChunkReply is the reply for AddHeapSnapshotChunk events.
 type AddHeapSnapshotChunkReply struct {
-	Chunk string `json:"chunk"` //
+	Chunk string `json:"chunk"` // No description.
 }
 
 // ResetProfilesClient is a client for ResetProfiles events.
@@ -40,9 +40,9 @@ type ReportHeapSnapshotProgressClient interface {
 
 // ReportHeapSnapshotProgressReply is the reply for ReportHeapSnapshotProgress events.
 type ReportHeapSnapshotProgressReply struct {
-	Done     int   `json:"done"`               //
-	Total    int   `json:"total"`              //
-	Finished *bool `json:"finished,omitempty"` //
+	Done     int   `json:"done"`               // No description.
+	Total    int   `json:"total"`              // No description.
+	Finished *bool `json:"finished,omitempty"` // No description.
 }
 
 // LastSeenObjectIDClient is a client for LastSeenObjectID events. If heap objects tracking has been started then backend regularly sends a current value for last seen object id and corresponding timestamp. If the were changes in the heap since last event then one or more heapStatsUpdate events will be sent before a new lastSeenObjectId event.
@@ -55,8 +55,8 @@ type LastSeenObjectIDClient interface {
 
 // LastSeenObjectIDReply is the reply for LastSeenObjectID events.
 type LastSeenObjectIDReply struct {
-	LastSeenObjectID int     `json:"lastSeenObjectId"` //
-	Timestamp        float64 `json:"timestamp"`        //
+	LastSeenObjectID int     `json:"lastSeenObjectId"` // No description.
+	Timestamp        float64 `json:"timestamp"`        // No description.
 }
 
 // HeapStatsUpdateClient is a client for HeapStatsUpdate events. If heap objects tracking has been started then backend may send update for one or more fragments

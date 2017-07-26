@@ -4,9 +4,9 @@ package memory
 
 // GetDOMCountersReply represents the return values for GetDOMCounters in the Memory domain.
 type GetDOMCountersReply struct {
-	Documents        int `json:"documents"`        //
-	Nodes            int `json:"nodes"`            //
-	JsEventListeners int `json:"jsEventListeners"` //
+	Documents        int `json:"documents"`        // No description.
+	Nodes            int `json:"nodes"`            // No description.
+	JsEventListeners int `json:"jsEventListeners"` // No description.
 }
 
 // SetPressureNotificationsSuppressedArgs represents the arguments for SetPressureNotificationsSuppressed in the Memory domain.

@@ -38,7 +38,7 @@ type StyleSheetChangedClient interface {
 
 // StyleSheetChangedReply is the reply for StyleSheetChanged events.
 type StyleSheetChangedReply struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` //
+	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
 }
 
 // StyleSheetAddedClient is a client for StyleSheetAdded events. Fired whenever an active document stylesheet is added.

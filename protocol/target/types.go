@@ -13,15 +13,15 @@ type BrowserContextID string
 
 // Info
 type Info struct {
-	TargetID ID     `json:"targetId"` //
-	Type     string `json:"type"`     //
-	Title    string `json:"title"`    //
-	URL      string `json:"url"`      //
+	TargetID ID     `json:"targetId"` // No description.
+	Type     string `json:"type"`     // No description.
+	Title    string `json:"title"`    // No description.
+	URL      string `json:"url"`      // No description.
 	Attached bool   `json:"attached"` // Whether the target has an attached client.
 }
 
 // RemoteLocation
 type RemoteLocation struct {
-	Host string `json:"host"` //
-	Port int    `json:"port"` //
+	Host string `json:"host"` // No description.
+	Port int    `json:"port"` // No description.
 }

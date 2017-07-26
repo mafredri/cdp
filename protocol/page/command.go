@@ -12,7 +12,7 @@ import (
 
 // AddScriptToEvaluateOnLoadArgs represents the arguments for AddScriptToEvaluateOnLoad in the Page domain.
 type AddScriptToEvaluateOnLoadArgs struct {
-	ScriptSource string `json:"scriptSource"` //
+	ScriptSource string `json:"scriptSource"` // No description.
 }
 
 // NewAddScriptToEvaluateOnLoadArgs initializes AddScriptToEvaluateOnLoadArgs with the required arguments.
@@ -29,7 +29,7 @@ type AddScriptToEvaluateOnLoadReply struct {
 
 // RemoveScriptToEvaluateOnLoadArgs represents the arguments for RemoveScriptToEvaluateOnLoad in the Page domain.
 type RemoveScriptToEvaluateOnLoadArgs struct {
-	Identifier ScriptIdentifier `json:"identifier"` //
+	Identifier ScriptIdentifier `json:"identifier"` // No description.
 }
 
 // NewRemoveScriptToEvaluateOnLoadArgs initializes RemoveScriptToEvaluateOnLoadArgs with the required arguments.
@@ -41,7 +41,7 @@ func NewRemoveScriptToEvaluateOnLoadArgs(identifier ScriptIdentifier) *RemoveScr
 
 // AddScriptToEvaluateOnNewDocumentArgs represents the arguments for AddScriptToEvaluateOnNewDocument in the Page domain.
 type AddScriptToEvaluateOnNewDocumentArgs struct {
-	Source string `json:"source"` //
+	Source string `json:"source"` // No description.
 }
 
 // NewAddScriptToEvaluateOnNewDocumentArgs initializes AddScriptToEvaluateOnNewDocumentArgs with the required arguments.
@@ -58,7 +58,7 @@ type AddScriptToEvaluateOnNewDocumentReply struct {
 
 // RemoveScriptToEvaluateOnNewDocumentArgs represents the arguments for RemoveScriptToEvaluateOnNewDocument in the Page domain.
 type RemoveScriptToEvaluateOnNewDocumentArgs struct {
-	Identifier ScriptIdentifier `json:"identifier"` //
+	Identifier ScriptIdentifier `json:"identifier"` // No description.
 }
 
 // NewRemoveScriptToEvaluateOnNewDocumentArgs initializes RemoveScriptToEvaluateOnNewDocumentArgs with the required arguments.
@@ -577,13 +577,13 @@ func (a *HandleJavaScriptDialogArgs) SetPromptText(promptText string) *HandleJav
 // GetAppManifestReply represents the return values for GetAppManifest in the Page domain.
 type GetAppManifestReply struct {
 	URL    string             `json:"url"`            // Manifest location.
-	Errors []AppManifestError `json:"errors"`         //
+	Errors []AppManifestError `json:"errors"`         // No description.
 	Data   *string            `json:"data,omitempty"` // Manifest content.
 }
 
 // SetControlNavigationsArgs represents the arguments for SetControlNavigations in the Page domain.
 type SetControlNavigationsArgs struct {
-	Enabled bool `json:"enabled"` //
+	Enabled bool `json:"enabled"` // No description.
 }
 
 // NewSetControlNavigationsArgs initializes SetControlNavigationsArgs with the required arguments.
@@ -595,8 +595,8 @@ func NewSetControlNavigationsArgs(enabled bool) *SetControlNavigationsArgs {
 
 // ProcessNavigationArgs represents the arguments for ProcessNavigation in the Page domain.
 type ProcessNavigationArgs struct {
-	Response     NavigationResponse `json:"response"`     //
-	NavigationID int                `json:"navigationId"` //
+	Response     NavigationResponse `json:"response"`     // No description.
+	NavigationID int                `json:"navigationId"` // No description.
 }
 
 // NewProcessNavigationArgs initializes ProcessNavigationArgs with the required arguments.

@@ -17,7 +17,7 @@ type DOMContentEventFiredClient interface {
 
 // DOMContentEventFiredReply is the reply for DOMContentEventFired events.
 type DOMContentEventFiredReply struct {
-	Timestamp network.MonotonicTime `json:"timestamp"` //
+	Timestamp network.MonotonicTime `json:"timestamp"` // No description.
 }
 
 // LoadEventFiredClient is a client for LoadEventFired events.
@@ -30,7 +30,7 @@ type LoadEventFiredClient interface {
 
 // LoadEventFiredReply is the reply for LoadEventFired events.
 type LoadEventFiredReply struct {
-	Timestamp network.MonotonicTime `json:"timestamp"` //
+	Timestamp network.MonotonicTime `json:"timestamp"` // No description.
 }
 
 // FrameAttachedClient is a client for FrameAttached events. Fired when frame has been attached to its parent.
@@ -146,6 +146,6 @@ type NavigationRequestedClient interface {
 type NavigationRequestedReply struct {
 	IsInMainFrame bool   `json:"isInMainFrame"` // Whether the navigation is taking place in the main frame or in a subframe.
 	IsRedirect    bool   `json:"isRedirect"`    // Whether the navigation has encountered a server redirect or not.
-	NavigationID  int    `json:"navigationId"`  //
+	NavigationID  int    `json:"navigationId"`  // No description.
 	URL           string `json:"url"`           // URL of requested navigation.
 }

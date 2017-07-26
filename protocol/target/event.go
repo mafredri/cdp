@@ -16,7 +16,7 @@ type CreatedClient interface {
 
 // CreatedReply is the reply for TargetCreated events.
 type CreatedReply struct {
-	TargetInfo Info `json:"targetInfo"` //
+	TargetInfo Info `json:"targetInfo"` // No description.
 }
 
 // InfoChangedClient is a client for TargetInfoChanged events. Issued when some information about a target has changed. This only happens between targetCreated and targetDestroyed.
@@ -29,7 +29,7 @@ type InfoChangedClient interface {
 
 // InfoChangedReply is the reply for TargetInfoChanged events.
 type InfoChangedReply struct {
-	TargetInfo Info `json:"targetInfo"` //
+	TargetInfo Info `json:"targetInfo"` // No description.
 }
 
 // DestroyedClient is a client for TargetDestroyed events. Issued when a target is destroyed.
@@ -42,7 +42,7 @@ type DestroyedClient interface {
 
 // DestroyedReply is the reply for TargetDestroyed events.
 type DestroyedReply struct {
-	TargetID ID `json:"targetId"` //
+	TargetID ID `json:"targetId"` // No description.
 }
 
 // AttachedToTargetClient is a client for AttachedToTarget events. Issued when attached to target because of auto-attach or attachToTarget command.
@@ -56,8 +56,8 @@ type AttachedToTargetClient interface {
 // AttachedToTargetReply is the reply for AttachedToTarget events.
 type AttachedToTargetReply struct {
 	SessionID          SessionID `json:"sessionId"`          // Identifier assigned to the session used to send/receive messages.
-	TargetInfo         Info      `json:"targetInfo"`         //
-	WaitingForDebugger bool      `json:"waitingForDebugger"` //
+	TargetInfo         Info      `json:"targetInfo"`         // No description.
+	WaitingForDebugger bool      `json:"waitingForDebugger"` // No description.
 }
 
 // DetachedFromTargetClient is a client for DetachedFromTarget events. Issued when detached from target for any reason (including detachFromTarget command). Can be issued multiple times per target if multiple sessions have been attached to it.
@@ -88,7 +88,7 @@ type ReceivedMessageFromTargetClient interface {
 // ReceivedMessageFromTargetReply is the reply for ReceivedMessageFromTarget events.
 type ReceivedMessageFromTargetReply struct {
 	SessionID SessionID `json:"sessionId"` // Identifier of a session which sends a message.
-	Message   string    `json:"message"`   //
+	Message   string    `json:"message"`   // No description.
 	// TargetID is deprecated.
 	//
 	// Deprecated: Deprecated.
