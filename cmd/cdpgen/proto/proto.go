@@ -348,6 +348,11 @@ func (at AnyType) IsEnum() bool {
 	return at.IDName != "" && len(at.Enum) > 0
 }
 
+// IsLocalEnum returns true if type is enumerated without an exported type.
+func (at AnyType) IsLocalEnum() bool {
+	return at.IDName == "" && len(at.Enum) > 0
+}
+
 func lowerFirst(d string) string {
 	desc := strings.Split(d, " ")
 	if desc[0] != strings.ToUpper(desc[0]) {

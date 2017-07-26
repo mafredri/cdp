@@ -442,6 +442,9 @@ func (g *Generator) DomainInterface(d proto.Domain) {
 	if d.Deprecated {
 		desc = "\n//\n// Deprecated: " + desc
 	}
+	if d.Experimental {
+		desc += "\n//\n// Note: This domain is experimental."
+	}
 	g.Printf(`
 // The %[1]s domain. %[2]s
 type %[1]s interface{`, d.Name(), desc)
@@ -459,6 +462,9 @@ type %[1]s interface{`, d.Name(), desc)
 			desc = strings.Replace(desc, "Deprecated, ", "", 1)
 			desc = "Deprecated: " + strings.ToUpper(desc[0:1]) + desc[1:]
 		}
+		if c.Experimental {
+			desc += "\n//\n// Note: This command is experimental."
+		}
 		g.Printf("\n\t// Command %s\n\t//\n\t// %s\n\t%s(context.Context%s) %s\n", c.Name(), desc, c.Name(), request, reply)
 	}
 	for _, e := range d.Events {
@@ -467,6 +473,9 @@ type %[1]s interface{`, d.Name(), desc)
 		if e.Deprecated {
 			desc = strings.Replace(desc, "Deprecated, ", "", 1)
 			desc = "Deprecated: " + strings.ToUpper(desc[0:1]) + desc[1:]
+		}
+		if e.Experimental {
+			desc += "\n//\n// Note: This event is experimental."
 		}
 		g.Printf("\n\t// Event %s\n\t//\n\t// %s\n\t%s(context.Context) (%s.%s, error)\n", e.Name(), desc, e.Name(), strings.ToLower(d.Name()), eventClient)
 	}
@@ -665,6 +674,9 @@ type %[1]s = internal.Page%[1]s
 	if t.Deprecated {
 		desc = "\n//\n// Deprecated: " + desc
 	}
+	if t.Experimental {
+		desc += "\n//\n// Note: This type is experimental."
+	}
 	g.Printf(`
 // %[1]s %[2]s
 %[3]stype %[1]s `, t.Name(d), desc, comment)
@@ -729,16 +741,38 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 			exportedName = OptionalPropPrefix + exportedName
 		}
 
+		var preDesc, postDesc string
+
 		desc := prop.Desc()
+		var deprecated, localEnum, experimental string
 		if prop.Deprecated {
-			desc = "Deprecated: " + desc
+			if desc == "" {
+				desc = "This property should not be used."
+			}
+			deprecated = "//\n// Deprecated: " + desc + "\n"
+			desc = "is deprecated."
+		}
+		if prop.IsLocalEnum() {
+			var enums []string
+			for _, e := range prop.Enum {
+				enums = append(enums, fmt.Sprintf("%q", e))
+			}
+			localEnum = "//\n// Values: " + strings.Join(enums, ", ") + ".\n"
+		}
+		if prop.Experimental {
+			experimental = "//\n// Note: This property is experimental.\n"
+		}
+		if deprecated != "" || localEnum != "" || experimental != "" {
+			preDesc = "// " + exportedName + " " + desc + "\n" + deprecated + localEnum + experimental
+		} else {
+			postDesc = "// " + desc
 		}
 
 		if !g.isCircularType {
-			g.Printf("\t%s %s `json:\"%s\"` // %s\n", exportedName, ptype, jsontag, desc)
+			g.Printf("\t%s%s %s `json:\"%s\"` %s\n", preDesc, exportedName, ptype, jsontag, postDesc)
 		} else {
-			g.Printf19("\t%s %s `json:\"%s\"` // %s\n", exportedName, ptype19, jsontag, desc)
-			g.Printf18("\t%s %s `json:\"%s\"` // %s\n", exportedName, ptype18, jsontag, desc)
+			g.Printf19("\t%s%s %s `json:\"%s\"` %s\n", preDesc, exportedName, ptype19, jsontag, postDesc)
+			g.Printf18("\t%s%s %s `json:\"%s\"` %s\n", preDesc, exportedName, ptype18, jsontag, postDesc)
 		}
 	}
 }
@@ -1080,7 +1114,8 @@ func (g *Generator) DomainCmd(d proto.Domain, c proto.Command) {
 func (g *Generator) domainCmdArgs(d proto.Domain, c proto.Command) {
 	g.Printf(`
 // %[1]s represents the arguments for %[2]s in the %[3]s domain.
-type %[1]s struct {`, c.ArgsName(d), c.Name(), d.Name())
+type %[1]s struct {
+`, c.ArgsName(d), c.Name(), d.Name())
 	g.printStructProperties(d, c.ArgsName(d), c.Parameters, true, true)
 	g.Printf("}\n\n")
 
@@ -1134,20 +1169,38 @@ func TestNew%[1]s(t *testing.T) {
 		if name == "range" || name == "type" {
 			name = name[0 : len(name)-1]
 		}
+		desc := arg.Desc()
+		if arg.Deprecated {
+			if desc == "" {
+				desc = "This argument should not be used."
+			}
+			desc = "\n//\n// Deprecated: " + desc
+		}
+		if arg.IsLocalEnum() {
+			var enums []string
+			for _, e := range arg.Enum {
+				enums = append(enums, fmt.Sprintf("%q", e))
+			}
+			desc += "\n//\n// Values: " + strings.Join(enums, ", ") + "."
+		}
+		if arg.Experimental {
+			desc += "\n//\n// Note: This argument is experimental."
+		}
 		g.Printf(`
 // Set%[1]s sets the %[1]s optional argument. %[6]s
 func (a *%[2]s) Set%[1]s(%[3]s %[4]s) *%[2]s {
 	a.%[5]s%[1]s = %[7]s%[3]s
 	return a
 }
-`, arg.ExportedName(d), c.ArgsName(d), name, arg.GoType("cdp", d), OptionalPropPrefix, arg.Desc(), ptr)
+`, arg.ExportedName(d), c.ArgsName(d), name, arg.GoType("cdp", d), OptionalPropPrefix, desc, ptr)
 	}
 }
 
 func (g *Generator) domainCmdReply(d proto.Domain, c proto.Command) {
 	g.Printf(`
 // %[1]s represents the return values for %[2]s in the %[3]s domain.
-type %[1]s struct {`, c.ReplyName(d), c.Name(), d.Name())
+type %[1]s struct {
+`, c.ReplyName(d), c.Name(), d.Name())
 	g.printStructProperties(d, c.ReplyName(d), c.Returns, true, false)
 	g.Printf("}\n\n")
 }
