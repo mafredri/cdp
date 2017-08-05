@@ -503,21 +503,6 @@ type DOM interface {
 	// Requests that the node is sent to the caller given the JavaScript node object reference. All nodes that form the path from the node to the root are also sent to the client as a series of setChildNodes notifications.
 	RequestNode(context.Context, *dom.RequestNodeArgs) (*dom.RequestNodeReply, error)
 
-	// Command HighlightRect
-	//
-	// Highlights given rectangle.
-	HighlightRect(context.Context) error
-
-	// Command HighlightNode
-	//
-	// Highlights DOM node.
-	HighlightNode(context.Context) error
-
-	// Command HideHighlight
-	//
-	// Hides any highlight.
-	HideHighlight(context.Context) error
-
 	// Command PushNodeByPathToFrontend
 	//
 	// Requests that the node is sent to the caller given its path. // FIXME, use XPath
@@ -1880,20 +1865,6 @@ type Page interface {
 	// Note: This command is experimental.
 	NavigateToHistoryEntry(context.Context, *page.NavigateToHistoryEntryArgs) error
 
-	// Command GetCookies
-	//
-	// Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the cookies field.
-	//
-	// Note: This command is experimental.
-	GetCookies(context.Context) (*page.GetCookiesReply, error)
-
-	// Command DeleteCookie
-	//
-	// Deletes browser cookie with given name, domain and path.
-	//
-	// Note: This command is experimental.
-	DeleteCookie(context.Context, *page.DeleteCookieArgs) error
-
 	// Command GetResourceTree
 	//
 	// Returns present frame / resource tree structure.
@@ -1921,51 +1892,6 @@ type Page interface {
 	//
 	// Note: This command is experimental.
 	SetDocumentContent(context.Context, *page.SetDocumentContentArgs) error
-
-	// Command SetDeviceMetricsOverride
-	//
-	// Overrides the values of device screen dimensions (window.screen.width, window.screen.height, window.innerWidth, window.innerHeight, and "device-width"/"device-height"-related CSS media query results).
-	//
-	// Note: This command is experimental.
-	SetDeviceMetricsOverride(context.Context, *page.SetDeviceMetricsOverrideArgs) error
-
-	// Command ClearDeviceMetricsOverride
-	//
-	// Clears the overridden device metrics.
-	//
-	// Note: This command is experimental.
-	ClearDeviceMetricsOverride(context.Context) error
-
-	// Command SetGeolocationOverride
-	//
-	// Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position unavailable.
-	SetGeolocationOverride(context.Context, *page.SetGeolocationOverrideArgs) error
-
-	// Command ClearGeolocationOverride
-	//
-	// Clears the overridden Geolocation Position and Error.
-	ClearGeolocationOverride(context.Context) error
-
-	// Command SetDeviceOrientationOverride
-	//
-	// Overrides the Device Orientation.
-	//
-	// Note: This command is experimental.
-	SetDeviceOrientationOverride(context.Context, *page.SetDeviceOrientationOverrideArgs) error
-
-	// Command ClearDeviceOrientationOverride
-	//
-	// Clears the overridden Device Orientation.
-	//
-	// Note: This command is experimental.
-	ClearDeviceOrientationOverride(context.Context) error
-
-	// Command SetTouchEmulationEnabled
-	//
-	// Toggles mouse event-based touch event emulation.
-	//
-	// Note: This command is experimental.
-	SetTouchEmulationEnabled(context.Context, *page.SetTouchEmulationEnabledArgs) error
 
 	// Command CaptureScreenshot
 	//

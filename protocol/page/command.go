@@ -5,8 +5,6 @@ package page
 import (
 	"github.com/mafredri/cdp/protocol/debugger"
 	"github.com/mafredri/cdp/protocol/dom"
-	"github.com/mafredri/cdp/protocol/emulation"
-	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/runtime"
 )
 
@@ -159,25 +157,6 @@ func NewNavigateToHistoryEntryArgs(entryID int) *NavigateToHistoryEntryArgs {
 	return args
 }
 
-// GetCookiesReply represents the return values for GetCookies in the Page domain.
-type GetCookiesReply struct {
-	Cookies []network.Cookie `json:"cookies"` // Array of cookie objects.
-}
-
-// DeleteCookieArgs represents the arguments for DeleteCookie in the Page domain.
-type DeleteCookieArgs struct {
-	CookieName string `json:"cookieName"` // Name of the cookie to remove.
-	URL        string `json:"url"`        // URL to match cooke domain and path.
-}
-
-// NewDeleteCookieArgs initializes DeleteCookieArgs with the required arguments.
-func NewDeleteCookieArgs(cookieName string, url string) *DeleteCookieArgs {
-	args := new(DeleteCookieArgs)
-	args.CookieName = cookieName
-	args.URL = url
-	return args
-}
-
 // GetResourceTreeReply represents the return values for GetResourceTree in the Page domain.
 type GetResourceTreeReply struct {
 	FrameTree FrameResourceTree `json:"frameTree"` // Present frame / resource tree structure.
@@ -192,145 +171,6 @@ type GetResourceContentReply struct {
 // SearchInResourceReply represents the return values for SearchInResource in the Page domain.
 type SearchInResourceReply struct {
 	Result []debugger.SearchMatch `json:"result"` // List of search matches.
-}
-
-// SetDeviceMetricsOverrideArgs represents the arguments for SetDeviceMetricsOverride in the Page domain.
-type SetDeviceMetricsOverrideArgs struct {
-	Width              int                          `json:"width"`                        // Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
-	Height             int                          `json:"height"`                       // Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
-	DeviceScaleFactor  float64                      `json:"deviceScaleFactor"`            // Overriding device scale factor value. 0 disables the override.
-	Mobile             bool                         `json:"mobile"`                       // Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more.
-	Scale              *float64                     `json:"scale,omitempty"`              // Scale to apply to resulting view image. Ignored in |fitWindow| mode.
-	ScreenWidth        *int                         `json:"screenWidth,omitempty"`        // Overriding screen width value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-	ScreenHeight       *int                         `json:"screenHeight,omitempty"`       // Overriding screen height value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-	PositionX          *int                         `json:"positionX,omitempty"`          // Overriding view X position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-	PositionY          *int                         `json:"positionY,omitempty"`          // Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-	DontSetVisibleSize *bool                        `json:"dontSetVisibleSize,omitempty"` // Do not set visible view size, rely upon explicit setVisibleSize call.
-	ScreenOrientation  *emulation.ScreenOrientation `json:"screenOrientation,omitempty"`  // Screen orientation override.
-}
-
-// NewSetDeviceMetricsOverrideArgs initializes SetDeviceMetricsOverrideArgs with the required arguments.
-func NewSetDeviceMetricsOverrideArgs(width int, height int, deviceScaleFactor float64, mobile bool) *SetDeviceMetricsOverrideArgs {
-	args := new(SetDeviceMetricsOverrideArgs)
-	args.Width = width
-	args.Height = height
-	args.DeviceScaleFactor = deviceScaleFactor
-	args.Mobile = mobile
-	return args
-}
-
-// SetScale sets the Scale optional argument. Scale to apply to resulting view image. Ignored in |fitWindow| mode.
-func (a *SetDeviceMetricsOverrideArgs) SetScale(scale float64) *SetDeviceMetricsOverrideArgs {
-	a.Scale = &scale
-	return a
-}
-
-// SetScreenWidth sets the ScreenWidth optional argument. Overriding screen width value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-func (a *SetDeviceMetricsOverrideArgs) SetScreenWidth(screenWidth int) *SetDeviceMetricsOverrideArgs {
-	a.ScreenWidth = &screenWidth
-	return a
-}
-
-// SetScreenHeight sets the ScreenHeight optional argument. Overriding screen height value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-func (a *SetDeviceMetricsOverrideArgs) SetScreenHeight(screenHeight int) *SetDeviceMetricsOverrideArgs {
-	a.ScreenHeight = &screenHeight
-	return a
-}
-
-// SetPositionX sets the PositionX optional argument. Overriding view X position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-func (a *SetDeviceMetricsOverrideArgs) SetPositionX(positionX int) *SetDeviceMetricsOverrideArgs {
-	a.PositionX = &positionX
-	return a
-}
-
-// SetPositionY sets the PositionY optional argument. Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
-func (a *SetDeviceMetricsOverrideArgs) SetPositionY(positionY int) *SetDeviceMetricsOverrideArgs {
-	a.PositionY = &positionY
-	return a
-}
-
-// SetDontSetVisibleSize sets the DontSetVisibleSize optional argument. Do not set visible view size, rely upon explicit setVisibleSize call.
-func (a *SetDeviceMetricsOverrideArgs) SetDontSetVisibleSize(dontSetVisibleSize bool) *SetDeviceMetricsOverrideArgs {
-	a.DontSetVisibleSize = &dontSetVisibleSize
-	return a
-}
-
-// SetScreenOrientation sets the ScreenOrientation optional argument. Screen orientation override.
-func (a *SetDeviceMetricsOverrideArgs) SetScreenOrientation(screenOrientation emulation.ScreenOrientation) *SetDeviceMetricsOverrideArgs {
-	a.ScreenOrientation = &screenOrientation
-	return a
-}
-
-// SetGeolocationOverrideArgs represents the arguments for SetGeolocationOverride in the Page domain.
-type SetGeolocationOverrideArgs struct {
-	Latitude  *float64 `json:"latitude,omitempty"`  // Mock latitude
-	Longitude *float64 `json:"longitude,omitempty"` // Mock longitude
-	Accuracy  *float64 `json:"accuracy,omitempty"`  // Mock accuracy
-}
-
-// NewSetGeolocationOverrideArgs initializes SetGeolocationOverrideArgs with the required arguments.
-func NewSetGeolocationOverrideArgs() *SetGeolocationOverrideArgs {
-	args := new(SetGeolocationOverrideArgs)
-
-	return args
-}
-
-// SetLatitude sets the Latitude optional argument. Mock latitude
-func (a *SetGeolocationOverrideArgs) SetLatitude(latitude float64) *SetGeolocationOverrideArgs {
-	a.Latitude = &latitude
-	return a
-}
-
-// SetLongitude sets the Longitude optional argument. Mock longitude
-func (a *SetGeolocationOverrideArgs) SetLongitude(longitude float64) *SetGeolocationOverrideArgs {
-	a.Longitude = &longitude
-	return a
-}
-
-// SetAccuracy sets the Accuracy optional argument. Mock accuracy
-func (a *SetGeolocationOverrideArgs) SetAccuracy(accuracy float64) *SetGeolocationOverrideArgs {
-	a.Accuracy = &accuracy
-	return a
-}
-
-// SetDeviceOrientationOverrideArgs represents the arguments for SetDeviceOrientationOverride in the Page domain.
-type SetDeviceOrientationOverrideArgs struct {
-	Alpha float64 `json:"alpha"` // Mock alpha
-	Beta  float64 `json:"beta"`  // Mock beta
-	Gamma float64 `json:"gamma"` // Mock gamma
-}
-
-// NewSetDeviceOrientationOverrideArgs initializes SetDeviceOrientationOverrideArgs with the required arguments.
-func NewSetDeviceOrientationOverrideArgs(alpha float64, beta float64, gamma float64) *SetDeviceOrientationOverrideArgs {
-	args := new(SetDeviceOrientationOverrideArgs)
-	args.Alpha = alpha
-	args.Beta = beta
-	args.Gamma = gamma
-	return args
-}
-
-// SetTouchEmulationEnabledArgs represents the arguments for SetTouchEmulationEnabled in the Page domain.
-type SetTouchEmulationEnabledArgs struct {
-	Enabled bool `json:"enabled"` // Whether the touch event emulation should be enabled.
-	// Configuration Touch/gesture events configuration. Default: current platform.
-	//
-	// Values: "mobile", "desktop".
-	Configuration *string `json:"configuration,omitempty"`
-}
-
-// NewSetTouchEmulationEnabledArgs initializes SetTouchEmulationEnabledArgs with the required arguments.
-func NewSetTouchEmulationEnabledArgs(enabled bool) *SetTouchEmulationEnabledArgs {
-	args := new(SetTouchEmulationEnabledArgs)
-	args.Enabled = enabled
-	return args
-}
-
-// SetConfiguration sets the Configuration optional argument. Touch/gesture events configuration. Default: current platform.
-//
-// Values: "mobile", "desktop".
-func (a *SetTouchEmulationEnabledArgs) SetConfiguration(configuration string) *SetTouchEmulationEnabledArgs {
-	a.Configuration = &configuration
-	return a
 }
 
 // CaptureScreenshotArgs represents the arguments for CaptureScreenshot in the Page domain.

@@ -284,33 +284,6 @@ func (d *domainClient) RequestNode(ctx context.Context, args *RequestNodeArgs) (
 	return
 }
 
-// HighlightRect invokes the DOM method. Highlights given rectangle.
-func (d *domainClient) HighlightRect(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOM.highlightRect", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "DOM", Op: "HighlightRect", Err: err}
-	}
-	return
-}
-
-// HighlightNode invokes the DOM method. Highlights DOM node.
-func (d *domainClient) HighlightNode(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOM.highlightNode", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "DOM", Op: "HighlightNode", Err: err}
-	}
-	return
-}
-
-// HideHighlight invokes the DOM method. Hides any highlight.
-func (d *domainClient) HideHighlight(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOM.hideHighlight", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "DOM", Op: "HideHighlight", Err: err}
-	}
-	return
-}
-
 // PushNodeByPathToFrontend invokes the DOM method. Requests that the node is sent to the caller given its path. // FIXME, use XPath
 func (d *domainClient) PushNodeByPathToFrontend(ctx context.Context, args *PushNodeByPathToFrontendArgs) (reply *PushNodeByPathToFrontendReply, err error) {
 	reply = new(PushNodeByPathToFrontendReply)

@@ -162,29 +162,6 @@ func (d *domainClient) NavigateToHistoryEntry(ctx context.Context, args *Navigat
 	return
 }
 
-// GetCookies invokes the Page method. Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the cookies field.
-func (d *domainClient) GetCookies(ctx context.Context) (reply *GetCookiesReply, err error) {
-	reply = new(GetCookiesReply)
-	err = rpcc.Invoke(ctx, "Page.getCookies", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "GetCookies", Err: err}
-	}
-	return
-}
-
-// DeleteCookie invokes the Page method. Deletes browser cookie with given name, domain and path.
-func (d *domainClient) DeleteCookie(ctx context.Context, args *DeleteCookieArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.deleteCookie", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.deleteCookie", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "DeleteCookie", Err: err}
-	}
-	return
-}
-
 // GetResourceTree invokes the Page method. Returns present frame / resource tree structure.
 func (d *domainClient) GetResourceTree(ctx context.Context) (reply *GetResourceTreeReply, err error) {
 	reply = new(GetResourceTreeReply)
@@ -232,85 +209,6 @@ func (d *domainClient) SetDocumentContent(ctx context.Context, args *SetDocument
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "SetDocumentContent", Err: err}
-	}
-	return
-}
-
-// SetDeviceMetricsOverride invokes the Page method. Overrides the values of device screen dimensions (window.screen.width, window.screen.height, window.innerWidth, window.innerHeight, and "device-width"/"device-height"-related CSS media query results).
-func (d *domainClient) SetDeviceMetricsOverride(ctx context.Context, args *SetDeviceMetricsOverrideArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.setDeviceMetricsOverride", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.setDeviceMetricsOverride", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "SetDeviceMetricsOverride", Err: err}
-	}
-	return
-}
-
-// ClearDeviceMetricsOverride invokes the Page method. Clears the overridden device metrics.
-func (d *domainClient) ClearDeviceMetricsOverride(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Page.clearDeviceMetricsOverride", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "ClearDeviceMetricsOverride", Err: err}
-	}
-	return
-}
-
-// SetGeolocationOverride invokes the Page method. Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position unavailable.
-func (d *domainClient) SetGeolocationOverride(ctx context.Context, args *SetGeolocationOverrideArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.setGeolocationOverride", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.setGeolocationOverride", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "SetGeolocationOverride", Err: err}
-	}
-	return
-}
-
-// ClearGeolocationOverride invokes the Page method. Clears the overridden Geolocation Position and Error.
-func (d *domainClient) ClearGeolocationOverride(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Page.clearGeolocationOverride", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "ClearGeolocationOverride", Err: err}
-	}
-	return
-}
-
-// SetDeviceOrientationOverride invokes the Page method. Overrides the Device Orientation.
-func (d *domainClient) SetDeviceOrientationOverride(ctx context.Context, args *SetDeviceOrientationOverrideArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.setDeviceOrientationOverride", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.setDeviceOrientationOverride", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "SetDeviceOrientationOverride", Err: err}
-	}
-	return
-}
-
-// ClearDeviceOrientationOverride invokes the Page method. Clears the overridden Device Orientation.
-func (d *domainClient) ClearDeviceOrientationOverride(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Page.clearDeviceOrientationOverride", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "ClearDeviceOrientationOverride", Err: err}
-	}
-	return
-}
-
-// SetTouchEmulationEnabled invokes the Page method. Toggles mouse event-based touch event emulation.
-func (d *domainClient) SetTouchEmulationEnabled(ctx context.Context, args *SetTouchEmulationEnabledArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.setTouchEmulationEnabled", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.setTouchEmulationEnabled", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "SetTouchEmulationEnabled", Err: err}
 	}
 	return
 }
