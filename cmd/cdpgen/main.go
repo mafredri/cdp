@@ -192,6 +192,9 @@ func main() {
 		if len(d.Commands) > 0 {
 			g.PackageHeader("")
 			for _, c := range d.Commands {
+				if c.Redirect != "" {
+					continue
+				}
 				g.DomainCmd(d, c)
 			}
 			g.writeFile("command.go")
@@ -449,6 +452,9 @@ func (g *Generator) DomainInterface(d proto.Domain) {
 // The %[1]s domain. %[2]s
 type %[1]s interface{`, d.Name(), desc)
 	for _, c := range d.Commands {
+		if c.Redirect != "" {
+			continue
+		}
 		request := ""
 		reply := "error"
 		if len(c.Parameters) > 0 {
@@ -497,6 +503,9 @@ func NewClient(conn *rpcc.Conn) *%[1]s {
 `, "domainClient", d.Name(), d.Desc())
 
 	for _, c := range d.Commands {
+		if c.Redirect != "" {
+			continue
+		}
 		request := ""
 		invokeReply := "nil"
 		if len(c.Parameters) > 0 {
