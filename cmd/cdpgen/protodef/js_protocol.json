@@ -294,6 +294,14 @@
                 ],
                 "description": "Reloads given page optionally ignoring the cache."
             },
+	    {
+                "name": "setAdBlockingEnabled",
+                "description": "Enable Chrome's experimental ad filter on all sites.",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean", "description": "Whether to block ads." }
+                ],
+		"experimental": true
+	    },
             {
                 "name": "navigate",
                 "parameters": [
@@ -542,23 +550,6 @@
                 "experimental": true
             },
             {
-                "name": "setControlNavigations",
-                "parameters": [
-                    { "name": "enabled", "type": "boolean" }
-                ],
-                "description": "Toggles navigation throttling which allows programatic control over navigation and redirect response.",
-                "experimental": true
-            },
-            {
-                "name": "processNavigation",
-                "parameters": [
-                    { "name": "response", "$ref": "NavigationResponse" },
-                    { "name": "navigationId", "type": "integer" }
-                ],
-                "description": "Should be sent in response to a navigationRequested or a redirectRequested event, telling the browser how to handle the navigation.",
-                "experimental": true
-            },
-            {
                 "name": "getLayoutMetrics",
                 "description": "Returns metrics relating to the layouting of the page, such as viewport bounds/scale.",
                 "experimental": true,
@@ -644,7 +635,8 @@
                 "parameters": [
                     { "name": "frameId", "$ref": "FrameId", "description": "Id of the frame that has scheduled a navigation." },
                     { "name": "delay", "type": "number", "description": "Delay (in seconds) until the navigation is scheduled to begin. The navigation is not guaranteed to start." },
-                    { "name": "reason", "type": "string", "experimental": true, "enum": ["formSubmission", "httpHeaderRefresh", "scriptInitiated", "metaTagRefresh", "pageBlockInterstitial", "reload"], "description": "The reason for the navigation." }
+                    { "name": "reason", "type": "string", "experimental": true, "enum": ["formSubmission", "httpHeaderRefresh", "scriptInitiated", "metaTagRefresh", "pageBlockInterstitial", "reload"], "description": "The reason for the navigation." },
+                    { "name": "url", "type": "string", "experimental": true, "description": "The destination URL for the scheduled navigation." }
                 ],
                 "experimental": true
             },
@@ -664,15 +656,18 @@
                 "name": "javascriptDialogOpening",
                 "description": "Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) is about to open.",
                 "parameters": [
+                    { "name": "url", "type": "string", "description": "Frame url." },
                     { "name": "message", "type": "string", "description": "Message that will be displayed by the dialog." },
-                    { "name": "type", "$ref": "DialogType", "description": "Dialog type." }
+                    { "name": "type", "$ref": "DialogType", "description": "Dialog type." },
+                    { "name": "defaultPrompt", "optional": true, "type": "string", "description": "Default dialog prompt." }
                 ]
             },
             {
                 "name": "javascriptDialogClosed",
                 "description": "Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) has been closed.",
                 "parameters": [
-                    { "name": "result", "type": "boolean", "description": "Whether dialog was confirmed." }
+                    { "name": "result", "type": "boolean", "description": "Whether dialog was confirmed." },
+                    { "name": "userInput", "type": "string", "description": "User input in case of prompt." }
                 ]
             },
             {
@@ -700,16 +695,6 @@
             {
                 "name": "interstitialHidden",
                 "description": "Fired when interstitial page was hidden"
-            },
-            {
-                "name": "navigationRequested",
-                "description": "Fired when a navigation is started if navigation throttles are enabled.  The navigation will be deferred until processNavigation is called.",
-                "parameters": [
-                    { "name": "isInMainFrame", "type": "boolean", "description": "Whether the navigation is taking place in the main frame or in a subframe." },
-                    { "name": "isRedirect", "type": "boolean", "description": "Whether the navigation has encountered a server redirect or not." },
-                    { "name": "navigationId", "type": "integer" },
-                    { "name": "url", "type": "string", "description": "URL of requested navigation." }
-                ]
             }
         ]
     },
@@ -880,6 +865,13 @@
                 "description": "Fired when the node should be inspected. This happens after call to <code>setInspectMode</code> or when user manually inspects an element.",
                 "parameters": [
                     { "name": "backendNodeId", "$ref": "DOM.BackendNodeId", "description": "Id of the node to inspect." }
+                ]
+            },
+            {
+                "name": "screenshotRequested",
+                "description": "Fired when user asks to capture screenshot of some area on the page.",
+                "parameters": [
+                    { "name": "viewport", "$ref": "Page.Viewport", "description": "Viewport to capture, in CSS." }
                 ]
             }
         ]
@@ -1593,7 +1585,7 @@
                 "description": "Response to Network.requestIntercepted which either modifies the request to continue with any modifications, or blocks it, or completes it with the provided response bytes. If a network fetch occurs as a result which encounters a redirect an additional Network.requestIntercepted event will be sent with the same InterceptionId.",
                 "parameters": [
                     { "name": "interceptionId", "$ref": "InterceptionId" },
-                    { "name": "errorReason", "$ref": "ErrorReason", "optional": true, "description": "If set this causes the request to fail with the given reason. Must not be set in response to an authChallenge." },
+                    { "name": "errorReason", "$ref": "ErrorReason", "optional": true, "description": "If set this causes the request to fail with the given reason. Passing <code>Aborted</code> for requests marked with <code>isNavigationRequest</code> also cancels the navigation. Must not be set in response to an authChallenge." },
                     { "name": "rawResponse", "type": "string", "optional": true, "description": "If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc... Must not be set in response to an authChallenge." },
                     { "name": "url", "type": "string", "optional": true, "description": "If set the request url will be modified in a way that's not observable by page. Must not be set in response to an authChallenge." },
                     { "name": "method", "type": "string", "optional": true, "description": "If set this allows the request method to be overridden. Must not be set in response to an authChallenge."},
@@ -1770,6 +1762,7 @@
                     { "name": "interceptionId", "$ref": "InterceptionId", "description": "Each request the page makes will have a unique id, however if any redirects are encountered while processing that fetch, they will be reported with the same id as the original fetch. Likewise if HTTP authentication is needed then the same fetch id will be used." },
                     { "name": "request", "$ref": "Request" },
                     { "name": "resourceType", "$ref": "Page.ResourceType", "description": "How the requested resource will be used." },
+                    { "name": "isNavigationRequest", "type": "boolean", "description": "Whether this is a navigation request, which can abort the navigation completely." },
                     { "name": "redirectHeaders", "$ref": "Headers", "optional": true, "description": "HTTP response headers, only sent if a redirect was intercepted." },
                     { "name": "redirectStatusCode", "type": "integer", "optional": true, "description": "HTTP response code, only sent if a redirect was intercepted." },
                     { "name": "redirectUrl", "optional": true, "type": "string", "description": "Redirect location, only sent if a redirect was intercepted."},
@@ -3416,9 +3409,10 @@
                     { "name": "documentURL", "type": "string", "optional": true, "description": "Document URL that <code>Document</code> or <code>FrameOwner</code> node points to." },
                     { "name": "baseURL", "type": "string", "optional": true, "description": "Base URL that <code>Document</code> or <code>FrameOwner</code> node uses for URL completion." },
                     { "name": "contentLanguage", "type": "string", "optional": true, "description": "Only set for documents, contains the document's content language." },
+                    { "name": "documentEncoding", "type": "string", "optional": true, "description": "Only set for documents, contains the document's character set encoding." },
                     { "name": "publicId", "type": "string", "optional": true, "description": "<code>DocumentType</code> node's publicId." },
                     { "name": "systemId", "type": "string", "optional": true, "description": "<code>DocumentType</code> node's systemId." },
-                    { "name": "frameId", "$ref": "Page.FrameId", "optional": true, "description": "Frame ID for frame owner elements." },
+                    { "name": "frameId", "$ref": "Page.FrameId", "optional": true, "description": "Frame ID for frame owner elements and also for the document node." },
                     { "name": "contentDocumentIndex", "type": "integer", "optional": true, "description": "The index of a frame owner element's content document in the <code>domNodes</code> array returned by <code>getSnapshot</code>, if any." },
                     { "name": "importedDocumentIndex", "type": "integer", "optional": true, "description": "Index of the imported document's node of a link element in the <code>domNodes</code> array returned by <code>getSnapshot</code>, if any." },
                     { "name": "templateContentIndex", "type": "integer", "optional": true, "description": "Index of the content node of a template element in the <code>domNodes</code> array returned by <code>getSnapshot</code>." },
@@ -4144,6 +4138,17 @@
                 ]
             },
             {
+                "id": "StickyPositionConstraint",
+                "type": "object",
+                "description": "Sticky position constraints.",
+                "properties": [
+                    { "name": "stickyBoxRect", "$ref": "DOM.Rect", "description": "Layout rectangle of the sticky element before being shifted" },
+                    { "name": "containingBlockRect", "$ref": "DOM.Rect", "description": "Layout rectangle of the containing block of the sticky element" },
+                    { "name": "nearestLayerShiftingStickyBox", "$ref": "LayerId", "optional": true, "description": "The nearest sticky layer that shifts the sticky box" },
+                    { "name": "nearestLayerShiftingContainingBlock", "$ref": "LayerId", "optional": true, "description": "The nearest sticky layer that shifts the containing block" }
+                ]
+            },
+            {
                 "id": "PictureTile",
                 "type": "object",
                 "description": "Serialized fragment of layer picture along with its offset within the layer.",
@@ -4172,7 +4177,8 @@
                     { "name": "paintCount", "type": "integer", "description": "Indicates how many time this layer has painted." },
                     { "name": "drawsContent", "type": "boolean", "description": "Indicates whether this layer hosts any content, rather than being used for transform/scrolling purposes only." },
                     { "name": "invisible", "type": "boolean", "optional": true, "description": "Set if layer is not visible." },
-                    { "name": "scrollRects", "type": "array", "items": { "$ref": "ScrollRect"}, "optional": true, "description": "Rectangles scrolling on main thread only."}
+                    { "name": "scrollRects", "type": "array", "items": { "$ref": "ScrollRect"}, "optional": true, "description": "Rectangles scrolling on main thread only."},
+                    { "name": "stickyPositionConstraint", "$ref": "StickyPositionConstraint", "optional": true, "description": "Sticky position constraint information" }
                 ]
             },
             {
@@ -4625,13 +4631,13 @@
             {
                 "id": "AXGlobalStates",
                 "type": "string",
-                "enum": [ "disabled", "hidden", "hiddenRoot", "invalid", "keyshortcuts", "roledescription" ],
+                "enum": [ "busy", "disabled", "hidden", "hiddenRoot", "invalid", "keyshortcuts", "roledescription" ],
                 "description": "States which apply to every AX node."
             },
             {
                 "id": "AXLiveRegionAttributes",
                 "type": "string",
-                "enum": [ "live", "atomic", "relevant", "busy", "root" ],
+                "enum": [ "live", "atomic", "relevant", "root" ],
                 "description": "Attributes which apply to nodes in live regions."
             },
             {
