@@ -250,3 +250,21 @@ func (c *inspectNodeRequestedClient) Recv() (*InspectNodeRequestedReply, error) 
 	}
 	return event, nil
 }
+
+func (d *domainClient) ScreenshotRequested(ctx context.Context) (ScreenshotRequestedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Overlay.screenshotRequested", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &screenshotRequestedClient{Stream: s}, nil
+}
+
+type screenshotRequestedClient struct{ rpcc.Stream }
+
+func (c *screenshotRequestedClient) Recv() (*ScreenshotRequestedReply, error) {
+	event := new(ScreenshotRequestedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Overlay", Op: "ScreenshotRequested Recv", Err: err}
+	}
+	return event, nil
+}

@@ -337,6 +337,7 @@ type AXGlobalStates int
 // AXGlobalStates as enums.
 const (
 	AXGlobalStatesNotSet AXGlobalStates = iota
+	AXGlobalStatesBusy
 	AXGlobalStatesDisabled
 	AXGlobalStatesHidden
 	AXGlobalStatesHiddenRoot
@@ -347,7 +348,7 @@ const (
 
 // Valid returns true if enum is set.
 func (e AXGlobalStates) Valid() bool {
-	return e >= 1 && e <= 6
+	return e >= 1 && e <= 7
 }
 
 func (e AXGlobalStates) String() string {
@@ -355,16 +356,18 @@ func (e AXGlobalStates) String() string {
 	case 0:
 		return "AXGlobalStatesNotSet"
 	case 1:
-		return "disabled"
+		return "busy"
 	case 2:
-		return "hidden"
+		return "disabled"
 	case 3:
-		return "hiddenRoot"
+		return "hidden"
 	case 4:
-		return "invalid"
+		return "hiddenRoot"
 	case 5:
-		return "keyshortcuts"
+		return "invalid"
 	case 6:
+		return "keyshortcuts"
+	case 7:
 		return "roledescription"
 	}
 	return fmt.Sprintf("AXGlobalStates(%d)", e)
@@ -386,18 +389,20 @@ func (e *AXGlobalStates) UnmarshalJSON(data []byte) error {
 	switch string(data) {
 	case "null":
 		*e = 0
-	case "\"disabled\"":
+	case "\"busy\"":
 		*e = 1
-	case "\"hidden\"":
+	case "\"disabled\"":
 		*e = 2
-	case "\"hiddenRoot\"":
+	case "\"hidden\"":
 		*e = 3
-	case "\"invalid\"":
+	case "\"hiddenRoot\"":
 		*e = 4
-	case "\"keyshortcuts\"":
+	case "\"invalid\"":
 		*e = 5
-	case "\"roledescription\"":
+	case "\"keyshortcuts\"":
 		*e = 6
+	case "\"roledescription\"":
+		*e = 7
 	default:
 		return fmt.Errorf("accessibility.AXGlobalStates: UnmarshalJSON on bad input: %s", data)
 	}
@@ -413,13 +418,12 @@ const (
 	AXLiveRegionAttributesLive
 	AXLiveRegionAttributesAtomic
 	AXLiveRegionAttributesRelevant
-	AXLiveRegionAttributesBusy
 	AXLiveRegionAttributesRoot
 )
 
 // Valid returns true if enum is set.
 func (e AXLiveRegionAttributes) Valid() bool {
-	return e >= 1 && e <= 5
+	return e >= 1 && e <= 4
 }
 
 func (e AXLiveRegionAttributes) String() string {
@@ -433,8 +437,6 @@ func (e AXLiveRegionAttributes) String() string {
 	case 3:
 		return "relevant"
 	case 4:
-		return "busy"
-	case 5:
 		return "root"
 	}
 	return fmt.Sprintf("AXLiveRegionAttributes(%d)", e)
@@ -462,10 +464,8 @@ func (e *AXLiveRegionAttributes) UnmarshalJSON(data []byte) error {
 		*e = 2
 	case "\"relevant\"":
 		*e = 3
-	case "\"busy\"":
-		*e = 4
 	case "\"root\"":
-		*e = 5
+		*e = 4
 	default:
 		return fmt.Errorf("accessibility.AXLiveRegionAttributes: UnmarshalJSON on bad input: %s", data)
 	}

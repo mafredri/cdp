@@ -26,9 +26,10 @@ type DOMNode struct {
 	DocumentURL           *string           `json:"documentURL,omitempty"`           // Document URL that Document or FrameOwner node points to.
 	BaseURL               *string           `json:"baseURL,omitempty"`               // Base URL that Document or FrameOwner node uses for URL completion.
 	ContentLanguage       *string           `json:"contentLanguage,omitempty"`       // Only set for documents, contains the document's content language.
+	DocumentEncoding      *string           `json:"documentEncoding,omitempty"`      // Only set for documents, contains the document's character set encoding.
 	PublicID              *string           `json:"publicId,omitempty"`              // DocumentType node's publicId.
 	SystemID              *string           `json:"systemId,omitempty"`              // DocumentType node's systemId.
-	FrameID               *page.FrameID     `json:"frameId,omitempty"`               // Frame ID for frame owner elements.
+	FrameID               *page.FrameID     `json:"frameId,omitempty"`               // Frame ID for frame owner elements and also for the document node.
 	ContentDocumentIndex  *int              `json:"contentDocumentIndex,omitempty"`  // The index of a frame owner element's content document in the domNodes array returned by getSnapshot, if any.
 	ImportedDocumentIndex *int              `json:"importedDocumentIndex,omitempty"` // Index of the imported document's node of a link element in the domNodes array returned by getSnapshot, if any.
 	TemplateContentIndex  *int              `json:"templateContentIndex,omitempty"`  // Index of the content node of a template element in the domNodes array returned by getSnapshot.

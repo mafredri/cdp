@@ -67,8 +67,10 @@ type JavascriptDialogOpeningClient interface {
 
 // JavascriptDialogOpeningReply is the reply for JavascriptDialogOpening events.
 type JavascriptDialogOpeningReply struct {
-	Message string     `json:"message"` // Message that will be displayed by the dialog.
-	Type    DialogType `json:"type"`    // Dialog type.
+	URL           string     `json:"url"`                     // Frame url.
+	Message       string     `json:"message"`                 // Message that will be displayed by the dialog.
+	Type          DialogType `json:"type"`                    // Dialog type.
+	DefaultPrompt *string    `json:"defaultPrompt,omitempty"` // Default dialog prompt.
 }
 
 // JavascriptDialogClosedClient is a client for JavascriptDialogClosed events. Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) has been closed.
@@ -81,7 +83,8 @@ type JavascriptDialogClosedClient interface {
 
 // JavascriptDialogClosedReply is the reply for JavascriptDialogClosed events.
 type JavascriptDialogClosedReply struct {
-	Result bool `json:"result"` // Whether dialog was confirmed.
+	Result    bool   `json:"result"`    // Whether dialog was confirmed.
+	UserInput string `json:"userInput"` // User input in case of prompt.
 }
 
 // ScreencastFrameClient is a client for ScreencastFrame events. Compressed image data requested by the startScreencast.
@@ -133,19 +136,3 @@ type InterstitialHiddenClient interface {
 
 // InterstitialHiddenReply is the reply for InterstitialHidden events.
 type InterstitialHiddenReply struct{}
-
-// NavigationRequestedClient is a client for NavigationRequested events. Fired when a navigation is started if navigation throttles are enabled.  The navigation will be deferred until processNavigation is called.
-type NavigationRequestedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*NavigationRequestedReply, error)
-	rpcc.Stream
-}
-
-// NavigationRequestedReply is the reply for NavigationRequested events.
-type NavigationRequestedReply struct {
-	IsInMainFrame bool   `json:"isInMainFrame"` // Whether the navigation is taking place in the main frame or in a subframe.
-	IsRedirect    bool   `json:"isRedirect"`    // Whether the navigation has encountered a server redirect or not.
-	NavigationID  int    `json:"navigationId"`  // No description.
-	URL           string `json:"url"`           // URL of requested navigation.
-}

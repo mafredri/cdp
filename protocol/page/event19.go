@@ -76,6 +76,10 @@ type FrameScheduledNavigationReply struct {
 	//
 	// Note: This property is experimental.
 	Reason string `json:"reason"`
+	// URL The destination URL for the scheduled navigation.
+	//
+	// Note: This property is experimental.
+	URL string `json:"url"`
 }
 
 // FrameClearedScheduledNavigationClient is a client for FrameClearedScheduledNavigation events. Fired when frame no longer has a scheduled navigation.

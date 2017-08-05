@@ -1785,6 +1785,11 @@ type Overlay interface {
 	//
 	// Fired when the node should be inspected. This happens after call to setInspectMode or when user manually inspects an element.
 	InspectNodeRequested(context.Context) (overlay.InspectNodeRequestedClient, error)
+
+	// Event ScreenshotRequested
+	//
+	// Fired when user asks to capture screenshot of some area on the page.
+	ScreenshotRequested(context.Context) (overlay.ScreenshotRequestedClient, error)
 }
 
 // The Page domain. Actions and events related to the inspected page belong to the page domain.
@@ -1838,6 +1843,13 @@ type Page interface {
 	//
 	// Reloads given page optionally ignoring the cache.
 	Reload(context.Context, *page.ReloadArgs) error
+
+	// Command SetAdBlockingEnabled
+	//
+	// Enable Chrome's experimental ad filter on all sites.
+	//
+	// Note: This command is experimental.
+	SetAdBlockingEnabled(context.Context, *page.SetAdBlockingEnabledArgs) error
 
 	// Command Navigate
 	//
@@ -1946,20 +1958,6 @@ type Page interface {
 	//
 	// Note: This command is experimental.
 	RequestAppBanner(context.Context) error
-
-	// Command SetControlNavigations
-	//
-	// Toggles navigation throttling which allows programatic control over navigation and redirect response.
-	//
-	// Note: This command is experimental.
-	SetControlNavigations(context.Context, *page.SetControlNavigationsArgs) error
-
-	// Command ProcessNavigation
-	//
-	// Should be sent in response to a navigationRequested or a redirectRequested event, telling the browser how to handle the navigation.
-	//
-	// Note: This command is experimental.
-	ProcessNavigation(context.Context, *page.ProcessNavigationArgs) error
 
 	// Command GetLayoutMetrics
 	//
@@ -2073,11 +2071,6 @@ type Page interface {
 	//
 	// Fired when interstitial page was hidden
 	InterstitialHidden(context.Context) (page.InterstitialHiddenClient, error)
-
-	// Event NavigationRequested
-	//
-	// Fired when a navigation is started if navigation throttles are enabled.  The navigation will be deferred until processNavigation is called.
-	NavigationRequested(context.Context) (page.NavigationRequestedClient, error)
 }
 
 // The Profiler domain.

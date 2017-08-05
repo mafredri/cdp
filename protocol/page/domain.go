@@ -116,6 +116,19 @@ func (d *domainClient) Reload(ctx context.Context, args *ReloadArgs) (err error)
 	return
 }
 
+// SetAdBlockingEnabled invokes the Page method. Enable Chrome's experimental ad filter on all sites.
+func (d *domainClient) SetAdBlockingEnabled(ctx context.Context, args *SetAdBlockingEnabledArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setAdBlockingEnabled", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setAdBlockingEnabled", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetAdBlockingEnabled", Err: err}
+	}
+	return
+}
+
 // Navigate invokes the Page method. Navigates current page to the given URL.
 func (d *domainClient) Navigate(ctx context.Context, args *NavigateArgs) (reply *NavigateReply, err error) {
 	reply = new(NavigateReply)
@@ -304,32 +317,6 @@ func (d *domainClient) RequestAppBanner(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Page.requestAppBanner", nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "RequestAppBanner", Err: err}
-	}
-	return
-}
-
-// SetControlNavigations invokes the Page method. Toggles navigation throttling which allows programatic control over navigation and redirect response.
-func (d *domainClient) SetControlNavigations(ctx context.Context, args *SetControlNavigationsArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.setControlNavigations", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.setControlNavigations", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "SetControlNavigations", Err: err}
-	}
-	return
-}
-
-// ProcessNavigation invokes the Page method. Should be sent in response to a navigationRequested or a redirectRequested event, telling the browser how to handle the navigation.
-func (d *domainClient) ProcessNavigation(ctx context.Context, args *ProcessNavigationArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.processNavigation", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.processNavigation", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "ProcessNavigation", Err: err}
 	}
 	return
 }
@@ -651,24 +638,6 @@ func (c *interstitialHiddenClient) Recv() (*InterstitialHiddenReply, error) {
 	event := new(InterstitialHiddenReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "InterstitialHidden Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) NavigationRequested(ctx context.Context) (NavigationRequestedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Page.navigationRequested", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &navigationRequestedClient{Stream: s}, nil
-}
-
-type navigationRequestedClient struct{ rpcc.Stream }
-
-func (c *navigationRequestedClient) Recv() (*NavigationRequestedReply, error) {
-	event := new(NavigationRequestedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Page", Op: "NavigationRequested Recv", Err: err}
 	}
 	return event, nil
 }

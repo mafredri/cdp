@@ -103,6 +103,18 @@ func (a *ReloadArgs) SetScriptToEvaluateOnLoad(scriptToEvaluateOnLoad string) *R
 	return a
 }
 
+// SetAdBlockingEnabledArgs represents the arguments for SetAdBlockingEnabled in the Page domain.
+type SetAdBlockingEnabledArgs struct {
+	Enabled bool `json:"enabled"` // Whether to block ads.
+}
+
+// NewSetAdBlockingEnabledArgs initializes SetAdBlockingEnabledArgs with the required arguments.
+func NewSetAdBlockingEnabledArgs(enabled bool) *SetAdBlockingEnabledArgs {
+	args := new(SetAdBlockingEnabledArgs)
+	args.Enabled = enabled
+	return args
+}
+
 // NavigateArgs represents the arguments for Navigate in the Page domain.
 type NavigateArgs struct {
 	URL string `json:"url"` // URL to navigate the page to.
@@ -419,32 +431,6 @@ type GetAppManifestReply struct {
 	URL    string             `json:"url"`            // Manifest location.
 	Errors []AppManifestError `json:"errors"`         // No description.
 	Data   *string            `json:"data,omitempty"` // Manifest content.
-}
-
-// SetControlNavigationsArgs represents the arguments for SetControlNavigations in the Page domain.
-type SetControlNavigationsArgs struct {
-	Enabled bool `json:"enabled"` // No description.
-}
-
-// NewSetControlNavigationsArgs initializes SetControlNavigationsArgs with the required arguments.
-func NewSetControlNavigationsArgs(enabled bool) *SetControlNavigationsArgs {
-	args := new(SetControlNavigationsArgs)
-	args.Enabled = enabled
-	return args
-}
-
-// ProcessNavigationArgs represents the arguments for ProcessNavigation in the Page domain.
-type ProcessNavigationArgs struct {
-	Response     NavigationResponse `json:"response"`     // No description.
-	NavigationID int                `json:"navigationId"` // No description.
-}
-
-// NewProcessNavigationArgs initializes ProcessNavigationArgs with the required arguments.
-func NewProcessNavigationArgs(response NavigationResponse, navigationID int) *ProcessNavigationArgs {
-	args := new(ProcessNavigationArgs)
-	args.Response = response
-	args.NavigationID = navigationID
-	return args
 }
 
 // GetLayoutMetricsReply represents the return values for GetLayoutMetrics in the Page domain.
