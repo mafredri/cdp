@@ -153,21 +153,13 @@ For more information, consult the [documentation](#documentation).
 
 The Go implementation of gRPC ([grpc-go](https://github.com/grpc/grpc-go)) has been a source of inspiration for some of the design descisions made in the `cdp` and `rpcc` packages. Some ideas have also been borrowed from the `net/rpc` package from the standard library.
 
-## Links
+## Resources
 
-### Chrome Debugging Protocol
-
-* [Chrome DevTools Documentation: Chrome Debugging Protocol](https://developer.chrome.com/devtools/docs/debugger-protocol)
-* [Chrome Debugging Protocol Viewer](https://chromedevtools.github.io/debugger-protocol-viewer/) lists all the domains, methods, events and types used in the protocol
+* [Chrome DevTools Protocol Documentation](https://chromedevtools.github.io/devtools-protocol/)
+* [Chrome DevTools Protocol Viewer (latest tip-of-tree)](https://chromedevtools.github.io/devtools-protocol/tot/) official protocol API docs
+* [Chrome DevTools Protocol Repository (GitHub)](https://github.com/chromedevtools/devtools-protocol) please [file issues](https://github.com/ChromeDevTools/devtools-protocol/issues) at this repo if you have concerns or problems with the Chrome Debugging Protocol
+* [Chrome Debugging Protocol Mailing List](https://groups.google.com/forum/#!forum/chrome-debugging-protocol)
 * [Getting Started with Headless Chrome](https://developers.google.com/web/updates/2017/04/headless-chrome)
 * [RemoteDebug](http://remotedebug.org/) is an initiative to bring remote debugging (e.g. CDP) to all modern browsers
 * [RemoteDebug Protocol Compatibility Tables](https://compatibility.remotedebug.org/)
-
-### Other work
-
-These are alternative implementations of the Chrome Debugging Protocol, written in Go:
-
-* [gcd](https://github.com/wirepair/gcd): Low-level client library for communicating with Google Chrome
-* [autogcd](https://github.com/wirepair/autogcd): Wrapper around gcd to enable browser automation
-* [chromedp](https://github.com/knq/chromedp): High-level API for driving web browsers
-* [godet](https://github.com/raff/godet): Remote client for Chrome DevTools
+* [Awesome chrome-devtools: Chrome DevTools Protocol](https://github.com/ChromeDevTools/awesome-chrome-devtools#chrome-devtools-protocol)
