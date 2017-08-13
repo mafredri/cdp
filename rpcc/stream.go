@@ -65,6 +65,9 @@ type Stream interface {
 	// RecvMsg unmarshals pending messages onto m. Blocks until the
 	// next message is received, context is canceled or stream is
 	// closed.
+	//
+	// When m is a *[]byte the message will not be decoded and the
+	// raw bytes are copied into m.
 	RecvMsg(m interface{}) error
 	// Close closes the stream and no new messages will be received.
 	// RecvMsg will return ErrStreamClosing once all pending messages
@@ -122,6 +125,11 @@ func (s *streamClient) RecvMsg(m interface{}) (err error) {
 	msg, err := s.recv()
 	if err != nil {
 		return err
+	}
+
+	if m, ok := m.(*[]byte); ok {
+		*m = append(*m, msg.data...)
+		return nil
 	}
 
 	return json.Unmarshal(msg.data, m)
