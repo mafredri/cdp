@@ -410,7 +410,7 @@ func (c *Conn) notify(method string, data []byte) {
 	c.streamMu.Lock()
 	stream := c.streams[method]
 	if stream != nil {
-		stream.send(data)
+		stream.send(method, data)
 	}
 	c.streamMu.Unlock()
 }

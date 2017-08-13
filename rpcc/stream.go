@@ -13,13 +13,24 @@ var (
 	ErrStreamClosing = errors.New("rpcc: the stream is closing")
 )
 
-type messageBuffer struct {
-	ch    chan []byte
-	mu    sync.Mutex
-	queue [][]byte
+type streamMsg struct {
+	method string
+	data   []byte
 }
 
-func (b *messageBuffer) store(m []byte) {
+type messageBuffer struct {
+	ch    chan *streamMsg
+	mu    sync.Mutex
+	queue []*streamMsg
+}
+
+func newMessageBuffer() *messageBuffer {
+	return &messageBuffer{
+		ch: make(chan *streamMsg, 1),
+	}
+}
+
+func (b *messageBuffer) store(m *streamMsg) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	if len(b.queue) == 0 {
@@ -45,7 +56,7 @@ func (b *messageBuffer) load() {
 	}
 }
 
-func (b *messageBuffer) get() <-chan []byte {
+func (b *messageBuffer) get() <-chan *streamMsg {
 	return b.ch
 }
 
@@ -69,7 +80,7 @@ func NewStream(ctx context.Context, method string, conn *Conn) (Stream, error) {
 	}
 
 	s := &streamClient{userCtx: ctx, done: make(chan struct{})}
-	s.msgBuf.ch = make(chan []byte, 1)
+	s.msgBuf = newMessageBuffer()
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
 	var err error
@@ -98,7 +109,7 @@ type streamClient struct {
 
 	// msgBuf stores all incoming messages
 	// until they are ready to be received.
-	msgBuf messageBuffer
+	msgBuf *messageBuffer
 
 	mu     sync.Mutex // Protects following.
 	remove func()     // Unsubscribes from messages.
@@ -108,8 +119,15 @@ type streamClient struct {
 }
 
 func (s *streamClient) RecvMsg(m interface{}) (err error) {
-	var data []byte
+	msg, err := s.recv()
+	if err != nil {
+		return err
+	}
 
+	return json.Unmarshal(msg.data, m)
+}
+
+func (s *streamClient) recv() (m *streamMsg, err error) {
 	userCancelled := func() bool {
 		select {
 		case <-s.userCtx.Done():
@@ -121,31 +139,31 @@ func (s *streamClient) RecvMsg(m interface{}) (err error) {
 
 	select {
 	case <-s.userCtx.Done():
-		return s.userCtx.Err()
+		return m, s.userCtx.Err()
 	case <-s.ctx.Done():
 		// Give precedence for user cancellation.
 		if userCancelled() {
-			return s.userCtx.Err()
+			return m, s.userCtx.Err()
 		}
 
 		// Send all messages before returning error.
 		select {
-		case data = <-s.msgBuf.get():
+		case m = <-s.msgBuf.get():
 		default:
 			<-s.done
-			return s.err
+			return m, s.err
 		}
-	case data = <-s.msgBuf.get():
+	case m = <-s.msgBuf.get():
 		// Give precedence for user cancellation.
 		if userCancelled() {
-			return s.userCtx.Err()
+			return m, s.userCtx.Err()
 		}
 	}
 
 	// Preload the next message.
 	s.msgBuf.load()
 
-	return json.Unmarshal(data, m)
+	return m, nil
 }
 
 // Close closes the stream client.
@@ -206,10 +224,10 @@ func (s *streamClients) remove(seq uint64) {
 	s.mu.Unlock()
 }
 
-func (s *streamClients) send(args []byte) {
+func (s *streamClients) send(method string, args []byte) {
 	s.mu.Lock()
 	for _, client := range s.clients {
-		client.msgBuf.store(args)
+		client.msgBuf.store(&streamMsg{method: method, data: args})
 	}
 	s.mu.Unlock()
 }
