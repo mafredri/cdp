@@ -2,7 +2,9 @@ package rpcc
 
 import (
 	"context"
+	"sort"
 	"strconv"
+	"sync"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -45,6 +47,115 @@ func TestStream_UserCancel(t *testing.T) {
 	err = s.RecvMsg(nil)
 	if err != ctx.Err() {
 		t.Errorf("err != ctx.Err(); got %v, want %v", err, ctx.Err())
+	}
+}
+
+func TestStream_Ready(t *testing.T) {
+	conn, connCancel := newTestStreamConn()
+	defer connCancel()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	run := func(t *testing.T, closeEarly bool) {
+		s, err := NewStream(ctx, "test", conn)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		go func() {
+			for i := 0; i < 10; i++ {
+				conn.notify("test", []byte(strconv.Itoa(i)))
+			}
+			if closeEarly {
+				s.Close()
+			}
+
+		}()
+
+		for i := 0; i < 10; i++ {
+			<-s.Ready()
+			var x int
+			err = s.RecvMsg(&x)
+			if err != nil {
+				t.Error(err)
+			}
+			if x != i {
+				t.Errorf("x != i; got %d == %d, want %d == %d", x, i, i, i)
+			}
+		}
+
+		s.Close()
+		if _, ok := <-s.Ready(); ok {
+			t.Errorf("s.Read(), got channel open, want channel closed")
+		}
+	}
+
+	t.Run("Iteration", func(t *testing.T) { run(t, false) })
+	t.Run("Iteration (close early)", func(t *testing.T) { run(t, true) })
+}
+
+func TestStream_ReadyConcurrent(t *testing.T) {
+	conn, connCancel := newTestStreamConn()
+	defer connCancel()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s1, err := NewStream(ctx, "test1", conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s1.Close()
+
+	s2, err := NewStream(ctx, "test2", conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s2.Close()
+
+	go func() {
+		for i := 0; i < 10; i++ {
+			conn.notify("test1", []byte(strconv.Itoa(i)))
+			conn.notify("test2", []byte(strconv.Itoa(i)))
+		}
+	}()
+
+	var wg sync.WaitGroup
+
+	c := make(chan int, 20)
+	for i := 0; i < 10*2; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			var x int
+			select {
+			case <-s1.Ready():
+				err := s1.RecvMsg(&x)
+				if err != nil {
+					t.Error(err)
+				}
+			case <-s2.Ready():
+				err := s2.RecvMsg(&x)
+				if err != nil {
+					t.Error(err)
+				}
+			}
+			c <- x
+		}()
+	}
+	wg.Wait()
+	close(c)
+
+	want := []int{0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9}
+	got := []int{}
+	for i := range c {
+		got = append(got, i)
+	}
+	sort.Ints(got)
+	if diff := cmp.Diff(got, want); diff != "" {
+		t.Errorf("Output differs (-got +want)\n%s", diff)
 	}
 }
 
@@ -138,7 +249,7 @@ func TestStream_RecvMsg(t *testing.T) {
 
 func TestMessageBuffer(t *testing.T) {
 	n := 1000
-	b := newMessageBuffer()
+	b := newMessageBuffer(nil)
 
 	go func() {
 		for i := 0; i < n; i++ {

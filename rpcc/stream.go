@@ -22,20 +22,27 @@ type messageBuffer struct {
 	ch    chan *streamMsg
 	mu    sync.Mutex
 	queue []*streamMsg
+	ready func()
 }
 
-func newMessageBuffer() *messageBuffer {
+func newMessageBuffer(ready func()) *messageBuffer {
+	if ready == nil {
+		ready = func() {}
+	}
 	return &messageBuffer{
-		ch: make(chan *streamMsg, 1),
+		ch:    make(chan *streamMsg, 1),
+		ready: ready,
 	}
 }
 
+// store the message in ch, if empty, otherwise in queue.
 func (b *messageBuffer) store(m *streamMsg) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	if len(b.queue) == 0 {
 		select {
 		case b.ch <- m:
+			b.ready()
 			return
 		default:
 		}
@@ -43,12 +50,14 @@ func (b *messageBuffer) store(m *streamMsg) {
 	b.queue = append(b.queue, m)
 }
 
+// load moves a message from the queue into ch.
 func (b *messageBuffer) load() {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	if len(b.queue) > 0 {
 		select {
 		case b.ch <- b.queue[0]:
+			b.ready()
 			b.queue[0] = nil // Remove reference from underlying array.
 			b.queue = b.queue[1:]
 		default:
@@ -62,6 +71,15 @@ func (b *messageBuffer) get() <-chan *streamMsg {
 
 // Stream represents a stream of notifications for a certain method.
 type Stream interface {
+	// Ready returns a channel that sends a single empty struct when
+	// a message is ready to be received via RecvMsg. Ready has no
+	// backlog and will at most send once per incoming message.
+	//
+	// Ready is closed when the stream is closed, pending messages
+	// may still be read via RecvMsg.
+	//
+	// Ready is provided for use in select statements.
+	Ready() <-chan struct{}
 	// RecvMsg unmarshals pending messages onto m. Blocks until the
 	// next message is received, context is canceled or stream is
 	// closed.
@@ -82,8 +100,12 @@ func NewStream(ctx context.Context, method string, conn *Conn) (Stream, error) {
 		ctx = context.Background()
 	}
 
-	s := &streamClient{userCtx: ctx, done: make(chan struct{})}
-	s.msgBuf = newMessageBuffer()
+	s := &streamClient{
+		userCtx: ctx,
+		ready:   make(chan struct{}, 1),
+		done:    make(chan struct{}),
+	}
+	s.msgBuf = newMessageBuffer(s.markReady)
 	s.ctx, s.cancel = context.WithCancel(context.Background())
 
 	var err error
@@ -113,12 +135,28 @@ type streamClient struct {
 	// msgBuf stores all incoming messages
 	// until they are ready to be received.
 	msgBuf *messageBuffer
+	ready  chan struct{}
 
 	mu     sync.Mutex // Protects following.
 	remove func()     // Unsubscribes from messages.
 
 	done chan struct{} // Protects err.
 	err  error
+}
+
+func (s *streamClient) Ready() <-chan struct{} {
+	return s.ready
+}
+
+func (s *streamClient) markReady() {
+	s.mu.Lock()
+	if s.remove != nil { // Stream is active.
+		select {
+		case s.ready <- struct{}{}:
+		default:
+		}
+	}
+	s.mu.Unlock()
 }
 
 func (s *streamClient) RecvMsg(m interface{}) (err error) {
@@ -177,7 +215,6 @@ func (s *streamClient) recv() (m *streamMsg, err error) {
 	return m, nil
 }
 
-// Close closes the stream client.
 func (s *streamClient) close(err error) error {
 	s.mu.Lock()
 	remove := s.remove
@@ -197,6 +234,7 @@ func (s *streamClient) close(err error) error {
 	s.cancel()
 	s.err = err
 	close(s.done)
+	close(s.ready)
 
 	return nil
 }
