@@ -236,9 +236,11 @@ func (s *streamClients) remove(seq uint64) {
 }
 
 func (s *streamClients) send(method string, args []byte) {
+	m := &streamMsg{method: method, data: args}
+
 	s.mu.Lock()
 	for _, client := range s.clients {
-		client.msgBuf.store(&streamMsg{method: method, data: args})
+		client.msgBuf.store(m)
 	}
 	s.mu.Unlock()
 }
