@@ -145,6 +145,11 @@ func (s *streamClient) recv() (m *streamMsg, err error) {
 		}
 	}
 
+	// Check cancellation once here to avoid race in select.
+	if userCancelled() {
+		return m, s.userCtx.Err()
+	}
+
 	select {
 	case <-s.userCtx.Done():
 		return m, s.userCtx.Err()
@@ -162,10 +167,8 @@ func (s *streamClient) recv() (m *streamMsg, err error) {
 			return m, s.err
 		}
 	case m = <-s.msgBuf.get():
-		// Give precedence for user cancellation.
-		if userCancelled() {
-			return m, s.userCtx.Err()
-		}
+		// We could check for userCancelled here,
+		// but this message would be lost.
 	}
 
 	// Preload the next message.
