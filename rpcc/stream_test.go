@@ -76,7 +76,7 @@ func TestStream_Ready(t *testing.T) {
 		for i := 0; i < 10; i++ {
 			<-s.Ready()
 			var x int
-			err = s.RecvMsg(&x)
+			err := s.RecvMsg(&x)
 			if err != nil {
 				t.Error(err)
 			}
@@ -156,6 +156,36 @@ func TestStream_ReadyConcurrent(t *testing.T) {
 	sort.Ints(got)
 	if diff := cmp.Diff(got, want); diff != "" {
 		t.Errorf("Output differs (-got +want)\n%s", diff)
+	}
+}
+
+func TestStream_Wait_Blocks_After_RecvMsg(t *testing.T) {
+	conn, connCancel := newTestStreamConn()
+	defer connCancel()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s, err := NewStream(ctx, "test", conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s.Close()
+
+	// Notify will trigger a send on the ready channel.
+	conn.notify("test", []byte(`"hello"`))
+
+	var got string
+	// RecvMsg should empty the ready channel so Ready can block.
+	err = s.RecvMsg(&got)
+	if err != nil {
+		t.Error(err)
+	}
+
+	select {
+	case <-s.Ready():
+		t.Errorf("Ready() did not block, expected a blocking call")
+	default:
 	}
 }
 
