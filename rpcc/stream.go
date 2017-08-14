@@ -188,6 +188,13 @@ func (s *streamClient) recv() (m *streamMsg, err error) {
 		return m, s.userCtx.Err()
 	}
 
+	// Deplete the ready channel in case recv was called without a
+	// previous call to Ready().
+	select {
+	case <-s.ready:
+	default:
+	}
+
 	select {
 	case <-s.userCtx.Done():
 		return m, s.userCtx.Err()
