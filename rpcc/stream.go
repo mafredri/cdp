@@ -13,25 +13,29 @@ var (
 	ErrStreamClosing = errors.New("rpcc: the stream is closing")
 )
 
-type streamMsg struct {
-	method string
-	data   []byte
+type bufItem struct {
+	m    *streamMsg
+	next func()
+}
+
+func (bi *bufItem) message() *streamMsg {
+	bi.next()
+	return bi.m
 }
 
 type messageBuffer struct {
-	ch    chan *streamMsg
-	mu    sync.Mutex
-	queue []*streamMsg
-	ready func()
+	c      chan *bufItem
+	mu     sync.Mutex // Protects following.
+	seq    uint
+	queue  []*bufItem
+	rc     chan struct{}
+	closed bool
 }
 
-func newMessageBuffer(ready func()) *messageBuffer {
-	if ready == nil {
-		ready = func() {}
-	}
+func newMessageBuffer() *messageBuffer {
 	return &messageBuffer{
-		ch:    make(chan *streamMsg, 1),
-		ready: ready,
+		c:  make(chan *bufItem, 1),
+		rc: make(chan struct{}),
 	}
 }
 
@@ -39,15 +43,41 @@ func newMessageBuffer(ready func()) *messageBuffer {
 func (b *messageBuffer) store(m *streamMsg) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
+
+	if b.seq == 0 && !b.closed {
+		// Close the ready channel
+		// until the buffer is empty.
+		close(b.rc)
+	}
+
+	b.seq++ // Keep track of pending messages.
+	seq := b.seq
+
+	// nextItem will be called when this
+	// message is fetched from the buffer.
+	nextItem := func() {
+		b.mu.Lock()
+		if b.seq == seq && !b.closed {
+			// This was the last message, open a blocking
+			// ready-channel and reset pending status.
+			b.rc = make(chan struct{})
+			b.seq = 0
+		}
+		b.mu.Unlock()
+
+		// Prime the next item (if any).
+		b.load()
+	}
+	bi := &bufItem{m: m, next: nextItem}
+
 	if len(b.queue) == 0 {
 		select {
-		case b.ch <- m:
-			b.ready()
+		case b.c <- bi:
 			return
 		default:
 		}
 	}
-	b.queue = append(b.queue, m)
+	b.queue = append(b.queue, bi)
 }
 
 // load moves a message from the queue into ch.
@@ -56,8 +86,7 @@ func (b *messageBuffer) load() {
 	defer b.mu.Unlock()
 	if len(b.queue) > 0 {
 		select {
-		case b.ch <- b.queue[0]:
-			b.ready()
+		case b.c <- b.queue[0]:
 			b.queue[0] = nil // Remove reference from underlying array.
 			b.queue = b.queue[1:]
 		default:
@@ -65,18 +94,47 @@ func (b *messageBuffer) load() {
 	}
 }
 
-func (b *messageBuffer) get() <-chan *streamMsg {
-	return b.ch
+// ready returns a channel that is closed when the buffer is non-empty.
+func (b *messageBuffer) ready() <-chan struct{} {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return b.rc
+}
+
+func (b *messageBuffer) get() <-chan *bufItem {
+	return b.c
+}
+
+// close ensures the ready channel is closed.
+func (b *messageBuffer) close() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.closed = true
+	if b.seq == 0 {
+		close(b.rc)
+	}
+}
+
+// streamMsg contains the invoked method name and data.
+type streamMsg struct {
+	method string
+	data   []byte
 }
 
 // Stream represents a stream of notifications for a certain method.
 type Stream interface {
-	// Ready returns a channel that sends a single empty struct when
-	// a message is ready to be received via RecvMsg. Ready has no
-	// backlog and will at most send once per incoming message.
+	// Ready returns a channel that is closed when a message is
+	// ready to be received via RecvMsg. Ready indicates that a call
+	// to RecvMsg is non-blocking.
 	//
-	// Ready is closed when the stream is closed, pending messages
-	// may still be read via RecvMsg.
+	// Ready must not be called concurrently while relying on the
+	// non-blocking behavior of RecvMsg. In this case both
+	// goroutines will be competing for the same message and one
+	// will block until the next message is available.
+	//
+	// Calling Close on the Stream will close the Ready channel
+	// indefinitely, pending messages may still be received via
+	// RecvMsg.
 	//
 	// Ready is provided for use in select statements.
 	Ready() <-chan struct{}
@@ -100,19 +158,16 @@ func NewStream(ctx context.Context, method string, conn *Conn) (Stream, error) {
 		ctx = context.Background()
 	}
 
-	s := &streamClient{
-		userCtx: ctx,
-		ready:   make(chan struct{}, 1),
-		done:    make(chan struct{}),
-	}
-	s.msgBuf = newMessageBuffer(s.markReady)
+	s := new(streamClient)
+	s.userCtx = ctx
 	s.ctx, s.cancel = context.WithCancel(context.Background())
+	s.msgBuf = newMessageBuffer()
 
-	var err error
-	s.remove, err = conn.listen(method, s)
+	remove, err := conn.listen(method, s)
 	if err != nil {
 		return nil, err
 	}
+	s.remove = remove
 
 	go func() {
 		select {
@@ -129,34 +184,20 @@ func NewStream(ctx context.Context, method string, conn *Conn) (Stream, error) {
 
 type streamClient struct {
 	userCtx context.Context
-	ctx     context.Context
 	cancel  context.CancelFunc
+	ctx     context.Context // Protects following.
+	err     error
 
 	// msgBuf stores all incoming messages
 	// until they are ready to be received.
 	msgBuf *messageBuffer
-	ready  chan struct{}
 
 	mu     sync.Mutex // Protects following.
 	remove func()     // Unsubscribes from messages.
-
-	done chan struct{} // Protects err.
-	err  error
 }
 
 func (s *streamClient) Ready() <-chan struct{} {
-	return s.ready
-}
-
-func (s *streamClient) markReady() {
-	s.mu.Lock()
-	if s.remove != nil { // Stream is active.
-		select {
-		case s.ready <- struct{}{}:
-		default:
-		}
-	}
-	s.mu.Unlock()
+	return s.msgBuf.ready()
 }
 
 func (s *streamClient) RecvMsg(m interface{}) (err error) {
@@ -173,7 +214,7 @@ func (s *streamClient) RecvMsg(m interface{}) (err error) {
 	return json.Unmarshal(msg.data, m)
 }
 
-func (s *streamClient) recv() (m *streamMsg, err error) {
+func (s *streamClient) recv() (*streamMsg, error) {
 	userCancelled := func() bool {
 		select {
 		case <-s.userCtx.Done():
@@ -183,43 +224,28 @@ func (s *streamClient) recv() (m *streamMsg, err error) {
 		}
 	}
 
-	// Check cancellation once here to avoid race in select.
-	if userCancelled() {
-		return m, s.userCtx.Err()
-	}
-
-	// Deplete the ready channel in case recv was called without a
-	// previous call to Ready().
+	var bi *bufItem
 	select {
-	case <-s.ready:
-	default:
-	}
-
-	select {
-	case <-s.userCtx.Done():
-		return m, s.userCtx.Err()
 	case <-s.ctx.Done():
 		// Give precedence for user cancellation.
 		if userCancelled() {
-			return m, s.userCtx.Err()
+			return nil, s.userCtx.Err()
 		}
 
 		// Send all messages before returning error.
 		select {
-		case m = <-s.msgBuf.get():
+		case bi = <-s.msgBuf.get():
 		default:
-			<-s.done
-			return m, s.err
+			return nil, s.err
 		}
-	case m = <-s.msgBuf.get():
-		// We could check for userCancelled here,
-		// but this message would be lost.
+	case bi = <-s.msgBuf.get():
+		// Give precedence for user cancellation.
+		if userCancelled() {
+			return nil, s.userCtx.Err()
+		}
 	}
 
-	// Preload the next message.
-	s.msgBuf.load()
-
-	return m, nil
+	return bi.message(), nil
 }
 
 func (s *streamClient) close(err error) error {
@@ -236,12 +262,12 @@ func (s *streamClient) close(err error) error {
 		err = ErrStreamClosing
 	}
 
-	// Unsubscribe first to prevent incoming messages.
-	remove()
+	remove()    // Unsubscribe first to prevent incoming messages.
+	s.err = err // Set err before cancel as reads are protected by context.
 	s.cancel()
-	s.err = err
-	close(s.done)
-	close(s.ready)
+
+	// Unblock the ready channel.
+	s.msgBuf.close()
 
 	return nil
 }
