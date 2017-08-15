@@ -83,8 +83,8 @@ Wait for an event by calling Recv:
 	}
 	// ...
 
-The Ready channel can be used to check for pending events or managing
-multiple event handlers:
+The Ready channel can be used to check for pending events or
+coordinating between multiple event handlers:
 
 	go func() {
 		select {
@@ -99,7 +99,8 @@ multiple event handlers:
 	}()
 	// ...
 
-Calling Close on the event client will also close the Ready channel.
+Ready must not be called concurrently while relying on the non-blocking
+behavior of Recv.
 
 */
 package cdp
