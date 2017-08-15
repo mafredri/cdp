@@ -4,7 +4,6 @@ import (
 	"context"
 	"sort"
 	"strconv"
-	"sync"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -91,11 +90,11 @@ func TestStream_Ready(t *testing.T) {
 		}
 	}
 
-	t.Run("Iteration", func(t *testing.T) { run(t, false) })
-	t.Run("Iteration (close early)", func(t *testing.T) { run(t, true) })
+	t.Run("Simple", func(t *testing.T) { run(t, false) })
+	t.Run("Close early", func(t *testing.T) { run(t, true) })
 }
 
-func TestStream_ReadyConcurrent(t *testing.T) {
+func TestStream_Ready_Multiple_Streams(t *testing.T) {
 	conn, connCancel := newTestStreamConn()
 	defer connCancel()
 
@@ -121,39 +120,26 @@ func TestStream_ReadyConcurrent(t *testing.T) {
 		}
 	}()
 
-	var wg sync.WaitGroup
-
-	c := make(chan int, 20)
+	var got []int
 	for i := 0; i < 10*2; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
-			var x int
-			select {
-			case <-s1.Ready():
-				err := s1.RecvMsg(&x)
-				if err != nil {
-					t.Error(err)
-				}
-			case <-s2.Ready():
-				err := s2.RecvMsg(&x)
-				if err != nil {
-					t.Error(err)
-				}
+		var x int
+		select {
+		case <-s1.Ready():
+			err := s1.RecvMsg(&x)
+			if err != nil {
+				t.Error(err)
 			}
-			c <- x
-		}()
+		case <-s2.Ready():
+			err := s2.RecvMsg(&x)
+			if err != nil {
+				t.Error(err)
+			}
+		}
+		got = append(got, x)
 	}
-	wg.Wait()
-	close(c)
 
-	want := []int{0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9}
-	got := []int{}
-	for i := range c {
-		got = append(got, i)
-	}
 	sort.Ints(got)
+	want := []int{0, 0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9}
 	if diff := cmp.Diff(got, want); diff != "" {
 		t.Errorf("Output differs (-got +want)\n%s", diff)
 	}
@@ -279,7 +265,7 @@ func TestStream_RecvMsg(t *testing.T) {
 
 func TestMessageBuffer(t *testing.T) {
 	n := 1000
-	b := newMessageBuffer(nil)
+	b := newMessageBuffer()
 
 	go func() {
 		for i := 0; i < n; i++ {
@@ -289,9 +275,9 @@ func TestMessageBuffer(t *testing.T) {
 
 	i := 0
 	for bi := range b.get() {
-		b.load()
-		if strconv.Itoa(i) != string(bi.data) {
-			t.Errorf("Got n = %s, want %d", bi, i)
+		m := bi.message()
+		if strconv.Itoa(i) != string(m.data) {
+			t.Errorf("Got n = %s, want %d", m.data, i)
 		}
 		i++
 		if i >= n {
