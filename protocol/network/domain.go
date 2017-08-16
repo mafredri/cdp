@@ -195,6 +195,19 @@ func (d *domainClient) SetCookie(ctx context.Context, args *SetCookieArgs) (repl
 	return
 }
 
+// SetCookies invokes the Network method. Sets given cookies.
+func (d *domainClient) SetCookies(ctx context.Context, args *SetCookiesArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.setCookies", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.setCookies", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "SetCookies", Err: err}
+	}
+	return
+}
+
 // CanEmulateNetworkConditions invokes the Network method. Tells whether emulation of network conditions is supported.
 func (d *domainClient) CanEmulateNetworkConditions(ctx context.Context) (reply *CanEmulateNetworkConditionsReply, err error) {
 	reply = new(CanEmulateNetworkConditionsReply)

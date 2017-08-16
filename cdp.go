@@ -31,6 +31,7 @@ import (
 	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/overlay"
 	"github.com/mafredri/cdp/protocol/page"
+	"github.com/mafredri/cdp/protocol/performance"
 	"github.com/mafredri/cdp/protocol/profiler"
 	"github.com/mafredri/cdp/protocol/runtime"
 	"github.com/mafredri/cdp/protocol/schema"
@@ -168,6 +169,11 @@ type Browser interface {
 	//
 	// Get the browser window that contains the devtools target.
 	GetWindowForTarget(context.Context, *browser.GetWindowForTargetArgs) (*browser.GetWindowForTargetReply, error)
+
+	// Command GetVersion
+	//
+	// Returns version information.
+	GetVersion(context.Context) (*browser.GetVersionReply, error)
 
 	// Command SetWindowBounds
 	//
@@ -1068,8 +1074,15 @@ type Emulation interface {
 
 	// Command SetTouchEmulationEnabled
 	//
-	// Toggles mouse event-based touch event emulation.
+	// Enables touch on platforms which do not support them.
 	SetTouchEmulationEnabled(context.Context, *emulation.SetTouchEmulationEnabledArgs) error
+
+	// Command SetEmitTouchEventsForMouse
+	//
+	//
+	//
+	// Note: This command is experimental.
+	SetEmitTouchEventsForMouse(context.Context, *emulation.SetEmitTouchEventsForMouseArgs) error
 
 	// Command SetEmulatedMedia
 	//
@@ -1538,6 +1551,13 @@ type Network interface {
 	//
 	// Note: This command is experimental.
 	SetCookie(context.Context, *network.SetCookieArgs) (*network.SetCookieReply, error)
+
+	// Command SetCookies
+	//
+	// Sets given cookies.
+	//
+	// Note: This command is experimental.
+	SetCookies(context.Context, *network.SetCookiesArgs) error
 
 	// Command CanEmulateNetworkConditions
 	//
@@ -2073,6 +2093,31 @@ type Page interface {
 	InterstitialHidden(context.Context) (page.InterstitialHiddenClient, error)
 }
 
+// The Performance domain.
+//
+// Note: This domain is experimental.
+type Performance interface {
+	// Command Enable
+	//
+	// Enable collecting and reporting metrics.
+	Enable(context.Context) error
+
+	// Command Disable
+	//
+	// Disable collecting and reporting metrics.
+	Disable(context.Context) error
+
+	// Command GetMetrics
+	//
+	// Retrieve current values of run-time metrics.
+	GetMetrics(context.Context) (*performance.GetMetricsReply, error)
+
+	// Event Metrics
+	//
+	// Current values of the metrics.
+	Metrics(context.Context) (performance.MetricsClient, error)
+}
+
 // The Profiler domain.
 type Profiler interface {
 	// Command Enable
@@ -2266,11 +2311,6 @@ type Security interface {
 	// Disables tracking security state changes.
 	Disable(context.Context) error
 
-	// Command ShowCertificateViewer
-	//
-	// Displays native dialog with the certificate details.
-	ShowCertificateViewer(context.Context) error
-
 	// Command HandleCertificateError
 	//
 	// Handles a certificate error that fired a certificateError event.
@@ -2380,6 +2420,26 @@ type Storage interface {
 	//
 	// Returns usage and quota in bytes.
 	GetUsageAndQuota(context.Context, *storage.GetUsageAndQuotaArgs) (*storage.GetUsageAndQuotaReply, error)
+
+	// Command TrackCacheStorageForOrigin
+	//
+	// Registers origin to be notified when an update occurs to its cache storage list.
+	TrackCacheStorageForOrigin(context.Context, *storage.TrackCacheStorageForOriginArgs) error
+
+	// Command UntrackCacheStorageForOrigin
+	//
+	// Unregisters origin from receiving notifications for cache storage.
+	UntrackCacheStorageForOrigin(context.Context, *storage.UntrackCacheStorageForOriginArgs) error
+
+	// Event CacheStorageListUpdated
+	//
+	// A cache has been added/deleted.
+	CacheStorageListUpdated(context.Context) (storage.CacheStorageListUpdatedClient, error)
+
+	// Event CacheStorageContentUpdated
+	//
+	// A cache's contents have been modified.
+	CacheStorageContentUpdated(context.Context) (storage.CacheStorageContentUpdatedClient, error)
 }
 
 // The SystemInfo domain. The SystemInfo domain defines methods and events for querying low-level system information.

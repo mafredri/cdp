@@ -29,6 +29,7 @@ import (
 	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/overlay"
 	"github.com/mafredri/cdp/protocol/page"
+	"github.com/mafredri/cdp/protocol/performance"
 	"github.com/mafredri/cdp/protocol/profiler"
 	"github.com/mafredri/cdp/protocol/runtime"
 	"github.com/mafredri/cdp/protocol/schema"
@@ -72,6 +73,7 @@ type Client struct {
 	Network           Network
 	Overlay           Overlay
 	Page              Page
+	Performance       Performance
 	Profiler          Profiler
 	Runtime           Runtime
 	Schema            Schema
@@ -114,6 +116,7 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Network:           network.NewClient(conn),
 		Overlay:           overlay.NewClient(conn),
 		Page:              page.NewClient(conn),
+		Performance:       performance.NewClient(conn),
 		Profiler:          profiler.NewClient(conn),
 		Runtime:           runtime.NewClient(conn),
 		Schema:            schema.NewClient(conn),

@@ -36,15 +36,6 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 	return
 }
 
-// ShowCertificateViewer invokes the Security method. Displays native dialog with the certificate details.
-func (d *domainClient) ShowCertificateViewer(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Security.showCertificateViewer", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Security", Op: "ShowCertificateViewer", Err: err}
-	}
-	return
-}
-
 // HandleCertificateError invokes the Security method. Handles a certificate error that fired a certificateError event.
 func (d *domainClient) HandleCertificateError(ctx context.Context, args *HandleCertificateErrorArgs) (err error) {
 	if args != nil {

@@ -157,65 +157,82 @@ func NewDeleteCookieArgs(cookieName string, url string) *DeleteCookieArgs {
 
 // SetCookieArgs represents the arguments for SetCookie in the Network domain.
 type SetCookieArgs struct {
-	URL            string         `json:"url"`                      // The request-URI to associate with the setting of the cookie. This value can affect the default domain and path values of the created cookie.
-	Name           string         `json:"name"`                     // The name of the cookie.
-	Value          string         `json:"value"`                    // The value of the cookie.
-	Domain         *string        `json:"domain,omitempty"`         // If omitted, the cookie becomes a host-only cookie.
-	Path           *string        `json:"path,omitempty"`           // Defaults to the path portion of the url parameter.
-	Secure         *bool          `json:"secure,omitempty"`         // Defaults ot false.
-	HTTPOnly       *bool          `json:"httpOnly,omitempty"`       // Defaults to false.
-	SameSite       CookieSameSite `json:"sameSite,omitempty"`       // Defaults to browser default behavior.
-	ExpirationDate TimeSinceEpoch `json:"expirationDate,omitempty"` // If omitted, the cookie becomes a session cookie.
+	Name     string         `json:"name"`               // Cookie name.
+	Value    string         `json:"value"`              // Cookie value.
+	URL      *string        `json:"url,omitempty"`      // The request-URI to associate with the setting of the cookie. This value can affect the default domain and path values of the created cookie.
+	Domain   *string        `json:"domain,omitempty"`   // Cookie domain.
+	Path     *string        `json:"path,omitempty"`     // Cookie path.
+	Secure   *bool          `json:"secure,omitempty"`   // True if cookie is secure.
+	HTTPOnly *bool          `json:"httpOnly,omitempty"` // True if cookie is http-only.
+	SameSite CookieSameSite `json:"sameSite,omitempty"` // Cookie SameSite type.
+	Expires  TimeSinceEpoch `json:"expires,omitempty"`  // Cookie expiration date, session cookie if not set
 }
 
 // NewSetCookieArgs initializes SetCookieArgs with the required arguments.
-func NewSetCookieArgs(url string, name string, value string) *SetCookieArgs {
+func NewSetCookieArgs(name string, value string) *SetCookieArgs {
 	args := new(SetCookieArgs)
-	args.URL = url
 	args.Name = name
 	args.Value = value
 	return args
 }
 
-// SetDomain sets the Domain optional argument. If omitted, the cookie becomes a host-only cookie.
+// SetURL sets the URL optional argument. The request-URI to associate with the setting of the cookie. This value can affect the default domain and path values of the created cookie.
+func (a *SetCookieArgs) SetURL(url string) *SetCookieArgs {
+	a.URL = &url
+	return a
+}
+
+// SetDomain sets the Domain optional argument. Cookie domain.
 func (a *SetCookieArgs) SetDomain(domain string) *SetCookieArgs {
 	a.Domain = &domain
 	return a
 }
 
-// SetPath sets the Path optional argument. Defaults to the path portion of the url parameter.
+// SetPath sets the Path optional argument. Cookie path.
 func (a *SetCookieArgs) SetPath(path string) *SetCookieArgs {
 	a.Path = &path
 	return a
 }
 
-// SetSecure sets the Secure optional argument. Defaults ot false.
+// SetSecure sets the Secure optional argument. True if cookie is secure.
 func (a *SetCookieArgs) SetSecure(secure bool) *SetCookieArgs {
 	a.Secure = &secure
 	return a
 }
 
-// SetHTTPOnly sets the HTTPOnly optional argument. Defaults to false.
+// SetHTTPOnly sets the HTTPOnly optional argument. True if cookie is http-only.
 func (a *SetCookieArgs) SetHTTPOnly(httpOnly bool) *SetCookieArgs {
 	a.HTTPOnly = &httpOnly
 	return a
 }
 
-// SetSameSite sets the SameSite optional argument. Defaults to browser default behavior.
+// SetSameSite sets the SameSite optional argument. Cookie SameSite type.
 func (a *SetCookieArgs) SetSameSite(sameSite CookieSameSite) *SetCookieArgs {
 	a.SameSite = sameSite
 	return a
 }
 
-// SetExpirationDate sets the ExpirationDate optional argument. If omitted, the cookie becomes a session cookie.
-func (a *SetCookieArgs) SetExpirationDate(expirationDate TimeSinceEpoch) *SetCookieArgs {
-	a.ExpirationDate = expirationDate
+// SetExpires sets the Expires optional argument. Cookie expiration date, session cookie if not set
+func (a *SetCookieArgs) SetExpires(expires TimeSinceEpoch) *SetCookieArgs {
+	a.Expires = expires
 	return a
 }
 
 // SetCookieReply represents the return values for SetCookie in the Network domain.
 type SetCookieReply struct {
 	Success bool `json:"success"` // True if successfully set cookie.
+}
+
+// SetCookiesArgs represents the arguments for SetCookies in the Network domain.
+type SetCookiesArgs struct {
+	Cookies []CookieParam `json:"cookies"` // Cookies to be set.
+}
+
+// NewSetCookiesArgs initializes SetCookiesArgs with the required arguments.
+func NewSetCookiesArgs(cookies []CookieParam) *SetCookiesArgs {
+	args := new(SetCookiesArgs)
+	args.Cookies = cookies
+	return args
 }
 
 // CanEmulateNetworkConditionsReply represents the return values for CanEmulateNetworkConditions in the Network domain.

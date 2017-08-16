@@ -117,7 +117,7 @@ func (a *DispatchKeyEventArgs) SetIsSystemKey(isSystemKey bool) *DispatchKeyEven
 type DispatchMouseEventArgs struct {
 	// Type Type of the mouse event.
 	//
-	// Values: "mousePressed", "mouseReleased", "mouseMoved".
+	// Values: "mousePressed", "mouseReleased", "mouseMoved", "mouseWheel".
 	Type      string         `json:"type"`
 	X         float64        `json:"x"`                   // X coordinate of the event relative to the main frame's viewport in CSS pixels.
 	Y         float64        `json:"y"`                   // Y coordinate of the event relative to the main frame's viewport in CSS pixels. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport.
@@ -126,8 +126,10 @@ type DispatchMouseEventArgs struct {
 	// Button Mouse button (default: "none").
 	//
 	// Values: "none", "left", "middle", "right".
-	Button     *string `json:"button,omitempty"`
-	ClickCount *int    `json:"clickCount,omitempty"` // Number of times the mouse button was clicked (default: 0).
+	Button     *string  `json:"button,omitempty"`
+	ClickCount *int     `json:"clickCount,omitempty"` // Number of times the mouse button was clicked (default: 0).
+	DeltaX     *float64 `json:"deltaX,omitempty"`     // X delta in CSS pixels for mouse wheel event (default: 0).
+	DeltaY     *float64 `json:"deltaY,omitempty"`     // Y delta in CSS pixels for mouse wheel event (default: 0).
 }
 
 // NewDispatchMouseEventArgs initializes DispatchMouseEventArgs with the required arguments.
@@ -162,6 +164,18 @@ func (a *DispatchMouseEventArgs) SetButton(button string) *DispatchMouseEventArg
 // SetClickCount sets the ClickCount optional argument. Number of times the mouse button was clicked (default: 0).
 func (a *DispatchMouseEventArgs) SetClickCount(clickCount int) *DispatchMouseEventArgs {
 	a.ClickCount = &clickCount
+	return a
+}
+
+// SetDeltaX sets the DeltaX optional argument. X delta in CSS pixels for mouse wheel event (default: 0).
+func (a *DispatchMouseEventArgs) SetDeltaX(deltaX float64) *DispatchMouseEventArgs {
+	a.DeltaX = &deltaX
+	return a
+}
+
+// SetDeltaY sets the DeltaY optional argument. Y delta in CSS pixels for mouse wheel event (default: 0).
+func (a *DispatchMouseEventArgs) SetDeltaY(deltaY float64) *DispatchMouseEventArgs {
+	a.DeltaY = &deltaY
 	return a
 }
 

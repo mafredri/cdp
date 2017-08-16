@@ -24,6 +24,15 @@ type GetWindowForTargetReply struct {
 	Bounds   Bounds   `json:"bounds"`   // Bounds information of the window. When window state is 'minimized', the restored window position and size are returned.
 }
 
+// GetVersionReply represents the return values for GetVersion in the Browser domain.
+type GetVersionReply struct {
+	ProtocolVersion string `json:"protocolVersion"` // Protocol version.
+	Product         string `json:"product"`         // Product name.
+	Revision        string `json:"revision"`        // Product revision.
+	UserAgent       string `json:"userAgent"`       // User-Agent.
+	JsVersion       string `json:"jsVersion"`       // V8 version.
+}
+
 // SetWindowBoundsArgs represents the arguments for SetWindowBounds in the Browser domain.
 type SetWindowBoundsArgs struct {
 	WindowID WindowID `json:"windowId"` // Browser window id.

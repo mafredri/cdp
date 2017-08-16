@@ -110,7 +110,7 @@ func (d *domainClient) ClearGeolocationOverride(ctx context.Context) (err error)
 	return
 }
 
-// SetTouchEmulationEnabled invokes the Emulation method. Toggles mouse event-based touch event emulation.
+// SetTouchEmulationEnabled invokes the Emulation method. Enables touch on platforms which do not support them.
 func (d *domainClient) SetTouchEmulationEnabled(ctx context.Context, args *SetTouchEmulationEnabledArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Emulation.setTouchEmulationEnabled", args, nil, d.conn)
@@ -119,6 +119,19 @@ func (d *domainClient) SetTouchEmulationEnabled(ctx context.Context, args *SetTo
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetTouchEmulationEnabled", Err: err}
+	}
+	return
+}
+
+// SetEmitTouchEventsForMouse invokes the Emulation method.
+func (d *domainClient) SetEmitTouchEventsForMouse(ctx context.Context, args *SetEmitTouchEventsForMouseArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setEmitTouchEventsForMouse", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setEmitTouchEventsForMouse", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetEmitTouchEventsForMouse", Err: err}
 	}
 	return
 }

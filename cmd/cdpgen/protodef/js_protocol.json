@@ -65,6 +65,48 @@
         ]
     },
     {
+        "domain": "Performance",
+        "experimental": true,
+        "types": [
+            {
+                "id": "Metric",
+                "type": "object",
+                "properties": [
+                    { "name": "name", "type": "string", "description": "Metric name." },
+                    { "name": "value", "type": "number", "description": "Metric value." }
+                ],
+                "description": "Run-time execution metric."
+            }
+        ],
+        "commands": [
+            {
+                "name": "enable",
+                "description": "Enable collecting and reporting metrics."
+            },
+            {
+                "name": "disable",
+                "description": "Disable collecting and reporting metrics."
+            },
+            {
+                "name": "getMetrics",
+                "returns": [
+                    { "name": "metrics", "type": "array", "items": { "$ref": "Metric" }, "description": "Current values for run-time metrics." }
+                ],
+                "description": "Retrieve current values of run-time metrics."
+            }
+        ],
+        "events": [
+            {
+                "name": "metrics",
+                "description": "Current values of the metrics.",
+                "parameters": [
+                    { "name": "metrics", "type": "array", "items": { "$ref": "Metric" }, "description": "Current values of the metrics." },
+                    { "name": "title", "type": "string", "description": "Timestamp title." }
+                ]
+            }
+        ]
+    },
+    {
         "domain": "Page",
         "description": "Actions and events related to the inspected page belong to the page domain.",
         "dependencies": ["Debugger", "DOM", "Network"],
@@ -719,7 +761,8 @@
                     { "name": "eventTargetColor", "$ref": "DOM.RGBA", "optional": true, "description": "The event target element highlight fill color (default: transparent)." },
                     { "name": "shapeColor", "$ref": "DOM.RGBA", "optional": true, "description": "The shape outside fill color (default: transparent)." },
                     { "name": "shapeMarginColor", "$ref": "DOM.RGBA", "optional": true, "description": "The shape margin fill color (default: transparent)." },
-                    { "name": "selectorList", "type": "string", "optional": true, "description": "Selectors to highlight relevant nodes."}
+                    { "name": "selectorList", "type": "string", "optional": true, "description": "Selectors to highlight relevant nodes."},
+                    { "name": "cssGridColor", "$ref": "DOM.RGBA", "optional": true, "description": "The grid layout color (default: transparent)." }
                 ],
                 "description": "Configuration data for the highlighting of page elements."
             },
@@ -974,9 +1017,17 @@
                 "name": "setTouchEmulationEnabled",
                 "parameters": [
                     { "name": "enabled", "type": "boolean", "description": "Whether the touch event emulation should be enabled." },
+                    { "name": "maxTouchPoints", "type": "integer", "optional": true, "description": "Maximum touch points supported. Defaults to one." }
+                ],
+                "description": "Enables touch on platforms which do not support them."
+            },
+            {
+                "name": "setEmitTouchEventsForMouse",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean", "description": "Whether touch emulation based on mouse input should be enabled." },
                     { "name": "configuration", "type": "string", "enum": ["mobile", "desktop"], "optional": true, "description": "Touch/gesture events configuration. Default: current platform." }
                 ],
-                "description": "Toggles mouse event-based touch event emulation."
+                "experimental": true
             },
             {
                 "name": "setEmulatedMedia",
@@ -1056,8 +1107,8 @@
                     { "name": "securityState", "$ref": "SecurityState", "description": "Security state representing the severity of the factor being explained." },
                     { "name": "summary", "type": "string", "description": "Short phrase describing the type of factor." },
                     { "name": "description", "type": "string", "description": "Full text explanation of the factor." },
-                    { "name": "hasCertificate", "type": "boolean", "description": "True if the page has a certificate." },
-                    { "name": "mixedContentType", "$ref": "MixedContentType", "description": "The type of mixed content described by the explanation." }
+                    { "name": "mixedContentType", "$ref": "MixedContentType", "description": "The type of mixed content described by the explanation." },
+                    { "name": "certificate", "type": "array", "items": { "type": "string" }, "description": "Page certificate." }
                 ],
                 "description": "An explanation of an factor contributing to the security state."
             },
@@ -1090,10 +1141,6 @@
             {
                 "name": "disable",
                 "description": "Disables tracking security state changes."
-            },
-            {
-                "name": "showCertificateViewer",
-                "description": "Displays native dialog with the certificate details."
             },
             {
                 "name": "handleCertificateError",
@@ -1373,6 +1420,23 @@
                 "experimental": true
             },
             {
+                "id": "CookieParam",
+                "type": "object",
+                "description": "Cookie parameter object",
+                "properties": [
+                    { "name": "name", "type": "string", "description": "Cookie name." },
+                    { "name": "value", "type": "string", "description": "Cookie value." },
+                    { "name": "url", "type": "string", "optional": true, "description": "The request-URI to associate with the setting of the cookie. This value can affect the default domain and path values of the created cookie." },
+                    { "name": "domain", "type": "string", "optional": true, "description": "Cookie domain." },
+                    { "name": "path", "type": "string", "optional": true, "description": "Cookie path." },
+                    { "name": "secure", "type": "boolean", "optional": true, "description": "True if cookie is secure." },
+                    { "name": "httpOnly", "type": "boolean", "optional": true, "description": "True if cookie is http-only." },
+                    { "name": "sameSite", "$ref": "CookieSameSite", "optional": true, "description": "Cookie SameSite type." },
+                    { "name": "expires", "$ref": "TimeSinceEpoch", "optional": true, "description": "Cookie expiration date, session cookie if not set" }
+                ],
+                "experimental": true
+            },
+            {
                 "id": "AuthChallenge",
                 "type": "object",
                 "description": "Authorization challenge for HTTP status code 401 or 407.",
@@ -1503,20 +1567,28 @@
             {
                 "name": "setCookie",
                 "parameters": [
-                    { "name": "url", "type": "string", "description": "The request-URI to associate with the setting of the cookie. This value can affect the default domain and path values of the created cookie." },
-                    { "name": "name", "type": "string", "description": "The name of the cookie." },
-                    { "name": "value", "type": "string", "description": "The value of the cookie." },
-                    { "name": "domain", "type": "string", "optional": true, "description": "If omitted, the cookie becomes a host-only cookie." },
-                    { "name": "path", "type": "string", "optional": true, "description": "Defaults to the path portion of the url parameter." },
-                    { "name": "secure", "type": "boolean", "optional": true, "description": "Defaults ot false." },
-                    { "name": "httpOnly", "type": "boolean", "optional": true, "description": "Defaults to false." },
-                    { "name": "sameSite", "$ref": "CookieSameSite", "optional": true, "description": "Defaults to browser default behavior." },
-                    { "name": "expirationDate", "$ref": "TimeSinceEpoch", "optional": true, "description": "If omitted, the cookie becomes a session cookie." }
+                    { "name": "name", "type": "string", "description": "Cookie name." },
+                    { "name": "value", "type": "string", "description": "Cookie value." },
+                    { "name": "url", "type": "string", "optional": true, "description": "The request-URI to associate with the setting of the cookie. This value can affect the default domain and path values of the created cookie." },
+                    { "name": "domain", "type": "string", "optional": true, "description": "Cookie domain." },
+                    { "name": "path", "type": "string", "optional": true, "description": "Cookie path." },
+                    { "name": "secure", "type": "boolean", "optional": true, "description": "True if cookie is secure." },
+                    { "name": "httpOnly", "type": "boolean", "optional": true, "description": "True if cookie is http-only." },
+                    { "name": "sameSite", "$ref": "CookieSameSite", "optional": true, "description": "Cookie SameSite type." },
+                    { "name": "expires", "$ref": "TimeSinceEpoch", "optional": true, "description": "Cookie expiration date, session cookie if not set" }
                 ],
                 "returns": [
                     { "name": "success", "type": "boolean", "description": "True if successfully set cookie." }
                 ],
                 "description": "Sets a cookie with the given cookie data; may overwrite equivalent cookies if they exist.",
+                "experimental": true
+            },
+            {
+                "name": "setCookies",
+                "parameters": [
+                    { "name": "cookies", "type": "array", "items": { "$ref": "CookieParam" }, "description": "Cookies to be set." }
+                ],
+                "description": "Sets given cookies.",
                 "experimental": true
             },
             {
@@ -3326,7 +3398,11 @@
                     { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Id of the node to get background colors for." }
                 ],
                 "returns": [
-                    { "name": "backgroundColors", "type": "array", "items": { "type": "string" }, "description": "The range of background colors behind this element, if it contains any visible text. If no visible text is present, this will be undefined. In the case of a flat background color, this will consist of simply that color. In the case of a gradient, this will consist of each of the color stops. For anything more complicated, this will be an empty array. Images will be ignored (as if the image had failed to load).", "optional": true }
+                    { "name": "backgroundColors", "type": "array", "items": { "type": "string" }, "description": "The range of background colors behind this element, if it contains any visible text. If no visible text is present, this will be undefined. In the case of a flat background color, this will consist of simply that color. In the case of a gradient, this will consist of each of the color stops. For anything more complicated, this will be an empty array. Images will be ignored (as if the image had failed to load).", "optional": true },
+                    { "name": "computedFontSize", "type": "string", "description": "The computed font size for this node, as a CSS computed value string (e.g. '12px').", "optional": true },
+                    { "name": "computedFontWeight", "type": "string", "description": "The computed font weight for this node, as a CSS computed value string (e.g. 'normal' or '100').", "optional": true },
+
+                    { "name": "computedBodyFontSize", "type": "string", "description": "The computed font size for the document body, as a computed CSS value string (e.g. '16px').", "optional": true }
                 ],
                 "experimental": true
             },
@@ -4030,13 +4106,15 @@
             {
                 "name": "dispatchMouseEvent",
                 "parameters": [
-                    { "name": "type", "type": "string", "enum": ["mousePressed", "mouseReleased", "mouseMoved"], "description": "Type of the mouse event." },
+                    { "name": "type", "type": "string", "enum": ["mousePressed", "mouseReleased", "mouseMoved", "mouseWheel"], "description": "Type of the mouse event." },
                     { "name": "x", "type": "number", "description": "X coordinate of the event relative to the main frame's viewport in CSS pixels."},
                     { "name": "y", "type": "number", "description": "Y coordinate of the event relative to the main frame's viewport in CSS pixels. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport."},
                     { "name": "modifiers", "type": "integer", "optional": true, "description": "Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0)." },
                     { "name": "timestamp", "$ref": "TimeSinceEpoch", "optional": true, "description": "Time at which the event occurred." },
                     { "name": "button", "type": "string", "enum": ["none", "left", "middle", "right"], "optional": true, "description": "Mouse button (default: \"none\")." },
-                    { "name": "clickCount", "type": "integer", "optional": true, "description": "Number of times the mouse button was clicked (default: 0)." }
+                    { "name": "clickCount", "type": "integer", "optional": true, "description": "Number of times the mouse button was clicked (default: 0)." },
+                    { "name": "deltaX", "type": "number", "optional": true, "description": "X delta in CSS pixels for mouse wheel event (default: 0)."},
+                    { "name": "deltaY", "type": "number", "optional": true, "description": "Y delta in CSS pixels for mouse wheel event (default: 0)."}
                 ],
                 "description": "Dispatches a mouse event to the page."
             },
@@ -4743,6 +4821,37 @@
                     { "name": "usageBreakdown", "type": "array", "items": { "$ref": "UsageForType" }, "description": "Storage usage per type (bytes)." }
                 ],
                 "description": "Returns usage and quota in bytes."
+            },
+            {
+                "name": "trackCacheStorageForOrigin",
+                "parameters": [
+                    { "name": "origin", "type": "string", "description": "Security origin." }
+                ],
+                "description": "Registers origin to be notified when an update occurs to its cache storage list."
+            },
+            {
+                "name": "untrackCacheStorageForOrigin",
+                "parameters": [
+                    { "name": "origin", "type": "string", "description": "Security origin." }
+                ],
+                "description": "Unregisters origin from receiving notifications for cache storage."
+            }
+        ],
+        "events": [
+            {
+                "name": "cacheStorageListUpdated",
+                "parameters": [
+                    { "name": "origin", "type": "string", "description": "Origin to update." }
+                ],
+                "description": "A cache has been added/deleted."
+            },
+            {
+                "name": "cacheStorageContentUpdated",
+                "parameters": [
+                    { "name": "origin", "type": "string", "description": "Origin to update." },
+                    { "name": "cacheName", "type": "string", "description": "Name of cache in origin." }
+                ],
+                "description": "A cache's contents have been modified."
             }
         ]
     },
@@ -4923,6 +5032,17 @@
                 "returns": [
                     { "name": "windowId", "$ref": "WindowID", "description": "Browser window id." },
                     { "name": "bounds", "$ref": "Bounds", "description": "Bounds information of the window. When window state is 'minimized', the restored window position and size are returned." }
+                ]
+            },
+            {
+                "name": "getVersion",
+                "description": "Returns version information.",
+                "returns": [
+                    { "name": "protocolVersion", "type": "string", "description": "Protocol version." },
+                    { "name": "product", "type": "string", "description": "Product name." },
+                    { "name": "revision", "type": "string", "description": "Product revision." },
+                    { "name": "userAgent", "type": "string", "description": "User-Agent." },
+                    { "name": "jsVersion", "type": "string", "description": "V8 version." }
                 ]
             },
             {

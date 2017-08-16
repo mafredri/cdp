@@ -34,3 +34,27 @@ type GetUsageAndQuotaReply struct {
 	Quota          float64        `json:"quota"`          // Storage quota (bytes).
 	UsageBreakdown []UsageForType `json:"usageBreakdown"` // Storage usage per type (bytes).
 }
+
+// TrackCacheStorageForOriginArgs represents the arguments for TrackCacheStorageForOrigin in the Storage domain.
+type TrackCacheStorageForOriginArgs struct {
+	Origin string `json:"origin"` // Security origin.
+}
+
+// NewTrackCacheStorageForOriginArgs initializes TrackCacheStorageForOriginArgs with the required arguments.
+func NewTrackCacheStorageForOriginArgs(origin string) *TrackCacheStorageForOriginArgs {
+	args := new(TrackCacheStorageForOriginArgs)
+	args.Origin = origin
+	return args
+}
+
+// UntrackCacheStorageForOriginArgs represents the arguments for UntrackCacheStorageForOrigin in the Storage domain.
+type UntrackCacheStorageForOriginArgs struct {
+	Origin string `json:"origin"` // Security origin.
+}
+
+// NewUntrackCacheStorageForOriginArgs initializes UntrackCacheStorageForOriginArgs with the required arguments.
+func NewUntrackCacheStorageForOriginArgs(origin string) *UntrackCacheStorageForOriginArgs {
+	args := new(UntrackCacheStorageForOriginArgs)
+	args.Origin = origin
+	return args
+}

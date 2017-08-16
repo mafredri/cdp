@@ -170,11 +170,8 @@ func (a *SetGeolocationOverrideArgs) SetAccuracy(accuracy float64) *SetGeolocati
 
 // SetTouchEmulationEnabledArgs represents the arguments for SetTouchEmulationEnabled in the Emulation domain.
 type SetTouchEmulationEnabledArgs struct {
-	Enabled bool `json:"enabled"` // Whether the touch event emulation should be enabled.
-	// Configuration Touch/gesture events configuration. Default: current platform.
-	//
-	// Values: "mobile", "desktop".
-	Configuration *string `json:"configuration,omitempty"`
+	Enabled        bool `json:"enabled"`                  // Whether the touch event emulation should be enabled.
+	MaxTouchPoints *int `json:"maxTouchPoints,omitempty"` // Maximum touch points supported. Defaults to one.
 }
 
 // NewSetTouchEmulationEnabledArgs initializes SetTouchEmulationEnabledArgs with the required arguments.
@@ -184,10 +181,32 @@ func NewSetTouchEmulationEnabledArgs(enabled bool) *SetTouchEmulationEnabledArgs
 	return args
 }
 
+// SetMaxTouchPoints sets the MaxTouchPoints optional argument. Maximum touch points supported. Defaults to one.
+func (a *SetTouchEmulationEnabledArgs) SetMaxTouchPoints(maxTouchPoints int) *SetTouchEmulationEnabledArgs {
+	a.MaxTouchPoints = &maxTouchPoints
+	return a
+}
+
+// SetEmitTouchEventsForMouseArgs represents the arguments for SetEmitTouchEventsForMouse in the Emulation domain.
+type SetEmitTouchEventsForMouseArgs struct {
+	Enabled bool `json:"enabled"` // Whether touch emulation based on mouse input should be enabled.
+	// Configuration Touch/gesture events configuration. Default: current platform.
+	//
+	// Values: "mobile", "desktop".
+	Configuration *string `json:"configuration,omitempty"`
+}
+
+// NewSetEmitTouchEventsForMouseArgs initializes SetEmitTouchEventsForMouseArgs with the required arguments.
+func NewSetEmitTouchEventsForMouseArgs(enabled bool) *SetEmitTouchEventsForMouseArgs {
+	args := new(SetEmitTouchEventsForMouseArgs)
+	args.Enabled = enabled
+	return args
+}
+
 // SetConfiguration sets the Configuration optional argument. Touch/gesture events configuration. Default: current platform.
 //
 // Values: "mobile", "desktop".
-func (a *SetTouchEmulationEnabledArgs) SetConfiguration(configuration string) *SetTouchEmulationEnabledArgs {
+func (a *SetEmitTouchEventsForMouseArgs) SetConfiguration(configuration string) *SetEmitTouchEventsForMouseArgs {
 	a.Configuration = &configuration
 	return a
 }

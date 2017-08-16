@@ -18,7 +18,7 @@ type EvaluateArgs struct {
 	//
 	// Note: This property is experimental.
 	UserGesture  *bool `json:"userGesture,omitempty"`
-	AwaitPromise *bool `json:"awaitPromise,omitempty"` // Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
+	AwaitPromise *bool `json:"awaitPromise,omitempty"` // Whether execution should await for resulting value and return once awaited promise is resolved.
 }
 
 // NewEvaluateArgs initializes EvaluateArgs with the required arguments.
@@ -74,7 +74,7 @@ func (a *EvaluateArgs) SetUserGesture(userGesture bool) *EvaluateArgs {
 	return a
 }
 
-// SetAwaitPromise sets the AwaitPromise optional argument. Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
+// SetAwaitPromise sets the AwaitPromise optional argument. Whether execution should await for resulting value and return once awaited promise is resolved.
 func (a *EvaluateArgs) SetAwaitPromise(awaitPromise bool) *EvaluateArgs {
 	a.AwaitPromise = &awaitPromise
 	return a
@@ -133,7 +133,7 @@ type CallFunctionOnArgs struct {
 	//
 	// Note: This property is experimental.
 	UserGesture  *bool `json:"userGesture,omitempty"`
-	AwaitPromise *bool `json:"awaitPromise,omitempty"` // Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
+	AwaitPromise *bool `json:"awaitPromise,omitempty"` // Whether execution should await for resulting value and return once awaited promise is resolved.
 }
 
 // NewCallFunctionOnArgs initializes CallFunctionOnArgs with the required arguments.
@@ -178,7 +178,7 @@ func (a *CallFunctionOnArgs) SetUserGesture(userGesture bool) *CallFunctionOnArg
 	return a
 }
 
-// SetAwaitPromise sets the AwaitPromise optional argument. Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
+// SetAwaitPromise sets the AwaitPromise optional argument. Whether execution should await for resulting value and return once awaited promise is resolved.
 func (a *CallFunctionOnArgs) SetAwaitPromise(awaitPromise bool) *CallFunctionOnArgs {
 	a.AwaitPromise = &awaitPromise
 	return a
@@ -314,7 +314,7 @@ type RunScriptArgs struct {
 	IncludeCommandLineAPI *bool               `json:"includeCommandLineAPI,omitempty"` // Determines whether Command Line API should be available during the evaluation.
 	ReturnByValue         *bool               `json:"returnByValue,omitempty"`         // Whether the result is expected to be a JSON object which should be sent by value.
 	GeneratePreview       *bool               `json:"generatePreview,omitempty"`       // Whether preview should be generated for the result.
-	AwaitPromise          *bool               `json:"awaitPromise,omitempty"`          // Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
+	AwaitPromise          *bool               `json:"awaitPromise,omitempty"`          // Whether execution should await for resulting value and return once awaited promise is resolved.
 }
 
 // NewRunScriptArgs initializes RunScriptArgs with the required arguments.
@@ -360,7 +360,7 @@ func (a *RunScriptArgs) SetGeneratePreview(generatePreview bool) *RunScriptArgs 
 	return a
 }
 
-// SetAwaitPromise sets the AwaitPromise optional argument. Whether execution should wait for promise to be resolved. If the result of evaluation is not a Promise, it's considered to be an error.
+// SetAwaitPromise sets the AwaitPromise optional argument. Whether execution should await for resulting value and return once awaited promise is resolved.
 func (a *RunScriptArgs) SetAwaitPromise(awaitPromise bool) *RunScriptArgs {
 	a.AwaitPromise = &awaitPromise
 	return a

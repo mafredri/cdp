@@ -32,6 +32,16 @@ func (d *domainClient) GetWindowForTarget(ctx context.Context, args *GetWindowFo
 	return
 }
 
+// GetVersion invokes the Browser method. Returns version information.
+func (d *domainClient) GetVersion(ctx context.Context) (reply *GetVersionReply, err error) {
+	reply = new(GetVersionReply)
+	err = rpcc.Invoke(ctx, "Browser.getVersion", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "GetVersion", Err: err}
+	}
+	return
+}
+
 // SetWindowBounds invokes the Browser method. Set position and/or size of the browser window.
 func (d *domainClient) SetWindowBounds(ctx context.Context, args *SetWindowBoundsArgs) (err error) {
 	if args != nil {

@@ -24,6 +24,7 @@ type HighlightConfig struct {
 	ShapeColor         *dom.RGBA `json:"shapeColor,omitempty"`         // The shape outside fill color (default: transparent).
 	ShapeMarginColor   *dom.RGBA `json:"shapeMarginColor,omitempty"`   // The shape margin fill color (default: transparent).
 	SelectorList       *string   `json:"selectorList,omitempty"`       // Selectors to highlight relevant nodes.
+	CSSGridColor       *dom.RGBA `json:"cssGridColor,omitempty"`       // The grid layout color (default: transparent).
 }
 
 // InspectMode

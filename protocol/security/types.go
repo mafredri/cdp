@@ -147,8 +147,8 @@ type StateExplanation struct {
 	SecurityState    State            `json:"securityState"`    // Security state representing the severity of the factor being explained.
 	Summary          string           `json:"summary"`          // Short phrase describing the type of factor.
 	Description      string           `json:"description"`      // Full text explanation of the factor.
-	HasCertificate   bool             `json:"hasCertificate"`   // True if the page has a certificate.
 	MixedContentType MixedContentType `json:"mixedContentType"` // The type of mixed content described by the explanation.
+	Certificate      []string         `json:"certificate"`      // Page certificate.
 }
 
 // InsecureContentStatus Information about insecure content on the page.

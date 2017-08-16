@@ -674,6 +674,21 @@ type Cookie struct {
 	SameSite CookieSameSite `json:"sameSite,omitempty"` // Cookie SameSite type.
 }
 
+// CookieParam Cookie parameter object
+//
+// Note: This type is experimental.
+type CookieParam struct {
+	Name     string         `json:"name"`               // Cookie name.
+	Value    string         `json:"value"`              // Cookie value.
+	URL      *string        `json:"url,omitempty"`      // The request-URI to associate with the setting of the cookie. This value can affect the default domain and path values of the created cookie.
+	Domain   *string        `json:"domain,omitempty"`   // Cookie domain.
+	Path     *string        `json:"path,omitempty"`     // Cookie path.
+	Secure   *bool          `json:"secure,omitempty"`   // True if cookie is secure.
+	HTTPOnly *bool          `json:"httpOnly,omitempty"` // True if cookie is http-only.
+	SameSite CookieSameSite `json:"sameSite,omitempty"` // Cookie SameSite type.
+	Expires  TimeSinceEpoch `json:"expires,omitempty"`  // Cookie expiration date, session cookie if not set
+}
+
 // AuthChallenge Authorization challenge for HTTP status code 401 or 407.
 //
 // Note: This type is experimental.

@@ -44,3 +44,65 @@ func (d *domainClient) GetUsageAndQuota(ctx context.Context, args *GetUsageAndQu
 	}
 	return
 }
+
+// TrackCacheStorageForOrigin invokes the Storage method. Registers origin to be notified when an update occurs to its cache storage list.
+func (d *domainClient) TrackCacheStorageForOrigin(ctx context.Context, args *TrackCacheStorageForOriginArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.trackCacheStorageForOrigin", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.trackCacheStorageForOrigin", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "TrackCacheStorageForOrigin", Err: err}
+	}
+	return
+}
+
+// UntrackCacheStorageForOrigin invokes the Storage method. Unregisters origin from receiving notifications for cache storage.
+func (d *domainClient) UntrackCacheStorageForOrigin(ctx context.Context, args *UntrackCacheStorageForOriginArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.untrackCacheStorageForOrigin", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.untrackCacheStorageForOrigin", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "UntrackCacheStorageForOrigin", Err: err}
+	}
+	return
+}
+
+func (d *domainClient) CacheStorageListUpdated(ctx context.Context) (CacheStorageListUpdatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Storage.cacheStorageListUpdated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &cacheStorageListUpdatedClient{Stream: s}, nil
+}
+
+type cacheStorageListUpdatedClient struct{ rpcc.Stream }
+
+func (c *cacheStorageListUpdatedClient) Recv() (*CacheStorageListUpdatedReply, error) {
+	event := new(CacheStorageListUpdatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Storage", Op: "CacheStorageListUpdated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) CacheStorageContentUpdated(ctx context.Context) (CacheStorageContentUpdatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Storage.cacheStorageContentUpdated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &cacheStorageContentUpdatedClient{Stream: s}, nil
+}
+
+type cacheStorageContentUpdatedClient struct{ rpcc.Stream }
+
+func (c *cacheStorageContentUpdatedClient) Recv() (*CacheStorageContentUpdatedReply, error) {
+	event := new(CacheStorageContentUpdatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Storage", Op: "CacheStorageContentUpdated Recv", Err: err}
+	}
+	return event, nil
+}
