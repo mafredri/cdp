@@ -201,7 +201,7 @@ func catchLoadingFailed(ctx context.Context, net cdp.Network, abort chan<- error
 func setCookies(ctx context.Context, net cdp.Network, cookies ...Cookie) error {
 	var cmds []runBatchFunc
 	for _, c := range cookies {
-		args := network.NewSetCookieArgs(c.URL, c.Name, c.Value)
+		args := network.NewSetCookieArgs(c.Name, c.Value).SetURL(c.URL)
 		cmds = append(cmds, func() error {
 			reply, err := net.SetCookie(ctx, args)
 			if err != nil {
