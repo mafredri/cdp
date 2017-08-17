@@ -151,13 +151,9 @@ type ApplicationCache interface {
 	GetApplicationCacheForFrame(context.Context, *applicationcache.GetApplicationCacheForFrameArgs) (*applicationcache.GetApplicationCacheForFrameReply, error)
 
 	// Event ApplicationCacheStatusUpdated
-	//
-	//
 	ApplicationCacheStatusUpdated(context.Context) (applicationcache.StatusUpdatedClient, error)
 
 	// Event NetworkStateUpdated
-	//
-	//
 	NetworkStateUpdated(context.Context) (applicationcache.NetworkStateUpdatedClient, error)
 }
 
@@ -289,8 +285,6 @@ type CSS interface {
 	SetEffectivePropertyValueForNode(context.Context, *css.SetEffectivePropertyValueForNodeArgs) error
 
 	// Command GetBackgroundColors
-	//
-	//
 	//
 	// Note: This command is experimental.
 	GetBackgroundColors(context.Context, *css.GetBackgroundColorsArgs) (*css.GetBackgroundColorsReply, error)
@@ -770,43 +764,27 @@ type DOMStorage interface {
 	Disable(context.Context) error
 
 	// Command Clear
-	//
-	//
 	Clear(context.Context, *domstorage.ClearArgs) error
 
 	// Command GetDOMStorageItems
-	//
-	//
 	GetDOMStorageItems(context.Context, *domstorage.GetDOMStorageItemsArgs) (*domstorage.GetDOMStorageItemsReply, error)
 
 	// Command SetDOMStorageItem
-	//
-	//
 	SetDOMStorageItem(context.Context, *domstorage.SetDOMStorageItemArgs) error
 
 	// Command RemoveDOMStorageItem
-	//
-	//
 	RemoveDOMStorageItem(context.Context, *domstorage.RemoveDOMStorageItemArgs) error
 
 	// Event DOMStorageItemsCleared
-	//
-	//
 	DOMStorageItemsCleared(context.Context) (domstorage.ItemsClearedClient, error)
 
 	// Event DOMStorageItemRemoved
-	//
-	//
 	DOMStorageItemRemoved(context.Context) (domstorage.ItemRemovedClient, error)
 
 	// Event DOMStorageItemAdded
-	//
-	//
 	DOMStorageItemAdded(context.Context) (domstorage.ItemAddedClient, error)
 
 	// Event DOMStorageItemUpdated
-	//
-	//
 	DOMStorageItemUpdated(context.Context) (domstorage.ItemUpdatedClient, error)
 }
 
@@ -825,18 +803,12 @@ type Database interface {
 	Disable(context.Context) error
 
 	// Command GetDatabaseTableNames
-	//
-	//
 	GetDatabaseTableNames(context.Context, *database.GetDatabaseTableNamesArgs) (*database.GetDatabaseTableNamesReply, error)
 
 	// Command ExecuteSQL
-	//
-	//
 	ExecuteSQL(context.Context, *database.ExecuteSQLArgs) (*database.ExecuteSQLReply, error)
 
 	// Event AddDatabase
-	//
-	//
 	AddDatabase(context.Context) (database.AddDatabaseClient, error)
 }
 
@@ -1079,8 +1051,6 @@ type Emulation interface {
 
 	// Command SetEmitTouchEventsForMouse
 	//
-	//
-	//
 	// Note: This command is experimental.
 	SetEmitTouchEventsForMouse(context.Context, *emulation.SetEmitTouchEventsForMouseArgs) error
 
@@ -1130,38 +1100,24 @@ type Emulation interface {
 // Note: This domain is experimental.
 type HeapProfiler interface {
 	// Command Enable
-	//
-	//
 	Enable(context.Context) error
 
 	// Command Disable
-	//
-	//
 	Disable(context.Context) error
 
 	// Command StartTrackingHeapObjects
-	//
-	//
 	StartTrackingHeapObjects(context.Context, *heapprofiler.StartTrackingHeapObjectsArgs) error
 
 	// Command StopTrackingHeapObjects
-	//
-	//
 	StopTrackingHeapObjects(context.Context, *heapprofiler.StopTrackingHeapObjectsArgs) error
 
 	// Command TakeHeapSnapshot
-	//
-	//
 	TakeHeapSnapshot(context.Context, *heapprofiler.TakeHeapSnapshotArgs) error
 
 	// Command CollectGarbage
-	//
-	//
 	CollectGarbage(context.Context) error
 
 	// Command GetObjectByHeapObjectID
-	//
-	//
 	GetObjectByHeapObjectID(context.Context, *heapprofiler.GetObjectByHeapObjectIDArgs) (*heapprofiler.GetObjectByHeapObjectIDReply, error)
 
 	// Command AddInspectedHeapObject
@@ -1170,33 +1126,21 @@ type HeapProfiler interface {
 	AddInspectedHeapObject(context.Context, *heapprofiler.AddInspectedHeapObjectArgs) error
 
 	// Command GetHeapObjectID
-	//
-	//
 	GetHeapObjectID(context.Context, *heapprofiler.GetHeapObjectIDArgs) (*heapprofiler.GetHeapObjectIDReply, error)
 
 	// Command StartSampling
-	//
-	//
 	StartSampling(context.Context, *heapprofiler.StartSamplingArgs) error
 
 	// Command StopSampling
-	//
-	//
 	StopSampling(context.Context) (*heapprofiler.StopSamplingReply, error)
 
 	// Event AddHeapSnapshotChunk
-	//
-	//
 	AddHeapSnapshotChunk(context.Context) (heapprofiler.AddHeapSnapshotChunkClient, error)
 
 	// Event ResetProfiles
-	//
-	//
 	ResetProfiles(context.Context) (heapprofiler.ResetProfilesClient, error)
 
 	// Event ReportHeapSnapshotProgress
-	//
-	//
 	ReportHeapSnapshotProgress(context.Context) (heapprofiler.ReportHeapSnapshotProgressClient, error)
 
 	// Event LastSeenObjectID
@@ -1383,8 +1327,6 @@ type LayerTree interface {
 	ReleaseSnapshot(context.Context, *layertree.ReleaseSnapshotArgs) error
 
 	// Command ProfileSnapshot
-	//
-	//
 	ProfileSnapshot(context.Context, *layertree.ProfileSnapshotArgs) (*layertree.ProfileSnapshotReply, error)
 
 	// Command ReplaySnapshot
@@ -1398,13 +1340,9 @@ type LayerTree interface {
 	SnapshotCommandLog(context.Context, *layertree.SnapshotCommandLogArgs) (*layertree.SnapshotCommandLogReply, error)
 
 	// Event LayerTreeDidChange
-	//
-	//
 	LayerTreeDidChange(context.Context) (layertree.DidChangeClient, error)
 
 	// Event LayerPainted
-	//
-	//
 	LayerPainted(context.Context) (layertree.LayerPaintedClient, error)
 }
 
@@ -1448,8 +1386,6 @@ type Log interface {
 // Note: This domain is experimental.
 type Memory interface {
 	// Command GetDOMCounters
-	//
-	//
 	GetDOMCounters(context.Context) (*memory.GetDOMCountersReply, error)
 
 	// Command SetPressureNotificationsSuppressed
@@ -1598,8 +1534,6 @@ type Network interface {
 	GetCertificate(context.Context, *network.GetCertificateArgs) (*network.GetCertificateReply, error)
 
 	// Command SetRequestInterceptionEnabled
-	//
-	//
 	//
 	// Note: This command is experimental.
 	SetRequestInterceptionEnabled(context.Context, *network.SetRequestInterceptionEnabledArgs) error
@@ -1752,13 +1686,9 @@ type Overlay interface {
 	SetShowViewportSizeOnResize(context.Context, *overlay.SetShowViewportSizeOnResizeArgs) error
 
 	// Command SetPausedInDebuggerMessage
-	//
-	//
 	SetPausedInDebuggerMessage(context.Context, *overlay.SetPausedInDebuggerMessageArgs) error
 
 	// Command SetSuspended
-	//
-	//
 	SetSuspended(context.Context, *overlay.SetSuspendedArgs) error
 
 	// Command SetInspectMode
@@ -1967,14 +1897,10 @@ type Page interface {
 
 	// Command GetAppManifest
 	//
-	//
-	//
 	// Note: This command is experimental.
 	GetAppManifest(context.Context) (*page.GetAppManifestReply, error)
 
 	// Command RequestAppBanner
-	//
-	//
 	//
 	// Note: This command is experimental.
 	RequestAppBanner(context.Context) error
@@ -1999,13 +1925,9 @@ type Page interface {
 	BringToFront(context.Context) error
 
 	// Event DOMContentEventFired
-	//
-	//
 	DOMContentEventFired(context.Context) (page.DOMContentEventFiredClient, error)
 
 	// Event LoadEventFired
-	//
-	//
 	LoadEventFired(context.Context) (page.LoadEventFiredClient, error)
 
 	// Event FrameAttached
@@ -2052,8 +1974,6 @@ type Page interface {
 	FrameClearedScheduledNavigation(context.Context) (page.FrameClearedScheduledNavigationClient, error)
 
 	// Event FrameResized
-	//
-	//
 	//
 	// Note: This event is experimental.
 	FrameResized(context.Context) (page.FrameResizedClient, error)
@@ -2121,13 +2041,9 @@ type Performance interface {
 // The Profiler domain.
 type Profiler interface {
 	// Command Enable
-	//
-	//
 	Enable(context.Context) error
 
 	// Command Disable
-	//
-	//
 	Disable(context.Context) error
 
 	// Command SetSamplingInterval
@@ -2136,13 +2052,9 @@ type Profiler interface {
 	SetSamplingInterval(context.Context, *profiler.SetSamplingIntervalArgs) error
 
 	// Command Start
-	//
-	//
 	Start(context.Context) error
 
 	// Command Stop
-	//
-	//
 	Stop(context.Context) (*profiler.StopReply, error)
 
 	// Command StartPreciseCoverage
@@ -2179,8 +2091,6 @@ type Profiler interface {
 	ConsoleProfileStarted(context.Context) (profiler.ConsoleProfileStartedClient, error)
 
 	// Event ConsoleProfileFinished
-	//
-	//
 	ConsoleProfileFinished(context.Context) (profiler.ConsoleProfileFinishedClient, error)
 }
 
@@ -2237,8 +2147,6 @@ type Runtime interface {
 	DiscardConsoleEntries(context.Context) error
 
 	// Command SetCustomObjectFormatterEnabled
-	//
-	//
 	//
 	// Note: This command is experimental.
 	SetCustomObjectFormatterEnabled(context.Context, *runtime.SetCustomObjectFormatterEnabledArgs) error
@@ -2337,73 +2245,45 @@ type Security interface {
 // Note: This domain is experimental.
 type ServiceWorker interface {
 	// Command Enable
-	//
-	//
 	Enable(context.Context) error
 
 	// Command Disable
-	//
-	//
 	Disable(context.Context) error
 
 	// Command Unregister
-	//
-	//
 	Unregister(context.Context, *serviceworker.UnregisterArgs) error
 
 	// Command UpdateRegistration
-	//
-	//
 	UpdateRegistration(context.Context, *serviceworker.UpdateRegistrationArgs) error
 
 	// Command StartWorker
-	//
-	//
 	StartWorker(context.Context, *serviceworker.StartWorkerArgs) error
 
 	// Command SkipWaiting
-	//
-	//
 	SkipWaiting(context.Context, *serviceworker.SkipWaitingArgs) error
 
 	// Command StopWorker
-	//
-	//
 	StopWorker(context.Context, *serviceworker.StopWorkerArgs) error
 
 	// Command InspectWorker
-	//
-	//
 	InspectWorker(context.Context, *serviceworker.InspectWorkerArgs) error
 
 	// Command SetForceUpdateOnPageLoad
-	//
-	//
 	SetForceUpdateOnPageLoad(context.Context, *serviceworker.SetForceUpdateOnPageLoadArgs) error
 
 	// Command DeliverPushMessage
-	//
-	//
 	DeliverPushMessage(context.Context, *serviceworker.DeliverPushMessageArgs) error
 
 	// Command DispatchSyncEvent
-	//
-	//
 	DispatchSyncEvent(context.Context, *serviceworker.DispatchSyncEventArgs) error
 
 	// Event WorkerRegistrationUpdated
-	//
-	//
 	WorkerRegistrationUpdated(context.Context) (serviceworker.WorkerRegistrationUpdatedClient, error)
 
 	// Event WorkerVersionUpdated
-	//
-	//
 	WorkerVersionUpdated(context.Context) (serviceworker.WorkerVersionUpdatedClient, error)
 
 	// Event WorkerErrorReported
-	//
-	//
 	WorkerErrorReported(context.Context) (serviceworker.WorkerErrorReportedClient, error)
 }
 
@@ -2467,8 +2347,6 @@ type Target interface {
 	SetAutoAttach(context.Context, *target.SetAutoAttachArgs) error
 
 	// Command SetAttachToFrames
-	//
-	//
 	SetAttachToFrames(context.Context, *target.SetAttachToFramesArgs) error
 
 	// Command SetRemoteLocations
@@ -2617,7 +2495,5 @@ type Tracing interface {
 	TracingComplete(context.Context) (tracing.CompleteClient, error)
 
 	// Event BufferUsage
-	//
-	//
 	BufferUsage(context.Context) (tracing.BufferUsageClient, error)
 }

@@ -54,7 +54,7 @@ func (a *SetDeviceMetricsOverrideArgs) SetScale(scale float64) *SetDeviceMetrics
 
 // SetScreenWidth sets the ScreenWidth optional argument. Overriding screen width value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetScreenWidth(screenWidth int) *SetDeviceMetricsOverrideArgs {
 	a.ScreenWidth = &screenWidth
 	return a
@@ -62,7 +62,7 @@ func (a *SetDeviceMetricsOverrideArgs) SetScreenWidth(screenWidth int) *SetDevic
 
 // SetScreenHeight sets the ScreenHeight optional argument. Overriding screen height value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetScreenHeight(screenHeight int) *SetDeviceMetricsOverrideArgs {
 	a.ScreenHeight = &screenHeight
 	return a
@@ -70,7 +70,7 @@ func (a *SetDeviceMetricsOverrideArgs) SetScreenHeight(screenHeight int) *SetDev
 
 // SetPositionX sets the PositionX optional argument. Overriding view X position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetPositionX(positionX int) *SetDeviceMetricsOverrideArgs {
 	a.PositionX = &positionX
 	return a
@@ -78,7 +78,7 @@ func (a *SetDeviceMetricsOverrideArgs) SetPositionX(positionX int) *SetDeviceMet
 
 // SetPositionY sets the PositionY optional argument. Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetPositionY(positionY int) *SetDeviceMetricsOverrideArgs {
 	a.PositionY = &positionY
 	return a
@@ -86,7 +86,7 @@ func (a *SetDeviceMetricsOverrideArgs) SetPositionY(positionY int) *SetDeviceMet
 
 // SetDontSetVisibleSize sets the DontSetVisibleSize optional argument. Do not set visible view size, rely upon explicit setVisibleSize call.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetDontSetVisibleSize(dontSetVisibleSize bool) *SetDeviceMetricsOverrideArgs {
 	a.DontSetVisibleSize = &dontSetVisibleSize
 	return a

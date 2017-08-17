@@ -53,7 +53,7 @@ func NewSetEventListenerBreakpointArgs(eventName string) *SetEventListenerBreakp
 
 // SetTargetName sets the TargetName optional argument. EventTarget interface name to stop on. If equal to "*" or not provided, will stop on any EventTarget.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *SetEventListenerBreakpointArgs) SetTargetName(targetName string) *SetEventListenerBreakpointArgs {
 	a.TargetName = &targetName
 	return a
@@ -77,7 +77,7 @@ func NewRemoveEventListenerBreakpointArgs(eventName string) *RemoveEventListener
 
 // SetTargetName sets the TargetName optional argument. EventTarget interface name.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *RemoveEventListenerBreakpointArgs) SetTargetName(targetName string) *RemoveEventListenerBreakpointArgs {
 	a.TargetName = &targetName
 	return a
@@ -153,7 +153,7 @@ func NewGetEventListenersArgs(objectID runtime.RemoteObjectID) *GetEventListener
 
 // SetDepth sets the Depth optional argument. The maximum depth at which Node children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *GetEventListenersArgs) SetDepth(depth int) *GetEventListenersArgs {
 	a.Depth = &depth
 	return a
@@ -161,7 +161,7 @@ func (a *GetEventListenersArgs) SetDepth(depth int) *GetEventListenersArgs {
 
 // SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false). Reports listeners for all contexts if pierce is enabled.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *GetEventListenersArgs) SetPierce(pierce bool) *GetEventListenersArgs {
 	a.Pierce = &pierce
 	return a

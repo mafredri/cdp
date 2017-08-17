@@ -60,7 +60,7 @@ func (a *EvaluateArgs) SetReturnByValue(returnByValue bool) *EvaluateArgs {
 
 // SetGeneratePreview sets the GeneratePreview optional argument. Whether preview should be generated for the result.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *EvaluateArgs) SetGeneratePreview(generatePreview bool) *EvaluateArgs {
 	a.GeneratePreview = &generatePreview
 	return a
@@ -68,7 +68,7 @@ func (a *EvaluateArgs) SetGeneratePreview(generatePreview bool) *EvaluateArgs {
 
 // SetUserGesture sets the UserGesture optional argument. Whether execution should be treated as initiated by user in the UI.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *EvaluateArgs) SetUserGesture(userGesture bool) *EvaluateArgs {
 	a.UserGesture = &userGesture
 	return a
@@ -164,7 +164,7 @@ func (a *CallFunctionOnArgs) SetReturnByValue(returnByValue bool) *CallFunctionO
 
 // SetGeneratePreview sets the GeneratePreview optional argument. Whether preview should be generated for the result.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *CallFunctionOnArgs) SetGeneratePreview(generatePreview bool) *CallFunctionOnArgs {
 	a.GeneratePreview = &generatePreview
 	return a
@@ -172,7 +172,7 @@ func (a *CallFunctionOnArgs) SetGeneratePreview(generatePreview bool) *CallFunct
 
 // SetUserGesture sets the UserGesture optional argument. Whether execution should be treated as initiated by user in the UI.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *CallFunctionOnArgs) SetUserGesture(userGesture bool) *CallFunctionOnArgs {
 	a.UserGesture = &userGesture
 	return a
@@ -219,7 +219,7 @@ func (a *GetPropertiesArgs) SetOwnProperties(ownProperties bool) *GetPropertiesA
 
 // SetAccessorPropertiesOnly sets the AccessorPropertiesOnly optional argument. If true, returns accessor properties (with getter/setter) only; internal properties are not returned either.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *GetPropertiesArgs) SetAccessorPropertiesOnly(accessorPropertiesOnly bool) *GetPropertiesArgs {
 	a.AccessorPropertiesOnly = &accessorPropertiesOnly
 	return a
@@ -227,7 +227,7 @@ func (a *GetPropertiesArgs) SetAccessorPropertiesOnly(accessorPropertiesOnly boo
 
 // SetGeneratePreview sets the GeneratePreview optional argument. Whether preview should be generated for the results.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *GetPropertiesArgs) SetGeneratePreview(generatePreview bool) *GetPropertiesArgs {
 	a.GeneratePreview = &generatePreview
 	return a

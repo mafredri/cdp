@@ -137,7 +137,7 @@ func NewNavigateArgs(url string) *NavigateArgs {
 
 // SetReferrer sets the Referrer optional argument. Referrer URL.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *NavigateArgs) SetReferrer(referrer string) *NavigateArgs {
 	a.Referrer = &referrer
 	return a
@@ -145,7 +145,7 @@ func (a *NavigateArgs) SetReferrer(referrer string) *NavigateArgs {
 
 // SetTransitionType sets the TransitionType optional argument. Intended transition type.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *NavigateArgs) SetTransitionType(transitionType TransitionType) *NavigateArgs {
 	a.TransitionType = transitionType
 	return a
@@ -225,7 +225,7 @@ func (a *CaptureScreenshotArgs) SetQuality(quality int) *CaptureScreenshotArgs {
 
 // SetClip sets the Clip optional argument. Capture the screenshot of a given region only.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *CaptureScreenshotArgs) SetClip(clip Viewport) *CaptureScreenshotArgs {
 	a.Clip = &clip
 	return a
@@ -233,7 +233,7 @@ func (a *CaptureScreenshotArgs) SetClip(clip Viewport) *CaptureScreenshotArgs {
 
 // SetFromSurface sets the FromSurface optional argument. Capture the screenshot from the surface, rather than the view. Defaults to true.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *CaptureScreenshotArgs) SetFromSurface(fromSurface bool) *CaptureScreenshotArgs {
 	a.FromSurface = &fromSurface
 	return a

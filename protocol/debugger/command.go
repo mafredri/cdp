@@ -166,7 +166,7 @@ func NewContinueToLocationArgs(location Location) *ContinueToLocationArgs {
 //
 // Values: "any", "current".
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *ContinueToLocationArgs) SetTargetCallFrames(targetCallFrames string) *ContinueToLocationArgs {
 	a.TargetCallFrames = &targetCallFrames
 	return a
@@ -336,7 +336,7 @@ func (a *EvaluateOnCallFrameArgs) SetReturnByValue(returnByValue bool) *Evaluate
 
 // SetGeneratePreview sets the GeneratePreview optional argument. Whether preview should be generated for the result.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *EvaluateOnCallFrameArgs) SetGeneratePreview(generatePreview bool) *EvaluateOnCallFrameArgs {
 	a.GeneratePreview = &generatePreview
 	return a
@@ -344,7 +344,7 @@ func (a *EvaluateOnCallFrameArgs) SetGeneratePreview(generatePreview bool) *Eval
 
 // SetThrowOnSideEffect sets the ThrowOnSideEffect optional argument. Whether to throw an exception if side effect cannot be ruled out during evaluation.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *EvaluateOnCallFrameArgs) SetThrowOnSideEffect(throwOnSideEffect bool) *EvaluateOnCallFrameArgs {
 	a.ThrowOnSideEffect = &throwOnSideEffect
 	return a

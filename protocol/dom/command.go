@@ -27,7 +27,7 @@ func NewGetDocumentArgs() *GetDocumentArgs {
 
 // SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *GetDocumentArgs) SetDepth(depth int) *GetDocumentArgs {
 	a.Depth = &depth
 	return a
@@ -35,7 +35,7 @@ func (a *GetDocumentArgs) SetDepth(depth int) *GetDocumentArgs {
 
 // SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *GetDocumentArgs) SetPierce(pierce bool) *GetDocumentArgs {
 	a.Pierce = &pierce
 	return a
@@ -67,7 +67,7 @@ func NewGetFlattenedDocumentArgs() *GetFlattenedDocumentArgs {
 
 // SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *GetFlattenedDocumentArgs) SetDepth(depth int) *GetFlattenedDocumentArgs {
 	a.Depth = &depth
 	return a
@@ -75,7 +75,7 @@ func (a *GetFlattenedDocumentArgs) SetDepth(depth int) *GetFlattenedDocumentArgs
 
 // SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *GetFlattenedDocumentArgs) SetPierce(pierce bool) *GetFlattenedDocumentArgs {
 	a.Pierce = &pierce
 	return a
@@ -125,7 +125,7 @@ func NewRequestChildNodesArgs(nodeID NodeID) *RequestChildNodesArgs {
 
 // SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *RequestChildNodesArgs) SetDepth(depth int) *RequestChildNodesArgs {
 	a.Depth = &depth
 	return a
@@ -133,7 +133,7 @@ func (a *RequestChildNodesArgs) SetDepth(depth int) *RequestChildNodesArgs {
 
 // SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the sub-tree (default is false).
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *RequestChildNodesArgs) SetPierce(pierce bool) *RequestChildNodesArgs {
 	a.Pierce = &pierce
 	return a
@@ -322,7 +322,7 @@ func NewPerformSearchArgs(query string) *PerformSearchArgs {
 
 // SetIncludeUserAgentShadowDOM sets the IncludeUserAgentShadowDOM optional argument. True to search in user agent shadow DOM.
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *PerformSearchArgs) SetIncludeUserAgentShadowDOM(includeUserAgentShadowDOM bool) *PerformSearchArgs {
 	a.IncludeUserAgentShadowDOM = &includeUserAgentShadowDOM
 	return a

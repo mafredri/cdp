@@ -23,7 +23,7 @@ func NewEnableArgs() *EnableArgs {
 
 // SetMaxTotalBufferSize sets the MaxTotalBufferSize optional argument. Buffer size in bytes to use when preserving network payloads (XHRs, etc).
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *EnableArgs) SetMaxTotalBufferSize(maxTotalBufferSize int) *EnableArgs {
 	a.MaxTotalBufferSize = &maxTotalBufferSize
 	return a
@@ -31,7 +31,7 @@ func (a *EnableArgs) SetMaxTotalBufferSize(maxTotalBufferSize int) *EnableArgs {
 
 // SetMaxResourceBufferSize sets the MaxResourceBufferSize optional argument. Per-resource buffer size in bytes to use when preserving network payloads (XHRs, etc).
 //
-// Note: This argument is experimental.
+// Note: This property is experimental.
 func (a *EnableArgs) SetMaxResourceBufferSize(maxResourceBufferSize int) *EnableArgs {
 	a.MaxResourceBufferSize = &maxResourceBufferSize
 	return a
