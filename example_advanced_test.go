@@ -1,5 +1,3 @@
-// +build go1.9
-
 package cdp_test
 
 import (
@@ -97,12 +95,12 @@ func Example_advanced() {
 	}
 
 	domLoadTimeout := 5 * time.Second
-	frameID, err := navigate(ctx, c.Page, MyURL, domLoadTimeout)
+	err = navigate(ctx, c.Page, MyURL, domLoadTimeout)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("Navigating with frame ID: %v\n", frameID)
+	fmt.Printf("Navigated to: %s\n", MyURL)
 
 	// Parse information from the document by evaluating JavaScript.
 	expression := `
@@ -168,8 +166,9 @@ func abortOnErrors(ctx context.Context, c *cdp.Client, abort chan<- error) error
 			case <-exceptionThrown.Ready():
 				ev, err := exceptionThrown.Recv()
 				if err != nil {
-					// This could be any one of: connection closed,
-					// context deadline or unmarshal failed.
+					// This could be any one of: stream closed,
+					// connection closed, context deadline or
+					// unmarshal failed.
 					abort <- err
 					return
 				}
@@ -186,8 +185,8 @@ func abortOnErrors(ctx context.Context, c *cdp.Client, abort chan<- error) error
 					return
 				}
 
-				// For now, most optional fields are pointers and must be
-				// checked for nil.
+				// For now, most optional fields are pointers
+				// and must be checked for nil.
 				canceled := ev.Canceled != nil && *ev.Canceled
 
 				if !canceled {
@@ -220,30 +219,31 @@ func setCookies(ctx context.Context, net cdp.Network, cookies ...Cookie) error {
 
 // navigate to the URL and wait for DOMContentEventFired. An error is
 // returned if timeout happens before DOMContentEventFired.
-func navigate(ctx context.Context, pageClient cdp.Page, url string, timeout time.Duration) (frame page.FrameID, err error) {
+func navigate(ctx context.Context, pageClient cdp.Page, url string, timeout time.Duration) error {
 	var cancel context.CancelFunc
 	ctx, cancel = context.WithTimeout(ctx, timeout)
 	defer cancel()
 
 	// Make sure Page events are enabled.
-	if err = pageClient.Enable(ctx); err != nil {
-		return frame, err
+	err := pageClient.Enable(ctx)
+	if err != nil {
+		return err
 	}
 
 	// Open client for DOMContentEventFired to block until DOM has fully loaded.
 	domContentEventFired, err := pageClient.DOMContentEventFired(ctx)
 	if err != nil {
-		return frame, err
+		return err
 	}
 	defer domContentEventFired.Close()
 
-	nav, err := pageClient.Navigate(ctx, page.NewNavigateArgs(url))
+	_, err = pageClient.Navigate(ctx, page.NewNavigateArgs(url))
 	if err != nil {
-		return frame, err
+		return err
 	}
 
 	_, err = domContentEventFired.Recv()
-	return nav.FrameID, err
+	return err
 }
 
 // removeNodes deletes all provided nodeIDs from the DOM.
