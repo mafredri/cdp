@@ -219,7 +219,7 @@ func main() {
 	goimports := exec.CommandContext(ctx, "goimports", "-w", g.path())
 	out, err := goimports.CombinedOutput()
 	if err != nil {
-		log.Printf("%s", out)
+		log.Printf("goimports failed: %s", out)
 		log.Println(err)
 		os.Exit(1)
 	}
@@ -227,7 +227,7 @@ func main() {
 	goinstall := exec.CommandContext(ctx, "go", "install", path.Join(destPkg, "..."))
 	out, err = goinstall.CombinedOutput()
 	if err != nil {
-		log.Printf("%s", out)
+		log.Printf("install failed: %s", out)
 		log.Println(err)
 		os.Exit(1)
 	}
@@ -468,10 +468,13 @@ type %[1]s interface{`, d.Name(), desc)
 			desc = strings.Replace(desc, "Deprecated, ", "", 1)
 			desc = "Deprecated: " + strings.ToUpper(desc[0:1]) + desc[1:]
 		}
-		if c.Experimental {
-			desc += "\n//\n// Note: This command is experimental."
+		if desc != "" {
+			desc = "\n\t//\n\t// " + desc
 		}
-		g.Printf("\n\t// Command %s\n\t//\n\t// %s\n\t%s(context.Context%s) %s\n", c.Name(), desc, c.Name(), request, reply)
+		if c.Experimental {
+			desc += "\n\t//\n\t// Note: This command is experimental."
+		}
+		g.Printf("\n\t// Command %s%s\n\t%s(context.Context%s) %s\n", c.Name(), desc, c.Name(), request, reply)
 	}
 	for _, e := range d.Events {
 		eventClient := fmt.Sprintf("%sClient", e.EventName(d))
@@ -480,10 +483,13 @@ type %[1]s interface{`, d.Name(), desc)
 			desc = strings.Replace(desc, "Deprecated, ", "", 1)
 			desc = "Deprecated: " + strings.ToUpper(desc[0:1]) + desc[1:]
 		}
+		if desc != "" {
+			desc = "\n\t//\n\t// " + desc
+		}
 		if e.Experimental {
 			desc += "\n//\n// Note: This event is experimental."
 		}
-		g.Printf("\n\t// Event %s\n\t//\n\t// %s\n\t%s(context.Context) (%s.%s, error)\n", e.Name(), desc, e.Name(), strings.ToLower(d.Name()), eventClient)
+		g.Printf("\n\t// Event %s%s\n\t%s(context.Context) (%s.%s, error)\n", e.Name(), desc, e.Name(), strings.ToLower(d.Name()), eventClient)
 	}
 	g.Printf("}\n")
 }
