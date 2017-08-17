@@ -1,19 +1,22 @@
 # cdp
 
-[![Build Status](https://travis-ci.org/mafredri/cdp.svg)](https://travis-ci.org/mafredri/cdp) [![Coverage Status](https://codecov.io/gh/mafredri/cdp/branch/master/graph/badge.svg)](https://codecov.io/gh/mafredri/cdp) <!--[![Go Report Card](https://goreportcard.com/badge/github.com/mafredri/cdp)](https://goreportcard.com/report/github.com/mafredri/cdp)--> [![GoDoc](https://godoc.org/mafredri/cdp?status.svg)](https://godoc.org/github.com/mafredri/cdp)
+[![Build Status][travis-badge]][travis] [![Coverage Status][codecov-badge]][codecov] <!--[![Go Report Card][goreportcard-badge]][goreportcard]--> [![GoDoc][godoc-badge]][godoc]
 
-Package `cdp` provides type-safe bindings for the [Chrome Debugging Protocol](https://developer.chrome.com/devtools/docs/debugger-protocol) (CDP), written in the Go programming language. The bindings are generated with the latest [js_protocol.json](https://chromium.googlesource.com/chromium/src/+/master/third_party/WebKit/Source/core/inspector/browser_protocol.json) and [browser_protocol.json](https://chromium.googlesource.com/v8/v8.git/+/master/src/inspector/js_protocol.json) from the Chromium repository using [cmd/cdpgen](https://github.com/mafredri/cdp/blob/master/cmd/cdpgen). These bindings can be used with any debug target that implements the protocol.
+Package `cdp` provides type-safe bindings for the [Chrome Debugging Protocol][devtool-protocol] (CDP), written in the Go programming language. The bindings are generated from the latest [tip-of-tree (tot)][tip-of-tree] protocol definitions and are mainly intended for use with Google Chrome or Chromium, however, they can be used with any debug target ([Node.js][node-debugging], [Edge][edge-diagnostics-adapter], [Safari][ios-webkit-debug-proxy], etc.) that implement the protocol.
+
+This package can be used for any kind of browser automation, scripting or debugging via the Chrome Debugging Protocol.
 
 A big motivation for `cdp` is to expose the full functionality of the Chrome Debugging Protocol and provide it in a discoverable and self-documenting manner.
 
-Providing high-level browser automation is a non-goal for this project. That being said, helpful helpers and useful utility functions could be added.
+Providing high-level browser automation is a non-goal for this project. That being said, `cdp` hopes to improve the ergonomics of working with the protocol by providing primitives better suited for Go and automating repetitive tasks.
 
-## Goals
+## Features
 
 * Discoverable API for the Chrome Debugging Protocol (GoDoc, autocomplete friendly)
-* User should be able to control when and what events are triggered / listened to
-* Concurrently safe without implementing concurrency patterns in the API
-* No silent or hidden errors, this is why creating event clients and receiving events return errors
+* Contexts as a first-class citizen (for timeouts and cancellation)
+* Simple and synchronous event handling (no callbacks)
+* Concurrently safe
+* No silent or hidden errors
 * Do what the user expects
 * Match CDP types to Go types wherever possible
 * Separation of concerns (avoid mixing CDP and RPC)
@@ -26,7 +29,7 @@ $ go get -u github.com/mafredri/cdp
 
 ## Documentation
 
-See [API documentation](https://godoc.org/github.com/mafredri/cdp) for package, API descriptions and examples. Examples can also be found in this repository, see the [simple](https://github.com/mafredri/cdp/blob/master/example_test.go), [advanced](https://github.com/mafredri/cdp/blob/master/example_advanced_test.go) and [logging](https://github.com/mafredri/cdp/blob/master/example_logging_test.go) examples.
+See [API documentation][godoc] for package, API descriptions and examples. Examples can also be found in this repository, see the [simple][simple-example] [advanced][advanced-example] and [logging][logging-example] examples.
 
 ## Usage
 
@@ -155,11 +158,29 @@ The Go implementation of gRPC ([grpc-go](https://github.com/grpc/grpc-go)) has b
 
 ## Resources
 
-* [Chrome DevTools Protocol Documentation](https://chromedevtools.github.io/devtools-protocol/)
-* [Chrome DevTools Protocol Viewer (latest tip-of-tree)](https://chromedevtools.github.io/devtools-protocol/tot/) official protocol API docs
-* [Chrome DevTools Protocol Repository (GitHub)](https://github.com/chromedevtools/devtools-protocol) please [file issues](https://github.com/ChromeDevTools/devtools-protocol/issues) at this repo if you have concerns or problems with the Chrome Debugging Protocol
-* [Chrome Debugging Protocol Mailing List](https://groups.google.com/forum/#!forum/chrome-debugging-protocol)
+* [Chrome DevTools Protocol][devtool-protocol]
+    * [Viewer (latest tip-of-tree)][tip-of-tree] official protocol API docs
+    * [Repository (GitHub)](https://github.com/chromedevtools/devtools-protocol) please [file issues](https://github.com/ChromeDevTools/devtools-protocol/issues) at this repo if you have concerns or problems with the Chrome Debugging Protocol
+    * [Mailing list](https://groups.google.com/forum/#!forum/chrome-debugging-protocol)
 * [Getting Started with Headless Chrome](https://developers.google.com/web/updates/2017/04/headless-chrome)
-* [RemoteDebug](http://remotedebug.org/) is an initiative to bring remote debugging (e.g. CDP) to all modern browsers
-* [RemoteDebug Protocol Compatibility Tables](https://compatibility.remotedebug.org/)
 * [Awesome chrome-devtools: Chrome DevTools Protocol](https://github.com/ChromeDevTools/awesome-chrome-devtools#chrome-devtools-protocol)
+* [RemoteDebug](http://remotedebug.org/) is an initiative to bring remote debugging (e.g. CDP) to all modern browsers
+    * [Protocol Compatibility Tables](https://compatibility.remotedebug.org/)
+
+[devtool-protocol]: https://chromedevtools.github.io/devtools-protocol/
+[tip-of-tree]: https://chromedevtools.github.io/devtools-protocol/tot/
+[simple-example]: https://github.com/mafredri/cdp/blob/master/example_test.go
+[advanced-example]: https://github.com/mafredri/cdp/blob/master/example_advanced_test.go
+[logging-example]: https://github.com/mafredri/cdp/blob/master/example_logging_test.go
+[node-debugging]: https://nodejs.org/en/docs/guides/debugging-getting-started/
+[edge-diagnostics-adapter]: https://github.com/Microsoft/edge-diagnostics-adapter
+[ios-webkit-debug-proxy]: https://github.com/google/ios-webkit-debug-proxy
+
+[travis]: https://travis-ci.org/mafredri/cdp
+[travis-badge]: https://travis-ci.org/mafredri/cdp.svg
+[codecov]: https://codecov.io/gh/mafredri/cdp
+[codecov-badge]: https://codecov.io/gh/mafredri/cdp/branch/master/graph/badge.svg
+[goreportcard]: https://goreportcard.com/report/github.com/mafredri/cdp
+[goreportcard-badge]: https://goreportcard.com/badge/github.com/mafredri/cdp
+[godoc]: https://godoc.org/github.com/mafredri/cdp
+[godoc-badge]: https://godoc.org/mafredri/cdp?status.svg
