@@ -1190,7 +1190,7 @@ func TestNew%[1]s(t *testing.T) {
 		desc := arg.Desc()
 		if arg.Deprecated {
 			if desc == "" {
-				desc = "This argument should not be used."
+				desc = "This property should not be used."
 			}
 			desc = "\n//\n// Deprecated: " + desc
 		}
@@ -1202,7 +1202,7 @@ func TestNew%[1]s(t *testing.T) {
 			desc += "\n//\n// Values: " + strings.Join(enums, ", ") + "."
 		}
 		if arg.Experimental {
-			desc += "\n//\n// Note: This argument is experimental."
+			desc += "\n//\n// Note: This property is experimental."
 		}
 		g.Printf(`
 // Set%[1]s sets the %[1]s optional argument. %[6]s
