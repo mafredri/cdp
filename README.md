@@ -29,7 +29,7 @@ $ go get -u github.com/mafredri/cdp
 
 ## Documentation
 
-See [API documentation][godoc] for package, API descriptions and examples. Examples can also be found in this repository, see the [simple][simple-example] [advanced][advanced-example] and [logging][logging-example] examples.
+See [API documentation][godoc] for package, API descriptions and examples. Examples can also be found in this repository, see the [simple][simple-example], [advanced][advanced-example] and [logging][logging-example] examples.
 
 ## Usage
 
