@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/mafredri/cdp"
+	"github.com/mafredri/cdp/devtool"
 	"github.com/mafredri/cdp/protocol"
 	"github.com/mafredri/cdp/protocol/dom"
 	"github.com/mafredri/cdp/protocol/network"
@@ -46,8 +47,14 @@ func Example_advanced() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	devt := devtool.New("http://localhost:9222")
+	pt, err := devt.Get(ctx, devtool.Page)
+	if err != nil {
+		return
+	}
+
 	// Connect to WebSocket URL (page) that speaks the Chrome Debugging Protocol.
-	conn, err := rpcc.DialContext(ctx, "ws://localhost:9222/devtools/page/45a887ba-c92a-4cff-9194-d9398cc87e2c")
+	conn, err := rpcc.DialContext(ctx, pt.WebSocketDebuggerURL)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -72,11 +79,7 @@ func Example_advanced() {
 
 	// Setup event handlers early because domain events can be sent as
 	// soon as Enable is called on the domain.
-	if err = catchExceptionThrown(ctx, c.Runtime, abort); err != nil {
-		fmt.Println(err)
-		return
-	}
-	if err = catchLoadingFailed(ctx, c.Network, abort); err != nil {
+	if err = abortOnErrors(ctx, c, abort); err != nil {
 		fmt.Println(err)
 		return
 	}
@@ -145,52 +148,52 @@ func Example_advanced() {
 	}
 }
 
-func catchExceptionThrown(ctx context.Context, runtime cdp.Runtime, abort chan<- error) error {
-	// Listen to exceptions so we can abort as soon as one is encountered.
-	exceptionThrown, err := runtime.ExceptionThrown(ctx)
+func abortOnErrors(ctx context.Context, c *cdp.Client, abort chan<- error) error {
+	exceptionThrown, err := c.Runtime.ExceptionThrown(ctx)
 	if err != nil {
-		// Connection is closed.
 		return err
 	}
+
+	loadingFailed, err := c.Network.LoadingFailed(ctx)
+	if err != nil {
+		return err
+	}
+
 	go func() {
 		defer exceptionThrown.Close() // Cleanup.
-		for {
-			ev, err := exceptionThrown.Recv()
-			if err != nil {
-				// This could be any one of: connection closed,
-				// context deadline or unmarshal failed.
-				abort <- err
-				return
-			}
-
-			// Ruh-roh! Let the caller know something went wrong.
-			abort <- ev.ExceptionDetails
-		}
-	}()
-	return nil
-}
-
-func catchLoadingFailed(ctx context.Context, net cdp.Network, abort chan<- error) error {
-	// Check for non-canceled resources that failed to load.
-	loadingFailed, err := net.LoadingFailed(ctx)
-	if err != nil {
-		return err
-	}
-	go func() {
 		defer loadingFailed.Close()
 		for {
-			ev, err := loadingFailed.Recv()
-			if err != nil {
-				abort <- err
-				return
-			}
+			select {
+			// Check for exceptions so we can abort as soon
+			// as one is encountered.
+			case <-exceptionThrown.Ready():
+				ev, err := exceptionThrown.Recv()
+				if err != nil {
+					// This could be any one of: connection closed,
+					// context deadline or unmarshal failed.
+					abort <- err
+					return
+				}
 
-			// For now, most optional fields are pointers and must be
-			// checked for nil.
-			canceled := ev.Canceled != nil && *ev.Canceled
+				// Ruh-roh! Let the caller know something went wrong.
+				abort <- ev.ExceptionDetails
 
-			if !canceled {
-				abort <- fmt.Errorf("request %s failed: %s", ev.RequestID, ev.ErrorText)
+			// Check for non-canceled resources that failed
+			// to load.
+			case <-loadingFailed.Ready():
+				ev, err := loadingFailed.Recv()
+				if err != nil {
+					abort <- err
+					return
+				}
+
+				// For now, most optional fields are pointers and must be
+				// checked for nil.
+				canceled := ev.Canceled != nil && *ev.Canceled
+
+				if !canceled {
+					abort <- fmt.Errorf("request %s failed: %s", ev.RequestID, ev.ErrorText)
+				}
 			}
 		}
 	}()
