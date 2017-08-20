@@ -269,13 +269,13 @@ func TestMessageBuffer(t *testing.T) {
 
 	go func() {
 		for i := 0; i < n; i++ {
-			b.store(&streamMsg{data: []byte(strconv.Itoa(i))})
+			b.store(&streamMsg{data: []byte(strconv.Itoa(i)), next: func() { b.load() }})
 		}
 	}()
 
 	i := 0
-	for bi := range b.get() {
-		m := bi.message()
+	for m := range b.get() {
+		m.next()
 		if strconv.Itoa(i) != string(m.data) {
 			t.Errorf("Got n = %s, want %d", m.data, i)
 		}
