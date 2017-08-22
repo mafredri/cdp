@@ -418,7 +418,7 @@ func (c *Conn) notify(method string, data []byte) {
 // listen registers a new stream listener (chan) for the RPC notification
 // method. Returns a function for removing the listener. Error if the
 // connection is closed.
-func (c *Conn) listen(method string, client *streamClient) (func(), error) {
+func (c *Conn) listen(method string, client streamSender) (func(), error) {
 	c.streamMu.Lock()
 	defer c.streamMu.Unlock()
 
@@ -428,7 +428,7 @@ func (c *Conn) listen(method string, client *streamClient) (func(), error) {
 
 	stream, ok := c.streams[method]
 	if !ok {
-		stream = newStreamService()
+		stream = newStreamClients()
 		c.streams[method] = stream
 	}
 	seq := stream.add(client)
