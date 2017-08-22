@@ -145,6 +145,67 @@ func TestStream_Ready_Multiple_Streams(t *testing.T) {
 	}
 }
 
+func TestSync(t *testing.T) {
+	conn, connCancel := newTestStreamConn()
+	defer connCancel()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s1, err := NewStream(ctx, "test1", conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s1.Close()
+
+	s2, err := NewStream(ctx, "test2", conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s2.Close()
+
+	err = Sync(s1, s2)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	go func() {
+		for i := 0; i < 3; i++ {
+			conn.notify("test1", []byte(strconv.Itoa(100+i)))
+		}
+		for i := 0; i < 3; i++ {
+			conn.notify("test2", []byte(strconv.Itoa(200+i)))
+		}
+		for i := 0; i < 4; i++ {
+			conn.notify("test1", []byte(strconv.Itoa(100+i)))
+			conn.notify("test2", []byte(strconv.Itoa(200+i)))
+		}
+	}()
+
+	var got []int
+	for i := 0; i < 14; i++ {
+		var x int
+		select {
+		case <-s1.Ready():
+			err := s1.RecvMsg(&x)
+			if err != nil {
+				t.Error(err)
+			}
+		case <-s2.Ready():
+			err := s2.RecvMsg(&x)
+			if err != nil {
+				t.Error(err)
+			}
+		}
+		got = append(got, x)
+	}
+
+	want := []int{100, 101, 102, 200, 201, 202, 100, 200, 101, 201, 102, 202, 103, 203}
+	if diff := cmp.Diff(got, want); diff != "" {
+		t.Errorf("Output differs (-got +want)\n%s", diff)
+	}
+}
+
 func TestStream_Wait_Blocks_After_RecvMsg(t *testing.T) {
 	conn, connCancel := newTestStreamConn()
 	defer connCancel()
