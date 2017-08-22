@@ -330,7 +330,7 @@ func TestMessageBuffer(t *testing.T) {
 
 	go func() {
 		for i := 0; i < n; i++ {
-			b.store(&streamMsg{data: []byte(strconv.Itoa(i)), next: func() { b.load() }})
+			b.store(&message{data: []byte(strconv.Itoa(i)), next: func() { b.load() }})
 		}
 	}()
 

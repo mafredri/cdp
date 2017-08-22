@@ -410,7 +410,7 @@ func (c *Conn) notify(method string, data []byte) {
 	c.streamMu.Lock()
 	stream := c.streams[method]
 	if stream != nil {
-		stream.send(method, data)
+		stream.write(method, data)
 	}
 	c.streamMu.Unlock()
 }
@@ -418,7 +418,7 @@ func (c *Conn) notify(method string, data []byte) {
 // listen registers a new stream listener (chan) for the RPC notification
 // method. Returns a function for removing the listener. Error if the
 // connection is closed.
-func (c *Conn) listen(method string, client streamSender) (func(), error) {
+func (c *Conn) listen(method string, w streamWriter) (func(), error) {
 	c.streamMu.Lock()
 	defer c.streamMu.Unlock()
 
@@ -431,7 +431,7 @@ func (c *Conn) listen(method string, client streamSender) (func(), error) {
 		stream = newStreamClients()
 		c.streams[method] = stream
 	}
-	seq := stream.add(client)
+	seq := stream.add(w)
 
 	return func() { stream.remove(seq) }, nil
 }
