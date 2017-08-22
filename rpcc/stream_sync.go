@@ -6,32 +6,32 @@ import (
 	"sync"
 )
 
-// syncMessageStore loads one message into a
-// messageStorer and waits for message.next
+// syncMessageStore writes one message into a
+// messageWriter and waits for message.next
 // to be called before loading the next.
 type syncMessageStore struct {
 	mu      sync.Mutex
-	buf     map[string]streamSender
-	backlog []*streamMsg
+	writers map[string]streamWriter
+	backlog []*message
 	pending bool
 }
 
 func newSyncMessageStore() *syncMessageStore {
 	return &syncMessageStore{
-		buf: make(map[string]streamSender),
+		writers: make(map[string]streamWriter),
 	}
 }
 
-func (s *syncMessageStore) register(method string, ms streamSender) {
+func (s *syncMessageStore) register(method string, w streamWriter) {
 	s.mu.Lock()
-	s.buf[method] = ms
+	s.writers[method] = w
 	s.mu.Unlock()
 }
 
-// send implements messageStorer, the message is stored
-// in a messageStorer if there are no pending messages,
+// write implements messageWriter, the message is stored
+// in a messageWriter if there are no pending messages,
 // otherwise appended to backlog.
-func (s *syncMessageStore) send(m streamMsg) {
+func (s *syncMessageStore) write(m message) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -42,14 +42,14 @@ func (s *syncMessageStore) send(m streamMsg) {
 	}
 
 	s.pending = true
-	ms, ok := s.buf[m.method]
+	w, ok := s.writers[m.method]
 	if !ok {
 		panic("store: bad mojo " + m.method)
 	}
-	ms.send(m)
+	w.write(m)
 }
 
-// load stores the next message into a messageStorer,
+// load writes the next message into a messageWriter,
 // resets pending status if backlog is empty.
 func (s *syncMessageStore) load() {
 	s.mu.Lock()
@@ -61,11 +61,11 @@ func (s *syncMessageStore) load() {
 	}
 
 	m := s.backlog[0]
-	ms, ok := s.buf[m.method]
+	w, ok := s.writers[m.method]
 	if !ok {
 		panic("load: bad mojo" + m.method)
 	}
-	ms.send(*m)
+	w.write(*m)
 	s.backlog[0] = nil // Remove reference from underlying array.
 	s.backlog = s.backlog[1:]
 }
