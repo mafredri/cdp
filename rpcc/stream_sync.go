@@ -97,7 +97,8 @@ func (s *syncMessageStore) load() {
 	s.backlog = s.backlog[1:]
 }
 
-// Sync synchronizes two or more Streams.
+// Sync synchronizes two or more Streams. On error there will be no
+// changes done to the Streams.
 func Sync(s ...Stream) (err error) {
 	store := newSyncMessageStore()
 	defer func() {
@@ -107,6 +108,8 @@ func Sync(s ...Stream) (err error) {
 	}()
 
 	var conn *Conn
+	var swap []func()
+
 	for _, ss := range s {
 		sc, ok := ss.(*streamClient)
 		if !ok {
@@ -119,7 +122,8 @@ func Sync(s ...Stream) (err error) {
 			return errors.New("rpcc: Sync: all Streams must share same Conn")
 		}
 
-		// Grab a lock on remove.
+		// Grab a lock on remove and keep it
+		// for the duration of the sync.
 		sc.mu.Lock()
 		defer sc.mu.Unlock()
 
@@ -127,16 +131,27 @@ func Sync(s ...Stream) (err error) {
 			return errors.New("rpcc: Sync: Stream is closed")
 		}
 
-		// Unsubscribe Stream from Conn listen.
-		sc.remove()
-
 		// Register stream client with store.
 		unregister, err := store.register(sc.method, sc, sc.conn)
 		if err != nil {
 			return errors.New("rpcc: Sync: " + err.Error())
 		}
 
-		sc.remove = unregister
+		// Delay listener swap until all Streams
+		// have been processed successfully.
+		swap = append(swap, func() {
+			// Unsubscribe Stream from Conn listen.
+			sc.remove()
+			sc.remove = unregister
+
+			// Clear stream messages to prevent sync issues.
+			sc.mbuf.clear()
+		})
+	}
+
+	// Perform swap, mutex lock (streamClient.mu) is still active.
+	for _, s := range swap {
+		s()
 	}
 
 	return nil
