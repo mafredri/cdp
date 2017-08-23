@@ -22,10 +22,16 @@ func newSyncMessageStore() *syncMessageStore {
 	}
 }
 
-func (s *syncMessageStore) register(method string, w streamWriter) {
+func (s *syncMessageStore) register(method string, w streamWriter) (unregister func()) {
 	s.mu.Lock()
 	s.writers[method] = w
 	s.mu.Unlock()
+
+	return func() {
+		s.mu.Lock()
+		delete(s.writers, method)
+		s.mu.Unlock()
+	}
 }
 
 // write implements messageWriter, the message is stored
@@ -111,14 +117,17 @@ func Sync(s ...Stream) error {
 		sc.remove()
 
 		// Register stream client with store.
-		store.register(sc.method, sc)
+		unregister := store.register(sc.method, sc)
 
 		// Resubscribe with store as intermediary.
 		remove, err := conn.listen(sc.method, store)
 		if err != nil {
 			return err
 		}
-		sc.remove = remove
+		sc.remove = func() {
+			remove()
+			unregister()
+		}
 	}
 
 	return nil
