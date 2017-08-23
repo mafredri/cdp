@@ -10,6 +10,7 @@ import (
 // messageWriter and waits for message.next
 // to be called before loading the next.
 type syncMessageStore struct {
+	closers []func()
 	mu      sync.Mutex
 	writers map[string]streamWriter
 	backlog []*message
@@ -22,15 +23,41 @@ func newSyncMessageStore() *syncMessageStore {
 	}
 }
 
-func (s *syncMessageStore) register(method string, w streamWriter) (unregister func()) {
+func (s *syncMessageStore) register(method string, w streamWriter, conn *Conn) (unregister func(), err error) {
 	s.mu.Lock()
-	s.writers[method] = w
-	s.mu.Unlock()
+	defer s.mu.Unlock()
 
-	return func() {
+	if _, ok := s.writers[method]; ok {
+		return nil, fmt.Errorf("%s already registered", method)
+	}
+
+	remove, err := conn.listen(method, s)
+	if err != nil {
+		return nil, err
+	}
+
+	s.writers[method] = w
+
+	unreg := func() {
+		remove()
+
 		s.mu.Lock()
 		delete(s.writers, method)
 		s.mu.Unlock()
+	}
+	s.closers = append(s.closers, unreg)
+
+	return unreg, nil
+}
+
+func (s *syncMessageStore) close() {
+	s.mu.Lock()
+	closers := s.closers
+	s.closers = nil
+	s.mu.Unlock()
+
+	for _, c := range closers {
+		c()
 	}
 }
 
@@ -48,10 +75,7 @@ func (s *syncMessageStore) write(m message) {
 	}
 
 	s.pending = true
-	w, ok := s.writers[m.method]
-	if !ok {
-		panic("store: bad mojo " + m.method)
-	}
+	w := s.writers[m.method]
 	w.write(m)
 }
 
@@ -67,67 +91,52 @@ func (s *syncMessageStore) load() {
 	}
 
 	m := s.backlog[0]
-	w, ok := s.writers[m.method]
-	if !ok {
-		panic("load: bad mojo" + m.method)
-	}
+	w := s.writers[m.method]
 	w.write(*m)
 	s.backlog[0] = nil // Remove reference from underlying array.
 	s.backlog = s.backlog[1:]
 }
 
 // Sync synchronizes two or more Streams.
-func Sync(s ...Stream) error {
-	if len(s) == 0 {
-		return nil
-	}
-
+func Sync(s ...Stream) (err error) {
 	store := newSyncMessageStore()
+	defer func() {
+		if err != nil {
+			store.close()
+		}
+	}()
 
-	// Validate that the Streams can be synced, they must belong to
-	// the same Conn and the same type of stream cannot be synced
-	// more than once.
 	var conn *Conn
-	prev := make(map[string]struct{})
 	for _, ss := range s {
 		sc, ok := ss.(*streamClient)
 		if !ok {
-			return fmt.Errorf("rpcc: cannot sync Stream of type %T", ss)
+			return fmt.Errorf("rpcc: Sync: bad Stream type: %T", ss)
 		}
 		if conn == nil {
 			conn = sc.conn
 		}
 		if sc.conn != conn {
-			return errors.New("rpcc: cannot sync Stream with different Conn")
+			return errors.New("rpcc: Sync: all Streams must share same Conn")
 		}
-		if _, ok := prev[sc.method]; ok {
-			return fmt.Errorf("rpcc: cannot sync Stream with method %q twice", sc.method)
-		}
-		prev[sc.method] = struct{}{}
 
 		// Grab a lock on remove.
 		sc.mu.Lock()
 		defer sc.mu.Unlock()
 
 		if sc.remove == nil {
-			return errors.New("rpcc: cannot sync closed Stream")
+			return errors.New("rpcc: Sync: Stream is closed")
 		}
 
 		// Unsubscribe Stream from Conn listen.
 		sc.remove()
 
 		// Register stream client with store.
-		unregister := store.register(sc.method, sc)
-
-		// Resubscribe with store as intermediary.
-		remove, err := conn.listen(sc.method, store)
+		unregister, err := store.register(sc.method, sc, sc.conn)
 		if err != nil {
-			return err
+			return errors.New("rpcc: Sync: " + err.Error())
 		}
-		sc.remove = func() {
-			remove()
-			unregister()
-		}
+
+		sc.remove = unregister
 	}
 
 	return nil
