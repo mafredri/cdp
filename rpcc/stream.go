@@ -62,6 +62,23 @@ func (b *messageBuffer) load() {
 	}
 }
 
+// clear removes all messages from buffer.
+func (b *messageBuffer) clear() {
+	b.mu.Lock()
+	backlog := b.backlog
+	b.backlog = nil
+	b.mu.Unlock()
+
+	select {
+	case m := <-b.c:
+		m.next()
+	default:
+	}
+	for _, m := range backlog {
+		m.next()
+	}
+}
+
 func (b *messageBuffer) get() <-chan *message {
 	return b.c
 }
