@@ -13,12 +13,8 @@ import (
 //
 // Note: This type is experimental.
 type TouchPoint struct {
-	// State State of the touch point.
-	//
-	// Values: "touchPressed", "touchReleased", "touchMoved", "touchStationary", "touchCancelled".
-	State         string   `json:"state"`
-	X             int      `json:"x"`                       // X coordinate of the event relative to the main frame's viewport.
-	Y             int      `json:"y"`                       // Y coordinate of the event relative to the main frame's viewport. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport.
+	X             int      `json:"x"`                       // X coordinate of the event relative to the main frame's viewport in CSS pixels.
+	Y             int      `json:"y"`                       // Y coordinate of the event relative to the main frame's viewport in CSS pixels. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport.
 	RadiusX       *int     `json:"radiusX,omitempty"`       // X radius of the touch area (default: 1).
 	RadiusY       *int     `json:"radiusY,omitempty"`       // Y radius of the touch area (default: 1).
 	RotationAngle *float64 `json:"rotationAngle,omitempty"` // Rotation angle (default: 0.0).

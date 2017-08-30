@@ -78,14 +78,13 @@ const (
 	StateUnknown
 	StateNeutral
 	StateInsecure
-	StateWarning
 	StateSecure
 	StateInfo
 )
 
 // Valid returns true if enum is set.
 func (e State) Valid() bool {
-	return e >= 1 && e <= 6
+	return e >= 1 && e <= 5
 }
 
 func (e State) String() string {
@@ -99,10 +98,8 @@ func (e State) String() string {
 	case 3:
 		return "insecure"
 	case 4:
-		return "warning"
-	case 5:
 		return "secure"
-	case 6:
+	case 5:
 		return "info"
 	}
 	return fmt.Sprintf("State(%d)", e)
@@ -130,12 +127,10 @@ func (e *State) UnmarshalJSON(data []byte) error {
 		*e = 2
 	case "\"insecure\"":
 		*e = 3
-	case "\"warning\"":
-		*e = 4
 	case "\"secure\"":
-		*e = 5
+		*e = 4
 	case "\"info\"":
-		*e = 6
+		*e = 5
 	default:
 		return fmt.Errorf("security.State: UnmarshalJSON on bad input: %s", data)
 	}

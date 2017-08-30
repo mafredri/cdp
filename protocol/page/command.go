@@ -444,3 +444,25 @@ type GetLayoutMetricsReply struct {
 type CreateIsolatedWorldReply struct {
 	ExecutionContextID runtime.ExecutionContextID `json:"executionContextId"` // Execution context of the isolated world.
 }
+
+// SetDownloadBehaviorArgs represents the arguments for SetDownloadBehavior in the Page domain.
+type SetDownloadBehaviorArgs struct {
+	// Behavior Whether to allow all or deny all download requests, or use default Chrome behavior if available (otherwise deny).
+	//
+	// Values: "deny", "allow", "default".
+	Behavior     string  `json:"behavior"`
+	DownloadPath *string `json:"downloadPath,omitempty"` // The default path to save downloaded files to. This is required if behavior is set to 'allow'
+}
+
+// NewSetDownloadBehaviorArgs initializes SetDownloadBehaviorArgs with the required arguments.
+func NewSetDownloadBehaviorArgs(behavior string) *SetDownloadBehaviorArgs {
+	args := new(SetDownloadBehaviorArgs)
+	args.Behavior = behavior
+	return args
+}
+
+// SetDownloadPath sets the DownloadPath optional argument. The default path to save downloaded files to. This is required if behavior is set to 'allow'
+func (a *SetDownloadBehaviorArgs) SetDownloadPath(downloadPath string) *SetDownloadBehaviorArgs {
+	a.DownloadPath = &downloadPath
+	return a
+}

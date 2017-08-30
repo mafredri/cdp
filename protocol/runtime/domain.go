@@ -177,6 +177,20 @@ func (d *domainClient) RunScript(ctx context.Context, args *RunScriptArgs) (repl
 	return
 }
 
+// QueryObjects invokes the Runtime method.
+func (d *domainClient) QueryObjects(ctx context.Context, args *QueryObjectsArgs) (reply *QueryObjectsReply, err error) {
+	reply = new(QueryObjectsReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Runtime.queryObjects", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Runtime.queryObjects", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Runtime", Op: "QueryObjects", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) ExecutionContextCreated(ctx context.Context) (ExecutionContextCreatedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Runtime.executionContextCreated", d.conn)
 	if err != nil {

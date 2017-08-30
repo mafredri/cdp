@@ -476,6 +476,20 @@ func (d *domainClient) GetRelayoutBoundary(ctx context.Context, args *GetRelayou
 	return
 }
 
+// DescribeNode invokes the DOM method. Describes node given its id, does not require domain to be enabled. Does not start tracking any objects, can be used for automation.
+func (d *domainClient) DescribeNode(ctx context.Context, args *DescribeNodeArgs) (reply *DescribeNodeReply, err error) {
+	reply = new(DescribeNodeReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.describeNode", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.describeNode", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "DescribeNode", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) DocumentUpdated(ctx context.Context) (DocumentUpdatedClient, error) {
 	s, err := rpcc.NewStream(ctx, "DOM.documentUpdated", d.conn)
 	if err != nil {

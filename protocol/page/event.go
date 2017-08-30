@@ -33,6 +33,20 @@ type LoadEventFiredReply struct {
 	Timestamp network.MonotonicTime `json:"timestamp"` // No description.
 }
 
+// LifecycleEventClient is a client for LifecycleEvent events. Fired for top level page lifecycle events such as navigation, load, paint, etc.
+type LifecycleEventClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*LifecycleEventReply, error)
+	rpcc.Stream
+}
+
+// LifecycleEventReply is the reply for LifecycleEvent events.
+type LifecycleEventReply struct {
+	Name      string                `json:"name"`      // No description.
+	Timestamp network.MonotonicTime `json:"timestamp"` // No description.
+}
+
 // FrameAttachedClient is a client for FrameAttached events. Fired when frame has been attached to its parent.
 type FrameAttachedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is

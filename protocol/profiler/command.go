@@ -22,6 +22,7 @@ type StopReply struct {
 // StartPreciseCoverageArgs represents the arguments for StartPreciseCoverage in the Profiler domain.
 type StartPreciseCoverageArgs struct {
 	CallCount *bool `json:"callCount,omitempty"` // Collect accurate call counts beyond simple 'covered' or 'not covered'.
+	Detailed  *bool `json:"detailed,omitempty"`  // Collect block-based coverage.
 }
 
 // NewStartPreciseCoverageArgs initializes StartPreciseCoverageArgs with the required arguments.
@@ -34,6 +35,12 @@ func NewStartPreciseCoverageArgs() *StartPreciseCoverageArgs {
 // SetCallCount sets the CallCount optional argument. Collect accurate call counts beyond simple 'covered' or 'not covered'.
 func (a *StartPreciseCoverageArgs) SetCallCount(callCount bool) *StartPreciseCoverageArgs {
 	a.CallCount = &callCount
+	return a
+}
+
+// SetDetailed sets the Detailed optional argument. Collect block-based coverage.
+func (a *StartPreciseCoverageArgs) SetDetailed(detailed bool) *StartPreciseCoverageArgs {
+	a.Detailed = &detailed
 	return a
 }
 

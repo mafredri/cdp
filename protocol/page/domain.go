@@ -354,6 +354,19 @@ func (d *domainClient) BringToFront(ctx context.Context) (err error) {
 	return
 }
 
+// SetDownloadBehavior invokes the Page method. Set the behavior when downloading a file.
+func (d *domainClient) SetDownloadBehavior(ctx context.Context, args *SetDownloadBehaviorArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setDownloadBehavior", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setDownloadBehavior", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetDownloadBehavior", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) DOMContentEventFired(ctx context.Context) (DOMContentEventFiredClient, error) {
 	s, err := rpcc.NewStream(ctx, "Page.domContentEventFired", d.conn)
 	if err != nil {
@@ -386,6 +399,24 @@ func (c *loadEventFiredClient) Recv() (*LoadEventFiredReply, error) {
 	event := new(LoadEventFiredReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "LoadEventFired Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) LifecycleEvent(ctx context.Context) (LifecycleEventClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.lifecycleEvent", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &lifecycleEventClient{Stream: s}, nil
+}
+
+type lifecycleEventClient struct{ rpcc.Stream }
+
+func (c *lifecycleEventClient) Recv() (*LifecycleEventReply, error) {
+	event := new(LifecycleEventReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "LifecycleEvent Recv", Err: err}
 	}
 	return event, nil
 }

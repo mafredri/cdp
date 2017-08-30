@@ -371,3 +371,20 @@ type RunScriptReply struct {
 	Result           RemoteObject      `json:"result"`                     // Run result.
 	ExceptionDetails *ExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details.
 }
+
+// QueryObjectsArgs represents the arguments for QueryObjects in the Runtime domain.
+type QueryObjectsArgs struct {
+	PrototypeObjectID RemoteObjectID `json:"prototypeObjectId"` // Identifier of the prototype to return objects for.
+}
+
+// NewQueryObjectsArgs initializes QueryObjectsArgs with the required arguments.
+func NewQueryObjectsArgs(prototypeObjectID RemoteObjectID) *QueryObjectsArgs {
+	args := new(QueryObjectsArgs)
+	args.PrototypeObjectID = prototypeObjectID
+	return args
+}
+
+// QueryObjectsReply represents the return values for QueryObjects in the Runtime domain.
+type QueryObjectsReply struct {
+	Objects RemoteObject `json:"objects"` // Array with objects.
+}

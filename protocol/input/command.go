@@ -181,11 +181,11 @@ func (a *DispatchMouseEventArgs) SetDeltaY(deltaY float64) *DispatchMouseEventAr
 
 // DispatchTouchEventArgs represents the arguments for DispatchTouchEvent in the Input domain.
 type DispatchTouchEventArgs struct {
-	// Type Type of the touch event.
+	// Type Type of the touch event. TouchEnd and TouchCancel must not contain any touch points, while TouchStart and TouchMove must contains at least one.
 	//
-	// Values: "touchStart", "touchEnd", "touchMove".
+	// Values: "touchStart", "touchEnd", "touchMove", "touchCancel".
 	Type        string         `json:"type"`
-	TouchPoints []TouchPoint   `json:"touchPoints"`         // Touch points.
+	TouchPoints []TouchPoint   `json:"touchPoints"`         // Active touch points on the touch device. One event per any changed point (compared to previous touch event in a sequence) is generated, emulating pressing/moving/releasing points one by one.
 	Modifiers   *int           `json:"modifiers,omitempty"` // Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
 	Timestamp   TimeSinceEpoch `json:"timestamp,omitempty"` // Time at which the event occurred.
 }

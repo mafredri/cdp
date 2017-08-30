@@ -141,18 +141,37 @@ type GetAllCookiesReply struct {
 	Cookies []Cookie `json:"cookies"` // Array of cookie objects.
 }
 
-// DeleteCookieArgs represents the arguments for DeleteCookie in the Network domain.
-type DeleteCookieArgs struct {
-	CookieName string `json:"cookieName"` // Name of the cookie to remove.
-	URL        string `json:"url"`        // URL to match cooke domain and path.
+// DeleteCookiesArgs represents the arguments for DeleteCookies in the Network domain.
+type DeleteCookiesArgs struct {
+	Name   string  `json:"name"`             // Name of the cookies to remove.
+	URL    *string `json:"url,omitempty"`    // If specified, deletes all the cookies with the given name where domain and path match provided URL.
+	Domain *string `json:"domain,omitempty"` // If specified, deletes only cookies with the exact domain.
+	Path   *string `json:"path,omitempty"`   // If specified, deletes only cookies with the exact path.
 }
 
-// NewDeleteCookieArgs initializes DeleteCookieArgs with the required arguments.
-func NewDeleteCookieArgs(cookieName string, url string) *DeleteCookieArgs {
-	args := new(DeleteCookieArgs)
-	args.CookieName = cookieName
-	args.URL = url
+// NewDeleteCookiesArgs initializes DeleteCookiesArgs with the required arguments.
+func NewDeleteCookiesArgs(name string) *DeleteCookiesArgs {
+	args := new(DeleteCookiesArgs)
+	args.Name = name
 	return args
+}
+
+// SetURL sets the URL optional argument. If specified, deletes all the cookies with the given name where domain and path match provided URL.
+func (a *DeleteCookiesArgs) SetURL(url string) *DeleteCookiesArgs {
+	a.URL = &url
+	return a
+}
+
+// SetDomain sets the Domain optional argument. If specified, deletes only cookies with the exact domain.
+func (a *DeleteCookiesArgs) SetDomain(domain string) *DeleteCookiesArgs {
+	a.Domain = &domain
+	return a
+}
+
+// SetPath sets the Path optional argument. If specified, deletes only cookies with the exact path.
+func (a *DeleteCookiesArgs) SetPath(path string) *DeleteCookiesArgs {
+	a.Path = &path
+	return a
 }
 
 // SetCookieArgs represents the arguments for SetCookie in the Network domain.
@@ -322,7 +341,8 @@ type GetCertificateReply struct {
 
 // SetRequestInterceptionEnabledArgs represents the arguments for SetRequestInterceptionEnabled in the Network domain.
 type SetRequestInterceptionEnabledArgs struct {
-	Enabled bool `json:"enabled"` // Whether or not HTTP requests should be intercepted and Network.requestIntercepted events sent.
+	Enabled  bool     `json:"enabled"`            // Whether requests should be intercepted. If patterns is not set, matches all and resets any previously set patterns. Other parameters are ignored if false.
+	Patterns []string `json:"patterns,omitempty"` // URLs matching any of these patterns will be forwarded and wait for the corresponding continueInterceptedRequest call. Wildcards ('*' -> zero or more, '?' -> exactly one) are allowed. Escape character is backslash. If omitted equivalent to ['*'] (intercept all).
 }
 
 // NewSetRequestInterceptionEnabledArgs initializes SetRequestInterceptionEnabledArgs with the required arguments.
@@ -330,6 +350,12 @@ func NewSetRequestInterceptionEnabledArgs(enabled bool) *SetRequestInterceptionE
 	args := new(SetRequestInterceptionEnabledArgs)
 	args.Enabled = enabled
 	return args
+}
+
+// SetPatterns sets the Patterns optional argument. URLs matching any of these patterns will be forwarded and wait for the corresponding continueInterceptedRequest call. Wildcards ('*' -> zero or more, '?' -> exactly one) are allowed. Escape character is backslash. If omitted equivalent to ['*'] (intercept all).
+func (a *SetRequestInterceptionEnabledArgs) SetPatterns(patterns []string) *SetRequestInterceptionEnabledArgs {
+	a.Patterns = patterns
+	return a
 }
 
 // ContinueInterceptedRequestArgs represents the arguments for ContinueInterceptedRequest in the Network domain.

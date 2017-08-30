@@ -6,6 +6,7 @@ import (
 	"github.com/mafredri/cdp/protocol/accessibility"
 	"github.com/mafredri/cdp/protocol/animation"
 	"github.com/mafredri/cdp/protocol/applicationcache"
+	"github.com/mafredri/cdp/protocol/audits"
 	"github.com/mafredri/cdp/protocol/browser"
 	"github.com/mafredri/cdp/protocol/cachestorage"
 	"github.com/mafredri/cdp/protocol/console"
@@ -50,6 +51,7 @@ type Client struct {
 	Accessibility     Accessibility
 	Animation         Animation
 	ApplicationCache  ApplicationCache
+	Audits            Audits
 	Browser           Browser
 	CSS               CSS
 	CacheStorage      CacheStorage
@@ -93,6 +95,7 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Accessibility:     accessibility.NewClient(conn),
 		Animation:         animation.NewClient(conn),
 		ApplicationCache:  applicationcache.NewClient(conn),
+		Audits:            audits.NewClient(conn),
 		Browser:           browser.NewClient(conn),
 		CSS:               css.NewClient(conn),
 		CacheStorage:      cachestorage.NewClient(conn),

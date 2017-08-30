@@ -179,7 +179,7 @@ type InternalPropertyDescriptor struct {
 
 // CallArgument Represents function call argument. Either remote object id objectId, primitive value, unserializable primitive value or neither of (for undefined) them should be specified.
 type CallArgument struct {
-	Value               json.RawMessage     `json:"value,omitempty"`               // Primitive value.
+	Value               json.RawMessage     `json:"value,omitempty"`               // Primitive value or serializable javascript object.
 	UnserializableValue UnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified.
 	ObjectID            *RemoteObjectID     `json:"objectId,omitempty"`            // Remote object handle.
 }

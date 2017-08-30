@@ -275,14 +275,34 @@ func NewRemoveAttributeArgs(nodeID NodeID, name string) *RemoveAttributeArgs {
 
 // GetOuterHTMLArgs represents the arguments for GetOuterHTML in the DOM domain.
 type GetOuterHTMLArgs struct {
-	NodeID NodeID `json:"nodeId"` // Id of the node to get markup for.
+	NodeID        *NodeID                 `json:"nodeId,omitempty"`        // Identifier of the node.
+	BackendNodeID *BackendNodeID          `json:"backendNodeId,omitempty"` // Identifier of the backend node.
+	ObjectID      *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node wrapper.
 }
 
 // NewGetOuterHTMLArgs initializes GetOuterHTMLArgs with the required arguments.
-func NewGetOuterHTMLArgs(nodeID NodeID) *GetOuterHTMLArgs {
+func NewGetOuterHTMLArgs() *GetOuterHTMLArgs {
 	args := new(GetOuterHTMLArgs)
-	args.NodeID = nodeID
+
 	return args
+}
+
+// SetNodeID sets the NodeID optional argument. Identifier of the node.
+func (a *GetOuterHTMLArgs) SetNodeID(nodeID NodeID) *GetOuterHTMLArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node.
+func (a *GetOuterHTMLArgs) SetBackendNodeID(backendNodeID BackendNodeID) *GetOuterHTMLArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
+}
+
+// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node wrapper.
+func (a *GetOuterHTMLArgs) SetObjectID(objectID runtime.RemoteObjectID) *GetOuterHTMLArgs {
+	a.ObjectID = &objectID
+	return a
 }
 
 // GetOuterHTMLReply represents the return values for GetOuterHTML in the DOM domain.
@@ -679,4 +699,65 @@ func NewGetRelayoutBoundaryArgs(nodeID NodeID) *GetRelayoutBoundaryArgs {
 // GetRelayoutBoundaryReply represents the return values for GetRelayoutBoundary in the DOM domain.
 type GetRelayoutBoundaryReply struct {
 	NodeID NodeID `json:"nodeId"` // Relayout boundary node id for the given node.
+}
+
+// DescribeNodeArgs represents the arguments for DescribeNode in the DOM domain.
+type DescribeNodeArgs struct {
+	NodeID        *NodeID                 `json:"nodeId,omitempty"`        // Identifier of the node.
+	BackendNodeID *BackendNodeID          `json:"backendNodeId,omitempty"` // Identifier of the backend node.
+	ObjectID      *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node wrapper.
+	// Depth The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+	//
+	// Note: This property is experimental.
+	Depth *int `json:"depth,omitempty"`
+	// Pierce Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+	//
+	// Note: This property is experimental.
+	Pierce *bool `json:"pierce,omitempty"`
+}
+
+// NewDescribeNodeArgs initializes DescribeNodeArgs with the required arguments.
+func NewDescribeNodeArgs() *DescribeNodeArgs {
+	args := new(DescribeNodeArgs)
+
+	return args
+}
+
+// SetNodeID sets the NodeID optional argument. Identifier of the node.
+func (a *DescribeNodeArgs) SetNodeID(nodeID NodeID) *DescribeNodeArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node.
+func (a *DescribeNodeArgs) SetBackendNodeID(backendNodeID BackendNodeID) *DescribeNodeArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
+}
+
+// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node wrapper.
+func (a *DescribeNodeArgs) SetObjectID(objectID runtime.RemoteObjectID) *DescribeNodeArgs {
+	a.ObjectID = &objectID
+	return a
+}
+
+// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+//
+// Note: This property is experimental.
+func (a *DescribeNodeArgs) SetDepth(depth int) *DescribeNodeArgs {
+	a.Depth = &depth
+	return a
+}
+
+// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+//
+// Note: This property is experimental.
+func (a *DescribeNodeArgs) SetPierce(pierce bool) *DescribeNodeArgs {
+	a.Pierce = &pierce
+	return a
+}
+
+// DescribeNodeReply represents the return values for DescribeNode in the DOM domain.
+type DescribeNodeReply struct {
+	Node Node `json:"node"` // Node description.
 }

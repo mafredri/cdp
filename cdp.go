@@ -8,6 +8,7 @@ import (
 	"github.com/mafredri/cdp/protocol/accessibility"
 	"github.com/mafredri/cdp/protocol/animation"
 	"github.com/mafredri/cdp/protocol/applicationcache"
+	"github.com/mafredri/cdp/protocol/audits"
 	"github.com/mafredri/cdp/protocol/browser"
 	"github.com/mafredri/cdp/protocol/cachestorage"
 	"github.com/mafredri/cdp/protocol/console"
@@ -155,6 +156,16 @@ type ApplicationCache interface {
 
 	// Event NetworkStateUpdated
 	NetworkStateUpdated(context.Context) (applicationcache.NetworkStateUpdatedClient, error)
+}
+
+// The Audits domain. Audits domain allows investigation of page violations and possible improvements.
+//
+// Note: This domain is experimental.
+type Audits interface {
+	// Command GetEncodedResponse
+	//
+	// Returns the response body and size if it were re-encoded with the specified settings. Only applies to images.
+	GetEncodedResponse(context.Context, *audits.GetEncodedResponseArgs) (*audits.GetEncodedResponseReply, error)
 }
 
 // The Browser domain. The Browser domain defines methods and events for browser managing.
@@ -601,6 +612,11 @@ type DOM interface {
 	//
 	// Note: This command is experimental.
 	GetRelayoutBoundary(context.Context, *dom.GetRelayoutBoundaryArgs) (*dom.GetRelayoutBoundaryReply, error)
+
+	// Command DescribeNode
+	//
+	// Describes node given its id, does not require domain to be enabled. Does not start tracking any objects, can be used for automation.
+	DescribeNode(context.Context, *dom.DescribeNodeArgs) (*dom.DescribeNodeReply, error)
 
 	// Event DocumentUpdated
 	//
@@ -1388,6 +1404,9 @@ type Memory interface {
 	// Command GetDOMCounters
 	GetDOMCounters(context.Context) (*memory.GetDOMCountersReply, error)
 
+	// Command PrepareForLeakDetection
+	PrepareForLeakDetection(context.Context) error
+
 	// Command SetPressureNotificationsSuppressed
 	//
 	// Enable/disable suppressing memory pressure notifications in all processes.
@@ -1474,12 +1493,12 @@ type Network interface {
 	// Note: This command is experimental.
 	GetAllCookies(context.Context) (*network.GetAllCookiesReply, error)
 
-	// Command DeleteCookie
+	// Command DeleteCookies
 	//
-	// Deletes browser cookie with given name, domain and path.
+	// Deletes browser cookies with matching name and url or domain/path pair.
 	//
 	// Note: This command is experimental.
-	DeleteCookie(context.Context, *network.DeleteCookieArgs) error
+	DeleteCookies(context.Context, *network.DeleteCookiesArgs) error
 
 	// Command SetCookie
 	//
@@ -1534,6 +1553,8 @@ type Network interface {
 	GetCertificate(context.Context, *network.GetCertificateArgs) (*network.GetCertificateReply, error)
 
 	// Command SetRequestInterceptionEnabled
+	//
+	// Sets the requests to intercept that match a the provided patterns.
 	//
 	// Note: This command is experimental.
 	SetRequestInterceptionEnabled(context.Context, *network.SetRequestInterceptionEnabledArgs) error
@@ -1924,11 +1945,23 @@ type Page interface {
 	// Brings page to front (activates tab).
 	BringToFront(context.Context) error
 
+	// Command SetDownloadBehavior
+	//
+	// Set the behavior when downloading a file.
+	//
+	// Note: This command is experimental.
+	SetDownloadBehavior(context.Context, *page.SetDownloadBehaviorArgs) error
+
 	// Event DOMContentEventFired
 	DOMContentEventFired(context.Context) (page.DOMContentEventFiredClient, error)
 
 	// Event LoadEventFired
 	LoadEventFired(context.Context) (page.LoadEventFiredClient, error)
+
+	// Event LifecycleEvent
+	//
+	// Fired for top level page lifecycle events such as navigation, load, paint, etc.
+	LifecycleEvent(context.Context) (page.LifecycleEventClient, error)
 
 	// Event FrameAttached
 	//
@@ -2160,6 +2193,11 @@ type Runtime interface {
 	//
 	// Runs script with given id in a given context.
 	RunScript(context.Context, *runtime.RunScriptArgs) (*runtime.RunScriptReply, error)
+
+	// Command QueryObjects
+	//
+	// Note: This command is experimental.
+	QueryObjects(context.Context, *runtime.QueryObjectsArgs) (*runtime.QueryObjectsReply, error)
 
 	// Event ExecutionContextCreated
 	//

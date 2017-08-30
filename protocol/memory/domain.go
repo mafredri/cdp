@@ -28,6 +28,15 @@ func (d *domainClient) GetDOMCounters(ctx context.Context) (reply *GetDOMCounter
 	return
 }
 
+// PrepareForLeakDetection invokes the Memory method.
+func (d *domainClient) PrepareForLeakDetection(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Memory.prepareForLeakDetection", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Memory", Op: "PrepareForLeakDetection", Err: err}
+	}
+	return
+}
+
 // SetPressureNotificationsSuppressed invokes the Memory method. Enable/disable suppressing memory pressure notifications in all processes.
 func (d *domainClient) SetPressureNotificationsSuppressed(ctx context.Context, args *SetPressureNotificationsSuppressedArgs) (err error) {
 	if args != nil {

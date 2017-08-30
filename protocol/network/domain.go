@@ -168,15 +168,15 @@ func (d *domainClient) GetAllCookies(ctx context.Context) (reply *GetAllCookiesR
 	return
 }
 
-// DeleteCookie invokes the Network method. Deletes browser cookie with given name, domain and path.
-func (d *domainClient) DeleteCookie(ctx context.Context, args *DeleteCookieArgs) (err error) {
+// DeleteCookies invokes the Network method. Deletes browser cookies with matching name and url or domain/path pair.
+func (d *domainClient) DeleteCookies(ctx context.Context, args *DeleteCookiesArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.deleteCookie", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.deleteCookies", args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.deleteCookie", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.deleteCookies", nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "DeleteCookie", Err: err}
+		err = &internal.OpError{Domain: "Network", Op: "DeleteCookies", Err: err}
 	}
 	return
 }
@@ -284,7 +284,7 @@ func (d *domainClient) GetCertificate(ctx context.Context, args *GetCertificateA
 	return
 }
 
-// SetRequestInterceptionEnabled invokes the Network method.
+// SetRequestInterceptionEnabled invokes the Network method. Sets the requests to intercept that match a the provided patterns.
 func (d *domainClient) SetRequestInterceptionEnabled(ctx context.Context, args *SetRequestInterceptionEnabledArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Network.setRequestInterceptionEnabled", args, nil, d.conn)
