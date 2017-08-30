@@ -1,6 +1,6 @@
 # cdp
 
-[![Build Status][travis-badge]][travis] [![Coverage Status][codecov-badge]][codecov] <!--[![Go Report Card][goreportcard-badge]][goreportcard]--> [![GoDoc][godoc-badge]][godoc]
+[![Build Status][travis-badge]][travis] [![Coverage Status][codecov-badge]][codecov] [![Go Report Card][goreportcard-badge]][goreportcard] [![GoDoc][godoc-badge]][godoc]
 
 Package `cdp` provides type-safe bindings for the [Chrome Debugging Protocol][devtool-protocol] (CDP), written in the Go programming language. The bindings are generated (by [cdpgen][cdpgen]) from the latest [tip-of-tree (tot)][tip-of-tree] protocol definitions and are mainly intended for use with Google Chrome or Chromium, however, they can be used with any debug target ([Node.js][node-debugging], [Edge][edge-diagnostics-adapter], [Safari][ios-webkit-debug-proxy], etc.) that implement the protocol.
 
