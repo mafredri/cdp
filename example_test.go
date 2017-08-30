@@ -81,7 +81,7 @@ func run(timeout time.Duration) error {
 
 	// Get the outer HTML for the page.
 	result, err := c.DOM.GetOuterHTML(ctx, &dom.GetOuterHTMLArgs{
-		NodeID: doc.Root.NodeID,
+		NodeID: &doc.Root.NodeID,
 	})
 	if err != nil {
 		return err
