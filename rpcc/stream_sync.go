@@ -10,11 +10,11 @@ import (
 // messageWriter and waits for message.next
 // to be called before loading the next.
 type syncMessageStore struct {
-	closers []func()
 	mu      sync.Mutex
 	writers map[string]streamWriter
 	backlog []*message
 	pending bool
+	closers []func()
 }
 
 func newSyncMessageStore() *syncMessageStore {
@@ -23,12 +23,12 @@ func newSyncMessageStore() *syncMessageStore {
 	}
 }
 
-func (s *syncMessageStore) register(method string, w streamWriter, conn *Conn) (unregister func(), err error) {
+func (s *syncMessageStore) subscribe(method string, w streamWriter, conn *Conn) (unsubscribe func(), err error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
 	if _, ok := s.writers[method]; ok {
-		return nil, fmt.Errorf("%s already registered", method)
+		return nil, fmt.Errorf("%s already subscribed", method)
 	}
 
 	remove, err := conn.listen(method, s)
@@ -38,16 +38,23 @@ func (s *syncMessageStore) register(method string, w streamWriter, conn *Conn) (
 
 	s.writers[method] = w
 
-	unreg := func() {
+	unsub := func() {
 		remove()
 
 		s.mu.Lock()
 		delete(s.writers, method)
+		if len(s.writers) == 0 {
+			// Either close has been called
+			// or all streams have closed.
+			s.writers = nil
+			s.backlog = nil
+			s.closers = nil
+		}
 		s.mu.Unlock()
 	}
-	s.closers = append(s.closers, unreg)
+	s.closers = append(s.closers, unsub)
 
-	return unreg, nil
+	return unsub, nil
 }
 
 func (s *syncMessageStore) close() {
@@ -122,8 +129,8 @@ func Sync(s ...Stream) (err error) {
 			return errors.New("rpcc: Sync: all Streams must share same Conn")
 		}
 
-		// Grab a lock on remove and keep it
-		// for the duration of the sync.
+		// The Stream lock must be held until the
+		// swap has been done for all streams.
 		sc.mu.Lock()
 		defer sc.mu.Unlock()
 
@@ -131,18 +138,17 @@ func Sync(s ...Stream) (err error) {
 			return errors.New("rpcc: Sync: Stream is closed")
 		}
 
-		// Register stream client with store.
-		unregister, err := store.register(sc.method, sc, sc.conn)
+		// Allow store to manage messages to streamClient.
+		unsub, err := store.subscribe(sc.method, sc, sc.conn)
 		if err != nil {
 			return errors.New("rpcc: Sync: " + err.Error())
 		}
 
-		// Delay listener swap until all Streams
-		// have been processed successfully.
+		// Delay listener swap until all Streams have been
+		// processed so that we can abort on error.
 		swap = append(swap, func() {
-			// Unsubscribe Stream from Conn listen.
-			sc.remove()
-			sc.remove = unregister
+			sc.remove()       // Prevent direct events from Conn.
+			sc.remove = unsub // Remove from store on Close.
 
 			// Clear stream messages to prevent sync issues.
 			sc.mbuf.clear()
