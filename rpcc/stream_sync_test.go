@@ -126,16 +126,17 @@ func TestSyncError(t *testing.T) {
 		name string
 		run  func() error
 	}{
-		{"Invalid stream", func() error { return Sync(&fakeStream{}) }},
+		{"Single stream", func() error { return Sync(s1) }},
+		{"Invalid stream", func() error { return Sync(&fakeStream{}, s1) }},
 		{"Duplicate stream", func() error { return Sync(s1, s2, s3) }},
 		{"Mixed Conn", func() error { return Sync(s1, s2, s4) }},
 		{"Closed Conn", func() error {
 			conn2.Close()
-			return Sync(s4)
+			return Sync(s4, s1)
 		}},
 		{"Closed Stream", func() error {
 			s3.Close()
-			return Sync(s3)
+			return Sync(s3, s1)
 		}},
 	}
 
