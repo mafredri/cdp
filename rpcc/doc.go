@@ -63,5 +63,12 @@ memory:
 	}
 	defer stream.Close()
 
+When order is important, two streams can be synchronized with Sync:
+
+	err := rpcc.Sync(stream1, stream2)
+	if err != nil {
+		// Handle error.
+	}
+
 */
 package rpcc

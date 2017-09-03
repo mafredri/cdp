@@ -104,8 +104,19 @@ func (s *syncMessageStore) load() {
 	s.backlog = s.backlog[1:]
 }
 
-// Sync synchronizes two or more Streams. On error there will be no
-// changes done to the Streams.
+// Sync takes two or more streams and sets them into synchronous operation,
+// relative to each other. This operation cannot be undone. If an error is
+// returned this function is no-op and the streams will continue in asynchronous
+// operation.
+//
+// All streams must belong to the same Conn and they must not be closed. Passing
+// multiple streams of the same method to Sync is not supported and will return
+// an error.
+//
+// When two streams, A and B, are in sync they will receive messages in the
+// order that they arrived on Conn. If A and B receive a message, in that order,
+// it will not be possible to receive the message from B before the message from
+// A has been received.
 func Sync(s ...Stream) (err error) {
 	store := newSyncMessageStore()
 	defer func() {
