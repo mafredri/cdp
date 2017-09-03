@@ -113,10 +113,13 @@ func (s *syncMessageStore) load() {
 // multiple streams of the same method to Sync is not supported and will return
 // an error.
 //
-// When two streams, A and B, are in sync they will receive messages in the
-// order that they arrived on Conn. If A and B receive a message, in that order,
-// it will not be possible to receive the message from B before the message from
-// A has been received.
+// A stream that is closed is removed and has no further affect on the streams
+// that were synchronized.
+//
+// When two streams, A and B, are in sync they will both receive messages in the
+// order that they arrived on Conn. If a message for both A and B arrives, in
+// that order, it will not be possible to receive the message from B before the
+// message from A has been received.
 func Sync(s ...Stream) (err error) {
 	if len(s) < 2 {
 		return errors.New("rpcc: Sync: two or more streams must be provided")
