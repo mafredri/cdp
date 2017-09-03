@@ -118,6 +118,10 @@ func (s *syncMessageStore) load() {
 // it will not be possible to receive the message from B before the message from
 // A has been received.
 func Sync(s ...Stream) (err error) {
+	if len(s) < 2 {
+		return errors.New("rpcc: Sync: two or more streams must be provided")
+	}
+
 	store := newSyncMessageStore()
 	defer func() {
 		if err != nil {
