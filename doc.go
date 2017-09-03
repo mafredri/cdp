@@ -102,6 +102,17 @@ coordinating between multiple event handlers:
 Ready must not be called concurrently while relying on the non-blocking
 behavior of Recv.
 
+Event clients can be synchronized, realtive to each other, when the order of
+events is important:
+
+	err := cdp.Sync(domContentEventFired, loadEventFired)
+	if err != nil {
+		// Handle error.
+	}
+
+Use the Ready channel to detect which synchronized event client is ready to
+Recv.
+
 */
 package cdp
 
