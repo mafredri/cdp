@@ -120,11 +120,11 @@ type AwaitPromiseReply struct {
 
 // CallFunctionOnArgs represents the arguments for CallFunctionOn in the Runtime domain.
 type CallFunctionOnArgs struct {
-	ObjectID            RemoteObjectID `json:"objectId"`                // Identifier of the object to call function on.
-	FunctionDeclaration string         `json:"functionDeclaration"`     // Declaration of the function to call.
-	Arguments           []CallArgument `json:"arguments,omitempty"`     // Call arguments. All call arguments must belong to the same JavaScript world as the target object.
-	Silent              *bool          `json:"silent,omitempty"`        // In silent mode exceptions thrown during evaluation are not reported and do not pause execution. Overrides setPauseOnException state.
-	ReturnByValue       *bool          `json:"returnByValue,omitempty"` // Whether the result is expected to be a JSON object which should be sent by value.
+	FunctionDeclaration string          `json:"functionDeclaration"`     // Declaration of the function to call.
+	ObjectID            *RemoteObjectID `json:"objectId,omitempty"`      // Identifier of the object to call function on. Either objectId or executionContextId should be specified.
+	Arguments           []CallArgument  `json:"arguments,omitempty"`     // Call arguments. All call arguments must belong to the same JavaScript world as the target object.
+	Silent              *bool           `json:"silent,omitempty"`        // In silent mode exceptions thrown during evaluation are not reported and do not pause execution. Overrides setPauseOnException state.
+	ReturnByValue       *bool           `json:"returnByValue,omitempty"` // Whether the result is expected to be a JSON object which should be sent by value.
 	// GeneratePreview Whether preview should be generated for the result.
 	//
 	// Note: This property is experimental.
@@ -132,16 +132,23 @@ type CallFunctionOnArgs struct {
 	// UserGesture Whether execution should be treated as initiated by user in the UI.
 	//
 	// Note: This property is experimental.
-	UserGesture  *bool `json:"userGesture,omitempty"`
-	AwaitPromise *bool `json:"awaitPromise,omitempty"` // Whether execution should await for resulting value and return once awaited promise is resolved.
+	UserGesture        *bool               `json:"userGesture,omitempty"`
+	AwaitPromise       *bool               `json:"awaitPromise,omitempty"`       // Whether execution should await for resulting value and return once awaited promise is resolved.
+	ExecutionContextID *ExecutionContextID `json:"executionContextId,omitempty"` // Specifies execution context which global object will be used to call function on. Either executionContextId or objectId should be specified.
+	ObjectGroup        *string             `json:"objectGroup,omitempty"`        // Symbolic group name that can be used to release multiple objects. If objectGroup is not specified and objectId is, objectGroup will be inherited from object.
 }
 
 // NewCallFunctionOnArgs initializes CallFunctionOnArgs with the required arguments.
-func NewCallFunctionOnArgs(objectID RemoteObjectID, functionDeclaration string) *CallFunctionOnArgs {
+func NewCallFunctionOnArgs(functionDeclaration string) *CallFunctionOnArgs {
 	args := new(CallFunctionOnArgs)
-	args.ObjectID = objectID
 	args.FunctionDeclaration = functionDeclaration
 	return args
+}
+
+// SetObjectID sets the ObjectID optional argument. Identifier of the object to call function on. Either objectId or executionContextId should be specified.
+func (a *CallFunctionOnArgs) SetObjectID(objectID RemoteObjectID) *CallFunctionOnArgs {
+	a.ObjectID = &objectID
+	return a
 }
 
 // SetArguments sets the Arguments optional argument. Call arguments. All call arguments must belong to the same JavaScript world as the target object.
@@ -181,6 +188,18 @@ func (a *CallFunctionOnArgs) SetUserGesture(userGesture bool) *CallFunctionOnArg
 // SetAwaitPromise sets the AwaitPromise optional argument. Whether execution should await for resulting value and return once awaited promise is resolved.
 func (a *CallFunctionOnArgs) SetAwaitPromise(awaitPromise bool) *CallFunctionOnArgs {
 	a.AwaitPromise = &awaitPromise
+	return a
+}
+
+// SetExecutionContextID sets the ExecutionContextID optional argument. Specifies execution context which global object will be used to call function on. Either executionContextId or objectId should be specified.
+func (a *CallFunctionOnArgs) SetExecutionContextID(executionContextID ExecutionContextID) *CallFunctionOnArgs {
+	a.ExecutionContextID = &executionContextID
+	return a
+}
+
+// SetObjectGroup sets the ObjectGroup optional argument. Symbolic group name that can be used to release multiple objects. If objectGroup is not specified and objectId is, objectGroup will be inherited from object.
+func (a *CallFunctionOnArgs) SetObjectGroup(objectGroup string) *CallFunctionOnArgs {
+	a.ObjectGroup = &objectGroup
 	return a
 }
 

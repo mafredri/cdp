@@ -7,9 +7,13 @@ type CacheID string
 
 // DataEntry Data entry.
 type DataEntry struct {
-	RequestURL      string   `json:"requestURL"`      // Request URL.
-	ResponseTime    float64  `json:"responseTime"`    // Number of seconds since epoch.
-	ResponseHeaders []Header `json:"responseHeaders"` // Response headers
+	RequestURL         string   `json:"requestURL"`         // Request URL.
+	RequestMethod      string   `json:"requestMethod"`      // Request method.
+	RequestHeaders     []Header `json:"requestHeaders"`     // Request headers
+	ResponseTime       float64  `json:"responseTime"`       // Number of seconds since epoch.
+	ResponseStatus     int      `json:"responseStatus"`     // HTTP response status code.
+	ResponseStatusText string   `json:"responseStatusText"` // HTTP response status text.
+	ResponseHeaders    []Header `json:"responseHeaders"`    // Response headers
 }
 
 // Cache Cache identifier.
