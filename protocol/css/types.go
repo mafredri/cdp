@@ -3,10 +3,6 @@
 package css
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-
 	"github.com/mafredri/cdp/protocol/dom"
 )
 
@@ -14,66 +10,28 @@ import (
 type StyleSheetID string
 
 // StyleSheetOrigin Stylesheet type: "injected" for stylesheets injected via extension, "user-agent" for user-agent stylesheets, "inspector" for stylesheets created by the inspector (i.e. those holding the "via inspector" rules), "regular" for regular stylesheets.
-type StyleSheetOrigin int
+type StyleSheetOrigin string
 
 // StyleSheetOrigin as enums.
 const (
-	StyleSheetOriginNotSet StyleSheetOrigin = iota
-	StyleSheetOriginInjected
-	StyleSheetOriginUserAgent
-	StyleSheetOriginInspector
-	StyleSheetOriginRegular
+	StyleSheetOriginNotSet    StyleSheetOrigin = ""
+	StyleSheetOriginInjected  StyleSheetOrigin = "injected"
+	StyleSheetOriginUserAgent StyleSheetOrigin = "user-agent"
+	StyleSheetOriginInspector StyleSheetOrigin = "inspector"
+	StyleSheetOriginRegular   StyleSheetOrigin = "regular"
 )
 
-// Valid returns true if enum is set.
 func (e StyleSheetOrigin) Valid() bool {
-	return e >= 1 && e <= 4
+	switch e {
+	case "injected", "user-agent", "inspector", "regular":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e StyleSheetOrigin) String() string {
-	switch e {
-	case 0:
-		return "StyleSheetOriginNotSet"
-	case 1:
-		return "injected"
-	case 2:
-		return "user-agent"
-	case 3:
-		return "inspector"
-	case 4:
-		return "regular"
-	}
-	return fmt.Sprintf("StyleSheetOrigin(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e StyleSheetOrigin) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("css.StyleSheetOrigin: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *StyleSheetOrigin) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"injected\"":
-		*e = 1
-	case "\"user-agent\"":
-		*e = 2
-	case "\"inspector\"":
-		*e = 3
-	case "\"regular\"":
-		*e = 4
-	default:
-		return fmt.Errorf("css.StyleSheetOrigin: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }
 
 // PseudoElementMatches CSS rule collection for a single pseudo style.

@@ -15,24 +15,24 @@ import (
 type ResourceType = internal.PageResourceType
 
 // ResourceType Resource type as it was perceived by the rendering engine.
-//type ResourceType int
+//type ResourceType string
 
 // ResourceType as enums.
 const (
-	ResourceTypeNotSet ResourceType = iota
-	ResourceTypeDocument
-	ResourceTypeStylesheet
-	ResourceTypeImage
-	ResourceTypeMedia
-	ResourceTypeFont
-	ResourceTypeScript
-	ResourceTypeTextTrack
-	ResourceTypeXHR
-	ResourceTypeFetch
-	ResourceTypeEventSource
-	ResourceTypeWebSocket
-	ResourceTypeManifest
-	ResourceTypeOther
+	ResourceTypeNotSet      ResourceType = ""
+	ResourceTypeDocument    ResourceType = "Document"
+	ResourceTypeStylesheet  ResourceType = "Stylesheet"
+	ResourceTypeImage       ResourceType = "Image"
+	ResourceTypeMedia       ResourceType = "Media"
+	ResourceTypeFont        ResourceType = "Font"
+	ResourceTypeScript      ResourceType = "Script"
+	ResourceTypeTextTrack   ResourceType = "TextTrack"
+	ResourceTypeXHR         ResourceType = "XHR"
+	ResourceTypeFetch       ResourceType = "Fetch"
+	ResourceTypeEventSource ResourceType = "EventSource"
+	ResourceTypeWebSocket   ResourceType = "WebSocket"
+	ResourceTypeManifest    ResourceType = "Manifest"
+	ResourceTypeOther       ResourceType = "Other"
 )
 
 // FrameID Unique frame identifier.

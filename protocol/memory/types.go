@@ -2,61 +2,25 @@
 
 package memory
 
-import (
-	"encoding/json"
-	"errors"
-	"fmt"
-)
-
 // PressureLevel Memory pressure level.
-type PressureLevel int
+type PressureLevel string
 
 // PressureLevel as enums.
 const (
-	PressureLevelNotSet PressureLevel = iota
-	PressureLevelModerate
-	PressureLevelCritical
+	PressureLevelNotSet   PressureLevel = ""
+	PressureLevelModerate PressureLevel = "moderate"
+	PressureLevelCritical PressureLevel = "critical"
 )
 
-// Valid returns true if enum is set.
 func (e PressureLevel) Valid() bool {
-	return e >= 1 && e <= 2
+	switch e {
+	case "moderate", "critical":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e PressureLevel) String() string {
-	switch e {
-	case 0:
-		return "PressureLevelNotSet"
-	case 1:
-		return "moderate"
-	case 2:
-		return "critical"
-	}
-	return fmt.Sprintf("PressureLevel(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e PressureLevel) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("memory.PressureLevel: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *PressureLevel) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"moderate\"":
-		*e = 1
-	case "\"critical\"":
-		*e = 2
-	default:
-		return fmt.Errorf("memory.PressureLevel: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }

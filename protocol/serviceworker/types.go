@@ -3,10 +3,6 @@
 package serviceworker
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-
 	"github.com/mafredri/cdp/protocol/target"
 )
 
@@ -18,139 +14,55 @@ type Registration struct {
 }
 
 // VersionRunningStatus
-type VersionRunningStatus int
+type VersionRunningStatus string
 
 // VersionRunningStatus as enums.
 const (
-	VersionRunningStatusNotSet VersionRunningStatus = iota
-	VersionRunningStatusStopped
-	VersionRunningStatusStarting
-	VersionRunningStatusRunning
-	VersionRunningStatusStopping
+	VersionRunningStatusNotSet   VersionRunningStatus = ""
+	VersionRunningStatusStopped  VersionRunningStatus = "stopped"
+	VersionRunningStatusStarting VersionRunningStatus = "starting"
+	VersionRunningStatusRunning  VersionRunningStatus = "running"
+	VersionRunningStatusStopping VersionRunningStatus = "stopping"
 )
 
-// Valid returns true if enum is set.
 func (e VersionRunningStatus) Valid() bool {
-	return e >= 1 && e <= 4
+	switch e {
+	case "stopped", "starting", "running", "stopping":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e VersionRunningStatus) String() string {
-	switch e {
-	case 0:
-		return "VersionRunningStatusNotSet"
-	case 1:
-		return "stopped"
-	case 2:
-		return "starting"
-	case 3:
-		return "running"
-	case 4:
-		return "stopping"
-	}
-	return fmt.Sprintf("VersionRunningStatus(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e VersionRunningStatus) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("serviceworker.VersionRunningStatus: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *VersionRunningStatus) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"stopped\"":
-		*e = 1
-	case "\"starting\"":
-		*e = 2
-	case "\"running\"":
-		*e = 3
-	case "\"stopping\"":
-		*e = 4
-	default:
-		return fmt.Errorf("serviceworker.VersionRunningStatus: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }
 
 // VersionStatus
-type VersionStatus int
+type VersionStatus string
 
 // VersionStatus as enums.
 const (
-	VersionStatusNotSet VersionStatus = iota
-	VersionStatusNew
-	VersionStatusInstalling
-	VersionStatusInstalled
-	VersionStatusActivating
-	VersionStatusActivated
-	VersionStatusRedundant
+	VersionStatusNotSet     VersionStatus = ""
+	VersionStatusNew        VersionStatus = "new"
+	VersionStatusInstalling VersionStatus = "installing"
+	VersionStatusInstalled  VersionStatus = "installed"
+	VersionStatusActivating VersionStatus = "activating"
+	VersionStatusActivated  VersionStatus = "activated"
+	VersionStatusRedundant  VersionStatus = "redundant"
 )
 
-// Valid returns true if enum is set.
 func (e VersionStatus) Valid() bool {
-	return e >= 1 && e <= 6
+	switch e {
+	case "new", "installing", "installed", "activating", "activated", "redundant":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e VersionStatus) String() string {
-	switch e {
-	case 0:
-		return "VersionStatusNotSet"
-	case 1:
-		return "new"
-	case 2:
-		return "installing"
-	case 3:
-		return "installed"
-	case 4:
-		return "activating"
-	case 5:
-		return "activated"
-	case 6:
-		return "redundant"
-	}
-	return fmt.Sprintf("VersionStatus(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e VersionStatus) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("serviceworker.VersionStatus: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *VersionStatus) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"new\"":
-		*e = 1
-	case "\"installing\"":
-		*e = 2
-	case "\"installed\"":
-		*e = 3
-	case "\"activating\"":
-		*e = 4
-	case "\"activated\"":
-		*e = 5
-	case "\"redundant\"":
-		*e = 6
-	default:
-		return fmt.Errorf("serviceworker.VersionStatus: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }
 
 // Version ServiceWorker version.

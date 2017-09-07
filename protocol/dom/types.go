@@ -4,8 +4,6 @@ package dom
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 )
 
 // NodeID Unique DOM node identifier.
@@ -26,179 +24,63 @@ type BackendNode struct {
 }
 
 // PseudoType Pseudo element type.
-type PseudoType int
+type PseudoType string
 
 // PseudoType as enums.
 const (
-	PseudoTypeNotSet PseudoType = iota
-	PseudoTypeFirstLine
-	PseudoTypeFirstLetter
-	PseudoTypeBefore
-	PseudoTypeAfter
-	PseudoTypeBackdrop
-	PseudoTypeSelection
-	PseudoTypeFirstLineInherited
-	PseudoTypeScrollbar
-	PseudoTypeScrollbarThumb
-	PseudoTypeScrollbarButton
-	PseudoTypeScrollbarTrack
-	PseudoTypeScrollbarTrackPiece
-	PseudoTypeScrollbarCorner
-	PseudoTypeResizer
-	PseudoTypeInputListButton
+	PseudoTypeNotSet              PseudoType = ""
+	PseudoTypeFirstLine           PseudoType = "first-line"
+	PseudoTypeFirstLetter         PseudoType = "first-letter"
+	PseudoTypeBefore              PseudoType = "before"
+	PseudoTypeAfter               PseudoType = "after"
+	PseudoTypeBackdrop            PseudoType = "backdrop"
+	PseudoTypeSelection           PseudoType = "selection"
+	PseudoTypeFirstLineInherited  PseudoType = "first-line-inherited"
+	PseudoTypeScrollbar           PseudoType = "scrollbar"
+	PseudoTypeScrollbarThumb      PseudoType = "scrollbar-thumb"
+	PseudoTypeScrollbarButton     PseudoType = "scrollbar-button"
+	PseudoTypeScrollbarTrack      PseudoType = "scrollbar-track"
+	PseudoTypeScrollbarTrackPiece PseudoType = "scrollbar-track-piece"
+	PseudoTypeScrollbarCorner     PseudoType = "scrollbar-corner"
+	PseudoTypeResizer             PseudoType = "resizer"
+	PseudoTypeInputListButton     PseudoType = "input-list-button"
 )
 
-// Valid returns true if enum is set.
 func (e PseudoType) Valid() bool {
-	return e >= 1 && e <= 15
+	switch e {
+	case "first-line", "first-letter", "before", "after", "backdrop", "selection", "first-line-inherited", "scrollbar", "scrollbar-thumb", "scrollbar-button", "scrollbar-track", "scrollbar-track-piece", "scrollbar-corner", "resizer", "input-list-button":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e PseudoType) String() string {
-	switch e {
-	case 0:
-		return "PseudoTypeNotSet"
-	case 1:
-		return "first-line"
-	case 2:
-		return "first-letter"
-	case 3:
-		return "before"
-	case 4:
-		return "after"
-	case 5:
-		return "backdrop"
-	case 6:
-		return "selection"
-	case 7:
-		return "first-line-inherited"
-	case 8:
-		return "scrollbar"
-	case 9:
-		return "scrollbar-thumb"
-	case 10:
-		return "scrollbar-button"
-	case 11:
-		return "scrollbar-track"
-	case 12:
-		return "scrollbar-track-piece"
-	case 13:
-		return "scrollbar-corner"
-	case 14:
-		return "resizer"
-	case 15:
-		return "input-list-button"
-	}
-	return fmt.Sprintf("PseudoType(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e PseudoType) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("dom.PseudoType: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *PseudoType) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"first-line\"":
-		*e = 1
-	case "\"first-letter\"":
-		*e = 2
-	case "\"before\"":
-		*e = 3
-	case "\"after\"":
-		*e = 4
-	case "\"backdrop\"":
-		*e = 5
-	case "\"selection\"":
-		*e = 6
-	case "\"first-line-inherited\"":
-		*e = 7
-	case "\"scrollbar\"":
-		*e = 8
-	case "\"scrollbar-thumb\"":
-		*e = 9
-	case "\"scrollbar-button\"":
-		*e = 10
-	case "\"scrollbar-track\"":
-		*e = 11
-	case "\"scrollbar-track-piece\"":
-		*e = 12
-	case "\"scrollbar-corner\"":
-		*e = 13
-	case "\"resizer\"":
-		*e = 14
-	case "\"input-list-button\"":
-		*e = 15
-	default:
-		return fmt.Errorf("dom.PseudoType: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }
 
 // ShadowRootType Shadow root type.
-type ShadowRootType int
+type ShadowRootType string
 
 // ShadowRootType as enums.
 const (
-	ShadowRootTypeNotSet ShadowRootType = iota
-	ShadowRootTypeUserAgent
-	ShadowRootTypeOpen
-	ShadowRootTypeClosed
+	ShadowRootTypeNotSet    ShadowRootType = ""
+	ShadowRootTypeUserAgent ShadowRootType = "user-agent"
+	ShadowRootTypeOpen      ShadowRootType = "open"
+	ShadowRootTypeClosed    ShadowRootType = "closed"
 )
 
-// Valid returns true if enum is set.
 func (e ShadowRootType) Valid() bool {
-	return e >= 1 && e <= 3
+	switch e {
+	case "user-agent", "open", "closed":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e ShadowRootType) String() string {
-	switch e {
-	case 0:
-		return "ShadowRootTypeNotSet"
-	case 1:
-		return "user-agent"
-	case 2:
-		return "open"
-	case 3:
-		return "closed"
-	}
-	return fmt.Sprintf("ShadowRootType(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e ShadowRootType) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("dom.ShadowRootType: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *ShadowRootType) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"user-agent\"":
-		*e = 1
-	case "\"open\"":
-		*e = 2
-	case "\"closed\"":
-		*e = 3
-	default:
-		return fmt.Errorf("dom.ShadowRootType: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }
 
 // RGBA A structure holding an RGBA color.

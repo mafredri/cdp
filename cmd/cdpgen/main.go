@@ -22,7 +22,7 @@ import (
 // Global constants.
 const (
 	OptionalPropPrefix = ""
-	realEnum           = true
+	realEnum           = false
 )
 
 var (
@@ -946,8 +946,18 @@ func (g *Generator) domainTypeEnum(d proto.Domain, t proto.AnyType) {
 	if t.Type != "string" {
 		log.Panicf("unknown enum type: %s", t.Type)
 	}
+
+	// Verify assumption about enums never being the empty string, this
+	// allows us to consider optional enums as type string instead of
+	// *string when encoding to JSON (omitempty).
+	for _, e := range t.Enum {
+		if e == "" {
+			panic("enum " + t.Name(d) + " has unexpected empty enum value")
+		}
+	}
+
+	name := strings.Title(t.Name(d))
 	if realEnum {
-		name := strings.Title(t.Name(d))
 		g.Printf("int\n\n")
 
 		if name != "PageResourceType" {
@@ -1020,73 +1030,58 @@ func (e *%[1]s) UnmarshalJSON(data []byte) error {
 	return nil
 }`, g.pkg, name)
 	} else {
-		g.Printf(`string
+		g.Printf("string\n\n")
+
+		if name != "PageResourceType" {
+			g.Printf(`
+// %s as enums.
+const (`, name)
+			format := "\n\t%s%s %s = %q"
+			if !isCircular {
+				g.Printf(format, name, "NotSet", name, "")
+			} else {
+				g.Printf19(format, name, "NotSet", name, "")
+				g.Printf18(format, name, "NotSet", "protocol."+d.Name()+name, "")
+			}
+
+			for _, e := range t.Enum {
+				if !isCircular {
+					g.Printf(format, name, e.Name(), name, e)
+				} else {
+					g.Printf19(format, name, e.Name(), name, e)
+					g.Printf18(format, name, e.Name(), "protocol."+d.Name()+name, e)
+				}
+			}
+			g.Printf(`
+)
+`)
+			if isCircular {
+				g.commitType()
+				g.beginType()
+			}
+		}
+
+		var enumValues []string
+		for _, e := range t.Enum {
+			enumValues = append(enumValues, fmt.Sprintf("%q", e))
+		}
+
+		g.Printf(`
+func (e %[1]s) Valid() bool {
+	switch e {
+	case %[2]s:
+		return true
+	default:
+		return false
+	}
+}
 
 func (e %[1]s) String() string {
 	return string(e)
 }
-
-// %[1]s types.
-const (
-`, t.Name(d))
-		for _, e := range t.Enum {
-			g.Printf("\t%s %s = %q\n", t.Name(d)+e.Name(), t.Name(d), e)
-		}
-		g.Printf(")")
+`, t.Name(d), strings.Join(enumValues, ", "))
 	}
 
-	g.TestPrintf(`
-func Test%[1]s_Marshal(t *testing.T) {
-	var v %[1]s
-
-	// Test empty.
-	b, err := json.Marshal(&v)
-	if err != nil {
-		t.Errorf("Marshal() got %%v, want no error", err)
-	}
-	if string(b) != "null" {
-		t.Errorf("Marshal() got %%s, want null", b)
-	}
-	err = json.Unmarshal(b, &v)
-	if err != nil {
-		t.Errorf("Unmarshal() got %%v, want no error", err)
-	}
-
-	// Test bad input.
-	v = 9001
-	_, err = json.Marshal(&v)
-	if err == nil {
-		t.Error("Marshal(9001) got no error, want error")
-	}
-	err = json.Unmarshal([]byte("9001"), &v)
-	if err == nil {
-		t.Error("Unmarshal(9001) got no error, want error")
-	}
-`, t.Name(d))
-	for i, e := range t.Enum {
-		i := i + 1
-		g.TestPrintf(`
-	// Test %s.
-	v = %d
-	b, err = json.Marshal(&v)
-	if err != nil {
-		t.Errorf("Marshal() got %%v, want no error", err)
-	}
-	if strings.Contains(v.String(), string(b)) {
-		t.Errorf("Marshal() got %%s, want ~~ %%s", b, v.String())
-	}
-	err = json.Unmarshal(b, &v)
-	if err != nil {
-		t.Errorf("Unmarshal() got %%v, want no error", err)
-	}
-	if v != %d {
-		t.Errorf("Unmarshal(%d): v == %%d, want %d", v)
-	}
-	`, e.Name(), i, i, i, i)
-	}
-	g.TestPrintf(`
-}
-`)
 	if isCircular {
 		g.typebuf.Reset()
 	}
