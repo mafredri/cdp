@@ -10,24 +10,24 @@ import (
 )
 
 // ResourceType Resource type as it was perceived by the rendering engine.
-//type ResourceType int
+//type ResourceType string
 
 // ResourceType as enums.
 const (
-	ResourceTypeNotSet protocol.PageResourceType = iota
-	ResourceTypeDocument
-	ResourceTypeStylesheet
-	ResourceTypeImage
-	ResourceTypeMedia
-	ResourceTypeFont
-	ResourceTypeScript
-	ResourceTypeTextTrack
-	ResourceTypeXHR
-	ResourceTypeFetch
-	ResourceTypeEventSource
-	ResourceTypeWebSocket
-	ResourceTypeManifest
-	ResourceTypeOther
+	ResourceTypeNotSet      protocol.PageResourceType = ""
+	ResourceTypeDocument    protocol.PageResourceType = "Document"
+	ResourceTypeStylesheet  protocol.PageResourceType = "Stylesheet"
+	ResourceTypeImage       protocol.PageResourceType = "Image"
+	ResourceTypeMedia       protocol.PageResourceType = "Media"
+	ResourceTypeFont        protocol.PageResourceType = "Font"
+	ResourceTypeScript      protocol.PageResourceType = "Script"
+	ResourceTypeTextTrack   protocol.PageResourceType = "TextTrack"
+	ResourceTypeXHR         protocol.PageResourceType = "XHR"
+	ResourceTypeFetch       protocol.PageResourceType = "Fetch"
+	ResourceTypeEventSource protocol.PageResourceType = "EventSource"
+	ResourceTypeWebSocket   protocol.PageResourceType = "WebSocket"
+	ResourceTypeManifest    protocol.PageResourceType = "Manifest"
+	ResourceTypeOther       protocol.PageResourceType = "Other"
 )
 
 // FrameID Unique frame identifier.

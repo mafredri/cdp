@@ -5,7 +5,6 @@ package runtime
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"time"
 )
 
@@ -16,66 +15,28 @@ type ScriptID string
 type RemoteObjectID string
 
 // UnserializableValue Primitive value which cannot be JSON-stringified.
-type UnserializableValue int
+type UnserializableValue string
 
 // UnserializableValue as enums.
 const (
-	UnserializableValueNotSet UnserializableValue = iota
-	UnserializableValueInfinity
-	UnserializableValueNaN
-	UnserializableValueNegativeInfinity
-	UnserializableValueNegative0
+	UnserializableValueNotSet           UnserializableValue = ""
+	UnserializableValueInfinity         UnserializableValue = "Infinity"
+	UnserializableValueNaN              UnserializableValue = "NaN"
+	UnserializableValueNegativeInfinity UnserializableValue = "-Infinity"
+	UnserializableValueNegative0        UnserializableValue = "-0"
 )
 
-// Valid returns true if enum is set.
 func (e UnserializableValue) Valid() bool {
-	return e >= 1 && e <= 4
+	switch e {
+	case "Infinity", "NaN", "-Infinity", "-0":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e UnserializableValue) String() string {
-	switch e {
-	case 0:
-		return "UnserializableValueNotSet"
-	case 1:
-		return "Infinity"
-	case 2:
-		return "NaN"
-	case 3:
-		return "-Infinity"
-	case 4:
-		return "-0"
-	}
-	return fmt.Sprintf("UnserializableValue(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e UnserializableValue) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("runtime.UnserializableValue: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *UnserializableValue) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"Infinity\"":
-		*e = 1
-	case "\"NaN\"":
-		*e = 2
-	case "\"-Infinity\"":
-		*e = 3
-	case "\"-0\"":
-		*e = 4
-	default:
-		return fmt.Errorf("runtime.UnserializableValue: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }
 
 // RemoteObject Mirror object referencing original JavaScript object.

@@ -2,76 +2,32 @@
 
 package browser
 
-import (
-	"encoding/json"
-	"errors"
-	"fmt"
-)
-
 // WindowID
 type WindowID int
 
 // WindowState The state of the browser window.
-type WindowState int
+type WindowState string
 
 // WindowState as enums.
 const (
-	WindowStateNotSet WindowState = iota
-	WindowStateNormal
-	WindowStateMinimized
-	WindowStateMaximized
-	WindowStateFullscreen
+	WindowStateNotSet     WindowState = ""
+	WindowStateNormal     WindowState = "normal"
+	WindowStateMinimized  WindowState = "minimized"
+	WindowStateMaximized  WindowState = "maximized"
+	WindowStateFullscreen WindowState = "fullscreen"
 )
 
-// Valid returns true if enum is set.
 func (e WindowState) Valid() bool {
-	return e >= 1 && e <= 4
+	switch e {
+	case "normal", "minimized", "maximized", "fullscreen":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e WindowState) String() string {
-	switch e {
-	case 0:
-		return "WindowStateNotSet"
-	case 1:
-		return "normal"
-	case 2:
-		return "minimized"
-	case 3:
-		return "maximized"
-	case 4:
-		return "fullscreen"
-	}
-	return fmt.Sprintf("WindowState(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e WindowState) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("browser.WindowState: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *WindowState) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"normal\"":
-		*e = 1
-	case "\"minimized\"":
-		*e = 2
-	case "\"maximized\"":
-		*e = 3
-	case "\"fullscreen\"":
-		*e = 4
-	default:
-		return fmt.Errorf("browser.WindowState: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }
 
 // Bounds Browser window bounds information

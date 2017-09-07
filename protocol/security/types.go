@@ -2,139 +2,57 @@
 
 package security
 
-import (
-	"encoding/json"
-	"errors"
-	"fmt"
-)
-
 // CertificateID An internal certificate ID value.
 type CertificateID int
 
 // MixedContentType A description of mixed content (HTTP resources on HTTPS pages), as defined by https://www.w3.org/TR/mixed-content/#categories
-type MixedContentType int
+type MixedContentType string
 
 // MixedContentType as enums.
 const (
-	MixedContentTypeNotSet MixedContentType = iota
-	MixedContentTypeBlockable
-	MixedContentTypeOptionallyBlockable
-	MixedContentTypeNone
+	MixedContentTypeNotSet              MixedContentType = ""
+	MixedContentTypeBlockable           MixedContentType = "blockable"
+	MixedContentTypeOptionallyBlockable MixedContentType = "optionally-blockable"
+	MixedContentTypeNone                MixedContentType = "none"
 )
 
-// Valid returns true if enum is set.
 func (e MixedContentType) Valid() bool {
-	return e >= 1 && e <= 3
+	switch e {
+	case "blockable", "optionally-blockable", "none":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e MixedContentType) String() string {
-	switch e {
-	case 0:
-		return "MixedContentTypeNotSet"
-	case 1:
-		return "blockable"
-	case 2:
-		return "optionally-blockable"
-	case 3:
-		return "none"
-	}
-	return fmt.Sprintf("MixedContentType(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e MixedContentType) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("security.MixedContentType: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *MixedContentType) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"blockable\"":
-		*e = 1
-	case "\"optionally-blockable\"":
-		*e = 2
-	case "\"none\"":
-		*e = 3
-	default:
-		return fmt.Errorf("security.MixedContentType: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }
 
 // State The security level of a page or resource.
-type State int
+type State string
 
 // State as enums.
 const (
-	StateNotSet State = iota
-	StateUnknown
-	StateNeutral
-	StateInsecure
-	StateSecure
-	StateInfo
+	StateNotSet   State = ""
+	StateUnknown  State = "unknown"
+	StateNeutral  State = "neutral"
+	StateInsecure State = "insecure"
+	StateSecure   State = "secure"
+	StateInfo     State = "info"
 )
 
-// Valid returns true if enum is set.
 func (e State) Valid() bool {
-	return e >= 1 && e <= 5
+	switch e {
+	case "unknown", "neutral", "insecure", "secure", "info":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e State) String() string {
-	switch e {
-	case 0:
-		return "StateNotSet"
-	case 1:
-		return "unknown"
-	case 2:
-		return "neutral"
-	case 3:
-		return "insecure"
-	case 4:
-		return "secure"
-	case 5:
-		return "info"
-	}
-	return fmt.Sprintf("State(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e State) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("security.State: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *State) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"unknown\"":
-		*e = 1
-	case "\"neutral\"":
-		*e = 2
-	case "\"insecure\"":
-		*e = 3
-	case "\"secure\"":
-		*e = 4
-	case "\"info\"":
-		*e = 5
-	default:
-		return fmt.Errorf("security.State: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }
 
 // StateExplanation An explanation of an factor contributing to the security state.
@@ -158,54 +76,24 @@ type InsecureContentStatus struct {
 }
 
 // CertificateErrorAction The action to take when a certificate error occurs. continue will continue processing the request and cancel will cancel the request.
-type CertificateErrorAction int
+type CertificateErrorAction string
 
 // CertificateErrorAction as enums.
 const (
-	CertificateErrorActionNotSet CertificateErrorAction = iota
-	CertificateErrorActionContinue
-	CertificateErrorActionCancel
+	CertificateErrorActionNotSet   CertificateErrorAction = ""
+	CertificateErrorActionContinue CertificateErrorAction = "continue"
+	CertificateErrorActionCancel   CertificateErrorAction = "cancel"
 )
 
-// Valid returns true if enum is set.
 func (e CertificateErrorAction) Valid() bool {
-	return e >= 1 && e <= 2
+	switch e {
+	case "continue", "cancel":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e CertificateErrorAction) String() string {
-	switch e {
-	case 0:
-		return "CertificateErrorActionNotSet"
-	case 1:
-		return "continue"
-	case 2:
-		return "cancel"
-	}
-	return fmt.Sprintf("CertificateErrorAction(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e CertificateErrorAction) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("security.CertificateErrorAction: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *CertificateErrorAction) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"continue\"":
-		*e = 1
-	case "\"cancel\"":
-		*e = 2
-	default:
-		return fmt.Errorf("security.CertificateErrorAction: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }

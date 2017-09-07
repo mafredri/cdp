@@ -5,7 +5,6 @@ package input
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"time"
 )
 
@@ -25,61 +24,27 @@ type TouchPoint struct {
 // GestureSourceType
 //
 // Note: This type is experimental.
-type GestureSourceType int
+type GestureSourceType string
 
 // GestureSourceType as enums.
 const (
-	GestureSourceTypeNotSet GestureSourceType = iota
-	GestureSourceTypeDefault
-	GestureSourceTypeTouch
-	GestureSourceTypeMouse
+	GestureSourceTypeNotSet  GestureSourceType = ""
+	GestureSourceTypeDefault GestureSourceType = "default"
+	GestureSourceTypeTouch   GestureSourceType = "touch"
+	GestureSourceTypeMouse   GestureSourceType = "mouse"
 )
 
-// Valid returns true if enum is set.
 func (e GestureSourceType) Valid() bool {
-	return e >= 1 && e <= 3
+	switch e {
+	case "default", "touch", "mouse":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e GestureSourceType) String() string {
-	switch e {
-	case 0:
-		return "GestureSourceTypeNotSet"
-	case 1:
-		return "default"
-	case 2:
-		return "touch"
-	case 3:
-		return "mouse"
-	}
-	return fmt.Sprintf("GestureSourceType(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e GestureSourceType) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("input.GestureSourceType: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *GestureSourceType) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"default\"":
-		*e = 1
-	case "\"touch\"":
-		*e = 2
-	case "\"mouse\"":
-		*e = 3
-	default:
-		return fmt.Errorf("input.GestureSourceType: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }
 
 // TimeSinceEpoch UTC time in seconds, counted from January 1, 1970.

@@ -3,10 +3,6 @@
 package overlay
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-
 	"github.com/mafredri/cdp/protocol/dom"
 )
 
@@ -28,59 +24,25 @@ type HighlightConfig struct {
 }
 
 // InspectMode
-type InspectMode int
+type InspectMode string
 
 // InspectMode as enums.
 const (
-	InspectModeNotSet InspectMode = iota
-	InspectModeSearchForNode
-	InspectModeSearchForUAShadowDOM
-	InspectModeNone
+	InspectModeNotSet               InspectMode = ""
+	InspectModeSearchForNode        InspectMode = "searchForNode"
+	InspectModeSearchForUAShadowDOM InspectMode = "searchForUAShadowDOM"
+	InspectModeNone                 InspectMode = "none"
 )
 
-// Valid returns true if enum is set.
 func (e InspectMode) Valid() bool {
-	return e >= 1 && e <= 3
+	switch e {
+	case "searchForNode", "searchForUAShadowDOM", "none":
+		return true
+	default:
+		return false
+	}
 }
 
 func (e InspectMode) String() string {
-	switch e {
-	case 0:
-		return "InspectModeNotSet"
-	case 1:
-		return "searchForNode"
-	case 2:
-		return "searchForUAShadowDOM"
-	case 3:
-		return "none"
-	}
-	return fmt.Sprintf("InspectMode(%d)", e)
-}
-
-// MarshalJSON encodes enum into a string or null when not set.
-func (e InspectMode) MarshalJSON() ([]byte, error) {
-	if e == 0 {
-		return []byte("null"), nil
-	}
-	if !e.Valid() {
-		return nil, errors.New("overlay.InspectMode: MarshalJSON on bad enum value: " + e.String())
-	}
-	return json.Marshal(e.String())
-}
-
-// UnmarshalJSON decodes a string value into a enum.
-func (e *InspectMode) UnmarshalJSON(data []byte) error {
-	switch string(data) {
-	case "null":
-		*e = 0
-	case "\"searchForNode\"":
-		*e = 1
-	case "\"searchForUAShadowDOM\"":
-		*e = 2
-	case "\"none\"":
-		*e = 3
-	default:
-		return fmt.Errorf("overlay.InspectMode: UnmarshalJSON on bad input: %s", data)
-	}
-	return nil
+	return string(e)
 }
