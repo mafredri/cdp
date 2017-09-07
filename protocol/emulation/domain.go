@@ -215,3 +215,21 @@ func (c *virtualTimeBudgetExpiredClient) Recv() (*VirtualTimeBudgetExpiredReply,
 	}
 	return event, nil
 }
+
+func (d *domainClient) VirtualTimePaused(ctx context.Context) (VirtualTimePausedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Emulation.virtualTimePaused", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &virtualTimePausedClient{Stream: s}, nil
+}
+
+type virtualTimePausedClient struct{ rpcc.Stream }
+
+func (c *virtualTimePausedClient) Recv() (*VirtualTimePausedReply, error) {
+	event := new(VirtualTimePausedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Emulation", Op: "VirtualTimePaused Recv", Err: err}
+	}
+	return event, nil
+}

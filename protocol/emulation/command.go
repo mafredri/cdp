@@ -12,20 +12,20 @@ type SetDeviceMetricsOverrideArgs struct {
 	Height            int      `json:"height"`            // Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
 	DeviceScaleFactor float64  `json:"deviceScaleFactor"` // Overriding device scale factor value. 0 disables the override.
 	Mobile            bool     `json:"mobile"`            // Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more.
-	Scale             *float64 `json:"scale,omitempty"`   // Scale to apply to resulting view image. Ignored in |fitWindow| mode.
-	// ScreenWidth Overriding screen width value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+	Scale             *float64 `json:"scale,omitempty"`   // Scale to apply to resulting view image.
+	// ScreenWidth Overriding screen width value in pixels (minimum 0, maximum 10000000).
 	//
 	// Note: This property is experimental.
 	ScreenWidth *int `json:"screenWidth,omitempty"`
-	// ScreenHeight Overriding screen height value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+	// ScreenHeight Overriding screen height value in pixels (minimum 0, maximum 10000000).
 	//
 	// Note: This property is experimental.
 	ScreenHeight *int `json:"screenHeight,omitempty"`
-	// PositionX Overriding view X position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+	// PositionX Overriding view X position on screen in pixels (minimum 0, maximum 10000000).
 	//
 	// Note: This property is experimental.
 	PositionX *int `json:"positionX,omitempty"`
-	// PositionY Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+	// PositionY Overriding view Y position on screen in pixels (minimum 0, maximum 10000000).
 	//
 	// Note: This property is experimental.
 	PositionY *int `json:"positionY,omitempty"`
@@ -46,13 +46,13 @@ func NewSetDeviceMetricsOverrideArgs(width int, height int, deviceScaleFactor fl
 	return args
 }
 
-// SetScale sets the Scale optional argument. Scale to apply to resulting view image. Ignored in |fitWindow| mode.
+// SetScale sets the Scale optional argument. Scale to apply to resulting view image.
 func (a *SetDeviceMetricsOverrideArgs) SetScale(scale float64) *SetDeviceMetricsOverrideArgs {
 	a.Scale = &scale
 	return a
 }
 
-// SetScreenWidth sets the ScreenWidth optional argument. Overriding screen width value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+// SetScreenWidth sets the ScreenWidth optional argument. Overriding screen width value in pixels (minimum 0, maximum 10000000).
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetScreenWidth(screenWidth int) *SetDeviceMetricsOverrideArgs {
@@ -60,7 +60,7 @@ func (a *SetDeviceMetricsOverrideArgs) SetScreenWidth(screenWidth int) *SetDevic
 	return a
 }
 
-// SetScreenHeight sets the ScreenHeight optional argument. Overriding screen height value in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+// SetScreenHeight sets the ScreenHeight optional argument. Overriding screen height value in pixels (minimum 0, maximum 10000000).
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetScreenHeight(screenHeight int) *SetDeviceMetricsOverrideArgs {
@@ -68,7 +68,7 @@ func (a *SetDeviceMetricsOverrideArgs) SetScreenHeight(screenHeight int) *SetDev
 	return a
 }
 
-// SetPositionX sets the PositionX optional argument. Overriding view X position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+// SetPositionX sets the PositionX optional argument. Overriding view X position on screen in pixels (minimum 0, maximum 10000000).
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetPositionX(positionX int) *SetDeviceMetricsOverrideArgs {
@@ -76,7 +76,7 @@ func (a *SetDeviceMetricsOverrideArgs) SetPositionX(positionX int) *SetDeviceMet
 	return a
 }
 
-// SetPositionY sets the PositionY optional argument. Overriding view Y position on screen in pixels (minimum 0, maximum 10000000). Only used for |mobile==true|.
+// SetPositionY sets the PositionY optional argument. Overriding view Y position on screen in pixels (minimum 0, maximum 10000000).
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetPositionY(positionY int) *SetDeviceMetricsOverrideArgs {

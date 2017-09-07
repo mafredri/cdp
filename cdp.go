@@ -1105,10 +1105,17 @@ type Emulation interface {
 
 	// Event VirtualTimeBudgetExpired
 	//
-	// Notification sent after the virual time budget for the current VirtualTimePolicy has run out.
+	// Notification sent after the virtual time budget for the current VirtualTimePolicy has run out.
 	//
 	// Note: This event is experimental.
 	VirtualTimeBudgetExpired(context.Context) (emulation.VirtualTimeBudgetExpiredClient, error)
+
+	// Event VirtualTimePaused
+	//
+	// Notification sent after the virtual time has paused.
+	//
+	// Note: This event is experimental.
+	VirtualTimePaused(context.Context) (emulation.VirtualTimePausedClient, error)
 }
 
 // The HeapProfiler domain.

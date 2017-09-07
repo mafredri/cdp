@@ -160,7 +160,7 @@ func (h *Headers) UnmarshalJSON(data []byte) error {
 var _ json.Marshaler = (*Headers)(nil)
 var _ json.Unmarshaler = (*Headers)(nil)
 
-// ConnectionType Loading priority of a resource request.
+// ConnectionType The underlying connection technology that the browser is supposedly using.
 type ConnectionType string
 
 // ConnectionType as enums.
