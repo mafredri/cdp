@@ -36,6 +36,7 @@ type CallFrame struct {
 	// Note: This property is experimental.
 	FunctionLocation *Location             `json:"functionLocation,omitempty"`
 	Location         Location              `json:"location"`              // Location in the source code.
+	URL              string                `json:"url"`                   // JavaScript script name or url.
 	ScopeChain       []Scope               `json:"scopeChain"`            // Scope chain for this call frame.
 	This             runtime.RemoteObject  `json:"this"`                  // this object for this call frame.
 	ReturnValue      *runtime.RemoteObject `json:"returnValue,omitempty"` // The value being returned, if the function is at return point.

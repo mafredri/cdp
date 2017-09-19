@@ -185,6 +185,19 @@ func (d *domainClient) SetVirtualTimePolicy(ctx context.Context, args *SetVirtua
 	return
 }
 
+// SetNavigatorOverrides invokes the Emulation method. Overrides value returned by the javascript navigator object.
+func (d *domainClient) SetNavigatorOverrides(ctx context.Context, args *SetNavigatorOverridesArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setNavigatorOverrides", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setNavigatorOverrides", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetNavigatorOverrides", Err: err}
+	}
+	return
+}
+
 // SetDefaultBackgroundColorOverride invokes the Emulation method. Sets or clears an override of the default background color of the frame. This override is used if the content does not specify one.
 func (d *domainClient) SetDefaultBackgroundColorOverride(ctx context.Context, args *SetDefaultBackgroundColorOverrideArgs) (err error) {
 	if args != nil {

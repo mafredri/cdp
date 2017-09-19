@@ -259,6 +259,18 @@ func (a *SetVirtualTimePolicyArgs) SetBudget(budget int) *SetVirtualTimePolicyAr
 	return a
 }
 
+// SetNavigatorOverridesArgs represents the arguments for SetNavigatorOverrides in the Emulation domain.
+type SetNavigatorOverridesArgs struct {
+	Platform string `json:"platform"` // The platform navigator.platform should return.
+}
+
+// NewSetNavigatorOverridesArgs initializes SetNavigatorOverridesArgs with the required arguments.
+func NewSetNavigatorOverridesArgs(platform string) *SetNavigatorOverridesArgs {
+	args := new(SetNavigatorOverridesArgs)
+	args.Platform = platform
+	return args
+}
+
 // SetDefaultBackgroundColorOverrideArgs represents the arguments for SetDefaultBackgroundColorOverride in the Emulation domain.
 type SetDefaultBackgroundColorOverrideArgs struct {
 	Color *dom.RGBA `json:"color,omitempty"` // RGBA of the default background color. If not specified, any existing override will be cleared.

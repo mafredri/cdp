@@ -101,6 +101,15 @@ func (d *domainClient) StopWorker(ctx context.Context, args *StopWorkerArgs) (er
 	return
 }
 
+// StopAllWorkers invokes the ServiceWorker method.
+func (d *domainClient) StopAllWorkers(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "ServiceWorker.stopAllWorkers", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "ServiceWorker", Op: "StopAllWorkers", Err: err}
+	}
+	return
+}
+
 // InspectWorker invokes the ServiceWorker method.
 func (d *domainClient) InspectWorker(ctx context.Context, args *InspectWorkerArgs) (err error) {
 	if args != nil {

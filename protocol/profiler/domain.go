@@ -110,6 +110,34 @@ func (d *domainClient) GetBestEffortCoverage(ctx context.Context) (reply *GetBes
 	return
 }
 
+// StartTypeProfile invokes the Profiler method. Enable type profile.
+func (d *domainClient) StartTypeProfile(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Profiler.startTypeProfile", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "StartTypeProfile", Err: err}
+	}
+	return
+}
+
+// StopTypeProfile invokes the Profiler method. Disable type profile. Disabling releases type profile data collected so far.
+func (d *domainClient) StopTypeProfile(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Profiler.stopTypeProfile", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "StopTypeProfile", Err: err}
+	}
+	return
+}
+
+// TakeTypeProfile invokes the Profiler method. Collect type profile.
+func (d *domainClient) TakeTypeProfile(ctx context.Context) (reply *TakeTypeProfileReply, err error) {
+	reply = new(TakeTypeProfileReply)
+	err = rpcc.Invoke(ctx, "Profiler.takeTypeProfile", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "TakeTypeProfile", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) ConsoleProfileStarted(ctx context.Context) (ConsoleProfileStartedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Profiler.consoleProfileStarted", d.conn)
 	if err != nil {

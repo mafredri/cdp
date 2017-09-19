@@ -53,3 +53,8 @@ type TakePreciseCoverageReply struct {
 type GetBestEffortCoverageReply struct {
 	Result []ScriptCoverage `json:"result"` // Coverage data for the current isolate.
 }
+
+// TakeTypeProfileReply represents the return values for TakeTypeProfile in the Profiler domain.
+type TakeTypeProfileReply struct {
+	Result []ScriptTypeProfile `json:"result"` // Type profile for all scripts since startTypeProfile() was turned on.
+}

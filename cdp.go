@@ -1096,6 +1096,13 @@ type Emulation interface {
 	// Note: This command is experimental.
 	SetVirtualTimePolicy(context.Context, *emulation.SetVirtualTimePolicyArgs) error
 
+	// Command SetNavigatorOverrides
+	//
+	// Overrides value returned by the javascript navigator object.
+	//
+	// Note: This command is experimental.
+	SetNavigatorOverrides(context.Context, *emulation.SetNavigatorOverridesArgs) error
+
 	// Command SetDefaultBackgroundColorOverride
 	//
 	// Sets or clears an override of the default background color of the frame. This override is used if the content does not specify one.
@@ -2125,6 +2132,27 @@ type Profiler interface {
 	// Note: This command is experimental.
 	GetBestEffortCoverage(context.Context) (*profiler.GetBestEffortCoverageReply, error)
 
+	// Command StartTypeProfile
+	//
+	// Enable type profile.
+	//
+	// Note: This command is experimental.
+	StartTypeProfile(context.Context) error
+
+	// Command StopTypeProfile
+	//
+	// Disable type profile. Disabling releases type profile data collected so far.
+	//
+	// Note: This command is experimental.
+	StopTypeProfile(context.Context) error
+
+	// Command TakeTypeProfile
+	//
+	// Collect type profile.
+	//
+	// Note: This command is experimental.
+	TakeTypeProfile(context.Context) (*profiler.TakeTypeProfileReply, error)
+
 	// Event ConsoleProfileStarted
 	//
 	// Sent when new profile recording is started using console.profile() call.
@@ -2309,6 +2337,9 @@ type ServiceWorker interface {
 
 	// Command StopWorker
 	StopWorker(context.Context, *serviceworker.StopWorkerArgs) error
+
+	// Command StopAllWorkers
+	StopAllWorkers(context.Context) error
 
 	// Command InspectWorker
 	InspectWorker(context.Context, *serviceworker.InspectWorkerArgs) error
