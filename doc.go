@@ -119,3 +119,9 @@ package cdp
 // Generate protcol definition using cdpgen.
 //go:generate go install github.com/mafredri/cdp/cmd/cdpgen
 //go:generate cdpgen -dest-pkg github.com/mafredri/cdp -browser-proto ./cmd/cdpgen/protodef/browser_protocol.json -js-proto ./cmd/cdpgen/protodef/js_protocol.json
+
+// Update code samples in README.
+//go:generate embedmd -w README.md
+//go:generate -command sed sed -i ""
+//go:generate sed -e "s/^package .*_test$/package main/" README.md
+//go:generate sed -e "s/^func Example\\(_[^)]*\\)*() {$/func main() {/" README.md
