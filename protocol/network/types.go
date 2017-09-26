@@ -346,7 +346,7 @@ func (e BlockedReason) String() string {
 // Response HTTP response data.
 type Response struct {
 	URL                string  `json:"url"`                          // Response URL. This URL can be different from CachedResource.url in case of redirect.
-	Status             float64 `json:"status"`                       // HTTP response status code.
+	Status             int     `json:"status"`                       // HTTP response status code.
 	StatusText         string  `json:"statusText"`                   // HTTP response status text.
 	Headers            Headers `json:"headers"`                      // HTTP response headers.
 	HeadersText        *string `json:"headersText,omitempty"`        // HTTP response headers text.
@@ -383,7 +383,7 @@ type WebSocketRequest struct {
 //
 // Note: This type is experimental.
 type WebSocketResponse struct {
-	Status             float64 `json:"status"`                       // HTTP response status code.
+	Status             int     `json:"status"`                       // HTTP response status code.
 	StatusText         string  `json:"statusText"`                   // HTTP response status text.
 	Headers            Headers `json:"headers"`                      // HTTP response headers.
 	HeadersText        *string `json:"headersText,omitempty"`        // HTTP response headers text.
