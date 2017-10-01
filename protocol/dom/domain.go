@@ -243,7 +243,7 @@ func (d *domainClient) PerformSearch(ctx context.Context, args *PerformSearchArg
 	return
 }
 
-// GetSearchResults invokes the DOM method. Returns search results from given fromIndex to given toIndex from the sarch with the given identifier.
+// GetSearchResults invokes the DOM method. Returns search results from given fromIndex to given toIndex from the search with the given identifier.
 func (d *domainClient) GetSearchResults(ctx context.Context, args *GetSearchResultsArgs) (reply *GetSearchResultsReply, err error) {
 	reply = new(GetSearchResultsReply)
 	if args != nil {

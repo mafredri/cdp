@@ -58,3 +58,27 @@ func NewUntrackCacheStorageForOriginArgs(origin string) *UntrackCacheStorageForO
 	args.Origin = origin
 	return args
 }
+
+// TrackIndexedDBForOriginArgs represents the arguments for TrackIndexedDBForOrigin in the Storage domain.
+type TrackIndexedDBForOriginArgs struct {
+	Origin string `json:"origin"` // Security origin.
+}
+
+// NewTrackIndexedDBForOriginArgs initializes TrackIndexedDBForOriginArgs with the required arguments.
+func NewTrackIndexedDBForOriginArgs(origin string) *TrackIndexedDBForOriginArgs {
+	args := new(TrackIndexedDBForOriginArgs)
+	args.Origin = origin
+	return args
+}
+
+// UntrackIndexedDBForOriginArgs represents the arguments for UntrackIndexedDBForOrigin in the Storage domain.
+type UntrackIndexedDBForOriginArgs struct {
+	Origin string `json:"origin"` // Security origin.
+}
+
+// NewUntrackIndexedDBForOriginArgs initializes UntrackIndexedDBForOriginArgs with the required arguments.
+func NewUntrackIndexedDBForOriginArgs(origin string) *UntrackIndexedDBForOriginArgs {
+	args := new(UntrackIndexedDBForOriginArgs)
+	args.Origin = origin
+	return args
+}

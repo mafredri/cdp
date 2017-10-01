@@ -71,6 +71,32 @@ func (d *domainClient) UntrackCacheStorageForOrigin(ctx context.Context, args *U
 	return
 }
 
+// TrackIndexedDBForOrigin invokes the Storage method. Registers origin to be notified when an update occurs to its IndexedDB.
+func (d *domainClient) TrackIndexedDBForOrigin(ctx context.Context, args *TrackIndexedDBForOriginArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.trackIndexedDBForOrigin", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.trackIndexedDBForOrigin", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "TrackIndexedDBForOrigin", Err: err}
+	}
+	return
+}
+
+// UntrackIndexedDBForOrigin invokes the Storage method. Unregisters origin from receiving notifications for IndexedDB.
+func (d *domainClient) UntrackIndexedDBForOrigin(ctx context.Context, args *UntrackIndexedDBForOriginArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.untrackIndexedDBForOrigin", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.untrackIndexedDBForOrigin", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "UntrackIndexedDBForOrigin", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) CacheStorageListUpdated(ctx context.Context) (CacheStorageListUpdatedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Storage.cacheStorageListUpdated", d.conn)
 	if err != nil {
@@ -103,6 +129,42 @@ func (c *cacheStorageContentUpdatedClient) Recv() (*CacheStorageContentUpdatedRe
 	event := new(CacheStorageContentUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Storage", Op: "CacheStorageContentUpdated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) IndexedDBListUpdated(ctx context.Context) (IndexedDBListUpdatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Storage.indexedDBListUpdated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &indexedDBListUpdatedClient{Stream: s}, nil
+}
+
+type indexedDBListUpdatedClient struct{ rpcc.Stream }
+
+func (c *indexedDBListUpdatedClient) Recv() (*IndexedDBListUpdatedReply, error) {
+	event := new(IndexedDBListUpdatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Storage", Op: "IndexedDBListUpdated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) IndexedDBContentUpdated(ctx context.Context) (IndexedDBContentUpdatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Storage.indexedDBContentUpdated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &indexedDBContentUpdatedClient{Stream: s}, nil
+}
+
+type indexedDBContentUpdatedClient struct{ rpcc.Stream }
+
+func (c *indexedDBContentUpdatedClient) Recv() (*IndexedDBContentUpdatedReply, error) {
+	event := new(IndexedDBContentUpdatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Storage", Op: "IndexedDBContentUpdated Recv", Err: err}
 	}
 	return event, nil
 }

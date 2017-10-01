@@ -497,7 +497,7 @@ type DOM interface {
 
 	// Command GetSearchResults
 	//
-	// Returns search results from given fromIndex to given toIndex from the sarch with the given identifier.
+	// Returns search results from given fromIndex to given toIndex from the search with the given identifier.
 	//
 	// Note: This command is experimental.
 	GetSearchResults(context.Context, *dom.GetSearchResultsArgs) (*dom.GetSearchResultsReply, error)
@@ -2387,6 +2387,16 @@ type Storage interface {
 	// Unregisters origin from receiving notifications for cache storage.
 	UntrackCacheStorageForOrigin(context.Context, *storage.UntrackCacheStorageForOriginArgs) error
 
+	// Command TrackIndexedDBForOrigin
+	//
+	// Registers origin to be notified when an update occurs to its IndexedDB.
+	TrackIndexedDBForOrigin(context.Context, *storage.TrackIndexedDBForOriginArgs) error
+
+	// Command UntrackIndexedDBForOrigin
+	//
+	// Unregisters origin from receiving notifications for IndexedDB.
+	UntrackIndexedDBForOrigin(context.Context, *storage.UntrackIndexedDBForOriginArgs) error
+
 	// Event CacheStorageListUpdated
 	//
 	// A cache has been added/deleted.
@@ -2396,6 +2406,16 @@ type Storage interface {
 	//
 	// A cache's contents have been modified.
 	CacheStorageContentUpdated(context.Context) (storage.CacheStorageContentUpdatedClient, error)
+
+	// Event IndexedDBListUpdated
+	//
+	// The origin's IndexedDB database list has been modified.
+	IndexedDBListUpdated(context.Context) (storage.IndexedDBListUpdatedClient, error)
+
+	// Event IndexedDBContentUpdated
+	//
+	// The origin's IndexedDB object store has been modified.
+	IndexedDBContentUpdated(context.Context) (storage.IndexedDBContentUpdatedClient, error)
 }
 
 // The SystemInfo domain. The SystemInfo domain defines methods and events for querying low-level system information.

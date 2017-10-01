@@ -70,7 +70,7 @@ type ExceptionRevokedClient interface {
 // ExceptionRevokedReply is the reply for ExceptionRevoked events.
 type ExceptionRevokedReply struct {
 	Reason      string `json:"reason"`      // Reason describing why exception was revoked.
-	ExceptionID int    `json:"exceptionId"` // The id of revoked exception, as reported in exceptionUnhandled.
+	ExceptionID int    `json:"exceptionId"` // The id of revoked exception, as reported in exceptionThrown.
 }
 
 // ConsoleAPICalledClient is a client for ConsoleAPICalled events. Issued when console API was called.
