@@ -9,4 +9,4 @@ Close: <nil> <nil>
 GET /json/activate/ddd908ca-4d8c-4783-a089-c9456c463eef
 Activate: <nil> <nil>
 GET /json/version
-Version: &{Chrome/59.0.3040.0 1.2 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3040.0 Safari/537.36 5.9.35 537.36 (@c020f6a22577978ce1fe89fc1a397f2a651c48a8) } <nil>
+Version: &{Chrome/59.0.3040.0 1.2 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3040.0 Safari/537.36 5.9.35 537.36 (@c020f6a22577978ce1fe89fc1a397f2a651c48a8)  ws://localhost:9222/devtools/browser/74ffefaa-3f6b-4d25-8fb3-98b85d7bf1cd} <nil>
