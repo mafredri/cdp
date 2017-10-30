@@ -13,11 +13,12 @@ type BrowserContextID string
 
 // Info
 type Info struct {
-	TargetID ID     `json:"targetId"` // No description.
-	Type     string `json:"type"`     // No description.
-	Title    string `json:"title"`    // No description.
-	URL      string `json:"url"`      // No description.
-	Attached bool   `json:"attached"` // Whether the target has an attached client.
+	TargetID ID     `json:"targetId"`           // No description.
+	Type     string `json:"type"`               // No description.
+	Title    string `json:"title"`              // No description.
+	URL      string `json:"url"`                // No description.
+	Attached bool   `json:"attached"`           // Whether the target has an attached client.
+	OpenerID *ID    `json:"openerId,omitempty"` // Opener target Id
 }
 
 // RemoteLocation

@@ -284,15 +284,15 @@ func (d *domainClient) GetCertificate(ctx context.Context, args *GetCertificateA
 	return
 }
 
-// SetRequestInterceptionEnabled invokes the Network method. Sets the requests to intercept that match a the provided patterns.
-func (d *domainClient) SetRequestInterceptionEnabled(ctx context.Context, args *SetRequestInterceptionEnabledArgs) (err error) {
+// SetRequestInterception invokes the Network method. Sets the requests to intercept that match a the provided patterns and optionally resource types.
+func (d *domainClient) SetRequestInterception(ctx context.Context, args *SetRequestInterceptionArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setRequestInterceptionEnabled", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.setRequestInterception", args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.setRequestInterceptionEnabled", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.setRequestInterception", nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "SetRequestInterceptionEnabled", Err: err}
+		err = &internal.OpError{Domain: "Network", Op: "SetRequestInterception", Err: err}
 	}
 	return
 }

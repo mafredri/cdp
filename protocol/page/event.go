@@ -41,20 +41,6 @@ type LifecycleEventClient interface {
 	rpcc.Stream
 }
 
-// LifecycleEventReply is the reply for LifecycleEvent events.
-type LifecycleEventReply struct {
-	Name      string                `json:"name"`      // No description.
-	Timestamp network.MonotonicTime `json:"timestamp"` // No description.
-}
-
-// FrameAttachedClient is a client for FrameAttached events. Fired when frame has been attached to its parent.
-type FrameAttachedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*FrameAttachedReply, error)
-	rpcc.Stream
-}
-
 // FrameNavigatedReply is the reply for FrameNavigated events.
 type FrameNavigatedReply struct {
 	Frame Frame `json:"frame"` // Frame object.
@@ -150,3 +136,19 @@ type InterstitialHiddenClient interface {
 
 // InterstitialHiddenReply is the reply for InterstitialHidden events.
 type InterstitialHiddenReply struct{}
+
+// WindowOpenClient is a client for WindowOpen events. Fired when window.open() was called
+type WindowOpenClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*WindowOpenReply, error)
+	rpcc.Stream
+}
+
+// WindowOpenReply is the reply for WindowOpen events.
+type WindowOpenReply struct {
+	URL            string `json:"url"`            // The URL for the new window.
+	WindowName     string `json:"windowName"`     // Window name passed to window.open().
+	WindowFeatures string `json:"windowFeatures"` // Window features passed to window.open().
+	UserGesture    bool   `json:"userGesture"`    // Whether or not window.open() was triggered by user gesture.
+}

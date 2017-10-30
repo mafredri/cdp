@@ -672,3 +672,21 @@ func (c *interstitialHiddenClient) Recv() (*InterstitialHiddenReply, error) {
 	}
 	return event, nil
 }
+
+func (d *domainClient) WindowOpen(ctx context.Context) (WindowOpenClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.windowOpen", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &windowOpenClient{Stream: s}, nil
+}
+
+type windowOpenClient struct{ rpcc.Stream }
+
+func (c *windowOpenClient) Recv() (*WindowOpenReply, error) {
+	event := new(WindowOpenReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "WindowOpen Recv", Err: err}
+	}
+	return event, nil
+}

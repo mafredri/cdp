@@ -191,6 +191,20 @@ func (d *domainClient) QueryObjects(ctx context.Context, args *QueryObjectsArgs)
 	return
 }
 
+// GlobalLexicalScopeNames invokes the Runtime method. Returns all let, const and class variables from global scope.
+func (d *domainClient) GlobalLexicalScopeNames(ctx context.Context, args *GlobalLexicalScopeNamesArgs) (reply *GlobalLexicalScopeNamesReply, err error) {
+	reply = new(GlobalLexicalScopeNamesReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Runtime.globalLexicalScopeNames", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Runtime.globalLexicalScopeNames", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Runtime", Op: "GlobalLexicalScopeNames", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) ExecutionContextCreated(ctx context.Context) (ExecutionContextCreatedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Runtime.executionContextCreated", d.conn)
 	if err != nil {

@@ -15,3 +15,11 @@ type CachedResource struct {
 	Response *Response                 `json:"response,omitempty"` // Cached response data.
 	BodySize float64                   `json:"bodySize"`           // Cached response body size.
 }
+
+// RequestPattern Request pattern for interception.
+//
+// Note: This type is experimental.
+type RequestPattern struct {
+	URLPattern   *string                    `json:"urlPattern,omitempty"`   // Wildcards ('*' -> zero or more, '?' -> exactly one) are allowed. Escape character is backslash. Omitting is equivalent to "*".
+	ResourceType *protocol.PageResourceType `json:"resourceType,omitempty"` // If set, only requests for matching resource types will be intercepted.
+}

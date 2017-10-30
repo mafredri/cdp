@@ -20,28 +20,28 @@ type Animation struct {
 	PlaybackRate float64 `json:"playbackRate"` // Animation's playback rate.
 	StartTime    float64 `json:"startTime"`    // Animation's start time.
 	CurrentTime  float64 `json:"currentTime"`  // Animation's current time.
-	Source       Effect  `json:"source"`       // Animation's source animation node.
 	// Type Animation type of Animation.
 	//
 	// Values: "CSSTransition", "CSSAnimation", "WebAnimation".
-	Type  string  `json:"type"`
-	CSSID *string `json:"cssId,omitempty"` // A unique ID for Animation representing the sources that triggered this CSS animation/transition.
+	Type   string  `json:"type"`
+	Source *Effect `json:"source,omitempty"` // Animation's source animation node.
+	CSSID  *string `json:"cssId,omitempty"`  // A unique ID for Animation representing the sources that triggered this CSS animation/transition.
 }
 
 // Effect AnimationEffect instance
 //
 // Note: This type is experimental.
 type Effect struct {
-	Delay          float64           `json:"delay"`                   // AnimationEffect's delay.
-	EndDelay       float64           `json:"endDelay"`                // AnimationEffect's end delay.
-	IterationStart float64           `json:"iterationStart"`          // AnimationEffect's iteration start.
-	Iterations     float64           `json:"iterations"`              // AnimationEffect's iterations.
-	Duration       float64           `json:"duration"`                // AnimationEffect's iteration duration.
-	Direction      string            `json:"direction"`               // AnimationEffect's playback direction.
-	Fill           string            `json:"fill"`                    // AnimationEffect's fill mode.
-	BackendNodeID  dom.BackendNodeID `json:"backendNodeId"`           // AnimationEffect's target node.
-	KeyframesRule  *KeyframesRule    `json:"keyframesRule,omitempty"` // AnimationEffect's keyframes.
-	Easing         string            `json:"easing"`                  // AnimationEffect's timing function.
+	Delay          float64            `json:"delay"`                   // AnimationEffect's delay.
+	EndDelay       float64            `json:"endDelay"`                // AnimationEffect's end delay.
+	IterationStart float64            `json:"iterationStart"`          // AnimationEffect's iteration start.
+	Iterations     float64            `json:"iterations"`              // AnimationEffect's iterations.
+	Duration       float64            `json:"duration"`                // AnimationEffect's iteration duration.
+	Direction      string             `json:"direction"`               // AnimationEffect's playback direction.
+	Fill           string             `json:"fill"`                    // AnimationEffect's fill mode.
+	BackendNodeID  *dom.BackendNodeID `json:"backendNodeId,omitempty"` // AnimationEffect's target node.
+	KeyframesRule  *KeyframesRule     `json:"keyframesRule,omitempty"` // AnimationEffect's keyframes.
+	Easing         string             `json:"easing"`                  // AnimationEffect's timing function.
 }
 
 // KeyframesRule Keyframes Rule

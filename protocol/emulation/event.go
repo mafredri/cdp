@@ -17,6 +17,19 @@ type VirtualTimeBudgetExpiredClient interface {
 // VirtualTimeBudgetExpiredReply is the reply for VirtualTimeBudgetExpired events.
 type VirtualTimeBudgetExpiredReply struct{}
 
+// VirtualTimeAdvancedClient is a client for VirtualTimeAdvanced events. Notification sent after the virtual time has advanced.
+type VirtualTimeAdvancedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*VirtualTimeAdvancedReply, error)
+	rpcc.Stream
+}
+
+// VirtualTimeAdvancedReply is the reply for VirtualTimeAdvanced events.
+type VirtualTimeAdvancedReply struct {
+	VirtualTimeElapsed int `json:"virtualTimeElapsed"` // The amount of virtual time that has elapsed in milliseconds since virtual time was first enabled.
+}
+
 // VirtualTimePausedClient is a client for VirtualTimePaused events. Notification sent after the virtual time has paused.
 type VirtualTimePausedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is

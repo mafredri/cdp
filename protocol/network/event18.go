@@ -86,6 +86,7 @@ type WebSocketWillSendHandshakeRequestClient interface {
 type RequestInterceptedReply struct {
 	InterceptionID      InterceptionID            `json:"interceptionId"`               // Each request the page makes will have a unique id, however if any redirects are encountered while processing that fetch, they will be reported with the same id as the original fetch. Likewise if HTTP authentication is needed then the same fetch id will be used.
 	Request             Request                   `json:"request"`                      // No description.
+	FrameID             protocol.PageFrameID      `json:"frameId"`                      // The id of the frame that initiated the request.
 	ResourceType        protocol.PageResourceType `json:"resourceType"`                 // How the requested resource will be used.
 	IsNavigationRequest bool                      `json:"isNavigationRequest"`          // Whether this is a navigation request, which can abort the navigation completely.
 	RedirectHeaders     Headers                   `json:"redirectHeaders,omitempty"`    // HTTP response headers, only sent if a redirect was intercepted.

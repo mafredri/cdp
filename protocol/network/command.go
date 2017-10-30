@@ -339,23 +339,16 @@ type GetCertificateReply struct {
 	TableNames []string `json:"tableNames"` // No description.
 }
 
-// SetRequestInterceptionEnabledArgs represents the arguments for SetRequestInterceptionEnabled in the Network domain.
-type SetRequestInterceptionEnabledArgs struct {
-	Enabled  bool     `json:"enabled"`            // Whether requests should be intercepted. If patterns is not set, matches all and resets any previously set patterns. Other parameters are ignored if false.
-	Patterns []string `json:"patterns,omitempty"` // URLs matching any of these patterns will be forwarded and wait for the corresponding continueInterceptedRequest call. Wildcards ('*' -> zero or more, '?' -> exactly one) are allowed. Escape character is backslash. If omitted equivalent to ['*'] (intercept all).
+// SetRequestInterceptionArgs represents the arguments for SetRequestInterception in the Network domain.
+type SetRequestInterceptionArgs struct {
+	Patterns []RequestPattern `json:"patterns"` // Requests matching any of these patterns will be forwarded and wait for the corresponding continueInterceptedRequest call.
 }
 
-// NewSetRequestInterceptionEnabledArgs initializes SetRequestInterceptionEnabledArgs with the required arguments.
-func NewSetRequestInterceptionEnabledArgs(enabled bool) *SetRequestInterceptionEnabledArgs {
-	args := new(SetRequestInterceptionEnabledArgs)
-	args.Enabled = enabled
+// NewSetRequestInterceptionArgs initializes SetRequestInterceptionArgs with the required arguments.
+func NewSetRequestInterceptionArgs(patterns []RequestPattern) *SetRequestInterceptionArgs {
+	args := new(SetRequestInterceptionArgs)
+	args.Patterns = patterns
 	return args
-}
-
-// SetPatterns sets the Patterns optional argument. URLs matching any of these patterns will be forwarded and wait for the corresponding continueInterceptedRequest call. Wildcards ('*' -> zero or more, '?' -> exactly one) are allowed. Escape character is backslash. If omitted equivalent to ['*'] (intercept all).
-func (a *SetRequestInterceptionEnabledArgs) SetPatterns(patterns []string) *SetRequestInterceptionEnabledArgs {
-	a.Patterns = patterns
-	return a
 }
 
 // ContinueInterceptedRequestArgs represents the arguments for ContinueInterceptedRequest in the Network domain.

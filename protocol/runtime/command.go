@@ -407,3 +407,26 @@ func NewQueryObjectsArgs(prototypeObjectID RemoteObjectID) *QueryObjectsArgs {
 type QueryObjectsReply struct {
 	Objects RemoteObject `json:"objects"` // Array with objects.
 }
+
+// GlobalLexicalScopeNamesArgs represents the arguments for GlobalLexicalScopeNames in the Runtime domain.
+type GlobalLexicalScopeNamesArgs struct {
+	ExecutionContextID *ExecutionContextID `json:"executionContextId,omitempty"` // Specifies in which execution context to lookup global scope variables.
+}
+
+// NewGlobalLexicalScopeNamesArgs initializes GlobalLexicalScopeNamesArgs with the required arguments.
+func NewGlobalLexicalScopeNamesArgs() *GlobalLexicalScopeNamesArgs {
+	args := new(GlobalLexicalScopeNamesArgs)
+
+	return args
+}
+
+// SetExecutionContextID sets the ExecutionContextID optional argument. Specifies in which execution context to lookup global scope variables.
+func (a *GlobalLexicalScopeNamesArgs) SetExecutionContextID(executionContextID ExecutionContextID) *GlobalLexicalScopeNamesArgs {
+	a.ExecutionContextID = &executionContextID
+	return a
+}
+
+// GlobalLexicalScopeNamesReply represents the return values for GlobalLexicalScopeNames in the Runtime domain.
+type GlobalLexicalScopeNamesReply struct {
+	Names []string `json:"names"` // No description.
+}

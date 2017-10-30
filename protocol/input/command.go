@@ -32,6 +32,10 @@ type DispatchKeyEventArgs struct {
 	AutoRepeat            *bool          `json:"autoRepeat,omitempty"`            // Whether the event was generated from auto repeat (default: false).
 	IsKeypad              *bool          `json:"isKeypad,omitempty"`              // Whether the event was generated from the keypad (default: false).
 	IsSystemKey           *bool          `json:"isSystemKey,omitempty"`           // Whether the event was a system key event (default: false).
+	// Location Whether the event was from the left or right side of the keyboard. 1=Left, 2=Right (default: 0).
+	//
+	// Note: This property is experimental.
+	Location *int `json:"location,omitempty"`
 }
 
 // NewDispatchKeyEventArgs initializes DispatchKeyEventArgs with the required arguments.
@@ -110,6 +114,14 @@ func (a *DispatchKeyEventArgs) SetIsKeypad(isKeypad bool) *DispatchKeyEventArgs 
 // SetIsSystemKey sets the IsSystemKey optional argument. Whether the event was a system key event (default: false).
 func (a *DispatchKeyEventArgs) SetIsSystemKey(isSystemKey bool) *DispatchKeyEventArgs {
 	a.IsSystemKey = &isSystemKey
+	return a
+}
+
+// SetLocation sets the Location optional argument. Whether the event was from the left or right side of the keyboard. 1=Left, 2=Right (default: 0).
+//
+// Note: This property is experimental.
+func (a *DispatchKeyEventArgs) SetLocation(location int) *DispatchKeyEventArgs {
+	a.Location = &location
 	return a
 }
 

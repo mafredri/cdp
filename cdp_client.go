@@ -19,6 +19,7 @@ import (
 	"github.com/mafredri/cdp/protocol/domsnapshot"
 	"github.com/mafredri/cdp/protocol/domstorage"
 	"github.com/mafredri/cdp/protocol/emulation"
+	"github.com/mafredri/cdp/protocol/headlessexperimental"
 	"github.com/mafredri/cdp/protocol/heapprofiler"
 	"github.com/mafredri/cdp/protocol/indexeddb"
 	"github.com/mafredri/cdp/protocol/input"
@@ -48,87 +49,89 @@ import (
 // invoke methods or listen to events in every CDP domain. The Client consumes
 // a rpcc connection, used to invoke the methods.
 type Client struct {
-	Accessibility     Accessibility
-	Animation         Animation
-	ApplicationCache  ApplicationCache
-	Audits            Audits
-	Browser           Browser
-	CSS               CSS
-	CacheStorage      CacheStorage
-	Console           Console
-	DOM               DOM
-	DOMDebugger       DOMDebugger
-	DOMSnapshot       DOMSnapshot
-	DOMStorage        DOMStorage
-	Database          Database
-	Debugger          Debugger
-	DeviceOrientation DeviceOrientation
-	Emulation         Emulation
-	HeapProfiler      HeapProfiler
-	IO                IO
-	IndexedDB         IndexedDB
-	Input             Input
-	Inspector         Inspector
-	LayerTree         LayerTree
-	Log               Log
-	Memory            Memory
-	Network           Network
-	Overlay           Overlay
-	Page              Page
-	Performance       Performance
-	Profiler          Profiler
-	Runtime           Runtime
-	Schema            Schema
-	Security          Security
-	ServiceWorker     ServiceWorker
-	Storage           Storage
-	SystemInfo        SystemInfo
-	Target            Target
-	Tethering         Tethering
-	Tracing           Tracing
+	Accessibility        Accessibility
+	Animation            Animation
+	ApplicationCache     ApplicationCache
+	Audits               Audits
+	Browser              Browser
+	CSS                  CSS
+	CacheStorage         CacheStorage
+	Console              Console
+	DOM                  DOM
+	DOMDebugger          DOMDebugger
+	DOMSnapshot          DOMSnapshot
+	DOMStorage           DOMStorage
+	Database             Database
+	Debugger             Debugger
+	DeviceOrientation    DeviceOrientation
+	Emulation            Emulation
+	HeadlessExperimental HeadlessExperimental
+	HeapProfiler         HeapProfiler
+	IO                   IO
+	IndexedDB            IndexedDB
+	Input                Input
+	Inspector            Inspector
+	LayerTree            LayerTree
+	Log                  Log
+	Memory               Memory
+	Network              Network
+	Overlay              Overlay
+	Page                 Page
+	Performance          Performance
+	Profiler             Profiler
+	Runtime              Runtime
+	Schema               Schema
+	Security             Security
+	ServiceWorker        ServiceWorker
+	Storage              Storage
+	SystemInfo           SystemInfo
+	Target               Target
+	Tethering            Tethering
+	Tracing              Tracing
 }
 
 // NewClient returns a new Client that uses conn
 // for communication with the debugging target.
 func NewClient(conn *rpcc.Conn) *Client {
 	return &Client{
-		Accessibility:     accessibility.NewClient(conn),
-		Animation:         animation.NewClient(conn),
-		ApplicationCache:  applicationcache.NewClient(conn),
-		Audits:            audits.NewClient(conn),
-		Browser:           browser.NewClient(conn),
-		CSS:               css.NewClient(conn),
-		CacheStorage:      cachestorage.NewClient(conn),
-		Console:           console.NewClient(conn),
-		DOM:               dom.NewClient(conn),
-		DOMDebugger:       domdebugger.NewClient(conn),
-		DOMSnapshot:       domsnapshot.NewClient(conn),
-		DOMStorage:        domstorage.NewClient(conn),
-		Database:          database.NewClient(conn),
-		Debugger:          debugger.NewClient(conn),
-		DeviceOrientation: deviceorientation.NewClient(conn),
-		Emulation:         emulation.NewClient(conn),
-		HeapProfiler:      heapprofiler.NewClient(conn),
-		IO:                io.NewClient(conn),
-		IndexedDB:         indexeddb.NewClient(conn),
-		Input:             input.NewClient(conn),
-		Inspector:         inspector.NewClient(conn),
-		LayerTree:         layertree.NewClient(conn),
-		Log:               log.NewClient(conn),
-		Memory:            memory.NewClient(conn),
-		Network:           network.NewClient(conn),
-		Overlay:           overlay.NewClient(conn),
-		Page:              page.NewClient(conn),
-		Performance:       performance.NewClient(conn),
-		Profiler:          profiler.NewClient(conn),
-		Runtime:           runtime.NewClient(conn),
-		Schema:            schema.NewClient(conn),
-		Security:          security.NewClient(conn),
-		ServiceWorker:     serviceworker.NewClient(conn),
-		Storage:           storage.NewClient(conn),
-		SystemInfo:        systeminfo.NewClient(conn),
-		Target:            target.NewClient(conn),
-		Tethering:         tethering.NewClient(conn),
-		Tracing:           tracing.NewClient(conn),
+		Accessibility:        accessibility.NewClient(conn),
+		Animation:            animation.NewClient(conn),
+		ApplicationCache:     applicationcache.NewClient(conn),
+		Audits:               audits.NewClient(conn),
+		Browser:              browser.NewClient(conn),
+		CSS:                  css.NewClient(conn),
+		CacheStorage:         cachestorage.NewClient(conn),
+		Console:              console.NewClient(conn),
+		DOM:                  dom.NewClient(conn),
+		DOMDebugger:          domdebugger.NewClient(conn),
+		DOMSnapshot:          domsnapshot.NewClient(conn),
+		DOMStorage:           domstorage.NewClient(conn),
+		Database:             database.NewClient(conn),
+		Debugger:             debugger.NewClient(conn),
+		DeviceOrientation:    deviceorientation.NewClient(conn),
+		Emulation:            emulation.NewClient(conn),
+		HeadlessExperimental: headlessexperimental.NewClient(conn),
+		HeapProfiler:         heapprofiler.NewClient(conn),
+		IO:                   io.NewClient(conn),
+		IndexedDB:            indexeddb.NewClient(conn),
+		Input:                input.NewClient(conn),
+		Inspector:            inspector.NewClient(conn),
+		LayerTree:            layertree.NewClient(conn),
+		Log:                  log.NewClient(conn),
+		Memory:               memory.NewClient(conn),
+		Network:              network.NewClient(conn),
+		Overlay:              overlay.NewClient(conn),
+		Page:                 page.NewClient(conn),
+		Performance:          performance.NewClient(conn),
+		Profiler:             profiler.NewClient(conn),
+		Runtime:              runtime.NewClient(conn),
+		Schema:               schema.NewClient(conn),
+		Security:             security.NewClient(conn),
+		ServiceWorker:        serviceworker.NewClient(conn),
+		Storage:              storage.NewClient(conn),
+		SystemInfo:           systeminfo.NewClient(conn),
+		Target:               target.NewClient(conn),
+		Tethering:            tethering.NewClient(conn),
+		Tracing:              tracing.NewClient(conn),
 	}
 }

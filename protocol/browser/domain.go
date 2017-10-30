@@ -18,6 +18,15 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// Close invokes the Browser method. Close browser gracefully.
+func (d *domainClient) Close(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Browser.close", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "Close", Err: err}
+	}
+	return
+}
+
 // GetWindowForTarget invokes the Browser method. Get the browser window that contains the devtools target.
 func (d *domainClient) GetWindowForTarget(ctx context.Context, args *GetWindowForTargetArgs) (reply *GetWindowForTargetReply, err error) {
 	reply = new(GetWindowForTargetReply)

@@ -5,9 +5,25 @@
 package page
 
 import (
+	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/runtime"
 	"github.com/mafredri/cdp/rpcc"
 )
+
+// LifecycleEventReply is the reply for LifecycleEvent events.
+type LifecycleEventReply struct {
+	FrameID   FrameID               `json:"frameId"`   // Id of the frame.
+	Name      string                `json:"name"`      // No description.
+	Timestamp network.MonotonicTime `json:"timestamp"` // No description.
+}
+
+// FrameAttachedClient is a client for FrameAttached events. Fired when frame has been attached to its parent.
+type FrameAttachedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*FrameAttachedReply, error)
+	rpcc.Stream
+}
 
 // FrameAttachedReply is the reply for FrameAttached events.
 type FrameAttachedReply struct {
@@ -72,7 +88,7 @@ type FrameScheduledNavigationReply struct {
 	Delay   float64 `json:"delay"`   // Delay (in seconds) until the navigation is scheduled to begin. The navigation is not guaranteed to start.
 	// Reason The reason for the navigation.
 	//
-	// Values: "formSubmission", "httpHeaderRefresh", "scriptInitiated", "metaTagRefresh", "pageBlockInterstitial", "reload".
+	// Values: "formSubmissionGet", "formSubmissionPost", "httpHeaderRefresh", "scriptInitiated", "metaTagRefresh", "pageBlockInterstitial", "reload".
 	//
 	// Note: This property is experimental.
 	Reason string `json:"reason"`

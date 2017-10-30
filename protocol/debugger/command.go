@@ -32,9 +32,13 @@ func NewSetSkipAllPausesArgs(skip bool) *SetSkipAllPausesArgs {
 
 // SetBreakpointByURLArgs represents the arguments for SetBreakpointByURL in the Debugger domain.
 type SetBreakpointByURLArgs struct {
-	LineNumber   int     `json:"lineNumber"`             // Line number to set breakpoint at.
-	URL          *string `json:"url,omitempty"`          // URL of the resources to set breakpoint on.
-	URLRegex     *string `json:"urlRegex,omitempty"`     // Regex pattern for the URLs of the resources to set breakpoints on. Either url or urlRegex must be specified.
+	LineNumber int     `json:"lineNumber"`         // Line number to set breakpoint at.
+	URL        *string `json:"url,omitempty"`      // URL of the resources to set breakpoint on.
+	URLRegex   *string `json:"urlRegex,omitempty"` // Regex pattern for the URLs of the resources to set breakpoints on. Either url or urlRegex must be specified.
+	// ScriptHash Script hash of the resources to set breakpoint on.
+	//
+	// Note: This property is experimental.
+	ScriptHash   *string `json:"scriptHash,omitempty"`
 	ColumnNumber *int    `json:"columnNumber,omitempty"` // Offset in the line to set breakpoint at.
 	Condition    *string `json:"condition,omitempty"`    // Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true.
 }
@@ -55,6 +59,14 @@ func (a *SetBreakpointByURLArgs) SetURL(url string) *SetBreakpointByURLArgs {
 // SetURLRegex sets the URLRegex optional argument. Regex pattern for the URLs of the resources to set breakpoints on. Either url or urlRegex must be specified.
 func (a *SetBreakpointByURLArgs) SetURLRegex(urlRegex string) *SetBreakpointByURLArgs {
 	a.URLRegex = &urlRegex
+	return a
+}
+
+// SetScriptHash sets the ScriptHash optional argument. Script hash of the resources to set breakpoint on.
+//
+// Note: This property is experimental.
+func (a *SetBreakpointByURLArgs) SetScriptHash(scriptHash string) *SetBreakpointByURLArgs {
+	a.ScriptHash = &scriptHash
 	return a
 }
 

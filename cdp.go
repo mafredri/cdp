@@ -21,6 +21,7 @@ import (
 	"github.com/mafredri/cdp/protocol/domsnapshot"
 	"github.com/mafredri/cdp/protocol/domstorage"
 	"github.com/mafredri/cdp/protocol/emulation"
+	"github.com/mafredri/cdp/protocol/headlessexperimental"
 	"github.com/mafredri/cdp/protocol/heapprofiler"
 	"github.com/mafredri/cdp/protocol/indexeddb"
 	"github.com/mafredri/cdp/protocol/input"
@@ -172,6 +173,11 @@ type Audits interface {
 //
 // Note: This domain is experimental.
 type Browser interface {
+	// Command Close
+	//
+	// Close browser gracefully.
+	Close(context.Context) error
+
 	// Command GetWindowForTarget
 	//
 	// Get the browser window that contains the devtools target.
@@ -1117,12 +1123,49 @@ type Emulation interface {
 	// Note: This event is experimental.
 	VirtualTimeBudgetExpired(context.Context) (emulation.VirtualTimeBudgetExpiredClient, error)
 
+	// Event VirtualTimeAdvanced
+	//
+	// Notification sent after the virtual time has advanced.
+	//
+	// Note: This event is experimental.
+	VirtualTimeAdvanced(context.Context) (emulation.VirtualTimeAdvancedClient, error)
+
 	// Event VirtualTimePaused
 	//
 	// Notification sent after the virtual time has paused.
 	//
 	// Note: This event is experimental.
 	VirtualTimePaused(context.Context) (emulation.VirtualTimePausedClient, error)
+}
+
+// The HeadlessExperimental domain. This domain provides experimental commands only supported in headless mode.
+//
+// Note: This domain is experimental.
+type HeadlessExperimental interface {
+	// Command Enable
+	//
+	// Enables headless events for the target.
+	Enable(context.Context) error
+
+	// Command Disable
+	//
+	// Disables headless events for the target.
+	Disable(context.Context) error
+
+	// Command BeginFrame
+	//
+	// Sends a BeginFrame to the target and returns when the frame was completed. Optionally captures a screenshot from the resulting frame. Requires that the target was created with enabled BeginFrameControl.
+	BeginFrame(context.Context, *headlessexperimental.BeginFrameArgs) (*headlessexperimental.BeginFrameReply, error)
+
+	// Event NeedsBeginFramesChanged
+	//
+	// Issued when the target starts or stops needing BeginFrames.
+	NeedsBeginFramesChanged(context.Context) (headlessexperimental.NeedsBeginFramesChangedClient, error)
+
+	// Event MainFrameReadyForScreenshots
+	//
+	// Issued when the main frame has first submitted a frame to the browser. May only be fired while a BeginFrame is in flight. Before this event, screenshotting requests may fail.
+	MainFrameReadyForScreenshots(context.Context) (headlessexperimental.MainFrameReadyForScreenshotsClient, error)
 }
 
 // The HeapProfiler domain.
@@ -1566,12 +1609,12 @@ type Network interface {
 	// Note: This command is experimental.
 	GetCertificate(context.Context, *network.GetCertificateArgs) (*network.GetCertificateReply, error)
 
-	// Command SetRequestInterceptionEnabled
+	// Command SetRequestInterception
 	//
-	// Sets the requests to intercept that match a the provided patterns.
+	// Sets the requests to intercept that match a the provided patterns and optionally resource types.
 	//
 	// Note: This command is experimental.
-	SetRequestInterceptionEnabled(context.Context, *network.SetRequestInterceptionEnabledArgs) error
+	SetRequestInterception(context.Context, *network.SetRequestInterceptionArgs) error
 
 	// Command ContinueInterceptedRequest
 	//
@@ -2058,6 +2101,13 @@ type Page interface {
 	//
 	// Fired when interstitial page was hidden
 	InterstitialHidden(context.Context) (page.InterstitialHiddenClient, error)
+
+	// Event WindowOpen
+	//
+	// Fired when window.open() was called
+	//
+	// Note: This event is experimental.
+	WindowOpen(context.Context) (page.WindowOpenClient, error)
 }
 
 // The Performance domain.
@@ -2233,6 +2283,13 @@ type Runtime interface {
 	//
 	// Note: This command is experimental.
 	QueryObjects(context.Context, *runtime.QueryObjectsArgs) (*runtime.QueryObjectsReply, error)
+
+	// Command GlobalLexicalScopeNames
+	//
+	// Returns all let, const and class variables from global scope.
+	//
+	// Note: This command is experimental.
+	GlobalLexicalScopeNames(context.Context, *runtime.GlobalLexicalScopeNamesArgs) (*runtime.GlobalLexicalScopeNamesReply, error)
 
 	// Event ExecutionContextCreated
 	//

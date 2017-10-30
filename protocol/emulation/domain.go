@@ -229,6 +229,24 @@ func (c *virtualTimeBudgetExpiredClient) Recv() (*VirtualTimeBudgetExpiredReply,
 	return event, nil
 }
 
+func (d *domainClient) VirtualTimeAdvanced(ctx context.Context) (VirtualTimeAdvancedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Emulation.virtualTimeAdvanced", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &virtualTimeAdvancedClient{Stream: s}, nil
+}
+
+type virtualTimeAdvancedClient struct{ rpcc.Stream }
+
+func (c *virtualTimeAdvancedClient) Recv() (*VirtualTimeAdvancedReply, error) {
+	event := new(VirtualTimeAdvancedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Emulation", Op: "VirtualTimeAdvanced Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) VirtualTimePaused(ctx context.Context) (VirtualTimePausedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Emulation.virtualTimePaused", d.conn)
 	if err != nil {
