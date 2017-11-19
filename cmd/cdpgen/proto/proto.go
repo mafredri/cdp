@@ -311,6 +311,12 @@ func (at AnyType) GoType(pkg string, d Domain) string {
 		return "[]byte"
 	}
 
+	// Using a string for Target messages introduces unnecessary copying,
+	// instead we use json.RawMessage so that we can pass byte-slices around.
+	if d.Domain == "Target" && at.NameName == "message" && at.Type == "string" {
+		return "json.RawMessage"
+	}
+
 	switch at.Type {
 	case "any":
 		return "json.RawMessage"
