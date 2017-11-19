@@ -2,6 +2,10 @@
 
 package target
 
+import (
+	"encoding/json"
+)
+
 // SetDiscoverTargetsArgs represents the arguments for SetDiscoverTargets in the Target domain.
 type SetDiscoverTargetsArgs struct {
 	Discover bool `json:"discover"` // Whether to discover available targets.
@@ -54,8 +58,8 @@ func NewSetRemoteLocationsArgs(locations []RemoteLocation) *SetRemoteLocationsAr
 
 // SendMessageToTargetArgs represents the arguments for SendMessageToTarget in the Target domain.
 type SendMessageToTargetArgs struct {
-	Message   string     `json:"message"`             // No description.
-	SessionID *SessionID `json:"sessionId,omitempty"` // Identifier of the session.
+	Message   json.RawMessage `json:"message"`             // No description.
+	SessionID *SessionID      `json:"sessionId,omitempty"` // Identifier of the session.
 	// TargetID is deprecated.
 	//
 	// Deprecated: Deprecated.
@@ -63,7 +67,7 @@ type SendMessageToTargetArgs struct {
 }
 
 // NewSendMessageToTargetArgs initializes SendMessageToTargetArgs with the required arguments.
-func NewSendMessageToTargetArgs(message string) *SendMessageToTargetArgs {
+func NewSendMessageToTargetArgs(message json.RawMessage) *SendMessageToTargetArgs {
 	args := new(SendMessageToTargetArgs)
 	args.Message = message
 	return args

@@ -3,6 +3,8 @@
 package target
 
 import (
+	"encoding/json"
+
 	"github.com/mafredri/cdp/rpcc"
 )
 
@@ -87,8 +89,8 @@ type ReceivedMessageFromTargetClient interface {
 
 // ReceivedMessageFromTargetReply is the reply for ReceivedMessageFromTarget events.
 type ReceivedMessageFromTargetReply struct {
-	SessionID SessionID `json:"sessionId"` // Identifier of a session which sends a message.
-	Message   string    `json:"message"`   // No description.
+	SessionID SessionID       `json:"sessionId"` // Identifier of a session which sends a message.
+	Message   json.RawMessage `json:"message"`   // No description.
 	// TargetID is deprecated.
 	//
 	// Deprecated: Deprecated.
