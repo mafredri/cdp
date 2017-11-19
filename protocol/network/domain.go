@@ -53,6 +53,20 @@ func (d *domainClient) SetUserAgentOverride(ctx context.Context, args *SetUserAg
 	return
 }
 
+// SearchInResponseBody invokes the Network method. Searches for given string in response content.
+func (d *domainClient) SearchInResponseBody(ctx context.Context, args *SearchInResponseBodyArgs) (reply *SearchInResponseBodyReply, err error) {
+	reply = new(SearchInResponseBodyReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.searchInResponseBody", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.searchInResponseBody", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "SearchInResponseBody", Err: err}
+	}
+	return
+}
+
 // SetExtraHTTPHeaders invokes the Network method. Specifies whether to always send extra HTTP headers with the requests from this page.
 func (d *domainClient) SetExtraHTTPHeaders(ctx context.Context, args *SetExtraHTTPHeadersArgs) (err error) {
 	if args != nil {
@@ -306,6 +320,20 @@ func (d *domainClient) ContinueInterceptedRequest(ctx context.Context, args *Con
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "ContinueInterceptedRequest", Err: err}
+	}
+	return
+}
+
+// GetResponseBodyForInterception invokes the Network method. Returns content served for the given currently intercepted request.
+func (d *domainClient) GetResponseBodyForInterception(ctx context.Context, args *GetResponseBodyForInterceptionArgs) (reply *GetResponseBodyForInterceptionReply, err error) {
+	reply = new(GetResponseBodyForInterceptionReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.getResponseBodyForInterception", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.getResponseBodyForInterception", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "GetResponseBodyForInterception", Err: err}
 	}
 	return
 }

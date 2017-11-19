@@ -184,6 +184,41 @@ func (a *ContinueToLocationArgs) SetTargetCallFrames(targetCallFrames string) *C
 	return a
 }
 
+// PauseOnAsyncTaskArgs represents the arguments for PauseOnAsyncTask in the Debugger domain.
+type PauseOnAsyncTaskArgs struct {
+	AsyncTaskID runtime.AsyncTaskID `json:"asyncTaskId"` // Debugger will pause when given async task is started.
+}
+
+// NewPauseOnAsyncTaskArgs initializes PauseOnAsyncTaskArgs with the required arguments.
+func NewPauseOnAsyncTaskArgs(asyncTaskID runtime.AsyncTaskID) *PauseOnAsyncTaskArgs {
+	args := new(PauseOnAsyncTaskArgs)
+	args.AsyncTaskID = asyncTaskID
+	return args
+}
+
+// StepIntoArgs represents the arguments for StepInto in the Debugger domain.
+type StepIntoArgs struct {
+	// BreakOnAsyncCall Debugger will issue additional Debugger.paused notification if any async task is scheduled before next pause.
+	//
+	// Note: This property is experimental.
+	BreakOnAsyncCall *bool `json:"breakOnAsyncCall,omitempty"`
+}
+
+// NewStepIntoArgs initializes StepIntoArgs with the required arguments.
+func NewStepIntoArgs() *StepIntoArgs {
+	args := new(StepIntoArgs)
+
+	return args
+}
+
+// SetBreakOnAsyncCall sets the BreakOnAsyncCall optional argument. Debugger will issue additional Debugger.paused notification if any async task is scheduled before next pause.
+//
+// Note: This property is experimental.
+func (a *StepIntoArgs) SetBreakOnAsyncCall(breakOnAsyncCall bool) *StepIntoArgs {
+	a.BreakOnAsyncCall = &breakOnAsyncCall
+	return a
+}
+
 // SearchInContentArgs represents the arguments for SearchInContent in the Debugger domain.
 type SearchInContentArgs struct {
 	ScriptID      runtime.ScriptID `json:"scriptId"`                // Id of the script to search in.
@@ -383,6 +418,18 @@ func NewSetVariableValueArgs(scopeNumber int, variableName string, newValue runt
 	args.VariableName = variableName
 	args.NewValue = newValue
 	args.CallFrameID = callFrameID
+	return args
+}
+
+// SetReturnValueArgs represents the arguments for SetReturnValue in the Debugger domain.
+type SetReturnValueArgs struct {
+	NewValue runtime.CallArgument `json:"newValue"` // New return value.
+}
+
+// NewSetReturnValueArgs initializes SetReturnValueArgs with the required arguments.
+func NewSetReturnValueArgs(newValue runtime.CallArgument) *SetReturnValueArgs {
+	args := new(SetReturnValueArgs)
+	args.NewValue = newValue
 	return args
 }
 

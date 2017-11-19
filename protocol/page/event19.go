@@ -13,6 +13,7 @@ import (
 // LifecycleEventReply is the reply for LifecycleEvent events.
 type LifecycleEventReply struct {
 	FrameID   FrameID               `json:"frameId"`   // Id of the frame.
+	LoaderID  network.LoaderID      `json:"loaderId"`  // Loader identifier. Empty string if the request is fetched from worker.
 	Name      string                `json:"name"`      // No description.
 	Timestamp network.MonotonicTime `json:"timestamp"` // No description.
 }
@@ -27,12 +28,9 @@ type FrameAttachedClient interface {
 
 // FrameAttachedReply is the reply for FrameAttached events.
 type FrameAttachedReply struct {
-	FrameID       FrameID `json:"frameId"`       // Id of the frame that has been attached.
-	ParentFrameID FrameID `json:"parentFrameId"` // Parent frame identifier.
-	// Stack JavaScript stack trace of when frame was attached, only set if frame initiated from script.
-	//
-	// Note: This property is experimental.
-	Stack *runtime.StackTrace `json:"stack,omitempty"`
+	FrameID       FrameID             `json:"frameId"`         // Id of the frame that has been attached.
+	ParentFrameID FrameID             `json:"parentFrameId"`   // Parent frame identifier.
+	Stack         *runtime.StackTrace `json:"stack,omitempty"` // JavaScript stack trace of when frame was attached, only set if frame initiated from script.
 }
 
 // FrameNavigatedClient is a client for FrameNavigated events. Fired once navigation of the frame has completed. Frame is now associated with the new loader.
@@ -89,13 +87,8 @@ type FrameScheduledNavigationReply struct {
 	// Reason The reason for the navigation.
 	//
 	// Values: "formSubmissionGet", "formSubmissionPost", "httpHeaderRefresh", "scriptInitiated", "metaTagRefresh", "pageBlockInterstitial", "reload".
-	//
-	// Note: This property is experimental.
 	Reason string `json:"reason"`
-	// URL The destination URL for the scheduled navigation.
-	//
-	// Note: This property is experimental.
-	URL string `json:"url"`
+	URL    string `json:"url"` // The destination URL for the scheduled navigation.
 }
 
 // FrameClearedScheduledNavigationClient is a client for FrameClearedScheduledNavigation events. Fired when frame no longer has a scheduled navigation.

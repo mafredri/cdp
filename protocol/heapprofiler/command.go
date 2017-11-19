@@ -135,3 +135,8 @@ func (a *StartSamplingArgs) SetSamplingInterval(samplingInterval float64) *Start
 type StopSamplingReply struct {
 	Profile SamplingHeapProfile `json:"profile"` // Recorded sampling heap profile.
 }
+
+// GetSamplingProfileReply represents the return values for GetSamplingProfile in the HeapProfiler domain.
+type GetSamplingProfileReply struct {
+	Profile SamplingHeapProfile `json:"profile"` // Return the sampling profile being collected.
+}

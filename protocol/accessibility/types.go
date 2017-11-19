@@ -127,8 +127,8 @@ type AXRelatedNode struct {
 
 // AXProperty
 type AXProperty struct {
-	Name  string  `json:"name"`  // The name of this property.
-	Value AXValue `json:"value"` // The value of this property.
+	Name  AXPropertyName `json:"name"`  // The name of this property.
+	Value AXValue        `json:"value"` // The value of this property.
 }
 
 // AXValue A single computed AX property.
@@ -139,143 +139,59 @@ type AXValue struct {
 	Sources      []AXValueSource `json:"sources,omitempty"`      // The sources which contributed to the computation of this property.
 }
 
-// AXGlobalStates States which apply to every AX node.
-type AXGlobalStates string
+// AXPropertyName Values of AXProperty name: from 'busy' to 'roledescription' - states which apply to every AX node, from 'live' to 'root' - attributes which apply to nodes in live regions, from 'autocomplete' to 'valuetext' - attributes which apply to widgets, from 'checked' to 'selected' - states which apply to widgets, from 'activedescendant' to 'owns' - relationships between elements other than parent/child/sibling.
+type AXPropertyName string
 
-// AXGlobalStates as enums.
+// AXPropertyName as enums.
 const (
-	AXGlobalStatesNotSet          AXGlobalStates = ""
-	AXGlobalStatesBusy            AXGlobalStates = "busy"
-	AXGlobalStatesDisabled        AXGlobalStates = "disabled"
-	AXGlobalStatesHidden          AXGlobalStates = "hidden"
-	AXGlobalStatesHiddenRoot      AXGlobalStates = "hiddenRoot"
-	AXGlobalStatesInvalid         AXGlobalStates = "invalid"
-	AXGlobalStatesKeyshortcuts    AXGlobalStates = "keyshortcuts"
-	AXGlobalStatesRoledescription AXGlobalStates = "roledescription"
+	AXPropertyNameNotSet           AXPropertyName = ""
+	AXPropertyNameBusy             AXPropertyName = "busy"
+	AXPropertyNameDisabled         AXPropertyName = "disabled"
+	AXPropertyNameHidden           AXPropertyName = "hidden"
+	AXPropertyNameHiddenRoot       AXPropertyName = "hiddenRoot"
+	AXPropertyNameInvalid          AXPropertyName = "invalid"
+	AXPropertyNameKeyshortcuts     AXPropertyName = "keyshortcuts"
+	AXPropertyNameRoledescription  AXPropertyName = "roledescription"
+	AXPropertyNameLive             AXPropertyName = "live"
+	AXPropertyNameAtomic           AXPropertyName = "atomic"
+	AXPropertyNameRelevant         AXPropertyName = "relevant"
+	AXPropertyNameRoot             AXPropertyName = "root"
+	AXPropertyNameAutocomplete     AXPropertyName = "autocomplete"
+	AXPropertyNameHaspopup         AXPropertyName = "haspopup"
+	AXPropertyNameLevel            AXPropertyName = "level"
+	AXPropertyNameMultiselectable  AXPropertyName = "multiselectable"
+	AXPropertyNameOrientation      AXPropertyName = "orientation"
+	AXPropertyNameMultiline        AXPropertyName = "multiline"
+	AXPropertyNameReadonly         AXPropertyName = "readonly"
+	AXPropertyNameRequired         AXPropertyName = "required"
+	AXPropertyNameValuemin         AXPropertyName = "valuemin"
+	AXPropertyNameValuemax         AXPropertyName = "valuemax"
+	AXPropertyNameValuetext        AXPropertyName = "valuetext"
+	AXPropertyNameChecked          AXPropertyName = "checked"
+	AXPropertyNameExpanded         AXPropertyName = "expanded"
+	AXPropertyNameModal            AXPropertyName = "modal"
+	AXPropertyNamePressed          AXPropertyName = "pressed"
+	AXPropertyNameSelected         AXPropertyName = "selected"
+	AXPropertyNameActivedescendant AXPropertyName = "activedescendant"
+	AXPropertyNameControls         AXPropertyName = "controls"
+	AXPropertyNameDescribedby      AXPropertyName = "describedby"
+	AXPropertyNameDetails          AXPropertyName = "details"
+	AXPropertyNameErrormessage     AXPropertyName = "errormessage"
+	AXPropertyNameFlowto           AXPropertyName = "flowto"
+	AXPropertyNameLabelledby       AXPropertyName = "labelledby"
+	AXPropertyNameOwns             AXPropertyName = "owns"
 )
 
-func (e AXGlobalStates) Valid() bool {
+func (e AXPropertyName) Valid() bool {
 	switch e {
-	case "busy", "disabled", "hidden", "hiddenRoot", "invalid", "keyshortcuts", "roledescription":
+	case "busy", "disabled", "hidden", "hiddenRoot", "invalid", "keyshortcuts", "roledescription", "live", "atomic", "relevant", "root", "autocomplete", "haspopup", "level", "multiselectable", "orientation", "multiline", "readonly", "required", "valuemin", "valuemax", "valuetext", "checked", "expanded", "modal", "pressed", "selected", "activedescendant", "controls", "describedby", "details", "errormessage", "flowto", "labelledby", "owns":
 		return true
 	default:
 		return false
 	}
 }
 
-func (e AXGlobalStates) String() string {
-	return string(e)
-}
-
-// AXLiveRegionAttributes Attributes which apply to nodes in live regions.
-type AXLiveRegionAttributes string
-
-// AXLiveRegionAttributes as enums.
-const (
-	AXLiveRegionAttributesNotSet   AXLiveRegionAttributes = ""
-	AXLiveRegionAttributesLive     AXLiveRegionAttributes = "live"
-	AXLiveRegionAttributesAtomic   AXLiveRegionAttributes = "atomic"
-	AXLiveRegionAttributesRelevant AXLiveRegionAttributes = "relevant"
-	AXLiveRegionAttributesRoot     AXLiveRegionAttributes = "root"
-)
-
-func (e AXLiveRegionAttributes) Valid() bool {
-	switch e {
-	case "live", "atomic", "relevant", "root":
-		return true
-	default:
-		return false
-	}
-}
-
-func (e AXLiveRegionAttributes) String() string {
-	return string(e)
-}
-
-// AXWidgetAttributes Attributes which apply to widgets.
-type AXWidgetAttributes string
-
-// AXWidgetAttributes as enums.
-const (
-	AXWidgetAttributesNotSet          AXWidgetAttributes = ""
-	AXWidgetAttributesAutocomplete    AXWidgetAttributes = "autocomplete"
-	AXWidgetAttributesHaspopup        AXWidgetAttributes = "haspopup"
-	AXWidgetAttributesLevel           AXWidgetAttributes = "level"
-	AXWidgetAttributesMultiselectable AXWidgetAttributes = "multiselectable"
-	AXWidgetAttributesOrientation     AXWidgetAttributes = "orientation"
-	AXWidgetAttributesMultiline       AXWidgetAttributes = "multiline"
-	AXWidgetAttributesReadonly        AXWidgetAttributes = "readonly"
-	AXWidgetAttributesRequired        AXWidgetAttributes = "required"
-	AXWidgetAttributesValuemin        AXWidgetAttributes = "valuemin"
-	AXWidgetAttributesValuemax        AXWidgetAttributes = "valuemax"
-	AXWidgetAttributesValuetext       AXWidgetAttributes = "valuetext"
-)
-
-func (e AXWidgetAttributes) Valid() bool {
-	switch e {
-	case "autocomplete", "haspopup", "level", "multiselectable", "orientation", "multiline", "readonly", "required", "valuemin", "valuemax", "valuetext":
-		return true
-	default:
-		return false
-	}
-}
-
-func (e AXWidgetAttributes) String() string {
-	return string(e)
-}
-
-// AXWidgetStates States which apply to widgets.
-type AXWidgetStates string
-
-// AXWidgetStates as enums.
-const (
-	AXWidgetStatesNotSet   AXWidgetStates = ""
-	AXWidgetStatesChecked  AXWidgetStates = "checked"
-	AXWidgetStatesExpanded AXWidgetStates = "expanded"
-	AXWidgetStatesModal    AXWidgetStates = "modal"
-	AXWidgetStatesPressed  AXWidgetStates = "pressed"
-	AXWidgetStatesSelected AXWidgetStates = "selected"
-)
-
-func (e AXWidgetStates) Valid() bool {
-	switch e {
-	case "checked", "expanded", "modal", "pressed", "selected":
-		return true
-	default:
-		return false
-	}
-}
-
-func (e AXWidgetStates) String() string {
-	return string(e)
-}
-
-// AXRelationshipAttributes Relationships between elements other than parent/child/sibling.
-type AXRelationshipAttributes string
-
-// AXRelationshipAttributes as enums.
-const (
-	AXRelationshipAttributesNotSet           AXRelationshipAttributes = ""
-	AXRelationshipAttributesActivedescendant AXRelationshipAttributes = "activedescendant"
-	AXRelationshipAttributesControls         AXRelationshipAttributes = "controls"
-	AXRelationshipAttributesDescribedby      AXRelationshipAttributes = "describedby"
-	AXRelationshipAttributesDetails          AXRelationshipAttributes = "details"
-	AXRelationshipAttributesErrormessage     AXRelationshipAttributes = "errormessage"
-	AXRelationshipAttributesFlowto           AXRelationshipAttributes = "flowto"
-	AXRelationshipAttributesLabelledby       AXRelationshipAttributes = "labelledby"
-	AXRelationshipAttributesOwns             AXRelationshipAttributes = "owns"
-)
-
-func (e AXRelationshipAttributes) Valid() bool {
-	switch e {
-	case "activedescendant", "controls", "describedby", "details", "errormessage", "flowto", "labelledby", "owns":
-		return true
-	default:
-		return false
-	}
-}
-
-func (e AXRelationshipAttributes) String() string {
+func (e AXPropertyName) String() string {
 	return string(e)
 }
 

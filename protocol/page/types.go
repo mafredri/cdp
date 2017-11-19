@@ -15,14 +15,16 @@ type FrameResourceTree struct {
 	Resources   []FrameResource     `json:"resources"`             // Information about frame resources.
 }
 
+// FrameTree Information about the Frame hierarchy.
+type FrameTree struct {
+	Frame       Frame       `json:"frame"`                 // Frame information for this tree item.
+	ChildFrames []FrameTree `json:"childFrames,omitempty"` // Child frames.
+}
+
 // ScriptIdentifier Unique script identifier.
-//
-// Note: This type is experimental.
 type ScriptIdentifier string
 
 // TransitionType Transition type.
-//
-// Note: This type is experimental.
 type TransitionType string
 
 // TransitionType as enums.
@@ -56,8 +58,6 @@ func (e TransitionType) String() string {
 }
 
 // NavigationEntry Navigation history entry.
-//
-// Note: This type is experimental.
 type NavigationEntry struct {
 	ID             int            `json:"id"`             // Unique id of the navigation history entry.
 	URL            string         `json:"url"`            // URL of the navigation history entry.
@@ -101,8 +101,6 @@ type ScreencastFrameMetadata struct {
 }
 
 // DialogType Javascript dialog type.
-//
-// Note: This type is experimental.
 type DialogType string
 
 // DialogType as enums.
@@ -128,8 +126,6 @@ func (e DialogType) String() string {
 }
 
 // AppManifestError Error while paring app manifest.
-//
-// Note: This type is experimental.
 type AppManifestError struct {
 	Message  string `json:"message"`  // Error message.
 	Critical int    `json:"critical"` // If criticial, this is a non-recoverable parse error.
@@ -137,35 +133,7 @@ type AppManifestError struct {
 	Column   int    `json:"column"`   // Error column.
 }
 
-// NavigationResponse Proceed: allow the navigation; Cancel: cancel the navigation; CancelAndIgnore: cancels the navigation and makes the requester of the navigation acts like the request was never made.
-//
-// Note: This type is experimental.
-type NavigationResponse string
-
-// NavigationResponse as enums.
-const (
-	NavigationResponseNotSet          NavigationResponse = ""
-	NavigationResponseProceed         NavigationResponse = "Proceed"
-	NavigationResponseCancel          NavigationResponse = "Cancel"
-	NavigationResponseCancelAndIgnore NavigationResponse = "CancelAndIgnore"
-)
-
-func (e NavigationResponse) Valid() bool {
-	switch e {
-	case "Proceed", "Cancel", "CancelAndIgnore":
-		return true
-	default:
-		return false
-	}
-}
-
-func (e NavigationResponse) String() string {
-	return string(e)
-}
-
 // LayoutViewport Layout viewport position and dimensions.
-//
-// Note: This type is experimental.
 type LayoutViewport struct {
 	PageX        int `json:"pageX"`        // Horizontal offset relative to the document (CSS pixels).
 	PageY        int `json:"pageY"`        // Vertical offset relative to the document (CSS pixels).
@@ -174,8 +142,6 @@ type LayoutViewport struct {
 }
 
 // VisualViewport Visual viewport position, dimensions, and scale.
-//
-// Note: This type is experimental.
 type VisualViewport struct {
 	OffsetX      float64 `json:"offsetX"`      // Horizontal offset relative to the layout viewport (CSS pixels).
 	OffsetY      float64 `json:"offsetY"`      // Vertical offset relative to the layout viewport (CSS pixels).
@@ -187,8 +153,6 @@ type VisualViewport struct {
 }
 
 // Viewport Viewport for capturing screenshot.
-//
-// Note: This type is experimental.
 type Viewport struct {
 	X      float64 `json:"x"`      // X offset in CSS pixels.
 	Y      float64 `json:"y"`      // Y offset in CSS pixels

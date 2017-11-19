@@ -170,8 +170,6 @@ type Audits interface {
 }
 
 // The Browser domain. The Browser domain defines methods and events for browser managing.
-//
-// Note: This domain is experimental.
 type Browser interface {
 	// Command Close
 	//
@@ -181,6 +179,8 @@ type Browser interface {
 	// Command GetWindowForTarget
 	//
 	// Get the browser window that contains the devtools target.
+	//
+	// Note: This command is experimental.
 	GetWindowForTarget(context.Context, *browser.GetWindowForTargetArgs) (*browser.GetWindowForTargetReply, error)
 
 	// Command GetVersion
@@ -191,11 +191,15 @@ type Browser interface {
 	// Command SetWindowBounds
 	//
 	// Set position and/or size of the browser window.
+	//
+	// Note: This command is experimental.
 	SetWindowBounds(context.Context, *browser.SetWindowBoundsArgs) error
 
 	// Command GetWindowBounds
 	//
 	// Get position and size of the browser window.
+	//
+	// Note: This command is experimental.
 	GetWindowBounds(context.Context, *browser.GetWindowBoundsArgs) (*browser.GetWindowBoundsReply, error)
 }
 
@@ -231,8 +235,6 @@ type CSS interface {
 	// Command GetPlatformFontsForNode
 	//
 	// Requests information about platform fonts which we used to render child TextNodes in the given node.
-	//
-	// Note: This command is experimental.
 	GetPlatformFontsForNode(context.Context, *css.GetPlatformFontsForNodeArgs) (*css.GetPlatformFontsForNodeReply, error)
 
 	// Command GetStyleSheetText
@@ -243,8 +245,6 @@ type CSS interface {
 	// Command CollectClassNames
 	//
 	// Returns all class names from specified stylesheet.
-	//
-	// Note: This command is experimental.
 	CollectClassNames(context.Context, *css.CollectClassNamesArgs) (*css.CollectClassNamesReply, error)
 
 	// Command SetStyleSheetText
@@ -290,41 +290,29 @@ type CSS interface {
 	// Command GetMediaQueries
 	//
 	// Returns all media queries parsed by the rendering engine.
-	//
-	// Note: This command is experimental.
 	GetMediaQueries(context.Context) (*css.GetMediaQueriesReply, error)
 
 	// Command SetEffectivePropertyValueForNode
 	//
 	// Find a rule with the given active property for the given node and set the new value for this property
-	//
-	// Note: This command is experimental.
 	SetEffectivePropertyValueForNode(context.Context, *css.SetEffectivePropertyValueForNodeArgs) error
 
 	// Command GetBackgroundColors
-	//
-	// Note: This command is experimental.
 	GetBackgroundColors(context.Context, *css.GetBackgroundColorsArgs) (*css.GetBackgroundColorsReply, error)
 
 	// Command StartRuleUsageTracking
 	//
 	// Enables the selector recording.
-	//
-	// Note: This command is experimental.
 	StartRuleUsageTracking(context.Context) error
 
 	// Command TakeCoverageDelta
 	//
 	// Obtain list of rules that became used since last call to this method (or since start of coverage instrumentation)
-	//
-	// Note: This command is experimental.
 	TakeCoverageDelta(context.Context) (*css.TakeCoverageDeltaReply, error)
 
 	// Command StopRuleUsageTracking
 	//
 	// The list of rules with an indication of whether these were used
-	//
-	// Note: This command is experimental.
 	StopRuleUsageTracking(context.Context) (*css.StopRuleUsageTrackingReply, error)
 
 	// Event MediaQueryResultChanged
@@ -587,22 +575,16 @@ type DOM interface {
 	// Command Focus
 	//
 	// Focuses the given element.
-	//
-	// Note: This command is experimental.
 	Focus(context.Context, *dom.FocusArgs) error
 
 	// Command SetFileInputFiles
 	//
 	// Sets files for the given file input element.
-	//
-	// Note: This command is experimental.
 	SetFileInputFiles(context.Context, *dom.SetFileInputFilesArgs) error
 
 	// Command GetBoxModel
 	//
-	// Returns boxes for the currently selected nodes.
-	//
-	// Note: This command is experimental.
+	// Returns boxes for the given node.
 	GetBoxModel(context.Context, *dom.GetBoxModelArgs) (*dom.GetBoxModelReply, error)
 
 	// Command GetNodeForLocation
@@ -756,8 +738,6 @@ type DOMDebugger interface {
 	// Command GetEventListeners
 	//
 	// Returns event listeners of the given object.
-	//
-	// Note: This command is experimental.
 	GetEventListeners(context.Context, *domdebugger.GetEventListenersArgs) (*domdebugger.GetEventListenersReply, error)
 }
 
@@ -883,6 +863,11 @@ type Debugger interface {
 	// Continues execution until specific location is reached.
 	ContinueToLocation(context.Context, *debugger.ContinueToLocationArgs) error
 
+	// Command PauseOnAsyncTask
+	//
+	// Note: This command is experimental.
+	PauseOnAsyncTask(context.Context, *debugger.PauseOnAsyncTaskArgs) error
+
 	// Command StepOver
 	//
 	// Steps over the statement.
@@ -891,7 +876,7 @@ type Debugger interface {
 	// Command StepInto
 	//
 	// Steps into the function call.
-	StepInto(context.Context) error
+	StepInto(context.Context, *debugger.StepIntoArgs) error
 
 	// Command StepOut
 	//
@@ -905,7 +890,7 @@ type Debugger interface {
 
 	// Command ScheduleStepIntoAsync
 	//
-	// Steps into next scheduled async task if any is scheduled before next pause. Returns success when async task is actually scheduled, returns error if no task were scheduled or another scheduleStepIntoAsync was called.
+	// This method is deprecated - use Debugger.stepInto with breakOnAsyncCall and Debugger.pauseOnAsyncTask instead. Steps into next scheduled async task if any is scheduled before next pause. Returns success when async task is actually scheduled, returns error if no task were scheduled or another scheduleStepIntoAsync was called.
 	//
 	// Note: This command is experimental.
 	ScheduleStepIntoAsync(context.Context) error
@@ -951,6 +936,13 @@ type Debugger interface {
 	//
 	// Changes value of variable in a callframe. Object-based scopes are not supported and must be mutated manually.
 	SetVariableValue(context.Context, *debugger.SetVariableValueArgs) error
+
+	// Command SetReturnValue
+	//
+	// Changes return value in top frame. Available only at return break position.
+	//
+	// Note: This command is experimental.
+	SetReturnValue(context.Context, *debugger.SetReturnValueArgs) error
 
 	// Command SetAsyncCallStackDepth
 	//
@@ -1048,22 +1040,16 @@ type Emulation interface {
 	// Command SetScriptExecutionDisabled
 	//
 	// Switches script execution in the page.
-	//
-	// Note: This command is experimental.
 	SetScriptExecutionDisabled(context.Context, *emulation.SetScriptExecutionDisabledArgs) error
 
 	// Command SetGeolocationOverride
 	//
 	// Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position unavailable.
-	//
-	// Note: This command is experimental.
 	SetGeolocationOverride(context.Context, *emulation.SetGeolocationOverrideArgs) error
 
 	// Command ClearGeolocationOverride
 	//
 	// Clears the overridden Geolocation Position and Error.
-	//
-	// Note: This command is experimental.
 	ClearGeolocationOverride(context.Context) error
 
 	// Command SetTouchEmulationEnabled
@@ -1091,8 +1077,6 @@ type Emulation interface {
 	// Command CanEmulate
 	//
 	// Tells whether emulation is supported.
-	//
-	// Note: This command is experimental.
 	CanEmulate(context.Context) (*emulation.CanEmulateReply, error)
 
 	// Command SetVirtualTimePolicy
@@ -1100,7 +1084,7 @@ type Emulation interface {
 	// Turns on virtual time for all frames (replacing real-time with a synthetic time source) and sets the current virtual time policy.  Note this supersedes any previous time budget.
 	//
 	// Note: This command is experimental.
-	SetVirtualTimePolicy(context.Context, *emulation.SetVirtualTimePolicyArgs) error
+	SetVirtualTimePolicy(context.Context, *emulation.SetVirtualTimePolicyArgs) (*emulation.SetVirtualTimePolicyReply, error)
 
 	// Command SetNavigatorOverrides
 	//
@@ -1112,8 +1096,6 @@ type Emulation interface {
 	// Command SetDefaultBackgroundColorOverride
 	//
 	// Sets or clears an override of the default background color of the frame. This override is used if the content does not specify one.
-	//
-	// Note: This command is experimental.
 	SetDefaultBackgroundColorOverride(context.Context, *emulation.SetDefaultBackgroundColorOverrideArgs) error
 
 	// Event VirtualTimeBudgetExpired
@@ -1207,6 +1189,9 @@ type HeapProfiler interface {
 	// Command StopSampling
 	StopSampling(context.Context) (*heapprofiler.StopSamplingReply, error)
 
+	// Command GetSamplingProfile
+	GetSamplingProfile(context.Context) (*heapprofiler.GetSamplingProfileReply, error)
+
 	// Event AddHeapSnapshotChunk
 	AddHeapSnapshotChunk(context.Context) (heapprofiler.AddHeapSnapshotChunkClient, error)
 
@@ -1228,8 +1213,6 @@ type HeapProfiler interface {
 }
 
 // The IO domain. Input/Output operations for streams produced by DevTools.
-//
-// Note: This domain is experimental.
 type IO interface {
 	// Command Read
 	//
@@ -1307,8 +1290,6 @@ type Input interface {
 	// Command DispatchTouchEvent
 	//
 	// Dispatches a touch event to the page.
-	//
-	// Note: This command is experimental.
 	DispatchTouchEvent(context.Context, *input.DispatchTouchEventArgs) error
 
 	// Command EmulateTouchFromMouseEvent
@@ -1420,8 +1401,6 @@ type LayerTree interface {
 }
 
 // The Log domain. Provides access to log entries.
-//
-// Note: This domain is experimental.
 type Log interface {
 	// Command Enable
 	//
@@ -1492,6 +1471,13 @@ type Network interface {
 	// Allows overriding user agent with the given string.
 	SetUserAgentOverride(context.Context, *network.SetUserAgentOverrideArgs) error
 
+	// Command SearchInResponseBody
+	//
+	// Searches for given string in response content.
+	//
+	// Note: This command is experimental.
+	SearchInResponseBody(context.Context, *network.SearchInResponseBodyArgs) (*network.SearchInResponseBodyReply, error)
+
 	// Command SetExtraHTTPHeaders
 	//
 	// Specifies whether to always send extra HTTP headers with the requests from this page.
@@ -1539,43 +1525,31 @@ type Network interface {
 	// Command GetCookies
 	//
 	// Returns all browser cookies for the current URL. Depending on the backend support, will return detailed cookie information in the cookies field.
-	//
-	// Note: This command is experimental.
 	GetCookies(context.Context, *network.GetCookiesArgs) (*network.GetCookiesReply, error)
 
 	// Command GetAllCookies
 	//
 	// Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the cookies field.
-	//
-	// Note: This command is experimental.
 	GetAllCookies(context.Context) (*network.GetAllCookiesReply, error)
 
 	// Command DeleteCookies
 	//
 	// Deletes browser cookies with matching name and url or domain/path pair.
-	//
-	// Note: This command is experimental.
 	DeleteCookies(context.Context, *network.DeleteCookiesArgs) error
 
 	// Command SetCookie
 	//
 	// Sets a cookie with the given cookie data; may overwrite equivalent cookies if they exist.
-	//
-	// Note: This command is experimental.
 	SetCookie(context.Context, *network.SetCookieArgs) (*network.SetCookieReply, error)
 
 	// Command SetCookies
 	//
 	// Sets given cookies.
-	//
-	// Note: This command is experimental.
 	SetCookies(context.Context, *network.SetCookiesArgs) error
 
 	// Command CanEmulateNetworkConditions
 	//
 	// Tells whether emulation of network conditions is supported.
-	//
-	// Note: This command is experimental.
 	CanEmulateNetworkConditions(context.Context) (*network.CanEmulateNetworkConditionsReply, error)
 
 	// Command EmulateNetworkConditions
@@ -1623,6 +1597,13 @@ type Network interface {
 	// Note: This command is experimental.
 	ContinueInterceptedRequest(context.Context, *network.ContinueInterceptedRequestArgs) error
 
+	// Command GetResponseBodyForInterception
+	//
+	// Returns content served for the given currently intercepted request.
+	//
+	// Note: This command is experimental.
+	GetResponseBodyForInterception(context.Context, *network.GetResponseBodyForInterceptionArgs) (*network.GetResponseBodyForInterceptionReply, error)
+
 	// Event ResourceChangedPriority
 	//
 	// Fired when resource loading priority is changed
@@ -1663,57 +1644,41 @@ type Network interface {
 	// Event WebSocketWillSendHandshakeRequest
 	//
 	// Fired when WebSocket is about to initiate handshake.
-	//
-	// Note: This event is experimental.
 	WebSocketWillSendHandshakeRequest(context.Context) (network.WebSocketWillSendHandshakeRequestClient, error)
 
 	// Event WebSocketHandshakeResponseReceived
 	//
 	// Fired when WebSocket handshake response becomes available.
-	//
-	// Note: This event is experimental.
 	WebSocketHandshakeResponseReceived(context.Context) (network.WebSocketHandshakeResponseReceivedClient, error)
 
 	// Event WebSocketCreated
 	//
 	// Fired upon WebSocket creation.
-	//
-	// Note: This event is experimental.
 	WebSocketCreated(context.Context) (network.WebSocketCreatedClient, error)
 
 	// Event WebSocketClosed
 	//
 	// Fired when WebSocket is closed.
-	//
-	// Note: This event is experimental.
 	WebSocketClosed(context.Context) (network.WebSocketClosedClient, error)
 
 	// Event WebSocketFrameReceived
 	//
 	// Fired when WebSocket frame is received.
-	//
-	// Note: This event is experimental.
 	WebSocketFrameReceived(context.Context) (network.WebSocketFrameReceivedClient, error)
 
 	// Event WebSocketFrameError
 	//
 	// Fired when WebSocket frame error occurs.
-	//
-	// Note: This event is experimental.
 	WebSocketFrameError(context.Context) (network.WebSocketFrameErrorClient, error)
 
 	// Event WebSocketFrameSent
 	//
 	// Fired when WebSocket frame is sent.
-	//
-	// Note: This event is experimental.
 	WebSocketFrameSent(context.Context) (network.WebSocketFrameSentClient, error)
 
 	// Event EventSourceMessageReceived
 	//
 	// Fired when EventSource message is received.
-	//
-	// Note: This event is experimental.
 	EventSourceMessageReceived(context.Context) (network.EventSourceMessageReceivedClient, error)
 
 	// Event RequestIntercepted
@@ -1849,15 +1814,11 @@ type Page interface {
 	// Command AddScriptToEvaluateOnNewDocument
 	//
 	// Evaluates given script in every frame upon creation (before loading frame's scripts).
-	//
-	// Note: This command is experimental.
 	AddScriptToEvaluateOnNewDocument(context.Context, *page.AddScriptToEvaluateOnNewDocumentArgs) (*page.AddScriptToEvaluateOnNewDocumentReply, error)
 
 	// Command RemoveScriptToEvaluateOnNewDocument
 	//
 	// Removes given script from the list.
-	//
-	// Note: This command is experimental.
 	RemoveScriptToEvaluateOnNewDocument(context.Context, *page.RemoveScriptToEvaluateOnNewDocumentArgs) error
 
 	// Command SetAutoAttachToCreatedPages
@@ -1866,6 +1827,13 @@ type Page interface {
 	//
 	// Note: This command is experimental.
 	SetAutoAttachToCreatedPages(context.Context, *page.SetAutoAttachToCreatedPagesArgs) error
+
+	// Command SetLifecycleEventsEnabled
+	//
+	// Controls whether page will emit lifecycle events.
+	//
+	// Note: This command is experimental.
+	SetLifecycleEventsEnabled(context.Context, *page.SetLifecycleEventsEnabledArgs) error
 
 	// Command Reload
 	//
@@ -1887,22 +1855,16 @@ type Page interface {
 	// Command StopLoading
 	//
 	// Force the page stop all navigations and pending resource fetches.
-	//
-	// Note: This command is experimental.
 	StopLoading(context.Context) error
 
 	// Command GetNavigationHistory
 	//
 	// Returns navigation history for the current page.
-	//
-	// Note: This command is experimental.
 	GetNavigationHistory(context.Context) (*page.GetNavigationHistoryReply, error)
 
 	// Command NavigateToHistoryEntry
 	//
 	// Navigates current page to the given history entry.
-	//
-	// Note: This command is experimental.
 	NavigateToHistoryEntry(context.Context, *page.NavigateToHistoryEntryArgs) error
 
 	// Command GetResourceTree
@@ -1911,6 +1873,11 @@ type Page interface {
 	//
 	// Note: This command is experimental.
 	GetResourceTree(context.Context) (*page.GetResourceTreeReply, error)
+
+	// Command GetFrameTree
+	//
+	// Returns present frame tree structure.
+	GetFrameTree(context.Context) (*page.GetFrameTreeReply, error)
 
 	// Command GetResourceContent
 	//
@@ -1936,15 +1903,11 @@ type Page interface {
 	// Command CaptureScreenshot
 	//
 	// Capture page screenshot.
-	//
-	// Note: This command is experimental.
 	CaptureScreenshot(context.Context, *page.CaptureScreenshotArgs) (*page.CaptureScreenshotReply, error)
 
 	// Command PrintToPDF
 	//
 	// Print page as PDF.
-	//
-	// Note: This command is experimental.
 	PrintToPDF(context.Context, *page.PrintToPDFArgs) (*page.PrintToPDFReply, error)
 
 	// Command StartScreencast
@@ -1974,8 +1937,6 @@ type Page interface {
 	HandleJavaScriptDialog(context.Context, *page.HandleJavaScriptDialogArgs) error
 
 	// Command GetAppManifest
-	//
-	// Note: This command is experimental.
 	GetAppManifest(context.Context) (*page.GetAppManifestReply, error)
 
 	// Command RequestAppBanner
@@ -1986,15 +1947,11 @@ type Page interface {
 	// Command GetLayoutMetrics
 	//
 	// Returns metrics relating to the layouting of the page, such as viewport bounds/scale.
-	//
-	// Note: This command is experimental.
 	GetLayoutMetrics(context.Context) (*page.GetLayoutMetricsReply, error)
 
 	// Command CreateIsolatedWorld
 	//
 	// Creates an isolated world for the given frame.
-	//
-	// Note: This command is experimental.
 	CreateIsolatedWorld(context.Context, *page.CreateIsolatedWorldArgs) (*page.CreateIsolatedWorldReply, error)
 
 	// Command BringToFront
@@ -2104,15 +2061,11 @@ type Page interface {
 
 	// Event WindowOpen
 	//
-	// Fired when window.open() was called
-	//
-	// Note: This event is experimental.
+	// Fired when a new window is going to be opened, via window.open(), link click, form submission, etc.
 	WindowOpen(context.Context) (page.WindowOpenClient, error)
 }
 
 // The Performance domain.
-//
-// Note: This domain is experimental.
 type Performance interface {
 	// Command Enable
 	//
@@ -2336,8 +2289,6 @@ type Schema interface {
 }
 
 // The Security domain. Security
-//
-// Note: This domain is experimental.
 type Security interface {
 	// Command Enable
 	//
@@ -2486,8 +2437,6 @@ type SystemInfo interface {
 }
 
 // The Target domain. Supports additional targets discovery and allows to attach to them.
-//
-// Note: This domain is experimental.
 type Target interface {
 	// Command SetDiscoverTargets
 	//
@@ -2500,11 +2449,15 @@ type Target interface {
 	SetAutoAttach(context.Context, *target.SetAutoAttachArgs) error
 
 	// Command SetAttachToFrames
+	//
+	// Note: This command is experimental.
 	SetAttachToFrames(context.Context, *target.SetAttachToFramesArgs) error
 
 	// Command SetRemoteLocations
 	//
 	// Enables target discovery for the specified locations, when setDiscoverTargets was set to true.
+	//
+	// Note: This command is experimental.
 	SetRemoteLocations(context.Context, *target.SetRemoteLocationsArgs) error
 
 	// Command SendMessageToTarget
@@ -2540,11 +2493,15 @@ type Target interface {
 	// Command CreateBrowserContext
 	//
 	// Creates a new empty BrowserContext. Similar to an incognito profile but you can have more than one.
+	//
+	// Note: This command is experimental.
 	CreateBrowserContext(context.Context) (*target.CreateBrowserContextReply, error)
 
 	// Command DisposeBrowserContext
 	//
 	// Deletes a BrowserContext, will fail of any open page uses it.
+	//
+	// Note: This command is experimental.
 	DisposeBrowserContext(context.Context, *target.DisposeBrowserContextArgs) (*target.DisposeBrowserContextReply, error)
 
 	// Command CreateTarget

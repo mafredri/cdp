@@ -9,6 +9,8 @@ type ID string
 type SessionID string
 
 // BrowserContextID
+//
+// Note: This type is experimental.
 type BrowserContextID string
 
 // Info
@@ -22,6 +24,8 @@ type Info struct {
 }
 
 // RemoteLocation
+//
+// Note: This type is experimental.
 type RemoteLocation struct {
 	Host string `json:"host"` // No description.
 	Port int    `json:"port"` // No description.

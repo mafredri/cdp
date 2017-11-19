@@ -5,6 +5,7 @@ package emulation
 import (
 	"github.com/mafredri/cdp/protocol/dom"
 	"github.com/mafredri/cdp/protocol/page"
+	"github.com/mafredri/cdp/protocol/runtime"
 )
 
 // SetDeviceMetricsOverrideArgs represents the arguments for SetDeviceMetricsOverride in the Emulation domain.
@@ -256,7 +257,7 @@ type CanEmulateReply struct {
 // SetVirtualTimePolicyArgs represents the arguments for SetVirtualTimePolicy in the Emulation domain.
 type SetVirtualTimePolicyArgs struct {
 	Policy                            VirtualTimePolicy `json:"policy"`                                      // No description.
-	Budget                            *int              `json:"budget,omitempty"`                            // If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
+	Budget                            *float64          `json:"budget,omitempty"`                            // If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
 	MaxVirtualTimeTaskStarvationCount *int              `json:"maxVirtualTimeTaskStarvationCount,omitempty"` // If set this specifies the maximum number of tasks that can be run before virtual is forced forwards to prevent deadlock.
 }
 
@@ -268,7 +269,7 @@ func NewSetVirtualTimePolicyArgs(policy VirtualTimePolicy) *SetVirtualTimePolicy
 }
 
 // SetBudget sets the Budget optional argument. If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
-func (a *SetVirtualTimePolicyArgs) SetBudget(budget int) *SetVirtualTimePolicyArgs {
+func (a *SetVirtualTimePolicyArgs) SetBudget(budget float64) *SetVirtualTimePolicyArgs {
 	a.Budget = &budget
 	return a
 }
@@ -277,6 +278,11 @@ func (a *SetVirtualTimePolicyArgs) SetBudget(budget int) *SetVirtualTimePolicyAr
 func (a *SetVirtualTimePolicyArgs) SetMaxVirtualTimeTaskStarvationCount(maxVirtualTimeTaskStarvationCount int) *SetVirtualTimePolicyArgs {
 	a.MaxVirtualTimeTaskStarvationCount = &maxVirtualTimeTaskStarvationCount
 	return a
+}
+
+// SetVirtualTimePolicyReply represents the return values for SetVirtualTimePolicy in the Emulation domain.
+type SetVirtualTimePolicyReply struct {
+	VirtualTimeBase runtime.Timestamp `json:"virtualTimeBase"` // Absolute timestamp at which virtual time was first enabled (milliseconds since epoch).
 }
 
 // SetNavigatorOverridesArgs represents the arguments for SetNavigatorOverrides in the Emulation domain.

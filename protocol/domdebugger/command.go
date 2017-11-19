@@ -133,15 +133,9 @@ func NewRemoveXHRBreakpointArgs(url string) *RemoveXHRBreakpointArgs {
 
 // GetEventListenersArgs represents the arguments for GetEventListeners in the DOMDebugger domain.
 type GetEventListenersArgs struct {
-	ObjectID runtime.RemoteObjectID `json:"objectId"` // Identifier of the object to return listeners for.
-	// Depth The maximum depth at which Node children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
-	//
-	// Note: This property is experimental.
-	Depth *int `json:"depth,omitempty"`
-	// Pierce Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false). Reports listeners for all contexts if pierce is enabled.
-	//
-	// Note: This property is experimental.
-	Pierce *bool `json:"pierce,omitempty"`
+	ObjectID runtime.RemoteObjectID `json:"objectId"`         // Identifier of the object to return listeners for.
+	Depth    *int                   `json:"depth,omitempty"`  // The maximum depth at which Node children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+	Pierce   *bool                  `json:"pierce,omitempty"` // Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false). Reports listeners for all contexts if pierce is enabled.
 }
 
 // NewGetEventListenersArgs initializes GetEventListenersArgs with the required arguments.
@@ -152,16 +146,12 @@ func NewGetEventListenersArgs(objectID runtime.RemoteObjectID) *GetEventListener
 }
 
 // SetDepth sets the Depth optional argument. The maximum depth at which Node children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
-//
-// Note: This property is experimental.
 func (a *GetEventListenersArgs) SetDepth(depth int) *GetEventListenersArgs {
 	a.Depth = &depth
 	return a
 }
 
 // SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false). Reports listeners for all contexts if pierce is enabled.
-//
-// Note: This property is experimental.
 func (a *GetEventListenersArgs) SetPierce(pierce bool) *GetEventListenersArgs {
 	a.Pierce = &pierce
 	return a

@@ -78,6 +78,18 @@ func NewSetAutoAttachToCreatedPagesArgs(autoAttach bool) *SetAutoAttachToCreated
 	return args
 }
 
+// SetLifecycleEventsEnabledArgs represents the arguments for SetLifecycleEventsEnabled in the Page domain.
+type SetLifecycleEventsEnabledArgs struct {
+	Enabled bool `json:"enabled"` // If true, starts emitting lifecycle events.
+}
+
+// NewSetLifecycleEventsEnabledArgs initializes SetLifecycleEventsEnabledArgs with the required arguments.
+func NewSetLifecycleEventsEnabledArgs(enabled bool) *SetLifecycleEventsEnabledArgs {
+	args := new(SetLifecycleEventsEnabledArgs)
+	args.Enabled = enabled
+	return args
+}
+
 // ReloadArgs represents the arguments for Reload in the Page domain.
 type ReloadArgs struct {
 	IgnoreCache            *bool   `json:"ignoreCache,omitempty"`            // If true, browser cache is ignored (as if the user pressed Shift+refresh).
@@ -117,15 +129,9 @@ func NewSetAdBlockingEnabledArgs(enabled bool) *SetAdBlockingEnabledArgs {
 
 // NavigateArgs represents the arguments for Navigate in the Page domain.
 type NavigateArgs struct {
-	URL string `json:"url"` // URL to navigate the page to.
-	// Referrer Referrer URL.
-	//
-	// Note: This property is experimental.
-	Referrer *string `json:"referrer,omitempty"`
-	// TransitionType Intended transition type.
-	//
-	// Note: This property is experimental.
-	TransitionType TransitionType `json:"transitionType,omitempty"`
+	URL            string         `json:"url"`                      // URL to navigate the page to.
+	Referrer       *string        `json:"referrer,omitempty"`       // Referrer URL.
+	TransitionType TransitionType `json:"transitionType,omitempty"` // Intended transition type.
 }
 
 // NewNavigateArgs initializes NavigateArgs with the required arguments.
@@ -136,16 +142,12 @@ func NewNavigateArgs(url string) *NavigateArgs {
 }
 
 // SetReferrer sets the Referrer optional argument. Referrer URL.
-//
-// Note: This property is experimental.
 func (a *NavigateArgs) SetReferrer(referrer string) *NavigateArgs {
 	a.Referrer = &referrer
 	return a
 }
 
 // SetTransitionType sets the TransitionType optional argument. Intended transition type.
-//
-// Note: This property is experimental.
 func (a *NavigateArgs) SetTransitionType(transitionType TransitionType) *NavigateArgs {
 	a.TransitionType = transitionType
 	return a
@@ -174,6 +176,11 @@ type GetResourceTreeReply struct {
 	FrameTree FrameResourceTree `json:"frameTree"` // Present frame / resource tree structure.
 }
 
+// GetFrameTreeReply represents the return values for GetFrameTree in the Page domain.
+type GetFrameTreeReply struct {
+	FrameTree FrameTree `json:"frameTree"` // Present frame tree structure.
+}
+
 // GetResourceContentReply represents the return values for GetResourceContent in the Page domain.
 type GetResourceContentReply struct {
 	Content       string `json:"content"`       // Resource content.
@@ -190,12 +197,9 @@ type CaptureScreenshotArgs struct {
 	// Format Image compression format (defaults to png).
 	//
 	// Values: "jpeg", "png".
-	Format  *string `json:"format,omitempty"`
-	Quality *int    `json:"quality,omitempty"` // Compression quality from range [0..100] (jpeg only).
-	// Clip Capture the screenshot of a given region only.
-	//
-	// Note: This property is experimental.
-	Clip *Viewport `json:"clip,omitempty"`
+	Format  *string   `json:"format,omitempty"`
+	Quality *int      `json:"quality,omitempty"` // Compression quality from range [0..100] (jpeg only).
+	Clip    *Viewport `json:"clip,omitempty"`    // Capture the screenshot of a given region only.
 	// FromSurface Capture the screenshot from the surface, rather than the view. Defaults to true.
 	//
 	// Note: This property is experimental.
@@ -224,8 +228,6 @@ func (a *CaptureScreenshotArgs) SetQuality(quality int) *CaptureScreenshotArgs {
 }
 
 // SetClip sets the Clip optional argument. Capture the screenshot of a given region only.
-//
-// Note: This property is experimental.
 func (a *CaptureScreenshotArgs) SetClip(clip Viewport) *CaptureScreenshotArgs {
 	a.Clip = &clip
 	return a

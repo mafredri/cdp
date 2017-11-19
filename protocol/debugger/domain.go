@@ -130,6 +130,19 @@ func (d *domainClient) ContinueToLocation(ctx context.Context, args *ContinueToL
 	return
 }
 
+// PauseOnAsyncTask invokes the Debugger method.
+func (d *domainClient) PauseOnAsyncTask(ctx context.Context, args *PauseOnAsyncTaskArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.pauseOnAsyncTask", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.pauseOnAsyncTask", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Debugger", Op: "PauseOnAsyncTask", Err: err}
+	}
+	return
+}
+
 // StepOver invokes the Debugger method. Steps over the statement.
 func (d *domainClient) StepOver(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Debugger.stepOver", nil, nil, d.conn)
@@ -140,8 +153,12 @@ func (d *domainClient) StepOver(ctx context.Context) (err error) {
 }
 
 // StepInto invokes the Debugger method. Steps into the function call.
-func (d *domainClient) StepInto(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Debugger.stepInto", nil, nil, d.conn)
+func (d *domainClient) StepInto(ctx context.Context, args *StepIntoArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.stepInto", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.stepInto", nil, nil, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "StepInto", Err: err}
 	}
@@ -166,7 +183,7 @@ func (d *domainClient) Pause(ctx context.Context) (err error) {
 	return
 }
 
-// ScheduleStepIntoAsync invokes the Debugger method. Steps into next scheduled async task if any is scheduled before next pause. Returns success when async task is actually scheduled, returns error if no task were scheduled or another scheduleStepIntoAsync was called.
+// ScheduleStepIntoAsync invokes the Debugger method. This method is deprecated - use Debugger.stepInto with breakOnAsyncCall and Debugger.pauseOnAsyncTask instead. Steps into next scheduled async task if any is scheduled before next pause. Returns success when async task is actually scheduled, returns error if no task were scheduled or another scheduleStepIntoAsync was called.
 func (d *domainClient) ScheduleStepIntoAsync(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Debugger.scheduleStepIntoAsync", nil, nil, d.conn)
 	if err != nil {
@@ -276,6 +293,19 @@ func (d *domainClient) SetVariableValue(ctx context.Context, args *SetVariableVa
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetVariableValue", Err: err}
+	}
+	return
+}
+
+// SetReturnValue invokes the Debugger method. Changes return value in top frame. Available only at return break position.
+func (d *domainClient) SetReturnValue(ctx context.Context, args *SetReturnValueArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.setReturnValue", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.setReturnValue", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Debugger", Op: "SetReturnValue", Err: err}
 	}
 	return
 }

@@ -103,6 +103,19 @@ func (d *domainClient) SetAutoAttachToCreatedPages(ctx context.Context, args *Se
 	return
 }
 
+// SetLifecycleEventsEnabled invokes the Page method. Controls whether page will emit lifecycle events.
+func (d *domainClient) SetLifecycleEventsEnabled(ctx context.Context, args *SetLifecycleEventsEnabledArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setLifecycleEventsEnabled", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setLifecycleEventsEnabled", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetLifecycleEventsEnabled", Err: err}
+	}
+	return
+}
+
 // Reload invokes the Page method. Reloads given page optionally ignoring the cache.
 func (d *domainClient) Reload(ctx context.Context, args *ReloadArgs) (err error) {
 	if args != nil {
@@ -181,6 +194,16 @@ func (d *domainClient) GetResourceTree(ctx context.Context) (reply *GetResourceT
 	err = rpcc.Invoke(ctx, "Page.getResourceTree", nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "GetResourceTree", Err: err}
+	}
+	return
+}
+
+// GetFrameTree invokes the Page method. Returns present frame tree structure.
+func (d *domainClient) GetFrameTree(ctx context.Context) (reply *GetFrameTreeReply, err error) {
+	reply = new(GetFrameTreeReply)
+	err = rpcc.Invoke(ctx, "Page.getFrameTree", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetFrameTree", Err: err}
 	}
 	return
 }

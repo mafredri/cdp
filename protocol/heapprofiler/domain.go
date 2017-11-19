@@ -148,6 +148,16 @@ func (d *domainClient) StopSampling(ctx context.Context) (reply *StopSamplingRep
 	return
 }
 
+// GetSamplingProfile invokes the HeapProfiler method.
+func (d *domainClient) GetSamplingProfile(ctx context.Context) (reply *GetSamplingProfileReply, err error) {
+	reply = new(GetSamplingProfileReply)
+	err = rpcc.Invoke(ctx, "HeapProfiler.getSamplingProfile", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "HeapProfiler", Op: "GetSamplingProfile", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) AddHeapSnapshotChunk(ctx context.Context) (AddHeapSnapshotChunkClient, error) {
 	s, err := rpcc.NewStream(ctx, "HeapProfiler.addHeapSnapshotChunk", d.conn)
 	if err != nil {

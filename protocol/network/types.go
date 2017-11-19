@@ -315,8 +315,6 @@ type SecurityDetails struct {
 }
 
 // BlockedReason The reason why request was blocked.
-//
-// Note: This type is experimental.
 type BlockedReason string
 
 // BlockedReason as enums.
@@ -345,43 +343,33 @@ func (e BlockedReason) String() string {
 
 // Response HTTP response data.
 type Response struct {
-	URL                string  `json:"url"`                          // Response URL. This URL can be different from CachedResource.url in case of redirect.
-	Status             int     `json:"status"`                       // HTTP response status code.
-	StatusText         string  `json:"statusText"`                   // HTTP response status text.
-	Headers            Headers `json:"headers"`                      // HTTP response headers.
-	HeadersText        *string `json:"headersText,omitempty"`        // HTTP response headers text.
-	MimeType           string  `json:"mimeType"`                     // Resource mimeType as determined by the browser.
-	RequestHeaders     Headers `json:"requestHeaders,omitempty"`     // Refined HTTP request headers that were actually transmitted over the network.
-	RequestHeadersText *string `json:"requestHeadersText,omitempty"` // HTTP request headers text.
-	ConnectionReused   bool    `json:"connectionReused"`             // Specifies whether physical connection was actually reused for this request.
-	ConnectionID       float64 `json:"connectionId"`                 // Physical connection id that was actually used for this request.
-	// RemoteIPAddress Remote IP address.
-	//
-	// Note: This property is experimental.
-	RemoteIPAddress *string `json:"remoteIPAddress,omitempty"`
-	// RemotePort Remote port.
-	//
-	// Note: This property is experimental.
-	RemotePort        *int             `json:"remotePort,omitempty"`
-	FromDiskCache     *bool            `json:"fromDiskCache,omitempty"`     // Specifies that the request was served from the disk cache.
-	FromServiceWorker *bool            `json:"fromServiceWorker,omitempty"` // Specifies that the request was served from the ServiceWorker.
-	EncodedDataLength float64          `json:"encodedDataLength"`           // Total number of bytes received for this request so far.
-	Timing            *ResourceTiming  `json:"timing,omitempty"`            // Timing information for the given request.
-	Protocol          *string          `json:"protocol,omitempty"`          // Protocol used to fetch this request.
-	SecurityState     security.State   `json:"securityState"`               // Security state of the request resource.
-	SecurityDetails   *SecurityDetails `json:"securityDetails,omitempty"`   // Security details for the request.
+	URL                string           `json:"url"`                          // Response URL. This URL can be different from CachedResource.url in case of redirect.
+	Status             int              `json:"status"`                       // HTTP response status code.
+	StatusText         string           `json:"statusText"`                   // HTTP response status text.
+	Headers            Headers          `json:"headers"`                      // HTTP response headers.
+	HeadersText        *string          `json:"headersText,omitempty"`        // HTTP response headers text.
+	MimeType           string           `json:"mimeType"`                     // Resource mimeType as determined by the browser.
+	RequestHeaders     Headers          `json:"requestHeaders,omitempty"`     // Refined HTTP request headers that were actually transmitted over the network.
+	RequestHeadersText *string          `json:"requestHeadersText,omitempty"` // HTTP request headers text.
+	ConnectionReused   bool             `json:"connectionReused"`             // Specifies whether physical connection was actually reused for this request.
+	ConnectionID       float64          `json:"connectionId"`                 // Physical connection id that was actually used for this request.
+	RemoteIPAddress    *string          `json:"remoteIPAddress,omitempty"`    // Remote IP address.
+	RemotePort         *int             `json:"remotePort,omitempty"`         // Remote port.
+	FromDiskCache      *bool            `json:"fromDiskCache,omitempty"`      // Specifies that the request was served from the disk cache.
+	FromServiceWorker  *bool            `json:"fromServiceWorker,omitempty"`  // Specifies that the request was served from the ServiceWorker.
+	EncodedDataLength  float64          `json:"encodedDataLength"`            // Total number of bytes received for this request so far.
+	Timing             *ResourceTiming  `json:"timing,omitempty"`             // Timing information for the given request.
+	Protocol           *string          `json:"protocol,omitempty"`           // Protocol used to fetch this request.
+	SecurityState      security.State   `json:"securityState"`                // Security state of the request resource.
+	SecurityDetails    *SecurityDetails `json:"securityDetails,omitempty"`    // Security details for the request.
 }
 
 // WebSocketRequest WebSocket request data.
-//
-// Note: This type is experimental.
 type WebSocketRequest struct {
 	Headers Headers `json:"headers"` // HTTP request headers.
 }
 
 // WebSocketResponse WebSocket response data.
-//
-// Note: This type is experimental.
 type WebSocketResponse struct {
 	Status             int     `json:"status"`                       // HTTP response status code.
 	StatusText         string  `json:"statusText"`                   // HTTP response status text.
@@ -392,8 +380,6 @@ type WebSocketResponse struct {
 }
 
 // WebSocketFrame WebSocket frame data.
-//
-// Note: This type is experimental.
 type WebSocketFrame struct {
 	Opcode      float64 `json:"opcode"`      // WebSocket frame opcode.
 	Mask        bool    `json:"mask"`        // WebSocke frame mask.
@@ -412,8 +398,6 @@ type Initiator struct {
 }
 
 // Cookie Cookie object
-//
-// Note: This type is experimental.
 type Cookie struct {
 	Name     string         `json:"name"`               // Cookie name.
 	Value    string         `json:"value"`              // Cookie value.
@@ -428,8 +412,6 @@ type Cookie struct {
 }
 
 // CookieParam Cookie parameter object
-//
-// Note: This type is experimental.
 type CookieParam struct {
 	Name     string         `json:"name"`               // Cookie name.
 	Value    string         `json:"value"`              // Cookie value.
@@ -465,4 +447,29 @@ type AuthChallengeResponse struct {
 	Response string  `json:"response"`
 	Username *string `json:"username,omitempty"` // The username to provide, possibly empty. Should only be set if response is ProvideCredentials.
 	Password *string `json:"password,omitempty"` // The password to provide, possibly empty. Should only be set if response is ProvideCredentials.
+}
+
+// InterceptionStage Stages of the interception to begin intercepting. Request will intercept before the request is sent. Response will intercept after the response is received.
+//
+// Note: This type is experimental.
+type InterceptionStage string
+
+// InterceptionStage as enums.
+const (
+	InterceptionStageNotSet          InterceptionStage = ""
+	InterceptionStageRequest         InterceptionStage = "Request"
+	InterceptionStageHeadersReceived InterceptionStage = "HeadersReceived"
+)
+
+func (e InterceptionStage) Valid() bool {
+	switch e {
+	case "Request", "HeadersReceived":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e InterceptionStage) String() string {
+	return string(e)
 }

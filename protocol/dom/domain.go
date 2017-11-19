@@ -434,7 +434,7 @@ func (d *domainClient) SetFileInputFiles(ctx context.Context, args *SetFileInput
 	return
 }
 
-// GetBoxModel invokes the DOM method. Returns boxes for the currently selected nodes.
+// GetBoxModel invokes the DOM method. Returns boxes for the given node.
 func (d *domainClient) GetBoxModel(ctx context.Context, args *GetBoxModelArgs) (reply *GetBoxModelReply, err error) {
 	reply = new(GetBoxModelReply)
 	if args != nil {

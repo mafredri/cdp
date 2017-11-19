@@ -121,6 +121,10 @@ type PausedReply struct {
 	Data            json.RawMessage     `json:"data,omitempty"`            // Object containing break-specific auxiliary properties.
 	HitBreakpoints  []string            `json:"hitBreakpoints,omitempty"`  // Hit breakpoints IDs
 	AsyncStackTrace *runtime.StackTrace `json:"asyncStackTrace,omitempty"` // Async stack trace, if any.
+	// ScheduledAsyncTaskID Scheduled async task id.
+	//
+	// Note: This property is experimental.
+	ScheduledAsyncTaskID *runtime.AsyncTaskID `json:"scheduledAsyncTaskId,omitempty"`
 }
 
 // ResumedClient is a client for Resumed events. Fired when the virtual machine resumed execution.

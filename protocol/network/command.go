@@ -2,6 +2,10 @@
 
 package network
 
+import (
+	"github.com/mafredri/cdp/protocol/debugger"
+)
+
 // EnableArgs represents the arguments for Enable in the Network domain.
 type EnableArgs struct {
 	// MaxTotalBufferSize Buffer size in bytes to use when preserving network payloads (XHRs, etc).
@@ -47,6 +51,39 @@ func NewSetUserAgentOverrideArgs(userAgent string) *SetUserAgentOverrideArgs {
 	args := new(SetUserAgentOverrideArgs)
 	args.UserAgent = userAgent
 	return args
+}
+
+// SearchInResponseBodyArgs represents the arguments for SearchInResponseBody in the Network domain.
+type SearchInResponseBodyArgs struct {
+	RequestID     RequestID `json:"requestId"`               // Identifier of the network response to search.
+	Query         string    `json:"query"`                   // String to search for.
+	CaseSensitive *bool     `json:"caseSensitive,omitempty"` // If true, search is case sensitive.
+	IsRegex       *bool     `json:"isRegex,omitempty"`       // If true, treats string parameter as regex.
+}
+
+// NewSearchInResponseBodyArgs initializes SearchInResponseBodyArgs with the required arguments.
+func NewSearchInResponseBodyArgs(requestID RequestID, query string) *SearchInResponseBodyArgs {
+	args := new(SearchInResponseBodyArgs)
+	args.RequestID = requestID
+	args.Query = query
+	return args
+}
+
+// SetCaseSensitive sets the CaseSensitive optional argument. If true, search is case sensitive.
+func (a *SearchInResponseBodyArgs) SetCaseSensitive(caseSensitive bool) *SearchInResponseBodyArgs {
+	a.CaseSensitive = &caseSensitive
+	return a
+}
+
+// SetIsRegex sets the IsRegex optional argument. If true, treats string parameter as regex.
+func (a *SearchInResponseBodyArgs) SetIsRegex(isRegex bool) *SearchInResponseBodyArgs {
+	a.IsRegex = &isRegex
+	return a
+}
+
+// SearchInResponseBodyReply represents the return values for SearchInResponseBody in the Network domain.
+type SearchInResponseBodyReply struct {
+	Result []debugger.SearchMatch `json:"result"` // List of search matches.
 }
 
 // SetExtraHTTPHeadersArgs represents the arguments for SetExtraHTTPHeaders in the Network domain.
@@ -410,4 +447,22 @@ func (a *ContinueInterceptedRequestArgs) SetHeaders(headers Headers) *ContinueIn
 func (a *ContinueInterceptedRequestArgs) SetAuthChallengeResponse(authChallengeResponse AuthChallengeResponse) *ContinueInterceptedRequestArgs {
 	a.AuthChallengeResponse = &authChallengeResponse
 	return a
+}
+
+// GetResponseBodyForInterceptionArgs represents the arguments for GetResponseBodyForInterception in the Network domain.
+type GetResponseBodyForInterceptionArgs struct {
+	InterceptionID InterceptionID `json:"interceptionId"` // Identifier for the intercepted request to get body for.
+}
+
+// NewGetResponseBodyForInterceptionArgs initializes GetResponseBodyForInterceptionArgs with the required arguments.
+func NewGetResponseBodyForInterceptionArgs(interceptionID InterceptionID) *GetResponseBodyForInterceptionArgs {
+	args := new(GetResponseBodyForInterceptionArgs)
+	args.InterceptionID = interceptionID
+	return args
+}
+
+// GetResponseBodyForInterceptionReply represents the return values for GetResponseBodyForInterception in the Network domain.
+type GetResponseBodyForInterceptionReply struct {
+	Body          string `json:"body"`          // Response body.
+	Base64Encoded bool   `json:"base64Encoded"` // True, if content was sent as base64.
 }

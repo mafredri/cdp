@@ -3,9 +3,13 @@
 package browser
 
 // WindowID
+//
+// Note: This type is experimental.
 type WindowID int
 
 // WindowState The state of the browser window.
+//
+// Note: This type is experimental.
 type WindowState string
 
 // WindowState as enums.
@@ -31,6 +35,8 @@ func (e WindowState) String() string {
 }
 
 // Bounds Browser window bounds information
+//
+// Note: This type is experimental.
 type Bounds struct {
 	Left        *int        `json:"left,omitempty"`        // The offset from the left edge of the screen to the window in pixels.
 	Top         *int        `json:"top,omitempty"`         // The offset from the top edge of the screen to the window in pixels.

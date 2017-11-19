@@ -230,3 +230,8 @@ type StackTrace struct {
 	// Note: This property is experimental.
 	PromiseCreationFrame *CallFrame `json:"promiseCreationFrame,omitempty"`
 }
+
+// AsyncTaskID
+//
+// Note: This type is experimental.
+type AsyncTaskID string

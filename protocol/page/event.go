@@ -137,7 +137,7 @@ type InterstitialHiddenClient interface {
 // InterstitialHiddenReply is the reply for InterstitialHidden events.
 type InterstitialHiddenReply struct{}
 
-// WindowOpenClient is a client for WindowOpen events. Fired when window.open() was called
+// WindowOpenClient is a client for WindowOpen events. Fired when a new window is going to be opened, via window.open(), link click, form submission, etc.
 type WindowOpenClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -147,8 +147,8 @@ type WindowOpenClient interface {
 
 // WindowOpenReply is the reply for WindowOpen events.
 type WindowOpenReply struct {
-	URL            string `json:"url"`            // The URL for the new window.
-	WindowName     string `json:"windowName"`     // Window name passed to window.open().
-	WindowFeatures string `json:"windowFeatures"` // Window features passed to window.open().
-	UserGesture    bool   `json:"userGesture"`    // Whether or not window.open() was triggered by user gesture.
+	URL            string   `json:"url"`            // The URL for the new window.
+	WindowName     string   `json:"windowName"`     // Window name.
+	WindowFeatures []string `json:"windowFeatures"` // An array of enabled window features.
+	UserGesture    bool     `json:"userGesture"`    // Whether or not it was triggered by user gesture.
 }

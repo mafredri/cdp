@@ -23,8 +23,5 @@ type StyleSheetHeader struct {
 	IsInline     bool               `json:"isInline"`               // Whether this stylesheet is created for STYLE tag by parser. This flag is not set for document.written STYLE tags.
 	StartLine    float64            `json:"startLine"`              // Line offset of the stylesheet within the resource (zero based).
 	StartColumn  float64            `json:"startColumn"`            // Column offset of the stylesheet within the resource (zero based).
-	// Length Size of the content (in characters).
-	//
-	// Note: This property is experimental.
-	Length float64 `json:"length"`
+	Length       float64            `json:"length"`                 // Size of the content (in characters).
 }

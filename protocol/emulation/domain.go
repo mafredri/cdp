@@ -173,11 +173,12 @@ func (d *domainClient) CanEmulate(ctx context.Context) (reply *CanEmulateReply, 
 }
 
 // SetVirtualTimePolicy invokes the Emulation method. Turns on virtual time for all frames (replacing real-time with a synthetic time source) and sets the current virtual time policy.  Note this supersedes any previous time budget.
-func (d *domainClient) SetVirtualTimePolicy(ctx context.Context, args *SetVirtualTimePolicyArgs) (err error) {
+func (d *domainClient) SetVirtualTimePolicy(ctx context.Context, args *SetVirtualTimePolicyArgs) (reply *SetVirtualTimePolicyReply, err error) {
+	reply = new(SetVirtualTimePolicyReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setVirtualTimePolicy", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Emulation.setVirtualTimePolicy", args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setVirtualTimePolicy", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Emulation.setVirtualTimePolicy", nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetVirtualTimePolicy", Err: err}

@@ -27,7 +27,7 @@ type VirtualTimeAdvancedClient interface {
 
 // VirtualTimeAdvancedReply is the reply for VirtualTimeAdvanced events.
 type VirtualTimeAdvancedReply struct {
-	VirtualTimeElapsed int `json:"virtualTimeElapsed"` // The amount of virtual time that has elapsed in milliseconds since virtual time was first enabled.
+	VirtualTimeElapsed float64 `json:"virtualTimeElapsed"` // The amount of virtual time that has elapsed in milliseconds since virtual time was first enabled.
 }
 
 // VirtualTimePausedClient is a client for VirtualTimePaused events. Notification sent after the virtual time has paused.
@@ -40,5 +40,5 @@ type VirtualTimePausedClient interface {
 
 // VirtualTimePausedReply is the reply for VirtualTimePaused events.
 type VirtualTimePausedReply struct {
-	VirtualTimeElapsed int `json:"virtualTimeElapsed"` // The amount of virtual time that has elapsed in milliseconds since virtual time was first enabled.
+	VirtualTimeElapsed float64 `json:"virtualTimeElapsed"` // The amount of virtual time that has elapsed in milliseconds since virtual time was first enabled.
 }

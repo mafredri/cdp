@@ -20,6 +20,7 @@ type CachedResource struct {
 //
 // Note: This type is experimental.
 type RequestPattern struct {
-	URLPattern   *string                    `json:"urlPattern,omitempty"`   // Wildcards ('*' -> zero or more, '?' -> exactly one) are allowed. Escape character is backslash. Omitting is equivalent to "*".
-	ResourceType *internal.PageResourceType `json:"resourceType,omitempty"` // If set, only requests for matching resource types will be intercepted.
+	URLPattern        *string                    `json:"urlPattern,omitempty"`        // Wildcards ('*' -> zero or more, '?' -> exactly one) are allowed. Escape character is backslash. Omitting is equivalent to "*".
+	ResourceType      *internal.PageResourceType `json:"resourceType,omitempty"`      // If set, only requests for matching resource types will be intercepted.
+	InterceptionStage InterceptionStage          `json:"interceptionStage,omitempty"` // Stage at which to begin intercepting requests. Default is Request.
 }

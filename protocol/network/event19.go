@@ -11,25 +11,16 @@ import (
 
 // RequestWillBeSentReply is the reply for RequestWillBeSent events.
 type RequestWillBeSentReply struct {
-	RequestID   RequestID     `json:"requestId"`   // Request identifier.
-	LoaderID    LoaderID      `json:"loaderId"`    // Loader identifier. Empty string if the request is fetched form worker.
-	DocumentURL string        `json:"documentURL"` // URL of the document this request is loaded for.
-	Request     Request       `json:"request"`     // Request data.
-	Timestamp   MonotonicTime `json:"timestamp"`   // Timestamp.
-	// WallTime Timestamp.
-	//
-	// Note: This property is experimental.
-	WallTime         TimeSinceEpoch `json:"wallTime"`
-	Initiator        Initiator      `json:"initiator"`                  // Request initiator.
-	RedirectResponse *Response      `json:"redirectResponse,omitempty"` // Redirect response data.
-	// Type Type of this resource.
-	//
-	// Note: This property is experimental.
-	Type *internal.PageResourceType `json:"type,omitempty"`
-	// FrameID Frame identifier.
-	//
-	// Note: This property is experimental.
-	FrameID *internal.PageFrameID `json:"frameId,omitempty"`
+	RequestID        RequestID                  `json:"requestId"`                  // Request identifier.
+	LoaderID         LoaderID                   `json:"loaderId"`                   // Loader identifier. Empty string if the request is fetched from worker.
+	DocumentURL      string                     `json:"documentURL"`                // URL of the document this request is loaded for.
+	Request          Request                    `json:"request"`                    // Request data.
+	Timestamp        MonotonicTime              `json:"timestamp"`                  // Timestamp.
+	WallTime         TimeSinceEpoch             `json:"wallTime"`                   // Timestamp.
+	Initiator        Initiator                  `json:"initiator"`                  // Request initiator.
+	RedirectResponse *Response                  `json:"redirectResponse,omitempty"` // Redirect response data.
+	Type             *internal.PageResourceType `json:"type,omitempty"`             // Type of this resource.
+	FrameID          *internal.PageFrameID      `json:"frameId,omitempty"`          // Frame identifier.
 }
 
 // RequestServedFromCacheClient is a client for RequestServedFromCache events. Fired if request ended up loading from cache.
@@ -42,15 +33,12 @@ type RequestServedFromCacheClient interface {
 
 // ResponseReceivedReply is the reply for ResponseReceived events.
 type ResponseReceivedReply struct {
-	RequestID RequestID                 `json:"requestId"` // Request identifier.
-	LoaderID  LoaderID                  `json:"loaderId"`  // Loader identifier. Empty string if the request is fetched form worker.
-	Timestamp MonotonicTime             `json:"timestamp"` // Timestamp.
-	Type      internal.PageResourceType `json:"type"`      // Resource type.
-	Response  Response                  `json:"response"`  // Response data.
-	// FrameID Frame identifier.
-	//
-	// Note: This property is experimental.
-	FrameID *internal.PageFrameID `json:"frameId,omitempty"`
+	RequestID RequestID                 `json:"requestId"`         // Request identifier.
+	LoaderID  LoaderID                  `json:"loaderId"`          // Loader identifier. Empty string if the request is fetched from worker.
+	Timestamp MonotonicTime             `json:"timestamp"`         // Timestamp.
+	Type      internal.PageResourceType `json:"type"`              // Resource type.
+	Response  Response                  `json:"response"`          // Response data.
+	FrameID   *internal.PageFrameID     `json:"frameId,omitempty"` // Frame identifier.
 }
 
 // DataReceivedClient is a client for DataReceived events. Fired when data chunk was received over the network.
@@ -63,15 +51,12 @@ type DataReceivedClient interface {
 
 // LoadingFailedReply is the reply for LoadingFailed events.
 type LoadingFailedReply struct {
-	RequestID RequestID                 `json:"requestId"`          // Request identifier.
-	Timestamp MonotonicTime             `json:"timestamp"`          // Timestamp.
-	Type      internal.PageResourceType `json:"type"`               // Resource type.
-	ErrorText string                    `json:"errorText"`          // User friendly error message.
-	Canceled  *bool                     `json:"canceled,omitempty"` // True if loading was canceled.
-	// BlockedReason The reason why loading was blocked, if any.
-	//
-	// Note: This property is experimental.
-	BlockedReason BlockedReason `json:"blockedReason,omitempty"`
+	RequestID     RequestID                 `json:"requestId"`               // Request identifier.
+	Timestamp     MonotonicTime             `json:"timestamp"`               // Timestamp.
+	Type          internal.PageResourceType `json:"type"`                    // Resource type.
+	ErrorText     string                    `json:"errorText"`               // User friendly error message.
+	Canceled      *bool                     `json:"canceled,omitempty"`      // True if loading was canceled.
+	BlockedReason BlockedReason             `json:"blockedReason,omitempty"` // The reason why loading was blocked, if any.
 }
 
 // WebSocketWillSendHandshakeRequestClient is a client for WebSocketWillSendHandshakeRequest events. Fired when WebSocket is about to initiate handshake.
@@ -84,13 +69,14 @@ type WebSocketWillSendHandshakeRequestClient interface {
 
 // RequestInterceptedReply is the reply for RequestIntercepted events.
 type RequestInterceptedReply struct {
-	InterceptionID      InterceptionID            `json:"interceptionId"`               // Each request the page makes will have a unique id, however if any redirects are encountered while processing that fetch, they will be reported with the same id as the original fetch. Likewise if HTTP authentication is needed then the same fetch id will be used.
-	Request             Request                   `json:"request"`                      // No description.
-	FrameID             internal.PageFrameID      `json:"frameId"`                      // The id of the frame that initiated the request.
-	ResourceType        internal.PageResourceType `json:"resourceType"`                 // How the requested resource will be used.
-	IsNavigationRequest bool                      `json:"isNavigationRequest"`          // Whether this is a navigation request, which can abort the navigation completely.
-	RedirectHeaders     Headers                   `json:"redirectHeaders,omitempty"`    // HTTP response headers, only sent if a redirect was intercepted.
-	RedirectStatusCode  *int                      `json:"redirectStatusCode,omitempty"` // HTTP response code, only sent if a redirect was intercepted.
-	RedirectURL         *string                   `json:"redirectUrl,omitempty"`        // Redirect location, only sent if a redirect was intercepted.
-	AuthChallenge       *AuthChallenge            `json:"authChallenge,omitempty"`      // Details of the Authorization Challenge encountered. If this is set then continueInterceptedRequest must contain an authChallengeResponse.
+	InterceptionID      InterceptionID            `json:"interceptionId"`                // Each request the page makes will have a unique id, however if any redirects are encountered while processing that fetch, they will be reported with the same id as the original fetch. Likewise if HTTP authentication is needed then the same fetch id will be used.
+	Request             Request                   `json:"request"`                       // No description.
+	FrameID             internal.PageFrameID      `json:"frameId"`                       // The id of the frame that initiated the request.
+	ResourceType        internal.PageResourceType `json:"resourceType"`                  // How the requested resource will be used.
+	IsNavigationRequest bool                      `json:"isNavigationRequest"`           // Whether this is a navigation request, which can abort the navigation completely.
+	RedirectURL         *string                   `json:"redirectUrl,omitempty"`         // Redirect location, only sent if a redirect was intercepted.
+	AuthChallenge       *AuthChallenge            `json:"authChallenge,omitempty"`       // Details of the Authorization Challenge encountered. If this is set then continueInterceptedRequest must contain an authChallengeResponse.
+	ResponseErrorReason ErrorReason               `json:"responseErrorReason,omitempty"` // Response error if intercepted at response stage or if redirect occurred while intercepting request.
+	ResponseStatusCode  *int                      `json:"responseStatusCode,omitempty"`  // Response code if intercepted at response stage or if redirect occurred while intercepting request or auth retry occurred.
+	ResponseHeaders     Headers                   `json:"responseHeaders,omitempty"`     // Response headers if intercepted at the response stage or if redirect occurred while intercepting request or auth retry occurred.
 }
