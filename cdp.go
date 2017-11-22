@@ -1504,7 +1504,7 @@ type Network interface {
 
 	// Command CanClearBrowserCache
 	//
-	// Tells whether clearing browser cache is supported.
+	// Deprecated: Tells whether clearing browser cache is supported.
 	CanClearBrowserCache(context.Context) (*network.CanClearBrowserCacheReply, error)
 
 	// Command ClearBrowserCache
@@ -1514,7 +1514,7 @@ type Network interface {
 
 	// Command CanClearBrowserCookies
 	//
-	// Tells whether clearing browser cookies is supported.
+	// Deprecated: Tells whether clearing browser cookies is supported.
 	CanClearBrowserCookies(context.Context) (*network.CanClearBrowserCookiesReply, error)
 
 	// Command ClearBrowserCookies
@@ -1549,7 +1549,7 @@ type Network interface {
 
 	// Command CanEmulateNetworkConditions
 	//
-	// Tells whether emulation of network conditions is supported.
+	// Deprecated: Tells whether emulation of network conditions is supported.
 	CanEmulateNetworkConditions(context.Context) (*network.CanEmulateNetworkConditionsReply, error)
 
 	// Command EmulateNetworkConditions
@@ -1896,8 +1896,6 @@ type Page interface {
 	// Command SetDocumentContent
 	//
 	// Sets given markup as the document's HTML.
-	//
-	// Note: This command is experimental.
 	SetDocumentContent(context.Context, *page.SetDocumentContentArgs) error
 
 	// Command CaptureScreenshot
@@ -2446,6 +2444,8 @@ type Target interface {
 	// Command SetAutoAttach
 	//
 	// Controls whether to automatically attach to new targets which are considered to be related to this one. When turned on, attaches to all existing related targets as well. When turned off, automatically detaches from all currently attached targets.
+	//
+	// Note: This command is experimental.
 	SetAutoAttach(context.Context, *target.SetAutoAttachArgs) error
 
 	// Command SetAttachToFrames
@@ -2468,6 +2468,8 @@ type Target interface {
 	// Command GetTargetInfo
 	//
 	// Returns information about a target.
+	//
+	// Note: This command is experimental.
 	GetTargetInfo(context.Context, *target.GetTargetInfoArgs) (*target.GetTargetInfoReply, error)
 
 	// Command ActivateTarget
@@ -2532,11 +2534,15 @@ type Target interface {
 	// Event AttachedToTarget
 	//
 	// Issued when attached to target because of auto-attach or attachToTarget command.
+	//
+	// Note: This event is experimental.
 	AttachedToTarget(context.Context) (target.AttachedToTargetClient, error)
 
 	// Event DetachedFromTarget
 	//
 	// Issued when detached from target for any reason (including detachFromTarget command). Can be issued multiple times per target if multiple sessions have been attached to it.
+	//
+	// Note: This event is experimental.
 	DetachedFromTarget(context.Context) (target.DetachedFromTargetClient, error)
 
 	// Event ReceivedMessageFromTarget

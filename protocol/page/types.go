@@ -70,34 +70,13 @@ type NavigationEntry struct {
 //
 // Note: This type is experimental.
 type ScreencastFrameMetadata struct {
-	// OffsetTop Top offset in DIP.
-	//
-	// Note: This property is experimental.
-	OffsetTop float64 `json:"offsetTop"`
-	// PageScaleFactor Page scale factor.
-	//
-	// Note: This property is experimental.
-	PageScaleFactor float64 `json:"pageScaleFactor"`
-	// DeviceWidth Device screen width in DIP.
-	//
-	// Note: This property is experimental.
-	DeviceWidth float64 `json:"deviceWidth"`
-	// DeviceHeight Device screen height in DIP.
-	//
-	// Note: This property is experimental.
-	DeviceHeight float64 `json:"deviceHeight"`
-	// ScrollOffsetX Position of horizontal scroll in CSS pixels.
-	//
-	// Note: This property is experimental.
-	ScrollOffsetX float64 `json:"scrollOffsetX"`
-	// ScrollOffsetY Position of vertical scroll in CSS pixels.
-	//
-	// Note: This property is experimental.
-	ScrollOffsetY float64 `json:"scrollOffsetY"`
-	// Timestamp Frame swap timestamp.
-	//
-	// Note: This property is experimental.
-	Timestamp network.TimeSinceEpoch `json:"timestamp,omitempty"`
+	OffsetTop       float64                `json:"offsetTop"`           // Top offset in DIP.
+	PageScaleFactor float64                `json:"pageScaleFactor"`     // Page scale factor.
+	DeviceWidth     float64                `json:"deviceWidth"`         // Device screen width in DIP.
+	DeviceHeight    float64                `json:"deviceHeight"`        // Device screen height in DIP.
+	ScrollOffsetX   float64                `json:"scrollOffsetX"`       // Position of horizontal scroll in CSS pixels.
+	ScrollOffsetY   float64                `json:"scrollOffsetY"`       // Position of vertical scroll in CSS pixels.
+	Timestamp       network.TimeSinceEpoch `json:"timestamp,omitempty"` // Frame swap timestamp.
 }
 
 // DialogType Javascript dialog type.

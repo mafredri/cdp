@@ -4,10 +4,15 @@
 
 package page
 
+import (
+	"github.com/mafredri/cdp/protocol/network"
+)
+
 // NavigateReply represents the return values for Navigate in the Page domain.
 type NavigateReply struct {
-	FrameID   FrameID `json:"frameId"`             // Frame id that has navigated (or failed to navigate)
-	ErrorText *string `json:"errorText,omitempty"` // User friendly error message, present if and only if navigation has failed.
+	FrameID   FrameID           `json:"frameId"`             // Frame id that has navigated (or failed to navigate)
+	LoaderID  *network.LoaderID `json:"loaderId,omitempty"`  // Loader identifier.
+	ErrorText *string           `json:"errorText,omitempty"` // User friendly error message, present if and only if navigation has failed.
 }
 
 // GetResourceContentArgs represents the arguments for GetResourceContent in the Page domain.

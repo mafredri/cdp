@@ -10,11 +10,14 @@ import (
 
 // SetDeviceMetricsOverrideArgs represents the arguments for SetDeviceMetricsOverride in the Emulation domain.
 type SetDeviceMetricsOverrideArgs struct {
-	Width             int      `json:"width"`             // Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
-	Height            int      `json:"height"`            // Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
-	DeviceScaleFactor float64  `json:"deviceScaleFactor"` // Overriding device scale factor value. 0 disables the override.
-	Mobile            bool     `json:"mobile"`            // Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more.
-	Scale             *float64 `json:"scale,omitempty"`   // Scale to apply to resulting view image.
+	Width             int     `json:"width"`             // Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
+	Height            int     `json:"height"`            // Overriding height value in pixels (minimum 0, maximum 10000000). 0 disables the override.
+	DeviceScaleFactor float64 `json:"deviceScaleFactor"` // Overriding device scale factor value. 0 disables the override.
+	Mobile            bool    `json:"mobile"`            // Whether to emulate mobile device. This includes viewport meta tag, overlay scrollbars, text autosizing and more.
+	// Scale Scale to apply to resulting view image.
+	//
+	// Note: This property is experimental.
+	Scale *float64 `json:"scale,omitempty"`
 	// ScreenWidth Overriding screen width value in pixels (minimum 0, maximum 10000000).
 	//
 	// Note: This property is experimental.
@@ -53,6 +56,8 @@ func NewSetDeviceMetricsOverrideArgs(width int, height int, deviceScaleFactor fl
 }
 
 // SetScale sets the Scale optional argument. Scale to apply to resulting view image.
+//
+// Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetScale(scale float64) *SetDeviceMetricsOverrideArgs {
 	a.Scale = &scale
 	return a

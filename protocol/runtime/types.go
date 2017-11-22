@@ -225,10 +225,6 @@ type StackTrace struct {
 	Description *string     `json:"description,omitempty"` // String label of this stack trace. For async traces this may be a name of the function that initiated the async call.
 	CallFrames  []CallFrame `json:"callFrames"`            // JavaScript function name.
 	Parent      *StackTrace `json:"parent,omitempty"`      // Asynchronous JavaScript stack trace that preceded this stack, if available.
-	// PromiseCreationFrame Creation frame of the Promise which produced the next synchronous trace when resolved, if available.
-	//
-	// Note: This property is experimental.
-	PromiseCreationFrame *CallFrame `json:"promiseCreationFrame,omitempty"`
 }
 
 // AsyncTaskID

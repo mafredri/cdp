@@ -7,15 +7,10 @@ import (
 )
 
 // Animation Animation instance.
-//
-// Note: This type is experimental.
 type Animation struct {
-	ID   string `json:"id"`   // Animation's id.
-	Name string `json:"name"` // Animation's name.
-	// PausedState Animation's internal paused state.
-	//
-	// Note: This property is experimental.
-	PausedState  bool    `json:"pausedState"`
+	ID           string  `json:"id"`           // Animation's id.
+	Name         string  `json:"name"`         // Animation's name.
+	PausedState  bool    `json:"pausedState"`  // Animation's internal paused state.
 	PlayState    string  `json:"playState"`    // Animation's play state.
 	PlaybackRate float64 `json:"playbackRate"` // Animation's playback rate.
 	StartTime    float64 `json:"startTime"`    // Animation's start time.
@@ -29,8 +24,6 @@ type Animation struct {
 }
 
 // Effect AnimationEffect instance
-//
-// Note: This type is experimental.
 type Effect struct {
 	Delay          float64            `json:"delay"`                   // AnimationEffect's delay.
 	EndDelay       float64            `json:"endDelay"`                // AnimationEffect's end delay.

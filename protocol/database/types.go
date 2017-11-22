@@ -3,13 +3,9 @@
 package database
 
 // ID Unique identifier of Database object.
-//
-// Note: This type is experimental.
 type ID string
 
 // Database Database object.
-//
-// Note: This type is experimental.
 type Database struct {
 	ID      ID     `json:"id"`      // Database ID.
 	Domain  string `json:"domain"`  // Database domain.
