@@ -1,11 +1,17 @@
 package cdp
 
 import (
+	"fmt"
+
 	"github.com/mafredri/cdp/rpcc"
 )
 
 type eventClient interface {
 	rpcc.Stream
+}
+
+type getStreamer interface {
+	GetStream() rpcc.Stream
 }
 
 // Sync takes two or more event clients and sets them into synchronous operation,
@@ -27,7 +33,11 @@ type eventClient interface {
 func Sync(c ...eventClient) error {
 	var s []rpcc.Stream
 	for _, cc := range c {
-		s = append(s, cc)
+		cs, ok := cc.(getStreamer)
+		if !ok {
+			return fmt.Errorf("cdp: Sync: bad eventClient type: %T", cc)
+		}
+		s = append(s, cs.GetStream())
 	}
 	return rpcc.Sync(s...)
 }
