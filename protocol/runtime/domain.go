@@ -215,6 +215,9 @@ func (d *domainClient) ExecutionContextCreated(ctx context.Context) (ExecutionCo
 
 type executionContextCreatedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *executionContextCreatedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *executionContextCreatedClient) Recv() (*ExecutionContextCreatedReply, error) {
 	event := new(ExecutionContextCreatedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -232,6 +235,9 @@ func (d *domainClient) ExecutionContextDestroyed(ctx context.Context) (Execution
 }
 
 type executionContextDestroyedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *executionContextDestroyedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *executionContextDestroyedClient) Recv() (*ExecutionContextDestroyedReply, error) {
 	event := new(ExecutionContextDestroyedReply)
@@ -251,6 +257,9 @@ func (d *domainClient) ExecutionContextsCleared(ctx context.Context) (ExecutionC
 
 type executionContextsClearedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *executionContextsClearedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *executionContextsClearedClient) Recv() (*ExecutionContextsClearedReply, error) {
 	event := new(ExecutionContextsClearedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -268,6 +277,9 @@ func (d *domainClient) ExceptionThrown(ctx context.Context) (ExceptionThrownClie
 }
 
 type exceptionThrownClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *exceptionThrownClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *exceptionThrownClient) Recv() (*ExceptionThrownReply, error) {
 	event := new(ExceptionThrownReply)
@@ -287,6 +299,9 @@ func (d *domainClient) ExceptionRevoked(ctx context.Context) (ExceptionRevokedCl
 
 type exceptionRevokedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *exceptionRevokedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *exceptionRevokedClient) Recv() (*ExceptionRevokedReply, error) {
 	event := new(ExceptionRevokedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -305,6 +320,9 @@ func (d *domainClient) ConsoleAPICalled(ctx context.Context) (ConsoleAPICalledCl
 
 type consoleAPICalledClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *consoleAPICalledClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *consoleAPICalledClient) Recv() (*ConsoleAPICalledReply, error) {
 	event := new(ConsoleAPICalledReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -322,6 +340,9 @@ func (d *domainClient) InspectRequested(ctx context.Context) (InspectRequestedCl
 }
 
 type inspectRequestedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *inspectRequestedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *inspectRequestedClient) Recv() (*InspectRequestedReply, error) {
 	event := new(InspectRequestedReply)

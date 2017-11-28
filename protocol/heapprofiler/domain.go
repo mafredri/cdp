@@ -168,6 +168,9 @@ func (d *domainClient) AddHeapSnapshotChunk(ctx context.Context) (AddHeapSnapsho
 
 type addHeapSnapshotChunkClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *addHeapSnapshotChunkClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *addHeapSnapshotChunkClient) Recv() (*AddHeapSnapshotChunkReply, error) {
 	event := new(AddHeapSnapshotChunkReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -185,6 +188,9 @@ func (d *domainClient) ResetProfiles(ctx context.Context) (ResetProfilesClient, 
 }
 
 type resetProfilesClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *resetProfilesClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *resetProfilesClient) Recv() (*ResetProfilesReply, error) {
 	event := new(ResetProfilesReply)
@@ -204,6 +210,9 @@ func (d *domainClient) ReportHeapSnapshotProgress(ctx context.Context) (ReportHe
 
 type reportHeapSnapshotProgressClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *reportHeapSnapshotProgressClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *reportHeapSnapshotProgressClient) Recv() (*ReportHeapSnapshotProgressReply, error) {
 	event := new(ReportHeapSnapshotProgressReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -222,6 +231,9 @@ func (d *domainClient) LastSeenObjectID(ctx context.Context) (LastSeenObjectIDCl
 
 type lastSeenObjectIDClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *lastSeenObjectIDClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *lastSeenObjectIDClient) Recv() (*LastSeenObjectIDReply, error) {
 	event := new(LastSeenObjectIDReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -239,6 +251,9 @@ func (d *domainClient) HeapStatsUpdate(ctx context.Context) (HeapStatsUpdateClie
 }
 
 type heapStatsUpdateClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *heapStatsUpdateClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *heapStatsUpdateClient) Recv() (*HeapStatsUpdateReply, error) {
 	event := new(HeapStatsUpdateReply)

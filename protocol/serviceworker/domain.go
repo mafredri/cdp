@@ -172,6 +172,9 @@ func (d *domainClient) WorkerRegistrationUpdated(ctx context.Context) (WorkerReg
 
 type workerRegistrationUpdatedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *workerRegistrationUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *workerRegistrationUpdatedClient) Recv() (*WorkerRegistrationUpdatedReply, error) {
 	event := new(WorkerRegistrationUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -190,6 +193,9 @@ func (d *domainClient) WorkerVersionUpdated(ctx context.Context) (WorkerVersionU
 
 type workerVersionUpdatedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *workerVersionUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *workerVersionUpdatedClient) Recv() (*WorkerVersionUpdatedReply, error) {
 	event := new(WorkerVersionUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -207,6 +213,9 @@ func (d *domainClient) WorkerErrorReported(ctx context.Context) (WorkerErrorRepo
 }
 
 type workerErrorReportedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *workerErrorReportedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *workerErrorReportedClient) Recv() (*WorkerErrorReportedReply, error) {
 	event := new(WorkerErrorReportedReply)

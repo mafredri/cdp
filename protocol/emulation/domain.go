@@ -222,6 +222,9 @@ func (d *domainClient) VirtualTimeBudgetExpired(ctx context.Context) (VirtualTim
 
 type virtualTimeBudgetExpiredClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *virtualTimeBudgetExpiredClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *virtualTimeBudgetExpiredClient) Recv() (*VirtualTimeBudgetExpiredReply, error) {
 	event := new(VirtualTimeBudgetExpiredReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -240,6 +243,9 @@ func (d *domainClient) VirtualTimeAdvanced(ctx context.Context) (VirtualTimeAdva
 
 type virtualTimeAdvancedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *virtualTimeAdvancedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *virtualTimeAdvancedClient) Recv() (*VirtualTimeAdvancedReply, error) {
 	event := new(VirtualTimeAdvancedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -257,6 +263,9 @@ func (d *domainClient) VirtualTimePaused(ctx context.Context) (VirtualTimePaused
 }
 
 type virtualTimePausedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *virtualTimePausedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *virtualTimePausedClient) Recv() (*VirtualTimePausedReply, error) {
 	event := new(VirtualTimePausedReply)

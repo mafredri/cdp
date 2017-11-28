@@ -99,6 +99,9 @@ func (d *domainClient) DOMStorageItemsCleared(ctx context.Context) (ItemsCleared
 
 type itemsClearedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *itemsClearedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *itemsClearedClient) Recv() (*ItemsClearedReply, error) {
 	event := new(ItemsClearedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -116,6 +119,9 @@ func (d *domainClient) DOMStorageItemRemoved(ctx context.Context) (ItemRemovedCl
 }
 
 type itemRemovedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *itemRemovedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *itemRemovedClient) Recv() (*ItemRemovedReply, error) {
 	event := new(ItemRemovedReply)
@@ -135,6 +141,9 @@ func (d *domainClient) DOMStorageItemAdded(ctx context.Context) (ItemAddedClient
 
 type itemAddedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *itemAddedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *itemAddedClient) Recv() (*ItemAddedReply, error) {
 	event := new(ItemAddedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -152,6 +161,9 @@ func (d *domainClient) DOMStorageItemUpdated(ctx context.Context) (ItemUpdatedCl
 }
 
 type itemUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *itemUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *itemUpdatedClient) Recv() (*ItemUpdatedReply, error) {
 	event := new(ItemUpdatedReply)

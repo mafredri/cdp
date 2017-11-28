@@ -143,6 +143,9 @@ func (d *domainClient) LayerTreeDidChange(ctx context.Context) (DidChangeClient,
 
 type didChangeClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *didChangeClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *didChangeClient) Recv() (*DidChangeReply, error) {
 	event := new(DidChangeReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -160,6 +163,9 @@ func (d *domainClient) LayerPainted(ctx context.Context) (LayerPaintedClient, er
 }
 
 type layerPaintedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *layerPaintedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *layerPaintedClient) Recv() (*LayerPaintedReply, error) {
 	event := new(LayerPaintedReply)

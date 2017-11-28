@@ -72,6 +72,9 @@ func (d *domainClient) SecurityStateChanged(ctx context.Context) (StateChangedCl
 
 type stateChangedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *stateChangedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *stateChangedClient) Recv() (*StateChangedReply, error) {
 	event := new(StateChangedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -89,6 +92,9 @@ func (d *domainClient) CertificateError(ctx context.Context) (CertificateErrorCl
 }
 
 type certificateErrorClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *certificateErrorClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *certificateErrorClient) Recv() (*CertificateErrorReply, error) {
 	event := new(CertificateErrorReply)

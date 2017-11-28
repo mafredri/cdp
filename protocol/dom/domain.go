@@ -500,6 +500,9 @@ func (d *domainClient) DocumentUpdated(ctx context.Context) (DocumentUpdatedClie
 
 type documentUpdatedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *documentUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *documentUpdatedClient) Recv() (*DocumentUpdatedReply, error) {
 	event := new(DocumentUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -517,6 +520,9 @@ func (d *domainClient) SetChildNodes(ctx context.Context) (SetChildNodesClient, 
 }
 
 type setChildNodesClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *setChildNodesClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *setChildNodesClient) Recv() (*SetChildNodesReply, error) {
 	event := new(SetChildNodesReply)
@@ -536,6 +542,9 @@ func (d *domainClient) AttributeModified(ctx context.Context) (AttributeModified
 
 type attributeModifiedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *attributeModifiedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *attributeModifiedClient) Recv() (*AttributeModifiedReply, error) {
 	event := new(AttributeModifiedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -553,6 +562,9 @@ func (d *domainClient) AttributeRemoved(ctx context.Context) (AttributeRemovedCl
 }
 
 type attributeRemovedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *attributeRemovedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *attributeRemovedClient) Recv() (*AttributeRemovedReply, error) {
 	event := new(AttributeRemovedReply)
@@ -572,6 +584,9 @@ func (d *domainClient) InlineStyleInvalidated(ctx context.Context) (InlineStyleI
 
 type inlineStyleInvalidatedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *inlineStyleInvalidatedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *inlineStyleInvalidatedClient) Recv() (*InlineStyleInvalidatedReply, error) {
 	event := new(InlineStyleInvalidatedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -589,6 +604,9 @@ func (d *domainClient) CharacterDataModified(ctx context.Context) (CharacterData
 }
 
 type characterDataModifiedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *characterDataModifiedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *characterDataModifiedClient) Recv() (*CharacterDataModifiedReply, error) {
 	event := new(CharacterDataModifiedReply)
@@ -608,6 +626,9 @@ func (d *domainClient) ChildNodeCountUpdated(ctx context.Context) (ChildNodeCoun
 
 type childNodeCountUpdatedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *childNodeCountUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *childNodeCountUpdatedClient) Recv() (*ChildNodeCountUpdatedReply, error) {
 	event := new(ChildNodeCountUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -625,6 +646,9 @@ func (d *domainClient) ChildNodeInserted(ctx context.Context) (ChildNodeInserted
 }
 
 type childNodeInsertedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *childNodeInsertedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *childNodeInsertedClient) Recv() (*ChildNodeInsertedReply, error) {
 	event := new(ChildNodeInsertedReply)
@@ -644,6 +668,9 @@ func (d *domainClient) ChildNodeRemoved(ctx context.Context) (ChildNodeRemovedCl
 
 type childNodeRemovedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *childNodeRemovedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *childNodeRemovedClient) Recv() (*ChildNodeRemovedReply, error) {
 	event := new(ChildNodeRemovedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -661,6 +688,9 @@ func (d *domainClient) ShadowRootPushed(ctx context.Context) (ShadowRootPushedCl
 }
 
 type shadowRootPushedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *shadowRootPushedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *shadowRootPushedClient) Recv() (*ShadowRootPushedReply, error) {
 	event := new(ShadowRootPushedReply)
@@ -680,6 +710,9 @@ func (d *domainClient) ShadowRootPopped(ctx context.Context) (ShadowRootPoppedCl
 
 type shadowRootPoppedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *shadowRootPoppedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *shadowRootPoppedClient) Recv() (*ShadowRootPoppedReply, error) {
 	event := new(ShadowRootPoppedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -697,6 +730,9 @@ func (d *domainClient) PseudoElementAdded(ctx context.Context) (PseudoElementAdd
 }
 
 type pseudoElementAddedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *pseudoElementAddedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *pseudoElementAddedClient) Recv() (*PseudoElementAddedReply, error) {
 	event := new(PseudoElementAddedReply)
@@ -716,6 +752,9 @@ func (d *domainClient) PseudoElementRemoved(ctx context.Context) (PseudoElementR
 
 type pseudoElementRemovedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *pseudoElementRemovedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *pseudoElementRemovedClient) Recv() (*PseudoElementRemovedReply, error) {
 	event := new(PseudoElementRemovedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -733,6 +772,9 @@ func (d *domainClient) DistributedNodesUpdated(ctx context.Context) (Distributed
 }
 
 type distributedNodesUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *distributedNodesUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *distributedNodesUpdatedClient) Recv() (*DistributedNodesUpdatedReply, error) {
 	event := new(DistributedNodesUpdatedReply)

@@ -77,6 +77,9 @@ func (d *domainClient) EntryAdded(ctx context.Context) (EntryAddedClient, error)
 
 type entryAddedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *entryAddedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *entryAddedClient) Recv() (*EntryAddedReply, error) {
 	event := new(EntryAddedReply)
 	if err := c.RecvMsg(event); err != nil {

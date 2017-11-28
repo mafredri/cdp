@@ -55,6 +55,9 @@ func (d *domainClient) MessageAdded(ctx context.Context) (MessageAddedClient, er
 
 type messageAddedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *messageAddedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *messageAddedClient) Recv() (*MessageAddedReply, error) {
 	event := new(MessageAddedReply)
 	if err := c.RecvMsg(event); err != nil {

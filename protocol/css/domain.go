@@ -307,6 +307,9 @@ func (d *domainClient) MediaQueryResultChanged(ctx context.Context) (MediaQueryR
 
 type mediaQueryResultChangedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *mediaQueryResultChangedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *mediaQueryResultChangedClient) Recv() (*MediaQueryResultChangedReply, error) {
 	event := new(MediaQueryResultChangedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -324,6 +327,9 @@ func (d *domainClient) FontsUpdated(ctx context.Context) (FontsUpdatedClient, er
 }
 
 type fontsUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *fontsUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *fontsUpdatedClient) Recv() (*FontsUpdatedReply, error) {
 	event := new(FontsUpdatedReply)
@@ -343,6 +349,9 @@ func (d *domainClient) StyleSheetChanged(ctx context.Context) (StyleSheetChanged
 
 type styleSheetChangedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *styleSheetChangedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *styleSheetChangedClient) Recv() (*StyleSheetChangedReply, error) {
 	event := new(StyleSheetChangedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -361,6 +370,9 @@ func (d *domainClient) StyleSheetAdded(ctx context.Context) (StyleSheetAddedClie
 
 type styleSheetAddedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *styleSheetAddedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *styleSheetAddedClient) Recv() (*StyleSheetAddedReply, error) {
 	event := new(StyleSheetAddedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -378,6 +390,9 @@ func (d *domainClient) StyleSheetRemoved(ctx context.Context) (StyleSheetRemoved
 }
 
 type styleSheetRemovedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *styleSheetRemovedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *styleSheetRemovedClient) Recv() (*StyleSheetRemovedReply, error) {
 	event := new(StyleSheetRemovedReply)

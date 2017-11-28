@@ -225,6 +225,9 @@ func (d *domainClient) NodeHighlightRequested(ctx context.Context) (NodeHighligh
 
 type nodeHighlightRequestedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *nodeHighlightRequestedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *nodeHighlightRequestedClient) Recv() (*NodeHighlightRequestedReply, error) {
 	event := new(NodeHighlightRequestedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -243,6 +246,9 @@ func (d *domainClient) InspectNodeRequested(ctx context.Context) (InspectNodeReq
 
 type inspectNodeRequestedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *inspectNodeRequestedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *inspectNodeRequestedClient) Recv() (*InspectNodeRequestedReply, error) {
 	event := new(InspectNodeRequestedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -260,6 +266,9 @@ func (d *domainClient) ScreenshotRequested(ctx context.Context) (ScreenshotReque
 }
 
 type screenshotRequestedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *screenshotRequestedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *screenshotRequestedClient) Recv() (*ScreenshotRequestedReply, error) {
 	event := new(ScreenshotRequestedReply)

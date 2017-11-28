@@ -74,6 +74,9 @@ func (d *domainClient) AddDatabase(ctx context.Context) (AddDatabaseClient, erro
 
 type addDatabaseClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *addDatabaseClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *addDatabaseClient) Recv() (*AddDatabaseReply, error) {
 	event := new(AddDatabaseReply)
 	if err := c.RecvMsg(event); err != nil {

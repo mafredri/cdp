@@ -148,6 +148,9 @@ func (d *domainClient) ConsoleProfileStarted(ctx context.Context) (ConsoleProfil
 
 type consoleProfileStartedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *consoleProfileStartedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *consoleProfileStartedClient) Recv() (*ConsoleProfileStartedReply, error) {
 	event := new(ConsoleProfileStartedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -165,6 +168,9 @@ func (d *domainClient) ConsoleProfileFinished(ctx context.Context) (ConsoleProfi
 }
 
 type consoleProfileFinishedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *consoleProfileFinishedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *consoleProfileFinishedClient) Recv() (*ConsoleProfileFinishedReply, error) {
 	event := new(ConsoleProfileFinishedReply)

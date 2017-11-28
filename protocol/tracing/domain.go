@@ -83,6 +83,9 @@ func (d *domainClient) DataCollected(ctx context.Context) (DataCollectedClient, 
 
 type dataCollectedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *dataCollectedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *dataCollectedClient) Recv() (*DataCollectedReply, error) {
 	event := new(DataCollectedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -101,6 +104,9 @@ func (d *domainClient) TracingComplete(ctx context.Context) (CompleteClient, err
 
 type completeClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *completeClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *completeClient) Recv() (*CompleteReply, error) {
 	event := new(CompleteReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -118,6 +124,9 @@ func (d *domainClient) BufferUsage(ctx context.Context) (BufferUsageClient, erro
 }
 
 type bufferUsageClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *bufferUsageClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *bufferUsageClient) Recv() (*BufferUsageReply, error) {
 	event := new(BufferUsageReply)

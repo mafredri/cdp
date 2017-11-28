@@ -56,6 +56,9 @@ func (d *domainClient) Metrics(ctx context.Context) (MetricsClient, error) {
 
 type metricsClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *metricsClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *metricsClient) Recv() (*MetricsReply, error) {
 	event := new(MetricsReply)
 	if err := c.RecvMsg(event); err != nil {

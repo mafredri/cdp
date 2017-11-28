@@ -60,6 +60,9 @@ func (d *domainClient) NeedsBeginFramesChanged(ctx context.Context) (NeedsBeginF
 
 type needsBeginFramesChangedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *needsBeginFramesChangedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *needsBeginFramesChangedClient) Recv() (*NeedsBeginFramesChangedReply, error) {
 	event := new(NeedsBeginFramesChangedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -77,6 +80,9 @@ func (d *domainClient) MainFrameReadyForScreenshots(ctx context.Context) (MainFr
 }
 
 type mainFrameReadyForScreenshotsClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *mainFrameReadyForScreenshotsClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *mainFrameReadyForScreenshotsClient) Recv() (*MainFrameReadyForScreenshotsReply, error) {
 	event := new(MainFrameReadyForScreenshotsReply)

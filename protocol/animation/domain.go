@@ -149,6 +149,9 @@ func (d *domainClient) AnimationCreated(ctx context.Context) (CreatedClient, err
 
 type createdClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *createdClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *createdClient) Recv() (*CreatedReply, error) {
 	event := new(CreatedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -167,6 +170,9 @@ func (d *domainClient) AnimationStarted(ctx context.Context) (StartedClient, err
 
 type startedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *startedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *startedClient) Recv() (*StartedReply, error) {
 	event := new(StartedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -184,6 +190,9 @@ func (d *domainClient) AnimationCanceled(ctx context.Context) (CanceledClient, e
 }
 
 type canceledClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *canceledClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *canceledClient) Recv() (*CanceledReply, error) {
 	event := new(CanceledReply)

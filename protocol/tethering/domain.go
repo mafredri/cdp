@@ -54,6 +54,9 @@ func (d *domainClient) Accepted(ctx context.Context) (AcceptedClient, error) {
 
 type acceptedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *acceptedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *acceptedClient) Recv() (*AcceptedReply, error) {
 	event := new(AcceptedReply)
 	if err := c.RecvMsg(event); err != nil {

@@ -46,6 +46,9 @@ func (d *domainClient) Detached(ctx context.Context) (DetachedClient, error) {
 
 type detachedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *detachedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *detachedClient) Recv() (*DetachedReply, error) {
 	event := new(DetachedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -63,6 +66,9 @@ func (d *domainClient) TargetCrashed(ctx context.Context) (TargetCrashedClient, 
 }
 
 type targetCrashedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *targetCrashedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *targetCrashedClient) Recv() (*TargetCrashedReply, error) {
 	event := new(TargetCrashedReply)

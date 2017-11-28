@@ -209,6 +209,9 @@ func (d *domainClient) TargetCreated(ctx context.Context) (CreatedClient, error)
 
 type createdClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *createdClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *createdClient) Recv() (*CreatedReply, error) {
 	event := new(CreatedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -226,6 +229,9 @@ func (d *domainClient) TargetInfoChanged(ctx context.Context) (InfoChangedClient
 }
 
 type infoChangedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *infoChangedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *infoChangedClient) Recv() (*InfoChangedReply, error) {
 	event := new(InfoChangedReply)
@@ -245,6 +251,9 @@ func (d *domainClient) TargetDestroyed(ctx context.Context) (DestroyedClient, er
 
 type destroyedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *destroyedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *destroyedClient) Recv() (*DestroyedReply, error) {
 	event := new(DestroyedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -262,6 +271,9 @@ func (d *domainClient) AttachedToTarget(ctx context.Context) (AttachedToTargetCl
 }
 
 type attachedToTargetClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *attachedToTargetClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *attachedToTargetClient) Recv() (*AttachedToTargetReply, error) {
 	event := new(AttachedToTargetReply)
@@ -281,6 +293,9 @@ func (d *domainClient) DetachedFromTarget(ctx context.Context) (DetachedFromTarg
 
 type detachedFromTargetClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *detachedFromTargetClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *detachedFromTargetClient) Recv() (*DetachedFromTargetReply, error) {
 	event := new(DetachedFromTargetReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -298,6 +313,9 @@ func (d *domainClient) ReceivedMessageFromTarget(ctx context.Context) (ReceivedM
 }
 
 type receivedMessageFromTargetClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *receivedMessageFromTargetClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *receivedMessageFromTargetClient) Recv() (*ReceivedMessageFromTargetReply, error) {
 	event := new(ReceivedMessageFromTargetReply)

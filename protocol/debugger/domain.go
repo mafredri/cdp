@@ -359,6 +359,9 @@ func (d *domainClient) ScriptParsed(ctx context.Context) (ScriptParsedClient, er
 
 type scriptParsedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *scriptParsedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *scriptParsedClient) Recv() (*ScriptParsedReply, error) {
 	event := new(ScriptParsedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -376,6 +379,9 @@ func (d *domainClient) ScriptFailedToParse(ctx context.Context) (ScriptFailedToP
 }
 
 type scriptFailedToParseClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *scriptFailedToParseClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *scriptFailedToParseClient) Recv() (*ScriptFailedToParseReply, error) {
 	event := new(ScriptFailedToParseReply)
@@ -395,6 +401,9 @@ func (d *domainClient) BreakpointResolved(ctx context.Context) (BreakpointResolv
 
 type breakpointResolvedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *breakpointResolvedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *breakpointResolvedClient) Recv() (*BreakpointResolvedReply, error) {
 	event := new(BreakpointResolvedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -413,6 +422,9 @@ func (d *domainClient) Paused(ctx context.Context) (PausedClient, error) {
 
 type pausedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *pausedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *pausedClient) Recv() (*PausedReply, error) {
 	event := new(PausedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -430,6 +442,9 @@ func (d *domainClient) Resumed(ctx context.Context) (ResumedClient, error) {
 }
 
 type resumedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *resumedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *resumedClient) Recv() (*ResumedReply, error) {
 	event := new(ResumedReply)

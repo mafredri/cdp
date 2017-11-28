@@ -400,6 +400,9 @@ func (d *domainClient) DOMContentEventFired(ctx context.Context) (DOMContentEven
 
 type dOMContentEventFiredClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *dOMContentEventFiredClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *dOMContentEventFiredClient) Recv() (*DOMContentEventFiredReply, error) {
 	event := new(DOMContentEventFiredReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -417,6 +420,9 @@ func (d *domainClient) LoadEventFired(ctx context.Context) (LoadEventFiredClient
 }
 
 type loadEventFiredClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *loadEventFiredClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *loadEventFiredClient) Recv() (*LoadEventFiredReply, error) {
 	event := new(LoadEventFiredReply)
@@ -436,6 +442,9 @@ func (d *domainClient) LifecycleEvent(ctx context.Context) (LifecycleEventClient
 
 type lifecycleEventClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *lifecycleEventClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *lifecycleEventClient) Recv() (*LifecycleEventReply, error) {
 	event := new(LifecycleEventReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -453,6 +462,9 @@ func (d *domainClient) FrameAttached(ctx context.Context) (FrameAttachedClient, 
 }
 
 type frameAttachedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameAttachedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *frameAttachedClient) Recv() (*FrameAttachedReply, error) {
 	event := new(FrameAttachedReply)
@@ -472,6 +484,9 @@ func (d *domainClient) FrameNavigated(ctx context.Context) (FrameNavigatedClient
 
 type frameNavigatedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameNavigatedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *frameNavigatedClient) Recv() (*FrameNavigatedReply, error) {
 	event := new(FrameNavigatedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -489,6 +504,9 @@ func (d *domainClient) FrameDetached(ctx context.Context) (FrameDetachedClient, 
 }
 
 type frameDetachedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameDetachedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *frameDetachedClient) Recv() (*FrameDetachedReply, error) {
 	event := new(FrameDetachedReply)
@@ -508,6 +526,9 @@ func (d *domainClient) FrameStartedLoading(ctx context.Context) (FrameStartedLoa
 
 type frameStartedLoadingClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameStartedLoadingClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *frameStartedLoadingClient) Recv() (*FrameStartedLoadingReply, error) {
 	event := new(FrameStartedLoadingReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -525,6 +546,9 @@ func (d *domainClient) FrameStoppedLoading(ctx context.Context) (FrameStoppedLoa
 }
 
 type frameStoppedLoadingClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameStoppedLoadingClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *frameStoppedLoadingClient) Recv() (*FrameStoppedLoadingReply, error) {
 	event := new(FrameStoppedLoadingReply)
@@ -544,6 +568,9 @@ func (d *domainClient) FrameScheduledNavigation(ctx context.Context) (FrameSched
 
 type frameScheduledNavigationClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameScheduledNavigationClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *frameScheduledNavigationClient) Recv() (*FrameScheduledNavigationReply, error) {
 	event := new(FrameScheduledNavigationReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -561,6 +588,9 @@ func (d *domainClient) FrameClearedScheduledNavigation(ctx context.Context) (Fra
 }
 
 type frameClearedScheduledNavigationClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameClearedScheduledNavigationClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *frameClearedScheduledNavigationClient) Recv() (*FrameClearedScheduledNavigationReply, error) {
 	event := new(FrameClearedScheduledNavigationReply)
@@ -580,6 +610,9 @@ func (d *domainClient) FrameResized(ctx context.Context) (FrameResizedClient, er
 
 type frameResizedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameResizedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *frameResizedClient) Recv() (*FrameResizedReply, error) {
 	event := new(FrameResizedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -597,6 +630,9 @@ func (d *domainClient) JavascriptDialogOpening(ctx context.Context) (JavascriptD
 }
 
 type javascriptDialogOpeningClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *javascriptDialogOpeningClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *javascriptDialogOpeningClient) Recv() (*JavascriptDialogOpeningReply, error) {
 	event := new(JavascriptDialogOpeningReply)
@@ -616,6 +652,9 @@ func (d *domainClient) JavascriptDialogClosed(ctx context.Context) (JavascriptDi
 
 type javascriptDialogClosedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *javascriptDialogClosedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *javascriptDialogClosedClient) Recv() (*JavascriptDialogClosedReply, error) {
 	event := new(JavascriptDialogClosedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -633,6 +672,9 @@ func (d *domainClient) ScreencastFrame(ctx context.Context) (ScreencastFrameClie
 }
 
 type screencastFrameClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *screencastFrameClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *screencastFrameClient) Recv() (*ScreencastFrameReply, error) {
 	event := new(ScreencastFrameReply)
@@ -652,6 +694,9 @@ func (d *domainClient) ScreencastVisibilityChanged(ctx context.Context) (Screenc
 
 type screencastVisibilityChangedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *screencastVisibilityChangedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *screencastVisibilityChangedClient) Recv() (*ScreencastVisibilityChangedReply, error) {
 	event := new(ScreencastVisibilityChangedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -669,6 +714,9 @@ func (d *domainClient) InterstitialShown(ctx context.Context) (InterstitialShown
 }
 
 type interstitialShownClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *interstitialShownClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *interstitialShownClient) Recv() (*InterstitialShownReply, error) {
 	event := new(InterstitialShownReply)
@@ -688,6 +736,9 @@ func (d *domainClient) InterstitialHidden(ctx context.Context) (InterstitialHidd
 
 type interstitialHiddenClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *interstitialHiddenClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *interstitialHiddenClient) Recv() (*InterstitialHiddenReply, error) {
 	event := new(InterstitialHiddenReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -705,6 +756,9 @@ func (d *domainClient) WindowOpen(ctx context.Context) (WindowOpenClient, error)
 }
 
 type windowOpenClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *windowOpenClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *windowOpenClient) Recv() (*WindowOpenReply, error) {
 	event := new(WindowOpenReply)

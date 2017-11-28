@@ -348,6 +348,9 @@ func (d *domainClient) ResourceChangedPriority(ctx context.Context) (ResourceCha
 
 type resourceChangedPriorityClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *resourceChangedPriorityClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *resourceChangedPriorityClient) Recv() (*ResourceChangedPriorityReply, error) {
 	event := new(ResourceChangedPriorityReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -365,6 +368,9 @@ func (d *domainClient) RequestWillBeSent(ctx context.Context) (RequestWillBeSent
 }
 
 type requestWillBeSentClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *requestWillBeSentClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *requestWillBeSentClient) Recv() (*RequestWillBeSentReply, error) {
 	event := new(RequestWillBeSentReply)
@@ -384,6 +390,9 @@ func (d *domainClient) RequestServedFromCache(ctx context.Context) (RequestServe
 
 type requestServedFromCacheClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *requestServedFromCacheClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *requestServedFromCacheClient) Recv() (*RequestServedFromCacheReply, error) {
 	event := new(RequestServedFromCacheReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -401,6 +410,9 @@ func (d *domainClient) ResponseReceived(ctx context.Context) (ResponseReceivedCl
 }
 
 type responseReceivedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *responseReceivedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *responseReceivedClient) Recv() (*ResponseReceivedReply, error) {
 	event := new(ResponseReceivedReply)
@@ -420,6 +432,9 @@ func (d *domainClient) DataReceived(ctx context.Context) (DataReceivedClient, er
 
 type dataReceivedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *dataReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *dataReceivedClient) Recv() (*DataReceivedReply, error) {
 	event := new(DataReceivedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -437,6 +452,9 @@ func (d *domainClient) LoadingFinished(ctx context.Context) (LoadingFinishedClie
 }
 
 type loadingFinishedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *loadingFinishedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *loadingFinishedClient) Recv() (*LoadingFinishedReply, error) {
 	event := new(LoadingFinishedReply)
@@ -456,6 +474,9 @@ func (d *domainClient) LoadingFailed(ctx context.Context) (LoadingFailedClient, 
 
 type loadingFailedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *loadingFailedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *loadingFailedClient) Recv() (*LoadingFailedReply, error) {
 	event := new(LoadingFailedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -473,6 +494,9 @@ func (d *domainClient) WebSocketWillSendHandshakeRequest(ctx context.Context) (W
 }
 
 type webSocketWillSendHandshakeRequestClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketWillSendHandshakeRequestClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *webSocketWillSendHandshakeRequestClient) Recv() (*WebSocketWillSendHandshakeRequestReply, error) {
 	event := new(WebSocketWillSendHandshakeRequestReply)
@@ -492,6 +516,9 @@ func (d *domainClient) WebSocketHandshakeResponseReceived(ctx context.Context) (
 
 type webSocketHandshakeResponseReceivedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketHandshakeResponseReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *webSocketHandshakeResponseReceivedClient) Recv() (*WebSocketHandshakeResponseReceivedReply, error) {
 	event := new(WebSocketHandshakeResponseReceivedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -509,6 +536,9 @@ func (d *domainClient) WebSocketCreated(ctx context.Context) (WebSocketCreatedCl
 }
 
 type webSocketCreatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketCreatedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *webSocketCreatedClient) Recv() (*WebSocketCreatedReply, error) {
 	event := new(WebSocketCreatedReply)
@@ -528,6 +558,9 @@ func (d *domainClient) WebSocketClosed(ctx context.Context) (WebSocketClosedClie
 
 type webSocketClosedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketClosedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *webSocketClosedClient) Recv() (*WebSocketClosedReply, error) {
 	event := new(WebSocketClosedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -545,6 +578,9 @@ func (d *domainClient) WebSocketFrameReceived(ctx context.Context) (WebSocketFra
 }
 
 type webSocketFrameReceivedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketFrameReceivedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *webSocketFrameReceivedClient) Recv() (*WebSocketFrameReceivedReply, error) {
 	event := new(WebSocketFrameReceivedReply)
@@ -564,6 +600,9 @@ func (d *domainClient) WebSocketFrameError(ctx context.Context) (WebSocketFrameE
 
 type webSocketFrameErrorClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketFrameErrorClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *webSocketFrameErrorClient) Recv() (*WebSocketFrameErrorReply, error) {
 	event := new(WebSocketFrameErrorReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -581,6 +620,9 @@ func (d *domainClient) WebSocketFrameSent(ctx context.Context) (WebSocketFrameSe
 }
 
 type webSocketFrameSentClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketFrameSentClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *webSocketFrameSentClient) Recv() (*WebSocketFrameSentReply, error) {
 	event := new(WebSocketFrameSentReply)
@@ -600,6 +642,9 @@ func (d *domainClient) EventSourceMessageReceived(ctx context.Context) (EventSou
 
 type eventSourceMessageReceivedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *eventSourceMessageReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *eventSourceMessageReceivedClient) Recv() (*EventSourceMessageReceivedReply, error) {
 	event := new(EventSourceMessageReceivedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -617,6 +662,9 @@ func (d *domainClient) RequestIntercepted(ctx context.Context) (RequestIntercept
 }
 
 type requestInterceptedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *requestInterceptedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *requestInterceptedClient) Recv() (*RequestInterceptedReply, error) {
 	event := new(RequestInterceptedReply)

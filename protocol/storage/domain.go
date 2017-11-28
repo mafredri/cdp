@@ -107,6 +107,9 @@ func (d *domainClient) CacheStorageListUpdated(ctx context.Context) (CacheStorag
 
 type cacheStorageListUpdatedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *cacheStorageListUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *cacheStorageListUpdatedClient) Recv() (*CacheStorageListUpdatedReply, error) {
 	event := new(CacheStorageListUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -124,6 +127,9 @@ func (d *domainClient) CacheStorageContentUpdated(ctx context.Context) (CacheSto
 }
 
 type cacheStorageContentUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *cacheStorageContentUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *cacheStorageContentUpdatedClient) Recv() (*CacheStorageContentUpdatedReply, error) {
 	event := new(CacheStorageContentUpdatedReply)
@@ -143,6 +149,9 @@ func (d *domainClient) IndexedDBListUpdated(ctx context.Context) (IndexedDBListU
 
 type indexedDBListUpdatedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *indexedDBListUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *indexedDBListUpdatedClient) Recv() (*IndexedDBListUpdatedReply, error) {
 	event := new(IndexedDBListUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -160,6 +169,9 @@ func (d *domainClient) IndexedDBContentUpdated(ctx context.Context) (IndexedDBCo
 }
 
 type indexedDBContentUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *indexedDBContentUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *indexedDBContentUpdatedClient) Recv() (*IndexedDBContentUpdatedReply, error) {
 	event := new(IndexedDBContentUpdatedReply)

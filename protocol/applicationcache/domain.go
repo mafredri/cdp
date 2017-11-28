@@ -75,6 +75,9 @@ func (d *domainClient) ApplicationCacheStatusUpdated(ctx context.Context) (Statu
 
 type statusUpdatedClient struct{ rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *statusUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *statusUpdatedClient) Recv() (*StatusUpdatedReply, error) {
 	event := new(StatusUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
@@ -92,6 +95,9 @@ func (d *domainClient) NetworkStateUpdated(ctx context.Context) (NetworkStateUpd
 }
 
 type networkStateUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *networkStateUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
 
 func (c *networkStateUpdatedClient) Recv() (*NetworkStateUpdatedReply, error) {
 	event := new(NetworkStateUpdatedReply)
