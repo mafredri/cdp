@@ -620,6 +620,9 @@ func (d *domainClient) %s(ctx context.Context) (%s, error) {
 		g.Printf(`
 type %[4]s struct { rpcc.Stream }
 
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *%[4]s) GetStream() rpcc.Stream { return c.Stream }
+
 func (c *%[4]s) Recv() (*%[3]s, error) {
 	event := new(%[3]s)
 	if err := c.RecvMsg(event); err != nil {
