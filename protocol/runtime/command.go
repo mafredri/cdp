@@ -14,11 +14,8 @@ type EvaluateArgs struct {
 	//
 	// Note: This property is experimental.
 	GeneratePreview *bool `json:"generatePreview,omitempty"`
-	// UserGesture Whether execution should be treated as initiated by user in the UI.
-	//
-	// Note: This property is experimental.
-	UserGesture  *bool `json:"userGesture,omitempty"`
-	AwaitPromise *bool `json:"awaitPromise,omitempty"` // Whether execution should await for resulting value and return once awaited promise is resolved.
+	UserGesture     *bool `json:"userGesture,omitempty"`  // Whether execution should be treated as initiated by user in the UI.
+	AwaitPromise    *bool `json:"awaitPromise,omitempty"` // Whether execution should await for resulting value and return once awaited promise is resolved.
 }
 
 // NewEvaluateArgs initializes EvaluateArgs with the required arguments.
@@ -67,8 +64,6 @@ func (a *EvaluateArgs) SetGeneratePreview(generatePreview bool) *EvaluateArgs {
 }
 
 // SetUserGesture sets the UserGesture optional argument. Whether execution should be treated as initiated by user in the UI.
-//
-// Note: This property is experimental.
 func (a *EvaluateArgs) SetUserGesture(userGesture bool) *EvaluateArgs {
 	a.UserGesture = &userGesture
 	return a
@@ -128,11 +123,8 @@ type CallFunctionOnArgs struct {
 	// GeneratePreview Whether preview should be generated for the result.
 	//
 	// Note: This property is experimental.
-	GeneratePreview *bool `json:"generatePreview,omitempty"`
-	// UserGesture Whether execution should be treated as initiated by user in the UI.
-	//
-	// Note: This property is experimental.
-	UserGesture        *bool               `json:"userGesture,omitempty"`
+	GeneratePreview    *bool               `json:"generatePreview,omitempty"`
+	UserGesture        *bool               `json:"userGesture,omitempty"`        // Whether execution should be treated as initiated by user in the UI.
 	AwaitPromise       *bool               `json:"awaitPromise,omitempty"`       // Whether execution should await for resulting value and return once awaited promise is resolved.
 	ExecutionContextID *ExecutionContextID `json:"executionContextId,omitempty"` // Specifies execution context which global object will be used to call function on. Either executionContextId or objectId should be specified.
 	ObjectGroup        *string             `json:"objectGroup,omitempty"`        // Symbolic group name that can be used to release multiple objects. If objectGroup is not specified and objectId is, objectGroup will be inherited from object.
@@ -178,8 +170,6 @@ func (a *CallFunctionOnArgs) SetGeneratePreview(generatePreview bool) *CallFunct
 }
 
 // SetUserGesture sets the UserGesture optional argument. Whether execution should be treated as initiated by user in the UI.
-//
-// Note: This property is experimental.
 func (a *CallFunctionOnArgs) SetUserGesture(userGesture bool) *CallFunctionOnArgs {
 	a.UserGesture = &userGesture
 	return a

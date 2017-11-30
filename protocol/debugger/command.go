@@ -6,6 +6,14 @@ import (
 	"github.com/mafredri/cdp/protocol/runtime"
 )
 
+// EnableReply represents the return values for Enable in the Debugger domain.
+type EnableReply struct {
+	// DebuggerID Unique identifier of the debugger.
+	//
+	// Note: This property is experimental.
+	DebuggerID runtime.UniqueDebuggerID `json:"debuggerId"`
+}
+
 // SetBreakpointsActiveArgs represents the arguments for SetBreakpointsActive in the Debugger domain.
 type SetBreakpointsActiveArgs struct {
 	Active bool `json:"active"` // New value for breakpoints active state.
@@ -32,13 +40,10 @@ func NewSetSkipAllPausesArgs(skip bool) *SetSkipAllPausesArgs {
 
 // SetBreakpointByURLArgs represents the arguments for SetBreakpointByURL in the Debugger domain.
 type SetBreakpointByURLArgs struct {
-	LineNumber int     `json:"lineNumber"`         // Line number to set breakpoint at.
-	URL        *string `json:"url,omitempty"`      // URL of the resources to set breakpoint on.
-	URLRegex   *string `json:"urlRegex,omitempty"` // Regex pattern for the URLs of the resources to set breakpoints on. Either url or urlRegex must be specified.
-	// ScriptHash Script hash of the resources to set breakpoint on.
-	//
-	// Note: This property is experimental.
-	ScriptHash   *string `json:"scriptHash,omitempty"`
+	LineNumber   int     `json:"lineNumber"`             // Line number to set breakpoint at.
+	URL          *string `json:"url,omitempty"`          // URL of the resources to set breakpoint on.
+	URLRegex     *string `json:"urlRegex,omitempty"`     // Regex pattern for the URLs of the resources to set breakpoints on. Either url or urlRegex must be specified.
+	ScriptHash   *string `json:"scriptHash,omitempty"`   // Script hash of the resources to set breakpoint on.
 	ColumnNumber *int    `json:"columnNumber,omitempty"` // Offset in the line to set breakpoint at.
 	Condition    *string `json:"condition,omitempty"`    // Expression to use as a breakpoint condition. When specified, debugger will only stop on the breakpoint if this expression evaluates to true.
 }
@@ -63,8 +68,6 @@ func (a *SetBreakpointByURLArgs) SetURLRegex(urlRegex string) *SetBreakpointByUR
 }
 
 // SetScriptHash sets the ScriptHash optional argument. Script hash of the resources to set breakpoint on.
-//
-// Note: This property is experimental.
 func (a *SetBreakpointByURLArgs) SetScriptHash(scriptHash string) *SetBreakpointByURLArgs {
 	a.ScriptHash = &scriptHash
 	return a
@@ -162,8 +165,6 @@ type ContinueToLocationArgs struct {
 	// TargetCallFrames
 	//
 	// Values: "any", "current".
-	//
-	// Note: This property is experimental.
 	TargetCallFrames *string `json:"targetCallFrames,omitempty"`
 }
 
@@ -177,22 +178,20 @@ func NewContinueToLocationArgs(location Location) *ContinueToLocationArgs {
 // SetTargetCallFrames sets the TargetCallFrames optional argument.
 //
 // Values: "any", "current".
-//
-// Note: This property is experimental.
 func (a *ContinueToLocationArgs) SetTargetCallFrames(targetCallFrames string) *ContinueToLocationArgs {
 	a.TargetCallFrames = &targetCallFrames
 	return a
 }
 
-// PauseOnAsyncTaskArgs represents the arguments for PauseOnAsyncTask in the Debugger domain.
-type PauseOnAsyncTaskArgs struct {
-	AsyncTaskID runtime.AsyncTaskID `json:"asyncTaskId"` // Debugger will pause when given async task is started.
+// PauseOnAsyncCallArgs represents the arguments for PauseOnAsyncCall in the Debugger domain.
+type PauseOnAsyncCallArgs struct {
+	ParentStackTraceID runtime.StackTraceID `json:"parentStackTraceId"` // Debugger will pause when async call with given stack trace is started.
 }
 
-// NewPauseOnAsyncTaskArgs initializes PauseOnAsyncTaskArgs with the required arguments.
-func NewPauseOnAsyncTaskArgs(asyncTaskID runtime.AsyncTaskID) *PauseOnAsyncTaskArgs {
-	args := new(PauseOnAsyncTaskArgs)
-	args.AsyncTaskID = asyncTaskID
+// NewPauseOnAsyncCallArgs initializes PauseOnAsyncCallArgs with the required arguments.
+func NewPauseOnAsyncCallArgs(parentStackTraceID runtime.StackTraceID) *PauseOnAsyncCallArgs {
+	args := new(PauseOnAsyncCallArgs)
+	args.ParentStackTraceID = parentStackTraceID
 	return args
 }
 
@@ -217,6 +216,23 @@ func NewStepIntoArgs() *StepIntoArgs {
 func (a *StepIntoArgs) SetBreakOnAsyncCall(breakOnAsyncCall bool) *StepIntoArgs {
 	a.BreakOnAsyncCall = &breakOnAsyncCall
 	return a
+}
+
+// GetStackTraceArgs represents the arguments for GetStackTrace in the Debugger domain.
+type GetStackTraceArgs struct {
+	StackTraceID runtime.StackTraceID `json:"stackTraceId"` // No description.
+}
+
+// NewGetStackTraceArgs initializes GetStackTraceArgs with the required arguments.
+func NewGetStackTraceArgs(stackTraceID runtime.StackTraceID) *GetStackTraceArgs {
+	args := new(GetStackTraceArgs)
+	args.StackTraceID = stackTraceID
+	return args
+}
+
+// GetStackTraceReply represents the return values for GetStackTrace in the Debugger domain.
+type GetStackTraceReply struct {
+	StackTrace runtime.StackTrace `json:"stackTrace"` // No description.
 }
 
 // SearchInContentArgs represents the arguments for SearchInContent in the Debugger domain.
@@ -275,10 +291,14 @@ func (a *SetScriptSourceArgs) SetDryRun(dryRun bool) *SetScriptSourceArgs {
 
 // SetScriptSourceReply represents the return values for SetScriptSource in the Debugger domain.
 type SetScriptSourceReply struct {
-	CallFrames       []CallFrame               `json:"callFrames,omitempty"`       // New stack trace in case editing has happened while VM was stopped.
-	StackChanged     *bool                     `json:"stackChanged,omitempty"`     // Whether current call stack  was modified after applying the changes.
-	AsyncStackTrace  *runtime.StackTrace       `json:"asyncStackTrace,omitempty"`  // Async stack trace, if any.
-	ExceptionDetails *runtime.ExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details if any.
+	CallFrames      []CallFrame         `json:"callFrames,omitempty"`      // New stack trace in case editing has happened while VM was stopped.
+	StackChanged    *bool               `json:"stackChanged,omitempty"`    // Whether current call stack  was modified after applying the changes.
+	AsyncStackTrace *runtime.StackTrace `json:"asyncStackTrace,omitempty"` // Async stack trace, if any.
+	// AsyncStackTraceID Async stack trace, if any.
+	//
+	// Note: This property is experimental.
+	AsyncStackTraceID *runtime.StackTraceID     `json:"asyncStackTraceId,omitempty"`
+	ExceptionDetails  *runtime.ExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details if any.
 }
 
 // RestartFrameArgs represents the arguments for RestartFrame in the Debugger domain.
@@ -297,6 +317,10 @@ func NewRestartFrameArgs(callFrameID CallFrameID) *RestartFrameArgs {
 type RestartFrameReply struct {
 	CallFrames      []CallFrame         `json:"callFrames"`                // New stack trace.
 	AsyncStackTrace *runtime.StackTrace `json:"asyncStackTrace,omitempty"` // Async stack trace, if any.
+	// AsyncStackTraceID Async stack trace, if any.
+	//
+	// Note: This property is experimental.
+	AsyncStackTraceID *runtime.StackTraceID `json:"asyncStackTraceId,omitempty"`
 }
 
 // GetScriptSourceArgs represents the arguments for GetScriptSource in the Debugger domain.
@@ -342,11 +366,8 @@ type EvaluateOnCallFrameArgs struct {
 	// GeneratePreview Whether preview should be generated for the result.
 	//
 	// Note: This property is experimental.
-	GeneratePreview *bool `json:"generatePreview,omitempty"`
-	// ThrowOnSideEffect Whether to throw an exception if side effect cannot be ruled out during evaluation.
-	//
-	// Note: This property is experimental.
-	ThrowOnSideEffect *bool `json:"throwOnSideEffect,omitempty"`
+	GeneratePreview   *bool `json:"generatePreview,omitempty"`
+	ThrowOnSideEffect *bool `json:"throwOnSideEffect,omitempty"` // Whether to throw an exception if side effect cannot be ruled out during evaluation.
 }
 
 // NewEvaluateOnCallFrameArgs initializes EvaluateOnCallFrameArgs with the required arguments.
@@ -390,8 +411,6 @@ func (a *EvaluateOnCallFrameArgs) SetGeneratePreview(generatePreview bool) *Eval
 }
 
 // SetThrowOnSideEffect sets the ThrowOnSideEffect optional argument. Whether to throw an exception if side effect cannot be ruled out during evaluation.
-//
-// Note: This property is experimental.
 func (a *EvaluateOnCallFrameArgs) SetThrowOnSideEffect(throwOnSideEffect bool) *EvaluateOnCallFrameArgs {
 	a.ThrowOnSideEffect = &throwOnSideEffect
 	return a

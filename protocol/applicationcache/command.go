@@ -2,6 +2,11 @@
 
 package applicationcache
 
+// GetApplicationCacheForFrameReply represents the return values for GetApplicationCacheForFrame in the ApplicationCache domain.
+type GetApplicationCacheForFrameReply struct {
+	ApplicationCache ApplicationCache `json:"applicationCache"` // Relevant application cache data for the document in given frame.
+}
+
 // GetFramesWithManifestsReply represents the return values for GetFramesWithManifests in the ApplicationCache domain.
 type GetFramesWithManifestsReply struct {
 	FrameIDs []FrameWithManifest `json:"frameIds"` // Array of frame identifiers with manifest urls for each frame containing a document associated with some application cache.
@@ -10,9 +15,4 @@ type GetFramesWithManifestsReply struct {
 // GetManifestForFrameReply represents the return values for GetManifestForFrame in the ApplicationCache domain.
 type GetManifestForFrameReply struct {
 	ManifestURL string `json:"manifestURL"` // Manifest URL for document in the given frame.
-}
-
-// GetApplicationCacheForFrameReply represents the return values for GetApplicationCacheForFrame in the ApplicationCache domain.
-type GetApplicationCacheForFrameReply struct {
-	ApplicationCache ApplicationCache `json:"applicationCache"` // Relevant application cache data for the document in given frame.
 }

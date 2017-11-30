@@ -18,20 +18,20 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Enable invokes the Security method. Enables tracking security state changes.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Security.enable", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Security", Op: "Enable", Err: err}
-	}
-	return
-}
-
 // Disable invokes the Security method. Disables tracking security state changes.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Security.disable", nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Security", Op: "Disable", Err: err}
+	}
+	return
+}
+
+// Enable invokes the Security method. Enables tracking security state changes.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Security.enable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Security", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -62,27 +62,6 @@ func (d *domainClient) SetOverrideCertificateErrors(ctx context.Context, args *S
 	return
 }
 
-func (d *domainClient) SecurityStateChanged(ctx context.Context) (StateChangedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Security.securityStateChanged", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &stateChangedClient{Stream: s}, nil
-}
-
-type stateChangedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *stateChangedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *stateChangedClient) Recv() (*StateChangedReply, error) {
-	event := new(StateChangedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Security", Op: "SecurityStateChanged Recv", Err: err}
-	}
-	return event, nil
-}
-
 func (d *domainClient) CertificateError(ctx context.Context) (CertificateErrorClient, error) {
 	s, err := rpcc.NewStream(ctx, "Security.certificateError", d.conn)
 	if err != nil {
@@ -100,6 +79,27 @@ func (c *certificateErrorClient) Recv() (*CertificateErrorReply, error) {
 	event := new(CertificateErrorReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Security", Op: "CertificateError Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) SecurityStateChanged(ctx context.Context) (StateChangedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Security.securityStateChanged", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &stateChangedClient{Stream: s}, nil
+}
+
+type stateChangedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *stateChangedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *stateChangedClient) Recv() (*StateChangedReply, error) {
+	event := new(StateChangedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Security", Op: "SecurityStateChanged Recv", Err: err}
 	}
 	return event, nil
 }

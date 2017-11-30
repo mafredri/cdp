@@ -6,6 +6,32 @@ import (
 	"github.com/mafredri/cdp/protocol/target"
 )
 
+// GetVersionReply represents the return values for GetVersion in the Browser domain.
+type GetVersionReply struct {
+	ProtocolVersion string `json:"protocolVersion"` // Protocol version.
+	Product         string `json:"product"`         // Product name.
+	Revision        string `json:"revision"`        // Product revision.
+	UserAgent       string `json:"userAgent"`       // User-Agent.
+	JsVersion       string `json:"jsVersion"`       // V8 version.
+}
+
+// GetWindowBoundsArgs represents the arguments for GetWindowBounds in the Browser domain.
+type GetWindowBoundsArgs struct {
+	WindowID WindowID `json:"windowId"` // Browser window id.
+}
+
+// NewGetWindowBoundsArgs initializes GetWindowBoundsArgs with the required arguments.
+func NewGetWindowBoundsArgs(windowID WindowID) *GetWindowBoundsArgs {
+	args := new(GetWindowBoundsArgs)
+	args.WindowID = windowID
+	return args
+}
+
+// GetWindowBoundsReply represents the return values for GetWindowBounds in the Browser domain.
+type GetWindowBoundsReply struct {
+	Bounds Bounds `json:"bounds"` // Bounds information of the window. When window state is 'minimized', the restored window position and size are returned.
+}
+
 // GetWindowForTargetArgs represents the arguments for GetWindowForTarget in the Browser domain.
 type GetWindowForTargetArgs struct {
 	TargetID target.ID `json:"targetId"` // Devtools agent host id.
@@ -24,15 +50,6 @@ type GetWindowForTargetReply struct {
 	Bounds   Bounds   `json:"bounds"`   // Bounds information of the window. When window state is 'minimized', the restored window position and size are returned.
 }
 
-// GetVersionReply represents the return values for GetVersion in the Browser domain.
-type GetVersionReply struct {
-	ProtocolVersion string `json:"protocolVersion"` // Protocol version.
-	Product         string `json:"product"`         // Product name.
-	Revision        string `json:"revision"`        // Product revision.
-	UserAgent       string `json:"userAgent"`       // User-Agent.
-	JsVersion       string `json:"jsVersion"`       // V8 version.
-}
-
 // SetWindowBoundsArgs represents the arguments for SetWindowBounds in the Browser domain.
 type SetWindowBoundsArgs struct {
 	WindowID WindowID `json:"windowId"` // Browser window id.
@@ -45,21 +62,4 @@ func NewSetWindowBoundsArgs(windowID WindowID, bounds Bounds) *SetWindowBoundsAr
 	args.WindowID = windowID
 	args.Bounds = bounds
 	return args
-}
-
-// GetWindowBoundsArgs represents the arguments for GetWindowBounds in the Browser domain.
-type GetWindowBoundsArgs struct {
-	WindowID WindowID `json:"windowId"` // Browser window id.
-}
-
-// NewGetWindowBoundsArgs initializes GetWindowBoundsArgs with the required arguments.
-func NewGetWindowBoundsArgs(windowID WindowID) *GetWindowBoundsArgs {
-	args := new(GetWindowBoundsArgs)
-	args.WindowID = windowID
-	return args
-}
-
-// GetWindowBoundsReply represents the return values for GetWindowBounds in the Browser domain.
-type GetWindowBoundsReply struct {
-	Bounds Bounds `json:"bounds"` // Bounds information of the window. When window state is 'minimized', the restored window position and size are returned.
 }

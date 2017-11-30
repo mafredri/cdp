@@ -6,6 +6,19 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
+// WorkerErrorReportedClient is a client for WorkerErrorReported events.
+type WorkerErrorReportedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*WorkerErrorReportedReply, error)
+	rpcc.Stream
+}
+
+// WorkerErrorReportedReply is the reply for WorkerErrorReported events.
+type WorkerErrorReportedReply struct {
+	ErrorMessage ErrorMessage `json:"errorMessage"` // No description.
+}
+
 // WorkerRegistrationUpdatedClient is a client for WorkerRegistrationUpdated events.
 type WorkerRegistrationUpdatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
@@ -30,17 +43,4 @@ type WorkerVersionUpdatedClient interface {
 // WorkerVersionUpdatedReply is the reply for WorkerVersionUpdated events.
 type WorkerVersionUpdatedReply struct {
 	Versions []Version `json:"versions"` // No description.
-}
-
-// WorkerErrorReportedClient is a client for WorkerErrorReported events.
-type WorkerErrorReportedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*WorkerErrorReportedReply, error)
-	rpcc.Stream
-}
-
-// WorkerErrorReportedReply is the reply for WorkerErrorReported events.
-type WorkerErrorReportedReply struct {
-	ErrorMessage ErrorMessage `json:"errorMessage"` // No description.
 }

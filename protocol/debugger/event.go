@@ -33,18 +33,9 @@ type ScriptParsedReply struct {
 	// Note: This property is experimental.
 	IsLiveEdit   *bool   `json:"isLiveEdit,omitempty"`
 	SourceMapURL *string `json:"sourceMapURL,omitempty"` // URL of source map associated with script (if any).
-	// HasSourceURL True, if this script has sourceURL.
-	//
-	// Note: This property is experimental.
-	HasSourceURL *bool `json:"hasSourceURL,omitempty"`
-	// IsModule True, if this script is ES6 module.
-	//
-	// Note: This property is experimental.
-	IsModule *bool `json:"isModule,omitempty"`
-	// Length This script length.
-	//
-	// Note: This property is experimental.
-	Length *int `json:"length,omitempty"`
+	HasSourceURL *bool   `json:"hasSourceURL,omitempty"` // True, if this script has sourceURL.
+	IsModule     *bool   `json:"isModule,omitempty"`     // True, if this script is ES6 module.
+	Length       *int    `json:"length,omitempty"`       // This script length.
 	// StackTrace JavaScript top stack frame of where the script parsed event was triggered if available.
 	//
 	// Note: This property is experimental.
@@ -71,18 +62,9 @@ type ScriptFailedToParseReply struct {
 	Hash                    string                     `json:"hash"`                              // Content hash of the script.
 	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
 	SourceMapURL            *string                    `json:"sourceMapURL,omitempty"`            // URL of source map associated with script (if any).
-	// HasSourceURL True, if this script has sourceURL.
-	//
-	// Note: This property is experimental.
-	HasSourceURL *bool `json:"hasSourceURL,omitempty"`
-	// IsModule True, if this script is ES6 module.
-	//
-	// Note: This property is experimental.
-	IsModule *bool `json:"isModule,omitempty"`
-	// Length This script length.
-	//
-	// Note: This property is experimental.
-	Length *int `json:"length,omitempty"`
+	HasSourceURL            *bool                      `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
+	IsModule                *bool                      `json:"isModule,omitempty"`                // True, if this script is ES6 module.
+	Length                  *int                       `json:"length,omitempty"`                  // This script length.
 	// StackTrace JavaScript top stack frame of where the script parsed event was triggered if available.
 	//
 	// Note: This property is experimental.
@@ -121,10 +103,14 @@ type PausedReply struct {
 	Data            json.RawMessage     `json:"data,omitempty"`            // Object containing break-specific auxiliary properties.
 	HitBreakpoints  []string            `json:"hitBreakpoints,omitempty"`  // Hit breakpoints IDs
 	AsyncStackTrace *runtime.StackTrace `json:"asyncStackTrace,omitempty"` // Async stack trace, if any.
-	// ScheduledAsyncTaskID Scheduled async task id.
+	// AsyncStackTraceID Async stack trace, if any.
 	//
 	// Note: This property is experimental.
-	ScheduledAsyncTaskID *runtime.AsyncTaskID `json:"scheduledAsyncTaskId,omitempty"`
+	AsyncStackTraceID *runtime.StackTraceID `json:"asyncStackTraceId,omitempty"`
+	// AsyncCallStackTraceID Just scheduled async call will have this stack trace as parent stack during async execution. This field is available only after Debugger.stepInto call with breakOnAsynCall flag.
+	//
+	// Note: This property is experimental.
+	AsyncCallStackTraceID *runtime.StackTraceID `json:"asyncCallStackTraceId,omitempty"`
 }
 
 // ResumedClient is a client for Resumed events. Fired when the virtual machine resumed execution.

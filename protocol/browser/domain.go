@@ -27,39 +27,12 @@ func (d *domainClient) Close(ctx context.Context) (err error) {
 	return
 }
 
-// GetWindowForTarget invokes the Browser method. Get the browser window that contains the devtools target.
-func (d *domainClient) GetWindowForTarget(ctx context.Context, args *GetWindowForTargetArgs) (reply *GetWindowForTargetReply, err error) {
-	reply = new(GetWindowForTargetReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Browser.getWindowForTarget", args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Browser.getWindowForTarget", nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Browser", Op: "GetWindowForTarget", Err: err}
-	}
-	return
-}
-
 // GetVersion invokes the Browser method. Returns version information.
 func (d *domainClient) GetVersion(ctx context.Context) (reply *GetVersionReply, err error) {
 	reply = new(GetVersionReply)
 	err = rpcc.Invoke(ctx, "Browser.getVersion", nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "GetVersion", Err: err}
-	}
-	return
-}
-
-// SetWindowBounds invokes the Browser method. Set position and/or size of the browser window.
-func (d *domainClient) SetWindowBounds(ctx context.Context, args *SetWindowBoundsArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Browser.setWindowBounds", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Browser.setWindowBounds", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Browser", Op: "SetWindowBounds", Err: err}
 	}
 	return
 }
@@ -74,6 +47,33 @@ func (d *domainClient) GetWindowBounds(ctx context.Context, args *GetWindowBound
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "GetWindowBounds", Err: err}
+	}
+	return
+}
+
+// GetWindowForTarget invokes the Browser method. Get the browser window that contains the devtools target.
+func (d *domainClient) GetWindowForTarget(ctx context.Context, args *GetWindowForTargetArgs) (reply *GetWindowForTargetReply, err error) {
+	reply = new(GetWindowForTargetReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.getWindowForTarget", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.getWindowForTarget", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "GetWindowForTarget", Err: err}
+	}
+	return
+}
+
+// SetWindowBounds invokes the Browser method. Set position and/or size of the browser window.
+func (d *domainClient) SetWindowBounds(ctx context.Context, args *SetWindowBoundsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.setWindowBounds", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.setWindowBounds", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "SetWindowBounds", Err: err}
 	}
 	return
 }

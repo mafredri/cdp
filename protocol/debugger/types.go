@@ -29,17 +29,14 @@ type ScriptPosition struct {
 
 // CallFrame JavaScript call frame. Array of call frames form the call stack.
 type CallFrame struct {
-	CallFrameID  CallFrameID `json:"callFrameId"`  // Call frame identifier. This identifier is only valid while the virtual machine is paused.
-	FunctionName string      `json:"functionName"` // Name of the JavaScript function called on this call frame.
-	// FunctionLocation Location in the source code.
-	//
-	// Note: This property is experimental.
-	FunctionLocation *Location             `json:"functionLocation,omitempty"`
-	Location         Location              `json:"location"`              // Location in the source code.
-	URL              string                `json:"url"`                   // JavaScript script name or url.
-	ScopeChain       []Scope               `json:"scopeChain"`            // Scope chain for this call frame.
-	This             runtime.RemoteObject  `json:"this"`                  // this object for this call frame.
-	ReturnValue      *runtime.RemoteObject `json:"returnValue,omitempty"` // The value being returned, if the function is at return point.
+	CallFrameID      CallFrameID           `json:"callFrameId"`                // Call frame identifier. This identifier is only valid while the virtual machine is paused.
+	FunctionName     string                `json:"functionName"`               // Name of the JavaScript function called on this call frame.
+	FunctionLocation *Location             `json:"functionLocation,omitempty"` // Location in the source code.
+	Location         Location              `json:"location"`                   // Location in the source code.
+	URL              string                `json:"url"`                        // JavaScript script name or url.
+	ScopeChain       []Scope               `json:"scopeChain"`                 // Scope chain for this call frame.
+	This             runtime.RemoteObject  `json:"this"`                       // this object for this call frame.
+	ReturnValue      *runtime.RemoteObject `json:"returnValue,omitempty"`      // The value being returned, if the function is at return point.
 }
 
 // Scope Scope description.
@@ -55,16 +52,12 @@ type Scope struct {
 }
 
 // SearchMatch Search match for resource.
-//
-// Note: This type is experimental.
 type SearchMatch struct {
 	LineNumber  float64 `json:"lineNumber"`  // Line number in resource content.
 	LineContent string  `json:"lineContent"` // Line with match content.
 }
 
 // BreakLocation
-//
-// Note: This type is experimental.
 type BreakLocation struct {
 	ScriptID     runtime.ScriptID `json:"scriptId"`               // Script identifier as reported in the Debugger.scriptParsed.
 	LineNumber   int              `json:"lineNumber"`             // Line number in the script (0-based).

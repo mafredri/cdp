@@ -200,10 +200,10 @@ type AXNode struct {
 	NodeID           AXNodeID           `json:"nodeId"`                     // Unique identifier for this node.
 	Ignored          bool               `json:"ignored"`                    // Whether this node is ignored for accessibility
 	IgnoredReasons   []AXProperty       `json:"ignoredReasons,omitempty"`   // Collection of reasons why this node is hidden.
-	Role             *AXValue           `json:"role,omitempty"`             // This Node's role, whether explicit or implicit.
-	Name             *AXValue           `json:"name,omitempty"`             // The accessible name for this Node.
-	Description      *AXValue           `json:"description,omitempty"`      // The accessible description for this Node.
-	Value            *AXValue           `json:"value,omitempty"`            // The value for this Node.
+	Role             *AXValue           `json:"role,omitempty"`             // This `Node`'s role, whether explicit or implicit.
+	Name             *AXValue           `json:"name,omitempty"`             // The accessible name for this `Node`.
+	Description      *AXValue           `json:"description,omitempty"`      // The accessible description for this `Node`.
+	Value            *AXValue           `json:"value,omitempty"`            // The value for this `Node`.
 	Properties       []AXProperty       `json:"properties,omitempty"`       // All other properties
 	ChildIDs         []AXNodeID         `json:"childIds,omitempty"`         // IDs for each of this node's child nodes.
 	BackendDOMNodeID *dom.BackendNodeID `json:"backendDOMNodeId,omitempty"` // The backend ID for the associated DOM node, if any.

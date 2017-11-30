@@ -6,19 +6,6 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// CacheStorageListUpdatedClient is a client for CacheStorageListUpdated events. A cache has been added/deleted.
-type CacheStorageListUpdatedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*CacheStorageListUpdatedReply, error)
-	rpcc.Stream
-}
-
-// CacheStorageListUpdatedReply is the reply for CacheStorageListUpdated events.
-type CacheStorageListUpdatedReply struct {
-	Origin string `json:"origin"` // Origin to update.
-}
-
 // CacheStorageContentUpdatedClient is a client for CacheStorageContentUpdated events. A cache's contents have been modified.
 type CacheStorageContentUpdatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
@@ -33,16 +20,16 @@ type CacheStorageContentUpdatedReply struct {
 	CacheName string `json:"cacheName"` // Name of cache in origin.
 }
 
-// IndexedDBListUpdatedClient is a client for IndexedDBListUpdated events. The origin's IndexedDB database list has been modified.
-type IndexedDBListUpdatedClient interface {
+// CacheStorageListUpdatedClient is a client for CacheStorageListUpdated events. A cache has been added/deleted.
+type CacheStorageListUpdatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
-	Recv() (*IndexedDBListUpdatedReply, error)
+	Recv() (*CacheStorageListUpdatedReply, error)
 	rpcc.Stream
 }
 
-// IndexedDBListUpdatedReply is the reply for IndexedDBListUpdated events.
-type IndexedDBListUpdatedReply struct {
+// CacheStorageListUpdatedReply is the reply for CacheStorageListUpdated events.
+type CacheStorageListUpdatedReply struct {
 	Origin string `json:"origin"` // Origin to update.
 }
 
@@ -59,4 +46,17 @@ type IndexedDBContentUpdatedReply struct {
 	Origin          string `json:"origin"`          // Origin to update.
 	DatabaseName    string `json:"databaseName"`    // Database to update.
 	ObjectStoreName string `json:"objectStoreName"` // ObjectStore to update.
+}
+
+// IndexedDBListUpdatedClient is a client for IndexedDBListUpdated events. The origin's IndexedDB database list has been modified.
+type IndexedDBListUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*IndexedDBListUpdatedReply, error)
+	rpcc.Stream
+}
+
+// IndexedDBListUpdatedReply is the reply for IndexedDBListUpdated events.
+type IndexedDBListUpdatedReply struct {
+	Origin string `json:"origin"` // Origin to update.
 }

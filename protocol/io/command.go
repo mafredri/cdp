@@ -6,6 +6,18 @@ import (
 	"github.com/mafredri/cdp/protocol/runtime"
 )
 
+// CloseArgs represents the arguments for Close in the IO domain.
+type CloseArgs struct {
+	Handle StreamHandle `json:"handle"` // Handle of the stream to close.
+}
+
+// NewCloseArgs initializes CloseArgs with the required arguments.
+func NewCloseArgs(handle StreamHandle) *CloseArgs {
+	args := new(CloseArgs)
+	args.Handle = handle
+	return args
+}
+
 // ReadArgs represents the arguments for Read in the IO domain.
 type ReadArgs struct {
 	Handle StreamHandle `json:"handle"`           // Handle of the stream to read.
@@ -37,18 +49,6 @@ type ReadReply struct {
 	Base64Encoded *bool  `json:"base64Encoded,omitempty"` // Set if the data is base64-encoded
 	Data          string `json:"data"`                    // Data that were read.
 	EOF           bool   `json:"eof"`                     // Set if the end-of-file condition occurred while reading.
-}
-
-// CloseArgs represents the arguments for Close in the IO domain.
-type CloseArgs struct {
-	Handle StreamHandle `json:"handle"` // Handle of the stream to close.
-}
-
-// NewCloseArgs initializes CloseArgs with the required arguments.
-func NewCloseArgs(handle StreamHandle) *CloseArgs {
-	args := new(CloseArgs)
-	args.Handle = handle
-	return args
 }
 
 // ResolveBlobArgs represents the arguments for ResolveBlob in the IO domain.

@@ -18,19 +18,6 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// SetIgnoreInputEvents invokes the Input method. Ignores input events (useful while auditing page).
-func (d *domainClient) SetIgnoreInputEvents(ctx context.Context, args *SetIgnoreInputEventsArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Input.setIgnoreInputEvents", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Input.setIgnoreInputEvents", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Input", Op: "SetIgnoreInputEvents", Err: err}
-	}
-	return
-}
-
 // DispatchKeyEvent invokes the Input method. Dispatches a key event to the page.
 func (d *domainClient) DispatchKeyEvent(ctx context.Context, args *DispatchKeyEventArgs) (err error) {
 	if args != nil {
@@ -79,6 +66,19 @@ func (d *domainClient) EmulateTouchFromMouseEvent(ctx context.Context, args *Emu
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Input", Op: "EmulateTouchFromMouseEvent", Err: err}
+	}
+	return
+}
+
+// SetIgnoreInputEvents invokes the Input method. Ignores input events (useful while auditing page).
+func (d *domainClient) SetIgnoreInputEvents(ctx context.Context, args *SetIgnoreInputEventsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Input.setIgnoreInputEvents", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Input.setIgnoreInputEvents", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Input", Op: "SetIgnoreInputEvents", Err: err}
 	}
 	return
 }

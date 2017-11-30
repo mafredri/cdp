@@ -9,11 +9,30 @@ import (
 	"github.com/mafredri/cdp/protocol/network"
 )
 
-// NavigateReply represents the return values for Navigate in the Page domain.
-type NavigateReply struct {
-	FrameID   protocol.PageFrameID `json:"frameId"`             // Frame id that has navigated (or failed to navigate)
-	LoaderID  *network.LoaderID    `json:"loaderId,omitempty"`  // Loader identifier.
-	ErrorText *string              `json:"errorText,omitempty"` // User friendly error message, present if and only if navigation has failed.
+// CreateIsolatedWorldArgs represents the arguments for CreateIsolatedWorld in the Page domain.
+type CreateIsolatedWorldArgs struct {
+	FrameID             protocol.PageFrameID `json:"frameId"`                       // Id of the frame in which the isolated world should be created.
+	WorldName           *string              `json:"worldName,omitempty"`           // An optional name which is reported in the Execution Context.
+	GrantUniveralAccess *bool                `json:"grantUniveralAccess,omitempty"` // Whether or not universal access should be granted to the isolated world. This is a powerful option, use with caution.
+}
+
+// NewCreateIsolatedWorldArgs initializes CreateIsolatedWorldArgs with the required arguments.
+func NewCreateIsolatedWorldArgs(frameID protocol.PageFrameID) *CreateIsolatedWorldArgs {
+	args := new(CreateIsolatedWorldArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// SetWorldName sets the WorldName optional argument. An optional name which is reported in the Execution Context.
+func (a *CreateIsolatedWorldArgs) SetWorldName(worldName string) *CreateIsolatedWorldArgs {
+	a.WorldName = &worldName
+	return a
+}
+
+// SetGrantUniveralAccess sets the GrantUniveralAccess optional argument. Whether or not universal access should be granted to the isolated world. This is a powerful option, use with caution.
+func (a *CreateIsolatedWorldArgs) SetGrantUniveralAccess(grantUniveralAccess bool) *CreateIsolatedWorldArgs {
+	a.GrantUniveralAccess = &grantUniveralAccess
+	return a
 }
 
 // GetResourceContentArgs represents the arguments for GetResourceContent in the Page domain.
@@ -28,6 +47,13 @@ func NewGetResourceContentArgs(frameID protocol.PageFrameID, url string) *GetRes
 	args.FrameID = frameID
 	args.URL = url
 	return args
+}
+
+// NavigateReply represents the return values for Navigate in the Page domain.
+type NavigateReply struct {
+	FrameID   protocol.PageFrameID `json:"frameId"`             // Frame id that has navigated (or failed to navigate)
+	LoaderID  *network.LoaderID    `json:"loaderId,omitempty"`  // Loader identifier.
+	ErrorText *string              `json:"errorText,omitempty"` // User friendly error message, present if and only if navigation has failed.
 }
 
 // SearchInResourceArgs represents the arguments for SearchInResource in the Page domain.
@@ -72,30 +98,4 @@ func NewSetDocumentContentArgs(frameID protocol.PageFrameID, html string) *SetDo
 	args.FrameID = frameID
 	args.HTML = html
 	return args
-}
-
-// CreateIsolatedWorldArgs represents the arguments for CreateIsolatedWorld in the Page domain.
-type CreateIsolatedWorldArgs struct {
-	FrameID             protocol.PageFrameID `json:"frameId"`                       // Id of the frame in which the isolated world should be created.
-	WorldName           *string              `json:"worldName,omitempty"`           // An optional name which is reported in the Execution Context.
-	GrantUniveralAccess *bool                `json:"grantUniveralAccess,omitempty"` // Whether or not universal access should be granted to the isolated world. This is a powerful option, use with caution.
-}
-
-// NewCreateIsolatedWorldArgs initializes CreateIsolatedWorldArgs with the required arguments.
-func NewCreateIsolatedWorldArgs(frameID protocol.PageFrameID) *CreateIsolatedWorldArgs {
-	args := new(CreateIsolatedWorldArgs)
-	args.FrameID = frameID
-	return args
-}
-
-// SetWorldName sets the WorldName optional argument. An optional name which is reported in the Execution Context.
-func (a *CreateIsolatedWorldArgs) SetWorldName(worldName string) *CreateIsolatedWorldArgs {
-	a.WorldName = &worldName
-	return a
-}
-
-// SetGrantUniveralAccess sets the GrantUniveralAccess optional argument. Whether or not universal access should be granted to the isolated world. This is a powerful option, use with caution.
-func (a *CreateIsolatedWorldArgs) SetGrantUniveralAccess(grantUniveralAccess bool) *CreateIsolatedWorldArgs {
-	a.GrantUniveralAccess = &grantUniveralAccess
-	return a
 }

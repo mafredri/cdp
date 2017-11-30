@@ -18,15 +18,6 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Enable invokes the Animation method. Enables animation domain notifications.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Animation.enable", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Animation", Op: "Enable", Err: err}
-	}
-	return
-}
-
 // Disable invokes the Animation method. Disables animation domain notifications.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Animation.disable", nil, nil, d.conn)
@@ -36,25 +27,11 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 	return
 }
 
-// GetPlaybackRate invokes the Animation method. Gets the playback rate of the document timeline.
-func (d *domainClient) GetPlaybackRate(ctx context.Context) (reply *GetPlaybackRateReply, err error) {
-	reply = new(GetPlaybackRateReply)
-	err = rpcc.Invoke(ctx, "Animation.getPlaybackRate", nil, reply, d.conn)
+// Enable invokes the Animation method. Enables animation domain notifications.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Animation.enable", nil, nil, d.conn)
 	if err != nil {
-		err = &internal.OpError{Domain: "Animation", Op: "GetPlaybackRate", Err: err}
-	}
-	return
-}
-
-// SetPlaybackRate invokes the Animation method. Sets the playback rate of the document timeline.
-func (d *domainClient) SetPlaybackRate(ctx context.Context, args *SetPlaybackRateArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Animation.setPlaybackRate", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Animation.setPlaybackRate", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Animation", Op: "SetPlaybackRate", Err: err}
+		err = &internal.OpError{Domain: "Animation", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -73,41 +50,12 @@ func (d *domainClient) GetCurrentTime(ctx context.Context, args *GetCurrentTimeA
 	return
 }
 
-// SetPaused invokes the Animation method. Sets the paused state of a set of animations.
-func (d *domainClient) SetPaused(ctx context.Context, args *SetPausedArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Animation.setPaused", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Animation.setPaused", nil, nil, d.conn)
-	}
+// GetPlaybackRate invokes the Animation method. Gets the playback rate of the document timeline.
+func (d *domainClient) GetPlaybackRate(ctx context.Context) (reply *GetPlaybackRateReply, err error) {
+	reply = new(GetPlaybackRateReply)
+	err = rpcc.Invoke(ctx, "Animation.getPlaybackRate", nil, reply, d.conn)
 	if err != nil {
-		err = &internal.OpError{Domain: "Animation", Op: "SetPaused", Err: err}
-	}
-	return
-}
-
-// SetTiming invokes the Animation method. Sets the timing of an animation node.
-func (d *domainClient) SetTiming(ctx context.Context, args *SetTimingArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Animation.setTiming", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Animation.setTiming", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Animation", Op: "SetTiming", Err: err}
-	}
-	return
-}
-
-// SeekAnimations invokes the Animation method. Seek a set of animations to a particular time within each animation.
-func (d *domainClient) SeekAnimations(ctx context.Context, args *SeekAnimationsArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Animation.seekAnimations", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Animation.seekAnimations", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Animation", Op: "SeekAnimations", Err: err}
+		err = &internal.OpError{Domain: "Animation", Op: "GetPlaybackRate", Err: err}
 	}
 	return
 }
@@ -137,6 +85,79 @@ func (d *domainClient) ResolveAnimation(ctx context.Context, args *ResolveAnimat
 		err = &internal.OpError{Domain: "Animation", Op: "ResolveAnimation", Err: err}
 	}
 	return
+}
+
+// SeekAnimations invokes the Animation method. Seek a set of animations to a particular time within each animation.
+func (d *domainClient) SeekAnimations(ctx context.Context, args *SeekAnimationsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Animation.seekAnimations", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Animation.seekAnimations", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Animation", Op: "SeekAnimations", Err: err}
+	}
+	return
+}
+
+// SetPaused invokes the Animation method. Sets the paused state of a set of animations.
+func (d *domainClient) SetPaused(ctx context.Context, args *SetPausedArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Animation.setPaused", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Animation.setPaused", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Animation", Op: "SetPaused", Err: err}
+	}
+	return
+}
+
+// SetPlaybackRate invokes the Animation method. Sets the playback rate of the document timeline.
+func (d *domainClient) SetPlaybackRate(ctx context.Context, args *SetPlaybackRateArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Animation.setPlaybackRate", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Animation.setPlaybackRate", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Animation", Op: "SetPlaybackRate", Err: err}
+	}
+	return
+}
+
+// SetTiming invokes the Animation method. Sets the timing of an animation node.
+func (d *domainClient) SetTiming(ctx context.Context, args *SetTimingArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Animation.setTiming", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Animation.setTiming", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Animation", Op: "SetTiming", Err: err}
+	}
+	return
+}
+
+func (d *domainClient) AnimationCanceled(ctx context.Context) (CanceledClient, error) {
+	s, err := rpcc.NewStream(ctx, "Animation.animationCanceled", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &canceledClient{Stream: s}, nil
+}
+
+type canceledClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *canceledClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *canceledClient) Recv() (*CanceledReply, error) {
+	event := new(CanceledReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Animation", Op: "AnimationCanceled Recv", Err: err}
+	}
+	return event, nil
 }
 
 func (d *domainClient) AnimationCreated(ctx context.Context) (CreatedClient, error) {
@@ -177,27 +198,6 @@ func (c *startedClient) Recv() (*StartedReply, error) {
 	event := new(StartedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Animation", Op: "AnimationStarted Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) AnimationCanceled(ctx context.Context) (CanceledClient, error) {
-	s, err := rpcc.NewStream(ctx, "Animation.animationCanceled", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &canceledClient{Stream: s}, nil
-}
-
-type canceledClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *canceledClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *canceledClient) Recv() (*CanceledReply, error) {
-	event := new(CanceledReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Animation", Op: "AnimationCanceled Recv", Err: err}
 	}
 	return event, nil
 }

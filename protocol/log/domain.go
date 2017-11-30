@@ -18,11 +18,11 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Enable invokes the Log method. Enables log domain, sends the entries collected so far to the client by means of the entryAdded notification.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Log.enable", nil, nil, d.conn)
+// Clear invokes the Log method. Clears the log.
+func (d *domainClient) Clear(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Log.clear", nil, nil, d.conn)
 	if err != nil {
-		err = &internal.OpError{Domain: "Log", Op: "Enable", Err: err}
+		err = &internal.OpError{Domain: "Log", Op: "Clear", Err: err}
 	}
 	return
 }
@@ -36,11 +36,11 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 	return
 }
 
-// Clear invokes the Log method. Clears the log.
-func (d *domainClient) Clear(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Log.clear", nil, nil, d.conn)
+// Enable invokes the Log method. Enables log domain, sends the entries collected so far to the client by means of the `entryAdded` notification.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Log.enable", nil, nil, d.conn)
 	if err != nil {
-		err = &internal.OpError{Domain: "Log", Op: "Clear", Err: err}
+		err = &internal.OpError{Domain: "Log", Op: "Enable", Err: err}
 	}
 	return
 }

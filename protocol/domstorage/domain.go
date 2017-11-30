@@ -18,11 +18,15 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Enable invokes the DOMStorage method. Enables storage tracking, storage events will now be delivered to the client.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOMStorage.enable", nil, nil, d.conn)
+// Clear invokes the DOMStorage method.
+func (d *domainClient) Clear(ctx context.Context, args *ClearArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOMStorage.clear", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOMStorage.clear", nil, nil, d.conn)
+	}
 	if err != nil {
-		err = &internal.OpError{Domain: "DOMStorage", Op: "Enable", Err: err}
+		err = &internal.OpError{Domain: "DOMStorage", Op: "Clear", Err: err}
 	}
 	return
 }
@@ -36,15 +40,11 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 	return
 }
 
-// Clear invokes the DOMStorage method.
-func (d *domainClient) Clear(ctx context.Context, args *ClearArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMStorage.clear", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "DOMStorage.clear", nil, nil, d.conn)
-	}
+// Enable invokes the DOMStorage method. Enables storage tracking, storage events will now be delivered to the client.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "DOMStorage.enable", nil, nil, d.conn)
 	if err != nil {
-		err = &internal.OpError{Domain: "DOMStorage", Op: "Clear", Err: err}
+		err = &internal.OpError{Domain: "DOMStorage", Op: "Enable", Err: err}
 	}
 	return
 }
@@ -63,19 +63,6 @@ func (d *domainClient) GetDOMStorageItems(ctx context.Context, args *GetDOMStora
 	return
 }
 
-// SetDOMStorageItem invokes the DOMStorage method.
-func (d *domainClient) SetDOMStorageItem(ctx context.Context, args *SetDOMStorageItemArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMStorage.setDOMStorageItem", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "DOMStorage.setDOMStorageItem", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "DOMStorage", Op: "SetDOMStorageItem", Err: err}
-	}
-	return
-}
-
 // RemoveDOMStorageItem invokes the DOMStorage method.
 func (d *domainClient) RemoveDOMStorageItem(ctx context.Context, args *RemoveDOMStorageItemArgs) (err error) {
 	if args != nil {
@@ -89,23 +76,36 @@ func (d *domainClient) RemoveDOMStorageItem(ctx context.Context, args *RemoveDOM
 	return
 }
 
-func (d *domainClient) DOMStorageItemsCleared(ctx context.Context) (ItemsClearedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemsCleared", d.conn)
+// SetDOMStorageItem invokes the DOMStorage method.
+func (d *domainClient) SetDOMStorageItem(ctx context.Context, args *SetDOMStorageItemArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOMStorage.setDOMStorageItem", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOMStorage.setDOMStorageItem", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOMStorage", Op: "SetDOMStorageItem", Err: err}
+	}
+	return
+}
+
+func (d *domainClient) DOMStorageItemAdded(ctx context.Context) (ItemAddedClient, error) {
+	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemAdded", d.conn)
 	if err != nil {
 		return nil, err
 	}
-	return &itemsClearedClient{Stream: s}, nil
+	return &itemAddedClient{Stream: s}, nil
 }
 
-type itemsClearedClient struct{ rpcc.Stream }
+type itemAddedClient struct{ rpcc.Stream }
 
 // GetStream returns the original Stream for use with cdp.Sync.
-func (c *itemsClearedClient) GetStream() rpcc.Stream { return c.Stream }
+func (c *itemAddedClient) GetStream() rpcc.Stream { return c.Stream }
 
-func (c *itemsClearedClient) Recv() (*ItemsClearedReply, error) {
-	event := new(ItemsClearedReply)
+func (c *itemAddedClient) Recv() (*ItemAddedReply, error) {
+	event := new(ItemAddedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "DOMStorage", Op: "DOMStorageItemsCleared Recv", Err: err}
+		return nil, &internal.OpError{Domain: "DOMStorage", Op: "DOMStorageItemAdded Recv", Err: err}
 	}
 	return event, nil
 }
@@ -131,27 +131,6 @@ func (c *itemRemovedClient) Recv() (*ItemRemovedReply, error) {
 	return event, nil
 }
 
-func (d *domainClient) DOMStorageItemAdded(ctx context.Context) (ItemAddedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemAdded", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &itemAddedClient{Stream: s}, nil
-}
-
-type itemAddedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *itemAddedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *itemAddedClient) Recv() (*ItemAddedReply, error) {
-	event := new(ItemAddedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "DOMStorage", Op: "DOMStorageItemAdded Recv", Err: err}
-	}
-	return event, nil
-}
-
 func (d *domainClient) DOMStorageItemUpdated(ctx context.Context) (ItemUpdatedClient, error) {
 	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemUpdated", d.conn)
 	if err != nil {
@@ -169,6 +148,27 @@ func (c *itemUpdatedClient) Recv() (*ItemUpdatedReply, error) {
 	event := new(ItemUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "DOMStorage", Op: "DOMStorageItemUpdated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DOMStorageItemsCleared(ctx context.Context) (ItemsClearedClient, error) {
+	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemsCleared", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &itemsClearedClient{Stream: s}, nil
+}
+
+type itemsClearedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *itemsClearedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *itemsClearedClient) Recv() (*ItemsClearedReply, error) {
+	event := new(ItemsClearedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "DOMStorage", Op: "DOMStorageItemsCleared Recv", Err: err}
 	}
 	return event, nil
 }

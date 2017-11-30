@@ -8,6 +8,41 @@ import (
 	"github.com/mafredri/cdp/protocol/runtime"
 )
 
+// CanEmulateReply represents the return values for CanEmulate in the Emulation domain.
+type CanEmulateReply struct {
+	Result bool `json:"result"` // True if emulation is supported.
+}
+
+// SetCPUThrottlingRateArgs represents the arguments for SetCPUThrottlingRate in the Emulation domain.
+type SetCPUThrottlingRateArgs struct {
+	Rate float64 `json:"rate"` // Throttling rate as a slowdown factor (1 is no throttle, 2 is 2x slowdown, etc).
+}
+
+// NewSetCPUThrottlingRateArgs initializes SetCPUThrottlingRateArgs with the required arguments.
+func NewSetCPUThrottlingRateArgs(rate float64) *SetCPUThrottlingRateArgs {
+	args := new(SetCPUThrottlingRateArgs)
+	args.Rate = rate
+	return args
+}
+
+// SetDefaultBackgroundColorOverrideArgs represents the arguments for SetDefaultBackgroundColorOverride in the Emulation domain.
+type SetDefaultBackgroundColorOverrideArgs struct {
+	Color *dom.RGBA `json:"color,omitempty"` // RGBA of the default background color. If not specified, any existing override will be cleared.
+}
+
+// NewSetDefaultBackgroundColorOverrideArgs initializes SetDefaultBackgroundColorOverrideArgs with the required arguments.
+func NewSetDefaultBackgroundColorOverrideArgs() *SetDefaultBackgroundColorOverrideArgs {
+	args := new(SetDefaultBackgroundColorOverrideArgs)
+
+	return args
+}
+
+// SetColor sets the Color optional argument. RGBA of the default background color. If not specified, any existing override will be cleared.
+func (a *SetDefaultBackgroundColorOverrideArgs) SetColor(color dom.RGBA) *SetDefaultBackgroundColorOverrideArgs {
+	a.Color = &color
+	return a
+}
+
 // SetDeviceMetricsOverrideArgs represents the arguments for SetDeviceMetricsOverride in the Emulation domain.
 type SetDeviceMetricsOverrideArgs struct {
 	Width             int     `json:"width"`             // Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
@@ -117,95 +152,6 @@ func (a *SetDeviceMetricsOverrideArgs) SetViewport(viewport page.Viewport) *SetD
 	return a
 }
 
-// SetPageScaleFactorArgs represents the arguments for SetPageScaleFactor in the Emulation domain.
-type SetPageScaleFactorArgs struct {
-	PageScaleFactor float64 `json:"pageScaleFactor"` // Page scale factor.
-}
-
-// NewSetPageScaleFactorArgs initializes SetPageScaleFactorArgs with the required arguments.
-func NewSetPageScaleFactorArgs(pageScaleFactor float64) *SetPageScaleFactorArgs {
-	args := new(SetPageScaleFactorArgs)
-	args.PageScaleFactor = pageScaleFactor
-	return args
-}
-
-// SetVisibleSizeArgs represents the arguments for SetVisibleSize in the Emulation domain.
-type SetVisibleSizeArgs struct {
-	Width  int `json:"width"`  // Frame width (DIP).
-	Height int `json:"height"` // Frame height (DIP).
-}
-
-// NewSetVisibleSizeArgs initializes SetVisibleSizeArgs with the required arguments.
-func NewSetVisibleSizeArgs(width int, height int) *SetVisibleSizeArgs {
-	args := new(SetVisibleSizeArgs)
-	args.Width = width
-	args.Height = height
-	return args
-}
-
-// SetScriptExecutionDisabledArgs represents the arguments for SetScriptExecutionDisabled in the Emulation domain.
-type SetScriptExecutionDisabledArgs struct {
-	Value bool `json:"value"` // Whether script execution should be disabled in the page.
-}
-
-// NewSetScriptExecutionDisabledArgs initializes SetScriptExecutionDisabledArgs with the required arguments.
-func NewSetScriptExecutionDisabledArgs(value bool) *SetScriptExecutionDisabledArgs {
-	args := new(SetScriptExecutionDisabledArgs)
-	args.Value = value
-	return args
-}
-
-// SetGeolocationOverrideArgs represents the arguments for SetGeolocationOverride in the Emulation domain.
-type SetGeolocationOverrideArgs struct {
-	Latitude  *float64 `json:"latitude,omitempty"`  // Mock latitude
-	Longitude *float64 `json:"longitude,omitempty"` // Mock longitude
-	Accuracy  *float64 `json:"accuracy,omitempty"`  // Mock accuracy
-}
-
-// NewSetGeolocationOverrideArgs initializes SetGeolocationOverrideArgs with the required arguments.
-func NewSetGeolocationOverrideArgs() *SetGeolocationOverrideArgs {
-	args := new(SetGeolocationOverrideArgs)
-
-	return args
-}
-
-// SetLatitude sets the Latitude optional argument. Mock latitude
-func (a *SetGeolocationOverrideArgs) SetLatitude(latitude float64) *SetGeolocationOverrideArgs {
-	a.Latitude = &latitude
-	return a
-}
-
-// SetLongitude sets the Longitude optional argument. Mock longitude
-func (a *SetGeolocationOverrideArgs) SetLongitude(longitude float64) *SetGeolocationOverrideArgs {
-	a.Longitude = &longitude
-	return a
-}
-
-// SetAccuracy sets the Accuracy optional argument. Mock accuracy
-func (a *SetGeolocationOverrideArgs) SetAccuracy(accuracy float64) *SetGeolocationOverrideArgs {
-	a.Accuracy = &accuracy
-	return a
-}
-
-// SetTouchEmulationEnabledArgs represents the arguments for SetTouchEmulationEnabled in the Emulation domain.
-type SetTouchEmulationEnabledArgs struct {
-	Enabled        bool `json:"enabled"`                  // Whether the touch event emulation should be enabled.
-	MaxTouchPoints *int `json:"maxTouchPoints,omitempty"` // Maximum touch points supported. Defaults to one.
-}
-
-// NewSetTouchEmulationEnabledArgs initializes SetTouchEmulationEnabledArgs with the required arguments.
-func NewSetTouchEmulationEnabledArgs(enabled bool) *SetTouchEmulationEnabledArgs {
-	args := new(SetTouchEmulationEnabledArgs)
-	args.Enabled = enabled
-	return args
-}
-
-// SetMaxTouchPoints sets the MaxTouchPoints optional argument. Maximum touch points supported. Defaults to one.
-func (a *SetTouchEmulationEnabledArgs) SetMaxTouchPoints(maxTouchPoints int) *SetTouchEmulationEnabledArgs {
-	a.MaxTouchPoints = &maxTouchPoints
-	return a
-}
-
 // SetEmitTouchEventsForMouseArgs represents the arguments for SetEmitTouchEventsForMouse in the Emulation domain.
 type SetEmitTouchEventsForMouseArgs struct {
 	Enabled bool `json:"enabled"` // Whether touch emulation based on mouse input should be enabled.
@@ -242,21 +188,91 @@ func NewSetEmulatedMediaArgs(media string) *SetEmulatedMediaArgs {
 	return args
 }
 
-// SetCPUThrottlingRateArgs represents the arguments for SetCPUThrottlingRate in the Emulation domain.
-type SetCPUThrottlingRateArgs struct {
-	Rate float64 `json:"rate"` // Throttling rate as a slowdown factor (1 is no throttle, 2 is 2x slowdown, etc).
+// SetGeolocationOverrideArgs represents the arguments for SetGeolocationOverride in the Emulation domain.
+type SetGeolocationOverrideArgs struct {
+	Latitude  *float64 `json:"latitude,omitempty"`  // Mock latitude
+	Longitude *float64 `json:"longitude,omitempty"` // Mock longitude
+	Accuracy  *float64 `json:"accuracy,omitempty"`  // Mock accuracy
 }
 
-// NewSetCPUThrottlingRateArgs initializes SetCPUThrottlingRateArgs with the required arguments.
-func NewSetCPUThrottlingRateArgs(rate float64) *SetCPUThrottlingRateArgs {
-	args := new(SetCPUThrottlingRateArgs)
-	args.Rate = rate
+// NewSetGeolocationOverrideArgs initializes SetGeolocationOverrideArgs with the required arguments.
+func NewSetGeolocationOverrideArgs() *SetGeolocationOverrideArgs {
+	args := new(SetGeolocationOverrideArgs)
+
 	return args
 }
 
-// CanEmulateReply represents the return values for CanEmulate in the Emulation domain.
-type CanEmulateReply struct {
-	Result bool `json:"result"` // True if emulation is supported.
+// SetLatitude sets the Latitude optional argument. Mock latitude
+func (a *SetGeolocationOverrideArgs) SetLatitude(latitude float64) *SetGeolocationOverrideArgs {
+	a.Latitude = &latitude
+	return a
+}
+
+// SetLongitude sets the Longitude optional argument. Mock longitude
+func (a *SetGeolocationOverrideArgs) SetLongitude(longitude float64) *SetGeolocationOverrideArgs {
+	a.Longitude = &longitude
+	return a
+}
+
+// SetAccuracy sets the Accuracy optional argument. Mock accuracy
+func (a *SetGeolocationOverrideArgs) SetAccuracy(accuracy float64) *SetGeolocationOverrideArgs {
+	a.Accuracy = &accuracy
+	return a
+}
+
+// SetNavigatorOverridesArgs represents the arguments for SetNavigatorOverrides in the Emulation domain.
+type SetNavigatorOverridesArgs struct {
+	Platform string `json:"platform"` // The platform navigator.platform should return.
+}
+
+// NewSetNavigatorOverridesArgs initializes SetNavigatorOverridesArgs with the required arguments.
+func NewSetNavigatorOverridesArgs(platform string) *SetNavigatorOverridesArgs {
+	args := new(SetNavigatorOverridesArgs)
+	args.Platform = platform
+	return args
+}
+
+// SetPageScaleFactorArgs represents the arguments for SetPageScaleFactor in the Emulation domain.
+type SetPageScaleFactorArgs struct {
+	PageScaleFactor float64 `json:"pageScaleFactor"` // Page scale factor.
+}
+
+// NewSetPageScaleFactorArgs initializes SetPageScaleFactorArgs with the required arguments.
+func NewSetPageScaleFactorArgs(pageScaleFactor float64) *SetPageScaleFactorArgs {
+	args := new(SetPageScaleFactorArgs)
+	args.PageScaleFactor = pageScaleFactor
+	return args
+}
+
+// SetScriptExecutionDisabledArgs represents the arguments for SetScriptExecutionDisabled in the Emulation domain.
+type SetScriptExecutionDisabledArgs struct {
+	Value bool `json:"value"` // Whether script execution should be disabled in the page.
+}
+
+// NewSetScriptExecutionDisabledArgs initializes SetScriptExecutionDisabledArgs with the required arguments.
+func NewSetScriptExecutionDisabledArgs(value bool) *SetScriptExecutionDisabledArgs {
+	args := new(SetScriptExecutionDisabledArgs)
+	args.Value = value
+	return args
+}
+
+// SetTouchEmulationEnabledArgs represents the arguments for SetTouchEmulationEnabled in the Emulation domain.
+type SetTouchEmulationEnabledArgs struct {
+	Enabled        bool `json:"enabled"`                  // Whether the touch event emulation should be enabled.
+	MaxTouchPoints *int `json:"maxTouchPoints,omitempty"` // Maximum touch points supported. Defaults to one.
+}
+
+// NewSetTouchEmulationEnabledArgs initializes SetTouchEmulationEnabledArgs with the required arguments.
+func NewSetTouchEmulationEnabledArgs(enabled bool) *SetTouchEmulationEnabledArgs {
+	args := new(SetTouchEmulationEnabledArgs)
+	args.Enabled = enabled
+	return args
+}
+
+// SetMaxTouchPoints sets the MaxTouchPoints optional argument. Maximum touch points supported. Defaults to one.
+func (a *SetTouchEmulationEnabledArgs) SetMaxTouchPoints(maxTouchPoints int) *SetTouchEmulationEnabledArgs {
+	a.MaxTouchPoints = &maxTouchPoints
+	return a
 }
 
 // SetVirtualTimePolicyArgs represents the arguments for SetVirtualTimePolicy in the Emulation domain.
@@ -290,32 +306,16 @@ type SetVirtualTimePolicyReply struct {
 	VirtualTimeBase runtime.Timestamp `json:"virtualTimeBase"` // Absolute timestamp at which virtual time was first enabled (milliseconds since epoch).
 }
 
-// SetNavigatorOverridesArgs represents the arguments for SetNavigatorOverrides in the Emulation domain.
-type SetNavigatorOverridesArgs struct {
-	Platform string `json:"platform"` // The platform navigator.platform should return.
+// SetVisibleSizeArgs represents the arguments for SetVisibleSize in the Emulation domain.
+type SetVisibleSizeArgs struct {
+	Width  int `json:"width"`  // Frame width (DIP).
+	Height int `json:"height"` // Frame height (DIP).
 }
 
-// NewSetNavigatorOverridesArgs initializes SetNavigatorOverridesArgs with the required arguments.
-func NewSetNavigatorOverridesArgs(platform string) *SetNavigatorOverridesArgs {
-	args := new(SetNavigatorOverridesArgs)
-	args.Platform = platform
+// NewSetVisibleSizeArgs initializes SetVisibleSizeArgs with the required arguments.
+func NewSetVisibleSizeArgs(width int, height int) *SetVisibleSizeArgs {
+	args := new(SetVisibleSizeArgs)
+	args.Width = width
+	args.Height = height
 	return args
-}
-
-// SetDefaultBackgroundColorOverrideArgs represents the arguments for SetDefaultBackgroundColorOverride in the Emulation domain.
-type SetDefaultBackgroundColorOverrideArgs struct {
-	Color *dom.RGBA `json:"color,omitempty"` // RGBA of the default background color. If not specified, any existing override will be cleared.
-}
-
-// NewSetDefaultBackgroundColorOverrideArgs initializes SetDefaultBackgroundColorOverrideArgs with the required arguments.
-func NewSetDefaultBackgroundColorOverrideArgs() *SetDefaultBackgroundColorOverrideArgs {
-	args := new(SetDefaultBackgroundColorOverrideArgs)
-
-	return args
-}
-
-// SetColor sets the Color optional argument. RGBA of the default background color. If not specified, any existing override will be cleared.
-func (a *SetDefaultBackgroundColorOverrideArgs) SetColor(color dom.RGBA) *SetDefaultBackgroundColorOverrideArgs {
-	a.Color = &color
-	return a
 }

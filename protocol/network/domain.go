@@ -18,15 +18,76 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Enable invokes the Network method. Enables network tracking, network events will now be delivered to the client.
-func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error) {
+// CanClearBrowserCache invokes the Network method. Tells whether clearing browser cache is supported.
+func (d *domainClient) CanClearBrowserCache(ctx context.Context) (reply *CanClearBrowserCacheReply, err error) {
+	reply = new(CanClearBrowserCacheReply)
+	err = rpcc.Invoke(ctx, "Network.canClearBrowserCache", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "CanClearBrowserCache", Err: err}
+	}
+	return
+}
+
+// CanClearBrowserCookies invokes the Network method. Tells whether clearing browser cookies is supported.
+func (d *domainClient) CanClearBrowserCookies(ctx context.Context) (reply *CanClearBrowserCookiesReply, err error) {
+	reply = new(CanClearBrowserCookiesReply)
+	err = rpcc.Invoke(ctx, "Network.canClearBrowserCookies", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "CanClearBrowserCookies", Err: err}
+	}
+	return
+}
+
+// CanEmulateNetworkConditions invokes the Network method. Tells whether emulation of network conditions is supported.
+func (d *domainClient) CanEmulateNetworkConditions(ctx context.Context) (reply *CanEmulateNetworkConditionsReply, err error) {
+	reply = new(CanEmulateNetworkConditionsReply)
+	err = rpcc.Invoke(ctx, "Network.canEmulateNetworkConditions", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "CanEmulateNetworkConditions", Err: err}
+	}
+	return
+}
+
+// ClearBrowserCache invokes the Network method. Clears browser cache.
+func (d *domainClient) ClearBrowserCache(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Network.clearBrowserCache", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "ClearBrowserCache", Err: err}
+	}
+	return
+}
+
+// ClearBrowserCookies invokes the Network method. Clears browser cookies.
+func (d *domainClient) ClearBrowserCookies(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Network.clearBrowserCookies", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "ClearBrowserCookies", Err: err}
+	}
+	return
+}
+
+// ContinueInterceptedRequest invokes the Network method. Response to Network.requestIntercepted which either modifies the request to continue with any modifications, or blocks it, or completes it with the provided response bytes. If a network fetch occurs as a result which encounters a redirect an additional Network.requestIntercepted event will be sent with the same InterceptionId.
+func (d *domainClient) ContinueInterceptedRequest(ctx context.Context, args *ContinueInterceptedRequestArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.enable", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.continueInterceptedRequest", args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.enable", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.continueInterceptedRequest", nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "Enable", Err: err}
+		err = &internal.OpError{Domain: "Network", Op: "ContinueInterceptedRequest", Err: err}
+	}
+	return
+}
+
+// DeleteCookies invokes the Network method. Deletes browser cookies with matching name and url or domain/path pair.
+func (d *domainClient) DeleteCookies(ctx context.Context, args *DeleteCookiesArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.deleteCookies", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.deleteCookies", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "DeleteCookies", Err: err}
 	}
 	return
 }
@@ -40,42 +101,66 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 	return
 }
 
-// SetUserAgentOverride invokes the Network method. Allows overriding user agent with the given string.
-func (d *domainClient) SetUserAgentOverride(ctx context.Context, args *SetUserAgentOverrideArgs) (err error) {
+// EmulateNetworkConditions invokes the Network method. Activates emulation of network conditions.
+func (d *domainClient) EmulateNetworkConditions(ctx context.Context, args *EmulateNetworkConditionsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setUserAgentOverride", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.emulateNetworkConditions", args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.setUserAgentOverride", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.emulateNetworkConditions", nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "SetUserAgentOverride", Err: err}
+		err = &internal.OpError{Domain: "Network", Op: "EmulateNetworkConditions", Err: err}
 	}
 	return
 }
 
-// SearchInResponseBody invokes the Network method. Searches for given string in response content.
-func (d *domainClient) SearchInResponseBody(ctx context.Context, args *SearchInResponseBodyArgs) (reply *SearchInResponseBodyReply, err error) {
-	reply = new(SearchInResponseBodyReply)
+// Enable invokes the Network method. Enables network tracking, network events will now be delivered to the client.
+func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.searchInResponseBody", args, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Network.enable", args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.searchInResponseBody", nil, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Network.enable", nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "SearchInResponseBody", Err: err}
+		err = &internal.OpError{Domain: "Network", Op: "Enable", Err: err}
 	}
 	return
 }
 
-// SetExtraHTTPHeaders invokes the Network method. Specifies whether to always send extra HTTP headers with the requests from this page.
-func (d *domainClient) SetExtraHTTPHeaders(ctx context.Context, args *SetExtraHTTPHeadersArgs) (err error) {
+// GetAllCookies invokes the Network method. Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the `cookies` field.
+func (d *domainClient) GetAllCookies(ctx context.Context) (reply *GetAllCookiesReply, err error) {
+	reply = new(GetAllCookiesReply)
+	err = rpcc.Invoke(ctx, "Network.getAllCookies", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "GetAllCookies", Err: err}
+	}
+	return
+}
+
+// GetCertificate invokes the Network method. Returns the DER-encoded certificate.
+func (d *domainClient) GetCertificate(ctx context.Context, args *GetCertificateArgs) (reply *GetCertificateReply, err error) {
+	reply = new(GetCertificateReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setExtraHTTPHeaders", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.getCertificate", args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.setExtraHTTPHeaders", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.getCertificate", nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "SetExtraHTTPHeaders", Err: err}
+		err = &internal.OpError{Domain: "Network", Op: "GetCertificate", Err: err}
+	}
+	return
+}
+
+// GetCookies invokes the Network method. Returns all browser cookies for the current URL. Depending on the backend support, will return detailed cookie information in the `cookies` field.
+func (d *domainClient) GetCookies(ctx context.Context, args *GetCookiesArgs) (reply *GetCookiesReply, err error) {
+	reply = new(GetCookiesReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.getCookies", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.getCookies", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "GetCookies", Err: err}
 	}
 	return
 }
@@ -94,15 +179,16 @@ func (d *domainClient) GetResponseBody(ctx context.Context, args *GetResponseBod
 	return
 }
 
-// SetBlockedURLs invokes the Network method. Blocks URLs from loading.
-func (d *domainClient) SetBlockedURLs(ctx context.Context, args *SetBlockedURLsArgs) (err error) {
+// GetResponseBodyForInterception invokes the Network method. Returns content served for the given currently intercepted request.
+func (d *domainClient) GetResponseBodyForInterception(ctx context.Context, args *GetResponseBodyForInterceptionArgs) (reply *GetResponseBodyForInterceptionReply, err error) {
+	reply = new(GetResponseBodyForInterceptionReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setBlockedURLs", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.getResponseBodyForInterception", args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.setBlockedURLs", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.getResponseBodyForInterception", nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "SetBlockedURLs", Err: err}
+		err = &internal.OpError{Domain: "Network", Op: "GetResponseBodyForInterception", Err: err}
 	}
 	return
 }
@@ -120,77 +206,55 @@ func (d *domainClient) ReplayXHR(ctx context.Context, args *ReplayXHRArgs) (err 
 	return
 }
 
-// CanClearBrowserCache invokes the Network method. Tells whether clearing browser cache is supported.
-func (d *domainClient) CanClearBrowserCache(ctx context.Context) (reply *CanClearBrowserCacheReply, err error) {
-	reply = new(CanClearBrowserCacheReply)
-	err = rpcc.Invoke(ctx, "Network.canClearBrowserCache", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "CanClearBrowserCache", Err: err}
-	}
-	return
-}
-
-// ClearBrowserCache invokes the Network method. Clears browser cache.
-func (d *domainClient) ClearBrowserCache(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Network.clearBrowserCache", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "ClearBrowserCache", Err: err}
-	}
-	return
-}
-
-// CanClearBrowserCookies invokes the Network method. Tells whether clearing browser cookies is supported.
-func (d *domainClient) CanClearBrowserCookies(ctx context.Context) (reply *CanClearBrowserCookiesReply, err error) {
-	reply = new(CanClearBrowserCookiesReply)
-	err = rpcc.Invoke(ctx, "Network.canClearBrowserCookies", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "CanClearBrowserCookies", Err: err}
-	}
-	return
-}
-
-// ClearBrowserCookies invokes the Network method. Clears browser cookies.
-func (d *domainClient) ClearBrowserCookies(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Network.clearBrowserCookies", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "ClearBrowserCookies", Err: err}
-	}
-	return
-}
-
-// GetCookies invokes the Network method. Returns all browser cookies for the current URL. Depending on the backend support, will return detailed cookie information in the cookies field.
-func (d *domainClient) GetCookies(ctx context.Context, args *GetCookiesArgs) (reply *GetCookiesReply, err error) {
-	reply = new(GetCookiesReply)
+// SearchInResponseBody invokes the Network method. Searches for given string in response content.
+func (d *domainClient) SearchInResponseBody(ctx context.Context, args *SearchInResponseBodyArgs) (reply *SearchInResponseBodyReply, err error) {
+	reply = new(SearchInResponseBodyReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.getCookies", args, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Network.searchInResponseBody", args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.getCookies", nil, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Network.searchInResponseBody", nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "GetCookies", Err: err}
+		err = &internal.OpError{Domain: "Network", Op: "SearchInResponseBody", Err: err}
 	}
 	return
 }
 
-// GetAllCookies invokes the Network method. Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the cookies field.
-func (d *domainClient) GetAllCookies(ctx context.Context) (reply *GetAllCookiesReply, err error) {
-	reply = new(GetAllCookiesReply)
-	err = rpcc.Invoke(ctx, "Network.getAllCookies", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "GetAllCookies", Err: err}
-	}
-	return
-}
-
-// DeleteCookies invokes the Network method. Deletes browser cookies with matching name and url or domain/path pair.
-func (d *domainClient) DeleteCookies(ctx context.Context, args *DeleteCookiesArgs) (err error) {
+// SetBlockedURLs invokes the Network method. Blocks URLs from loading.
+func (d *domainClient) SetBlockedURLs(ctx context.Context, args *SetBlockedURLsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.deleteCookies", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.setBlockedURLs", args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.deleteCookies", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.setBlockedURLs", nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "DeleteCookies", Err: err}
+		err = &internal.OpError{Domain: "Network", Op: "SetBlockedURLs", Err: err}
+	}
+	return
+}
+
+// SetBypassServiceWorker invokes the Network method. Toggles ignoring of service worker for each request.
+func (d *domainClient) SetBypassServiceWorker(ctx context.Context, args *SetBypassServiceWorkerArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.setBypassServiceWorker", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.setBypassServiceWorker", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "SetBypassServiceWorker", Err: err}
+	}
+	return
+}
+
+// SetCacheDisabled invokes the Network method. Toggles ignoring cache for each request. If `true`, cache will not be used.
+func (d *domainClient) SetCacheDisabled(ctx context.Context, args *SetCacheDisabledArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.setCacheDisabled", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.setCacheDisabled", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "SetCacheDisabled", Err: err}
 	}
 	return
 }
@@ -222,55 +286,6 @@ func (d *domainClient) SetCookies(ctx context.Context, args *SetCookiesArgs) (er
 	return
 }
 
-// CanEmulateNetworkConditions invokes the Network method. Tells whether emulation of network conditions is supported.
-func (d *domainClient) CanEmulateNetworkConditions(ctx context.Context) (reply *CanEmulateNetworkConditionsReply, err error) {
-	reply = new(CanEmulateNetworkConditionsReply)
-	err = rpcc.Invoke(ctx, "Network.canEmulateNetworkConditions", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "CanEmulateNetworkConditions", Err: err}
-	}
-	return
-}
-
-// EmulateNetworkConditions invokes the Network method. Activates emulation of network conditions.
-func (d *domainClient) EmulateNetworkConditions(ctx context.Context, args *EmulateNetworkConditionsArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.emulateNetworkConditions", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Network.emulateNetworkConditions", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "EmulateNetworkConditions", Err: err}
-	}
-	return
-}
-
-// SetCacheDisabled invokes the Network method. Toggles ignoring cache for each request. If true, cache will not be used.
-func (d *domainClient) SetCacheDisabled(ctx context.Context, args *SetCacheDisabledArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setCacheDisabled", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Network.setCacheDisabled", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "SetCacheDisabled", Err: err}
-	}
-	return
-}
-
-// SetBypassServiceWorker invokes the Network method. Toggles ignoring of service worker for each request.
-func (d *domainClient) SetBypassServiceWorker(ctx context.Context, args *SetBypassServiceWorkerArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setBypassServiceWorker", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Network.setBypassServiceWorker", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "SetBypassServiceWorker", Err: err}
-	}
-	return
-}
-
 // SetDataSizeLimitsForTest invokes the Network method. For testing.
 func (d *domainClient) SetDataSizeLimitsForTest(ctx context.Context, args *SetDataSizeLimitsForTestArgs) (err error) {
 	if args != nil {
@@ -284,16 +299,15 @@ func (d *domainClient) SetDataSizeLimitsForTest(ctx context.Context, args *SetDa
 	return
 }
 
-// GetCertificate invokes the Network method. Returns the DER-encoded certificate.
-func (d *domainClient) GetCertificate(ctx context.Context, args *GetCertificateArgs) (reply *GetCertificateReply, err error) {
-	reply = new(GetCertificateReply)
+// SetExtraHTTPHeaders invokes the Network method. Specifies whether to always send extra HTTP headers with the requests from this page.
+func (d *domainClient) SetExtraHTTPHeaders(ctx context.Context, args *SetExtraHTTPHeadersArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.getCertificate", args, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Network.setExtraHTTPHeaders", args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.getCertificate", nil, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Network.setExtraHTTPHeaders", nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "GetCertificate", Err: err}
+		err = &internal.OpError{Domain: "Network", Op: "SetExtraHTTPHeaders", Err: err}
 	}
 	return
 }
@@ -311,115 +325,17 @@ func (d *domainClient) SetRequestInterception(ctx context.Context, args *SetRequ
 	return
 }
 
-// ContinueInterceptedRequest invokes the Network method. Response to Network.requestIntercepted which either modifies the request to continue with any modifications, or blocks it, or completes it with the provided response bytes. If a network fetch occurs as a result which encounters a redirect an additional Network.requestIntercepted event will be sent with the same InterceptionId.
-func (d *domainClient) ContinueInterceptedRequest(ctx context.Context, args *ContinueInterceptedRequestArgs) (err error) {
+// SetUserAgentOverride invokes the Network method. Allows overriding user agent with the given string.
+func (d *domainClient) SetUserAgentOverride(ctx context.Context, args *SetUserAgentOverrideArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.continueInterceptedRequest", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.setUserAgentOverride", args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.continueInterceptedRequest", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Network.setUserAgentOverride", nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "ContinueInterceptedRequest", Err: err}
+		err = &internal.OpError{Domain: "Network", Op: "SetUserAgentOverride", Err: err}
 	}
 	return
-}
-
-// GetResponseBodyForInterception invokes the Network method. Returns content served for the given currently intercepted request.
-func (d *domainClient) GetResponseBodyForInterception(ctx context.Context, args *GetResponseBodyForInterceptionArgs) (reply *GetResponseBodyForInterceptionReply, err error) {
-	reply = new(GetResponseBodyForInterceptionReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.getResponseBodyForInterception", args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Network.getResponseBodyForInterception", nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "GetResponseBodyForInterception", Err: err}
-	}
-	return
-}
-
-func (d *domainClient) ResourceChangedPriority(ctx context.Context) (ResourceChangedPriorityClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.resourceChangedPriority", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &resourceChangedPriorityClient{Stream: s}, nil
-}
-
-type resourceChangedPriorityClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *resourceChangedPriorityClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *resourceChangedPriorityClient) Recv() (*ResourceChangedPriorityReply, error) {
-	event := new(ResourceChangedPriorityReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "ResourceChangedPriority Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) RequestWillBeSent(ctx context.Context) (RequestWillBeSentClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.requestWillBeSent", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &requestWillBeSentClient{Stream: s}, nil
-}
-
-type requestWillBeSentClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *requestWillBeSentClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *requestWillBeSentClient) Recv() (*RequestWillBeSentReply, error) {
-	event := new(RequestWillBeSentReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "RequestWillBeSent Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) RequestServedFromCache(ctx context.Context) (RequestServedFromCacheClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.requestServedFromCache", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &requestServedFromCacheClient{Stream: s}, nil
-}
-
-type requestServedFromCacheClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *requestServedFromCacheClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *requestServedFromCacheClient) Recv() (*RequestServedFromCacheReply, error) {
-	event := new(RequestServedFromCacheReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "RequestServedFromCache Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) ResponseReceived(ctx context.Context) (ResponseReceivedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.responseReceived", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &responseReceivedClient{Stream: s}, nil
-}
-
-type responseReceivedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *responseReceivedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *responseReceivedClient) Recv() (*ResponseReceivedReply, error) {
-	event := new(ResponseReceivedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "ResponseReceived Recv", Err: err}
-	}
-	return event, nil
 }
 
 func (d *domainClient) DataReceived(ctx context.Context) (DataReceivedClient, error) {
@@ -439,195 +355,6 @@ func (c *dataReceivedClient) Recv() (*DataReceivedReply, error) {
 	event := new(DataReceivedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Network", Op: "DataReceived Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) LoadingFinished(ctx context.Context) (LoadingFinishedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.loadingFinished", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &loadingFinishedClient{Stream: s}, nil
-}
-
-type loadingFinishedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *loadingFinishedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *loadingFinishedClient) Recv() (*LoadingFinishedReply, error) {
-	event := new(LoadingFinishedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "LoadingFinished Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) LoadingFailed(ctx context.Context) (LoadingFailedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.loadingFailed", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &loadingFailedClient{Stream: s}, nil
-}
-
-type loadingFailedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *loadingFailedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *loadingFailedClient) Recv() (*LoadingFailedReply, error) {
-	event := new(LoadingFailedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "LoadingFailed Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) WebSocketWillSendHandshakeRequest(ctx context.Context) (WebSocketWillSendHandshakeRequestClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketWillSendHandshakeRequest", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &webSocketWillSendHandshakeRequestClient{Stream: s}, nil
-}
-
-type webSocketWillSendHandshakeRequestClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *webSocketWillSendHandshakeRequestClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *webSocketWillSendHandshakeRequestClient) Recv() (*WebSocketWillSendHandshakeRequestReply, error) {
-	event := new(WebSocketWillSendHandshakeRequestReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketWillSendHandshakeRequest Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) WebSocketHandshakeResponseReceived(ctx context.Context) (WebSocketHandshakeResponseReceivedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketHandshakeResponseReceived", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &webSocketHandshakeResponseReceivedClient{Stream: s}, nil
-}
-
-type webSocketHandshakeResponseReceivedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *webSocketHandshakeResponseReceivedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *webSocketHandshakeResponseReceivedClient) Recv() (*WebSocketHandshakeResponseReceivedReply, error) {
-	event := new(WebSocketHandshakeResponseReceivedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketHandshakeResponseReceived Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) WebSocketCreated(ctx context.Context) (WebSocketCreatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketCreated", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &webSocketCreatedClient{Stream: s}, nil
-}
-
-type webSocketCreatedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *webSocketCreatedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *webSocketCreatedClient) Recv() (*WebSocketCreatedReply, error) {
-	event := new(WebSocketCreatedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketCreated Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) WebSocketClosed(ctx context.Context) (WebSocketClosedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketClosed", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &webSocketClosedClient{Stream: s}, nil
-}
-
-type webSocketClosedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *webSocketClosedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *webSocketClosedClient) Recv() (*WebSocketClosedReply, error) {
-	event := new(WebSocketClosedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketClosed Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) WebSocketFrameReceived(ctx context.Context) (WebSocketFrameReceivedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketFrameReceived", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &webSocketFrameReceivedClient{Stream: s}, nil
-}
-
-type webSocketFrameReceivedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *webSocketFrameReceivedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *webSocketFrameReceivedClient) Recv() (*WebSocketFrameReceivedReply, error) {
-	event := new(WebSocketFrameReceivedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketFrameReceived Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) WebSocketFrameError(ctx context.Context) (WebSocketFrameErrorClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketFrameError", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &webSocketFrameErrorClient{Stream: s}, nil
-}
-
-type webSocketFrameErrorClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *webSocketFrameErrorClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *webSocketFrameErrorClient) Recv() (*WebSocketFrameErrorReply, error) {
-	event := new(WebSocketFrameErrorReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketFrameError Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) WebSocketFrameSent(ctx context.Context) (WebSocketFrameSentClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketFrameSent", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &webSocketFrameSentClient{Stream: s}, nil
-}
-
-type webSocketFrameSentClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *webSocketFrameSentClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *webSocketFrameSentClient) Recv() (*WebSocketFrameSentReply, error) {
-	event := new(WebSocketFrameSentReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketFrameSent Recv", Err: err}
 	}
 	return event, nil
 }
@@ -653,6 +380,48 @@ func (c *eventSourceMessageReceivedClient) Recv() (*EventSourceMessageReceivedRe
 	return event, nil
 }
 
+func (d *domainClient) LoadingFailed(ctx context.Context) (LoadingFailedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.loadingFailed", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &loadingFailedClient{Stream: s}, nil
+}
+
+type loadingFailedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *loadingFailedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *loadingFailedClient) Recv() (*LoadingFailedReply, error) {
+	event := new(LoadingFailedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "LoadingFailed Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) LoadingFinished(ctx context.Context) (LoadingFinishedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.loadingFinished", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &loadingFinishedClient{Stream: s}, nil
+}
+
+type loadingFinishedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *loadingFinishedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *loadingFinishedClient) Recv() (*LoadingFinishedReply, error) {
+	event := new(LoadingFinishedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "LoadingFinished Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) RequestIntercepted(ctx context.Context) (RequestInterceptedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Network.requestIntercepted", d.conn)
 	if err != nil {
@@ -670,6 +439,237 @@ func (c *requestInterceptedClient) Recv() (*RequestInterceptedReply, error) {
 	event := new(RequestInterceptedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Network", Op: "RequestIntercepted Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) RequestServedFromCache(ctx context.Context) (RequestServedFromCacheClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.requestServedFromCache", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &requestServedFromCacheClient{Stream: s}, nil
+}
+
+type requestServedFromCacheClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *requestServedFromCacheClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *requestServedFromCacheClient) Recv() (*RequestServedFromCacheReply, error) {
+	event := new(RequestServedFromCacheReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "RequestServedFromCache Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) RequestWillBeSent(ctx context.Context) (RequestWillBeSentClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.requestWillBeSent", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &requestWillBeSentClient{Stream: s}, nil
+}
+
+type requestWillBeSentClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *requestWillBeSentClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *requestWillBeSentClient) Recv() (*RequestWillBeSentReply, error) {
+	event := new(RequestWillBeSentReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "RequestWillBeSent Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) ResourceChangedPriority(ctx context.Context) (ResourceChangedPriorityClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.resourceChangedPriority", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &resourceChangedPriorityClient{Stream: s}, nil
+}
+
+type resourceChangedPriorityClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *resourceChangedPriorityClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *resourceChangedPriorityClient) Recv() (*ResourceChangedPriorityReply, error) {
+	event := new(ResourceChangedPriorityReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "ResourceChangedPriority Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) ResponseReceived(ctx context.Context) (ResponseReceivedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.responseReceived", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &responseReceivedClient{Stream: s}, nil
+}
+
+type responseReceivedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *responseReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *responseReceivedClient) Recv() (*ResponseReceivedReply, error) {
+	event := new(ResponseReceivedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "ResponseReceived Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) WebSocketClosed(ctx context.Context) (WebSocketClosedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.webSocketClosed", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &webSocketClosedClient{Stream: s}, nil
+}
+
+type webSocketClosedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketClosedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *webSocketClosedClient) Recv() (*WebSocketClosedReply, error) {
+	event := new(WebSocketClosedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketClosed Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) WebSocketCreated(ctx context.Context) (WebSocketCreatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.webSocketCreated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &webSocketCreatedClient{Stream: s}, nil
+}
+
+type webSocketCreatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketCreatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *webSocketCreatedClient) Recv() (*WebSocketCreatedReply, error) {
+	event := new(WebSocketCreatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketCreated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) WebSocketFrameError(ctx context.Context) (WebSocketFrameErrorClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.webSocketFrameError", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &webSocketFrameErrorClient{Stream: s}, nil
+}
+
+type webSocketFrameErrorClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketFrameErrorClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *webSocketFrameErrorClient) Recv() (*WebSocketFrameErrorReply, error) {
+	event := new(WebSocketFrameErrorReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketFrameError Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) WebSocketFrameReceived(ctx context.Context) (WebSocketFrameReceivedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.webSocketFrameReceived", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &webSocketFrameReceivedClient{Stream: s}, nil
+}
+
+type webSocketFrameReceivedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketFrameReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *webSocketFrameReceivedClient) Recv() (*WebSocketFrameReceivedReply, error) {
+	event := new(WebSocketFrameReceivedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketFrameReceived Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) WebSocketFrameSent(ctx context.Context) (WebSocketFrameSentClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.webSocketFrameSent", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &webSocketFrameSentClient{Stream: s}, nil
+}
+
+type webSocketFrameSentClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketFrameSentClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *webSocketFrameSentClient) Recv() (*WebSocketFrameSentReply, error) {
+	event := new(WebSocketFrameSentReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketFrameSent Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) WebSocketHandshakeResponseReceived(ctx context.Context) (WebSocketHandshakeResponseReceivedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.webSocketHandshakeResponseReceived", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &webSocketHandshakeResponseReceivedClient{Stream: s}, nil
+}
+
+type webSocketHandshakeResponseReceivedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketHandshakeResponseReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *webSocketHandshakeResponseReceivedClient) Recv() (*WebSocketHandshakeResponseReceivedReply, error) {
+	event := new(WebSocketHandshakeResponseReceivedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketHandshakeResponseReceived Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) WebSocketWillSendHandshakeRequest(ctx context.Context) (WebSocketWillSendHandshakeRequestClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.webSocketWillSendHandshakeRequest", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &webSocketWillSendHandshakeRequestClient{Stream: s}, nil
+}
+
+type webSocketWillSendHandshakeRequestClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webSocketWillSendHandshakeRequestClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *webSocketWillSendHandshakeRequestClient) Recv() (*WebSocketWillSendHandshakeRequestReply, error) {
+	event := new(WebSocketWillSendHandshakeRequestReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketWillSendHandshakeRequest Recv", Err: err}
 	}
 	return event, nil
 }

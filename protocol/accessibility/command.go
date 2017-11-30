@@ -27,5 +27,5 @@ func (a *GetPartialAXTreeArgs) SetFetchRelatives(fetchRelatives bool) *GetPartia
 
 // GetPartialAXTreeReply represents the return values for GetPartialAXTree in the Accessibility domain.
 type GetPartialAXTreeReply struct {
-	Nodes []AXNode `json:"nodes"` // The Accessibility.AXNode for this DOM node, if it exists, plus its ancestors, siblings and children, if requested.
+	Nodes []AXNode `json:"nodes"` // The `Accessibility.AXNode` for this DOM node, if it exists, plus its ancestors, siblings and children, if requested.
 }

@@ -225,9 +225,21 @@ type StackTrace struct {
 	Description *string     `json:"description,omitempty"` // String label of this stack trace. For async traces this may be a name of the function that initiated the async call.
 	CallFrames  []CallFrame `json:"callFrames"`            // JavaScript function name.
 	Parent      *StackTrace `json:"parent,omitempty"`      // Asynchronous JavaScript stack trace that preceded this stack, if available.
+	// ParentID Asynchronous JavaScript stack trace that preceded this stack, if available.
+	//
+	// Note: This property is experimental.
+	ParentID *StackTraceID `json:"parentId,omitempty"`
 }
 
-// AsyncTaskID
+// UniqueDebuggerID Unique identifier of current debugger.
 //
 // Note: This type is experimental.
-type AsyncTaskID string
+type UniqueDebuggerID string
+
+// StackTraceID If debuggerId is set stack trace comes from another debugger and can be resolved there. This allows to track cross-debugger calls. See Runtime.StackTrace and Debugger.paused for usages.
+//
+// Note: This type is experimental.
+type StackTraceID struct {
+	ID         string            `json:"id"`                   // No description.
+	DebuggerID *UniqueDebuggerID `json:"debuggerId,omitempty"` // No description.
+}

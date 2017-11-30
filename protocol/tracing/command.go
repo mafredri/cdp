@@ -2,6 +2,29 @@
 
 package tracing
 
+// GetCategoriesReply represents the return values for GetCategories in the Tracing domain.
+type GetCategoriesReply struct {
+	Categories []string `json:"categories"` // A list of supported tracing categories.
+}
+
+// RecordClockSyncMarkerArgs represents the arguments for RecordClockSyncMarker in the Tracing domain.
+type RecordClockSyncMarkerArgs struct {
+	SyncID string `json:"syncId"` // The ID of this clock sync marker
+}
+
+// NewRecordClockSyncMarkerArgs initializes RecordClockSyncMarkerArgs with the required arguments.
+func NewRecordClockSyncMarkerArgs(syncID string) *RecordClockSyncMarkerArgs {
+	args := new(RecordClockSyncMarkerArgs)
+	args.SyncID = syncID
+	return args
+}
+
+// RequestMemoryDumpReply represents the return values for RequestMemoryDump in the Tracing domain.
+type RequestMemoryDumpReply struct {
+	DumpGUID string `json:"dumpGuid"` // GUID of the resulting global memory dump.
+	Success  bool   `json:"success"`  // True iff the global memory dump succeeded.
+}
+
 // StartArgs represents the arguments for Start in the Tracing domain.
 type StartArgs struct {
 	// Categories is deprecated.
@@ -13,7 +36,7 @@ type StartArgs struct {
 	// Deprecated: Tracing options
 	Options                      *string  `json:"options,omitempty"`
 	BufferUsageReportingInterval *float64 `json:"bufferUsageReportingInterval,omitempty"` // If set, the agent will issue bufferUsage events at this interval, specified in milliseconds
-	// TransferMode Whether to report trace events as series of dataCollected events or to save trace to a stream (defaults to ReportEvents).
+	// TransferMode Whether to report trace events as series of dataCollected events or to save trace to a stream (defaults to `ReportEvents`).
 	//
 	// Values: "ReportEvents", "ReturnAsStream".
 	TransferMode *string      `json:"transferMode,omitempty"`
@@ -49,7 +72,7 @@ func (a *StartArgs) SetBufferUsageReportingInterval(bufferUsageReportingInterval
 	return a
 }
 
-// SetTransferMode sets the TransferMode optional argument. Whether to report trace events as series of dataCollected events or to save trace to a stream (defaults to ReportEvents).
+// SetTransferMode sets the TransferMode optional argument. Whether to report trace events as series of dataCollected events or to save trace to a stream (defaults to `ReportEvents`).
 //
 // Values: "ReportEvents", "ReturnAsStream".
 func (a *StartArgs) SetTransferMode(transferMode string) *StartArgs {
@@ -61,27 +84,4 @@ func (a *StartArgs) SetTransferMode(transferMode string) *StartArgs {
 func (a *StartArgs) SetTraceConfig(traceConfig TraceConfig) *StartArgs {
 	a.TraceConfig = &traceConfig
 	return a
-}
-
-// GetCategoriesReply represents the return values for GetCategories in the Tracing domain.
-type GetCategoriesReply struct {
-	Categories []string `json:"categories"` // A list of supported tracing categories.
-}
-
-// RequestMemoryDumpReply represents the return values for RequestMemoryDump in the Tracing domain.
-type RequestMemoryDumpReply struct {
-	DumpGUID string `json:"dumpGuid"` // GUID of the resulting global memory dump.
-	Success  bool   `json:"success"`  // True iff the global memory dump succeeded.
-}
-
-// RecordClockSyncMarkerArgs represents the arguments for RecordClockSyncMarker in the Tracing domain.
-type RecordClockSyncMarkerArgs struct {
-	SyncID string `json:"syncId"` // The ID of this clock sync marker
-}
-
-// NewRecordClockSyncMarkerArgs initializes RecordClockSyncMarkerArgs with the required arguments.
-func NewRecordClockSyncMarkerArgs(syncID string) *RecordClockSyncMarkerArgs {
-	args := new(RecordClockSyncMarkerArgs)
-	args.SyncID = syncID
-	return args
 }

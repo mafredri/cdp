@@ -8,18 +8,6 @@ import (
 	"github.com/mafredri/cdp/protocol/page"
 )
 
-// GetManifestForFrameArgs represents the arguments for GetManifestForFrame in the ApplicationCache domain.
-type GetManifestForFrameArgs struct {
-	FrameID page.FrameID `json:"frameId"` // Identifier of the frame containing document whose manifest is retrieved.
-}
-
-// NewGetManifestForFrameArgs initializes GetManifestForFrameArgs with the required arguments.
-func NewGetManifestForFrameArgs(frameID page.FrameID) *GetManifestForFrameArgs {
-	args := new(GetManifestForFrameArgs)
-	args.FrameID = frameID
-	return args
-}
-
 // GetApplicationCacheForFrameArgs represents the arguments for GetApplicationCacheForFrame in the ApplicationCache domain.
 type GetApplicationCacheForFrameArgs struct {
 	FrameID page.FrameID `json:"frameId"` // Identifier of the frame containing document whose application cache is retrieved.
@@ -28,6 +16,18 @@ type GetApplicationCacheForFrameArgs struct {
 // NewGetApplicationCacheForFrameArgs initializes GetApplicationCacheForFrameArgs with the required arguments.
 func NewGetApplicationCacheForFrameArgs(frameID page.FrameID) *GetApplicationCacheForFrameArgs {
 	args := new(GetApplicationCacheForFrameArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// GetManifestForFrameArgs represents the arguments for GetManifestForFrame in the ApplicationCache domain.
+type GetManifestForFrameArgs struct {
+	FrameID page.FrameID `json:"frameId"` // Identifier of the frame containing document whose manifest is retrieved.
+}
+
+// NewGetManifestForFrameArgs initializes GetManifestForFrameArgs with the required arguments.
+func NewGetManifestForFrameArgs(frameID page.FrameID) *GetManifestForFrameArgs {
+	args := new(GetManifestForFrameArgs)
 	args.FrameID = frameID
 	return args
 }

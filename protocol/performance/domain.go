@@ -18,20 +18,20 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Enable invokes the Performance method. Enable collecting and reporting metrics.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Performance.enable", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Performance", Op: "Enable", Err: err}
-	}
-	return
-}
-
 // Disable invokes the Performance method. Disable collecting and reporting metrics.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Performance.disable", nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Performance", Op: "Disable", Err: err}
+	}
+	return
+}
+
+// Enable invokes the Performance method. Enable collecting and reporting metrics.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Performance.enable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Performance", Op: "Enable", Err: err}
 	}
 	return
 }

@@ -2,45 +2,6 @@
 
 package cachestorage
 
-// RequestCacheNamesArgs represents the arguments for RequestCacheNames in the CacheStorage domain.
-type RequestCacheNamesArgs struct {
-	SecurityOrigin string `json:"securityOrigin"` // Security origin.
-}
-
-// NewRequestCacheNamesArgs initializes RequestCacheNamesArgs with the required arguments.
-func NewRequestCacheNamesArgs(securityOrigin string) *RequestCacheNamesArgs {
-	args := new(RequestCacheNamesArgs)
-	args.SecurityOrigin = securityOrigin
-	return args
-}
-
-// RequestCacheNamesReply represents the return values for RequestCacheNames in the CacheStorage domain.
-type RequestCacheNamesReply struct {
-	Caches []Cache `json:"caches"` // Caches for the security origin.
-}
-
-// RequestEntriesArgs represents the arguments for RequestEntries in the CacheStorage domain.
-type RequestEntriesArgs struct {
-	CacheID   CacheID `json:"cacheId"`   // ID of cache to get entries from.
-	SkipCount int     `json:"skipCount"` // Number of records to skip.
-	PageSize  int     `json:"pageSize"`  // Number of records to fetch.
-}
-
-// NewRequestEntriesArgs initializes RequestEntriesArgs with the required arguments.
-func NewRequestEntriesArgs(cacheID CacheID, skipCount int, pageSize int) *RequestEntriesArgs {
-	args := new(RequestEntriesArgs)
-	args.CacheID = cacheID
-	args.SkipCount = skipCount
-	args.PageSize = pageSize
-	return args
-}
-
-// RequestEntriesReply represents the return values for RequestEntries in the CacheStorage domain.
-type RequestEntriesReply struct {
-	CacheDataEntries []DataEntry `json:"cacheDataEntries"` // Array of object store data entries.
-	HasMore          bool        `json:"hasMore"`          // If true, there are more entries to fetch in the given range.
-}
-
 // DeleteCacheArgs represents the arguments for DeleteCache in the CacheStorage domain.
 type DeleteCacheArgs struct {
 	CacheID CacheID `json:"cacheId"` // Id of cache for deletion.
@@ -67,6 +28,23 @@ func NewDeleteEntryArgs(cacheID CacheID, request string) *DeleteEntryArgs {
 	return args
 }
 
+// RequestCacheNamesArgs represents the arguments for RequestCacheNames in the CacheStorage domain.
+type RequestCacheNamesArgs struct {
+	SecurityOrigin string `json:"securityOrigin"` // Security origin.
+}
+
+// NewRequestCacheNamesArgs initializes RequestCacheNamesArgs with the required arguments.
+func NewRequestCacheNamesArgs(securityOrigin string) *RequestCacheNamesArgs {
+	args := new(RequestCacheNamesArgs)
+	args.SecurityOrigin = securityOrigin
+	return args
+}
+
+// RequestCacheNamesReply represents the return values for RequestCacheNames in the CacheStorage domain.
+type RequestCacheNamesReply struct {
+	Caches []Cache `json:"caches"` // Caches for the security origin.
+}
+
 // RequestCachedResponseArgs represents the arguments for RequestCachedResponse in the CacheStorage domain.
 type RequestCachedResponseArgs struct {
 	CacheID    CacheID `json:"cacheId"`    // Id of cache that contains the enty.
@@ -84,4 +62,26 @@ func NewRequestCachedResponseArgs(cacheID CacheID, requestURL string) *RequestCa
 // RequestCachedResponseReply represents the return values for RequestCachedResponse in the CacheStorage domain.
 type RequestCachedResponseReply struct {
 	Response CachedResponse `json:"response"` // Response read from the cache.
+}
+
+// RequestEntriesArgs represents the arguments for RequestEntries in the CacheStorage domain.
+type RequestEntriesArgs struct {
+	CacheID   CacheID `json:"cacheId"`   // ID of cache to get entries from.
+	SkipCount int     `json:"skipCount"` // Number of records to skip.
+	PageSize  int     `json:"pageSize"`  // Number of records to fetch.
+}
+
+// NewRequestEntriesArgs initializes RequestEntriesArgs with the required arguments.
+func NewRequestEntriesArgs(cacheID CacheID, skipCount int, pageSize int) *RequestEntriesArgs {
+	args := new(RequestEntriesArgs)
+	args.CacheID = cacheID
+	args.SkipCount = skipCount
+	args.PageSize = pageSize
+	return args
+}
+
+// RequestEntriesReply represents the return values for RequestEntries in the CacheStorage domain.
+type RequestEntriesReply struct {
+	CacheDataEntries []DataEntry `json:"cacheDataEntries"` // Array of object store data entries.
+	HasMore          bool        `json:"hasMore"`          // If true, there are more entries to fetch in the given range.
 }

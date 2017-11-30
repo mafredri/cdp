@@ -18,6 +18,19 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// Close invokes the IO method. Close the stream, discard any temporary backing storage.
+func (d *domainClient) Close(ctx context.Context, args *CloseArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "IO.close", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "IO.close", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "IO", Op: "Close", Err: err}
+	}
+	return
+}
+
 // Read invokes the IO method. Read a chunk of the stream
 func (d *domainClient) Read(ctx context.Context, args *ReadArgs) (reply *ReadReply, err error) {
 	reply = new(ReadReply)
@@ -28,19 +41,6 @@ func (d *domainClient) Read(ctx context.Context, args *ReadArgs) (reply *ReadRep
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "IO", Op: "Read", Err: err}
-	}
-	return
-}
-
-// Close invokes the IO method. Close the stream, discard any temporary backing storage.
-func (d *domainClient) Close(ctx context.Context, args *CloseArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "IO.close", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "IO.close", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "IO", Op: "Close", Err: err}
 	}
 	return
 }

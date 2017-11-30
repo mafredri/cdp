@@ -9,46 +9,6 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// RequestWillBeSentReply is the reply for RequestWillBeSent events.
-type RequestWillBeSentReply struct {
-	RequestID        RequestID                  `json:"requestId"`                  // Request identifier.
-	LoaderID         LoaderID                   `json:"loaderId"`                   // Loader identifier. Empty string if the request is fetched from worker.
-	DocumentURL      string                     `json:"documentURL"`                // URL of the document this request is loaded for.
-	Request          Request                    `json:"request"`                    // Request data.
-	Timestamp        MonotonicTime              `json:"timestamp"`                  // Timestamp.
-	WallTime         TimeSinceEpoch             `json:"wallTime"`                   // Timestamp.
-	Initiator        Initiator                  `json:"initiator"`                  // Request initiator.
-	RedirectResponse *Response                  `json:"redirectResponse,omitempty"` // Redirect response data.
-	Type             *protocol.PageResourceType `json:"type,omitempty"`             // Type of this resource.
-	FrameID          *protocol.PageFrameID      `json:"frameId,omitempty"`          // Frame identifier.
-}
-
-// RequestServedFromCacheClient is a client for RequestServedFromCache events. Fired if request ended up loading from cache.
-type RequestServedFromCacheClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*RequestServedFromCacheReply, error)
-	rpcc.Stream
-}
-
-// ResponseReceivedReply is the reply for ResponseReceived events.
-type ResponseReceivedReply struct {
-	RequestID RequestID                 `json:"requestId"`         // Request identifier.
-	LoaderID  LoaderID                  `json:"loaderId"`          // Loader identifier. Empty string if the request is fetched from worker.
-	Timestamp MonotonicTime             `json:"timestamp"`         // Timestamp.
-	Type      protocol.PageResourceType `json:"type"`              // Resource type.
-	Response  Response                  `json:"response"`          // Response data.
-	FrameID   *protocol.PageFrameID     `json:"frameId,omitempty"` // Frame identifier.
-}
-
-// DataReceivedClient is a client for DataReceived events. Fired when data chunk was received over the network.
-type DataReceivedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*DataReceivedReply, error)
-	rpcc.Stream
-}
-
 // LoadingFailedReply is the reply for LoadingFailed events.
 type LoadingFailedReply struct {
 	RequestID     RequestID                 `json:"requestId"`               // Request identifier.
@@ -59,11 +19,11 @@ type LoadingFailedReply struct {
 	BlockedReason BlockedReason             `json:"blockedReason,omitempty"` // The reason why loading was blocked, if any.
 }
 
-// WebSocketWillSendHandshakeRequestClient is a client for WebSocketWillSendHandshakeRequest events. Fired when WebSocket is about to initiate handshake.
-type WebSocketWillSendHandshakeRequestClient interface {
+// LoadingFinishedClient is a client for LoadingFinished events. Fired when HTTP request has finished loading.
+type LoadingFinishedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
-	Recv() (*WebSocketWillSendHandshakeRequestReply, error)
+	Recv() (*LoadingFinishedReply, error)
 	rpcc.Stream
 }
 
@@ -79,4 +39,52 @@ type RequestInterceptedReply struct {
 	ResponseErrorReason ErrorReason               `json:"responseErrorReason,omitempty"` // Response error if intercepted at response stage or if redirect occurred while intercepting request.
 	ResponseStatusCode  *int                      `json:"responseStatusCode,omitempty"`  // Response code if intercepted at response stage or if redirect occurred while intercepting request or auth retry occurred.
 	ResponseHeaders     Headers                   `json:"responseHeaders,omitempty"`     // Response headers if intercepted at the response stage or if redirect occurred while intercepting request or auth retry occurred.
+}
+
+// RequestServedFromCacheClient is a client for RequestServedFromCache events. Fired if request ended up loading from cache.
+type RequestServedFromCacheClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*RequestServedFromCacheReply, error)
+	rpcc.Stream
+}
+
+// RequestWillBeSentReply is the reply for RequestWillBeSent events.
+type RequestWillBeSentReply struct {
+	RequestID        RequestID                  `json:"requestId"`                  // Request identifier.
+	LoaderID         LoaderID                   `json:"loaderId"`                   // Loader identifier. Empty string if the request is fetched from worker.
+	DocumentURL      string                     `json:"documentURL"`                // URL of the document this request is loaded for.
+	Request          Request                    `json:"request"`                    // Request data.
+	Timestamp        MonotonicTime              `json:"timestamp"`                  // Timestamp.
+	WallTime         TimeSinceEpoch             `json:"wallTime"`                   // Timestamp.
+	Initiator        Initiator                  `json:"initiator"`                  // Request initiator.
+	RedirectResponse *Response                  `json:"redirectResponse,omitempty"` // Redirect response data.
+	Type             *protocol.PageResourceType `json:"type,omitempty"`             // Type of this resource.
+	FrameID          *protocol.PageFrameID      `json:"frameId,omitempty"`          // Frame identifier.
+}
+
+// ResourceChangedPriorityClient is a client for ResourceChangedPriority events. Fired when resource loading priority is changed
+type ResourceChangedPriorityClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*ResourceChangedPriorityReply, error)
+	rpcc.Stream
+}
+
+// ResponseReceivedReply is the reply for ResponseReceived events.
+type ResponseReceivedReply struct {
+	RequestID RequestID                 `json:"requestId"`         // Request identifier.
+	LoaderID  LoaderID                  `json:"loaderId"`          // Loader identifier. Empty string if the request is fetched from worker.
+	Timestamp MonotonicTime             `json:"timestamp"`         // Timestamp.
+	Type      protocol.PageResourceType `json:"type"`              // Resource type.
+	Response  Response                  `json:"response"`          // Response data.
+	FrameID   *protocol.PageFrameID     `json:"frameId,omitempty"` // Frame identifier.
+}
+
+// WebSocketClosedClient is a client for WebSocketClosed events. Fired when WebSocket is closed.
+type WebSocketClosedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*WebSocketClosedReply, error)
+	rpcc.Stream
 }

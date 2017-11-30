@@ -15,11 +15,11 @@ type InlineTextBox struct {
 
 // LayoutTreeNode Details of an element in the DOM tree with a LayoutObject.
 type LayoutTreeNode struct {
-	DOMNodeIndex    int             `json:"domNodeIndex"`              // The index of the related DOM node in the domNodes array returned by getSnapshot.
+	DOMNodeIndex    int             `json:"domNodeIndex"`              // The index of the related DOM node in the `domNodes` array returned by `getSnapshot`.
 	BoundingBox     dom.Rect        `json:"boundingBox"`               // The absolute position bounding box.
 	LayoutText      *string         `json:"layoutText,omitempty"`      // Contents of the LayoutText, if any.
 	InlineTextNodes []InlineTextBox `json:"inlineTextNodes,omitempty"` // The post-layout inline text nodes, if any.
-	StyleIndex      *int            `json:"styleIndex,omitempty"`      // Index into the computedStyles array returned by getSnapshot.
+	StyleIndex      *int            `json:"styleIndex,omitempty"`      // Index into the `computedStyles` array returned by `getSnapshot`.
 }
 
 // ComputedStyle A subset of the full ComputedStyle as defined by the request whitelist.

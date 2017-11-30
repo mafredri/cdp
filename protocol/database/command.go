@@ -6,23 +6,6 @@ import (
 	"encoding/json"
 )
 
-// GetDatabaseTableNamesArgs represents the arguments for GetDatabaseTableNames in the Database domain.
-type GetDatabaseTableNamesArgs struct {
-	DatabaseID ID `json:"databaseId"` // No description.
-}
-
-// NewGetDatabaseTableNamesArgs initializes GetDatabaseTableNamesArgs with the required arguments.
-func NewGetDatabaseTableNamesArgs(databaseID ID) *GetDatabaseTableNamesArgs {
-	args := new(GetDatabaseTableNamesArgs)
-	args.DatabaseID = databaseID
-	return args
-}
-
-// GetDatabaseTableNamesReply represents the return values for GetDatabaseTableNames in the Database domain.
-type GetDatabaseTableNamesReply struct {
-	TableNames []string `json:"tableNames"` // No description.
-}
-
 // ExecuteSQLArgs represents the arguments for ExecuteSQL in the Database domain.
 type ExecuteSQLArgs struct {
 	DatabaseID ID     `json:"databaseId"` // No description.
@@ -42,4 +25,21 @@ type ExecuteSQLReply struct {
 	ColumnNames []string          `json:"columnNames,omitempty"` // No description.
 	Values      []json.RawMessage `json:"values,omitempty"`      // No description.
 	SQLError    *Error            `json:"sqlError,omitempty"`    // No description.
+}
+
+// GetDatabaseTableNamesArgs represents the arguments for GetDatabaseTableNames in the Database domain.
+type GetDatabaseTableNamesArgs struct {
+	DatabaseID ID `json:"databaseId"` // No description.
+}
+
+// NewGetDatabaseTableNamesArgs initializes GetDatabaseTableNamesArgs with the required arguments.
+func NewGetDatabaseTableNamesArgs(databaseID ID) *GetDatabaseTableNamesArgs {
+	args := new(GetDatabaseTableNamesArgs)
+	args.DatabaseID = databaseID
+	return args
+}
+
+// GetDatabaseTableNamesReply represents the return values for GetDatabaseTableNames in the Database domain.
+type GetDatabaseTableNamesReply struct {
+	TableNames []string `json:"tableNames"` // No description.
 }

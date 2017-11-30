@@ -18,24 +18,6 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Enable invokes the HeadlessExperimental method. Enables headless events for the target.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "HeadlessExperimental.enable", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "HeadlessExperimental", Op: "Enable", Err: err}
-	}
-	return
-}
-
-// Disable invokes the HeadlessExperimental method. Disables headless events for the target.
-func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "HeadlessExperimental.disable", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "HeadlessExperimental", Op: "Disable", Err: err}
-	}
-	return
-}
-
 // BeginFrame invokes the HeadlessExperimental method. Sends a BeginFrame to the target and returns when the frame was completed. Optionally captures a screenshot from the resulting frame. Requires that the target was created with enabled BeginFrameControl.
 func (d *domainClient) BeginFrame(ctx context.Context, args *BeginFrameArgs) (reply *BeginFrameReply, err error) {
 	reply = new(BeginFrameReply)
@@ -50,25 +32,22 @@ func (d *domainClient) BeginFrame(ctx context.Context, args *BeginFrameArgs) (re
 	return
 }
 
-func (d *domainClient) NeedsBeginFramesChanged(ctx context.Context) (NeedsBeginFramesChangedClient, error) {
-	s, err := rpcc.NewStream(ctx, "HeadlessExperimental.needsBeginFramesChanged", d.conn)
+// Disable invokes the HeadlessExperimental method. Disables headless events for the target.
+func (d *domainClient) Disable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "HeadlessExperimental.disable", nil, nil, d.conn)
 	if err != nil {
-		return nil, err
+		err = &internal.OpError{Domain: "HeadlessExperimental", Op: "Disable", Err: err}
 	}
-	return &needsBeginFramesChangedClient{Stream: s}, nil
+	return
 }
 
-type needsBeginFramesChangedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *needsBeginFramesChangedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *needsBeginFramesChangedClient) Recv() (*NeedsBeginFramesChangedReply, error) {
-	event := new(NeedsBeginFramesChangedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "HeadlessExperimental", Op: "NeedsBeginFramesChanged Recv", Err: err}
+// Enable invokes the HeadlessExperimental method. Enables headless events for the target.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "HeadlessExperimental.enable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "HeadlessExperimental", Op: "Enable", Err: err}
 	}
-	return event, nil
+	return
 }
 
 func (d *domainClient) MainFrameReadyForScreenshots(ctx context.Context) (MainFrameReadyForScreenshotsClient, error) {
@@ -88,6 +67,27 @@ func (c *mainFrameReadyForScreenshotsClient) Recv() (*MainFrameReadyForScreensho
 	event := new(MainFrameReadyForScreenshotsReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "HeadlessExperimental", Op: "MainFrameReadyForScreenshots Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) NeedsBeginFramesChanged(ctx context.Context) (NeedsBeginFramesChangedClient, error) {
+	s, err := rpcc.NewStream(ctx, "HeadlessExperimental.needsBeginFramesChanged", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &needsBeginFramesChangedClient{Stream: s}, nil
+}
+
+type needsBeginFramesChangedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *needsBeginFramesChangedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *needsBeginFramesChangedClient) Recv() (*NeedsBeginFramesChangedReply, error) {
+	event := new(NeedsBeginFramesChangedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "HeadlessExperimental", Op: "NeedsBeginFramesChanged Recv", Err: err}
 	}
 	return event, nil
 }

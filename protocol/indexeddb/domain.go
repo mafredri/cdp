@@ -18,66 +18,6 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Enable invokes the IndexedDB method. Enables events from backend.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "IndexedDB.enable", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "IndexedDB", Op: "Enable", Err: err}
-	}
-	return
-}
-
-// Disable invokes the IndexedDB method. Disables events from backend.
-func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "IndexedDB.disable", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "IndexedDB", Op: "Disable", Err: err}
-	}
-	return
-}
-
-// RequestDatabaseNames invokes the IndexedDB method. Requests database names for given security origin.
-func (d *domainClient) RequestDatabaseNames(ctx context.Context, args *RequestDatabaseNamesArgs) (reply *RequestDatabaseNamesReply, err error) {
-	reply = new(RequestDatabaseNamesReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, "IndexedDB.requestDatabaseNames", args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "IndexedDB.requestDatabaseNames", nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "IndexedDB", Op: "RequestDatabaseNames", Err: err}
-	}
-	return
-}
-
-// RequestDatabase invokes the IndexedDB method. Requests database with given name in given frame.
-func (d *domainClient) RequestDatabase(ctx context.Context, args *RequestDatabaseArgs) (reply *RequestDatabaseReply, err error) {
-	reply = new(RequestDatabaseReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, "IndexedDB.requestDatabase", args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "IndexedDB.requestDatabase", nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "IndexedDB", Op: "RequestDatabase", Err: err}
-	}
-	return
-}
-
-// RequestData invokes the IndexedDB method. Requests data from object store or index.
-func (d *domainClient) RequestData(ctx context.Context, args *RequestDataArgs) (reply *RequestDataReply, err error) {
-	reply = new(RequestDataReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, "IndexedDB.requestData", args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "IndexedDB.requestData", nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "IndexedDB", Op: "RequestData", Err: err}
-	}
-	return
-}
-
 // ClearObjectStore invokes the IndexedDB method. Clears all entries from an object store.
 func (d *domainClient) ClearObjectStore(ctx context.Context, args *ClearObjectStoreArgs) (err error) {
 	if args != nil {
@@ -100,6 +40,66 @@ func (d *domainClient) DeleteDatabase(ctx context.Context, args *DeleteDatabaseA
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "IndexedDB", Op: "DeleteDatabase", Err: err}
+	}
+	return
+}
+
+// Disable invokes the IndexedDB method. Disables events from backend.
+func (d *domainClient) Disable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "IndexedDB.disable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "IndexedDB", Op: "Disable", Err: err}
+	}
+	return
+}
+
+// Enable invokes the IndexedDB method. Enables events from backend.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "IndexedDB.enable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "IndexedDB", Op: "Enable", Err: err}
+	}
+	return
+}
+
+// RequestData invokes the IndexedDB method. Requests data from object store or index.
+func (d *domainClient) RequestData(ctx context.Context, args *RequestDataArgs) (reply *RequestDataReply, err error) {
+	reply = new(RequestDataReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "IndexedDB.requestData", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "IndexedDB.requestData", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "IndexedDB", Op: "RequestData", Err: err}
+	}
+	return
+}
+
+// RequestDatabase invokes the IndexedDB method. Requests database with given name in given frame.
+func (d *domainClient) RequestDatabase(ctx context.Context, args *RequestDatabaseArgs) (reply *RequestDatabaseReply, err error) {
+	reply = new(RequestDatabaseReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "IndexedDB.requestDatabase", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "IndexedDB.requestDatabase", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "IndexedDB", Op: "RequestDatabase", Err: err}
+	}
+	return
+}
+
+// RequestDatabaseNames invokes the IndexedDB method. Requests database names for given security origin.
+func (d *domainClient) RequestDatabaseNames(ctx context.Context, args *RequestDatabaseNamesArgs) (reply *RequestDatabaseNamesReply, err error) {
+	reply = new(RequestDatabaseNamesReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "IndexedDB.requestDatabaseNames", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "IndexedDB.requestDatabaseNames", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "IndexedDB", Op: "RequestDatabaseNames", Err: err}
 	}
 	return
 }

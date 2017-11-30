@@ -14,8 +14,8 @@ type BackendNodeID int
 
 // BackendNode Backend node with a friendly name.
 type BackendNode struct {
-	NodeType      int           `json:"nodeType"`      // Node's nodeType.
-	NodeName      string        `json:"nodeName"`      // Node's nodeName.
+	NodeType      int           `json:"nodeType"`      // `Node`'s nodeType.
+	NodeName      string        `json:"nodeName"`      // `Node`'s nodeName.
 	BackendNodeID BackendNodeID `json:"backendNodeId"` // No description.
 }
 

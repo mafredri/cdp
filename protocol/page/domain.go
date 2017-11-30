@@ -18,24 +18,6 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Enable invokes the Page method. Enables page domain notifications.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Page.enable", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "Enable", Err: err}
-	}
-	return
-}
-
-// Disable invokes the Page method. Disables page domain notifications.
-func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Page.disable", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "Disable", Err: err}
-	}
-	return
-}
-
 // AddScriptToEvaluateOnLoad invokes the Page method. Deprecated, please use addScriptToEvaluateOnNewDocument instead.
 func (d *domainClient) AddScriptToEvaluateOnLoad(ctx context.Context, args *AddScriptToEvaluateOnLoadArgs) (reply *AddScriptToEvaluateOnLoadReply, err error) {
 	reply = new(AddScriptToEvaluateOnLoadReply)
@@ -46,19 +28,6 @@ func (d *domainClient) AddScriptToEvaluateOnLoad(ctx context.Context, args *AddS
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "AddScriptToEvaluateOnLoad", Err: err}
-	}
-	return
-}
-
-// RemoveScriptToEvaluateOnLoad invokes the Page method. Deprecated, please use removeScriptToEvaluateOnNewDocument instead.
-func (d *domainClient) RemoveScriptToEvaluateOnLoad(ctx context.Context, args *RemoveScriptToEvaluateOnLoadArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.removeScriptToEvaluateOnLoad", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.removeScriptToEvaluateOnLoad", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "RemoveScriptToEvaluateOnLoad", Err: err}
 	}
 	return
 }
@@ -77,174 +46,11 @@ func (d *domainClient) AddScriptToEvaluateOnNewDocument(ctx context.Context, arg
 	return
 }
 
-// RemoveScriptToEvaluateOnNewDocument invokes the Page method. Removes given script from the list.
-func (d *domainClient) RemoveScriptToEvaluateOnNewDocument(ctx context.Context, args *RemoveScriptToEvaluateOnNewDocumentArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.removeScriptToEvaluateOnNewDocument", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.removeScriptToEvaluateOnNewDocument", nil, nil, d.conn)
-	}
+// BringToFront invokes the Page method. Brings page to front (activates tab).
+func (d *domainClient) BringToFront(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Page.bringToFront", nil, nil, d.conn)
 	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "RemoveScriptToEvaluateOnNewDocument", Err: err}
-	}
-	return
-}
-
-// SetAutoAttachToCreatedPages invokes the Page method. Controls whether browser will open a new inspector window for connected pages.
-func (d *domainClient) SetAutoAttachToCreatedPages(ctx context.Context, args *SetAutoAttachToCreatedPagesArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.setAutoAttachToCreatedPages", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.setAutoAttachToCreatedPages", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "SetAutoAttachToCreatedPages", Err: err}
-	}
-	return
-}
-
-// SetLifecycleEventsEnabled invokes the Page method. Controls whether page will emit lifecycle events.
-func (d *domainClient) SetLifecycleEventsEnabled(ctx context.Context, args *SetLifecycleEventsEnabledArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.setLifecycleEventsEnabled", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.setLifecycleEventsEnabled", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "SetLifecycleEventsEnabled", Err: err}
-	}
-	return
-}
-
-// Reload invokes the Page method. Reloads given page optionally ignoring the cache.
-func (d *domainClient) Reload(ctx context.Context, args *ReloadArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.reload", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.reload", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "Reload", Err: err}
-	}
-	return
-}
-
-// SetAdBlockingEnabled invokes the Page method. Enable Chrome's experimental ad filter on all sites.
-func (d *domainClient) SetAdBlockingEnabled(ctx context.Context, args *SetAdBlockingEnabledArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.setAdBlockingEnabled", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.setAdBlockingEnabled", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "SetAdBlockingEnabled", Err: err}
-	}
-	return
-}
-
-// Navigate invokes the Page method. Navigates current page to the given URL.
-func (d *domainClient) Navigate(ctx context.Context, args *NavigateArgs) (reply *NavigateReply, err error) {
-	reply = new(NavigateReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.navigate", args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.navigate", nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "Navigate", Err: err}
-	}
-	return
-}
-
-// StopLoading invokes the Page method. Force the page stop all navigations and pending resource fetches.
-func (d *domainClient) StopLoading(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Page.stopLoading", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "StopLoading", Err: err}
-	}
-	return
-}
-
-// GetNavigationHistory invokes the Page method. Returns navigation history for the current page.
-func (d *domainClient) GetNavigationHistory(ctx context.Context) (reply *GetNavigationHistoryReply, err error) {
-	reply = new(GetNavigationHistoryReply)
-	err = rpcc.Invoke(ctx, "Page.getNavigationHistory", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "GetNavigationHistory", Err: err}
-	}
-	return
-}
-
-// NavigateToHistoryEntry invokes the Page method. Navigates current page to the given history entry.
-func (d *domainClient) NavigateToHistoryEntry(ctx context.Context, args *NavigateToHistoryEntryArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.navigateToHistoryEntry", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.navigateToHistoryEntry", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "NavigateToHistoryEntry", Err: err}
-	}
-	return
-}
-
-// GetResourceTree invokes the Page method. Returns present frame / resource tree structure.
-func (d *domainClient) GetResourceTree(ctx context.Context) (reply *GetResourceTreeReply, err error) {
-	reply = new(GetResourceTreeReply)
-	err = rpcc.Invoke(ctx, "Page.getResourceTree", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "GetResourceTree", Err: err}
-	}
-	return
-}
-
-// GetFrameTree invokes the Page method. Returns present frame tree structure.
-func (d *domainClient) GetFrameTree(ctx context.Context) (reply *GetFrameTreeReply, err error) {
-	reply = new(GetFrameTreeReply)
-	err = rpcc.Invoke(ctx, "Page.getFrameTree", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "GetFrameTree", Err: err}
-	}
-	return
-}
-
-// GetResourceContent invokes the Page method. Returns content of the given resource.
-func (d *domainClient) GetResourceContent(ctx context.Context, args *GetResourceContentArgs) (reply *GetResourceContentReply, err error) {
-	reply = new(GetResourceContentReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.getResourceContent", args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.getResourceContent", nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "GetResourceContent", Err: err}
-	}
-	return
-}
-
-// SearchInResource invokes the Page method. Searches for given string in resource content.
-func (d *domainClient) SearchInResource(ctx context.Context, args *SearchInResourceArgs) (reply *SearchInResourceReply, err error) {
-	reply = new(SearchInResourceReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.searchInResource", args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.searchInResource", nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "SearchInResource", Err: err}
-	}
-	return
-}
-
-// SetDocumentContent invokes the Page method. Sets given markup as the document's HTML.
-func (d *domainClient) SetDocumentContent(ctx context.Context, args *SetDocumentContentArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.setDocumentContent", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.setDocumentContent", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "SetDocumentContent", Err: err}
+		err = &internal.OpError{Domain: "Page", Op: "BringToFront", Err: err}
 	}
 	return
 }
@@ -263,51 +69,98 @@ func (d *domainClient) CaptureScreenshot(ctx context.Context, args *CaptureScree
 	return
 }
 
-// PrintToPDF invokes the Page method. Print page as PDF.
-func (d *domainClient) PrintToPDF(ctx context.Context, args *PrintToPDFArgs) (reply *PrintToPDFReply, err error) {
-	reply = new(PrintToPDFReply)
+// CreateIsolatedWorld invokes the Page method. Creates an isolated world for the given frame.
+func (d *domainClient) CreateIsolatedWorld(ctx context.Context, args *CreateIsolatedWorldArgs) (reply *CreateIsolatedWorldReply, err error) {
+	reply = new(CreateIsolatedWorldReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.printToPDF", args, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Page.createIsolatedWorld", args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Page.printToPDF", nil, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Page.createIsolatedWorld", nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "PrintToPDF", Err: err}
+		err = &internal.OpError{Domain: "Page", Op: "CreateIsolatedWorld", Err: err}
 	}
 	return
 }
 
-// StartScreencast invokes the Page method. Starts sending each frame using the screencastFrame event.
-func (d *domainClient) StartScreencast(ctx context.Context, args *StartScreencastArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.startScreencast", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.startScreencast", nil, nil, d.conn)
-	}
+// Disable invokes the Page method. Disables page domain notifications.
+func (d *domainClient) Disable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Page.disable", nil, nil, d.conn)
 	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "StartScreencast", Err: err}
+		err = &internal.OpError{Domain: "Page", Op: "Disable", Err: err}
 	}
 	return
 }
 
-// StopScreencast invokes the Page method. Stops sending each frame in the screencastFrame.
-func (d *domainClient) StopScreencast(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Page.stopScreencast", nil, nil, d.conn)
+// Enable invokes the Page method. Enables page domain notifications.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Page.enable", nil, nil, d.conn)
 	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "StopScreencast", Err: err}
+		err = &internal.OpError{Domain: "Page", Op: "Enable", Err: err}
 	}
 	return
 }
 
-// ScreencastFrameAck invokes the Page method. Acknowledges that a screencast frame has been received by the frontend.
-func (d *domainClient) ScreencastFrameAck(ctx context.Context, args *ScreencastFrameAckArgs) (err error) {
+// GetAppManifest invokes the Page method.
+func (d *domainClient) GetAppManifest(ctx context.Context) (reply *GetAppManifestReply, err error) {
+	reply = new(GetAppManifestReply)
+	err = rpcc.Invoke(ctx, "Page.getAppManifest", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetAppManifest", Err: err}
+	}
+	return
+}
+
+// GetFrameTree invokes the Page method. Returns present frame tree structure.
+func (d *domainClient) GetFrameTree(ctx context.Context) (reply *GetFrameTreeReply, err error) {
+	reply = new(GetFrameTreeReply)
+	err = rpcc.Invoke(ctx, "Page.getFrameTree", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetFrameTree", Err: err}
+	}
+	return
+}
+
+// GetLayoutMetrics invokes the Page method. Returns metrics relating to the layouting of the page, such as viewport bounds/scale.
+func (d *domainClient) GetLayoutMetrics(ctx context.Context) (reply *GetLayoutMetricsReply, err error) {
+	reply = new(GetLayoutMetricsReply)
+	err = rpcc.Invoke(ctx, "Page.getLayoutMetrics", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetLayoutMetrics", Err: err}
+	}
+	return
+}
+
+// GetNavigationHistory invokes the Page method. Returns navigation history for the current page.
+func (d *domainClient) GetNavigationHistory(ctx context.Context) (reply *GetNavigationHistoryReply, err error) {
+	reply = new(GetNavigationHistoryReply)
+	err = rpcc.Invoke(ctx, "Page.getNavigationHistory", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetNavigationHistory", Err: err}
+	}
+	return
+}
+
+// GetResourceContent invokes the Page method. Returns content of the given resource.
+func (d *domainClient) GetResourceContent(ctx context.Context, args *GetResourceContentArgs) (reply *GetResourceContentReply, err error) {
+	reply = new(GetResourceContentReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.screencastFrameAck", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Page.getResourceContent", args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Page.screencastFrameAck", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Page.getResourceContent", nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "ScreencastFrameAck", Err: err}
+		err = &internal.OpError{Domain: "Page", Op: "GetResourceContent", Err: err}
+	}
+	return
+}
+
+// GetResourceTree invokes the Page method. Returns present frame / resource tree structure.
+func (d *domainClient) GetResourceTree(ctx context.Context) (reply *GetResourceTreeReply, err error) {
+	reply = new(GetResourceTreeReply)
+	err = rpcc.Invoke(ctx, "Page.getResourceTree", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetResourceTree", Err: err}
 	}
 	return
 }
@@ -325,12 +178,82 @@ func (d *domainClient) HandleJavaScriptDialog(ctx context.Context, args *HandleJ
 	return
 }
 
-// GetAppManifest invokes the Page method.
-func (d *domainClient) GetAppManifest(ctx context.Context) (reply *GetAppManifestReply, err error) {
-	reply = new(GetAppManifestReply)
-	err = rpcc.Invoke(ctx, "Page.getAppManifest", nil, reply, d.conn)
+// Navigate invokes the Page method. Navigates current page to the given URL.
+func (d *domainClient) Navigate(ctx context.Context, args *NavigateArgs) (reply *NavigateReply, err error) {
+	reply = new(NavigateReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.navigate", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.navigate", nil, reply, d.conn)
+	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "GetAppManifest", Err: err}
+		err = &internal.OpError{Domain: "Page", Op: "Navigate", Err: err}
+	}
+	return
+}
+
+// NavigateToHistoryEntry invokes the Page method. Navigates current page to the given history entry.
+func (d *domainClient) NavigateToHistoryEntry(ctx context.Context, args *NavigateToHistoryEntryArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.navigateToHistoryEntry", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.navigateToHistoryEntry", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "NavigateToHistoryEntry", Err: err}
+	}
+	return
+}
+
+// PrintToPDF invokes the Page method. Print page as PDF.
+func (d *domainClient) PrintToPDF(ctx context.Context, args *PrintToPDFArgs) (reply *PrintToPDFReply, err error) {
+	reply = new(PrintToPDFReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.printToPDF", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.printToPDF", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "PrintToPDF", Err: err}
+	}
+	return
+}
+
+// Reload invokes the Page method. Reloads given page optionally ignoring the cache.
+func (d *domainClient) Reload(ctx context.Context, args *ReloadArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.reload", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.reload", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "Reload", Err: err}
+	}
+	return
+}
+
+// RemoveScriptToEvaluateOnLoad invokes the Page method. Deprecated, please use removeScriptToEvaluateOnNewDocument instead.
+func (d *domainClient) RemoveScriptToEvaluateOnLoad(ctx context.Context, args *RemoveScriptToEvaluateOnLoadArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.removeScriptToEvaluateOnLoad", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.removeScriptToEvaluateOnLoad", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "RemoveScriptToEvaluateOnLoad", Err: err}
+	}
+	return
+}
+
+// RemoveScriptToEvaluateOnNewDocument invokes the Page method. Removes given script from the list.
+func (d *domainClient) RemoveScriptToEvaluateOnNewDocument(ctx context.Context, args *RemoveScriptToEvaluateOnNewDocumentArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.removeScriptToEvaluateOnNewDocument", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.removeScriptToEvaluateOnNewDocument", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "RemoveScriptToEvaluateOnNewDocument", Err: err}
 	}
 	return
 }
@@ -344,35 +267,68 @@ func (d *domainClient) RequestAppBanner(ctx context.Context) (err error) {
 	return
 }
 
-// GetLayoutMetrics invokes the Page method. Returns metrics relating to the layouting of the page, such as viewport bounds/scale.
-func (d *domainClient) GetLayoutMetrics(ctx context.Context) (reply *GetLayoutMetricsReply, err error) {
-	reply = new(GetLayoutMetricsReply)
-	err = rpcc.Invoke(ctx, "Page.getLayoutMetrics", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "GetLayoutMetrics", Err: err}
-	}
-	return
-}
-
-// CreateIsolatedWorld invokes the Page method. Creates an isolated world for the given frame.
-func (d *domainClient) CreateIsolatedWorld(ctx context.Context, args *CreateIsolatedWorldArgs) (reply *CreateIsolatedWorldReply, err error) {
-	reply = new(CreateIsolatedWorldReply)
+// ScreencastFrameAck invokes the Page method. Acknowledges that a screencast frame has been received by the frontend.
+func (d *domainClient) ScreencastFrameAck(ctx context.Context, args *ScreencastFrameAckArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.createIsolatedWorld", args, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Page.screencastFrameAck", args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Page.createIsolatedWorld", nil, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Page.screencastFrameAck", nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "CreateIsolatedWorld", Err: err}
+		err = &internal.OpError{Domain: "Page", Op: "ScreencastFrameAck", Err: err}
 	}
 	return
 }
 
-// BringToFront invokes the Page method. Brings page to front (activates tab).
-func (d *domainClient) BringToFront(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Page.bringToFront", nil, nil, d.conn)
+// SearchInResource invokes the Page method. Searches for given string in resource content.
+func (d *domainClient) SearchInResource(ctx context.Context, args *SearchInResourceArgs) (reply *SearchInResourceReply, err error) {
+	reply = new(SearchInResourceReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.searchInResource", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.searchInResource", nil, reply, d.conn)
+	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "BringToFront", Err: err}
+		err = &internal.OpError{Domain: "Page", Op: "SearchInResource", Err: err}
+	}
+	return
+}
+
+// SetAdBlockingEnabled invokes the Page method. Enable Chrome's experimental ad filter on all sites.
+func (d *domainClient) SetAdBlockingEnabled(ctx context.Context, args *SetAdBlockingEnabledArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setAdBlockingEnabled", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setAdBlockingEnabled", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetAdBlockingEnabled", Err: err}
+	}
+	return
+}
+
+// SetAutoAttachToCreatedPages invokes the Page method. Controls whether browser will open a new inspector window for connected pages.
+func (d *domainClient) SetAutoAttachToCreatedPages(ctx context.Context, args *SetAutoAttachToCreatedPagesArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setAutoAttachToCreatedPages", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setAutoAttachToCreatedPages", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetAutoAttachToCreatedPages", Err: err}
+	}
+	return
+}
+
+// SetDocumentContent invokes the Page method. Sets given markup as the document's HTML.
+func (d *domainClient) SetDocumentContent(ctx context.Context, args *SetDocumentContentArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setDocumentContent", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setDocumentContent", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetDocumentContent", Err: err}
 	}
 	return
 }
@@ -386,6 +342,50 @@ func (d *domainClient) SetDownloadBehavior(ctx context.Context, args *SetDownloa
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "SetDownloadBehavior", Err: err}
+	}
+	return
+}
+
+// SetLifecycleEventsEnabled invokes the Page method. Controls whether page will emit lifecycle events.
+func (d *domainClient) SetLifecycleEventsEnabled(ctx context.Context, args *SetLifecycleEventsEnabledArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setLifecycleEventsEnabled", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setLifecycleEventsEnabled", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetLifecycleEventsEnabled", Err: err}
+	}
+	return
+}
+
+// StartScreencast invokes the Page method. Starts sending each frame using the `screencastFrame` event.
+func (d *domainClient) StartScreencast(ctx context.Context, args *StartScreencastArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.startScreencast", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.startScreencast", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "StartScreencast", Err: err}
+	}
+	return
+}
+
+// StopLoading invokes the Page method. Force the page stop all navigations and pending resource fetches.
+func (d *domainClient) StopLoading(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Page.stopLoading", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "StopLoading", Err: err}
+	}
+	return
+}
+
+// StopScreencast invokes the Page method. Stops sending each frame in the `screencastFrame`.
+func (d *domainClient) StopScreencast(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Page.stopScreencast", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "StopScreencast", Err: err}
 	}
 	return
 }
@@ -411,48 +411,6 @@ func (c *dOMContentEventFiredClient) Recv() (*DOMContentEventFiredReply, error) 
 	return event, nil
 }
 
-func (d *domainClient) LoadEventFired(ctx context.Context) (LoadEventFiredClient, error) {
-	s, err := rpcc.NewStream(ctx, "Page.loadEventFired", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &loadEventFiredClient{Stream: s}, nil
-}
-
-type loadEventFiredClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *loadEventFiredClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *loadEventFiredClient) Recv() (*LoadEventFiredReply, error) {
-	event := new(LoadEventFiredReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Page", Op: "LoadEventFired Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) LifecycleEvent(ctx context.Context) (LifecycleEventClient, error) {
-	s, err := rpcc.NewStream(ctx, "Page.lifecycleEvent", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &lifecycleEventClient{Stream: s}, nil
-}
-
-type lifecycleEventClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *lifecycleEventClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *lifecycleEventClient) Recv() (*LifecycleEventReply, error) {
-	event := new(LifecycleEventReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Page", Op: "LifecycleEvent Recv", Err: err}
-	}
-	return event, nil
-}
-
 func (d *domainClient) FrameAttached(ctx context.Context) (FrameAttachedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Page.frameAttached", d.conn)
 	if err != nil {
@@ -470,6 +428,48 @@ func (c *frameAttachedClient) Recv() (*FrameAttachedReply, error) {
 	event := new(FrameAttachedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "FrameAttached Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) FrameClearedScheduledNavigation(ctx context.Context) (FrameClearedScheduledNavigationClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.frameClearedScheduledNavigation", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &frameClearedScheduledNavigationClient{Stream: s}, nil
+}
+
+type frameClearedScheduledNavigationClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameClearedScheduledNavigationClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *frameClearedScheduledNavigationClient) Recv() (*FrameClearedScheduledNavigationReply, error) {
+	event := new(FrameClearedScheduledNavigationReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "FrameClearedScheduledNavigation Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) FrameDetached(ctx context.Context) (FrameDetachedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.frameDetached", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &frameDetachedClient{Stream: s}, nil
+}
+
+type frameDetachedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameDetachedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *frameDetachedClient) Recv() (*FrameDetachedReply, error) {
+	event := new(FrameDetachedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "FrameDetached Recv", Err: err}
 	}
 	return event, nil
 }
@@ -495,23 +495,44 @@ func (c *frameNavigatedClient) Recv() (*FrameNavigatedReply, error) {
 	return event, nil
 }
 
-func (d *domainClient) FrameDetached(ctx context.Context) (FrameDetachedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Page.frameDetached", d.conn)
+func (d *domainClient) FrameResized(ctx context.Context) (FrameResizedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.frameResized", d.conn)
 	if err != nil {
 		return nil, err
 	}
-	return &frameDetachedClient{Stream: s}, nil
+	return &frameResizedClient{Stream: s}, nil
 }
 
-type frameDetachedClient struct{ rpcc.Stream }
+type frameResizedClient struct{ rpcc.Stream }
 
 // GetStream returns the original Stream for use with cdp.Sync.
-func (c *frameDetachedClient) GetStream() rpcc.Stream { return c.Stream }
+func (c *frameResizedClient) GetStream() rpcc.Stream { return c.Stream }
 
-func (c *frameDetachedClient) Recv() (*FrameDetachedReply, error) {
-	event := new(FrameDetachedReply)
+func (c *frameResizedClient) Recv() (*FrameResizedReply, error) {
+	event := new(FrameResizedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Page", Op: "FrameDetached Recv", Err: err}
+		return nil, &internal.OpError{Domain: "Page", Op: "FrameResized Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) FrameScheduledNavigation(ctx context.Context) (FrameScheduledNavigationClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.frameScheduledNavigation", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &frameScheduledNavigationClient{Stream: s}, nil
+}
+
+type frameScheduledNavigationClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameScheduledNavigationClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *frameScheduledNavigationClient) Recv() (*FrameScheduledNavigationReply, error) {
+	event := new(FrameScheduledNavigationReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "FrameScheduledNavigation Recv", Err: err}
 	}
 	return event, nil
 }
@@ -558,65 +579,65 @@ func (c *frameStoppedLoadingClient) Recv() (*FrameStoppedLoadingReply, error) {
 	return event, nil
 }
 
-func (d *domainClient) FrameScheduledNavigation(ctx context.Context) (FrameScheduledNavigationClient, error) {
-	s, err := rpcc.NewStream(ctx, "Page.frameScheduledNavigation", d.conn)
+func (d *domainClient) InterstitialHidden(ctx context.Context) (InterstitialHiddenClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.interstitialHidden", d.conn)
 	if err != nil {
 		return nil, err
 	}
-	return &frameScheduledNavigationClient{Stream: s}, nil
+	return &interstitialHiddenClient{Stream: s}, nil
 }
 
-type frameScheduledNavigationClient struct{ rpcc.Stream }
+type interstitialHiddenClient struct{ rpcc.Stream }
 
 // GetStream returns the original Stream for use with cdp.Sync.
-func (c *frameScheduledNavigationClient) GetStream() rpcc.Stream { return c.Stream }
+func (c *interstitialHiddenClient) GetStream() rpcc.Stream { return c.Stream }
 
-func (c *frameScheduledNavigationClient) Recv() (*FrameScheduledNavigationReply, error) {
-	event := new(FrameScheduledNavigationReply)
+func (c *interstitialHiddenClient) Recv() (*InterstitialHiddenReply, error) {
+	event := new(InterstitialHiddenReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Page", Op: "FrameScheduledNavigation Recv", Err: err}
+		return nil, &internal.OpError{Domain: "Page", Op: "InterstitialHidden Recv", Err: err}
 	}
 	return event, nil
 }
 
-func (d *domainClient) FrameClearedScheduledNavigation(ctx context.Context) (FrameClearedScheduledNavigationClient, error) {
-	s, err := rpcc.NewStream(ctx, "Page.frameClearedScheduledNavigation", d.conn)
+func (d *domainClient) InterstitialShown(ctx context.Context) (InterstitialShownClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.interstitialShown", d.conn)
 	if err != nil {
 		return nil, err
 	}
-	return &frameClearedScheduledNavigationClient{Stream: s}, nil
+	return &interstitialShownClient{Stream: s}, nil
 }
 
-type frameClearedScheduledNavigationClient struct{ rpcc.Stream }
+type interstitialShownClient struct{ rpcc.Stream }
 
 // GetStream returns the original Stream for use with cdp.Sync.
-func (c *frameClearedScheduledNavigationClient) GetStream() rpcc.Stream { return c.Stream }
+func (c *interstitialShownClient) GetStream() rpcc.Stream { return c.Stream }
 
-func (c *frameClearedScheduledNavigationClient) Recv() (*FrameClearedScheduledNavigationReply, error) {
-	event := new(FrameClearedScheduledNavigationReply)
+func (c *interstitialShownClient) Recv() (*InterstitialShownReply, error) {
+	event := new(InterstitialShownReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Page", Op: "FrameClearedScheduledNavigation Recv", Err: err}
+		return nil, &internal.OpError{Domain: "Page", Op: "InterstitialShown Recv", Err: err}
 	}
 	return event, nil
 }
 
-func (d *domainClient) FrameResized(ctx context.Context) (FrameResizedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Page.frameResized", d.conn)
+func (d *domainClient) JavascriptDialogClosed(ctx context.Context) (JavascriptDialogClosedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.javascriptDialogClosed", d.conn)
 	if err != nil {
 		return nil, err
 	}
-	return &frameResizedClient{Stream: s}, nil
+	return &javascriptDialogClosedClient{Stream: s}, nil
 }
 
-type frameResizedClient struct{ rpcc.Stream }
+type javascriptDialogClosedClient struct{ rpcc.Stream }
 
 // GetStream returns the original Stream for use with cdp.Sync.
-func (c *frameResizedClient) GetStream() rpcc.Stream { return c.Stream }
+func (c *javascriptDialogClosedClient) GetStream() rpcc.Stream { return c.Stream }
 
-func (c *frameResizedClient) Recv() (*FrameResizedReply, error) {
-	event := new(FrameResizedReply)
+func (c *javascriptDialogClosedClient) Recv() (*JavascriptDialogClosedReply, error) {
+	event := new(JavascriptDialogClosedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Page", Op: "FrameResized Recv", Err: err}
+		return nil, &internal.OpError{Domain: "Page", Op: "JavascriptDialogClosed Recv", Err: err}
 	}
 	return event, nil
 }
@@ -642,23 +663,44 @@ func (c *javascriptDialogOpeningClient) Recv() (*JavascriptDialogOpeningReply, e
 	return event, nil
 }
 
-func (d *domainClient) JavascriptDialogClosed(ctx context.Context) (JavascriptDialogClosedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Page.javascriptDialogClosed", d.conn)
+func (d *domainClient) LifecycleEvent(ctx context.Context) (LifecycleEventClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.lifecycleEvent", d.conn)
 	if err != nil {
 		return nil, err
 	}
-	return &javascriptDialogClosedClient{Stream: s}, nil
+	return &lifecycleEventClient{Stream: s}, nil
 }
 
-type javascriptDialogClosedClient struct{ rpcc.Stream }
+type lifecycleEventClient struct{ rpcc.Stream }
 
 // GetStream returns the original Stream for use with cdp.Sync.
-func (c *javascriptDialogClosedClient) GetStream() rpcc.Stream { return c.Stream }
+func (c *lifecycleEventClient) GetStream() rpcc.Stream { return c.Stream }
 
-func (c *javascriptDialogClosedClient) Recv() (*JavascriptDialogClosedReply, error) {
-	event := new(JavascriptDialogClosedReply)
+func (c *lifecycleEventClient) Recv() (*LifecycleEventReply, error) {
+	event := new(LifecycleEventReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Page", Op: "JavascriptDialogClosed Recv", Err: err}
+		return nil, &internal.OpError{Domain: "Page", Op: "LifecycleEvent Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) LoadEventFired(ctx context.Context) (LoadEventFiredClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.loadEventFired", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &loadEventFiredClient{Stream: s}, nil
+}
+
+type loadEventFiredClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *loadEventFiredClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *loadEventFiredClient) Recv() (*LoadEventFiredReply, error) {
+	event := new(LoadEventFiredReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "LoadEventFired Recv", Err: err}
 	}
 	return event, nil
 }
@@ -701,48 +743,6 @@ func (c *screencastVisibilityChangedClient) Recv() (*ScreencastVisibilityChanged
 	event := new(ScreencastVisibilityChangedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "ScreencastVisibilityChanged Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) InterstitialShown(ctx context.Context) (InterstitialShownClient, error) {
-	s, err := rpcc.NewStream(ctx, "Page.interstitialShown", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &interstitialShownClient{Stream: s}, nil
-}
-
-type interstitialShownClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *interstitialShownClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *interstitialShownClient) Recv() (*InterstitialShownReply, error) {
-	event := new(InterstitialShownReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Page", Op: "InterstitialShown Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) InterstitialHidden(ctx context.Context) (InterstitialHiddenClient, error) {
-	s, err := rpcc.NewStream(ctx, "Page.interstitialHidden", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &interstitialHiddenClient{Stream: s}, nil
-}
-
-type interstitialHiddenClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *interstitialHiddenClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *interstitialHiddenClient) Recv() (*InterstitialHiddenReply, error) {
-	event := new(InterstitialHiddenReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Page", Op: "InterstitialHidden Recv", Err: err}
 	}
 	return event, nil
 }

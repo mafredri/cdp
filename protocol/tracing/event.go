@@ -9,6 +9,21 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
+// BufferUsageClient is a client for BufferUsage events.
+type BufferUsageClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*BufferUsageReply, error)
+	rpcc.Stream
+}
+
+// BufferUsageReply is the reply for BufferUsage events.
+type BufferUsageReply struct {
+	PercentFull *float64 `json:"percentFull,omitempty"` // A number in range [0..1] that indicates the used size of event buffer as a fraction of its total size.
+	EventCount  *float64 `json:"eventCount,omitempty"`  // An approximate number of events in the trace log.
+	Value       *float64 `json:"value,omitempty"`       // A number in range [0..1] that indicates the used size of event buffer as a fraction of its total size.
+}
+
 // DataCollectedClient is a client for DataCollected events. Contains an bucket of collected trace events. When tracing is stopped collected events will be send as a sequence of dataCollected events followed by tracingComplete event.
 type DataCollectedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
@@ -33,19 +48,4 @@ type CompleteClient interface {
 // CompleteReply is the reply for TracingComplete events.
 type CompleteReply struct {
 	Stream *io.StreamHandle `json:"stream,omitempty"` // A handle of the stream that holds resulting trace data.
-}
-
-// BufferUsageClient is a client for BufferUsage events.
-type BufferUsageClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*BufferUsageReply, error)
-	rpcc.Stream
-}
-
-// BufferUsageReply is the reply for BufferUsage events.
-type BufferUsageReply struct {
-	PercentFull *float64 `json:"percentFull,omitempty"` // A number in range [0..1] that indicates the used size of event buffer as a fraction of its total size.
-	EventCount  *float64 `json:"eventCount,omitempty"`  // An approximate number of events in the trace log.
-	Value       *float64 `json:"value,omitempty"`       // A number in range [0..1] that indicates the used size of event buffer as a fraction of its total size.
 }

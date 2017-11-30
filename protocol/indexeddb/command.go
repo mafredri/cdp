@@ -2,40 +2,34 @@
 
 package indexeddb
 
-// RequestDatabaseNamesArgs represents the arguments for RequestDatabaseNames in the IndexedDB domain.
-type RequestDatabaseNamesArgs struct {
-	SecurityOrigin string `json:"securityOrigin"` // Security origin.
+// ClearObjectStoreArgs represents the arguments for ClearObjectStore in the IndexedDB domain.
+type ClearObjectStoreArgs struct {
+	SecurityOrigin  string `json:"securityOrigin"`  // Security origin.
+	DatabaseName    string `json:"databaseName"`    // Database name.
+	ObjectStoreName string `json:"objectStoreName"` // Object store name.
 }
 
-// NewRequestDatabaseNamesArgs initializes RequestDatabaseNamesArgs with the required arguments.
-func NewRequestDatabaseNamesArgs(securityOrigin string) *RequestDatabaseNamesArgs {
-	args := new(RequestDatabaseNamesArgs)
+// NewClearObjectStoreArgs initializes ClearObjectStoreArgs with the required arguments.
+func NewClearObjectStoreArgs(securityOrigin string, databaseName string, objectStoreName string) *ClearObjectStoreArgs {
+	args := new(ClearObjectStoreArgs)
 	args.SecurityOrigin = securityOrigin
+	args.DatabaseName = databaseName
+	args.ObjectStoreName = objectStoreName
 	return args
 }
 
-// RequestDatabaseNamesReply represents the return values for RequestDatabaseNames in the IndexedDB domain.
-type RequestDatabaseNamesReply struct {
-	DatabaseNames []string `json:"databaseNames"` // Database names for origin.
-}
-
-// RequestDatabaseArgs represents the arguments for RequestDatabase in the IndexedDB domain.
-type RequestDatabaseArgs struct {
+// DeleteDatabaseArgs represents the arguments for DeleteDatabase in the IndexedDB domain.
+type DeleteDatabaseArgs struct {
 	SecurityOrigin string `json:"securityOrigin"` // Security origin.
 	DatabaseName   string `json:"databaseName"`   // Database name.
 }
 
-// NewRequestDatabaseArgs initializes RequestDatabaseArgs with the required arguments.
-func NewRequestDatabaseArgs(securityOrigin string, databaseName string) *RequestDatabaseArgs {
-	args := new(RequestDatabaseArgs)
+// NewDeleteDatabaseArgs initializes DeleteDatabaseArgs with the required arguments.
+func NewDeleteDatabaseArgs(securityOrigin string, databaseName string) *DeleteDatabaseArgs {
+	args := new(DeleteDatabaseArgs)
 	args.SecurityOrigin = securityOrigin
 	args.DatabaseName = databaseName
 	return args
-}
-
-// RequestDatabaseReply represents the return values for RequestDatabase in the IndexedDB domain.
-type RequestDatabaseReply struct {
-	DatabaseWithObjectStores DatabaseWithObjectStores `json:"databaseWithObjectStores"` // Database with an array of object stores.
 }
 
 // RequestDataArgs represents the arguments for RequestData in the IndexedDB domain.
@@ -73,32 +67,38 @@ type RequestDataReply struct {
 	HasMore                bool        `json:"hasMore"`                // If true, there are more entries to fetch in the given range.
 }
 
-// ClearObjectStoreArgs represents the arguments for ClearObjectStore in the IndexedDB domain.
-type ClearObjectStoreArgs struct {
-	SecurityOrigin  string `json:"securityOrigin"`  // Security origin.
-	DatabaseName    string `json:"databaseName"`    // Database name.
-	ObjectStoreName string `json:"objectStoreName"` // Object store name.
-}
-
-// NewClearObjectStoreArgs initializes ClearObjectStoreArgs with the required arguments.
-func NewClearObjectStoreArgs(securityOrigin string, databaseName string, objectStoreName string) *ClearObjectStoreArgs {
-	args := new(ClearObjectStoreArgs)
-	args.SecurityOrigin = securityOrigin
-	args.DatabaseName = databaseName
-	args.ObjectStoreName = objectStoreName
-	return args
-}
-
-// DeleteDatabaseArgs represents the arguments for DeleteDatabase in the IndexedDB domain.
-type DeleteDatabaseArgs struct {
+// RequestDatabaseArgs represents the arguments for RequestDatabase in the IndexedDB domain.
+type RequestDatabaseArgs struct {
 	SecurityOrigin string `json:"securityOrigin"` // Security origin.
 	DatabaseName   string `json:"databaseName"`   // Database name.
 }
 
-// NewDeleteDatabaseArgs initializes DeleteDatabaseArgs with the required arguments.
-func NewDeleteDatabaseArgs(securityOrigin string, databaseName string) *DeleteDatabaseArgs {
-	args := new(DeleteDatabaseArgs)
+// NewRequestDatabaseArgs initializes RequestDatabaseArgs with the required arguments.
+func NewRequestDatabaseArgs(securityOrigin string, databaseName string) *RequestDatabaseArgs {
+	args := new(RequestDatabaseArgs)
 	args.SecurityOrigin = securityOrigin
 	args.DatabaseName = databaseName
 	return args
+}
+
+// RequestDatabaseReply represents the return values for RequestDatabase in the IndexedDB domain.
+type RequestDatabaseReply struct {
+	DatabaseWithObjectStores DatabaseWithObjectStores `json:"databaseWithObjectStores"` // Database with an array of object stores.
+}
+
+// RequestDatabaseNamesArgs represents the arguments for RequestDatabaseNames in the IndexedDB domain.
+type RequestDatabaseNamesArgs struct {
+	SecurityOrigin string `json:"securityOrigin"` // Security origin.
+}
+
+// NewRequestDatabaseNamesArgs initializes RequestDatabaseNamesArgs with the required arguments.
+func NewRequestDatabaseNamesArgs(securityOrigin string) *RequestDatabaseNamesArgs {
+	args := new(RequestDatabaseNamesArgs)
+	args.SecurityOrigin = securityOrigin
+	return args
+}
+
+// RequestDatabaseNamesReply represents the return values for RequestDatabaseNames in the IndexedDB domain.
+type RequestDatabaseNamesReply struct {
+	DatabaseNames []string `json:"databaseNames"` // Database names for origin.
 }

@@ -18,35 +18,11 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// GetFramesWithManifests invokes the ApplicationCache method. Returns array of frame identifiers with manifest urls for each frame containing a document associated with some application cache.
-func (d *domainClient) GetFramesWithManifests(ctx context.Context) (reply *GetFramesWithManifestsReply, err error) {
-	reply = new(GetFramesWithManifestsReply)
-	err = rpcc.Invoke(ctx, "ApplicationCache.getFramesWithManifests", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "ApplicationCache", Op: "GetFramesWithManifests", Err: err}
-	}
-	return
-}
-
 // Enable invokes the ApplicationCache method. Enables application cache domain notifications.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "ApplicationCache.enable", nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "ApplicationCache", Op: "Enable", Err: err}
-	}
-	return
-}
-
-// GetManifestForFrame invokes the ApplicationCache method. Returns manifest URL for document in the given frame.
-func (d *domainClient) GetManifestForFrame(ctx context.Context, args *GetManifestForFrameArgs) (reply *GetManifestForFrameReply, err error) {
-	reply = new(GetManifestForFrameReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, "ApplicationCache.getManifestForFrame", args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "ApplicationCache.getManifestForFrame", nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "ApplicationCache", Op: "GetManifestForFrame", Err: err}
 	}
 	return
 }
@@ -61,6 +37,30 @@ func (d *domainClient) GetApplicationCacheForFrame(ctx context.Context, args *Ge
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "ApplicationCache", Op: "GetApplicationCacheForFrame", Err: err}
+	}
+	return
+}
+
+// GetFramesWithManifests invokes the ApplicationCache method. Returns array of frame identifiers with manifest urls for each frame containing a document associated with some application cache.
+func (d *domainClient) GetFramesWithManifests(ctx context.Context) (reply *GetFramesWithManifestsReply, err error) {
+	reply = new(GetFramesWithManifestsReply)
+	err = rpcc.Invoke(ctx, "ApplicationCache.getFramesWithManifests", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "ApplicationCache", Op: "GetFramesWithManifests", Err: err}
+	}
+	return
+}
+
+// GetManifestForFrame invokes the ApplicationCache method. Returns manifest URL for document in the given frame.
+func (d *domainClient) GetManifestForFrame(ctx context.Context, args *GetManifestForFrameArgs) (reply *GetManifestForFrameReply, err error) {
+	reply = new(GetManifestForFrameReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "ApplicationCache.getManifestForFrame", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "ApplicationCache.getManifestForFrame", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "ApplicationCache", Op: "GetManifestForFrame", Err: err}
 	}
 	return
 }

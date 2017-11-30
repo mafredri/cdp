@@ -6,46 +6,7 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// CreatedClient is a client for TargetCreated events. Issued when a possible inspection target is created.
-type CreatedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*CreatedReply, error)
-	rpcc.Stream
-}
-
-// CreatedReply is the reply for TargetCreated events.
-type CreatedReply struct {
-	TargetInfo Info `json:"targetInfo"` // No description.
-}
-
-// InfoChangedClient is a client for TargetInfoChanged events. Issued when some information about a target has changed. This only happens between targetCreated and targetDestroyed.
-type InfoChangedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*InfoChangedReply, error)
-	rpcc.Stream
-}
-
-// InfoChangedReply is the reply for TargetInfoChanged events.
-type InfoChangedReply struct {
-	TargetInfo Info `json:"targetInfo"` // No description.
-}
-
-// DestroyedClient is a client for TargetDestroyed events. Issued when a target is destroyed.
-type DestroyedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*DestroyedReply, error)
-	rpcc.Stream
-}
-
-// DestroyedReply is the reply for TargetDestroyed events.
-type DestroyedReply struct {
-	TargetID ID `json:"targetId"` // No description.
-}
-
-// AttachedToTargetClient is a client for AttachedToTarget events. Issued when attached to target because of auto-attach or attachToTarget command.
+// AttachedToTargetClient is a client for AttachedToTarget events. Issued when attached to target because of auto-attach or `attachToTarget` command.
 type AttachedToTargetClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -60,7 +21,7 @@ type AttachedToTargetReply struct {
 	WaitingForDebugger bool      `json:"waitingForDebugger"` // No description.
 }
 
-// DetachedFromTargetClient is a client for DetachedFromTarget events. Issued when detached from target for any reason (including detachFromTarget command). Can be issued multiple times per target if multiple sessions have been attached to it.
+// DetachedFromTargetClient is a client for DetachedFromTarget events. Issued when detached from target for any reason (including `detachFromTarget` command). Can be issued multiple times per target if multiple sessions have been attached to it.
 type DetachedFromTargetClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -77,7 +38,7 @@ type DetachedFromTargetReply struct {
 	TargetID *ID `json:"targetId,omitempty"`
 }
 
-// ReceivedMessageFromTargetClient is a client for ReceivedMessageFromTarget events. Notifies about a new protocol message received from the session (as reported in attachedToTarget event).
+// ReceivedMessageFromTargetClient is a client for ReceivedMessageFromTarget events. Notifies about a new protocol message received from the session (as reported in `attachedToTarget` event).
 type ReceivedMessageFromTargetClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -93,4 +54,43 @@ type ReceivedMessageFromTargetReply struct {
 	//
 	// Deprecated: Deprecated.
 	TargetID *ID `json:"targetId,omitempty"`
+}
+
+// CreatedClient is a client for TargetCreated events. Issued when a possible inspection target is created.
+type CreatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*CreatedReply, error)
+	rpcc.Stream
+}
+
+// CreatedReply is the reply for TargetCreated events.
+type CreatedReply struct {
+	TargetInfo Info `json:"targetInfo"` // No description.
+}
+
+// DestroyedClient is a client for TargetDestroyed events. Issued when a target is destroyed.
+type DestroyedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DestroyedReply, error)
+	rpcc.Stream
+}
+
+// DestroyedReply is the reply for TargetDestroyed events.
+type DestroyedReply struct {
+	TargetID ID `json:"targetId"` // No description.
+}
+
+// InfoChangedClient is a client for TargetInfoChanged events. Issued when some information about a target has changed. This only happens between `targetCreated` and `targetDestroyed`.
+type InfoChangedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*InfoChangedReply, error)
+	rpcc.Stream
+}
+
+// InfoChangedReply is the reply for TargetInfoChanged events.
+type InfoChangedReply struct {
+	TargetInfo Info `json:"targetInfo"` // No description.
 }

@@ -25,23 +25,6 @@ type CompositingReasonsReply struct {
 	CompositingReasons []string `json:"compositingReasons"` // A list of strings specifying reasons for the given layer to become composited.
 }
 
-// MakeSnapshotArgs represents the arguments for MakeSnapshot in the LayerTree domain.
-type MakeSnapshotArgs struct {
-	LayerID LayerID `json:"layerId"` // The id of the layer.
-}
-
-// NewMakeSnapshotArgs initializes MakeSnapshotArgs with the required arguments.
-func NewMakeSnapshotArgs(layerID LayerID) *MakeSnapshotArgs {
-	args := new(MakeSnapshotArgs)
-	args.LayerID = layerID
-	return args
-}
-
-// MakeSnapshotReply represents the return values for MakeSnapshot in the LayerTree domain.
-type MakeSnapshotReply struct {
-	SnapshotID SnapshotID `json:"snapshotId"` // The id of the layer snapshot.
-}
-
 // LoadSnapshotArgs represents the arguments for LoadSnapshot in the LayerTree domain.
 type LoadSnapshotArgs struct {
 	Tiles []PictureTile `json:"tiles"` // An array of tiles composing the snapshot.
@@ -59,16 +42,21 @@ type LoadSnapshotReply struct {
 	SnapshotID SnapshotID `json:"snapshotId"` // The id of the snapshot.
 }
 
-// ReleaseSnapshotArgs represents the arguments for ReleaseSnapshot in the LayerTree domain.
-type ReleaseSnapshotArgs struct {
-	SnapshotID SnapshotID `json:"snapshotId"` // The id of the layer snapshot.
+// MakeSnapshotArgs represents the arguments for MakeSnapshot in the LayerTree domain.
+type MakeSnapshotArgs struct {
+	LayerID LayerID `json:"layerId"` // The id of the layer.
 }
 
-// NewReleaseSnapshotArgs initializes ReleaseSnapshotArgs with the required arguments.
-func NewReleaseSnapshotArgs(snapshotID SnapshotID) *ReleaseSnapshotArgs {
-	args := new(ReleaseSnapshotArgs)
-	args.SnapshotID = snapshotID
+// NewMakeSnapshotArgs initializes MakeSnapshotArgs with the required arguments.
+func NewMakeSnapshotArgs(layerID LayerID) *MakeSnapshotArgs {
+	args := new(MakeSnapshotArgs)
+	args.LayerID = layerID
 	return args
+}
+
+// MakeSnapshotReply represents the return values for MakeSnapshot in the LayerTree domain.
+type MakeSnapshotReply struct {
+	SnapshotID SnapshotID `json:"snapshotId"` // The id of the layer snapshot.
 }
 
 // ProfileSnapshotArgs represents the arguments for ProfileSnapshot in the LayerTree domain.
@@ -107,6 +95,18 @@ func (a *ProfileSnapshotArgs) SetClipRect(clipRect dom.Rect) *ProfileSnapshotArg
 // ProfileSnapshotReply represents the return values for ProfileSnapshot in the LayerTree domain.
 type ProfileSnapshotReply struct {
 	Timings []PaintProfile `json:"timings"` // The array of paint profiles, one per run.
+}
+
+// ReleaseSnapshotArgs represents the arguments for ReleaseSnapshot in the LayerTree domain.
+type ReleaseSnapshotArgs struct {
+	SnapshotID SnapshotID `json:"snapshotId"` // The id of the layer snapshot.
+}
+
+// NewReleaseSnapshotArgs initializes ReleaseSnapshotArgs with the required arguments.
+func NewReleaseSnapshotArgs(snapshotID SnapshotID) *ReleaseSnapshotArgs {
+	args := new(ReleaseSnapshotArgs)
+	args.SnapshotID = snapshotID
+	return args
 }
 
 // ReplaySnapshotArgs represents the arguments for ReplaySnapshot in the LayerTree domain.

@@ -62,45 +62,25 @@ type Accessibility interface {
 //
 // Note: This domain is experimental.
 type Animation interface {
-	// Command Enable
-	//
-	// Enables animation domain notifications.
-	Enable(context.Context) error
-
 	// Command Disable
 	//
 	// Disables animation domain notifications.
 	Disable(context.Context) error
 
-	// Command GetPlaybackRate
+	// Command Enable
 	//
-	// Gets the playback rate of the document timeline.
-	GetPlaybackRate(context.Context) (*animation.GetPlaybackRateReply, error)
-
-	// Command SetPlaybackRate
-	//
-	// Sets the playback rate of the document timeline.
-	SetPlaybackRate(context.Context, *animation.SetPlaybackRateArgs) error
+	// Enables animation domain notifications.
+	Enable(context.Context) error
 
 	// Command GetCurrentTime
 	//
 	// Returns the current time of the an animation.
 	GetCurrentTime(context.Context, *animation.GetCurrentTimeArgs) (*animation.GetCurrentTimeReply, error)
 
-	// Command SetPaused
+	// Command GetPlaybackRate
 	//
-	// Sets the paused state of a set of animations.
-	SetPaused(context.Context, *animation.SetPausedArgs) error
-
-	// Command SetTiming
-	//
-	// Sets the timing of an animation node.
-	SetTiming(context.Context, *animation.SetTimingArgs) error
-
-	// Command SeekAnimations
-	//
-	// Seek a set of animations to a particular time within each animation.
-	SeekAnimations(context.Context, *animation.SeekAnimationsArgs) error
+	// Gets the playback rate of the document timeline.
+	GetPlaybackRate(context.Context) (*animation.GetPlaybackRateReply, error)
 
 	// Command ReleaseAnimations
 	//
@@ -112,6 +92,31 @@ type Animation interface {
 	// Gets the remote object of the Animation.
 	ResolveAnimation(context.Context, *animation.ResolveAnimationArgs) (*animation.ResolveAnimationReply, error)
 
+	// Command SeekAnimations
+	//
+	// Seek a set of animations to a particular time within each animation.
+	SeekAnimations(context.Context, *animation.SeekAnimationsArgs) error
+
+	// Command SetPaused
+	//
+	// Sets the paused state of a set of animations.
+	SetPaused(context.Context, *animation.SetPausedArgs) error
+
+	// Command SetPlaybackRate
+	//
+	// Sets the playback rate of the document timeline.
+	SetPlaybackRate(context.Context, *animation.SetPlaybackRateArgs) error
+
+	// Command SetTiming
+	//
+	// Sets the timing of an animation node.
+	SetTiming(context.Context, *animation.SetTimingArgs) error
+
+	// Event AnimationCanceled
+	//
+	// Event for when an animation has been canceled.
+	AnimationCanceled(context.Context) (animation.CanceledClient, error)
+
 	// Event AnimationCreated
 	//
 	// Event for each animation that has been created.
@@ -121,36 +126,31 @@ type Animation interface {
 	//
 	// Event for animation that has been started.
 	AnimationStarted(context.Context) (animation.StartedClient, error)
-
-	// Event AnimationCanceled
-	//
-	// Event for when an animation has been canceled.
-	AnimationCanceled(context.Context) (animation.CanceledClient, error)
 }
 
 // The ApplicationCache domain.
 //
 // Note: This domain is experimental.
 type ApplicationCache interface {
-	// Command GetFramesWithManifests
-	//
-	// Returns array of frame identifiers with manifest urls for each frame containing a document associated with some application cache.
-	GetFramesWithManifests(context.Context) (*applicationcache.GetFramesWithManifestsReply, error)
-
 	// Command Enable
 	//
 	// Enables application cache domain notifications.
 	Enable(context.Context) error
 
-	// Command GetManifestForFrame
-	//
-	// Returns manifest URL for document in the given frame.
-	GetManifestForFrame(context.Context, *applicationcache.GetManifestForFrameArgs) (*applicationcache.GetManifestForFrameReply, error)
-
 	// Command GetApplicationCacheForFrame
 	//
 	// Returns relevant application cache data for the document in given frame.
 	GetApplicationCacheForFrame(context.Context, *applicationcache.GetApplicationCacheForFrameArgs) (*applicationcache.GetApplicationCacheForFrameReply, error)
+
+	// Command GetFramesWithManifests
+	//
+	// Returns array of frame identifiers with manifest urls for each frame containing a document associated with some application cache.
+	GetFramesWithManifests(context.Context) (*applicationcache.GetFramesWithManifestsReply, error)
+
+	// Command GetManifestForFrame
+	//
+	// Returns manifest URL for document in the given frame.
+	GetManifestForFrame(context.Context, *applicationcache.GetManifestForFrameArgs) (*applicationcache.GetManifestForFrameReply, error)
 
 	// Event ApplicationCacheStatusUpdated
 	ApplicationCacheStatusUpdated(context.Context) (applicationcache.StatusUpdatedClient, error)
@@ -176,24 +176,10 @@ type Browser interface {
 	// Close browser gracefully.
 	Close(context.Context) error
 
-	// Command GetWindowForTarget
-	//
-	// Get the browser window that contains the devtools target.
-	//
-	// Note: This command is experimental.
-	GetWindowForTarget(context.Context, *browser.GetWindowForTargetArgs) (*browser.GetWindowForTargetReply, error)
-
 	// Command GetVersion
 	//
 	// Returns version information.
 	GetVersion(context.Context) (*browser.GetVersionReply, error)
-
-	// Command SetWindowBounds
-	//
-	// Set position and/or size of the browser window.
-	//
-	// Note: This command is experimental.
-	SetWindowBounds(context.Context, *browser.SetWindowBoundsArgs) error
 
 	// Command GetWindowBounds
 	//
@@ -201,36 +187,78 @@ type Browser interface {
 	//
 	// Note: This command is experimental.
 	GetWindowBounds(context.Context, *browser.GetWindowBoundsArgs) (*browser.GetWindowBoundsReply, error)
+
+	// Command GetWindowForTarget
+	//
+	// Get the browser window that contains the devtools target.
+	//
+	// Note: This command is experimental.
+	GetWindowForTarget(context.Context, *browser.GetWindowForTargetArgs) (*browser.GetWindowForTargetReply, error)
+
+	// Command SetWindowBounds
+	//
+	// Set position and/or size of the browser window.
+	//
+	// Note: This command is experimental.
+	SetWindowBounds(context.Context, *browser.SetWindowBoundsArgs) error
 }
 
-// The CSS domain. This domain exposes CSS read/write operations. All CSS objects (stylesheets, rules, and styles) have an associated id used in subsequent operations on the related object. Each object type has a specific id structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the get*ForNode() calls (which accept a DOM node id). A client can also keep track of stylesheets via the styleSheetAdded/styleSheetRemoved events and subsequently load the required stylesheet contents using the getStyleSheet[Text]() methods.
+// The CSS domain. This domain exposes CSS read/write operations. All CSS objects (stylesheets, rules, and styles) have an associated `id` used in subsequent operations on the related object. Each object type has a specific `id` structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the `get*ForNode()` calls (which accept a DOM node id). A client can also keep track of stylesheets via the `styleSheetAdded`/`styleSheetRemoved` events and subsequently load the required stylesheet contents using the `getStyleSheet[Text]()` methods.
 //
 // Note: This domain is experimental.
 type CSS interface {
-	// Command Enable
+	// Command AddRule
 	//
-	// Enables the CSS agent for the given page. Clients should not assume that the CSS agent has been enabled until the result of this command is received.
-	Enable(context.Context) error
+	// Inserts a new rule with the given `ruleText` in a stylesheet with given `styleSheetId`, at the position specified by `location`.
+	AddRule(context.Context, *css.AddRuleArgs) (*css.AddRuleReply, error)
+
+	// Command CollectClassNames
+	//
+	// Returns all class names from specified stylesheet.
+	CollectClassNames(context.Context, *css.CollectClassNamesArgs) (*css.CollectClassNamesReply, error)
+
+	// Command CreateStyleSheet
+	//
+	// Creates a new special "via-inspector" stylesheet in the frame with given `frameId`.
+	CreateStyleSheet(context.Context, *css.CreateStyleSheetArgs) (*css.CreateStyleSheetReply, error)
 
 	// Command Disable
 	//
 	// Disables the CSS agent for the given page.
 	Disable(context.Context) error
 
-	// Command GetMatchedStylesForNode
+	// Command Enable
 	//
-	// Returns requested styles for a DOM node identified by nodeId.
-	GetMatchedStylesForNode(context.Context, *css.GetMatchedStylesForNodeArgs) (*css.GetMatchedStylesForNodeReply, error)
+	// Enables the CSS agent for the given page. Clients should not assume that the CSS agent has been enabled until the result of this command is received.
+	Enable(context.Context) error
 
-	// Command GetInlineStylesForNode
+	// Command ForcePseudoState
 	//
-	// Returns the styles defined inline (explicitly in the "style" attribute and implicitly, using DOM attributes) for a DOM node identified by nodeId.
-	GetInlineStylesForNode(context.Context, *css.GetInlineStylesForNodeArgs) (*css.GetInlineStylesForNodeReply, error)
+	// Ensures that the given node will have specified pseudo-classes whenever its style is computed by the browser.
+	ForcePseudoState(context.Context, *css.ForcePseudoStateArgs) error
+
+	// Command GetBackgroundColors
+	GetBackgroundColors(context.Context, *css.GetBackgroundColorsArgs) (*css.GetBackgroundColorsReply, error)
 
 	// Command GetComputedStyleForNode
 	//
-	// Returns the computed style for a DOM node identified by nodeId.
+	// Returns the computed style for a DOM node identified by `nodeId`.
 	GetComputedStyleForNode(context.Context, *css.GetComputedStyleForNodeArgs) (*css.GetComputedStyleForNodeReply, error)
+
+	// Command GetInlineStylesForNode
+	//
+	// Returns the styles defined inline (explicitly in the "style" attribute and implicitly, using DOM attributes) for a DOM node identified by `nodeId`.
+	GetInlineStylesForNode(context.Context, *css.GetInlineStylesForNodeArgs) (*css.GetInlineStylesForNodeReply, error)
+
+	// Command GetMatchedStylesForNode
+	//
+	// Returns requested styles for a DOM node identified by `nodeId`.
+	GetMatchedStylesForNode(context.Context, *css.GetMatchedStylesForNodeArgs) (*css.GetMatchedStylesForNodeReply, error)
+
+	// Command GetMediaQueries
+	//
+	// Returns all media queries parsed by the rendering engine.
+	GetMediaQueries(context.Context) (*css.GetMediaQueriesReply, error)
 
 	// Command GetPlatformFontsForNode
 	//
@@ -242,98 +270,70 @@ type CSS interface {
 	// Returns the current textual content and the URL for a stylesheet.
 	GetStyleSheetText(context.Context, *css.GetStyleSheetTextArgs) (*css.GetStyleSheetTextReply, error)
 
-	// Command CollectClassNames
+	// Command SetEffectivePropertyValueForNode
 	//
-	// Returns all class names from specified stylesheet.
-	CollectClassNames(context.Context, *css.CollectClassNamesArgs) (*css.CollectClassNamesReply, error)
-
-	// Command SetStyleSheetText
-	//
-	// Sets the new stylesheet text.
-	SetStyleSheetText(context.Context, *css.SetStyleSheetTextArgs) (*css.SetStyleSheetTextReply, error)
-
-	// Command SetRuleSelector
-	//
-	// Modifies the rule selector.
-	SetRuleSelector(context.Context, *css.SetRuleSelectorArgs) (*css.SetRuleSelectorReply, error)
+	// Find a rule with the given active property for the given node and set the new value for this property
+	SetEffectivePropertyValueForNode(context.Context, *css.SetEffectivePropertyValueForNodeArgs) error
 
 	// Command SetKeyframeKey
 	//
 	// Modifies the keyframe rule key text.
 	SetKeyframeKey(context.Context, *css.SetKeyframeKeyArgs) (*css.SetKeyframeKeyReply, error)
 
-	// Command SetStyleTexts
-	//
-	// Applies specified style edits one after another in the given order.
-	SetStyleTexts(context.Context, *css.SetStyleTextsArgs) (*css.SetStyleTextsReply, error)
-
 	// Command SetMediaText
 	//
 	// Modifies the rule selector.
 	SetMediaText(context.Context, *css.SetMediaTextArgs) (*css.SetMediaTextReply, error)
 
-	// Command CreateStyleSheet
+	// Command SetRuleSelector
 	//
-	// Creates a new special "via-inspector" stylesheet in the frame with given frameId.
-	CreateStyleSheet(context.Context, *css.CreateStyleSheetArgs) (*css.CreateStyleSheetReply, error)
+	// Modifies the rule selector.
+	SetRuleSelector(context.Context, *css.SetRuleSelectorArgs) (*css.SetRuleSelectorReply, error)
 
-	// Command AddRule
+	// Command SetStyleSheetText
 	//
-	// Inserts a new rule with the given ruleText in a stylesheet with given styleSheetId, at the position specified by location.
-	AddRule(context.Context, *css.AddRuleArgs) (*css.AddRuleReply, error)
+	// Sets the new stylesheet text.
+	SetStyleSheetText(context.Context, *css.SetStyleSheetTextArgs) (*css.SetStyleSheetTextReply, error)
 
-	// Command ForcePseudoState
+	// Command SetStyleTexts
 	//
-	// Ensures that the given node will have specified pseudo-classes whenever its style is computed by the browser.
-	ForcePseudoState(context.Context, *css.ForcePseudoStateArgs) error
-
-	// Command GetMediaQueries
-	//
-	// Returns all media queries parsed by the rendering engine.
-	GetMediaQueries(context.Context) (*css.GetMediaQueriesReply, error)
-
-	// Command SetEffectivePropertyValueForNode
-	//
-	// Find a rule with the given active property for the given node and set the new value for this property
-	SetEffectivePropertyValueForNode(context.Context, *css.SetEffectivePropertyValueForNodeArgs) error
-
-	// Command GetBackgroundColors
-	GetBackgroundColors(context.Context, *css.GetBackgroundColorsArgs) (*css.GetBackgroundColorsReply, error)
+	// Applies specified style edits one after another in the given order.
+	SetStyleTexts(context.Context, *css.SetStyleTextsArgs) (*css.SetStyleTextsReply, error)
 
 	// Command StartRuleUsageTracking
 	//
 	// Enables the selector recording.
 	StartRuleUsageTracking(context.Context) error
 
-	// Command TakeCoverageDelta
-	//
-	// Obtain list of rules that became used since last call to this method (or since start of coverage instrumentation)
-	TakeCoverageDelta(context.Context) (*css.TakeCoverageDeltaReply, error)
-
 	// Command StopRuleUsageTracking
 	//
 	// The list of rules with an indication of whether these were used
 	StopRuleUsageTracking(context.Context) (*css.StopRuleUsageTrackingReply, error)
 
-	// Event MediaQueryResultChanged
+	// Command TakeCoverageDelta
 	//
-	// Fires whenever a MediaQuery result changes (for example, after a browser window has been resized.) The current implementation considers only viewport-dependent media features.
-	MediaQueryResultChanged(context.Context) (css.MediaQueryResultChangedClient, error)
+	// Obtain list of rules that became used since last call to this method (or since start of coverage instrumentation)
+	TakeCoverageDelta(context.Context) (*css.TakeCoverageDeltaReply, error)
 
 	// Event FontsUpdated
 	//
 	// Fires whenever a web font gets loaded.
 	FontsUpdated(context.Context) (css.FontsUpdatedClient, error)
 
-	// Event StyleSheetChanged
+	// Event MediaQueryResultChanged
 	//
-	// Fired whenever a stylesheet is changed as a result of the client operation.
-	StyleSheetChanged(context.Context) (css.StyleSheetChangedClient, error)
+	// Fires whenever a MediaQuery result changes (for example, after a browser window has been resized.) The current implementation considers only viewport-dependent media features.
+	MediaQueryResultChanged(context.Context) (css.MediaQueryResultChangedClient, error)
 
 	// Event StyleSheetAdded
 	//
 	// Fired whenever an active document stylesheet is added.
 	StyleSheetAdded(context.Context) (css.StyleSheetAddedClient, error)
+
+	// Event StyleSheetChanged
+	//
+	// Fired whenever a stylesheet is changed as a result of the client operation.
+	StyleSheetChanged(context.Context) (css.StyleSheetChangedClient, error)
 
 	// Event StyleSheetRemoved
 	//
@@ -345,16 +345,6 @@ type CSS interface {
 //
 // Note: This domain is experimental.
 type CacheStorage interface {
-	// Command RequestCacheNames
-	//
-	// Requests cache names.
-	RequestCacheNames(context.Context, *cachestorage.RequestCacheNamesArgs) (*cachestorage.RequestCacheNamesReply, error)
-
-	// Command RequestEntries
-	//
-	// Requests data from cache.
-	RequestEntries(context.Context, *cachestorage.RequestEntriesArgs) (*cachestorage.RequestEntriesReply, error)
-
 	// Command DeleteCache
 	//
 	// Deletes a cache.
@@ -365,10 +355,20 @@ type CacheStorage interface {
 	// Deletes a cache entry.
 	DeleteEntry(context.Context, *cachestorage.DeleteEntryArgs) error
 
+	// Command RequestCacheNames
+	//
+	// Requests cache names.
+	RequestCacheNames(context.Context, *cachestorage.RequestCacheNamesArgs) (*cachestorage.RequestCacheNamesReply, error)
+
 	// Command RequestCachedResponse
 	//
 	// Fetches cache entry.
 	RequestCachedResponse(context.Context, *cachestorage.RequestCachedResponseArgs) (*cachestorage.RequestCachedResponseReply, error)
+
+	// Command RequestEntries
+	//
+	// Requests data from cache.
+	RequestEntries(context.Context, *cachestorage.RequestEntriesArgs) (*cachestorage.RequestEntriesReply, error)
 }
 
 // The Console domain.
@@ -396,19 +396,60 @@ type Console interface {
 	MessageAdded(context.Context) (console.MessageAddedClient, error)
 }
 
-// The DOM domain. This domain exposes DOM read/write operations. Each DOM Node is represented with its mirror object that has an id. This id can be used to get additional information on the Node, resolve it into the JavaScript object wrapper, etc. It is important that client receives DOM events only for the nodes that are known to the client. Backend keeps track of the nodes that were sent to the client and never sends the same node twice. It is client's responsibility to collect information about the nodes that were sent to the client.
+// The DOM domain. This domain exposes DOM read/write operations. Each DOM Node is represented with its mirror object that has an `id`. This `id` can be used to get additional information on the Node, resolve it into the JavaScript object wrapper, etc. It is important that client receives DOM events only for the nodes that are known to the client. Backend keeps track of the nodes that were sent to the client and never sends the same node twice. It is client's responsibility to collect information about the nodes that were sent to the client.
 //
-// Note that iframe owner elements will return corresponding document elements as their child nodes.
+// Note that `iframe` owner elements will return corresponding document elements as their child nodes.
 type DOM interface {
-	// Command Enable
+	// Command CollectClassNamesFromSubtree
 	//
-	// Enables DOM agent for the given page.
-	Enable(context.Context) error
+	// Collects class names for the node with given id and all of it's child nodes.
+	//
+	// Note: This command is experimental.
+	CollectClassNamesFromSubtree(context.Context, *dom.CollectClassNamesFromSubtreeArgs) (*dom.CollectClassNamesFromSubtreeReply, error)
+
+	// Command CopyTo
+	//
+	// Creates a deep copy of the specified node and places it into the target container before the given anchor.
+	//
+	// Note: This command is experimental.
+	CopyTo(context.Context, *dom.CopyToArgs) (*dom.CopyToReply, error)
+
+	// Command DescribeNode
+	//
+	// Describes node given its id, does not require domain to be enabled. Does not start tracking any objects, can be used for automation.
+	DescribeNode(context.Context, *dom.DescribeNodeArgs) (*dom.DescribeNodeReply, error)
 
 	// Command Disable
 	//
 	// Disables DOM agent for the given page.
 	Disable(context.Context) error
+
+	// Command DiscardSearchResults
+	//
+	// Discards search results from the session with the given id. `getSearchResults` should no longer be called for that search.
+	//
+	// Note: This command is experimental.
+	DiscardSearchResults(context.Context, *dom.DiscardSearchResultsArgs) error
+
+	// Command Enable
+	//
+	// Enables DOM agent for the given page.
+	Enable(context.Context) error
+
+	// Command Focus
+	//
+	// Focuses the given element.
+	Focus(context.Context, *dom.FocusArgs) error
+
+	// Command GetAttributes
+	//
+	// Returns attributes for the specified node.
+	GetAttributes(context.Context, *dom.GetAttributesArgs) (*dom.GetAttributesReply, error)
+
+	// Command GetBoxModel
+	//
+	// Returns boxes for the given node.
+	GetBoxModel(context.Context, *dom.GetBoxModelArgs) (*dom.GetBoxModelReply, error)
 
 	// Command GetDocument
 	//
@@ -420,93 +461,50 @@ type DOM interface {
 	// Returns the root DOM node (and optionally the subtree) to the caller.
 	GetFlattenedDocument(context.Context, *dom.GetFlattenedDocumentArgs) (*dom.GetFlattenedDocumentReply, error)
 
-	// Command CollectClassNamesFromSubtree
+	// Command GetNodeForLocation
 	//
-	// Collects class names for the node with given id and all of it's child nodes.
+	// Returns node id at given location.
 	//
 	// Note: This command is experimental.
-	CollectClassNamesFromSubtree(context.Context, *dom.CollectClassNamesFromSubtreeArgs) (*dom.CollectClassNamesFromSubtreeReply, error)
-
-	// Command RequestChildNodes
-	//
-	// Requests that children of the node with given id are returned to the caller in form of setChildNodes events where not only immediate children are retrieved, but all children down to the specified depth.
-	RequestChildNodes(context.Context, *dom.RequestChildNodesArgs) error
-
-	// Command QuerySelector
-	//
-	// Executes querySelector on a given node.
-	QuerySelector(context.Context, *dom.QuerySelectorArgs) (*dom.QuerySelectorReply, error)
-
-	// Command QuerySelectorAll
-	//
-	// Executes querySelectorAll on a given node.
-	QuerySelectorAll(context.Context, *dom.QuerySelectorAllArgs) (*dom.QuerySelectorAllReply, error)
-
-	// Command SetNodeName
-	//
-	// Sets node name for a node with given id.
-	SetNodeName(context.Context, *dom.SetNodeNameArgs) (*dom.SetNodeNameReply, error)
-
-	// Command SetNodeValue
-	//
-	// Sets node value for a node with given id.
-	SetNodeValue(context.Context, *dom.SetNodeValueArgs) error
-
-	// Command RemoveNode
-	//
-	// Removes node with given id.
-	RemoveNode(context.Context, *dom.RemoveNodeArgs) error
-
-	// Command SetAttributeValue
-	//
-	// Sets attribute for an element with given id.
-	SetAttributeValue(context.Context, *dom.SetAttributeValueArgs) error
-
-	// Command SetAttributesAsText
-	//
-	// Sets attributes on element with given id. This method is useful when user edits some existing attribute value and types in several attribute name/value pairs.
-	SetAttributesAsText(context.Context, *dom.SetAttributesAsTextArgs) error
-
-	// Command RemoveAttribute
-	//
-	// Removes attribute with given name from an element with given id.
-	RemoveAttribute(context.Context, *dom.RemoveAttributeArgs) error
+	GetNodeForLocation(context.Context, *dom.GetNodeForLocationArgs) (*dom.GetNodeForLocationReply, error)
 
 	// Command GetOuterHTML
 	//
 	// Returns node's HTML markup.
 	GetOuterHTML(context.Context, *dom.GetOuterHTMLArgs) (*dom.GetOuterHTMLReply, error)
 
-	// Command SetOuterHTML
+	// Command GetRelayoutBoundary
 	//
-	// Sets node HTML markup, returns new node id.
-	SetOuterHTML(context.Context, *dom.SetOuterHTMLArgs) error
-
-	// Command PerformSearch
-	//
-	// Searches for a given string in the DOM tree. Use getSearchResults to access search results or cancelSearch to end this search session.
+	// Returns the id of the nearest ancestor that is a relayout boundary.
 	//
 	// Note: This command is experimental.
-	PerformSearch(context.Context, *dom.PerformSearchArgs) (*dom.PerformSearchReply, error)
+	GetRelayoutBoundary(context.Context, *dom.GetRelayoutBoundaryArgs) (*dom.GetRelayoutBoundaryReply, error)
 
 	// Command GetSearchResults
 	//
-	// Returns search results from given fromIndex to given toIndex from the search with the given identifier.
+	// Returns search results from given `fromIndex` to given `toIndex` from the search with the given identifier.
 	//
 	// Note: This command is experimental.
 	GetSearchResults(context.Context, *dom.GetSearchResultsArgs) (*dom.GetSearchResultsReply, error)
 
-	// Command DiscardSearchResults
+	// Command MarkUndoableState
 	//
-	// Discards search results from the session with the given id. getSearchResults should no longer be called for that search.
+	// Marks last undoable state.
 	//
 	// Note: This command is experimental.
-	DiscardSearchResults(context.Context, *dom.DiscardSearchResultsArgs) error
+	MarkUndoableState(context.Context) error
 
-	// Command RequestNode
+	// Command MoveTo
 	//
-	// Requests that the node is sent to the caller given the JavaScript node object reference. All nodes that form the path from the node to the root are also sent to the client as a series of setChildNodes notifications.
-	RequestNode(context.Context, *dom.RequestNodeArgs) (*dom.RequestNodeReply, error)
+	// Moves node into the new container, places it before the given anchor.
+	MoveTo(context.Context, *dom.MoveToArgs) (*dom.MoveToReply, error)
+
+	// Command PerformSearch
+	//
+	// Searches for a given string in the DOM tree. Use `getSearchResults` to access search results or `cancelSearch` to end this search session.
+	//
+	// Note: This command is experimental.
+	PerformSearch(context.Context, *dom.PerformSearchArgs) (*dom.PerformSearchReply, error)
 
 	// Command PushNodeByPathToFrontend
 	//
@@ -522,41 +520,15 @@ type DOM interface {
 	// Note: This command is experimental.
 	PushNodesByBackendIdsToFrontend(context.Context, *dom.PushNodesByBackendIdsToFrontendArgs) (*dom.PushNodesByBackendIdsToFrontendReply, error)
 
-	// Command SetInspectedNode
+	// Command QuerySelector
 	//
-	// Enables console to refer to the node with given id via $x (see Command Line API for more details $x functions).
-	//
-	// Note: This command is experimental.
-	SetInspectedNode(context.Context, *dom.SetInspectedNodeArgs) error
+	// Executes `querySelector` on a given node.
+	QuerySelector(context.Context, *dom.QuerySelectorArgs) (*dom.QuerySelectorReply, error)
 
-	// Command ResolveNode
+	// Command QuerySelectorAll
 	//
-	// Resolves the JavaScript node object for a given NodeId or BackendNodeId.
-	ResolveNode(context.Context, *dom.ResolveNodeArgs) (*dom.ResolveNodeReply, error)
-
-	// Command GetAttributes
-	//
-	// Returns attributes for the specified node.
-	GetAttributes(context.Context, *dom.GetAttributesArgs) (*dom.GetAttributesReply, error)
-
-	// Command CopyTo
-	//
-	// Creates a deep copy of the specified node and places it into the target container before the given anchor.
-	//
-	// Note: This command is experimental.
-	CopyTo(context.Context, *dom.CopyToArgs) (*dom.CopyToReply, error)
-
-	// Command MoveTo
-	//
-	// Moves node into the new container, places it before the given anchor.
-	MoveTo(context.Context, *dom.MoveToArgs) (*dom.MoveToReply, error)
-
-	// Command Undo
-	//
-	// Undoes the last performed action.
-	//
-	// Note: This command is experimental.
-	Undo(context.Context) error
+	// Executes `querySelectorAll` on a given node.
+	QuerySelectorAll(context.Context, *dom.QuerySelectorAllArgs) (*dom.QuerySelectorAllReply, error)
 
 	// Command Redo
 	//
@@ -565,107 +537,123 @@ type DOM interface {
 	// Note: This command is experimental.
 	Redo(context.Context) error
 
-	// Command MarkUndoableState
+	// Command RemoveAttribute
 	//
-	// Marks last undoable state.
-	//
-	// Note: This command is experimental.
-	MarkUndoableState(context.Context) error
+	// Removes attribute with given name from an element with given id.
+	RemoveAttribute(context.Context, *dom.RemoveAttributeArgs) error
 
-	// Command Focus
+	// Command RemoveNode
 	//
-	// Focuses the given element.
-	Focus(context.Context, *dom.FocusArgs) error
+	// Removes node with given id.
+	RemoveNode(context.Context, *dom.RemoveNodeArgs) error
+
+	// Command RequestChildNodes
+	//
+	// Requests that children of the node with given id are returned to the caller in form of `setChildNodes` events where not only immediate children are retrieved, but all children down to the specified depth.
+	RequestChildNodes(context.Context, *dom.RequestChildNodesArgs) error
+
+	// Command RequestNode
+	//
+	// Requests that the node is sent to the caller given the JavaScript node object reference. All nodes that form the path from the node to the root are also sent to the client as a series of `setChildNodes` notifications.
+	RequestNode(context.Context, *dom.RequestNodeArgs) (*dom.RequestNodeReply, error)
+
+	// Command ResolveNode
+	//
+	// Resolves the JavaScript node object for a given NodeId or BackendNodeId.
+	ResolveNode(context.Context, *dom.ResolveNodeArgs) (*dom.ResolveNodeReply, error)
+
+	// Command SetAttributeValue
+	//
+	// Sets attribute for an element with given id.
+	SetAttributeValue(context.Context, *dom.SetAttributeValueArgs) error
+
+	// Command SetAttributesAsText
+	//
+	// Sets attributes on element with given id. This method is useful when user edits some existing attribute value and types in several attribute name/value pairs.
+	SetAttributesAsText(context.Context, *dom.SetAttributesAsTextArgs) error
 
 	// Command SetFileInputFiles
 	//
 	// Sets files for the given file input element.
 	SetFileInputFiles(context.Context, *dom.SetFileInputFilesArgs) error
 
-	// Command GetBoxModel
+	// Command SetInspectedNode
 	//
-	// Returns boxes for the given node.
-	GetBoxModel(context.Context, *dom.GetBoxModelArgs) (*dom.GetBoxModelReply, error)
-
-	// Command GetNodeForLocation
-	//
-	// Returns node id at given location.
+	// Enables console to refer to the node with given id via $x (see Command Line API for more details $x functions).
 	//
 	// Note: This command is experimental.
-	GetNodeForLocation(context.Context, *dom.GetNodeForLocationArgs) (*dom.GetNodeForLocationReply, error)
+	SetInspectedNode(context.Context, *dom.SetInspectedNodeArgs) error
 
-	// Command GetRelayoutBoundary
+	// Command SetNodeName
 	//
-	// Returns the id of the nearest ancestor that is a relayout boundary.
+	// Sets node name for a node with given id.
+	SetNodeName(context.Context, *dom.SetNodeNameArgs) (*dom.SetNodeNameReply, error)
+
+	// Command SetNodeValue
+	//
+	// Sets node value for a node with given id.
+	SetNodeValue(context.Context, *dom.SetNodeValueArgs) error
+
+	// Command SetOuterHTML
+	//
+	// Sets node HTML markup, returns new node id.
+	SetOuterHTML(context.Context, *dom.SetOuterHTMLArgs) error
+
+	// Command Undo
+	//
+	// Undoes the last performed action.
 	//
 	// Note: This command is experimental.
-	GetRelayoutBoundary(context.Context, *dom.GetRelayoutBoundaryArgs) (*dom.GetRelayoutBoundaryReply, error)
-
-	// Command DescribeNode
-	//
-	// Describes node given its id, does not require domain to be enabled. Does not start tracking any objects, can be used for automation.
-	DescribeNode(context.Context, *dom.DescribeNodeArgs) (*dom.DescribeNodeReply, error)
-
-	// Event DocumentUpdated
-	//
-	// Fired when Document has been totally updated. Node ids are no longer valid.
-	DocumentUpdated(context.Context) (dom.DocumentUpdatedClient, error)
-
-	// Event SetChildNodes
-	//
-	// Fired when backend wants to provide client with the missing DOM structure. This happens upon most of the calls requesting node ids.
-	SetChildNodes(context.Context) (dom.SetChildNodesClient, error)
+	Undo(context.Context) error
 
 	// Event AttributeModified
 	//
-	// Fired when Element's attribute is modified.
+	// Fired when `Element`'s attribute is modified.
 	AttributeModified(context.Context) (dom.AttributeModifiedClient, error)
 
 	// Event AttributeRemoved
 	//
-	// Fired when Element's attribute is removed.
+	// Fired when `Element`'s attribute is removed.
 	AttributeRemoved(context.Context) (dom.AttributeRemovedClient, error)
-
-	// Event InlineStyleInvalidated
-	//
-	// Fired when Element's inline style is modified via a CSS property modification.
-	//
-	// Note: This event is experimental.
-	InlineStyleInvalidated(context.Context) (dom.InlineStyleInvalidatedClient, error)
 
 	// Event CharacterDataModified
 	//
-	// Mirrors DOMCharacterDataModified event.
+	// Mirrors `DOMCharacterDataModified` event.
 	CharacterDataModified(context.Context) (dom.CharacterDataModifiedClient, error)
 
 	// Event ChildNodeCountUpdated
 	//
-	// Fired when Container's child node count has changed.
+	// Fired when `Container`'s child node count has changed.
 	ChildNodeCountUpdated(context.Context) (dom.ChildNodeCountUpdatedClient, error)
 
 	// Event ChildNodeInserted
 	//
-	// Mirrors DOMNodeInserted event.
+	// Mirrors `DOMNodeInserted` event.
 	ChildNodeInserted(context.Context) (dom.ChildNodeInsertedClient, error)
 
 	// Event ChildNodeRemoved
 	//
-	// Mirrors DOMNodeRemoved event.
+	// Mirrors `DOMNodeRemoved` event.
 	ChildNodeRemoved(context.Context) (dom.ChildNodeRemovedClient, error)
 
-	// Event ShadowRootPushed
+	// Event DistributedNodesUpdated
 	//
-	// Called when shadow root is pushed into the element.
+	// Called when distribution is changed.
 	//
 	// Note: This event is experimental.
-	ShadowRootPushed(context.Context) (dom.ShadowRootPushedClient, error)
+	DistributedNodesUpdated(context.Context) (dom.DistributedNodesUpdatedClient, error)
 
-	// Event ShadowRootPopped
+	// Event DocumentUpdated
 	//
-	// Called when shadow root is popped from the element.
+	// Fired when `Document` has been totally updated. Node ids are no longer valid.
+	DocumentUpdated(context.Context) (dom.DocumentUpdatedClient, error)
+
+	// Event InlineStyleInvalidated
+	//
+	// Fired when `Element`'s inline style is modified via a CSS property modification.
 	//
 	// Note: This event is experimental.
-	ShadowRootPopped(context.Context) (dom.ShadowRootPoppedClient, error)
+	InlineStyleInvalidated(context.Context) (dom.InlineStyleInvalidatedClient, error)
 
 	// Event PseudoElementAdded
 	//
@@ -681,42 +669,42 @@ type DOM interface {
 	// Note: This event is experimental.
 	PseudoElementRemoved(context.Context) (dom.PseudoElementRemovedClient, error)
 
-	// Event DistributedNodesUpdated
+	// Event SetChildNodes
 	//
-	// Called when distribution is changed.
+	// Fired when backend wants to provide client with the missing DOM structure. This happens upon most of the calls requesting node ids.
+	SetChildNodes(context.Context) (dom.SetChildNodesClient, error)
+
+	// Event ShadowRootPopped
+	//
+	// Called when shadow root is popped from the element.
 	//
 	// Note: This event is experimental.
-	DistributedNodesUpdated(context.Context) (dom.DistributedNodesUpdatedClient, error)
+	ShadowRootPopped(context.Context) (dom.ShadowRootPoppedClient, error)
+
+	// Event ShadowRootPushed
+	//
+	// Called when shadow root is pushed into the element.
+	//
+	// Note: This event is experimental.
+	ShadowRootPushed(context.Context) (dom.ShadowRootPushedClient, error)
 }
 
 // The DOMDebugger domain. DOM debugging allows setting breakpoints on particular DOM operations and events. JavaScript execution will stop on these operations as if there was a regular breakpoint set.
 type DOMDebugger interface {
-	// Command SetDOMBreakpoint
+	// Command GetEventListeners
 	//
-	// Sets breakpoint on particular operation with DOM.
-	SetDOMBreakpoint(context.Context, *domdebugger.SetDOMBreakpointArgs) error
+	// Returns event listeners of the given object.
+	GetEventListeners(context.Context, *domdebugger.GetEventListenersArgs) (*domdebugger.GetEventListenersReply, error)
 
 	// Command RemoveDOMBreakpoint
 	//
-	// Removes DOM breakpoint that was set using setDOMBreakpoint.
+	// Removes DOM breakpoint that was set using `setDOMBreakpoint`.
 	RemoveDOMBreakpoint(context.Context, *domdebugger.RemoveDOMBreakpointArgs) error
-
-	// Command SetEventListenerBreakpoint
-	//
-	// Sets breakpoint on particular DOM event.
-	SetEventListenerBreakpoint(context.Context, *domdebugger.SetEventListenerBreakpointArgs) error
 
 	// Command RemoveEventListenerBreakpoint
 	//
 	// Removes breakpoint on particular DOM event.
 	RemoveEventListenerBreakpoint(context.Context, *domdebugger.RemoveEventListenerBreakpointArgs) error
-
-	// Command SetInstrumentationBreakpoint
-	//
-	// Sets breakpoint on particular native event.
-	//
-	// Note: This command is experimental.
-	SetInstrumentationBreakpoint(context.Context, *domdebugger.SetInstrumentationBreakpointArgs) error
 
 	// Command RemoveInstrumentationBreakpoint
 	//
@@ -725,20 +713,32 @@ type DOMDebugger interface {
 	// Note: This command is experimental.
 	RemoveInstrumentationBreakpoint(context.Context, *domdebugger.RemoveInstrumentationBreakpointArgs) error
 
-	// Command SetXHRBreakpoint
-	//
-	// Sets breakpoint on XMLHttpRequest.
-	SetXHRBreakpoint(context.Context, *domdebugger.SetXHRBreakpointArgs) error
-
 	// Command RemoveXHRBreakpoint
 	//
 	// Removes breakpoint from XMLHttpRequest.
 	RemoveXHRBreakpoint(context.Context, *domdebugger.RemoveXHRBreakpointArgs) error
 
-	// Command GetEventListeners
+	// Command SetDOMBreakpoint
 	//
-	// Returns event listeners of the given object.
-	GetEventListeners(context.Context, *domdebugger.GetEventListenersArgs) (*domdebugger.GetEventListenersReply, error)
+	// Sets breakpoint on particular operation with DOM.
+	SetDOMBreakpoint(context.Context, *domdebugger.SetDOMBreakpointArgs) error
+
+	// Command SetEventListenerBreakpoint
+	//
+	// Sets breakpoint on particular DOM event.
+	SetEventListenerBreakpoint(context.Context, *domdebugger.SetEventListenerBreakpointArgs) error
+
+	// Command SetInstrumentationBreakpoint
+	//
+	// Sets breakpoint on particular native event.
+	//
+	// Note: This command is experimental.
+	SetInstrumentationBreakpoint(context.Context, *domdebugger.SetInstrumentationBreakpointArgs) error
+
+	// Command SetXHRBreakpoint
+	//
+	// Sets breakpoint on XMLHttpRequest.
+	SetXHRBreakpoint(context.Context, *domdebugger.SetXHRBreakpointArgs) error
 }
 
 // The DOMSnapshot domain. This domain facilitates obtaining document snapshots with DOM, layout, and style information.
@@ -755,60 +755,60 @@ type DOMSnapshot interface {
 //
 // Note: This domain is experimental.
 type DOMStorage interface {
-	// Command Enable
-	//
-	// Enables storage tracking, storage events will now be delivered to the client.
-	Enable(context.Context) error
+	// Command Clear
+	Clear(context.Context, *domstorage.ClearArgs) error
 
 	// Command Disable
 	//
 	// Disables storage tracking, prevents storage events from being sent to the client.
 	Disable(context.Context) error
 
-	// Command Clear
-	Clear(context.Context, *domstorage.ClearArgs) error
+	// Command Enable
+	//
+	// Enables storage tracking, storage events will now be delivered to the client.
+	Enable(context.Context) error
 
 	// Command GetDOMStorageItems
 	GetDOMStorageItems(context.Context, *domstorage.GetDOMStorageItemsArgs) (*domstorage.GetDOMStorageItemsReply, error)
 
-	// Command SetDOMStorageItem
-	SetDOMStorageItem(context.Context, *domstorage.SetDOMStorageItemArgs) error
-
 	// Command RemoveDOMStorageItem
 	RemoveDOMStorageItem(context.Context, *domstorage.RemoveDOMStorageItemArgs) error
 
-	// Event DOMStorageItemsCleared
-	DOMStorageItemsCleared(context.Context) (domstorage.ItemsClearedClient, error)
-
-	// Event DOMStorageItemRemoved
-	DOMStorageItemRemoved(context.Context) (domstorage.ItemRemovedClient, error)
+	// Command SetDOMStorageItem
+	SetDOMStorageItem(context.Context, *domstorage.SetDOMStorageItemArgs) error
 
 	// Event DOMStorageItemAdded
 	DOMStorageItemAdded(context.Context) (domstorage.ItemAddedClient, error)
 
+	// Event DOMStorageItemRemoved
+	DOMStorageItemRemoved(context.Context) (domstorage.ItemRemovedClient, error)
+
 	// Event DOMStorageItemUpdated
 	DOMStorageItemUpdated(context.Context) (domstorage.ItemUpdatedClient, error)
+
+	// Event DOMStorageItemsCleared
+	DOMStorageItemsCleared(context.Context) (domstorage.ItemsClearedClient, error)
 }
 
 // The Database domain.
 //
 // Note: This domain is experimental.
 type Database interface {
-	// Command Enable
-	//
-	// Enables database tracking, database events will now be delivered to the client.
-	Enable(context.Context) error
-
 	// Command Disable
 	//
 	// Disables database tracking, prevents database events from being sent to the client.
 	Disable(context.Context) error
 
-	// Command GetDatabaseTableNames
-	GetDatabaseTableNames(context.Context, *database.GetDatabaseTableNamesArgs) (*database.GetDatabaseTableNamesReply, error)
+	// Command Enable
+	//
+	// Enables database tracking, database events will now be delivered to the client.
+	Enable(context.Context) error
 
 	// Command ExecuteSQL
 	ExecuteSQL(context.Context, *database.ExecuteSQLArgs) (*database.ExecuteSQLReply, error)
+
+	// Command GetDatabaseTableNames
+	GetDatabaseTableNames(context.Context, *database.GetDatabaseTableNamesArgs) (*database.GetDatabaseTableNamesReply, error)
 
 	// Event AddDatabase
 	AddDatabase(context.Context) (database.AddDatabaseClient, error)
@@ -819,7 +819,7 @@ type Debugger interface {
 	// Command Enable
 	//
 	// Enables debugger for the given page. Clients should not assume that the debugging has been enabled until the result for this command is received.
-	Enable(context.Context) error
+	Enable(context.Context) (*debugger.EnableReply, error)
 
 	// Command Disable
 	//
@@ -854,8 +854,6 @@ type Debugger interface {
 	// Command GetPossibleBreakpoints
 	//
 	// Returns possible locations for breakpoint. scriptId in start and end range locations should be the same.
-	//
-	// Note: This command is experimental.
 	GetPossibleBreakpoints(context.Context, *debugger.GetPossibleBreakpointsArgs) (*debugger.GetPossibleBreakpointsReply, error)
 
 	// Command ContinueToLocation
@@ -863,10 +861,10 @@ type Debugger interface {
 	// Continues execution until specific location is reached.
 	ContinueToLocation(context.Context, *debugger.ContinueToLocationArgs) error
 
-	// Command PauseOnAsyncTask
+	// Command PauseOnAsyncCall
 	//
 	// Note: This command is experimental.
-	PauseOnAsyncTask(context.Context, *debugger.PauseOnAsyncTaskArgs) error
+	PauseOnAsyncCall(context.Context, *debugger.PauseOnAsyncCallArgs) error
 
 	// Command StepOver
 	//
@@ -900,11 +898,16 @@ type Debugger interface {
 	// Resumes JavaScript execution.
 	Resume(context.Context) error
 
+	// Command GetStackTrace
+	//
+	// Returns stack trace with given stackTraceId.
+	//
+	// Note: This command is experimental.
+	GetStackTrace(context.Context, *debugger.GetStackTraceArgs) (*debugger.GetStackTraceReply, error)
+
 	// Command SearchInContent
 	//
 	// Searches for given string in script content.
-	//
-	// Note: This command is experimental.
 	SearchInContent(context.Context, *debugger.SearchInContentArgs) (*debugger.SearchInContentReply, error)
 
 	// Command SetScriptSource
@@ -993,28 +996,33 @@ type Debugger interface {
 //
 // Note: This domain is experimental.
 type DeviceOrientation interface {
-	// Command SetDeviceOrientationOverride
-	//
-	// Overrides the Device Orientation.
-	SetDeviceOrientationOverride(context.Context, *deviceorientation.SetDeviceOrientationOverrideArgs) error
-
 	// Command ClearDeviceOrientationOverride
 	//
 	// Clears the overridden Device Orientation.
 	ClearDeviceOrientationOverride(context.Context) error
+
+	// Command SetDeviceOrientationOverride
+	//
+	// Overrides the Device Orientation.
+	SetDeviceOrientationOverride(context.Context, *deviceorientation.SetDeviceOrientationOverrideArgs) error
 }
 
 // The Emulation domain. This domain emulates different environments for the page.
 type Emulation interface {
-	// Command SetDeviceMetricsOverride
+	// Command CanEmulate
 	//
-	// Overrides the values of device screen dimensions (window.screen.width, window.screen.height, window.innerWidth, window.innerHeight, and "device-width"/"device-height"-related CSS media query results).
-	SetDeviceMetricsOverride(context.Context, *emulation.SetDeviceMetricsOverrideArgs) error
+	// Tells whether emulation is supported.
+	CanEmulate(context.Context) (*emulation.CanEmulateReply, error)
 
 	// Command ClearDeviceMetricsOverride
 	//
 	// Clears the overridden device metrics.
 	ClearDeviceMetricsOverride(context.Context) error
+
+	// Command ClearGeolocationOverride
+	//
+	// Clears the overridden Geolocation Position and Error.
+	ClearGeolocationOverride(context.Context) error
 
 	// Command ResetPageScaleFactor
 	//
@@ -1023,39 +1031,22 @@ type Emulation interface {
 	// Note: This command is experimental.
 	ResetPageScaleFactor(context.Context) error
 
-	// Command SetPageScaleFactor
+	// Command SetCPUThrottlingRate
 	//
-	// Sets a specified page scale factor.
-	//
-	// Note: This command is experimental.
-	SetPageScaleFactor(context.Context, *emulation.SetPageScaleFactorArgs) error
-
-	// Command SetVisibleSize
-	//
-	// Deprecated: Resizes the frame/viewport of the page. Note that this does not affect the frame's container (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported on Android.
+	// Enables CPU throttling to emulate slow CPUs.
 	//
 	// Note: This command is experimental.
-	SetVisibleSize(context.Context, *emulation.SetVisibleSizeArgs) error
+	SetCPUThrottlingRate(context.Context, *emulation.SetCPUThrottlingRateArgs) error
 
-	// Command SetScriptExecutionDisabled
+	// Command SetDefaultBackgroundColorOverride
 	//
-	// Switches script execution in the page.
-	SetScriptExecutionDisabled(context.Context, *emulation.SetScriptExecutionDisabledArgs) error
+	// Sets or clears an override of the default background color of the frame. This override is used if the content does not specify one.
+	SetDefaultBackgroundColorOverride(context.Context, *emulation.SetDefaultBackgroundColorOverrideArgs) error
 
-	// Command SetGeolocationOverride
+	// Command SetDeviceMetricsOverride
 	//
-	// Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position unavailable.
-	SetGeolocationOverride(context.Context, *emulation.SetGeolocationOverrideArgs) error
-
-	// Command ClearGeolocationOverride
-	//
-	// Clears the overridden Geolocation Position and Error.
-	ClearGeolocationOverride(context.Context) error
-
-	// Command SetTouchEmulationEnabled
-	//
-	// Enables touch on platforms which do not support them.
-	SetTouchEmulationEnabled(context.Context, *emulation.SetTouchEmulationEnabledArgs) error
+	// Overrides the values of device screen dimensions (window.screen.width, window.screen.height, window.innerWidth, window.innerHeight, and "device-width"/"device-height"-related CSS media query results).
+	SetDeviceMetricsOverride(context.Context, *emulation.SetDeviceMetricsOverrideArgs) error
 
 	// Command SetEmitTouchEventsForMouse
 	//
@@ -1067,24 +1058,10 @@ type Emulation interface {
 	// Emulates the given media for CSS media queries.
 	SetEmulatedMedia(context.Context, *emulation.SetEmulatedMediaArgs) error
 
-	// Command SetCPUThrottlingRate
+	// Command SetGeolocationOverride
 	//
-	// Enables CPU throttling to emulate slow CPUs.
-	//
-	// Note: This command is experimental.
-	SetCPUThrottlingRate(context.Context, *emulation.SetCPUThrottlingRateArgs) error
-
-	// Command CanEmulate
-	//
-	// Tells whether emulation is supported.
-	CanEmulate(context.Context) (*emulation.CanEmulateReply, error)
-
-	// Command SetVirtualTimePolicy
-	//
-	// Turns on virtual time for all frames (replacing real-time with a synthetic time source) and sets the current virtual time policy.  Note this supersedes any previous time budget.
-	//
-	// Note: This command is experimental.
-	SetVirtualTimePolicy(context.Context, *emulation.SetVirtualTimePolicyArgs) (*emulation.SetVirtualTimePolicyReply, error)
+	// Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position unavailable.
+	SetGeolocationOverride(context.Context, *emulation.SetGeolocationOverrideArgs) error
 
 	// Command SetNavigatorOverrides
 	//
@@ -1093,17 +1070,36 @@ type Emulation interface {
 	// Note: This command is experimental.
 	SetNavigatorOverrides(context.Context, *emulation.SetNavigatorOverridesArgs) error
 
-	// Command SetDefaultBackgroundColorOverride
+	// Command SetPageScaleFactor
 	//
-	// Sets or clears an override of the default background color of the frame. This override is used if the content does not specify one.
-	SetDefaultBackgroundColorOverride(context.Context, *emulation.SetDefaultBackgroundColorOverrideArgs) error
+	// Sets a specified page scale factor.
+	//
+	// Note: This command is experimental.
+	SetPageScaleFactor(context.Context, *emulation.SetPageScaleFactorArgs) error
 
-	// Event VirtualTimeBudgetExpired
+	// Command SetScriptExecutionDisabled
 	//
-	// Notification sent after the virtual time budget for the current VirtualTimePolicy has run out.
+	// Switches script execution in the page.
+	SetScriptExecutionDisabled(context.Context, *emulation.SetScriptExecutionDisabledArgs) error
+
+	// Command SetTouchEmulationEnabled
 	//
-	// Note: This event is experimental.
-	VirtualTimeBudgetExpired(context.Context) (emulation.VirtualTimeBudgetExpiredClient, error)
+	// Enables touch on platforms which do not support them.
+	SetTouchEmulationEnabled(context.Context, *emulation.SetTouchEmulationEnabledArgs) error
+
+	// Command SetVirtualTimePolicy
+	//
+	// Turns on virtual time for all frames (replacing real-time with a synthetic time source) and sets the current virtual time policy.  Note this supersedes any previous time budget.
+	//
+	// Note: This command is experimental.
+	SetVirtualTimePolicy(context.Context, *emulation.SetVirtualTimePolicyArgs) (*emulation.SetVirtualTimePolicyReply, error)
+
+	// Command SetVisibleSize
+	//
+	// Deprecated: Resizes the frame/viewport of the page. Note that this does not affect the frame's container (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported on Android.
+	//
+	// Note: This command is experimental.
+	SetVisibleSize(context.Context, *emulation.SetVisibleSizeArgs) error
 
 	// Event VirtualTimeAdvanced
 	//
@@ -1111,6 +1107,13 @@ type Emulation interface {
 	//
 	// Note: This event is experimental.
 	VirtualTimeAdvanced(context.Context) (emulation.VirtualTimeAdvancedClient, error)
+
+	// Event VirtualTimeBudgetExpired
+	//
+	// Notification sent after the virtual time budget for the current VirtualTimePolicy has run out.
+	//
+	// Note: This event is experimental.
+	VirtualTimeBudgetExpired(context.Context) (emulation.VirtualTimeBudgetExpiredClient, error)
 
 	// Event VirtualTimePaused
 	//
@@ -1124,30 +1127,30 @@ type Emulation interface {
 //
 // Note: This domain is experimental.
 type HeadlessExperimental interface {
-	// Command Enable
+	// Command BeginFrame
 	//
-	// Enables headless events for the target.
-	Enable(context.Context) error
+	// Sends a BeginFrame to the target and returns when the frame was completed. Optionally captures a screenshot from the resulting frame. Requires that the target was created with enabled BeginFrameControl.
+	BeginFrame(context.Context, *headlessexperimental.BeginFrameArgs) (*headlessexperimental.BeginFrameReply, error)
 
 	// Command Disable
 	//
 	// Disables headless events for the target.
 	Disable(context.Context) error
 
-	// Command BeginFrame
+	// Command Enable
 	//
-	// Sends a BeginFrame to the target and returns when the frame was completed. Optionally captures a screenshot from the resulting frame. Requires that the target was created with enabled BeginFrameControl.
-	BeginFrame(context.Context, *headlessexperimental.BeginFrameArgs) (*headlessexperimental.BeginFrameReply, error)
-
-	// Event NeedsBeginFramesChanged
-	//
-	// Issued when the target starts or stops needing BeginFrames.
-	NeedsBeginFramesChanged(context.Context) (headlessexperimental.NeedsBeginFramesChangedClient, error)
+	// Enables headless events for the target.
+	Enable(context.Context) error
 
 	// Event MainFrameReadyForScreenshots
 	//
 	// Issued when the main frame has first submitted a frame to the browser. May only be fired while a BeginFrame is in flight. Before this event, screenshotting requests may fail.
 	MainFrameReadyForScreenshots(context.Context) (headlessexperimental.MainFrameReadyForScreenshotsClient, error)
+
+	// Event NeedsBeginFramesChanged
+	//
+	// Issued when the target starts or stops needing BeginFrames.
+	NeedsBeginFramesChanged(context.Context) (headlessexperimental.NeedsBeginFramesChangedClient, error)
 }
 
 // The HeapProfiler domain.
@@ -1214,15 +1217,15 @@ type HeapProfiler interface {
 
 // The IO domain. Input/Output operations for streams produced by DevTools.
 type IO interface {
-	// Command Read
-	//
-	// Read a chunk of the stream
-	Read(context.Context, *io.ReadArgs) (*io.ReadReply, error)
-
 	// Command Close
 	//
 	// Close the stream, discard any temporary backing storage.
 	Close(context.Context, *io.CloseArgs) error
+
+	// Command Read
+	//
+	// Read a chunk of the stream
+	Read(context.Context, *io.ReadArgs) (*io.ReadReply, error)
 
 	// Command ResolveBlob
 	//
@@ -1234,31 +1237,6 @@ type IO interface {
 //
 // Note: This domain is experimental.
 type IndexedDB interface {
-	// Command Enable
-	//
-	// Enables events from backend.
-	Enable(context.Context) error
-
-	// Command Disable
-	//
-	// Disables events from backend.
-	Disable(context.Context) error
-
-	// Command RequestDatabaseNames
-	//
-	// Requests database names for given security origin.
-	RequestDatabaseNames(context.Context, *indexeddb.RequestDatabaseNamesArgs) (*indexeddb.RequestDatabaseNamesReply, error)
-
-	// Command RequestDatabase
-	//
-	// Requests database with given name in given frame.
-	RequestDatabase(context.Context, *indexeddb.RequestDatabaseArgs) (*indexeddb.RequestDatabaseReply, error)
-
-	// Command RequestData
-	//
-	// Requests data from object store or index.
-	RequestData(context.Context, *indexeddb.RequestDataArgs) (*indexeddb.RequestDataReply, error)
-
 	// Command ClearObjectStore
 	//
 	// Clears all entries from an object store.
@@ -1268,15 +1246,35 @@ type IndexedDB interface {
 	//
 	// Deletes a database.
 	DeleteDatabase(context.Context, *indexeddb.DeleteDatabaseArgs) error
+
+	// Command Disable
+	//
+	// Disables events from backend.
+	Disable(context.Context) error
+
+	// Command Enable
+	//
+	// Enables events from backend.
+	Enable(context.Context) error
+
+	// Command RequestData
+	//
+	// Requests data from object store or index.
+	RequestData(context.Context, *indexeddb.RequestDataArgs) (*indexeddb.RequestDataReply, error)
+
+	// Command RequestDatabase
+	//
+	// Requests database with given name in given frame.
+	RequestDatabase(context.Context, *indexeddb.RequestDatabaseArgs) (*indexeddb.RequestDatabaseReply, error)
+
+	// Command RequestDatabaseNames
+	//
+	// Requests database names for given security origin.
+	RequestDatabaseNames(context.Context, *indexeddb.RequestDatabaseNamesArgs) (*indexeddb.RequestDatabaseNamesReply, error)
 }
 
 // The Input domain.
 type Input interface {
-	// Command SetIgnoreInputEvents
-	//
-	// Ignores input events (useful while auditing page).
-	SetIgnoreInputEvents(context.Context, *input.SetIgnoreInputEventsArgs) error
-
 	// Command DispatchKeyEvent
 	//
 	// Dispatches a key event to the page.
@@ -1298,6 +1296,11 @@ type Input interface {
 	//
 	// Note: This command is experimental.
 	EmulateTouchFromMouseEvent(context.Context, *input.EmulateTouchFromMouseEventArgs) error
+
+	// Command SetIgnoreInputEvents
+	//
+	// Ignores input events (useful while auditing page).
+	SetIgnoreInputEvents(context.Context, *input.SetIgnoreInputEventsArgs) error
 
 	// Command SynthesizePinchGesture
 	//
@@ -1325,15 +1328,15 @@ type Input interface {
 //
 // Note: This domain is experimental.
 type Inspector interface {
-	// Command Enable
-	//
-	// Enables inspector domain notifications.
-	Enable(context.Context) error
-
 	// Command Disable
 	//
 	// Disables inspector domain notifications.
 	Disable(context.Context) error
+
+	// Command Enable
+	//
+	// Enables inspector domain notifications.
+	Enable(context.Context) error
 
 	// Event Detached
 	//
@@ -1350,38 +1353,38 @@ type Inspector interface {
 //
 // Note: This domain is experimental.
 type LayerTree interface {
-	// Command Enable
+	// Command CompositingReasons
 	//
-	// Enables compositing tree inspection.
-	Enable(context.Context) error
+	// Provides the reasons why the given layer was composited.
+	CompositingReasons(context.Context, *layertree.CompositingReasonsArgs) (*layertree.CompositingReasonsReply, error)
 
 	// Command Disable
 	//
 	// Disables compositing tree inspection.
 	Disable(context.Context) error
 
-	// Command CompositingReasons
+	// Command Enable
 	//
-	// Provides the reasons why the given layer was composited.
-	CompositingReasons(context.Context, *layertree.CompositingReasonsArgs) (*layertree.CompositingReasonsReply, error)
-
-	// Command MakeSnapshot
-	//
-	// Returns the layer snapshot identifier.
-	MakeSnapshot(context.Context, *layertree.MakeSnapshotArgs) (*layertree.MakeSnapshotReply, error)
+	// Enables compositing tree inspection.
+	Enable(context.Context) error
 
 	// Command LoadSnapshot
 	//
 	// Returns the snapshot identifier.
 	LoadSnapshot(context.Context, *layertree.LoadSnapshotArgs) (*layertree.LoadSnapshotReply, error)
 
+	// Command MakeSnapshot
+	//
+	// Returns the layer snapshot identifier.
+	MakeSnapshot(context.Context, *layertree.MakeSnapshotArgs) (*layertree.MakeSnapshotReply, error)
+
+	// Command ProfileSnapshot
+	ProfileSnapshot(context.Context, *layertree.ProfileSnapshotArgs) (*layertree.ProfileSnapshotReply, error)
+
 	// Command ReleaseSnapshot
 	//
 	// Releases layer snapshot captured by the back-end.
 	ReleaseSnapshot(context.Context, *layertree.ReleaseSnapshotArgs) error
-
-	// Command ProfileSnapshot
-	ProfileSnapshot(context.Context, *layertree.ProfileSnapshotArgs) (*layertree.ProfileSnapshotReply, error)
 
 	// Command ReplaySnapshot
 	//
@@ -1393,29 +1396,29 @@ type LayerTree interface {
 	// Replays the layer snapshot and returns canvas log.
 	SnapshotCommandLog(context.Context, *layertree.SnapshotCommandLogArgs) (*layertree.SnapshotCommandLogReply, error)
 
-	// Event LayerTreeDidChange
-	LayerTreeDidChange(context.Context) (layertree.DidChangeClient, error)
-
 	// Event LayerPainted
 	LayerPainted(context.Context) (layertree.LayerPaintedClient, error)
+
+	// Event LayerTreeDidChange
+	LayerTreeDidChange(context.Context) (layertree.DidChangeClient, error)
 }
 
 // The Log domain. Provides access to log entries.
 type Log interface {
-	// Command Enable
+	// Command Clear
 	//
-	// Enables log domain, sends the entries collected so far to the client by means of the entryAdded notification.
-	Enable(context.Context) error
+	// Clears the log.
+	Clear(context.Context) error
 
 	// Command Disable
 	//
 	// Disables log domain, prevents further log entries from being reported to the client.
 	Disable(context.Context) error
 
-	// Command Clear
+	// Command Enable
 	//
-	// Clears the log.
-	Clear(context.Context) error
+	// Enables log domain, sends the entries collected so far to the client by means of the `entryAdded` notification.
+	Enable(context.Context) error
 
 	// Command StartViolationsReport
 	//
@@ -1456,44 +1459,86 @@ type Memory interface {
 
 // The Network domain. Network domain allows tracking network activities of the page. It exposes information about http, file, data and other requests and responses, their headers, bodies, timing, etc.
 type Network interface {
-	// Command Enable
+	// Command CanClearBrowserCache
 	//
-	// Enables network tracking, network events will now be delivered to the client.
-	Enable(context.Context, *network.EnableArgs) error
+	// Deprecated: Tells whether clearing browser cache is supported.
+	CanClearBrowserCache(context.Context) (*network.CanClearBrowserCacheReply, error)
+
+	// Command CanClearBrowserCookies
+	//
+	// Deprecated: Tells whether clearing browser cookies is supported.
+	CanClearBrowserCookies(context.Context) (*network.CanClearBrowserCookiesReply, error)
+
+	// Command CanEmulateNetworkConditions
+	//
+	// Deprecated: Tells whether emulation of network conditions is supported.
+	CanEmulateNetworkConditions(context.Context) (*network.CanEmulateNetworkConditionsReply, error)
+
+	// Command ClearBrowserCache
+	//
+	// Clears browser cache.
+	ClearBrowserCache(context.Context) error
+
+	// Command ClearBrowserCookies
+	//
+	// Clears browser cookies.
+	ClearBrowserCookies(context.Context) error
+
+	// Command ContinueInterceptedRequest
+	//
+	// Response to Network.requestIntercepted which either modifies the request to continue with any modifications, or blocks it, or completes it with the provided response bytes. If a network fetch occurs as a result which encounters a redirect an additional Network.requestIntercepted event will be sent with the same InterceptionId.
+	//
+	// Note: This command is experimental.
+	ContinueInterceptedRequest(context.Context, *network.ContinueInterceptedRequestArgs) error
+
+	// Command DeleteCookies
+	//
+	// Deletes browser cookies with matching name and url or domain/path pair.
+	DeleteCookies(context.Context, *network.DeleteCookiesArgs) error
 
 	// Command Disable
 	//
 	// Disables network tracking, prevents network events from being sent to the client.
 	Disable(context.Context) error
 
-	// Command SetUserAgentOverride
+	// Command EmulateNetworkConditions
 	//
-	// Allows overriding user agent with the given string.
-	SetUserAgentOverride(context.Context, *network.SetUserAgentOverrideArgs) error
+	// Activates emulation of network conditions.
+	EmulateNetworkConditions(context.Context, *network.EmulateNetworkConditionsArgs) error
 
-	// Command SearchInResponseBody
+	// Command Enable
 	//
-	// Searches for given string in response content.
+	// Enables network tracking, network events will now be delivered to the client.
+	Enable(context.Context, *network.EnableArgs) error
+
+	// Command GetAllCookies
+	//
+	// Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the `cookies` field.
+	GetAllCookies(context.Context) (*network.GetAllCookiesReply, error)
+
+	// Command GetCertificate
+	//
+	// Returns the DER-encoded certificate.
 	//
 	// Note: This command is experimental.
-	SearchInResponseBody(context.Context, *network.SearchInResponseBodyArgs) (*network.SearchInResponseBodyReply, error)
+	GetCertificate(context.Context, *network.GetCertificateArgs) (*network.GetCertificateReply, error)
 
-	// Command SetExtraHTTPHeaders
+	// Command GetCookies
 	//
-	// Specifies whether to always send extra HTTP headers with the requests from this page.
-	SetExtraHTTPHeaders(context.Context, *network.SetExtraHTTPHeadersArgs) error
+	// Returns all browser cookies for the current URL. Depending on the backend support, will return detailed cookie information in the `cookies` field.
+	GetCookies(context.Context, *network.GetCookiesArgs) (*network.GetCookiesReply, error)
 
 	// Command GetResponseBody
 	//
 	// Returns content served for the given request.
 	GetResponseBody(context.Context, *network.GetResponseBodyArgs) (*network.GetResponseBodyReply, error)
 
-	// Command SetBlockedURLs
+	// Command GetResponseBodyForInterception
 	//
-	// Blocks URLs from loading.
+	// Returns content served for the given currently intercepted request.
 	//
 	// Note: This command is experimental.
-	SetBlockedURLs(context.Context, *network.SetBlockedURLsArgs) error
+	GetResponseBodyForInterception(context.Context, *network.GetResponseBodyForInterceptionArgs) (*network.GetResponseBodyForInterceptionReply, error)
 
 	// Command ReplayXHR
 	//
@@ -1502,40 +1547,31 @@ type Network interface {
 	// Note: This command is experimental.
 	ReplayXHR(context.Context, *network.ReplayXHRArgs) error
 
-	// Command CanClearBrowserCache
+	// Command SearchInResponseBody
 	//
-	// Deprecated: Tells whether clearing browser cache is supported.
-	CanClearBrowserCache(context.Context) (*network.CanClearBrowserCacheReply, error)
+	// Searches for given string in response content.
+	//
+	// Note: This command is experimental.
+	SearchInResponseBody(context.Context, *network.SearchInResponseBodyArgs) (*network.SearchInResponseBodyReply, error)
 
-	// Command ClearBrowserCache
+	// Command SetBlockedURLs
 	//
-	// Clears browser cache.
-	ClearBrowserCache(context.Context) error
+	// Blocks URLs from loading.
+	//
+	// Note: This command is experimental.
+	SetBlockedURLs(context.Context, *network.SetBlockedURLsArgs) error
 
-	// Command CanClearBrowserCookies
+	// Command SetBypassServiceWorker
 	//
-	// Deprecated: Tells whether clearing browser cookies is supported.
-	CanClearBrowserCookies(context.Context) (*network.CanClearBrowserCookiesReply, error)
+	// Toggles ignoring of service worker for each request.
+	//
+	// Note: This command is experimental.
+	SetBypassServiceWorker(context.Context, *network.SetBypassServiceWorkerArgs) error
 
-	// Command ClearBrowserCookies
+	// Command SetCacheDisabled
 	//
-	// Clears browser cookies.
-	ClearBrowserCookies(context.Context) error
-
-	// Command GetCookies
-	//
-	// Returns all browser cookies for the current URL. Depending on the backend support, will return detailed cookie information in the cookies field.
-	GetCookies(context.Context, *network.GetCookiesArgs) (*network.GetCookiesReply, error)
-
-	// Command GetAllCookies
-	//
-	// Returns all browser cookies. Depending on the backend support, will return detailed cookie information in the cookies field.
-	GetAllCookies(context.Context) (*network.GetAllCookiesReply, error)
-
-	// Command DeleteCookies
-	//
-	// Deletes browser cookies with matching name and url or domain/path pair.
-	DeleteCookies(context.Context, *network.DeleteCookiesArgs) error
+	// Toggles ignoring cache for each request. If `true`, cache will not be used.
+	SetCacheDisabled(context.Context, *network.SetCacheDisabledArgs) error
 
 	// Command SetCookie
 	//
@@ -1547,28 +1583,6 @@ type Network interface {
 	// Sets given cookies.
 	SetCookies(context.Context, *network.SetCookiesArgs) error
 
-	// Command CanEmulateNetworkConditions
-	//
-	// Deprecated: Tells whether emulation of network conditions is supported.
-	CanEmulateNetworkConditions(context.Context) (*network.CanEmulateNetworkConditionsReply, error)
-
-	// Command EmulateNetworkConditions
-	//
-	// Activates emulation of network conditions.
-	EmulateNetworkConditions(context.Context, *network.EmulateNetworkConditionsArgs) error
-
-	// Command SetCacheDisabled
-	//
-	// Toggles ignoring cache for each request. If true, cache will not be used.
-	SetCacheDisabled(context.Context, *network.SetCacheDisabledArgs) error
-
-	// Command SetBypassServiceWorker
-	//
-	// Toggles ignoring of service worker for each request.
-	//
-	// Note: This command is experimental.
-	SetBypassServiceWorker(context.Context, *network.SetBypassServiceWorkerArgs) error
-
 	// Command SetDataSizeLimitsForTest
 	//
 	// For testing.
@@ -1576,12 +1590,10 @@ type Network interface {
 	// Note: This command is experimental.
 	SetDataSizeLimitsForTest(context.Context, *network.SetDataSizeLimitsForTestArgs) error
 
-	// Command GetCertificate
+	// Command SetExtraHTTPHeaders
 	//
-	// Returns the DER-encoded certificate.
-	//
-	// Note: This command is experimental.
-	GetCertificate(context.Context, *network.GetCertificateArgs) (*network.GetCertificateReply, error)
+	// Specifies whether to always send extra HTTP headers with the requests from this page.
+	SetExtraHTTPHeaders(context.Context, *network.SetExtraHTTPHeadersArgs) error
 
 	// Command SetRequestInterception
 	//
@@ -1590,19 +1602,47 @@ type Network interface {
 	// Note: This command is experimental.
 	SetRequestInterception(context.Context, *network.SetRequestInterceptionArgs) error
 
-	// Command ContinueInterceptedRequest
+	// Command SetUserAgentOverride
 	//
-	// Response to Network.requestIntercepted which either modifies the request to continue with any modifications, or blocks it, or completes it with the provided response bytes. If a network fetch occurs as a result which encounters a redirect an additional Network.requestIntercepted event will be sent with the same InterceptionId.
-	//
-	// Note: This command is experimental.
-	ContinueInterceptedRequest(context.Context, *network.ContinueInterceptedRequestArgs) error
+	// Allows overriding user agent with the given string.
+	SetUserAgentOverride(context.Context, *network.SetUserAgentOverrideArgs) error
 
-	// Command GetResponseBodyForInterception
+	// Event DataReceived
 	//
-	// Returns content served for the given currently intercepted request.
+	// Fired when data chunk was received over the network.
+	DataReceived(context.Context) (network.DataReceivedClient, error)
+
+	// Event EventSourceMessageReceived
 	//
-	// Note: This command is experimental.
-	GetResponseBodyForInterception(context.Context, *network.GetResponseBodyForInterceptionArgs) (*network.GetResponseBodyForInterceptionReply, error)
+	// Fired when EventSource message is received.
+	EventSourceMessageReceived(context.Context) (network.EventSourceMessageReceivedClient, error)
+
+	// Event LoadingFailed
+	//
+	// Fired when HTTP request has failed to load.
+	LoadingFailed(context.Context) (network.LoadingFailedClient, error)
+
+	// Event LoadingFinished
+	//
+	// Fired when HTTP request has finished loading.
+	LoadingFinished(context.Context) (network.LoadingFinishedClient, error)
+
+	// Event RequestIntercepted
+	//
+	// Details of an intercepted HTTP request, which must be either allowed, blocked, modified or mocked.
+	//
+	// Note: This event is experimental.
+	RequestIntercepted(context.Context) (network.RequestInterceptedClient, error)
+
+	// Event RequestServedFromCache
+	//
+	// Fired if request ended up loading from cache.
+	RequestServedFromCache(context.Context) (network.RequestServedFromCacheClient, error)
+
+	// Event RequestWillBeSent
+	//
+	// Fired when page is about to send HTTP request.
+	RequestWillBeSent(context.Context) (network.RequestWillBeSentClient, error)
 
 	// Event ResourceChangedPriority
 	//
@@ -1611,102 +1651,98 @@ type Network interface {
 	// Note: This event is experimental.
 	ResourceChangedPriority(context.Context) (network.ResourceChangedPriorityClient, error)
 
-	// Event RequestWillBeSent
-	//
-	// Fired when page is about to send HTTP request.
-	RequestWillBeSent(context.Context) (network.RequestWillBeSentClient, error)
-
-	// Event RequestServedFromCache
-	//
-	// Fired if request ended up loading from cache.
-	RequestServedFromCache(context.Context) (network.RequestServedFromCacheClient, error)
-
 	// Event ResponseReceived
 	//
 	// Fired when HTTP response is available.
 	ResponseReceived(context.Context) (network.ResponseReceivedClient, error)
-
-	// Event DataReceived
-	//
-	// Fired when data chunk was received over the network.
-	DataReceived(context.Context) (network.DataReceivedClient, error)
-
-	// Event LoadingFinished
-	//
-	// Fired when HTTP request has finished loading.
-	LoadingFinished(context.Context) (network.LoadingFinishedClient, error)
-
-	// Event LoadingFailed
-	//
-	// Fired when HTTP request has failed to load.
-	LoadingFailed(context.Context) (network.LoadingFailedClient, error)
-
-	// Event WebSocketWillSendHandshakeRequest
-	//
-	// Fired when WebSocket is about to initiate handshake.
-	WebSocketWillSendHandshakeRequest(context.Context) (network.WebSocketWillSendHandshakeRequestClient, error)
-
-	// Event WebSocketHandshakeResponseReceived
-	//
-	// Fired when WebSocket handshake response becomes available.
-	WebSocketHandshakeResponseReceived(context.Context) (network.WebSocketHandshakeResponseReceivedClient, error)
-
-	// Event WebSocketCreated
-	//
-	// Fired upon WebSocket creation.
-	WebSocketCreated(context.Context) (network.WebSocketCreatedClient, error)
 
 	// Event WebSocketClosed
 	//
 	// Fired when WebSocket is closed.
 	WebSocketClosed(context.Context) (network.WebSocketClosedClient, error)
 
-	// Event WebSocketFrameReceived
+	// Event WebSocketCreated
 	//
-	// Fired when WebSocket frame is received.
-	WebSocketFrameReceived(context.Context) (network.WebSocketFrameReceivedClient, error)
+	// Fired upon WebSocket creation.
+	WebSocketCreated(context.Context) (network.WebSocketCreatedClient, error)
 
 	// Event WebSocketFrameError
 	//
 	// Fired when WebSocket frame error occurs.
 	WebSocketFrameError(context.Context) (network.WebSocketFrameErrorClient, error)
 
+	// Event WebSocketFrameReceived
+	//
+	// Fired when WebSocket frame is received.
+	WebSocketFrameReceived(context.Context) (network.WebSocketFrameReceivedClient, error)
+
 	// Event WebSocketFrameSent
 	//
 	// Fired when WebSocket frame is sent.
 	WebSocketFrameSent(context.Context) (network.WebSocketFrameSentClient, error)
 
-	// Event EventSourceMessageReceived
+	// Event WebSocketHandshakeResponseReceived
 	//
-	// Fired when EventSource message is received.
-	EventSourceMessageReceived(context.Context) (network.EventSourceMessageReceivedClient, error)
+	// Fired when WebSocket handshake response becomes available.
+	WebSocketHandshakeResponseReceived(context.Context) (network.WebSocketHandshakeResponseReceivedClient, error)
 
-	// Event RequestIntercepted
+	// Event WebSocketWillSendHandshakeRequest
 	//
-	// Details of an intercepted HTTP request, which must be either allowed, blocked, modified or mocked.
-	//
-	// Note: This event is experimental.
-	RequestIntercepted(context.Context) (network.RequestInterceptedClient, error)
+	// Fired when WebSocket is about to initiate handshake.
+	WebSocketWillSendHandshakeRequest(context.Context) (network.WebSocketWillSendHandshakeRequestClient, error)
 }
 
 // The Overlay domain. This domain provides various functionality related to drawing atop the inspected page.
 //
 // Note: This domain is experimental.
 type Overlay interface {
-	// Command Enable
-	//
-	// Enables domain notifications.
-	Enable(context.Context) error
-
 	// Command Disable
 	//
 	// Disables domain notifications.
 	Disable(context.Context) error
 
-	// Command SetShowPaintRects
+	// Command Enable
 	//
-	// Requests that backend shows paint rectangles
-	SetShowPaintRects(context.Context, *overlay.SetShowPaintRectsArgs) error
+	// Enables domain notifications.
+	Enable(context.Context) error
+
+	// Command GetHighlightObjectForTest
+	//
+	// For testing.
+	GetHighlightObjectForTest(context.Context, *overlay.GetHighlightObjectForTestArgs) (*overlay.GetHighlightObjectForTestReply, error)
+
+	// Command HideHighlight
+	//
+	// Hides any highlight.
+	HideHighlight(context.Context) error
+
+	// Command HighlightFrame
+	//
+	// Highlights owner element of the frame with given id.
+	HighlightFrame(context.Context, *overlay.HighlightFrameArgs) error
+
+	// Command HighlightNode
+	//
+	// Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified.
+	HighlightNode(context.Context, *overlay.HighlightNodeArgs) error
+
+	// Command HighlightQuad
+	//
+	// Highlights given quad. Coordinates are absolute with respect to the main frame viewport.
+	HighlightQuad(context.Context, *overlay.HighlightQuadArgs) error
+
+	// Command HighlightRect
+	//
+	// Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.
+	HighlightRect(context.Context, *overlay.HighlightRectArgs) error
+
+	// Command SetInspectMode
+	//
+	// Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspectNodeRequested' event upon element selection.
+	SetInspectMode(context.Context, *overlay.SetInspectModeArgs) error
+
+	// Command SetPausedInDebuggerMessage
+	SetPausedInDebuggerMessage(context.Context, *overlay.SetPausedInDebuggerMessageArgs) error
 
 	// Command SetShowDebugBorders
 	//
@@ -1718,6 +1754,11 @@ type Overlay interface {
 	// Requests that backend shows the FPS counter
 	SetShowFPSCounter(context.Context, *overlay.SetShowFPSCounterArgs) error
 
+	// Command SetShowPaintRects
+	//
+	// Requests that backend shows paint rectangles
+	SetShowPaintRects(context.Context, *overlay.SetShowPaintRectsArgs) error
+
 	// Command SetShowScrollBottleneckRects
 	//
 	// Requests that backend shows scroll bottleneck rects
@@ -1728,56 +1769,18 @@ type Overlay interface {
 	// Paints viewport size upon main frame resize.
 	SetShowViewportSizeOnResize(context.Context, *overlay.SetShowViewportSizeOnResizeArgs) error
 
-	// Command SetPausedInDebuggerMessage
-	SetPausedInDebuggerMessage(context.Context, *overlay.SetPausedInDebuggerMessageArgs) error
-
 	// Command SetSuspended
 	SetSuspended(context.Context, *overlay.SetSuspendedArgs) error
 
-	// Command SetInspectMode
+	// Event InspectNodeRequested
 	//
-	// Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspectNodeRequested' event upon element selection.
-	SetInspectMode(context.Context, *overlay.SetInspectModeArgs) error
-
-	// Command HighlightRect
-	//
-	// Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport.
-	HighlightRect(context.Context, *overlay.HighlightRectArgs) error
-
-	// Command HighlightQuad
-	//
-	// Highlights given quad. Coordinates are absolute with respect to the main frame viewport.
-	HighlightQuad(context.Context, *overlay.HighlightQuadArgs) error
-
-	// Command HighlightNode
-	//
-	// Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified.
-	HighlightNode(context.Context, *overlay.HighlightNodeArgs) error
-
-	// Command HighlightFrame
-	//
-	// Highlights owner element of the frame with given id.
-	HighlightFrame(context.Context, *overlay.HighlightFrameArgs) error
-
-	// Command HideHighlight
-	//
-	// Hides any highlight.
-	HideHighlight(context.Context) error
-
-	// Command GetHighlightObjectForTest
-	//
-	// For testing.
-	GetHighlightObjectForTest(context.Context, *overlay.GetHighlightObjectForTestArgs) (*overlay.GetHighlightObjectForTestReply, error)
+	// Fired when the node should be inspected. This happens after call to `setInspectMode` or when user manually inspects an element.
+	InspectNodeRequested(context.Context) (overlay.InspectNodeRequestedClient, error)
 
 	// Event NodeHighlightRequested
 	//
-	// Fired when the node should be highlighted. This happens after call to setInspectMode.
+	// Fired when the node should be highlighted. This happens after call to `setInspectMode`.
 	NodeHighlightRequested(context.Context) (overlay.NodeHighlightRequestedClient, error)
-
-	// Event InspectNodeRequested
-	//
-	// Fired when the node should be inspected. This happens after call to setInspectMode or when user manually inspects an element.
-	InspectNodeRequested(context.Context) (overlay.InspectNodeRequestedClient, error)
 
 	// Event ScreenshotRequested
 	//
@@ -1787,16 +1790,6 @@ type Overlay interface {
 
 // The Page domain. Actions and events related to the inspected page belong to the page domain.
 type Page interface {
-	// Command Enable
-	//
-	// Enables page domain notifications.
-	Enable(context.Context) error
-
-	// Command Disable
-	//
-	// Disables page domain notifications.
-	Disable(context.Context) error
-
 	// Command AddScriptToEvaluateOnLoad
 	//
 	// Deprecated: Please use addScriptToEvaluateOnNewDocument instead.
@@ -1804,80 +1797,53 @@ type Page interface {
 	// Note: This command is experimental.
 	AddScriptToEvaluateOnLoad(context.Context, *page.AddScriptToEvaluateOnLoadArgs) (*page.AddScriptToEvaluateOnLoadReply, error)
 
-	// Command RemoveScriptToEvaluateOnLoad
-	//
-	// Deprecated: Please use removeScriptToEvaluateOnNewDocument instead.
-	//
-	// Note: This command is experimental.
-	RemoveScriptToEvaluateOnLoad(context.Context, *page.RemoveScriptToEvaluateOnLoadArgs) error
-
 	// Command AddScriptToEvaluateOnNewDocument
 	//
 	// Evaluates given script in every frame upon creation (before loading frame's scripts).
 	AddScriptToEvaluateOnNewDocument(context.Context, *page.AddScriptToEvaluateOnNewDocumentArgs) (*page.AddScriptToEvaluateOnNewDocumentReply, error)
 
-	// Command RemoveScriptToEvaluateOnNewDocument
+	// Command BringToFront
 	//
-	// Removes given script from the list.
-	RemoveScriptToEvaluateOnNewDocument(context.Context, *page.RemoveScriptToEvaluateOnNewDocumentArgs) error
+	// Brings page to front (activates tab).
+	BringToFront(context.Context) error
 
-	// Command SetAutoAttachToCreatedPages
+	// Command CaptureScreenshot
 	//
-	// Controls whether browser will open a new inspector window for connected pages.
-	//
-	// Note: This command is experimental.
-	SetAutoAttachToCreatedPages(context.Context, *page.SetAutoAttachToCreatedPagesArgs) error
+	// Capture page screenshot.
+	CaptureScreenshot(context.Context, *page.CaptureScreenshotArgs) (*page.CaptureScreenshotReply, error)
 
-	// Command SetLifecycleEventsEnabled
+	// Command CreateIsolatedWorld
 	//
-	// Controls whether page will emit lifecycle events.
-	//
-	// Note: This command is experimental.
-	SetLifecycleEventsEnabled(context.Context, *page.SetLifecycleEventsEnabledArgs) error
+	// Creates an isolated world for the given frame.
+	CreateIsolatedWorld(context.Context, *page.CreateIsolatedWorldArgs) (*page.CreateIsolatedWorldReply, error)
 
-	// Command Reload
+	// Command Disable
 	//
-	// Reloads given page optionally ignoring the cache.
-	Reload(context.Context, *page.ReloadArgs) error
+	// Disables page domain notifications.
+	Disable(context.Context) error
 
-	// Command SetAdBlockingEnabled
+	// Command Enable
 	//
-	// Enable Chrome's experimental ad filter on all sites.
-	//
-	// Note: This command is experimental.
-	SetAdBlockingEnabled(context.Context, *page.SetAdBlockingEnabledArgs) error
+	// Enables page domain notifications.
+	Enable(context.Context) error
 
-	// Command Navigate
-	//
-	// Navigates current page to the given URL.
-	Navigate(context.Context, *page.NavigateArgs) (*page.NavigateReply, error)
-
-	// Command StopLoading
-	//
-	// Force the page stop all navigations and pending resource fetches.
-	StopLoading(context.Context) error
-
-	// Command GetNavigationHistory
-	//
-	// Returns navigation history for the current page.
-	GetNavigationHistory(context.Context) (*page.GetNavigationHistoryReply, error)
-
-	// Command NavigateToHistoryEntry
-	//
-	// Navigates current page to the given history entry.
-	NavigateToHistoryEntry(context.Context, *page.NavigateToHistoryEntryArgs) error
-
-	// Command GetResourceTree
-	//
-	// Returns present frame / resource tree structure.
-	//
-	// Note: This command is experimental.
-	GetResourceTree(context.Context) (*page.GetResourceTreeReply, error)
+	// Command GetAppManifest
+	GetAppManifest(context.Context) (*page.GetAppManifestReply, error)
 
 	// Command GetFrameTree
 	//
 	// Returns present frame tree structure.
 	GetFrameTree(context.Context) (*page.GetFrameTreeReply, error)
+
+	// Command GetLayoutMetrics
+	//
+	// Returns metrics relating to the layouting of the page, such as viewport bounds/scale.
+	GetLayoutMetrics(context.Context) (*page.GetLayoutMetricsReply, error)
+
+	// Command GetNavigationHistory
+	//
+	// Returns navigation history for the current page.
+	GetNavigationHistory(context.Context) (*page.GetNavigationHistoryReply, error)
 
 	// Command GetResourceContent
 	//
@@ -1886,41 +1852,54 @@ type Page interface {
 	// Note: This command is experimental.
 	GetResourceContent(context.Context, *page.GetResourceContentArgs) (*page.GetResourceContentReply, error)
 
-	// Command SearchInResource
+	// Command GetResourceTree
 	//
-	// Searches for given string in resource content.
+	// Returns present frame / resource tree structure.
 	//
 	// Note: This command is experimental.
-	SearchInResource(context.Context, *page.SearchInResourceArgs) (*page.SearchInResourceReply, error)
+	GetResourceTree(context.Context) (*page.GetResourceTreeReply, error)
 
-	// Command SetDocumentContent
+	// Command HandleJavaScriptDialog
 	//
-	// Sets given markup as the document's HTML.
-	SetDocumentContent(context.Context, *page.SetDocumentContentArgs) error
+	// Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).
+	HandleJavaScriptDialog(context.Context, *page.HandleJavaScriptDialogArgs) error
 
-	// Command CaptureScreenshot
+	// Command Navigate
 	//
-	// Capture page screenshot.
-	CaptureScreenshot(context.Context, *page.CaptureScreenshotArgs) (*page.CaptureScreenshotReply, error)
+	// Navigates current page to the given URL.
+	Navigate(context.Context, *page.NavigateArgs) (*page.NavigateReply, error)
+
+	// Command NavigateToHistoryEntry
+	//
+	// Navigates current page to the given history entry.
+	NavigateToHistoryEntry(context.Context, *page.NavigateToHistoryEntryArgs) error
 
 	// Command PrintToPDF
 	//
 	// Print page as PDF.
 	PrintToPDF(context.Context, *page.PrintToPDFArgs) (*page.PrintToPDFReply, error)
 
-	// Command StartScreencast
+	// Command Reload
 	//
-	// Starts sending each frame using the screencastFrame event.
-	//
-	// Note: This command is experimental.
-	StartScreencast(context.Context, *page.StartScreencastArgs) error
+	// Reloads given page optionally ignoring the cache.
+	Reload(context.Context, *page.ReloadArgs) error
 
-	// Command StopScreencast
+	// Command RemoveScriptToEvaluateOnLoad
 	//
-	// Stops sending each frame in the screencastFrame.
+	// Deprecated: Please use removeScriptToEvaluateOnNewDocument instead.
 	//
 	// Note: This command is experimental.
-	StopScreencast(context.Context) error
+	RemoveScriptToEvaluateOnLoad(context.Context, *page.RemoveScriptToEvaluateOnLoadArgs) error
+
+	// Command RemoveScriptToEvaluateOnNewDocument
+	//
+	// Removes given script from the list.
+	RemoveScriptToEvaluateOnNewDocument(context.Context, *page.RemoveScriptToEvaluateOnNewDocumentArgs) error
+
+	// Command RequestAppBanner
+	//
+	// Note: This command is experimental.
+	RequestAppBanner(context.Context) error
 
 	// Command ScreencastFrameAck
 	//
@@ -1929,33 +1908,31 @@ type Page interface {
 	// Note: This command is experimental.
 	ScreencastFrameAck(context.Context, *page.ScreencastFrameAckArgs) error
 
-	// Command HandleJavaScriptDialog
+	// Command SearchInResource
 	//
-	// Accepts or dismisses a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload).
-	HandleJavaScriptDialog(context.Context, *page.HandleJavaScriptDialogArgs) error
-
-	// Command GetAppManifest
-	GetAppManifest(context.Context) (*page.GetAppManifestReply, error)
-
-	// Command RequestAppBanner
+	// Searches for given string in resource content.
 	//
 	// Note: This command is experimental.
-	RequestAppBanner(context.Context) error
+	SearchInResource(context.Context, *page.SearchInResourceArgs) (*page.SearchInResourceReply, error)
 
-	// Command GetLayoutMetrics
+	// Command SetAdBlockingEnabled
 	//
-	// Returns metrics relating to the layouting of the page, such as viewport bounds/scale.
-	GetLayoutMetrics(context.Context) (*page.GetLayoutMetricsReply, error)
+	// Enable Chrome's experimental ad filter on all sites.
+	//
+	// Note: This command is experimental.
+	SetAdBlockingEnabled(context.Context, *page.SetAdBlockingEnabledArgs) error
 
-	// Command CreateIsolatedWorld
+	// Command SetAutoAttachToCreatedPages
 	//
-	// Creates an isolated world for the given frame.
-	CreateIsolatedWorld(context.Context, *page.CreateIsolatedWorldArgs) (*page.CreateIsolatedWorldReply, error)
+	// Controls whether browser will open a new inspector window for connected pages.
+	//
+	// Note: This command is experimental.
+	SetAutoAttachToCreatedPages(context.Context, *page.SetAutoAttachToCreatedPagesArgs) error
 
-	// Command BringToFront
+	// Command SetDocumentContent
 	//
-	// Brings page to front (activates tab).
-	BringToFront(context.Context) error
+	// Sets given markup as the document's HTML.
+	SetDocumentContent(context.Context, *page.SetDocumentContentArgs) error
 
 	// Command SetDownloadBehavior
 	//
@@ -1964,31 +1941,68 @@ type Page interface {
 	// Note: This command is experimental.
 	SetDownloadBehavior(context.Context, *page.SetDownloadBehaviorArgs) error
 
+	// Command SetLifecycleEventsEnabled
+	//
+	// Controls whether page will emit lifecycle events.
+	//
+	// Note: This command is experimental.
+	SetLifecycleEventsEnabled(context.Context, *page.SetLifecycleEventsEnabledArgs) error
+
+	// Command StartScreencast
+	//
+	// Starts sending each frame using the `screencastFrame` event.
+	//
+	// Note: This command is experimental.
+	StartScreencast(context.Context, *page.StartScreencastArgs) error
+
+	// Command StopLoading
+	//
+	// Force the page stop all navigations and pending resource fetches.
+	StopLoading(context.Context) error
+
+	// Command StopScreencast
+	//
+	// Stops sending each frame in the `screencastFrame`.
+	//
+	// Note: This command is experimental.
+	StopScreencast(context.Context) error
+
 	// Event DOMContentEventFired
 	DOMContentEventFired(context.Context) (page.DOMContentEventFiredClient, error)
-
-	// Event LoadEventFired
-	LoadEventFired(context.Context) (page.LoadEventFiredClient, error)
-
-	// Event LifecycleEvent
-	//
-	// Fired for top level page lifecycle events such as navigation, load, paint, etc.
-	LifecycleEvent(context.Context) (page.LifecycleEventClient, error)
 
 	// Event FrameAttached
 	//
 	// Fired when frame has been attached to its parent.
 	FrameAttached(context.Context) (page.FrameAttachedClient, error)
 
-	// Event FrameNavigated
+	// Event FrameClearedScheduledNavigation
 	//
-	// Fired once navigation of the frame has completed. Frame is now associated with the new loader.
-	FrameNavigated(context.Context) (page.FrameNavigatedClient, error)
+	// Fired when frame no longer has a scheduled navigation.
+	//
+	// Note: This event is experimental.
+	FrameClearedScheduledNavigation(context.Context) (page.FrameClearedScheduledNavigationClient, error)
 
 	// Event FrameDetached
 	//
 	// Fired when frame has been detached from its parent.
 	FrameDetached(context.Context) (page.FrameDetachedClient, error)
+
+	// Event FrameNavigated
+	//
+	// Fired once navigation of the frame has completed. Frame is now associated with the new loader.
+	FrameNavigated(context.Context) (page.FrameNavigatedClient, error)
+
+	// Event FrameResized
+	//
+	// Note: This event is experimental.
+	FrameResized(context.Context) (page.FrameResizedClient, error)
+
+	// Event FrameScheduledNavigation
+	//
+	// Fired when frame schedules a potential navigation.
+	//
+	// Note: This event is experimental.
+	FrameScheduledNavigation(context.Context) (page.FrameScheduledNavigationClient, error)
 
 	// Event FrameStartedLoading
 	//
@@ -2004,58 +2018,47 @@ type Page interface {
 	// Note: This event is experimental.
 	FrameStoppedLoading(context.Context) (page.FrameStoppedLoadingClient, error)
 
-	// Event FrameScheduledNavigation
+	// Event InterstitialHidden
 	//
-	// Fired when frame schedules a potential navigation.
-	//
-	// Note: This event is experimental.
-	FrameScheduledNavigation(context.Context) (page.FrameScheduledNavigationClient, error)
-
-	// Event FrameClearedScheduledNavigation
-	//
-	// Fired when frame no longer has a scheduled navigation.
-	//
-	// Note: This event is experimental.
-	FrameClearedScheduledNavigation(context.Context) (page.FrameClearedScheduledNavigationClient, error)
-
-	// Event FrameResized
-	//
-	// Note: This event is experimental.
-	FrameResized(context.Context) (page.FrameResizedClient, error)
-
-	// Event JavascriptDialogOpening
-	//
-	// Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) is about to open.
-	JavascriptDialogOpening(context.Context) (page.JavascriptDialogOpeningClient, error)
-
-	// Event JavascriptDialogClosed
-	//
-	// Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) has been closed.
-	JavascriptDialogClosed(context.Context) (page.JavascriptDialogClosedClient, error)
-
-	// Event ScreencastFrame
-	//
-	// Compressed image data requested by the startScreencast.
-	//
-	// Note: This event is experimental.
-	ScreencastFrame(context.Context) (page.ScreencastFrameClient, error)
-
-	// Event ScreencastVisibilityChanged
-	//
-	// Fired when the page with currently enabled screencast was shown or hidden .
-	//
-	// Note: This event is experimental.
-	ScreencastVisibilityChanged(context.Context) (page.ScreencastVisibilityChangedClient, error)
+	// Fired when interstitial page was hidden
+	InterstitialHidden(context.Context) (page.InterstitialHiddenClient, error)
 
 	// Event InterstitialShown
 	//
 	// Fired when interstitial page was shown
 	InterstitialShown(context.Context) (page.InterstitialShownClient, error)
 
-	// Event InterstitialHidden
+	// Event JavascriptDialogClosed
 	//
-	// Fired when interstitial page was hidden
-	InterstitialHidden(context.Context) (page.InterstitialHiddenClient, error)
+	// Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) has been closed.
+	JavascriptDialogClosed(context.Context) (page.JavascriptDialogClosedClient, error)
+
+	// Event JavascriptDialogOpening
+	//
+	// Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) is about to open.
+	JavascriptDialogOpening(context.Context) (page.JavascriptDialogOpeningClient, error)
+
+	// Event LifecycleEvent
+	//
+	// Fired for top level page lifecycle events such as navigation, load, paint, etc.
+	LifecycleEvent(context.Context) (page.LifecycleEventClient, error)
+
+	// Event LoadEventFired
+	LoadEventFired(context.Context) (page.LoadEventFiredClient, error)
+
+	// Event ScreencastFrame
+	//
+	// Compressed image data requested by the `startScreencast`.
+	//
+	// Note: This event is experimental.
+	ScreencastFrame(context.Context) (page.ScreencastFrameClient, error)
+
+	// Event ScreencastVisibilityChanged
+	//
+	// Fired when the page with currently enabled screencast was shown or hidden `.
+	//
+	// Note: This event is experimental.
+	ScreencastVisibilityChanged(context.Context) (page.ScreencastVisibilityChangedClient, error)
 
 	// Event WindowOpen
 	//
@@ -2065,15 +2068,15 @@ type Page interface {
 
 // The Performance domain.
 type Performance interface {
-	// Command Enable
-	//
-	// Enable collecting and reporting metrics.
-	Enable(context.Context) error
-
 	// Command Disable
 	//
 	// Disable collecting and reporting metrics.
 	Disable(context.Context) error
+
+	// Command Enable
+	//
+	// Enable collecting and reporting metrics.
+	Enable(context.Context) error
 
 	// Command GetMetrics
 	//
@@ -2108,29 +2111,21 @@ type Profiler interface {
 	// Command StartPreciseCoverage
 	//
 	// Enable precise code coverage. Coverage data for JavaScript executed before enabling precise code coverage may be incomplete. Enabling prevents running optimized code and resets execution counters.
-	//
-	// Note: This command is experimental.
 	StartPreciseCoverage(context.Context, *profiler.StartPreciseCoverageArgs) error
 
 	// Command StopPreciseCoverage
 	//
 	// Disable precise code coverage. Disabling releases unnecessary execution count records and allows executing optimized code.
-	//
-	// Note: This command is experimental.
 	StopPreciseCoverage(context.Context) error
 
 	// Command TakePreciseCoverage
 	//
 	// Collect coverage data for the current isolate, and resets execution counters. Precise code coverage needs to have started.
-	//
-	// Note: This command is experimental.
 	TakePreciseCoverage(context.Context) (*profiler.TakePreciseCoverageReply, error)
 
 	// Command GetBestEffortCoverage
 	//
 	// Collect coverage data for the current isolate. The coverage data may be incomplete due to garbage collection.
-	//
-	// Note: This command is experimental.
 	GetBestEffortCoverage(context.Context) (*profiler.GetBestEffortCoverageReply, error)
 
 	// Command StartTypeProfile
@@ -2231,15 +2226,11 @@ type Runtime interface {
 	RunScript(context.Context, *runtime.RunScriptArgs) (*runtime.RunScriptReply, error)
 
 	// Command QueryObjects
-	//
-	// Note: This command is experimental.
 	QueryObjects(context.Context, *runtime.QueryObjectsArgs) (*runtime.QueryObjectsReply, error)
 
 	// Command GlobalLexicalScopeNames
 	//
 	// Returns all let, const and class variables from global scope.
-	//
-	// Note: This command is experimental.
 	GlobalLexicalScopeNames(context.Context, *runtime.GlobalLexicalScopeNamesArgs) (*runtime.GlobalLexicalScopeNamesReply, error)
 
 	// Event ExecutionContextCreated
@@ -2278,7 +2269,9 @@ type Runtime interface {
 	InspectRequested(context.Context) (runtime.InspectRequestedClient, error)
 }
 
-// The Schema domain. Provides information about the protocol schema.
+// The Schema domain.
+//
+// Deprecated: This domain is deprecated.
 type Schema interface {
 	// Command GetDomains
 	//
@@ -2288,15 +2281,15 @@ type Schema interface {
 
 // The Security domain. Security
 type Security interface {
-	// Command Enable
-	//
-	// Enables tracking security state changes.
-	Enable(context.Context) error
-
 	// Command Disable
 	//
 	// Disables tracking security state changes.
 	Disable(context.Context) error
+
+	// Command Enable
+	//
+	// Enables tracking security state changes.
+	Enable(context.Context) error
 
 	// Command HandleCertificateError
 	//
@@ -2308,44 +2301,32 @@ type Security interface {
 	// Enable/disable overriding certificate errors. If enabled, all certificate error events need to be handled by the DevTools client and should be answered with handleCertificateError commands.
 	SetOverrideCertificateErrors(context.Context, *security.SetOverrideCertificateErrorsArgs) error
 
-	// Event SecurityStateChanged
-	//
-	// The security state of the page changed.
-	SecurityStateChanged(context.Context) (security.StateChangedClient, error)
-
 	// Event CertificateError
 	//
 	// There is a certificate error. If overriding certificate errors is enabled, then it should be handled with the handleCertificateError command. Note: this event does not fire if the certificate error has been allowed internally.
 	CertificateError(context.Context) (security.CertificateErrorClient, error)
+
+	// Event SecurityStateChanged
+	//
+	// The security state of the page changed.
+	SecurityStateChanged(context.Context) (security.StateChangedClient, error)
 }
 
 // The ServiceWorker domain.
 //
 // Note: This domain is experimental.
 type ServiceWorker interface {
-	// Command Enable
-	Enable(context.Context) error
+	// Command DeliverPushMessage
+	DeliverPushMessage(context.Context, *serviceworker.DeliverPushMessageArgs) error
 
 	// Command Disable
 	Disable(context.Context) error
 
-	// Command Unregister
-	Unregister(context.Context, *serviceworker.UnregisterArgs) error
+	// Command DispatchSyncEvent
+	DispatchSyncEvent(context.Context, *serviceworker.DispatchSyncEventArgs) error
 
-	// Command UpdateRegistration
-	UpdateRegistration(context.Context, *serviceworker.UpdateRegistrationArgs) error
-
-	// Command StartWorker
-	StartWorker(context.Context, *serviceworker.StartWorkerArgs) error
-
-	// Command SkipWaiting
-	SkipWaiting(context.Context, *serviceworker.SkipWaitingArgs) error
-
-	// Command StopWorker
-	StopWorker(context.Context, *serviceworker.StopWorkerArgs) error
-
-	// Command StopAllWorkers
-	StopAllWorkers(context.Context) error
+	// Command Enable
+	Enable(context.Context) error
 
 	// Command InspectWorker
 	InspectWorker(context.Context, *serviceworker.InspectWorkerArgs) error
@@ -2353,20 +2334,32 @@ type ServiceWorker interface {
 	// Command SetForceUpdateOnPageLoad
 	SetForceUpdateOnPageLoad(context.Context, *serviceworker.SetForceUpdateOnPageLoadArgs) error
 
-	// Command DeliverPushMessage
-	DeliverPushMessage(context.Context, *serviceworker.DeliverPushMessageArgs) error
+	// Command SkipWaiting
+	SkipWaiting(context.Context, *serviceworker.SkipWaitingArgs) error
 
-	// Command DispatchSyncEvent
-	DispatchSyncEvent(context.Context, *serviceworker.DispatchSyncEventArgs) error
+	// Command StartWorker
+	StartWorker(context.Context, *serviceworker.StartWorkerArgs) error
+
+	// Command StopAllWorkers
+	StopAllWorkers(context.Context) error
+
+	// Command StopWorker
+	StopWorker(context.Context, *serviceworker.StopWorkerArgs) error
+
+	// Command Unregister
+	Unregister(context.Context, *serviceworker.UnregisterArgs) error
+
+	// Command UpdateRegistration
+	UpdateRegistration(context.Context, *serviceworker.UpdateRegistrationArgs) error
+
+	// Event WorkerErrorReported
+	WorkerErrorReported(context.Context) (serviceworker.WorkerErrorReportedClient, error)
 
 	// Event WorkerRegistrationUpdated
 	WorkerRegistrationUpdated(context.Context) (serviceworker.WorkerRegistrationUpdatedClient, error)
 
 	// Event WorkerVersionUpdated
 	WorkerVersionUpdated(context.Context) (serviceworker.WorkerVersionUpdatedClient, error)
-
-	// Event WorkerErrorReported
-	WorkerErrorReported(context.Context) (serviceworker.WorkerErrorReportedClient, error)
 }
 
 // The Storage domain.
@@ -2388,40 +2381,40 @@ type Storage interface {
 	// Registers origin to be notified when an update occurs to its cache storage list.
 	TrackCacheStorageForOrigin(context.Context, *storage.TrackCacheStorageForOriginArgs) error
 
-	// Command UntrackCacheStorageForOrigin
-	//
-	// Unregisters origin from receiving notifications for cache storage.
-	UntrackCacheStorageForOrigin(context.Context, *storage.UntrackCacheStorageForOriginArgs) error
-
 	// Command TrackIndexedDBForOrigin
 	//
 	// Registers origin to be notified when an update occurs to its IndexedDB.
 	TrackIndexedDBForOrigin(context.Context, *storage.TrackIndexedDBForOriginArgs) error
+
+	// Command UntrackCacheStorageForOrigin
+	//
+	// Unregisters origin from receiving notifications for cache storage.
+	UntrackCacheStorageForOrigin(context.Context, *storage.UntrackCacheStorageForOriginArgs) error
 
 	// Command UntrackIndexedDBForOrigin
 	//
 	// Unregisters origin from receiving notifications for IndexedDB.
 	UntrackIndexedDBForOrigin(context.Context, *storage.UntrackIndexedDBForOriginArgs) error
 
-	// Event CacheStorageListUpdated
-	//
-	// A cache has been added/deleted.
-	CacheStorageListUpdated(context.Context) (storage.CacheStorageListUpdatedClient, error)
-
 	// Event CacheStorageContentUpdated
 	//
 	// A cache's contents have been modified.
 	CacheStorageContentUpdated(context.Context) (storage.CacheStorageContentUpdatedClient, error)
 
-	// Event IndexedDBListUpdated
+	// Event CacheStorageListUpdated
 	//
-	// The origin's IndexedDB database list has been modified.
-	IndexedDBListUpdated(context.Context) (storage.IndexedDBListUpdatedClient, error)
+	// A cache has been added/deleted.
+	CacheStorageListUpdated(context.Context) (storage.CacheStorageListUpdatedClient, error)
 
 	// Event IndexedDBContentUpdated
 	//
 	// The origin's IndexedDB object store has been modified.
 	IndexedDBContentUpdated(context.Context) (storage.IndexedDBContentUpdatedClient, error)
+
+	// Event IndexedDBListUpdated
+	//
+	// The origin's IndexedDB database list has been modified.
+	IndexedDBListUpdated(context.Context) (storage.IndexedDBListUpdatedClient, error)
 }
 
 // The SystemInfo domain. The SystemInfo domain defines methods and events for querying low-level system information.
@@ -2436,61 +2429,20 @@ type SystemInfo interface {
 
 // The Target domain. Supports additional targets discovery and allows to attach to them.
 type Target interface {
-	// Command SetDiscoverTargets
-	//
-	// Controls whether to discover available targets and notify via targetCreated/targetInfoChanged/targetDestroyed events.
-	SetDiscoverTargets(context.Context, *target.SetDiscoverTargetsArgs) error
-
-	// Command SetAutoAttach
-	//
-	// Controls whether to automatically attach to new targets which are considered to be related to this one. When turned on, attaches to all existing related targets as well. When turned off, automatically detaches from all currently attached targets.
-	//
-	// Note: This command is experimental.
-	SetAutoAttach(context.Context, *target.SetAutoAttachArgs) error
-
-	// Command SetAttachToFrames
-	//
-	// Note: This command is experimental.
-	SetAttachToFrames(context.Context, *target.SetAttachToFramesArgs) error
-
-	// Command SetRemoteLocations
-	//
-	// Enables target discovery for the specified locations, when setDiscoverTargets was set to true.
-	//
-	// Note: This command is experimental.
-	SetRemoteLocations(context.Context, *target.SetRemoteLocationsArgs) error
-
-	// Command SendMessageToTarget
-	//
-	// Sends protocol message over session with given id.
-	SendMessageToTarget(context.Context, *target.SendMessageToTargetArgs) error
-
-	// Command GetTargetInfo
-	//
-	// Returns information about a target.
-	//
-	// Note: This command is experimental.
-	GetTargetInfo(context.Context, *target.GetTargetInfoArgs) (*target.GetTargetInfoReply, error)
-
 	// Command ActivateTarget
 	//
 	// Activates (focuses) the target.
 	ActivateTarget(context.Context, *target.ActivateTargetArgs) error
-
-	// Command CloseTarget
-	//
-	// Closes the target. If the target is a page that gets closed too.
-	CloseTarget(context.Context, *target.CloseTargetArgs) (*target.CloseTargetReply, error)
 
 	// Command AttachToTarget
 	//
 	// Attaches to the target with given id.
 	AttachToTarget(context.Context, *target.AttachToTargetArgs) (*target.AttachToTargetReply, error)
 
-	// Command DetachFromTarget
+	// Command CloseTarget
 	//
-	// Detaches session with given id.
-	DetachFromTarget(context.Context, *target.DetachFromTargetArgs) error
+	// Closes the target. If the target is a page that gets closed too.
+	CloseTarget(context.Context, *target.CloseTargetArgs) (*target.CloseTargetReply, error)
 
 	// Command CreateBrowserContext
 	//
@@ -2499,6 +2451,16 @@ type Target interface {
 	// Note: This command is experimental.
 	CreateBrowserContext(context.Context) (*target.CreateBrowserContextReply, error)
 
+	// Command CreateTarget
+	//
+	// Creates a new page.
+	CreateTarget(context.Context, *target.CreateTargetArgs) (*target.CreateTargetReply, error)
+
+	// Command DetachFromTarget
+	//
+	// Detaches session with given id.
+	DetachFromTarget(context.Context, *target.DetachFromTargetArgs) error
+
 	// Command DisposeBrowserContext
 	//
 	// Deletes a BrowserContext, will fail of any open page uses it.
@@ -2506,49 +2468,80 @@ type Target interface {
 	// Note: This command is experimental.
 	DisposeBrowserContext(context.Context, *target.DisposeBrowserContextArgs) (*target.DisposeBrowserContextReply, error)
 
-	// Command CreateTarget
+	// Command GetTargetInfo
 	//
-	// Creates a new page.
-	CreateTarget(context.Context, *target.CreateTargetArgs) (*target.CreateTargetReply, error)
+	// Returns information about a target.
+	//
+	// Note: This command is experimental.
+	GetTargetInfo(context.Context, *target.GetTargetInfoArgs) (*target.GetTargetInfoReply, error)
 
 	// Command GetTargets
 	//
 	// Retrieves a list of available targets.
 	GetTargets(context.Context) (*target.GetTargetsReply, error)
 
-	// Event TargetCreated
+	// Command SendMessageToTarget
 	//
-	// Issued when a possible inspection target is created.
-	TargetCreated(context.Context) (target.CreatedClient, error)
+	// Sends protocol message over session with given id.
+	SendMessageToTarget(context.Context, *target.SendMessageToTargetArgs) error
 
-	// Event TargetInfoChanged
+	// Command SetAttachToFrames
 	//
-	// Issued when some information about a target has changed. This only happens between targetCreated and targetDestroyed.
-	TargetInfoChanged(context.Context) (target.InfoChangedClient, error)
+	// Note: This command is experimental.
+	SetAttachToFrames(context.Context, *target.SetAttachToFramesArgs) error
 
-	// Event TargetDestroyed
+	// Command SetAutoAttach
 	//
-	// Issued when a target is destroyed.
-	TargetDestroyed(context.Context) (target.DestroyedClient, error)
+	// Controls whether to automatically attach to new targets which are considered to be related to this one. When turned on, attaches to all existing related targets as well. When turned off, automatically detaches from all currently attached targets.
+	//
+	// Note: This command is experimental.
+	SetAutoAttach(context.Context, *target.SetAutoAttachArgs) error
+
+	// Command SetDiscoverTargets
+	//
+	// Controls whether to discover available targets and notify via `targetCreated/targetInfoChanged/targetDestroyed` events.
+	SetDiscoverTargets(context.Context, *target.SetDiscoverTargetsArgs) error
+
+	// Command SetRemoteLocations
+	//
+	// Enables target discovery for the specified locations, when `setDiscoverTargets` was set to `true`.
+	//
+	// Note: This command is experimental.
+	SetRemoteLocations(context.Context, *target.SetRemoteLocationsArgs) error
 
 	// Event AttachedToTarget
 	//
-	// Issued when attached to target because of auto-attach or attachToTarget command.
+	// Issued when attached to target because of auto-attach or `attachToTarget` command.
 	//
 	// Note: This event is experimental.
 	AttachedToTarget(context.Context) (target.AttachedToTargetClient, error)
 
 	// Event DetachedFromTarget
 	//
-	// Issued when detached from target for any reason (including detachFromTarget command). Can be issued multiple times per target if multiple sessions have been attached to it.
+	// Issued when detached from target for any reason (including `detachFromTarget` command). Can be issued multiple times per target if multiple sessions have been attached to it.
 	//
 	// Note: This event is experimental.
 	DetachedFromTarget(context.Context) (target.DetachedFromTargetClient, error)
 
 	// Event ReceivedMessageFromTarget
 	//
-	// Notifies about a new protocol message received from the session (as reported in attachedToTarget event).
+	// Notifies about a new protocol message received from the session (as reported in `attachedToTarget` event).
 	ReceivedMessageFromTarget(context.Context) (target.ReceivedMessageFromTargetClient, error)
+
+	// Event TargetCreated
+	//
+	// Issued when a possible inspection target is created.
+	TargetCreated(context.Context) (target.CreatedClient, error)
+
+	// Event TargetDestroyed
+	//
+	// Issued when a target is destroyed.
+	TargetDestroyed(context.Context) (target.DestroyedClient, error)
+
+	// Event TargetInfoChanged
+	//
+	// Issued when some information about a target has changed. This only happens between `targetCreated` and `targetDestroyed`.
+	TargetInfoChanged(context.Context) (target.InfoChangedClient, error)
 }
 
 // The Tethering domain. The Tethering domain defines methods and events for browser port binding.
@@ -2575,11 +2568,6 @@ type Tethering interface {
 //
 // Note: This domain is experimental.
 type Tracing interface {
-	// Command Start
-	//
-	// Start trace events collection.
-	Start(context.Context, *tracing.StartArgs) error
-
 	// Command End
 	//
 	// Stop trace events collection.
@@ -2590,15 +2578,23 @@ type Tracing interface {
 	// Gets supported tracing categories.
 	GetCategories(context.Context) (*tracing.GetCategoriesReply, error)
 
+	// Command RecordClockSyncMarker
+	//
+	// Record a clock sync marker in the trace.
+	RecordClockSyncMarker(context.Context, *tracing.RecordClockSyncMarkerArgs) error
+
 	// Command RequestMemoryDump
 	//
 	// Request a global memory dump.
 	RequestMemoryDump(context.Context) (*tracing.RequestMemoryDumpReply, error)
 
-	// Command RecordClockSyncMarker
+	// Command Start
 	//
-	// Record a clock sync marker in the trace.
-	RecordClockSyncMarker(context.Context, *tracing.RecordClockSyncMarkerArgs) error
+	// Start trace events collection.
+	Start(context.Context, *tracing.StartArgs) error
+
+	// Event BufferUsage
+	BufferUsage(context.Context) (tracing.BufferUsageClient, error)
 
 	// Event DataCollected
 	//
@@ -2609,7 +2605,4 @@ type Tracing interface {
 	//
 	// Signals that tracing is stopped and there is no trace buffers pending flush, all data were delivered via dataCollected events.
 	TracingComplete(context.Context) (tracing.CompleteClient, error)
-
-	// Event BufferUsage
-	BufferUsage(context.Context) (tracing.BufferUsageClient, error)
 }

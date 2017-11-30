@@ -8,18 +8,12 @@ import (
 
 // ProfileNode Profile node. Holds callsite information, execution statistics and child nodes.
 type ProfileNode struct {
-	ID        int               `json:"id"`        // Unique id of the node.
-	CallFrame runtime.CallFrame `json:"callFrame"` // Function location.
-	// HitCount Number of samples where this node was on top of the call stack.
-	//
-	// Note: This property is experimental.
-	HitCount    *int    `json:"hitCount,omitempty"`
-	Children    []int   `json:"children,omitempty"`    // Child node ids.
-	DeoptReason *string `json:"deoptReason,omitempty"` // The reason of being not optimized. The function may be deoptimized or marked as don't optimize.
-	// PositionTicks An array of source position ticks.
-	//
-	// Note: This property is experimental.
-	PositionTicks []PositionTickInfo `json:"positionTicks,omitempty"`
+	ID            int                `json:"id"`                      // Unique id of the node.
+	CallFrame     runtime.CallFrame  `json:"callFrame"`               // Function location.
+	HitCount      *int               `json:"hitCount,omitempty"`      // Number of samples where this node was on top of the call stack.
+	Children      []int              `json:"children,omitempty"`      // Child node ids.
+	DeoptReason   *string            `json:"deoptReason,omitempty"`   // The reason of being not optimized. The function may be deoptimized or marked as don't optimize.
+	PositionTicks []PositionTickInfo `json:"positionTicks,omitempty"` // An array of source position ticks.
 }
 
 // Profile Profile.
@@ -32,16 +26,12 @@ type Profile struct {
 }
 
 // PositionTickInfo Specifies a number of samples attributed to a certain source position.
-//
-// Note: This type is experimental.
 type PositionTickInfo struct {
 	Line  int `json:"line"`  // Source line number (1-based).
 	Ticks int `json:"ticks"` // Number of samples attributed to the source line.
 }
 
 // CoverageRange Coverage data for a source range.
-//
-// Note: This type is experimental.
 type CoverageRange struct {
 	StartOffset int `json:"startOffset"` // JavaScript script source offset for the range start.
 	EndOffset   int `json:"endOffset"`   // JavaScript script source offset for the range end.
@@ -49,8 +39,6 @@ type CoverageRange struct {
 }
 
 // FunctionCoverage Coverage data for a JavaScript function.
-//
-// Note: This type is experimental.
 type FunctionCoverage struct {
 	FunctionName    string          `json:"functionName"`    // JavaScript function name.
 	Ranges          []CoverageRange `json:"ranges"`          // Source ranges inside the function with coverage data.
@@ -58,8 +46,6 @@ type FunctionCoverage struct {
 }
 
 // ScriptCoverage Coverage data for a JavaScript script.
-//
-// Note: This type is experimental.
 type ScriptCoverage struct {
 	ScriptID  runtime.ScriptID   `json:"scriptId"`  // JavaScript script id.
 	URL       string             `json:"url"`       // JavaScript script name or url.

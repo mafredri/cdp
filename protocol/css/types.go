@@ -93,7 +93,7 @@ type SourceRange struct {
 type ShorthandEntry struct {
 	Name      string `json:"name"`                // Shorthand name.
 	Value     string `json:"value"`               // Shorthand value.
-	Important *bool  `json:"important,omitempty"` // Whether the property has "!important" annotation (implies false if absent).
+	Important *bool  `json:"important,omitempty"` // Whether the property has "!important" annotation (implies `false` if absent).
 }
 
 // ComputedStyleProperty
@@ -115,10 +115,10 @@ type Style struct {
 type Property struct {
 	Name      string       `json:"name"`                // The property name.
 	Value     string       `json:"value"`               // The property value.
-	Important *bool        `json:"important,omitempty"` // Whether the property has "!important" annotation (implies false if absent).
-	Implicit  *bool        `json:"implicit,omitempty"`  // Whether the property is implicit (implies false if absent).
+	Important *bool        `json:"important,omitempty"` // Whether the property has "!important" annotation (implies `false` if absent).
+	Implicit  *bool        `json:"implicit,omitempty"`  // Whether the property is implicit (implies `false` if absent).
 	Text      *string      `json:"text,omitempty"`      // The full property text as specified in the style.
-	ParsedOk  *bool        `json:"parsedOk,omitempty"`  // Whether the property is understood by the browser (implies true if absent).
+	ParsedOk  *bool        `json:"parsedOk,omitempty"`  // Whether the property is understood by the browser (implies `true` if absent).
 	Disabled  *bool        `json:"disabled,omitempty"`  // Whether the property is disabled by the user (present for source-based properties only).
 	Range     *SourceRange `json:"range,omitempty"`     // The entire property range in the enclosing style declaration (if available).
 }

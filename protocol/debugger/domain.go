@@ -19,8 +19,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 }
 
 // Enable invokes the Debugger method. Enables debugger for the given page. Clients should not assume that the debugging has been enabled until the result for this command is received.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Debugger.enable", nil, nil, d.conn)
+func (d *domainClient) Enable(ctx context.Context) (reply *EnableReply, err error) {
+	reply = new(EnableReply)
+	err = rpcc.Invoke(ctx, "Debugger.enable", nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "Enable", Err: err}
 	}
@@ -130,15 +131,15 @@ func (d *domainClient) ContinueToLocation(ctx context.Context, args *ContinueToL
 	return
 }
 
-// PauseOnAsyncTask invokes the Debugger method.
-func (d *domainClient) PauseOnAsyncTask(ctx context.Context, args *PauseOnAsyncTaskArgs) (err error) {
+// PauseOnAsyncCall invokes the Debugger method.
+func (d *domainClient) PauseOnAsyncCall(ctx context.Context, args *PauseOnAsyncCallArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.pauseOnAsyncTask", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Debugger.pauseOnAsyncCall", args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.pauseOnAsyncTask", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Debugger.pauseOnAsyncCall", nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Debugger", Op: "PauseOnAsyncTask", Err: err}
+		err = &internal.OpError{Domain: "Debugger", Op: "PauseOnAsyncCall", Err: err}
 	}
 	return
 }
@@ -197,6 +198,20 @@ func (d *domainClient) Resume(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Debugger.resume", nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "Resume", Err: err}
+	}
+	return
+}
+
+// GetStackTrace invokes the Debugger method. Returns stack trace with given stackTraceId.
+func (d *domainClient) GetStackTrace(ctx context.Context, args *GetStackTraceArgs) (reply *GetStackTraceReply, err error) {
+	reply = new(GetStackTraceReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.getStackTrace", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.getStackTrace", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Debugger", Op: "GetStackTrace", Err: err}
 	}
 	return
 }

@@ -31,6 +31,20 @@ type GetDOMStorageItemsReply struct {
 	Entries []Item `json:"entries"` // No description.
 }
 
+// RemoveDOMStorageItemArgs represents the arguments for RemoveDOMStorageItem in the DOMStorage domain.
+type RemoveDOMStorageItemArgs struct {
+	StorageID StorageID `json:"storageId"` // No description.
+	Key       string    `json:"key"`       // No description.
+}
+
+// NewRemoveDOMStorageItemArgs initializes RemoveDOMStorageItemArgs with the required arguments.
+func NewRemoveDOMStorageItemArgs(storageID StorageID, key string) *RemoveDOMStorageItemArgs {
+	args := new(RemoveDOMStorageItemArgs)
+	args.StorageID = storageID
+	args.Key = key
+	return args
+}
+
 // SetDOMStorageItemArgs represents the arguments for SetDOMStorageItem in the DOMStorage domain.
 type SetDOMStorageItemArgs struct {
 	StorageID StorageID `json:"storageId"` // No description.
@@ -44,19 +58,5 @@ func NewSetDOMStorageItemArgs(storageID StorageID, key string, value string) *Se
 	args.StorageID = storageID
 	args.Key = key
 	args.Value = value
-	return args
-}
-
-// RemoveDOMStorageItemArgs represents the arguments for RemoveDOMStorageItem in the DOMStorage domain.
-type RemoveDOMStorageItemArgs struct {
-	StorageID StorageID `json:"storageId"` // No description.
-	Key       string    `json:"key"`       // No description.
-}
-
-// NewRemoveDOMStorageItemArgs initializes RemoveDOMStorageItemArgs with the required arguments.
-func NewRemoveDOMStorageItemArgs(storageID StorageID, key string) *RemoveDOMStorageItemArgs {
-	args := new(RemoveDOMStorageItemArgs)
-	args.StorageID = storageID
-	args.Key = key
 	return args
 }
