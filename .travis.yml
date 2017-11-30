@@ -10,7 +10,7 @@ go:
   - tip
 
 before_install:
-  - google-chrome --headless --disable-gpu --remote-debugging-port=9222 about:blank &
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 about:blank &
 
 script:
   - go test -browser
@@ -18,7 +18,7 @@ script:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-  - killall google-chrome
+  - killall google-chrome-stable
 
 matrix:
   fast_finish: true
