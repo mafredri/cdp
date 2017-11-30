@@ -1,18 +1,16 @@
 language: go
 
-# Use Trusty (beta) for Chrome addon.
-dist: trusty
 sudo: false
 
 addons:
-  chrome: beta
+  chrome: stable
 
 go:
   - 1.8.x
   - tip
 
 before_install:
-  - google-chrome-beta --headless --disable-gpu --remote-debugging-port=9222 about:blank &
+  - google-chrome --headless --disable-gpu --remote-debugging-port=9222 about:blank &
 
 script:
   - go test -browser
@@ -20,7 +18,7 @@ script:
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
-  - killall google-chrome-beta
+  - killall google-chrome
 
 matrix:
   fast_finish: true
