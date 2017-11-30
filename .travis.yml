@@ -10,7 +10,8 @@ go:
   - tip
 
 before_install:
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 about:blank &
+  # Use --disable-setuid-sandbox to avoid core dump on Travis.
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 --disable-setuid-sandbox about:blank &
 
 script:
   - go test -browser
