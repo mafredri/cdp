@@ -367,12 +367,11 @@ func cleanDescription(d string) string {
 	}{
 		{"<code>", ""}, {"</code>", ""},
 		// <p> is only used by DOM description.
-		{"<p>", "\n//\n// "}, {"</p>", ""},
+		{"<p>", "\n\n"}, {"</p>", ""},
 		{"&lt;", "<"}, {"&gt;", ">"},
 		// Fix typo...
 		{"&gt ", "> "},
 		{"\n", "\n// "},
-		{"// //", "//"}, // Clean up fixes by above, e.g. after \n\n.
 	}
 
 	for _, r := range replace {

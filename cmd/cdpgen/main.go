@@ -158,7 +158,7 @@ func main() {
 				if t.Name(d) == "FrameID" || t.Name(d) == "ResourceType" {
 					idName := t.Name(d)
 					t.IDName = "Page" + t.IDName
-					t.Description = fmt.Sprintf("%s\n//\n// This type cannot be used directly. Use page.%s instead.", t.Description, idName)
+					t.Description = fmt.Sprintf("%s\n\nThis type cannot be used directly. Use page.%s instead.", t.Description, idName)
 					g.DomainType(d, t)
 				}
 			}
