@@ -1272,7 +1272,8 @@ type %[1]s interface {
 func (g *Generator) domainEventReply(d proto.Domain, e proto.Event) {
 	g.Printf(`
 // %[1]s is the reply for %[2]s events.
-type %[1]s struct {`, e.ReplyName(d), e.Name())
+type %[1]s struct {
+`, e.ReplyName(d), e.Name())
 	g.printStructProperties(d, e.ReplyName(d), e.Parameters, true, false)
 	g.Printf("}\n")
 }
