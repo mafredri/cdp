@@ -21,13 +21,15 @@ func NewGetEventListenersArgs(objectID runtime.RemoteObjectID) *GetEventListener
 	return args
 }
 
-// SetDepth sets the Depth optional argument. The maximum depth at which Node children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+// SetDepth sets the Depth optional argument. The maximum depth at which Node children should be retrieved, defaults to 1. Use -1 for the
+// entire subtree or provide an integer larger than 0.
 func (a *GetEventListenersArgs) SetDepth(depth int) *GetEventListenersArgs {
 	a.Depth = &depth
 	return a
 }
 
-// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false). Reports listeners for all contexts if pierce is enabled.
+// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree
+// (default is false). Reports listeners for all contexts if pierce is enabled.
 func (a *GetEventListenersArgs) SetPierce(pierce bool) *GetEventListenersArgs {
 	a.Pierce = &pierce
 	return a
@@ -117,7 +119,8 @@ func NewSetDOMBreakpointArgs(nodeID dom.NodeID, typ DOMBreakpointType) *SetDOMBr
 // SetEventListenerBreakpointArgs represents the arguments for SetEventListenerBreakpoint in the DOMDebugger domain.
 type SetEventListenerBreakpointArgs struct {
 	EventName string `json:"eventName"` // DOM Event name to stop on (any DOM event will do).
-	// TargetName EventTarget interface name to stop on. If equal to `"*"` or not provided, will stop on any EventTarget.
+	// TargetName EventTarget interface name to stop on. If equal to `"*"` or not provided, will stop on any
+	// EventTarget.
 	//
 	// Note: This property is experimental.
 	TargetName *string `json:"targetName,omitempty"`
@@ -130,7 +133,8 @@ func NewSetEventListenerBreakpointArgs(eventName string) *SetEventListenerBreakp
 	return args
 }
 
-// SetTargetName sets the TargetName optional argument. EventTarget interface name to stop on. If equal to `"*"` or not provided, will stop on any EventTarget.
+// SetTargetName sets the TargetName optional argument. EventTarget interface name to stop on. If equal to `"*"` or not provided, will stop on any
+// EventTarget.
 //
 // Note: This property is experimental.
 func (a *SetEventListenerBreakpointArgs) SetTargetName(targetName string) *SetEventListenerBreakpointArgs {

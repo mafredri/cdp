@@ -54,7 +54,8 @@ type LoadingFinishedReply struct {
 	EncodedDataLength float64       `json:"encodedDataLength"` // Total number of bytes received for this request.
 }
 
-// RequestInterceptedClient is a client for RequestIntercepted events. Details of an intercepted HTTP request, which must be either allowed, blocked, modified or mocked.
+// RequestInterceptedClient is a client for RequestIntercepted events. Details of an intercepted HTTP request, which must be either allowed, blocked, modified or
+// mocked.
 type RequestInterceptedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

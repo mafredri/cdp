@@ -5,7 +5,8 @@ package security
 // CertificateID An internal certificate ID value.
 type CertificateID int
 
-// MixedContentType A description of mixed content (HTTP resources on HTTPS pages), as defined by https://www.w3.org/TR/mixed-content/#categories
+// MixedContentType A description of mixed content (HTTP resources on HTTPS pages), as defined by
+// https://www.w3.org/TR/mixed-content/#categories
 type MixedContentType string
 
 // MixedContentType as enums.
@@ -75,7 +76,8 @@ type InsecureContentStatus struct {
 	DisplayedInsecureContentStyle  State `json:"displayedInsecureContentStyle"`  // Security state representing a page that displayed insecure content.
 }
 
-// CertificateErrorAction The action to take when a certificate error occurs. continue will continue processing the request and cancel will cancel the request.
+// CertificateErrorAction The action to take when a certificate error occurs. continue will continue processing the
+// request and cancel will cancel the request.
 type CertificateErrorAction string
 
 // CertificateErrorAction as enums.

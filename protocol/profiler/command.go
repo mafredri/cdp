@@ -2,6 +2,11 @@
 
 package profiler
 
+// GetBestEffortCoverageReply represents the return values for GetBestEffortCoverage in the Profiler domain.
+type GetBestEffortCoverageReply struct {
+	Result []ScriptCoverage `json:"result"` // Coverage data for the current isolate.
+}
+
 // SetSamplingIntervalArgs represents the arguments for SetSamplingInterval in the Profiler domain.
 type SetSamplingIntervalArgs struct {
 	Interval int `json:"interval"` // New sampling interval in microseconds.
@@ -12,11 +17,6 @@ func NewSetSamplingIntervalArgs(interval int) *SetSamplingIntervalArgs {
 	args := new(SetSamplingIntervalArgs)
 	args.Interval = interval
 	return args
-}
-
-// StopReply represents the return values for Stop in the Profiler domain.
-type StopReply struct {
-	Profile Profile `json:"profile"` // Recorded profile.
 }
 
 // StartPreciseCoverageArgs represents the arguments for StartPreciseCoverage in the Profiler domain.
@@ -44,13 +44,13 @@ func (a *StartPreciseCoverageArgs) SetDetailed(detailed bool) *StartPreciseCover
 	return a
 }
 
-// TakePreciseCoverageReply represents the return values for TakePreciseCoverage in the Profiler domain.
-type TakePreciseCoverageReply struct {
-	Result []ScriptCoverage `json:"result"` // Coverage data for the current isolate.
+// StopReply represents the return values for Stop in the Profiler domain.
+type StopReply struct {
+	Profile Profile `json:"profile"` // Recorded profile.
 }
 
-// GetBestEffortCoverageReply represents the return values for GetBestEffortCoverage in the Profiler domain.
-type GetBestEffortCoverageReply struct {
+// TakePreciseCoverageReply represents the return values for TakePreciseCoverage in the Profiler domain.
+type TakePreciseCoverageReply struct {
 	Result []ScriptCoverage `json:"result"` // Coverage data for the current isolate.
 }
 

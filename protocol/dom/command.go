@@ -38,7 +38,8 @@ func NewCopyToArgs(nodeID NodeID, targetNodeID NodeID) *CopyToArgs {
 	return args
 }
 
-// SetInsertBeforeNodeID sets the InsertBeforeNodeID optional argument. Drop the copy before this node (if absent, the copy becomes the last child of `targetNodeId`).
+// SetInsertBeforeNodeID sets the InsertBeforeNodeID optional argument. Drop the copy before this node (if absent, the copy becomes the last child of
+// `targetNodeId`).
 func (a *CopyToArgs) SetInsertBeforeNodeID(insertBeforeNodeID NodeID) *CopyToArgs {
 	a.InsertBeforeNodeID = &insertBeforeNodeID
 	return a
@@ -83,13 +84,15 @@ func (a *DescribeNodeArgs) SetObjectID(objectID runtime.RemoteObjectID) *Describ
 	return a
 }
 
-// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the
+// entire subtree or provide an integer larger than 0.
 func (a *DescribeNodeArgs) SetDepth(depth int) *DescribeNodeArgs {
 	a.Depth = &depth
 	return a
 }
 
-// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree
+// (default is false).
 func (a *DescribeNodeArgs) SetPierce(pierce bool) *DescribeNodeArgs {
 	a.Pierce = &pierce
 	return a
@@ -211,13 +214,15 @@ func NewGetDocumentArgs() *GetDocumentArgs {
 	return args
 }
 
-// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the
+// entire subtree or provide an integer larger than 0.
 func (a *GetDocumentArgs) SetDepth(depth int) *GetDocumentArgs {
 	a.Depth = &depth
 	return a
 }
 
-// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree
+// (default is false).
 func (a *GetDocumentArgs) SetPierce(pierce bool) *GetDocumentArgs {
 	a.Pierce = &pierce
 	return a
@@ -241,13 +246,15 @@ func NewGetFlattenedDocumentArgs() *GetFlattenedDocumentArgs {
 	return args
 }
 
-// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the
+// entire subtree or provide an integer larger than 0.
 func (a *GetFlattenedDocumentArgs) SetDepth(depth int) *GetFlattenedDocumentArgs {
 	a.Depth = &depth
 	return a
 }
 
-// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree (default is false).
+// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree
+// (default is false).
 func (a *GetFlattenedDocumentArgs) SetPierce(pierce bool) *GetFlattenedDocumentArgs {
 	a.Pierce = &pierce
 	return a
@@ -374,7 +381,8 @@ func NewMoveToArgs(nodeID NodeID, targetNodeID NodeID) *MoveToArgs {
 	return args
 }
 
-// SetInsertBeforeNodeID sets the InsertBeforeNodeID optional argument. Drop node before this one (if absent, the moved node becomes the last child of `targetNodeId`).
+// SetInsertBeforeNodeID sets the InsertBeforeNodeID optional argument. Drop node before this one (if absent, the moved node becomes the last child of
+// `targetNodeId`).
 func (a *MoveToArgs) SetInsertBeforeNodeID(insertBeforeNodeID NodeID) *MoveToArgs {
 	a.InsertBeforeNodeID = &insertBeforeNodeID
 	return a
@@ -522,13 +530,15 @@ func NewRequestChildNodesArgs(nodeID NodeID) *RequestChildNodesArgs {
 	return args
 }
 
-// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.
+// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the
+// entire subtree or provide an integer larger than 0.
 func (a *RequestChildNodesArgs) SetDepth(depth int) *RequestChildNodesArgs {
 	a.Depth = &depth
 	return a
 }
 
-// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the sub-tree (default is false).
+// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the sub-tree
+// (default is false).
 func (a *RequestChildNodesArgs) SetPierce(pierce bool) *RequestChildNodesArgs {
 	a.Pierce = &pierce
 	return a
@@ -619,7 +629,8 @@ func NewSetAttributesAsTextArgs(nodeID NodeID, text string) *SetAttributesAsText
 	return args
 }
 
-// SetName sets the Name optional argument. Attribute name to replace with new attributes derived from text in case text parsed successfully.
+// SetName sets the Name optional argument. Attribute name to replace with new attributes derived from text in case text parsed
+// successfully.
 func (a *SetAttributesAsTextArgs) SetName(name string) *SetAttributesAsTextArgs {
 	a.Name = &name
 	return a

@@ -32,7 +32,8 @@ func NewReadArgs(handle StreamHandle) *ReadArgs {
 	return args
 }
 
-// SetOffset sets the Offset optional argument. Seek to the specified offset before reading (if not specificed, proceed with offset following the last read).
+// SetOffset sets the Offset optional argument. Seek to the specified offset before reading (if not specificed, proceed with offset
+// following the last read).
 func (a *ReadArgs) SetOffset(offset int) *ReadArgs {
 	a.Offset = &offset
 	return a

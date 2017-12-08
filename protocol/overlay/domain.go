@@ -72,7 +72,8 @@ func (d *domainClient) HighlightFrame(ctx context.Context, args *HighlightFrameA
 	return
 }
 
-// HighlightNode invokes the Overlay method. Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or objectId must be specified.
+// HighlightNode invokes the Overlay method. Highlights DOM node with given id or with the given JavaScript object wrapper. Either nodeId or
+// objectId must be specified.
 func (d *domainClient) HighlightNode(ctx context.Context, args *HighlightNodeArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Overlay.highlightNode", args, nil, d.conn)
@@ -111,7 +112,8 @@ func (d *domainClient) HighlightRect(ctx context.Context, args *HighlightRectArg
 	return
 }
 
-// SetInspectMode invokes the Overlay method. Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspectNodeRequested' event upon element selection.
+// SetInspectMode invokes the Overlay method. Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted.
+// Backend then generates 'inspectNodeRequested' event upon element selection.
 func (d *domainClient) SetInspectMode(ctx context.Context, args *SetInspectModeArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Overlay.setInspectMode", args, nil, d.conn)

@@ -18,11 +18,11 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Enable invokes the Console method. Enables console domain, sends the messages collected so far to the client by means of the messageAdded notification.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Console.enable", nil, nil, d.conn)
+// ClearMessages invokes the Console method. Does nothing.
+func (d *domainClient) ClearMessages(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Console.clearMessages", nil, nil, d.conn)
 	if err != nil {
-		err = &internal.OpError{Domain: "Console", Op: "Enable", Err: err}
+		err = &internal.OpError{Domain: "Console", Op: "ClearMessages", Err: err}
 	}
 	return
 }
@@ -36,11 +36,12 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 	return
 }
 
-// ClearMessages invokes the Console method. Does nothing.
-func (d *domainClient) ClearMessages(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Console.clearMessages", nil, nil, d.conn)
+// Enable invokes the Console method. Enables console domain, sends the messages collected so far to the client by means of the
+// `messageAdded` notification.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Console.enable", nil, nil, d.conn)
 	if err != nil {
-		err = &internal.OpError{Domain: "Console", Op: "ClearMessages", Err: err}
+		err = &internal.OpError{Domain: "Console", Op: "Enable", Err: err}
 	}
 	return
 }

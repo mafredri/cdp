@@ -18,11 +18,25 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Enable invokes the HeapProfiler method.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "HeapProfiler.enable", nil, nil, d.conn)
+// AddInspectedHeapObject invokes the HeapProfiler method. Enables console to refer to the node with given id via $x (see Command Line API for more details
+// $x functions).
+func (d *domainClient) AddInspectedHeapObject(ctx context.Context, args *AddInspectedHeapObjectArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "HeapProfiler.addInspectedHeapObject", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "HeapProfiler.addInspectedHeapObject", nil, nil, d.conn)
+	}
 	if err != nil {
-		err = &internal.OpError{Domain: "HeapProfiler", Op: "Enable", Err: err}
+		err = &internal.OpError{Domain: "HeapProfiler", Op: "AddInspectedHeapObject", Err: err}
+	}
+	return
+}
+
+// CollectGarbage invokes the HeapProfiler method.
+func (d *domainClient) CollectGarbage(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "HeapProfiler.collectGarbage", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "HeapProfiler", Op: "CollectGarbage", Err: err}
 	}
 	return
 }
@@ -36,6 +50,66 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 	return
 }
 
+// Enable invokes the HeapProfiler method.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "HeapProfiler.enable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "HeapProfiler", Op: "Enable", Err: err}
+	}
+	return
+}
+
+// GetHeapObjectID invokes the HeapProfiler method.
+func (d *domainClient) GetHeapObjectID(ctx context.Context, args *GetHeapObjectIDArgs) (reply *GetHeapObjectIDReply, err error) {
+	reply = new(GetHeapObjectIDReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "HeapProfiler.getHeapObjectId", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "HeapProfiler.getHeapObjectId", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "HeapProfiler", Op: "GetHeapObjectID", Err: err}
+	}
+	return
+}
+
+// GetObjectByHeapObjectID invokes the HeapProfiler method.
+func (d *domainClient) GetObjectByHeapObjectID(ctx context.Context, args *GetObjectByHeapObjectIDArgs) (reply *GetObjectByHeapObjectIDReply, err error) {
+	reply = new(GetObjectByHeapObjectIDReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "HeapProfiler.getObjectByHeapObjectId", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "HeapProfiler.getObjectByHeapObjectId", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "HeapProfiler", Op: "GetObjectByHeapObjectID", Err: err}
+	}
+	return
+}
+
+// GetSamplingProfile invokes the HeapProfiler method.
+func (d *domainClient) GetSamplingProfile(ctx context.Context) (reply *GetSamplingProfileReply, err error) {
+	reply = new(GetSamplingProfileReply)
+	err = rpcc.Invoke(ctx, "HeapProfiler.getSamplingProfile", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "HeapProfiler", Op: "GetSamplingProfile", Err: err}
+	}
+	return
+}
+
+// StartSampling invokes the HeapProfiler method.
+func (d *domainClient) StartSampling(ctx context.Context, args *StartSamplingArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "HeapProfiler.startSampling", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "HeapProfiler.startSampling", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "HeapProfiler", Op: "StartSampling", Err: err}
+	}
+	return
+}
+
 // StartTrackingHeapObjects invokes the HeapProfiler method.
 func (d *domainClient) StartTrackingHeapObjects(ctx context.Context, args *StartTrackingHeapObjectsArgs) (err error) {
 	if args != nil {
@@ -45,6 +119,16 @@ func (d *domainClient) StartTrackingHeapObjects(ctx context.Context, args *Start
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "HeapProfiler", Op: "StartTrackingHeapObjects", Err: err}
+	}
+	return
+}
+
+// StopSampling invokes the HeapProfiler method.
+func (d *domainClient) StopSampling(ctx context.Context) (reply *StopSamplingReply, err error) {
+	reply = new(StopSamplingReply)
+	err = rpcc.Invoke(ctx, "HeapProfiler.stopSampling", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "HeapProfiler", Op: "StopSampling", Err: err}
 	}
 	return
 }
@@ -75,89 +159,6 @@ func (d *domainClient) TakeHeapSnapshot(ctx context.Context, args *TakeHeapSnaps
 	return
 }
 
-// CollectGarbage invokes the HeapProfiler method.
-func (d *domainClient) CollectGarbage(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "HeapProfiler.collectGarbage", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "HeapProfiler", Op: "CollectGarbage", Err: err}
-	}
-	return
-}
-
-// GetObjectByHeapObjectID invokes the HeapProfiler method.
-func (d *domainClient) GetObjectByHeapObjectID(ctx context.Context, args *GetObjectByHeapObjectIDArgs) (reply *GetObjectByHeapObjectIDReply, err error) {
-	reply = new(GetObjectByHeapObjectIDReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, "HeapProfiler.getObjectByHeapObjectId", args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "HeapProfiler.getObjectByHeapObjectId", nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "HeapProfiler", Op: "GetObjectByHeapObjectID", Err: err}
-	}
-	return
-}
-
-// AddInspectedHeapObject invokes the HeapProfiler method. Enables console to refer to the node with given id via $x (see Command Line API for more details $x functions).
-func (d *domainClient) AddInspectedHeapObject(ctx context.Context, args *AddInspectedHeapObjectArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "HeapProfiler.addInspectedHeapObject", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "HeapProfiler.addInspectedHeapObject", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "HeapProfiler", Op: "AddInspectedHeapObject", Err: err}
-	}
-	return
-}
-
-// GetHeapObjectID invokes the HeapProfiler method.
-func (d *domainClient) GetHeapObjectID(ctx context.Context, args *GetHeapObjectIDArgs) (reply *GetHeapObjectIDReply, err error) {
-	reply = new(GetHeapObjectIDReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, "HeapProfiler.getHeapObjectId", args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "HeapProfiler.getHeapObjectId", nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "HeapProfiler", Op: "GetHeapObjectID", Err: err}
-	}
-	return
-}
-
-// StartSampling invokes the HeapProfiler method.
-func (d *domainClient) StartSampling(ctx context.Context, args *StartSamplingArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "HeapProfiler.startSampling", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "HeapProfiler.startSampling", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "HeapProfiler", Op: "StartSampling", Err: err}
-	}
-	return
-}
-
-// StopSampling invokes the HeapProfiler method.
-func (d *domainClient) StopSampling(ctx context.Context) (reply *StopSamplingReply, err error) {
-	reply = new(StopSamplingReply)
-	err = rpcc.Invoke(ctx, "HeapProfiler.stopSampling", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "HeapProfiler", Op: "StopSampling", Err: err}
-	}
-	return
-}
-
-// GetSamplingProfile invokes the HeapProfiler method.
-func (d *domainClient) GetSamplingProfile(ctx context.Context) (reply *GetSamplingProfileReply, err error) {
-	reply = new(GetSamplingProfileReply)
-	err = rpcc.Invoke(ctx, "HeapProfiler.getSamplingProfile", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "HeapProfiler", Op: "GetSamplingProfile", Err: err}
-	}
-	return
-}
-
 func (d *domainClient) AddHeapSnapshotChunk(ctx context.Context) (AddHeapSnapshotChunkClient, error) {
 	s, err := rpcc.NewStream(ctx, "HeapProfiler.addHeapSnapshotChunk", d.conn)
 	if err != nil {
@@ -179,44 +180,23 @@ func (c *addHeapSnapshotChunkClient) Recv() (*AddHeapSnapshotChunkReply, error) 
 	return event, nil
 }
 
-func (d *domainClient) ResetProfiles(ctx context.Context) (ResetProfilesClient, error) {
-	s, err := rpcc.NewStream(ctx, "HeapProfiler.resetProfiles", d.conn)
+func (d *domainClient) HeapStatsUpdate(ctx context.Context) (HeapStatsUpdateClient, error) {
+	s, err := rpcc.NewStream(ctx, "HeapProfiler.heapStatsUpdate", d.conn)
 	if err != nil {
 		return nil, err
 	}
-	return &resetProfilesClient{Stream: s}, nil
+	return &heapStatsUpdateClient{Stream: s}, nil
 }
 
-type resetProfilesClient struct{ rpcc.Stream }
+type heapStatsUpdateClient struct{ rpcc.Stream }
 
 // GetStream returns the original Stream for use with cdp.Sync.
-func (c *resetProfilesClient) GetStream() rpcc.Stream { return c.Stream }
+func (c *heapStatsUpdateClient) GetStream() rpcc.Stream { return c.Stream }
 
-func (c *resetProfilesClient) Recv() (*ResetProfilesReply, error) {
-	event := new(ResetProfilesReply)
+func (c *heapStatsUpdateClient) Recv() (*HeapStatsUpdateReply, error) {
+	event := new(HeapStatsUpdateReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "HeapProfiler", Op: "ResetProfiles Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) ReportHeapSnapshotProgress(ctx context.Context) (ReportHeapSnapshotProgressClient, error) {
-	s, err := rpcc.NewStream(ctx, "HeapProfiler.reportHeapSnapshotProgress", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &reportHeapSnapshotProgressClient{Stream: s}, nil
-}
-
-type reportHeapSnapshotProgressClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *reportHeapSnapshotProgressClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *reportHeapSnapshotProgressClient) Recv() (*ReportHeapSnapshotProgressReply, error) {
-	event := new(ReportHeapSnapshotProgressReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "HeapProfiler", Op: "ReportHeapSnapshotProgress Recv", Err: err}
+		return nil, &internal.OpError{Domain: "HeapProfiler", Op: "HeapStatsUpdate Recv", Err: err}
 	}
 	return event, nil
 }
@@ -242,23 +222,44 @@ func (c *lastSeenObjectIDClient) Recv() (*LastSeenObjectIDReply, error) {
 	return event, nil
 }
 
-func (d *domainClient) HeapStatsUpdate(ctx context.Context) (HeapStatsUpdateClient, error) {
-	s, err := rpcc.NewStream(ctx, "HeapProfiler.heapStatsUpdate", d.conn)
+func (d *domainClient) ReportHeapSnapshotProgress(ctx context.Context) (ReportHeapSnapshotProgressClient, error) {
+	s, err := rpcc.NewStream(ctx, "HeapProfiler.reportHeapSnapshotProgress", d.conn)
 	if err != nil {
 		return nil, err
 	}
-	return &heapStatsUpdateClient{Stream: s}, nil
+	return &reportHeapSnapshotProgressClient{Stream: s}, nil
 }
 
-type heapStatsUpdateClient struct{ rpcc.Stream }
+type reportHeapSnapshotProgressClient struct{ rpcc.Stream }
 
 // GetStream returns the original Stream for use with cdp.Sync.
-func (c *heapStatsUpdateClient) GetStream() rpcc.Stream { return c.Stream }
+func (c *reportHeapSnapshotProgressClient) GetStream() rpcc.Stream { return c.Stream }
 
-func (c *heapStatsUpdateClient) Recv() (*HeapStatsUpdateReply, error) {
-	event := new(HeapStatsUpdateReply)
+func (c *reportHeapSnapshotProgressClient) Recv() (*ReportHeapSnapshotProgressReply, error) {
+	event := new(ReportHeapSnapshotProgressReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "HeapProfiler", Op: "HeapStatsUpdate Recv", Err: err}
+		return nil, &internal.OpError{Domain: "HeapProfiler", Op: "ReportHeapSnapshotProgress Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) ResetProfiles(ctx context.Context) (ResetProfilesClient, error) {
+	s, err := rpcc.NewStream(ctx, "HeapProfiler.resetProfiles", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &resetProfilesClient{Stream: s}, nil
+}
+
+type resetProfilesClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *resetProfilesClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *resetProfilesClient) Recv() (*ResetProfilesReply, error) {
+	event := new(ResetProfilesReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "HeapProfiler", Op: "ResetProfiles Recv", Err: err}
 	}
 	return event, nil
 }

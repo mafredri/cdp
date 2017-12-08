@@ -37,7 +37,8 @@ func NewSetDefaultBackgroundColorOverrideArgs() *SetDefaultBackgroundColorOverri
 	return args
 }
 
-// SetColor sets the Color optional argument. RGBA of the default background color. If not specified, any existing override will be cleared.
+// SetColor sets the Color optional argument. RGBA of the default background color. If not specified, any existing override will be
+// cleared.
 func (a *SetDefaultBackgroundColorOverrideArgs) SetColor(color dom.RGBA) *SetDefaultBackgroundColorOverrideArgs {
 	a.Color = &color
 	return a
@@ -74,7 +75,8 @@ type SetDeviceMetricsOverrideArgs struct {
 	// Note: This property is experimental.
 	DontSetVisibleSize *bool              `json:"dontSetVisibleSize,omitempty"`
 	ScreenOrientation  *ScreenOrientation `json:"screenOrientation,omitempty"` // Screen orientation override.
-	// Viewport If set, the visible area of the page will be overridden to this viewport. This viewport change is not observed by the page, e.g. viewport-relative elements do not change positions.
+	// Viewport If set, the visible area of the page will be overridden to this viewport. This viewport
+	// change is not observed by the page, e.g. viewport-relative elements do not change positions.
 	//
 	// Note: This property is experimental.
 	Viewport *page.Viewport `json:"viewport,omitempty"`
@@ -144,7 +146,8 @@ func (a *SetDeviceMetricsOverrideArgs) SetScreenOrientation(screenOrientation Sc
 	return a
 }
 
-// SetViewport sets the Viewport optional argument. If set, the visible area of the page will be overridden to this viewport. This viewport change is not observed by the page, e.g. viewport-relative elements do not change positions.
+// SetViewport sets the Viewport optional argument. If set, the visible area of the page will be overridden to this viewport. This viewport
+// change is not observed by the page, e.g. viewport-relative elements do not change positions.
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetViewport(viewport page.Viewport) *SetDeviceMetricsOverrideArgs {
@@ -289,13 +292,15 @@ func NewSetVirtualTimePolicyArgs(policy VirtualTimePolicy) *SetVirtualTimePolicy
 	return args
 }
 
-// SetBudget sets the Budget optional argument. If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
+// SetBudget sets the Budget optional argument. If set, after this many virtual milliseconds have elapsed virtual time will be paused and a
+// virtualTimeBudgetExpired event is sent.
 func (a *SetVirtualTimePolicyArgs) SetBudget(budget float64) *SetVirtualTimePolicyArgs {
 	a.Budget = &budget
 	return a
 }
 
-// SetMaxVirtualTimeTaskStarvationCount sets the MaxVirtualTimeTaskStarvationCount optional argument. If set this specifies the maximum number of tasks that can be run before virtual is forced forwards to prevent deadlock.
+// SetMaxVirtualTimeTaskStarvationCount sets the MaxVirtualTimeTaskStarvationCount optional argument. If set this specifies the maximum number of tasks that can be run before virtual is forced
+// forwards to prevent deadlock.
 func (a *SetVirtualTimePolicyArgs) SetMaxVirtualTimeTaskStarvationCount(maxVirtualTimeTaskStarvationCount int) *SetVirtualTimePolicyArgs {
 	a.MaxVirtualTimeTaskStarvationCount = &maxVirtualTimeTaskStarvationCount
 	return a

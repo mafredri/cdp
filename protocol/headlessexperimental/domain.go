@@ -18,7 +18,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// BeginFrame invokes the HeadlessExperimental method. Sends a BeginFrame to the target and returns when the frame was completed. Optionally captures a screenshot from the resulting frame. Requires that the target was created with enabled BeginFrameControl.
+// BeginFrame invokes the HeadlessExperimental method. Sends a BeginFrame to the target and returns when the frame was completed. Optionally captures a
+// screenshot from the resulting frame. Requires that the target was created with enabled
+// BeginFrameControl.
 func (d *domainClient) BeginFrame(ctx context.Context, args *BeginFrameArgs) (reply *BeginFrameReply, err error) {
 	reply = new(BeginFrameReply)
 	if args != nil {

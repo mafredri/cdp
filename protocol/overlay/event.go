@@ -8,7 +8,8 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// InspectNodeRequestedClient is a client for InspectNodeRequested events. Fired when the node should be inspected. This happens after call to `setInspectMode` or when user manually inspects an element.
+// InspectNodeRequestedClient is a client for InspectNodeRequested events. Fired when the node should be inspected. This happens after call to `setInspectMode` or when
+// user manually inspects an element.
 type InspectNodeRequestedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

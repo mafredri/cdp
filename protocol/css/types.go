@@ -9,7 +9,9 @@ import (
 // StyleSheetID
 type StyleSheetID string
 
-// StyleSheetOrigin Stylesheet type: "injected" for stylesheets injected via extension, "user-agent" for user-agent stylesheets, "inspector" for stylesheets created by the inspector (i.e. those holding the "via inspector" rules), "regular" for regular stylesheets.
+// StyleSheetOrigin Stylesheet type: "injected" for stylesheets injected via extension, "user-agent" for user-agent
+// stylesheets, "inspector" for stylesheets created by the inspector (i.e. those holding the "via
+// inspector" rules), "regular" for regular stylesheets.
 type StyleSheetOrigin string
 
 // StyleSheetOrigin as enums.
@@ -126,7 +128,10 @@ type Property struct {
 // Media CSS media rule descriptor.
 type Media struct {
 	Text string `json:"text"` // Media query text.
-	// Source Source of the media query: "mediaRule" if specified by a @media rule, "importRule" if specified by an @import rule, "linkedSheet" if specified by a "media" attribute in a linked stylesheet's LINK tag, "inlineSheet" if specified by a "media" attribute in an inline stylesheet's STYLE tag.
+	// Source Source of the media query: "mediaRule" if specified by a @media rule, "importRule" if
+	// specified by an @import rule, "linkedSheet" if specified by a "media" attribute in a linked
+	// stylesheet's LINK tag, "inlineSheet" if specified by a "media" attribute in an inline
+	// stylesheet's STYLE tag.
 	//
 	// Values: "mediaRule", "importRule", "linkedSheet", "inlineSheet".
 	Source       string        `json:"source"`

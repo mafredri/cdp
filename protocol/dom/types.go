@@ -9,7 +9,8 @@ import (
 // NodeID Unique DOM node identifier.
 type NodeID int
 
-// BackendNodeID Unique DOM node identifier used to reference a node that may not have been pushed to the front-end.
+// BackendNodeID Unique DOM node identifier used to reference a node that may not have been pushed to the
+// front-end.
 type BackendNodeID int
 
 // BackendNode Backend node with a friendly name.

@@ -130,7 +130,8 @@ func NewSetInspectModeArgs(mode InspectMode) *SetInspectModeArgs {
 	return args
 }
 
-// SetHighlightConfig sets the HighlightConfig optional argument. A descriptor for the highlight appearance of hovered-over nodes. May be omitted if `enabled == false`.
+// SetHighlightConfig sets the HighlightConfig optional argument. A descriptor for the highlight appearance of hovered-over nodes. May be omitted if `enabled
+// == false`.
 func (a *SetInspectModeArgs) SetHighlightConfig(highlightConfig HighlightConfig) *SetInspectModeArgs {
 	a.HighlightConfig = &highlightConfig
 	return a

@@ -32,6 +32,24 @@ func NewDeleteDatabaseArgs(securityOrigin string, databaseName string) *DeleteDa
 	return args
 }
 
+// DeleteObjectStoreEntriesArgs represents the arguments for DeleteObjectStoreEntries in the IndexedDB domain.
+type DeleteObjectStoreEntriesArgs struct {
+	SecurityOrigin  string   `json:"securityOrigin"`  // No description.
+	DatabaseName    string   `json:"databaseName"`    // No description.
+	ObjectStoreName string   `json:"objectStoreName"` // No description.
+	KeyRange        KeyRange `json:"keyRange"`        // Range of entry keys to delete
+}
+
+// NewDeleteObjectStoreEntriesArgs initializes DeleteObjectStoreEntriesArgs with the required arguments.
+func NewDeleteObjectStoreEntriesArgs(securityOrigin string, databaseName string, objectStoreName string, keyRange KeyRange) *DeleteObjectStoreEntriesArgs {
+	args := new(DeleteObjectStoreEntriesArgs)
+	args.SecurityOrigin = securityOrigin
+	args.DatabaseName = databaseName
+	args.ObjectStoreName = objectStoreName
+	args.KeyRange = keyRange
+	return args
+}
+
 // RequestDataArgs represents the arguments for RequestData in the IndexedDB domain.
 type RequestDataArgs struct {
 	SecurityOrigin  string    `json:"securityOrigin"`     // Security origin.

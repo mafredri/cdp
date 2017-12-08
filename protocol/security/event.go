@@ -6,7 +6,9 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// CertificateErrorClient is a client for CertificateError events. There is a certificate error. If overriding certificate errors is enabled, then it should be handled with the handleCertificateError command. Note: this event does not fire if the certificate error has been allowed internally.
+// CertificateErrorClient is a client for CertificateError events. There is a certificate error. If overriding certificate errors is enabled, then it should be
+// handled with the handleCertificateError command. Note: this event does not fire if the
+// certificate error has been allowed internally.
 type CertificateErrorClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

@@ -18,6 +18,15 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// Disable invokes the Profiler method.
+func (d *domainClient) Disable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Profiler.disable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "Disable", Err: err}
+	}
+	return
+}
+
 // Enable invokes the Profiler method.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Profiler.enable", nil, nil, d.conn)
@@ -27,11 +36,13 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 	return
 }
 
-// Disable invokes the Profiler method.
-func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Profiler.disable", nil, nil, d.conn)
+// GetBestEffortCoverage invokes the Profiler method. Collect coverage data for the current isolate. The coverage data may be incomplete due to
+// garbage collection.
+func (d *domainClient) GetBestEffortCoverage(ctx context.Context) (reply *GetBestEffortCoverageReply, err error) {
+	reply = new(GetBestEffortCoverageReply)
+	err = rpcc.Invoke(ctx, "Profiler.getBestEffortCoverage", nil, reply, d.conn)
 	if err != nil {
-		err = &internal.OpError{Domain: "Profiler", Op: "Disable", Err: err}
+		err = &internal.OpError{Domain: "Profiler", Op: "GetBestEffortCoverage", Err: err}
 	}
 	return
 }
@@ -58,17 +69,9 @@ func (d *domainClient) Start(ctx context.Context) (err error) {
 	return
 }
 
-// Stop invokes the Profiler method.
-func (d *domainClient) Stop(ctx context.Context) (reply *StopReply, err error) {
-	reply = new(StopReply)
-	err = rpcc.Invoke(ctx, "Profiler.stop", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Profiler", Op: "Stop", Err: err}
-	}
-	return
-}
-
-// StartPreciseCoverage invokes the Profiler method. Enable precise code coverage. Coverage data for JavaScript executed before enabling precise code coverage may be incomplete. Enabling prevents running optimized code and resets execution counters.
+// StartPreciseCoverage invokes the Profiler method. Enable precise code coverage. Coverage data for JavaScript executed before enabling precise code
+// coverage may be incomplete. Enabling prevents running optimized code and resets execution
+// counters.
 func (d *domainClient) StartPreciseCoverage(ctx context.Context, args *StartPreciseCoverageArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Profiler.startPreciseCoverage", args, nil, d.conn)
@@ -77,35 +80,6 @@ func (d *domainClient) StartPreciseCoverage(ctx context.Context, args *StartPrec
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "StartPreciseCoverage", Err: err}
-	}
-	return
-}
-
-// StopPreciseCoverage invokes the Profiler method. Disable precise code coverage. Disabling releases unnecessary execution count records and allows executing optimized code.
-func (d *domainClient) StopPreciseCoverage(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Profiler.stopPreciseCoverage", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Profiler", Op: "StopPreciseCoverage", Err: err}
-	}
-	return
-}
-
-// TakePreciseCoverage invokes the Profiler method. Collect coverage data for the current isolate, and resets execution counters. Precise code coverage needs to have started.
-func (d *domainClient) TakePreciseCoverage(ctx context.Context) (reply *TakePreciseCoverageReply, err error) {
-	reply = new(TakePreciseCoverageReply)
-	err = rpcc.Invoke(ctx, "Profiler.takePreciseCoverage", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Profiler", Op: "TakePreciseCoverage", Err: err}
-	}
-	return
-}
-
-// GetBestEffortCoverage invokes the Profiler method. Collect coverage data for the current isolate. The coverage data may be incomplete due to garbage collection.
-func (d *domainClient) GetBestEffortCoverage(ctx context.Context) (reply *GetBestEffortCoverageReply, err error) {
-	reply = new(GetBestEffortCoverageReply)
-	err = rpcc.Invoke(ctx, "Profiler.getBestEffortCoverage", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Profiler", Op: "GetBestEffortCoverage", Err: err}
 	}
 	return
 }
@@ -119,11 +93,42 @@ func (d *domainClient) StartTypeProfile(ctx context.Context) (err error) {
 	return
 }
 
+// Stop invokes the Profiler method.
+func (d *domainClient) Stop(ctx context.Context) (reply *StopReply, err error) {
+	reply = new(StopReply)
+	err = rpcc.Invoke(ctx, "Profiler.stop", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "Stop", Err: err}
+	}
+	return
+}
+
+// StopPreciseCoverage invokes the Profiler method. Disable precise code coverage. Disabling releases unnecessary execution count records and allows
+// executing optimized code.
+func (d *domainClient) StopPreciseCoverage(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Profiler.stopPreciseCoverage", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "StopPreciseCoverage", Err: err}
+	}
+	return
+}
+
 // StopTypeProfile invokes the Profiler method. Disable type profile. Disabling releases type profile data collected so far.
 func (d *domainClient) StopTypeProfile(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Profiler.stopTypeProfile", nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "StopTypeProfile", Err: err}
+	}
+	return
+}
+
+// TakePreciseCoverage invokes the Profiler method. Collect coverage data for the current isolate, and resets execution counters. Precise code
+// coverage needs to have started.
+func (d *domainClient) TakePreciseCoverage(ctx context.Context) (reply *TakePreciseCoverageReply, err error) {
+	reply = new(TakePreciseCoverageReply)
+	err = rpcc.Invoke(ctx, "Profiler.takePreciseCoverage", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "TakePreciseCoverage", Err: err}
 	}
 	return
 }
@@ -136,27 +141,6 @@ func (d *domainClient) TakeTypeProfile(ctx context.Context) (reply *TakeTypeProf
 		err = &internal.OpError{Domain: "Profiler", Op: "TakeTypeProfile", Err: err}
 	}
 	return
-}
-
-func (d *domainClient) ConsoleProfileStarted(ctx context.Context) (ConsoleProfileStartedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Profiler.consoleProfileStarted", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &consoleProfileStartedClient{Stream: s}, nil
-}
-
-type consoleProfileStartedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *consoleProfileStartedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *consoleProfileStartedClient) Recv() (*ConsoleProfileStartedReply, error) {
-	event := new(ConsoleProfileStartedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Profiler", Op: "ConsoleProfileStarted Recv", Err: err}
-	}
-	return event, nil
 }
 
 func (d *domainClient) ConsoleProfileFinished(ctx context.Context) (ConsoleProfileFinishedClient, error) {
@@ -176,6 +160,27 @@ func (c *consoleProfileFinishedClient) Recv() (*ConsoleProfileFinishedReply, err
 	event := new(ConsoleProfileFinishedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Profiler", Op: "ConsoleProfileFinished Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) ConsoleProfileStarted(ctx context.Context) (ConsoleProfileStartedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Profiler.consoleProfileStarted", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &consoleProfileStartedClient{Stream: s}, nil
+}
+
+type consoleProfileStartedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *consoleProfileStartedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *consoleProfileStartedClient) Recv() (*ConsoleProfileStartedReply, error) {
+	event := new(ConsoleProfileStartedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Profiler", Op: "ConsoleProfileStarted Recv", Err: err}
 	}
 	return event, nil
 }

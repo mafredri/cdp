@@ -41,7 +41,8 @@ func (d *domainClient) GetApplicationCacheForFrame(ctx context.Context, args *Ge
 	return
 }
 
-// GetFramesWithManifests invokes the ApplicationCache method. Returns array of frame identifiers with manifest urls for each frame containing a document associated with some application cache.
+// GetFramesWithManifests invokes the ApplicationCache method. Returns array of frame identifiers with manifest urls for each frame containing a document
+// associated with some application cache.
 func (d *domainClient) GetFramesWithManifests(ctx context.Context) (reply *GetFramesWithManifestsReply, err error) {
 	reply = new(GetFramesWithManifestsReply)
 	err = rpcc.Invoke(ctx, "ApplicationCache.getFramesWithManifests", nil, reply, d.conn)

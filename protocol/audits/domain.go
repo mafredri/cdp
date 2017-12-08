@@ -18,7 +18,8 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// GetEncodedResponse invokes the Audits method. Returns the response body and size if it were re-encoded with the specified settings. Only applies to images.
+// GetEncodedResponse invokes the Audits method. Returns the response body and size if it were re-encoded with the specified settings. Only
+// applies to images.
 func (d *domainClient) GetEncodedResponse(ctx context.Context, args *GetEncodedResponseArgs) (reply *GetEncodedResponseReply, err error) {
 	reply = new(GetEncodedResponseReply)
 	if args != nil {

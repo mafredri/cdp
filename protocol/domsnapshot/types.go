@@ -6,7 +6,8 @@ import (
 	"github.com/mafredri/cdp/protocol/dom"
 )
 
-// InlineTextBox Details of post layout rendered text positions. The exact layout should not be regarded as stable and may change between versions.
+// InlineTextBox Details of post layout rendered text positions. The exact layout should not be regarded as
+// stable and may change between versions.
 type InlineTextBox struct {
 	BoundingBox         dom.Rect `json:"boundingBox"`         // The absolute position bounding box.
 	StartCharacterIndex int      `json:"startCharacterIndex"` // The starting index in characters, for this post layout textbox substring.

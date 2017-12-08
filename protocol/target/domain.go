@@ -59,7 +59,8 @@ func (d *domainClient) CloseTarget(ctx context.Context, args *CloseTargetArgs) (
 	return
 }
 
-// CreateBrowserContext invokes the Target method. Creates a new empty BrowserContext. Similar to an incognito profile but you can have more than one.
+// CreateBrowserContext invokes the Target method. Creates a new empty BrowserContext. Similar to an incognito profile but you can have more than
+// one.
 func (d *domainClient) CreateBrowserContext(ctx context.Context) (reply *CreateBrowserContextReply, err error) {
 	reply = new(CreateBrowserContextReply)
 	err = rpcc.Invoke(ctx, "Target.createBrowserContext", nil, reply, d.conn)
@@ -160,7 +161,9 @@ func (d *domainClient) SetAttachToFrames(ctx context.Context, args *SetAttachToF
 	return
 }
 
-// SetAutoAttach invokes the Target method. Controls whether to automatically attach to new targets which are considered to be related to this one. When turned on, attaches to all existing related targets as well. When turned off, automatically detaches from all currently attached targets.
+// SetAutoAttach invokes the Target method. Controls whether to automatically attach to new targets which are considered to be related to
+// this one. When turned on, attaches to all existing related targets as well. When turned off,
+// automatically detaches from all currently attached targets.
 func (d *domainClient) SetAutoAttach(ctx context.Context, args *SetAutoAttachArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Target.setAutoAttach", args, nil, d.conn)
@@ -173,7 +176,8 @@ func (d *domainClient) SetAutoAttach(ctx context.Context, args *SetAutoAttachArg
 	return
 }
 
-// SetDiscoverTargets invokes the Target method. Controls whether to discover available targets and notify via `targetCreated/targetInfoChanged/targetDestroyed` events.
+// SetDiscoverTargets invokes the Target method. Controls whether to discover available targets and notify via
+// `targetCreated/targetInfoChanged/targetDestroyed` events.
 func (d *domainClient) SetDiscoverTargets(ctx context.Context, args *SetDiscoverTargetsArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Target.setDiscoverTargets", args, nil, d.conn)
@@ -186,7 +190,8 @@ func (d *domainClient) SetDiscoverTargets(ctx context.Context, args *SetDiscover
 	return
 }
 
-// SetRemoteLocations invokes the Target method. Enables target discovery for the specified locations, when `setDiscoverTargets` was set to `true`.
+// SetRemoteLocations invokes the Target method. Enables target discovery for the specified locations, when `setDiscoverTargets` was set to
+// `true`.
 func (d *domainClient) SetRemoteLocations(ctx context.Context, args *SetRemoteLocationsArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Target.setRemoteLocations", args, nil, d.conn)

@@ -44,6 +44,19 @@ func (d *domainClient) DeleteDatabase(ctx context.Context, args *DeleteDatabaseA
 	return
 }
 
+// DeleteObjectStoreEntries invokes the IndexedDB method. Delete a range of entries from an object store
+func (d *domainClient) DeleteObjectStoreEntries(ctx context.Context, args *DeleteObjectStoreEntriesArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "IndexedDB.deleteObjectStoreEntries", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "IndexedDB.deleteObjectStoreEntries", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "IndexedDB", Op: "DeleteObjectStoreEntries", Err: err}
+	}
+	return
+}
+
 // Disable invokes the IndexedDB method. Disables events from backend.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "IndexedDB.disable", nil, nil, d.conn)

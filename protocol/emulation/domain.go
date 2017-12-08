@@ -68,7 +68,8 @@ func (d *domainClient) SetCPUThrottlingRate(ctx context.Context, args *SetCPUThr
 	return
 }
 
-// SetDefaultBackgroundColorOverride invokes the Emulation method. Sets or clears an override of the default background color of the frame. This override is used if the content does not specify one.
+// SetDefaultBackgroundColorOverride invokes the Emulation method. Sets or clears an override of the default background color of the frame. This override is used
+// if the content does not specify one.
 func (d *domainClient) SetDefaultBackgroundColorOverride(ctx context.Context, args *SetDefaultBackgroundColorOverrideArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Emulation.setDefaultBackgroundColorOverride", args, nil, d.conn)
@@ -81,7 +82,9 @@ func (d *domainClient) SetDefaultBackgroundColorOverride(ctx context.Context, ar
 	return
 }
 
-// SetDeviceMetricsOverride invokes the Emulation method. Overrides the values of device screen dimensions (window.screen.width, window.screen.height, window.innerWidth, window.innerHeight, and "device-width"/"device-height"-related CSS media query results).
+// SetDeviceMetricsOverride invokes the Emulation method. Overrides the values of device screen dimensions (window.screen.width, window.screen.height,
+// window.innerWidth, window.innerHeight, and "device-width"/"device-height"-related CSS media
+// query results).
 func (d *domainClient) SetDeviceMetricsOverride(ctx context.Context, args *SetDeviceMetricsOverrideArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Emulation.setDeviceMetricsOverride", args, nil, d.conn)
@@ -120,7 +123,8 @@ func (d *domainClient) SetEmulatedMedia(ctx context.Context, args *SetEmulatedMe
 	return
 }
 
-// SetGeolocationOverride invokes the Emulation method. Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position unavailable.
+// SetGeolocationOverride invokes the Emulation method. Overrides the Geolocation Position or Error. Omitting any of the parameters emulates position
+// unavailable.
 func (d *domainClient) SetGeolocationOverride(ctx context.Context, args *SetGeolocationOverrideArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Emulation.setGeolocationOverride", args, nil, d.conn)
@@ -185,7 +189,8 @@ func (d *domainClient) SetTouchEmulationEnabled(ctx context.Context, args *SetTo
 	return
 }
 
-// SetVirtualTimePolicy invokes the Emulation method. Turns on virtual time for all frames (replacing real-time with a synthetic time source) and sets the current virtual time policy.  Note this supersedes any previous time budget.
+// SetVirtualTimePolicy invokes the Emulation method. Turns on virtual time for all frames (replacing real-time with a synthetic time source) and sets
+// the current virtual time policy.  Note this supersedes any previous time budget.
 func (d *domainClient) SetVirtualTimePolicy(ctx context.Context, args *SetVirtualTimePolicyArgs) (reply *SetVirtualTimePolicyReply, err error) {
 	reply = new(SetVirtualTimePolicyReply)
 	if args != nil {
@@ -199,7 +204,9 @@ func (d *domainClient) SetVirtualTimePolicy(ctx context.Context, args *SetVirtua
 	return
 }
 
-// SetVisibleSize invokes the Emulation method. Resizes the frame/viewport of the page. Note that this does not affect the frame's container (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported on Android.
+// SetVisibleSize invokes the Emulation method. Resizes the frame/viewport of the page. Note that this does not affect the frame's container
+// (e.g. browser window). Can be used to produce screenshots of the specified size. Not supported
+// on Android.
 func (d *domainClient) SetVisibleSize(ctx context.Context, args *SetVisibleSizeArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Emulation.setVisibleSize", args, nil, d.conn)

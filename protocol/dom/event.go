@@ -115,7 +115,8 @@ type DocumentUpdatedClient interface {
 }
 
 // DocumentUpdatedReply is the reply for DocumentUpdated events.
-type DocumentUpdatedReply struct{}
+type DocumentUpdatedReply struct {
+}
 
 // InlineStyleInvalidatedClient is a client for InlineStyleInvalidated events. Fired when `Element`'s inline style is modified via a CSS property modification.
 type InlineStyleInvalidatedClient interface {
@@ -158,7 +159,8 @@ type PseudoElementRemovedReply struct {
 	PseudoElementID NodeID `json:"pseudoElementId"` // The removed pseudo element id.
 }
 
-// SetChildNodesClient is a client for SetChildNodes events. Fired when backend wants to provide client with the missing DOM structure. This happens upon most of the calls requesting node ids.
+// SetChildNodesClient is a client for SetChildNodes events. Fired when backend wants to provide client with the missing DOM structure. This happens upon
+// most of the calls requesting node ids.
 type SetChildNodesClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

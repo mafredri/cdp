@@ -59,7 +59,8 @@ type CreateTargetArgs struct {
 	Width            *int              `json:"width,omitempty"`            // Frame width in DIP (headless chrome only).
 	Height           *int              `json:"height,omitempty"`           // Frame height in DIP (headless chrome only).
 	BrowserContextID *BrowserContextID `json:"browserContextId,omitempty"` // The browser context to create the page in (headless chrome only).
-	// EnableBeginFrameControl Whether BeginFrames for this target will be controlled via DevTools (headless chrome only, not supported on MacOS yet, false by default).
+	// EnableBeginFrameControl Whether BeginFrames for this target will be controlled via DevTools (headless chrome only,
+	// not supported on MacOS yet, false by default).
 	//
 	// Note: This property is experimental.
 	EnableBeginFrameControl *bool `json:"enableBeginFrameControl,omitempty"`
@@ -90,7 +91,8 @@ func (a *CreateTargetArgs) SetBrowserContextID(browserContextID BrowserContextID
 	return a
 }
 
-// SetEnableBeginFrameControl sets the EnableBeginFrameControl optional argument. Whether BeginFrames for this target will be controlled via DevTools (headless chrome only, not supported on MacOS yet, false by default).
+// SetEnableBeginFrameControl sets the EnableBeginFrameControl optional argument. Whether BeginFrames for this target will be controlled via DevTools (headless chrome only,
+// not supported on MacOS yet, false by default).
 //
 // Note: This property is experimental.
 func (a *CreateTargetArgs) SetEnableBeginFrameControl(enableBeginFrameControl bool) *CreateTargetArgs {

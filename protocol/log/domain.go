@@ -36,7 +36,8 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 	return
 }
 
-// Enable invokes the Log method. Enables log domain, sends the entries collected so far to the client by means of the `entryAdded` notification.
+// Enable invokes the Log method. Enables log domain, sends the entries collected so far to the client by means of the
+// `entryAdded` notification.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Log.enable", nil, nil, d.conn)
 	if err != nil {

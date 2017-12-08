@@ -15,9 +15,11 @@ type FontsUpdatedClient interface {
 }
 
 // FontsUpdatedReply is the reply for FontsUpdated events.
-type FontsUpdatedReply struct{}
+type FontsUpdatedReply struct {
+}
 
-// MediaQueryResultChangedClient is a client for MediaQueryResultChanged events. Fires whenever a MediaQuery result changes (for example, after a browser window has been resized.) The current implementation considers only viewport-dependent media features.
+// MediaQueryResultChangedClient is a client for MediaQueryResultChanged events. Fires whenever a MediaQuery result changes (for example, after a browser window has been
+// resized.) The current implementation considers only viewport-dependent media features.
 type MediaQueryResultChangedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -26,7 +28,8 @@ type MediaQueryResultChangedClient interface {
 }
 
 // MediaQueryResultChangedReply is the reply for MediaQueryResultChanged events.
-type MediaQueryResultChangedReply struct{}
+type MediaQueryResultChangedReply struct {
+}
 
 // StyleSheetAddedClient is a client for StyleSheetAdded events. Fired whenever an active document stylesheet is added.
 type StyleSheetAddedClient interface {

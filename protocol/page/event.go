@@ -42,7 +42,8 @@ type FrameResizedClient interface {
 }
 
 // FrameResizedReply is the reply for FrameResized events.
-type FrameResizedReply struct{}
+type FrameResizedReply struct {
+}
 
 // FrameScheduledNavigationClient is a client for FrameScheduledNavigation events. Fired when frame schedules a potential navigation.
 type FrameScheduledNavigationClient interface {
@@ -53,7 +54,8 @@ type FrameScheduledNavigationClient interface {
 }
 
 // InterstitialHiddenReply is the reply for InterstitialHidden events.
-type InterstitialHiddenReply struct{}
+type InterstitialHiddenReply struct {
+}
 
 // InterstitialShownClient is a client for InterstitialShown events. Fired when interstitial page was shown
 type InterstitialShownClient interface {
@@ -64,9 +66,11 @@ type InterstitialShownClient interface {
 }
 
 // InterstitialShownReply is the reply for InterstitialShown events.
-type InterstitialShownReply struct{}
+type InterstitialShownReply struct {
+}
 
-// JavascriptDialogClosedClient is a client for JavascriptDialogClosed events. Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) has been closed.
+// JavascriptDialogClosedClient is a client for JavascriptDialogClosed events. Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) has been
+// closed.
 type JavascriptDialogClosedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -80,7 +84,8 @@ type JavascriptDialogClosedReply struct {
 	UserInput string `json:"userInput"` // User input in case of prompt.
 }
 
-// JavascriptDialogOpeningClient is a client for JavascriptDialogOpening events. Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) is about to open.
+// JavascriptDialogOpeningClient is a client for JavascriptDialogOpening events. Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) is about to
+// open.
 type JavascriptDialogOpeningClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -137,7 +142,8 @@ type ScreencastVisibilityChangedReply struct {
 	Visible bool `json:"visible"` // True if the page is visible.
 }
 
-// WindowOpenClient is a client for WindowOpen events. Fired when a new window is going to be opened, via window.open(), link click, form submission, etc.
+// WindowOpenClient is a client for WindowOpen events. Fired when a new window is going to be opened, via window.open(), link click, form submission,
+// etc.
 type WindowOpenClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

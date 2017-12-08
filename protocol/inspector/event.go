@@ -28,4 +28,5 @@ type TargetCrashedClient interface {
 }
 
 // TargetCrashedReply is the reply for TargetCrashed events.
-type TargetCrashedReply struct{}
+type TargetCrashedReply struct {
+}

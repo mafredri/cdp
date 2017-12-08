@@ -150,7 +150,8 @@ func NewHandleJavaScriptDialogArgs(accept bool) *HandleJavaScriptDialogArgs {
 	return args
 }
 
-// SetPromptText sets the PromptText optional argument. The text to enter into the dialog prompt before accepting. Used only if this is a prompt dialog.
+// SetPromptText sets the PromptText optional argument. The text to enter into the dialog prompt before accepting. Used only if this is a prompt
+// dialog.
 func (a *HandleJavaScriptDialogArgs) SetPromptText(promptText string) *HandleJavaScriptDialogArgs {
 	a.PromptText = &promptText
 	return a
@@ -277,13 +278,15 @@ func (a *PrintToPDFArgs) SetMarginRight(marginRight float64) *PrintToPDFArgs {
 	return a
 }
 
-// SetPageRanges sets the PageRanges optional argument. Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.
+// SetPageRanges sets the PageRanges optional argument. Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means
+// print all pages.
 func (a *PrintToPDFArgs) SetPageRanges(pageRanges string) *PrintToPDFArgs {
 	a.PageRanges = &pageRanges
 	return a
 }
 
-// SetIgnoreInvalidPageRanges sets the IgnoreInvalidPageRanges optional argument. Whether to silently ignore invalid but successfully parsed page ranges, such as '3-2'. Defaults to false.
+// SetIgnoreInvalidPageRanges sets the IgnoreInvalidPageRanges optional argument. Whether to silently ignore invalid but successfully parsed page ranges, such as '3-2'.
+// Defaults to false.
 func (a *PrintToPDFArgs) SetIgnoreInvalidPageRanges(ignoreInvalidPageRanges bool) *PrintToPDFArgs {
 	a.IgnoreInvalidPageRanges = &ignoreInvalidPageRanges
 	return a
@@ -386,7 +389,8 @@ func NewSetAutoAttachToCreatedPagesArgs(autoAttach bool) *SetAutoAttachToCreated
 
 // SetDownloadBehaviorArgs represents the arguments for SetDownloadBehavior in the Page domain.
 type SetDownloadBehaviorArgs struct {
-	// Behavior Whether to allow all or deny all download requests, or use default Chrome behavior if available (otherwise deny).
+	// Behavior Whether to allow all or deny all download requests, or use default Chrome behavior if
+	// available (otherwise deny).
 	//
 	// Values: "deny", "allow", "default".
 	Behavior     string  `json:"behavior"`

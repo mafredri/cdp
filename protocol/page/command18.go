@@ -29,7 +29,8 @@ func (a *CreateIsolatedWorldArgs) SetWorldName(worldName string) *CreateIsolated
 	return a
 }
 
-// SetGrantUniveralAccess sets the GrantUniveralAccess optional argument. Whether or not universal access should be granted to the isolated world. This is a powerful option, use with caution.
+// SetGrantUniveralAccess sets the GrantUniveralAccess optional argument. Whether or not universal access should be granted to the isolated world. This is a powerful
+// option, use with caution.
 func (a *CreateIsolatedWorldArgs) SetGrantUniveralAccess(grantUniveralAccess bool) *CreateIsolatedWorldArgs {
 	a.GrantUniveralAccess = &grantUniveralAccess
 	return a

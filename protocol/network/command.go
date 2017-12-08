@@ -40,25 +40,30 @@ func NewContinueInterceptedRequestArgs(interceptionID InterceptionID) *ContinueI
 	return args
 }
 
-// SetErrorReason sets the ErrorReason optional argument. If set this causes the request to fail with the given reason. Passing `Aborted` for requests marked with `isNavigationRequest` also cancels the navigation. Must not be set in response to an authChallenge.
+// SetErrorReason sets the ErrorReason optional argument. If set this causes the request to fail with the given reason. Passing `Aborted` for requests
+// marked with `isNavigationRequest` also cancels the navigation. Must not be set in response
+// to an authChallenge.
 func (a *ContinueInterceptedRequestArgs) SetErrorReason(errorReason ErrorReason) *ContinueInterceptedRequestArgs {
 	a.ErrorReason = errorReason
 	return a
 }
 
-// SetRawResponse sets the RawResponse optional argument. If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc... Must not be set in response to an authChallenge.
+// SetRawResponse sets the RawResponse optional argument. If set the requests completes using with the provided base64 encoded raw response, including
+// HTTP status line and headers etc... Must not be set in response to an authChallenge.
 func (a *ContinueInterceptedRequestArgs) SetRawResponse(rawResponse string) *ContinueInterceptedRequestArgs {
 	a.RawResponse = &rawResponse
 	return a
 }
 
-// SetURL sets the URL optional argument. If set the request url will be modified in a way that's not observable by page. Must not be set in response to an authChallenge.
+// SetURL sets the URL optional argument. If set the request url will be modified in a way that's not observable by page. Must not be
+// set in response to an authChallenge.
 func (a *ContinueInterceptedRequestArgs) SetURL(url string) *ContinueInterceptedRequestArgs {
 	a.URL = &url
 	return a
 }
 
-// SetMethod sets the Method optional argument. If set this allows the request method to be overridden. Must not be set in response to an authChallenge.
+// SetMethod sets the Method optional argument. If set this allows the request method to be overridden. Must not be set in response to an
+// authChallenge.
 func (a *ContinueInterceptedRequestArgs) SetMethod(method string) *ContinueInterceptedRequestArgs {
 	a.Method = &method
 	return a
@@ -70,7 +75,8 @@ func (a *ContinueInterceptedRequestArgs) SetPostData(postData string) *ContinueI
 	return a
 }
 
-// SetHeaders sets the Headers optional argument. If set this allows the request headers to be changed. Must not be set in response to an authChallenge.
+// SetHeaders sets the Headers optional argument. If set this allows the request headers to be changed. Must not be set in response to an
+// authChallenge.
 func (a *ContinueInterceptedRequestArgs) SetHeaders(headers Headers) *ContinueInterceptedRequestArgs {
 	a.Headers = headers
 	return a
@@ -97,7 +103,8 @@ func NewDeleteCookiesArgs(name string) *DeleteCookiesArgs {
 	return args
 }
 
-// SetURL sets the URL optional argument. If specified, deletes all the cookies with the given name where domain and path match provided URL.
+// SetURL sets the URL optional argument. If specified, deletes all the cookies with the given name where domain and path match
+// provided URL.
 func (a *DeleteCookiesArgs) SetURL(url string) *DeleteCookiesArgs {
 	a.URL = &url
 	return a
@@ -358,7 +365,8 @@ func NewSetCookieArgs(name string, value string) *SetCookieArgs {
 	return args
 }
 
-// SetURL sets the URL optional argument. The request-URI to associate with the setting of the cookie. This value can affect the default domain and path values of the created cookie.
+// SetURL sets the URL optional argument. The request-URI to associate with the setting of the cookie. This value can affect the
+// default domain and path values of the created cookie.
 func (a *SetCookieArgs) SetURL(url string) *SetCookieArgs {
 	a.URL = &url
 	return a

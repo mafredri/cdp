@@ -190,7 +190,8 @@ func (e ConnectionType) String() string {
 	return string(e)
 }
 
-// CookieSameSite Represents the cookie's 'SameSite' status: https://tools.ietf.org/html/draft-west-first-party-cookies
+// CookieSameSite Represents the cookie's 'SameSite' status:
+// https://tools.ietf.org/html/draft-west-first-party-cookies
 type CookieSameSite string
 
 // CookieSameSite as enums.
@@ -441,7 +442,9 @@ type AuthChallenge struct {
 //
 // Note: This type is experimental.
 type AuthChallengeResponse struct {
-	// Response The decision on what to do in response to the authorization challenge.  Default means deferring to the default behavior of the net stack, which will likely either the Cancel authentication or display a popup dialog box.
+	// Response The decision on what to do in response to the authorization challenge.  Default means
+	// deferring to the default behavior of the net stack, which will likely either the Cancel
+	// authentication or display a popup dialog box.
 	//
 	// Values: "Default", "CancelAuth", "ProvideCredentials".
 	Response string  `json:"response"`
@@ -449,7 +452,8 @@ type AuthChallengeResponse struct {
 	Password *string `json:"password,omitempty"` // The password to provide, possibly empty. Should only be set if response is ProvideCredentials.
 }
 
-// InterceptionStage Stages of the interception to begin intercepting. Request will intercept before the request is sent. Response will intercept after the response is received.
+// InterceptionStage Stages of the interception to begin intercepting. Request will intercept before the request is
+// sent. Response will intercept after the response is received.
 //
 // Note: This type is experimental.
 type InterceptionStage string

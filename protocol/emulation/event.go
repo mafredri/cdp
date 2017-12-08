@@ -28,7 +28,8 @@ type VirtualTimeBudgetExpiredClient interface {
 }
 
 // VirtualTimeBudgetExpiredReply is the reply for VirtualTimeBudgetExpired events.
-type VirtualTimeBudgetExpiredReply struct{}
+type VirtualTimeBudgetExpiredReply struct {
+}
 
 // VirtualTimePausedClient is a client for VirtualTimePaused events. Notification sent after the virtual time has paused.
 type VirtualTimePausedClient interface {
