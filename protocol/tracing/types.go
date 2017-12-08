@@ -7,7 +7,8 @@ import (
 	"errors"
 )
 
-// MemoryDumpConfig Configuration for memory dump. Used only when "memory-infra" category is enabled.
+// MemoryDumpConfig Configuration for memory dump. Used only when
+// "memory-infra" category is enabled.
 type MemoryDumpConfig []byte
 
 // MarshalJSON copies behavior of json.RawMessage.
@@ -45,7 +46,8 @@ type TraceConfig struct {
 	MemoryDumpConfig     MemoryDumpConfig `json:"memoryDumpConfig,omitempty"`     // Configuration for memory dump triggers. Used only when "memory-infra" category is enabled.
 }
 
-// StreamCompression Compression type to use for traces returned via streams.
+// StreamCompression Compression type to use for traces returned via
+// streams.
 type StreamCompression string
 
 // StreamCompression as enums.

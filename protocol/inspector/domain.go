@@ -18,7 +18,8 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Disable invokes the Inspector method. Disables inspector domain notifications.
+// Disable invokes the Inspector method. Disables inspector domain
+// notifications.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Inspector.disable", nil, nil, d.conn)
 	if err != nil {
@@ -27,7 +28,8 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 	return
 }
 
-// Enable invokes the Inspector method. Enables inspector domain notifications.
+// Enable invokes the Inspector method. Enables inspector domain
+// notifications.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Inspector.enable", nil, nil, d.conn)
 	if err != nil {

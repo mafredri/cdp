@@ -41,19 +41,22 @@ func NewHighlightNodeArgs(highlightConfig HighlightConfig) *HighlightNodeArgs {
 	return args
 }
 
-// SetNodeID sets the NodeID optional argument. Identifier of the node to highlight.
+// SetNodeID sets the NodeID optional argument. Identifier of the node
+// to highlight.
 func (a *HighlightNodeArgs) SetNodeID(nodeID dom.NodeID) *HighlightNodeArgs {
 	a.NodeID = &nodeID
 	return a
 }
 
-// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node to highlight.
+// SetBackendNodeID sets the BackendNodeID optional argument.
+// Identifier of the backend node to highlight.
 func (a *HighlightNodeArgs) SetBackendNodeID(backendNodeID dom.BackendNodeID) *HighlightNodeArgs {
 	a.BackendNodeID = &backendNodeID
 	return a
 }
 
-// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node to be highlighted.
+// SetObjectID sets the ObjectID optional argument. JavaScript object
+// id of the node to be highlighted.
 func (a *HighlightNodeArgs) SetObjectID(objectID runtime.RemoteObjectID) *HighlightNodeArgs {
 	a.ObjectID = &objectID
 	return a
@@ -73,13 +76,15 @@ func NewHighlightQuadArgs(quad dom.Quad) *HighlightQuadArgs {
 	return args
 }
 
-// SetColor sets the Color optional argument. The highlight fill color (default: transparent).
+// SetColor sets the Color optional argument. The highlight fill color
+// (default: transparent).
 func (a *HighlightQuadArgs) SetColor(color dom.RGBA) *HighlightQuadArgs {
 	a.Color = &color
 	return a
 }
 
-// SetOutlineColor sets the OutlineColor optional argument. The highlight outline color (default: transparent).
+// SetOutlineColor sets the OutlineColor optional argument. The
+// highlight outline color (default: transparent).
 func (a *HighlightQuadArgs) SetOutlineColor(outlineColor dom.RGBA) *HighlightQuadArgs {
 	a.OutlineColor = &outlineColor
 	return a
@@ -105,13 +110,15 @@ func NewHighlightRectArgs(x int, y int, width int, height int) *HighlightRectArg
 	return args
 }
 
-// SetColor sets the Color optional argument. The highlight fill color (default: transparent).
+// SetColor sets the Color optional argument. The highlight fill color
+// (default: transparent).
 func (a *HighlightRectArgs) SetColor(color dom.RGBA) *HighlightRectArgs {
 	a.Color = &color
 	return a
 }
 
-// SetOutlineColor sets the OutlineColor optional argument. The highlight outline color (default: transparent).
+// SetOutlineColor sets the OutlineColor optional argument. The
+// highlight outline color (default: transparent).
 func (a *HighlightRectArgs) SetOutlineColor(outlineColor dom.RGBA) *HighlightRectArgs {
 	a.OutlineColor = &outlineColor
 	return a
@@ -130,8 +137,9 @@ func NewSetInspectModeArgs(mode InspectMode) *SetInspectModeArgs {
 	return args
 }
 
-// SetHighlightConfig sets the HighlightConfig optional argument. A descriptor for the highlight appearance of hovered-over nodes. May be omitted if `enabled
-// == false`.
+// SetHighlightConfig sets the HighlightConfig optional argument. A
+// descriptor for the highlight appearance of hovered-over nodes. May
+// be omitted if `enabled == false`.
 func (a *SetInspectModeArgs) SetHighlightConfig(highlightConfig HighlightConfig) *SetInspectModeArgs {
 	a.HighlightConfig = &highlightConfig
 	return a
@@ -149,7 +157,8 @@ func NewSetPausedInDebuggerMessageArgs() *SetPausedInDebuggerMessageArgs {
 	return args
 }
 
-// SetMessage sets the Message optional argument. The message to display, also triggers resume and step over controls.
+// SetMessage sets the Message optional argument. The message to
+// display, also triggers resume and step over controls.
 func (a *SetPausedInDebuggerMessageArgs) SetMessage(message string) *SetPausedInDebuggerMessageArgs {
 	a.Message = &message
 	return a

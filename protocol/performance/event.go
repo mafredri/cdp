@@ -6,7 +6,8 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// MetricsClient is a client for Metrics events. Current values of the metrics.
+// MetricsClient is a client for Metrics events. Current values of the
+// metrics.
 type MetricsClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

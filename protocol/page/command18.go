@@ -23,14 +23,16 @@ func NewCreateIsolatedWorldArgs(frameID protocol.PageFrameID) *CreateIsolatedWor
 	return args
 }
 
-// SetWorldName sets the WorldName optional argument. An optional name which is reported in the Execution Context.
+// SetWorldName sets the WorldName optional argument. An optional name
+// which is reported in the Execution Context.
 func (a *CreateIsolatedWorldArgs) SetWorldName(worldName string) *CreateIsolatedWorldArgs {
 	a.WorldName = &worldName
 	return a
 }
 
-// SetGrantUniveralAccess sets the GrantUniveralAccess optional argument. Whether or not universal access should be granted to the isolated world. This is a powerful
-// option, use with caution.
+// SetGrantUniveralAccess sets the GrantUniveralAccess optional argument.
+// Whether or not universal access should be granted to the isolated
+// world. This is a powerful option, use with caution.
 func (a *CreateIsolatedWorldArgs) SetGrantUniveralAccess(grantUniveralAccess bool) *CreateIsolatedWorldArgs {
 	a.GrantUniveralAccess = &grantUniveralAccess
 	return a
@@ -75,13 +77,15 @@ func NewSearchInResourceArgs(frameID protocol.PageFrameID, url string, query str
 	return args
 }
 
-// SetCaseSensitive sets the CaseSensitive optional argument. If true, search is case sensitive.
+// SetCaseSensitive sets the CaseSensitive optional argument. If true,
+// search is case sensitive.
 func (a *SearchInResourceArgs) SetCaseSensitive(caseSensitive bool) *SearchInResourceArgs {
 	a.CaseSensitive = &caseSensitive
 	return a
 }
 
-// SetIsRegex sets the IsRegex optional argument. If true, treats string parameter as regex.
+// SetIsRegex sets the IsRegex optional argument. If true, treats
+// string parameter as regex.
 func (a *SearchInResourceArgs) SetIsRegex(isRegex bool) *SearchInResourceArgs {
 	a.IsRegex = &isRegex
 	return a

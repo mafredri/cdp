@@ -4,7 +4,8 @@
 
 package protocol
 
-// PageResourceType Resource type as it was perceived by the rendering engine.
+// PageResourceType Resource type as it was perceived by the rendering
+// engine.
 type PageResourceType string
 
 func (e PageResourceType) Valid() bool {

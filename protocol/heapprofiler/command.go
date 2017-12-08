@@ -48,7 +48,8 @@ func NewGetObjectByHeapObjectIDArgs(objectID HeapSnapshotObjectID) *GetObjectByH
 	return args
 }
 
-// SetObjectGroup sets the ObjectGroup optional argument. Symbolic group name that can be used to release multiple objects.
+// SetObjectGroup sets the ObjectGroup optional argument. Symbolic
+// group name that can be used to release multiple objects.
 func (a *GetObjectByHeapObjectIDArgs) SetObjectGroup(objectGroup string) *GetObjectByHeapObjectIDArgs {
 	a.ObjectGroup = &objectGroup
 	return a
@@ -76,8 +77,9 @@ func NewStartSamplingArgs() *StartSamplingArgs {
 	return args
 }
 
-// SetSamplingInterval sets the SamplingInterval optional argument. Average sample interval in bytes. Poisson distribution is used for the intervals. The
-// default value is 32768 bytes.
+// SetSamplingInterval sets the SamplingInterval optional argument.
+// Average sample interval in bytes. Poisson distribution is used for
+// the intervals. The default value is 32768 bytes.
 func (a *StartSamplingArgs) SetSamplingInterval(samplingInterval float64) *StartSamplingArgs {
 	a.SamplingInterval = &samplingInterval
 	return a
@@ -118,8 +120,9 @@ func NewStopTrackingHeapObjectsArgs() *StopTrackingHeapObjectsArgs {
 	return args
 }
 
-// SetReportProgress sets the ReportProgress optional argument. If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken
-// when the tracking is stopped.
+// SetReportProgress sets the ReportProgress optional argument. If
+// true 'reportHeapSnapshotProgress' events will be generated while
+// snapshot is being taken when the tracking is stopped.
 func (a *StopTrackingHeapObjectsArgs) SetReportProgress(reportProgress bool) *StopTrackingHeapObjectsArgs {
 	a.ReportProgress = &reportProgress
 	return a
@@ -137,7 +140,9 @@ func NewTakeHeapSnapshotArgs() *TakeHeapSnapshotArgs {
 	return args
 }
 
-// SetReportProgress sets the ReportProgress optional argument. If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
+// SetReportProgress sets the ReportProgress optional argument. If
+// true 'reportHeapSnapshotProgress' events will be generated while
+// snapshot is being taken.
 func (a *TakeHeapSnapshotArgs) SetReportProgress(reportProgress bool) *TakeHeapSnapshotArgs {
 	a.ReportProgress = &reportProgress
 	return a

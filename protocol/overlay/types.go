@@ -6,7 +6,8 @@ import (
 	"github.com/mafredri/cdp/protocol/dom"
 )
 
-// HighlightConfig Configuration data for the highlighting of page elements.
+// HighlightConfig Configuration data for the highlighting of page
+// elements.
 type HighlightConfig struct {
 	ShowInfo           *bool     `json:"showInfo,omitempty"`           // Whether the node info tooltip should be shown (default: false).
 	ShowRulers         *bool     `json:"showRulers,omitempty"`         // Whether the rulers should be shown (default: false).

@@ -6,7 +6,8 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// MessageAddedClient is a client for MessageAdded events. Issued when new console message is added.
+// MessageAddedClient is a client for MessageAdded events. Issued when
+// new console message is added.
 type MessageAddedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

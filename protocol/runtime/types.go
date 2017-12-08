@@ -14,7 +14,8 @@ type ScriptID string
 // RemoteObjectID Unique object identifier.
 type RemoteObjectID string
 
-// UnserializableValue Primitive value which cannot be JSON-stringified.
+// UnserializableValue Primitive value which cannot be
+// JSON-stringified.
 type UnserializableValue string
 
 // UnserializableValue as enums.
@@ -54,7 +55,8 @@ type RemoteObject struct {
 	UnserializableValue UnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified does not have `value`, but gets this property.
 	Description         *string             `json:"description,omitempty"`         // String representation of the object.
 	ObjectID            *RemoteObjectID     `json:"objectId,omitempty"`            // Unique object identifier (for non-primitive values).
-	// Preview Preview containing abbreviated property values. Specified for `object` type values only.
+	// Preview Preview containing abbreviated property values. Specified for
+	// `object` type values only.
 	//
 	// Note: This property is experimental.
 	Preview *ObjectPreview `json:"preview,omitempty"`
@@ -98,7 +100,8 @@ type ObjectPreview struct {
 // Note: This type is experimental.
 type PropertyPreview struct {
 	Name string `json:"name"` // Property name.
-	// Type Object type. Accessor means that the property itself is an accessor property.
+	// Type Object type. Accessor means that the property itself is an accessor
+	// property.
 	//
 	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol", "accessor".
 	Type         string         `json:"type"`
@@ -132,14 +135,16 @@ type PropertyDescriptor struct {
 	Symbol       *RemoteObject `json:"symbol,omitempty"`    // Property symbol object, if the property is of the `symbol` type.
 }
 
-// InternalPropertyDescriptor Object internal property descriptor. This property isn't normally visible in JavaScript code.
+// InternalPropertyDescriptor Object internal property descriptor.
+// This property isn't normally visible in JavaScript code.
 type InternalPropertyDescriptor struct {
 	Name  string        `json:"name"`            // Conventional property name.
 	Value *RemoteObject `json:"value,omitempty"` // The value associated with the property.
 }
 
-// CallArgument Represents function call argument. Either remote object id `objectId`, primitive `value`,
-// unserializable primitive value or neither of (for undefined) them should be specified.
+// CallArgument Represents function call argument. Either remote
+// object id `objectId`, primitive `value`, unserializable primitive
+// value or neither of (for undefined) them should be specified.
 type CallArgument struct {
 	Value               json.RawMessage     `json:"value,omitempty"`               // Primitive value or serializable javascript object.
 	UnserializableValue UnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified.
@@ -157,8 +162,8 @@ type ExecutionContextDescription struct {
 	AuxData json.RawMessage    `json:"auxData,omitempty"` // Embedder-specific auxiliary data.
 }
 
-// ExceptionDetails Detailed information about exception (or error) that was thrown during script compilation or
-// execution.
+// ExceptionDetails Detailed information about exception (or error)
+// that was thrown during script compilation or execution.
 type ExceptionDetails struct {
 	ExceptionID        int                 `json:"exceptionId"`                  // Exception id.
 	Text               string              `json:"text"`                         // Exception text, which should be used together with exception object when available.
@@ -227,7 +232,8 @@ type StackTrace struct {
 	Description *string     `json:"description,omitempty"` // String label of this stack trace. For async traces this may be a name of the function that initiated the async call.
 	CallFrames  []CallFrame `json:"callFrames"`            // JavaScript function name.
 	Parent      *StackTrace `json:"parent,omitempty"`      // Asynchronous JavaScript stack trace that preceded this stack, if available.
-	// ParentID Asynchronous JavaScript stack trace that preceded this stack, if available.
+	// ParentID Asynchronous JavaScript stack trace that preceded this stack, if
+	// available.
 	//
 	// Note: This property is experimental.
 	ParentID *StackTraceID `json:"parentId,omitempty"`
@@ -238,8 +244,10 @@ type StackTrace struct {
 // Note: This type is experimental.
 type UniqueDebuggerID string
 
-// StackTraceID If `debuggerId` is set stack trace comes from another debugger and can be resolved there. This
-// allows to track cross-debugger calls. See `Runtime.StackTrace` and `Debugger.paused` for usages.
+// StackTraceID If `debuggerId` is set stack trace comes from another
+// debugger and can be resolved there. This allows to track
+// cross-debugger calls. See `Runtime.StackTrace` and `Debugger.paused`
+// for usages.
 //
 // Note: This type is experimental.
 type StackTraceID struct {

@@ -9,7 +9,8 @@ import (
 // HeapSnapshotObjectID Heap snapshot object id.
 type HeapSnapshotObjectID string
 
-// SamplingHeapProfileNode Sampling Heap Profile node. Holds callsite information, allocation statistics and child nodes.
+// SamplingHeapProfileNode Sampling Heap Profile node. Holds callsite
+// information, allocation statistics and child nodes.
 type SamplingHeapProfileNode struct {
 	CallFrame runtime.CallFrame         `json:"callFrame"` // Function location.
 	SelfSize  float64                   `json:"selfSize"`  // Allocations size in bytes for the node excluding children.

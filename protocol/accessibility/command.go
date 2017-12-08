@@ -19,7 +19,9 @@ func NewGetPartialAXTreeArgs(nodeID dom.NodeID) *GetPartialAXTreeArgs {
 	return args
 }
 
-// SetFetchRelatives sets the FetchRelatives optional argument. Whether to fetch this nodes ancestors, siblings and children. Defaults to true.
+// SetFetchRelatives sets the FetchRelatives optional argument.
+// Whether to fetch this nodes ancestors, siblings and children.
+// Defaults to true.
 func (a *GetPartialAXTreeArgs) SetFetchRelatives(fetchRelatives bool) *GetPartialAXTreeArgs {
 	a.FetchRelatives = &fetchRelatives
 	return a

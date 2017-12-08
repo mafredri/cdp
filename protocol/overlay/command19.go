@@ -23,13 +23,15 @@ func NewHighlightFrameArgs(frameID page.FrameID) *HighlightFrameArgs {
 	return args
 }
 
-// SetContentColor sets the ContentColor optional argument. The content box highlight fill color (default: transparent).
+// SetContentColor sets the ContentColor optional argument. The
+// content box highlight fill color (default: transparent).
 func (a *HighlightFrameArgs) SetContentColor(contentColor dom.RGBA) *HighlightFrameArgs {
 	a.ContentColor = &contentColor
 	return a
 }
 
-// SetContentOutlineColor sets the ContentOutlineColor optional argument. The content box highlight outline color (default: transparent).
+// SetContentOutlineColor sets the ContentOutlineColor optional argument.
+// The content box highlight outline color (default: transparent).
 func (a *HighlightFrameArgs) SetContentOutlineColor(contentOutlineColor dom.RGBA) *HighlightFrameArgs {
 	a.ContentOutlineColor = &contentOutlineColor
 	return a

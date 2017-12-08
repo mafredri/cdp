@@ -59,8 +59,9 @@ type CreateTargetArgs struct {
 	Width            *int              `json:"width,omitempty"`            // Frame width in DIP (headless chrome only).
 	Height           *int              `json:"height,omitempty"`           // Frame height in DIP (headless chrome only).
 	BrowserContextID *BrowserContextID `json:"browserContextId,omitempty"` // The browser context to create the page in (headless chrome only).
-	// EnableBeginFrameControl Whether BeginFrames for this target will be controlled via DevTools (headless chrome only,
-	// not supported on MacOS yet, false by default).
+	// EnableBeginFrameControl Whether BeginFrames for this target will be controlled via DevTools
+	// (headless chrome only, not supported on MacOS yet, false by
+	// default).
 	//
 	// Note: This property is experimental.
 	EnableBeginFrameControl *bool `json:"enableBeginFrameControl,omitempty"`
@@ -73,26 +74,31 @@ func NewCreateTargetArgs(url string) *CreateTargetArgs {
 	return args
 }
 
-// SetWidth sets the Width optional argument. Frame width in DIP (headless chrome only).
+// SetWidth sets the Width optional argument. Frame width in DIP
+// (headless chrome only).
 func (a *CreateTargetArgs) SetWidth(width int) *CreateTargetArgs {
 	a.Width = &width
 	return a
 }
 
-// SetHeight sets the Height optional argument. Frame height in DIP (headless chrome only).
+// SetHeight sets the Height optional argument. Frame height in DIP
+// (headless chrome only).
 func (a *CreateTargetArgs) SetHeight(height int) *CreateTargetArgs {
 	a.Height = &height
 	return a
 }
 
-// SetBrowserContextID sets the BrowserContextID optional argument. The browser context to create the page in (headless chrome only).
+// SetBrowserContextID sets the BrowserContextID optional argument.
+// The browser context to create the page in (headless chrome only).
 func (a *CreateTargetArgs) SetBrowserContextID(browserContextID BrowserContextID) *CreateTargetArgs {
 	a.BrowserContextID = &browserContextID
 	return a
 }
 
-// SetEnableBeginFrameControl sets the EnableBeginFrameControl optional argument. Whether BeginFrames for this target will be controlled via DevTools (headless chrome only,
-// not supported on MacOS yet, false by default).
+// SetEnableBeginFrameControl sets the EnableBeginFrameControl optional argument.
+// Whether BeginFrames for this target will be controlled via DevTools
+// (headless chrome only, not supported on MacOS yet, false by
+// default).
 //
 // Note: This property is experimental.
 func (a *CreateTargetArgs) SetEnableBeginFrameControl(enableBeginFrameControl bool) *CreateTargetArgs {
@@ -121,7 +127,8 @@ func NewDetachFromTargetArgs() *DetachFromTargetArgs {
 	return args
 }
 
-// SetSessionID sets the SessionID optional argument. Session to detach.
+// SetSessionID sets the SessionID optional argument. Session to
+// detach.
 func (a *DetachFromTargetArgs) SetSessionID(sessionID SessionID) *DetachFromTargetArgs {
 	a.SessionID = &sessionID
 	return a
@@ -191,7 +198,8 @@ func NewSendMessageToTargetArgs(message string) *SendMessageToTargetArgs {
 	return args
 }
 
-// SetSessionID sets the SessionID optional argument. Identifier of the session.
+// SetSessionID sets the SessionID optional argument. Identifier of
+// the session.
 func (a *SendMessageToTargetArgs) SetSessionID(sessionID SessionID) *SendMessageToTargetArgs {
 	a.SessionID = &sessionID
 	return a

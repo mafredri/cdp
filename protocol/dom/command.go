@@ -38,8 +38,9 @@ func NewCopyToArgs(nodeID NodeID, targetNodeID NodeID) *CopyToArgs {
 	return args
 }
 
-// SetInsertBeforeNodeID sets the InsertBeforeNodeID optional argument. Drop the copy before this node (if absent, the copy becomes the last child of
-// `targetNodeId`).
+// SetInsertBeforeNodeID sets the InsertBeforeNodeID optional argument.
+// Drop the copy before this node (if absent, the copy becomes the last
+// child of `targetNodeId`).
 func (a *CopyToArgs) SetInsertBeforeNodeID(insertBeforeNodeID NodeID) *CopyToArgs {
 	a.InsertBeforeNodeID = &insertBeforeNodeID
 	return a
@@ -66,32 +67,37 @@ func NewDescribeNodeArgs() *DescribeNodeArgs {
 	return args
 }
 
-// SetNodeID sets the NodeID optional argument. Identifier of the node.
+// SetNodeID sets the NodeID optional argument. Identifier of the
+// node.
 func (a *DescribeNodeArgs) SetNodeID(nodeID NodeID) *DescribeNodeArgs {
 	a.NodeID = &nodeID
 	return a
 }
 
-// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node.
+// SetBackendNodeID sets the BackendNodeID optional argument.
+// Identifier of the backend node.
 func (a *DescribeNodeArgs) SetBackendNodeID(backendNodeID BackendNodeID) *DescribeNodeArgs {
 	a.BackendNodeID = &backendNodeID
 	return a
 }
 
-// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node wrapper.
+// SetObjectID sets the ObjectID optional argument. JavaScript object
+// id of the node wrapper.
 func (a *DescribeNodeArgs) SetObjectID(objectID runtime.RemoteObjectID) *DescribeNodeArgs {
 	a.ObjectID = &objectID
 	return a
 }
 
-// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the
+// SetDepth sets the Depth optional argument. The maximum depth at
+// which children should be retrieved, defaults to 1. Use -1 for the
 // entire subtree or provide an integer larger than 0.
 func (a *DescribeNodeArgs) SetDepth(depth int) *DescribeNodeArgs {
 	a.Depth = &depth
 	return a
 }
 
-// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree
+// SetPierce sets the Pierce optional argument. Whether or not iframes
+// and shadow roots should be traversed when returning the subtree
 // (default is false).
 func (a *DescribeNodeArgs) SetPierce(pierce bool) *DescribeNodeArgs {
 	a.Pierce = &pierce
@@ -129,19 +135,22 @@ func NewFocusArgs() *FocusArgs {
 	return args
 }
 
-// SetNodeID sets the NodeID optional argument. Identifier of the node.
+// SetNodeID sets the NodeID optional argument. Identifier of the
+// node.
 func (a *FocusArgs) SetNodeID(nodeID NodeID) *FocusArgs {
 	a.NodeID = &nodeID
 	return a
 }
 
-// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node.
+// SetBackendNodeID sets the BackendNodeID optional argument.
+// Identifier of the backend node.
 func (a *FocusArgs) SetBackendNodeID(backendNodeID BackendNodeID) *FocusArgs {
 	a.BackendNodeID = &backendNodeID
 	return a
 }
 
-// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node wrapper.
+// SetObjectID sets the ObjectID optional argument. JavaScript object
+// id of the node wrapper.
 func (a *FocusArgs) SetObjectID(objectID runtime.RemoteObjectID) *FocusArgs {
 	a.ObjectID = &objectID
 	return a
@@ -178,19 +187,22 @@ func NewGetBoxModelArgs() *GetBoxModelArgs {
 	return args
 }
 
-// SetNodeID sets the NodeID optional argument. Identifier of the node.
+// SetNodeID sets the NodeID optional argument. Identifier of the
+// node.
 func (a *GetBoxModelArgs) SetNodeID(nodeID NodeID) *GetBoxModelArgs {
 	a.NodeID = &nodeID
 	return a
 }
 
-// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node.
+// SetBackendNodeID sets the BackendNodeID optional argument.
+// Identifier of the backend node.
 func (a *GetBoxModelArgs) SetBackendNodeID(backendNodeID BackendNodeID) *GetBoxModelArgs {
 	a.BackendNodeID = &backendNodeID
 	return a
 }
 
-// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node wrapper.
+// SetObjectID sets the ObjectID optional argument. JavaScript object
+// id of the node wrapper.
 func (a *GetBoxModelArgs) SetObjectID(objectID runtime.RemoteObjectID) *GetBoxModelArgs {
 	a.ObjectID = &objectID
 	return a
@@ -214,14 +226,16 @@ func NewGetDocumentArgs() *GetDocumentArgs {
 	return args
 }
 
-// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the
+// SetDepth sets the Depth optional argument. The maximum depth at
+// which children should be retrieved, defaults to 1. Use -1 for the
 // entire subtree or provide an integer larger than 0.
 func (a *GetDocumentArgs) SetDepth(depth int) *GetDocumentArgs {
 	a.Depth = &depth
 	return a
 }
 
-// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree
+// SetPierce sets the Pierce optional argument. Whether or not iframes
+// and shadow roots should be traversed when returning the subtree
 // (default is false).
 func (a *GetDocumentArgs) SetPierce(pierce bool) *GetDocumentArgs {
 	a.Pierce = &pierce
@@ -246,14 +260,16 @@ func NewGetFlattenedDocumentArgs() *GetFlattenedDocumentArgs {
 	return args
 }
 
-// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the
+// SetDepth sets the Depth optional argument. The maximum depth at
+// which children should be retrieved, defaults to 1. Use -1 for the
 // entire subtree or provide an integer larger than 0.
 func (a *GetFlattenedDocumentArgs) SetDepth(depth int) *GetFlattenedDocumentArgs {
 	a.Depth = &depth
 	return a
 }
 
-// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the subtree
+// SetPierce sets the Pierce optional argument. Whether or not iframes
+// and shadow roots should be traversed when returning the subtree
 // (default is false).
 func (a *GetFlattenedDocumentArgs) SetPierce(pierce bool) *GetFlattenedDocumentArgs {
 	a.Pierce = &pierce
@@ -280,7 +296,9 @@ func NewGetNodeForLocationArgs(x int, y int) *GetNodeForLocationArgs {
 	return args
 }
 
-// SetIncludeUserAgentShadowDOM sets the IncludeUserAgentShadowDOM optional argument. False to skip to the nearest non-UA shadow root ancestor (default: false).
+// SetIncludeUserAgentShadowDOM sets the IncludeUserAgentShadowDOM optional argument.
+// False to skip to the nearest non-UA shadow root ancestor (default:
+// false).
 func (a *GetNodeForLocationArgs) SetIncludeUserAgentShadowDOM(includeUserAgentShadowDOM bool) *GetNodeForLocationArgs {
 	a.IncludeUserAgentShadowDOM = &includeUserAgentShadowDOM
 	return a
@@ -305,19 +323,22 @@ func NewGetOuterHTMLArgs() *GetOuterHTMLArgs {
 	return args
 }
 
-// SetNodeID sets the NodeID optional argument. Identifier of the node.
+// SetNodeID sets the NodeID optional argument. Identifier of the
+// node.
 func (a *GetOuterHTMLArgs) SetNodeID(nodeID NodeID) *GetOuterHTMLArgs {
 	a.NodeID = &nodeID
 	return a
 }
 
-// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node.
+// SetBackendNodeID sets the BackendNodeID optional argument.
+// Identifier of the backend node.
 func (a *GetOuterHTMLArgs) SetBackendNodeID(backendNodeID BackendNodeID) *GetOuterHTMLArgs {
 	a.BackendNodeID = &backendNodeID
 	return a
 }
 
-// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node wrapper.
+// SetObjectID sets the ObjectID optional argument. JavaScript object
+// id of the node wrapper.
 func (a *GetOuterHTMLArgs) SetObjectID(objectID runtime.RemoteObjectID) *GetOuterHTMLArgs {
 	a.ObjectID = &objectID
 	return a
@@ -381,8 +402,9 @@ func NewMoveToArgs(nodeID NodeID, targetNodeID NodeID) *MoveToArgs {
 	return args
 }
 
-// SetInsertBeforeNodeID sets the InsertBeforeNodeID optional argument. Drop node before this one (if absent, the moved node becomes the last child of
-// `targetNodeId`).
+// SetInsertBeforeNodeID sets the InsertBeforeNodeID optional argument.
+// Drop node before this one (if absent, the moved node becomes the
+// last child of `targetNodeId`).
 func (a *MoveToArgs) SetInsertBeforeNodeID(insertBeforeNodeID NodeID) *MoveToArgs {
 	a.InsertBeforeNodeID = &insertBeforeNodeID
 	return a
@@ -406,7 +428,8 @@ func NewPerformSearchArgs(query string) *PerformSearchArgs {
 	return args
 }
 
-// SetIncludeUserAgentShadowDOM sets the IncludeUserAgentShadowDOM optional argument. True to search in user agent shadow DOM.
+// SetIncludeUserAgentShadowDOM sets the IncludeUserAgentShadowDOM optional argument.
+// True to search in user agent shadow DOM.
 func (a *PerformSearchArgs) SetIncludeUserAgentShadowDOM(includeUserAgentShadowDOM bool) *PerformSearchArgs {
 	a.IncludeUserAgentShadowDOM = &includeUserAgentShadowDOM
 	return a
@@ -530,14 +553,16 @@ func NewRequestChildNodesArgs(nodeID NodeID) *RequestChildNodesArgs {
 	return args
 }
 
-// SetDepth sets the Depth optional argument. The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the
+// SetDepth sets the Depth optional argument. The maximum depth at
+// which children should be retrieved, defaults to 1. Use -1 for the
 // entire subtree or provide an integer larger than 0.
 func (a *RequestChildNodesArgs) SetDepth(depth int) *RequestChildNodesArgs {
 	a.Depth = &depth
 	return a
 }
 
-// SetPierce sets the Pierce optional argument. Whether or not iframes and shadow roots should be traversed when returning the sub-tree
+// SetPierce sets the Pierce optional argument. Whether or not iframes
+// and shadow roots should be traversed when returning the sub-tree
 // (default is false).
 func (a *RequestChildNodesArgs) SetPierce(pierce bool) *RequestChildNodesArgs {
 	a.Pierce = &pierce
@@ -575,19 +600,22 @@ func NewResolveNodeArgs() *ResolveNodeArgs {
 	return args
 }
 
-// SetNodeID sets the NodeID optional argument. Id of the node to resolve.
+// SetNodeID sets the NodeID optional argument. Id of the node to
+// resolve.
 func (a *ResolveNodeArgs) SetNodeID(nodeID NodeID) *ResolveNodeArgs {
 	a.NodeID = &nodeID
 	return a
 }
 
-// SetBackendNodeID sets the BackendNodeID optional argument. Backend identifier of the node to resolve.
+// SetBackendNodeID sets the BackendNodeID optional argument. Backend
+// identifier of the node to resolve.
 func (a *ResolveNodeArgs) SetBackendNodeID(backendNodeID BackendNodeID) *ResolveNodeArgs {
 	a.BackendNodeID = &backendNodeID
 	return a
 }
 
-// SetObjectGroup sets the ObjectGroup optional argument. Symbolic group name that can be used to release multiple objects.
+// SetObjectGroup sets the ObjectGroup optional argument. Symbolic
+// group name that can be used to release multiple objects.
 func (a *ResolveNodeArgs) SetObjectGroup(objectGroup string) *ResolveNodeArgs {
 	a.ObjectGroup = &objectGroup
 	return a
@@ -629,7 +657,8 @@ func NewSetAttributesAsTextArgs(nodeID NodeID, text string) *SetAttributesAsText
 	return args
 }
 
-// SetName sets the Name optional argument. Attribute name to replace with new attributes derived from text in case text parsed
+// SetName sets the Name optional argument. Attribute name to replace
+// with new attributes derived from text in case text parsed
 // successfully.
 func (a *SetAttributesAsTextArgs) SetName(name string) *SetAttributesAsTextArgs {
 	a.Name = &name
@@ -651,19 +680,22 @@ func NewSetFileInputFilesArgs(files []string) *SetFileInputFilesArgs {
 	return args
 }
 
-// SetNodeID sets the NodeID optional argument. Identifier of the node.
+// SetNodeID sets the NodeID optional argument. Identifier of the
+// node.
 func (a *SetFileInputFilesArgs) SetNodeID(nodeID NodeID) *SetFileInputFilesArgs {
 	a.NodeID = &nodeID
 	return a
 }
 
-// SetBackendNodeID sets the BackendNodeID optional argument. Identifier of the backend node.
+// SetBackendNodeID sets the BackendNodeID optional argument.
+// Identifier of the backend node.
 func (a *SetFileInputFilesArgs) SetBackendNodeID(backendNodeID BackendNodeID) *SetFileInputFilesArgs {
 	a.BackendNodeID = &backendNodeID
 	return a
 }
 
-// SetObjectID sets the ObjectID optional argument. JavaScript object id of the node wrapper.
+// SetObjectID sets the ObjectID optional argument. JavaScript object
+// id of the node wrapper.
 func (a *SetFileInputFilesArgs) SetObjectID(objectID runtime.RemoteObjectID) *SetFileInputFilesArgs {
 	a.ObjectID = &objectID
 	return a

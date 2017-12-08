@@ -6,7 +6,8 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// CacheStorageContentUpdatedClient is a client for CacheStorageContentUpdated events. A cache's contents have been modified.
+// CacheStorageContentUpdatedClient is a client for CacheStorageContentUpdated events.
+// A cache's contents have been modified.
 type CacheStorageContentUpdatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -20,7 +21,8 @@ type CacheStorageContentUpdatedReply struct {
 	CacheName string `json:"cacheName"` // Name of cache in origin.
 }
 
-// CacheStorageListUpdatedClient is a client for CacheStorageListUpdated events. A cache has been added/deleted.
+// CacheStorageListUpdatedClient is a client for CacheStorageListUpdated events.
+// A cache has been added/deleted.
 type CacheStorageListUpdatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -33,7 +35,8 @@ type CacheStorageListUpdatedReply struct {
 	Origin string `json:"origin"` // Origin to update.
 }
 
-// IndexedDBContentUpdatedClient is a client for IndexedDBContentUpdated events. The origin's IndexedDB object store has been modified.
+// IndexedDBContentUpdatedClient is a client for IndexedDBContentUpdated events.
+// The origin's IndexedDB object store has been modified.
 type IndexedDBContentUpdatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -48,7 +51,8 @@ type IndexedDBContentUpdatedReply struct {
 	ObjectStoreName string `json:"objectStoreName"` // ObjectStore to update.
 }
 
-// IndexedDBListUpdatedClient is a client for IndexedDBListUpdated events. The origin's IndexedDB database list has been modified.
+// IndexedDBListUpdatedClient is a client for IndexedDBListUpdated events.
+// The origin's IndexedDB database list has been modified.
 type IndexedDBListUpdatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

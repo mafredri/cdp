@@ -32,14 +32,16 @@ func NewReadArgs(handle StreamHandle) *ReadArgs {
 	return args
 }
 
-// SetOffset sets the Offset optional argument. Seek to the specified offset before reading (if not specificed, proceed with offset
+// SetOffset sets the Offset optional argument. Seek to the specified
+// offset before reading (if not specificed, proceed with offset
 // following the last read).
 func (a *ReadArgs) SetOffset(offset int) *ReadArgs {
 	a.Offset = &offset
 	return a
 }
 
-// SetSize sets the Size optional argument. Maximum number of bytes to read (left upon the agent discretion if not specified).
+// SetSize sets the Size optional argument. Maximum number of bytes to
+// read (left upon the agent discretion if not specified).
 func (a *ReadArgs) SetSize(size int) *ReadArgs {
 	a.Size = &size
 	return a

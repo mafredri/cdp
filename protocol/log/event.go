@@ -6,7 +6,8 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// EntryAddedClient is a client for EntryAdded events. Issued when new message was logged.
+// EntryAddedClient is a client for EntryAdded events. Issued when new
+// message was logged.
 type EntryAddedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

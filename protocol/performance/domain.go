@@ -18,7 +18,8 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Disable invokes the Performance method. Disable collecting and reporting metrics.
+// Disable invokes the Performance method. Disable collecting and
+// reporting metrics.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Performance.disable", nil, nil, d.conn)
 	if err != nil {
@@ -27,7 +28,8 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 	return
 }
 
-// Enable invokes the Performance method. Enable collecting and reporting metrics.
+// Enable invokes the Performance method. Enable collecting and
+// reporting metrics.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Performance.enable", nil, nil, d.conn)
 	if err != nil {
@@ -36,7 +38,8 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 	return
 }
 
-// GetMetrics invokes the Performance method. Retrieve current values of run-time metrics.
+// GetMetrics invokes the Performance method. Retrieve current values
+// of run-time metrics.
 func (d *domainClient) GetMetrics(ctx context.Context) (reply *GetMetricsReply, err error) {
 	reply = new(GetMetricsReply)
 	err = rpcc.Invoke(ctx, "Performance.getMetrics", nil, reply, d.conn)

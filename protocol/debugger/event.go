@@ -9,7 +9,8 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// BreakpointResolvedClient is a client for BreakpointResolved events. Fired when breakpoint is resolved to an actual script and location.
+// BreakpointResolvedClient is a client for BreakpointResolved events.
+// Fired when breakpoint is resolved to an actual script and location.
 type BreakpointResolvedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -23,7 +24,9 @@ type BreakpointResolvedReply struct {
 	Location     Location     `json:"location"`     // Actual breakpoint location.
 }
 
-// PausedClient is a client for Paused events. Fired when the virtual machine stopped on breakpoint or exception or any other stop criteria.
+// PausedClient is a client for Paused events. Fired when the virtual
+// machine stopped on breakpoint or exception or any other stop
+// criteria.
 type PausedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -45,14 +48,16 @@ type PausedReply struct {
 	//
 	// Note: This property is experimental.
 	AsyncStackTraceID *runtime.StackTraceID `json:"asyncStackTraceId,omitempty"`
-	// AsyncCallStackTraceID Just scheduled async call will have this stack trace as parent stack during async execution.
-	// This field is available only after `Debugger.stepInto` call with `breakOnAsynCall` flag.
+	// AsyncCallStackTraceID Just scheduled async call will have this stack trace as parent
+	// stack during async execution. This field is available only after
+	// `Debugger.stepInto` call with `breakOnAsynCall` flag.
 	//
 	// Note: This property is experimental.
 	AsyncCallStackTraceID *runtime.StackTraceID `json:"asyncCallStackTraceId,omitempty"`
 }
 
-// ResumedClient is a client for Resumed events. Fired when the virtual machine resumed execution.
+// ResumedClient is a client for Resumed events. Fired when the
+// virtual machine resumed execution.
 type ResumedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -64,7 +69,8 @@ type ResumedClient interface {
 type ResumedReply struct {
 }
 
-// ScriptFailedToParseClient is a client for ScriptFailedToParse events. Fired when virtual machine fails to parse the script.
+// ScriptFailedToParseClient is a client for ScriptFailedToParse events.
+// Fired when virtual machine fails to parse the script.
 type ScriptFailedToParseClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -87,14 +93,16 @@ type ScriptFailedToParseReply struct {
 	HasSourceURL            *bool                      `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
 	IsModule                *bool                      `json:"isModule,omitempty"`                // True, if this script is ES6 module.
 	Length                  *int                       `json:"length,omitempty"`                  // This script length.
-	// StackTrace JavaScript top stack frame of where the script parsed event was triggered if available.
+	// StackTrace JavaScript top stack frame of where the script parsed event was
+	// triggered if available.
 	//
 	// Note: This property is experimental.
 	StackTrace *runtime.StackTrace `json:"stackTrace,omitempty"`
 }
 
-// ScriptParsedClient is a client for ScriptParsed events. Fired when virtual machine parses script. This event is also fired for all known and uncollected
-// scripts upon enabling debugger.
+// ScriptParsedClient is a client for ScriptParsed events. Fired when
+// virtual machine parses script. This event is also fired for all
+// known and uncollected scripts upon enabling debugger.
 type ScriptParsedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -113,7 +121,8 @@ type ScriptParsedReply struct {
 	ExecutionContextID      runtime.ExecutionContextID `json:"executionContextId"`                // Specifies script creation context.
 	Hash                    string                     `json:"hash"`                              // Content hash of the script.
 	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
-	// IsLiveEdit True, if this script is generated as a result of the live edit operation.
+	// IsLiveEdit True, if this script is generated as a result of the live edit
+	// operation.
 	//
 	// Note: This property is experimental.
 	IsLiveEdit   *bool   `json:"isLiveEdit,omitempty"`
@@ -121,7 +130,8 @@ type ScriptParsedReply struct {
 	HasSourceURL *bool   `json:"hasSourceURL,omitempty"` // True, if this script has sourceURL.
 	IsModule     *bool   `json:"isModule,omitempty"`     // True, if this script is ES6 module.
 	Length       *int    `json:"length,omitempty"`       // This script length.
-	// StackTrace JavaScript top stack frame of where the script parsed event was triggered if available.
+	// StackTrace JavaScript top stack frame of where the script parsed event was
+	// triggered if available.
 	//
 	// Note: This property is experimental.
 	StackTrace *runtime.StackTrace `json:"stackTrace,omitempty"`

@@ -25,13 +25,15 @@ func NewGetEncodedResponseArgs(requestID network.RequestID, encoding string) *Ge
 	return args
 }
 
-// SetQuality sets the Quality optional argument. The quality of the encoding (0-1). (defaults to 1)
+// SetQuality sets the Quality optional argument. The quality of the
+// encoding (0-1). (defaults to 1)
 func (a *GetEncodedResponseArgs) SetQuality(quality float64) *GetEncodedResponseArgs {
 	a.Quality = &quality
 	return a
 }
 
-// SetSizeOnly sets the SizeOnly optional argument. Whether to only return the size information (defaults to false).
+// SetSizeOnly sets the SizeOnly optional argument. Whether to only
+// return the size information (defaults to false).
 func (a *GetEncodedResponseArgs) SetSizeOnly(sizeOnly bool) *GetEncodedResponseArgs {
 	a.SizeOnly = &sizeOnly
 	return a

@@ -37,7 +37,9 @@ func (d *domainClient) PrepareForLeakDetection(ctx context.Context) (err error) 
 	return
 }
 
-// SetPressureNotificationsSuppressed invokes the Memory method. Enable/disable suppressing memory pressure notifications in all processes.
+// SetPressureNotificationsSuppressed invokes the Memory method.
+// Enable/disable suppressing memory pressure notifications in all
+// processes.
 func (d *domainClient) SetPressureNotificationsSuppressed(ctx context.Context, args *SetPressureNotificationsSuppressedArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Memory.setPressureNotificationsSuppressed", args, nil, d.conn)
@@ -50,7 +52,8 @@ func (d *domainClient) SetPressureNotificationsSuppressed(ctx context.Context, a
 	return
 }
 
-// SimulatePressureNotification invokes the Memory method. Simulate a memory pressure notification in all processes.
+// SimulatePressureNotification invokes the Memory method. Simulate a
+// memory pressure notification in all processes.
 func (d *domainClient) SimulatePressureNotification(ctx context.Context, args *SimulatePressureNotificationArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Memory.simulatePressureNotification", args, nil, d.conn)

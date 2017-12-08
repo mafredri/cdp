@@ -27,7 +27,8 @@ func (d *domainClient) End(ctx context.Context) (err error) {
 	return
 }
 
-// GetCategories invokes the Tracing method. Gets supported tracing categories.
+// GetCategories invokes the Tracing method. Gets supported tracing
+// categories.
 func (d *domainClient) GetCategories(ctx context.Context) (reply *GetCategoriesReply, err error) {
 	reply = new(GetCategoriesReply)
 	err = rpcc.Invoke(ctx, "Tracing.getCategories", nil, reply, d.conn)
@@ -37,7 +38,8 @@ func (d *domainClient) GetCategories(ctx context.Context) (reply *GetCategoriesR
 	return
 }
 
-// RecordClockSyncMarker invokes the Tracing method. Record a clock sync marker in the trace.
+// RecordClockSyncMarker invokes the Tracing method. Record a clock
+// sync marker in the trace.
 func (d *domainClient) RecordClockSyncMarker(ctx context.Context, args *RecordClockSyncMarkerArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Tracing.recordClockSyncMarker", args, nil, d.conn)
@@ -50,7 +52,8 @@ func (d *domainClient) RecordClockSyncMarker(ctx context.Context, args *RecordCl
 	return
 }
 
-// RequestMemoryDump invokes the Tracing method. Request a global memory dump.
+// RequestMemoryDump invokes the Tracing method. Request a global
+// memory dump.
 func (d *domainClient) RequestMemoryDump(ctx context.Context) (reply *RequestMemoryDumpReply, err error) {
 	reply = new(RequestMemoryDumpReply)
 	err = rpcc.Invoke(ctx, "Tracing.requestMemoryDump", nil, reply, d.conn)

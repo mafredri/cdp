@@ -18,7 +18,8 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// CompositingReasons invokes the LayerTree method. Provides the reasons why the given layer was composited.
+// CompositingReasons invokes the LayerTree method. Provides the
+// reasons why the given layer was composited.
 func (d *domainClient) CompositingReasons(ctx context.Context, args *CompositingReasonsArgs) (reply *CompositingReasonsReply, err error) {
 	reply = new(CompositingReasonsReply)
 	if args != nil {
@@ -32,7 +33,8 @@ func (d *domainClient) CompositingReasons(ctx context.Context, args *Compositing
 	return
 }
 
-// Disable invokes the LayerTree method. Disables compositing tree inspection.
+// Disable invokes the LayerTree method. Disables compositing tree
+// inspection.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "LayerTree.disable", nil, nil, d.conn)
 	if err != nil {
@@ -41,7 +43,8 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 	return
 }
 
-// Enable invokes the LayerTree method. Enables compositing tree inspection.
+// Enable invokes the LayerTree method. Enables compositing tree
+// inspection.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "LayerTree.enable", nil, nil, d.conn)
 	if err != nil {
@@ -50,7 +53,8 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 	return
 }
 
-// LoadSnapshot invokes the LayerTree method. Returns the snapshot identifier.
+// LoadSnapshot invokes the LayerTree method. Returns the snapshot
+// identifier.
 func (d *domainClient) LoadSnapshot(ctx context.Context, args *LoadSnapshotArgs) (reply *LoadSnapshotReply, err error) {
 	reply = new(LoadSnapshotReply)
 	if args != nil {
@@ -64,7 +68,8 @@ func (d *domainClient) LoadSnapshot(ctx context.Context, args *LoadSnapshotArgs)
 	return
 }
 
-// MakeSnapshot invokes the LayerTree method. Returns the layer snapshot identifier.
+// MakeSnapshot invokes the LayerTree method. Returns the layer
+// snapshot identifier.
 func (d *domainClient) MakeSnapshot(ctx context.Context, args *MakeSnapshotArgs) (reply *MakeSnapshotReply, err error) {
 	reply = new(MakeSnapshotReply)
 	if args != nil {
@@ -92,7 +97,8 @@ func (d *domainClient) ProfileSnapshot(ctx context.Context, args *ProfileSnapsho
 	return
 }
 
-// ReleaseSnapshot invokes the LayerTree method. Releases layer snapshot captured by the back-end.
+// ReleaseSnapshot invokes the LayerTree method. Releases layer
+// snapshot captured by the back-end.
 func (d *domainClient) ReleaseSnapshot(ctx context.Context, args *ReleaseSnapshotArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "LayerTree.releaseSnapshot", args, nil, d.conn)
@@ -105,7 +111,8 @@ func (d *domainClient) ReleaseSnapshot(ctx context.Context, args *ReleaseSnapsho
 	return
 }
 
-// ReplaySnapshot invokes the LayerTree method. Replays the layer snapshot and returns the resulting bitmap.
+// ReplaySnapshot invokes the LayerTree method. Replays the layer
+// snapshot and returns the resulting bitmap.
 func (d *domainClient) ReplaySnapshot(ctx context.Context, args *ReplaySnapshotArgs) (reply *ReplaySnapshotReply, err error) {
 	reply = new(ReplaySnapshotReply)
 	if args != nil {
@@ -119,7 +126,8 @@ func (d *domainClient) ReplaySnapshot(ctx context.Context, args *ReplaySnapshotA
 	return
 }
 
-// SnapshotCommandLog invokes the LayerTree method. Replays the layer snapshot and returns canvas log.
+// SnapshotCommandLog invokes the LayerTree method. Replays the layer
+// snapshot and returns canvas log.
 func (d *domainClient) SnapshotCommandLog(ctx context.Context, args *SnapshotCommandLogArgs) (reply *SnapshotCommandLogReply, err error) {
 	reply = new(SnapshotCommandLogReply)
 	if args != nil {

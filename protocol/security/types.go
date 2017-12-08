@@ -5,7 +5,8 @@ package security
 // CertificateID An internal certificate ID value.
 type CertificateID int
 
-// MixedContentType A description of mixed content (HTTP resources on HTTPS pages), as defined by
+// MixedContentType A description of mixed content (HTTP resources on
+// HTTPS pages), as defined by
 // https://www.w3.org/TR/mixed-content/#categories
 type MixedContentType string
 
@@ -56,7 +57,8 @@ func (e State) String() string {
 	return string(e)
 }
 
-// StateExplanation An explanation of an factor contributing to the security state.
+// StateExplanation An explanation of an factor contributing to the
+// security state.
 type StateExplanation struct {
 	SecurityState    State            `json:"securityState"`    // Security state representing the severity of the factor being explained.
 	Summary          string           `json:"summary"`          // Short phrase describing the type of factor.
@@ -65,7 +67,8 @@ type StateExplanation struct {
 	Certificate      []string         `json:"certificate"`      // Page certificate.
 }
 
-// InsecureContentStatus Information about insecure content on the page.
+// InsecureContentStatus Information about insecure content on the
+// page.
 type InsecureContentStatus struct {
 	RanMixedContent                bool  `json:"ranMixedContent"`                // True if the page was loaded over HTTPS and ran mixed (HTTP) content such as scripts.
 	DisplayedMixedContent          bool  `json:"displayedMixedContent"`          // True if the page was loaded over HTTPS and displayed mixed (HTTP) content such as images.
@@ -76,8 +79,9 @@ type InsecureContentStatus struct {
 	DisplayedInsecureContentStyle  State `json:"displayedInsecureContentStyle"`  // Security state representing a page that displayed insecure content.
 }
 
-// CertificateErrorAction The action to take when a certificate error occurs. continue will continue processing the
-// request and cancel will cancel the request.
+// CertificateErrorAction The action to take when a certificate error
+// occurs. continue will continue processing the request and cancel
+// will cancel the request.
 type CertificateErrorAction string
 
 // CertificateErrorAction as enums.

@@ -6,7 +6,8 @@ import (
 	"github.com/mafredri/cdp/protocol/network"
 )
 
-// FrameResourceTree Information about the Frame hierarchy along with their cached resources.
+// FrameResourceTree Information about the Frame hierarchy along with
+// their cached resources.
 //
 // Note: This type is experimental.
 type FrameResourceTree struct {

@@ -95,7 +95,8 @@ func (t *TimeSinceEpoch) UnmarshalJSON(data []byte) error {
 var _ json.Marshaler = (*TimeSinceEpoch)(nil)
 var _ json.Unmarshaler = (*TimeSinceEpoch)(nil)
 
-// MonotonicTime Monotonically increasing time in seconds since an arbitrary point in the past.
+// MonotonicTime Monotonically increasing time in seconds since an
+// arbitrary point in the past.
 type MonotonicTime float64
 
 // String calls (time.Time).String().
@@ -160,7 +161,8 @@ func (h *Headers) UnmarshalJSON(data []byte) error {
 var _ json.Marshaler = (*Headers)(nil)
 var _ json.Unmarshaler = (*Headers)(nil)
 
-// ConnectionType The underlying connection technology that the browser is supposedly using.
+// ConnectionType The underlying connection technology that the
+// browser is supposedly using.
 type ConnectionType string
 
 // ConnectionType as enums.
@@ -280,14 +282,16 @@ type Request struct {
 	PostData         *string                    `json:"postData,omitempty"`         // HTTP POST request data.
 	MixedContentType *security.MixedContentType `json:"mixedContentType,omitempty"` // The mixed content type of the request.
 	InitialPriority  ResourcePriority           `json:"initialPriority"`            // Priority of the resource request at the time request is sent.
-	// ReferrerPolicy The referrer policy of the request, as defined in https://www.w3.org/TR/referrer-policy/
+	// ReferrerPolicy The referrer policy of the request, as defined in
+	// https://www.w3.org/TR/referrer-policy/
 	//
 	// Values: "unsafe-url", "no-referrer-when-downgrade", "no-referrer", "origin", "origin-when-cross-origin", "same-origin", "strict-origin", "strict-origin-when-cross-origin".
 	ReferrerPolicy string `json:"referrerPolicy"`
 	IsLinkPreload  *bool  `json:"isLinkPreload,omitempty"` // Whether is loaded via link preload.
 }
 
-// SignedCertificateTimestamp Details of a signed certificate timestamp (SCT).
+// SignedCertificateTimestamp Details of a signed certificate
+// timestamp (SCT).
 type SignedCertificateTimestamp struct {
 	Status             string         `json:"status"`             // Validation status.
 	Origin             string         `json:"origin"`             // Origin.
@@ -425,7 +429,8 @@ type CookieParam struct {
 	Expires  TimeSinceEpoch `json:"expires,omitempty"`  // Cookie expiration date, session cookie if not set
 }
 
-// AuthChallenge Authorization challenge for HTTP status code 401 or 407.
+// AuthChallenge Authorization challenge for HTTP status code 401 or
+// 407.
 //
 // Note: This type is experimental.
 type AuthChallenge struct {
@@ -442,9 +447,10 @@ type AuthChallenge struct {
 //
 // Note: This type is experimental.
 type AuthChallengeResponse struct {
-	// Response The decision on what to do in response to the authorization challenge.  Default means
-	// deferring to the default behavior of the net stack, which will likely either the Cancel
-	// authentication or display a popup dialog box.
+	// Response The decision on what to do in response to the authorization
+	// challenge. Default means deferring to the default behavior of the
+	// net stack, which will likely either the Cancel authentication or
+	// display a popup dialog box.
 	//
 	// Values: "Default", "CancelAuth", "ProvideCredentials".
 	Response string  `json:"response"`
@@ -452,8 +458,9 @@ type AuthChallengeResponse struct {
 	Password *string `json:"password,omitempty"` // The password to provide, possibly empty. Should only be set if response is ProvideCredentials.
 }
 
-// InterceptionStage Stages of the interception to begin intercepting. Request will intercept before the request is
-// sent. Response will intercept after the response is received.
+// InterceptionStage Stages of the interception to begin intercepting.
+// Request will intercept before the request is sent. Response will
+// intercept after the response is received.
 //
 // Note: This type is experimental.
 type InterceptionStage string

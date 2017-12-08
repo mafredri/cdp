@@ -19,7 +19,8 @@ type LoadingFailedReply struct {
 	BlockedReason BlockedReason             `json:"blockedReason,omitempty"` // The reason why loading was blocked, if any.
 }
 
-// LoadingFinishedClient is a client for LoadingFinished events. Fired when HTTP request has finished loading.
+// LoadingFinishedClient is a client for LoadingFinished events. Fired
+// when HTTP request has finished loading.
 type LoadingFinishedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -41,7 +42,8 @@ type RequestInterceptedReply struct {
 	ResponseHeaders     Headers                   `json:"responseHeaders,omitempty"`     // Response headers if intercepted at the response stage or if redirect occurred while intercepting request or auth retry occurred.
 }
 
-// RequestServedFromCacheClient is a client for RequestServedFromCache events. Fired if request ended up loading from cache.
+// RequestServedFromCacheClient is a client for RequestServedFromCache events.
+// Fired if request ended up loading from cache.
 type RequestServedFromCacheClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -63,7 +65,8 @@ type RequestWillBeSentReply struct {
 	FrameID          *protocol.PageFrameID      `json:"frameId,omitempty"`          // Frame identifier.
 }
 
-// ResourceChangedPriorityClient is a client for ResourceChangedPriority events. Fired when resource loading priority is changed
+// ResourceChangedPriorityClient is a client for ResourceChangedPriority events.
+// Fired when resource loading priority is changed
 type ResourceChangedPriorityClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -81,7 +84,8 @@ type ResponseReceivedReply struct {
 	FrameID   *protocol.PageFrameID     `json:"frameId,omitempty"` // Frame identifier.
 }
 
-// WebSocketClosedClient is a client for WebSocketClosed events. Fired when WebSocket is closed.
+// WebSocketClosedClient is a client for WebSocketClosed events. Fired
+// when WebSocket is closed.
 type WebSocketClosedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

@@ -19,7 +19,9 @@ type AddHeapSnapshotChunkReply struct {
 	Chunk string `json:"chunk"` // No description.
 }
 
-// HeapStatsUpdateClient is a client for HeapStatsUpdate events. If heap objects tracking has been started then backend may send update for one or more fragments
+// HeapStatsUpdateClient is a client for HeapStatsUpdate events. If
+// heap objects tracking has been started then backend may send update
+// for one or more fragments
 type HeapStatsUpdateClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -32,9 +34,12 @@ type HeapStatsUpdateReply struct {
 	StatsUpdate []int `json:"statsUpdate"` // An array of triplets. Each triplet describes a fragment. The first integer is the fragment index, the second integer is a total count of objects for the fragment, the third integer is a total size of the objects for the fragment.
 }
 
-// LastSeenObjectIDClient is a client for LastSeenObjectID events. If heap objects tracking has been started then backend regularly sends a current value for last
-// seen object id and corresponding timestamp. If the were changes in the heap since last event
-// then one or more heapStatsUpdate events will be sent before a new lastSeenObjectId event.
+// LastSeenObjectIDClient is a client for LastSeenObjectID events. If
+// heap objects tracking has been started then backend regularly sends
+// a current value for last seen object id and corresponding timestamp.
+// If the were changes in the heap since last event then one or more
+// heapStatsUpdate events will be sent before a new lastSeenObjectId
+// event.
 type LastSeenObjectIDClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

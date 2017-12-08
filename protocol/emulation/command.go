@@ -37,7 +37,8 @@ func NewSetDefaultBackgroundColorOverrideArgs() *SetDefaultBackgroundColorOverri
 	return args
 }
 
-// SetColor sets the Color optional argument. RGBA of the default background color. If not specified, any existing override will be
+// SetColor sets the Color optional argument. RGBA of the default
+// background color. If not specified, any existing override will be
 // cleared.
 func (a *SetDefaultBackgroundColorOverrideArgs) SetColor(color dom.RGBA) *SetDefaultBackgroundColorOverrideArgs {
 	a.Color = &color
@@ -54,29 +55,35 @@ type SetDeviceMetricsOverrideArgs struct {
 	//
 	// Note: This property is experimental.
 	Scale *float64 `json:"scale,omitempty"`
-	// ScreenWidth Overriding screen width value in pixels (minimum 0, maximum 10000000).
+	// ScreenWidth Overriding screen width value in pixels (minimum 0, maximum
+	// 10000000).
 	//
 	// Note: This property is experimental.
 	ScreenWidth *int `json:"screenWidth,omitempty"`
-	// ScreenHeight Overriding screen height value in pixels (minimum 0, maximum 10000000).
+	// ScreenHeight Overriding screen height value in pixels (minimum 0, maximum
+	// 10000000).
 	//
 	// Note: This property is experimental.
 	ScreenHeight *int `json:"screenHeight,omitempty"`
-	// PositionX Overriding view X position on screen in pixels (minimum 0, maximum 10000000).
+	// PositionX Overriding view X position on screen in pixels (minimum 0, maximum
+	// 10000000).
 	//
 	// Note: This property is experimental.
 	PositionX *int `json:"positionX,omitempty"`
-	// PositionY Overriding view Y position on screen in pixels (minimum 0, maximum 10000000).
+	// PositionY Overriding view Y position on screen in pixels (minimum 0, maximum
+	// 10000000).
 	//
 	// Note: This property is experimental.
 	PositionY *int `json:"positionY,omitempty"`
-	// DontSetVisibleSize Do not set visible view size, rely upon explicit setVisibleSize call.
+	// DontSetVisibleSize Do not set visible view size, rely upon explicit setVisibleSize
+	// call.
 	//
 	// Note: This property is experimental.
 	DontSetVisibleSize *bool              `json:"dontSetVisibleSize,omitempty"`
 	ScreenOrientation  *ScreenOrientation `json:"screenOrientation,omitempty"` // Screen orientation override.
-	// Viewport If set, the visible area of the page will be overridden to this viewport. This viewport
-	// change is not observed by the page, e.g. viewport-relative elements do not change positions.
+	// Viewport If set, the visible area of the page will be overridden to this
+	// viewport. This viewport change is not observed by the page, e.g.
+	// viewport-relative elements do not change positions.
 	//
 	// Note: This property is experimental.
 	Viewport *page.Viewport `json:"viewport,omitempty"`
@@ -92,7 +99,8 @@ func NewSetDeviceMetricsOverrideArgs(width int, height int, deviceScaleFactor fl
 	return args
 }
 
-// SetScale sets the Scale optional argument. Scale to apply to resulting view image.
+// SetScale sets the Scale optional argument. Scale to apply to
+// resulting view image.
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetScale(scale float64) *SetDeviceMetricsOverrideArgs {
@@ -100,7 +108,8 @@ func (a *SetDeviceMetricsOverrideArgs) SetScale(scale float64) *SetDeviceMetrics
 	return a
 }
 
-// SetScreenWidth sets the ScreenWidth optional argument. Overriding screen width value in pixels (minimum 0, maximum 10000000).
+// SetScreenWidth sets the ScreenWidth optional argument. Overriding
+// screen width value in pixels (minimum 0, maximum 10000000).
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetScreenWidth(screenWidth int) *SetDeviceMetricsOverrideArgs {
@@ -108,7 +117,8 @@ func (a *SetDeviceMetricsOverrideArgs) SetScreenWidth(screenWidth int) *SetDevic
 	return a
 }
 
-// SetScreenHeight sets the ScreenHeight optional argument. Overriding screen height value in pixels (minimum 0, maximum 10000000).
+// SetScreenHeight sets the ScreenHeight optional argument. Overriding
+// screen height value in pixels (minimum 0, maximum 10000000).
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetScreenHeight(screenHeight int) *SetDeviceMetricsOverrideArgs {
@@ -116,7 +126,8 @@ func (a *SetDeviceMetricsOverrideArgs) SetScreenHeight(screenHeight int) *SetDev
 	return a
 }
 
-// SetPositionX sets the PositionX optional argument. Overriding view X position on screen in pixels (minimum 0, maximum 10000000).
+// SetPositionX sets the PositionX optional argument. Overriding view
+// X position on screen in pixels (minimum 0, maximum 10000000).
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetPositionX(positionX int) *SetDeviceMetricsOverrideArgs {
@@ -124,7 +135,8 @@ func (a *SetDeviceMetricsOverrideArgs) SetPositionX(positionX int) *SetDeviceMet
 	return a
 }
 
-// SetPositionY sets the PositionY optional argument. Overriding view Y position on screen in pixels (minimum 0, maximum 10000000).
+// SetPositionY sets the PositionY optional argument. Overriding view
+// Y position on screen in pixels (minimum 0, maximum 10000000).
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetPositionY(positionY int) *SetDeviceMetricsOverrideArgs {
@@ -132,7 +144,9 @@ func (a *SetDeviceMetricsOverrideArgs) SetPositionY(positionY int) *SetDeviceMet
 	return a
 }
 
-// SetDontSetVisibleSize sets the DontSetVisibleSize optional argument. Do not set visible view size, rely upon explicit setVisibleSize call.
+// SetDontSetVisibleSize sets the DontSetVisibleSize optional argument.
+// Do not set visible view size, rely upon explicit setVisibleSize
+// call.
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetDontSetVisibleSize(dontSetVisibleSize bool) *SetDeviceMetricsOverrideArgs {
@@ -140,14 +154,17 @@ func (a *SetDeviceMetricsOverrideArgs) SetDontSetVisibleSize(dontSetVisibleSize 
 	return a
 }
 
-// SetScreenOrientation sets the ScreenOrientation optional argument. Screen orientation override.
+// SetScreenOrientation sets the ScreenOrientation optional argument.
+// Screen orientation override.
 func (a *SetDeviceMetricsOverrideArgs) SetScreenOrientation(screenOrientation ScreenOrientation) *SetDeviceMetricsOverrideArgs {
 	a.ScreenOrientation = &screenOrientation
 	return a
 }
 
-// SetViewport sets the Viewport optional argument. If set, the visible area of the page will be overridden to this viewport. This viewport
-// change is not observed by the page, e.g. viewport-relative elements do not change positions.
+// SetViewport sets the Viewport optional argument. If set, the
+// visible area of the page will be overridden to this viewport. This
+// viewport change is not observed by the page, e.g. viewport-relative
+// elements do not change positions.
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetViewport(viewport page.Viewport) *SetDeviceMetricsOverrideArgs {
@@ -171,7 +188,8 @@ func NewSetEmitTouchEventsForMouseArgs(enabled bool) *SetEmitTouchEventsForMouse
 	return args
 }
 
-// SetConfiguration sets the Configuration optional argument. Touch/gesture events configuration. Default: current platform.
+// SetConfiguration sets the Configuration optional argument.
+// Touch/gesture events configuration. Default: current platform.
 //
 // Values: "mobile", "desktop".
 func (a *SetEmitTouchEventsForMouseArgs) SetConfiguration(configuration string) *SetEmitTouchEventsForMouseArgs {
@@ -272,7 +290,8 @@ func NewSetTouchEmulationEnabledArgs(enabled bool) *SetTouchEmulationEnabledArgs
 	return args
 }
 
-// SetMaxTouchPoints sets the MaxTouchPoints optional argument. Maximum touch points supported. Defaults to one.
+// SetMaxTouchPoints sets the MaxTouchPoints optional argument.
+// Maximum touch points supported. Defaults to one.
 func (a *SetTouchEmulationEnabledArgs) SetMaxTouchPoints(maxTouchPoints int) *SetTouchEmulationEnabledArgs {
 	a.MaxTouchPoints = &maxTouchPoints
 	return a
@@ -292,15 +311,17 @@ func NewSetVirtualTimePolicyArgs(policy VirtualTimePolicy) *SetVirtualTimePolicy
 	return args
 }
 
-// SetBudget sets the Budget optional argument. If set, after this many virtual milliseconds have elapsed virtual time will be paused and a
-// virtualTimeBudgetExpired event is sent.
+// SetBudget sets the Budget optional argument. If set, after this
+// many virtual milliseconds have elapsed virtual time will be paused
+// and a virtualTimeBudgetExpired event is sent.
 func (a *SetVirtualTimePolicyArgs) SetBudget(budget float64) *SetVirtualTimePolicyArgs {
 	a.Budget = &budget
 	return a
 }
 
-// SetMaxVirtualTimeTaskStarvationCount sets the MaxVirtualTimeTaskStarvationCount optional argument. If set this specifies the maximum number of tasks that can be run before virtual is forced
-// forwards to prevent deadlock.
+// SetMaxVirtualTimeTaskStarvationCount sets the MaxVirtualTimeTaskStarvationCount optional argument.
+// If set this specifies the maximum number of tasks that can be run
+// before virtual is forced forwards to prevent deadlock.
 func (a *SetVirtualTimePolicyArgs) SetMaxVirtualTimeTaskStarvationCount(maxVirtualTimeTaskStarvationCount int) *SetVirtualTimePolicyArgs {
 	a.MaxVirtualTimeTaskStarvationCount = &maxVirtualTimeTaskStarvationCount
 	return a

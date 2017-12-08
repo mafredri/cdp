@@ -18,7 +18,8 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// ClearObjectStore invokes the IndexedDB method. Clears all entries from an object store.
+// ClearObjectStore invokes the IndexedDB method. Clears all entries
+// from an object store.
 func (d *domainClient) ClearObjectStore(ctx context.Context, args *ClearObjectStoreArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "IndexedDB.clearObjectStore", args, nil, d.conn)
@@ -44,7 +45,8 @@ func (d *domainClient) DeleteDatabase(ctx context.Context, args *DeleteDatabaseA
 	return
 }
 
-// DeleteObjectStoreEntries invokes the IndexedDB method. Delete a range of entries from an object store
+// DeleteObjectStoreEntries invokes the IndexedDB method. Delete a
+// range of entries from an object store
 func (d *domainClient) DeleteObjectStoreEntries(ctx context.Context, args *DeleteObjectStoreEntriesArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "IndexedDB.deleteObjectStoreEntries", args, nil, d.conn)
@@ -75,7 +77,8 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 	return
 }
 
-// RequestData invokes the IndexedDB method. Requests data from object store or index.
+// RequestData invokes the IndexedDB method. Requests data from object
+// store or index.
 func (d *domainClient) RequestData(ctx context.Context, args *RequestDataArgs) (reply *RequestDataReply, err error) {
 	reply = new(RequestDataReply)
 	if args != nil {
@@ -89,7 +92,8 @@ func (d *domainClient) RequestData(ctx context.Context, args *RequestDataArgs) (
 	return
 }
 
-// RequestDatabase invokes the IndexedDB method. Requests database with given name in given frame.
+// RequestDatabase invokes the IndexedDB method. Requests database
+// with given name in given frame.
 func (d *domainClient) RequestDatabase(ctx context.Context, args *RequestDatabaseArgs) (reply *RequestDatabaseReply, err error) {
 	reply = new(RequestDatabaseReply)
 	if args != nil {
@@ -103,7 +107,8 @@ func (d *domainClient) RequestDatabase(ctx context.Context, args *RequestDatabas
 	return
 }
 
-// RequestDatabaseNames invokes the IndexedDB method. Requests database names for given security origin.
+// RequestDatabaseNames invokes the IndexedDB method. Requests
+// database names for given security origin.
 func (d *domainClient) RequestDatabaseNames(ctx context.Context, args *RequestDatabaseNamesArgs) (reply *RequestDatabaseNamesReply, err error) {
 	reply = new(RequestDatabaseNamesReply)
 	if args != nil {

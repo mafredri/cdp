@@ -36,8 +36,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 	return
 }
 
-// GetBestEffortCoverage invokes the Profiler method. Collect coverage data for the current isolate. The coverage data may be incomplete due to
-// garbage collection.
+// GetBestEffortCoverage invokes the Profiler method. Collect coverage
+// data for the current isolate. The coverage data may be incomplete
+// due to garbage collection.
 func (d *domainClient) GetBestEffortCoverage(ctx context.Context) (reply *GetBestEffortCoverageReply, err error) {
 	reply = new(GetBestEffortCoverageReply)
 	err = rpcc.Invoke(ctx, "Profiler.getBestEffortCoverage", nil, reply, d.conn)
@@ -47,7 +48,9 @@ func (d *domainClient) GetBestEffortCoverage(ctx context.Context) (reply *GetBes
 	return
 }
 
-// SetSamplingInterval invokes the Profiler method. Changes CPU profiler sampling interval. Must be called before CPU profiles recording started.
+// SetSamplingInterval invokes the Profiler method. Changes CPU
+// profiler sampling interval. Must be called before CPU profiles
+// recording started.
 func (d *domainClient) SetSamplingInterval(ctx context.Context, args *SetSamplingIntervalArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Profiler.setSamplingInterval", args, nil, d.conn)
@@ -69,9 +72,10 @@ func (d *domainClient) Start(ctx context.Context) (err error) {
 	return
 }
 
-// StartPreciseCoverage invokes the Profiler method. Enable precise code coverage. Coverage data for JavaScript executed before enabling precise code
-// coverage may be incomplete. Enabling prevents running optimized code and resets execution
-// counters.
+// StartPreciseCoverage invokes the Profiler method. Enable precise
+// code coverage. Coverage data for JavaScript executed before enabling
+// precise code coverage may be incomplete. Enabling prevents running
+// optimized code and resets execution counters.
 func (d *domainClient) StartPreciseCoverage(ctx context.Context, args *StartPreciseCoverageArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Profiler.startPreciseCoverage", args, nil, d.conn)
@@ -103,8 +107,9 @@ func (d *domainClient) Stop(ctx context.Context) (reply *StopReply, err error) {
 	return
 }
 
-// StopPreciseCoverage invokes the Profiler method. Disable precise code coverage. Disabling releases unnecessary execution count records and allows
-// executing optimized code.
+// StopPreciseCoverage invokes the Profiler method. Disable precise
+// code coverage. Disabling releases unnecessary execution count
+// records and allows executing optimized code.
 func (d *domainClient) StopPreciseCoverage(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Profiler.stopPreciseCoverage", nil, nil, d.conn)
 	if err != nil {
@@ -113,7 +118,8 @@ func (d *domainClient) StopPreciseCoverage(ctx context.Context) (err error) {
 	return
 }
 
-// StopTypeProfile invokes the Profiler method. Disable type profile. Disabling releases type profile data collected so far.
+// StopTypeProfile invokes the Profiler method. Disable type profile.
+// Disabling releases type profile data collected so far.
 func (d *domainClient) StopTypeProfile(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Profiler.stopTypeProfile", nil, nil, d.conn)
 	if err != nil {
@@ -122,8 +128,9 @@ func (d *domainClient) StopTypeProfile(ctx context.Context) (err error) {
 	return
 }
 
-// TakePreciseCoverage invokes the Profiler method. Collect coverage data for the current isolate, and resets execution counters. Precise code
-// coverage needs to have started.
+// TakePreciseCoverage invokes the Profiler method. Collect coverage
+// data for the current isolate, and resets execution counters. Precise
+// code coverage needs to have started.
 func (d *domainClient) TakePreciseCoverage(ctx context.Context) (reply *TakePreciseCoverageReply, err error) {
 	reply = new(TakePreciseCoverageReply)
 	err = rpcc.Invoke(ctx, "Profiler.takePreciseCoverage", nil, reply, d.conn)

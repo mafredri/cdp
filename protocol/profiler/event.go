@@ -23,7 +23,9 @@ type ConsoleProfileFinishedReply struct {
 	Title    *string           `json:"title,omitempty"` // Profile title passed as an argument to console.profile().
 }
 
-// ConsoleProfileStartedClient is a client for ConsoleProfileStarted events. Sent when new profile recording is started using console.profile() call.
+// ConsoleProfileStartedClient is a client for ConsoleProfileStarted events.
+// Sent when new profile recording is started using console.profile()
+// call.
 type ConsoleProfileStartedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

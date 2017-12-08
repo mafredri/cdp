@@ -44,7 +44,8 @@ func (d *domainClient) DeleteEntry(ctx context.Context, args *DeleteEntryArgs) (
 	return
 }
 
-// RequestCacheNames invokes the CacheStorage method. Requests cache names.
+// RequestCacheNames invokes the CacheStorage method. Requests cache
+// names.
 func (d *domainClient) RequestCacheNames(ctx context.Context, args *RequestCacheNamesArgs) (reply *RequestCacheNamesReply, err error) {
 	reply = new(RequestCacheNamesReply)
 	if args != nil {
@@ -58,7 +59,8 @@ func (d *domainClient) RequestCacheNames(ctx context.Context, args *RequestCache
 	return
 }
 
-// RequestCachedResponse invokes the CacheStorage method. Fetches cache entry.
+// RequestCachedResponse invokes the CacheStorage method. Fetches
+// cache entry.
 func (d *domainClient) RequestCachedResponse(ctx context.Context, args *RequestCachedResponseArgs) (reply *RequestCachedResponseReply, err error) {
 	reply = new(RequestCachedResponseReply)
 	if args != nil {
@@ -72,7 +74,8 @@ func (d *domainClient) RequestCachedResponse(ctx context.Context, args *RequestC
 	return
 }
 
-// RequestEntries invokes the CacheStorage method. Requests data from cache.
+// RequestEntries invokes the CacheStorage method. Requests data from
+// cache.
 func (d *domainClient) RequestEntries(ctx context.Context, args *RequestEntriesArgs) (reply *RequestEntriesReply, err error) {
 	reply = new(RequestEntriesReply)
 	if args != nil {

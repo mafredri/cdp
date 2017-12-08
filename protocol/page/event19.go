@@ -17,7 +17,8 @@ type FrameAttachedReply struct {
 	Stack         *runtime.StackTrace `json:"stack,omitempty"` // JavaScript stack trace of when frame was attached, only set if frame initiated from script.
 }
 
-// FrameClearedScheduledNavigationClient is a client for FrameClearedScheduledNavigation events. Fired when frame no longer has a scheduled navigation.
+// FrameClearedScheduledNavigationClient is a client for FrameClearedScheduledNavigation events.
+// Fired when frame no longer has a scheduled navigation.
 type FrameClearedScheduledNavigationClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -30,7 +31,8 @@ type FrameClearedScheduledNavigationReply struct {
 	FrameID FrameID `json:"frameId"` // Id of the frame that has cleared its scheduled navigation.
 }
 
-// FrameDetachedClient is a client for FrameDetached events. Fired when frame has been detached from its parent.
+// FrameDetachedClient is a client for FrameDetached events. Fired
+// when frame has been detached from its parent.
 type FrameDetachedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -43,7 +45,9 @@ type FrameDetachedReply struct {
 	FrameID FrameID `json:"frameId"` // Id of the frame that has been detached.
 }
 
-// FrameNavigatedClient is a client for FrameNavigated events. Fired once navigation of the frame has completed. Frame is now associated with the new loader.
+// FrameNavigatedClient is a client for FrameNavigated events. Fired
+// once navigation of the frame has completed. Frame is now associated
+// with the new loader.
 type FrameNavigatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -62,7 +66,8 @@ type FrameScheduledNavigationReply struct {
 	URL    string `json:"url"` // The destination URL for the scheduled navigation.
 }
 
-// FrameStartedLoadingClient is a client for FrameStartedLoading events. Fired when frame has started loading.
+// FrameStartedLoadingClient is a client for FrameStartedLoading events.
+// Fired when frame has started loading.
 type FrameStartedLoadingClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -75,7 +80,8 @@ type FrameStartedLoadingReply struct {
 	FrameID FrameID `json:"frameId"` // Id of the frame that has started loading.
 }
 
-// FrameStoppedLoadingClient is a client for FrameStoppedLoading events. Fired when frame has stopped loading.
+// FrameStoppedLoadingClient is a client for FrameStoppedLoading events.
+// Fired when frame has stopped loading.
 type FrameStoppedLoadingClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -88,7 +94,8 @@ type FrameStoppedLoadingReply struct {
 	FrameID FrameID `json:"frameId"` // Id of the frame that has stopped loading.
 }
 
-// InterstitialHiddenClient is a client for InterstitialHidden events. Fired when interstitial page was hidden
+// InterstitialHiddenClient is a client for InterstitialHidden events.
+// Fired when interstitial page was hidden
 type InterstitialHiddenClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

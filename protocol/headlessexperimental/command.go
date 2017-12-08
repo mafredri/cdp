@@ -21,29 +21,34 @@ func NewBeginFrameArgs() *BeginFrameArgs {
 	return args
 }
 
-// SetFrameTime sets the FrameTime optional argument. Timestamp of this BeginFrame (milliseconds since epoch). If not set, the current time will
-// be used.
+// SetFrameTime sets the FrameTime optional argument. Timestamp of
+// this BeginFrame (milliseconds since epoch). If not set, the current
+// time will be used.
 func (a *BeginFrameArgs) SetFrameTime(frameTime runtime.Timestamp) *BeginFrameArgs {
 	a.FrameTime = &frameTime
 	return a
 }
 
-// SetDeadline sets the Deadline optional argument. Deadline of this BeginFrame (milliseconds since epoch). If not set, the deadline will be
-// calculated from the frameTime and interval.
+// SetDeadline sets the Deadline optional argument. Deadline of this
+// BeginFrame (milliseconds since epoch). If not set, the deadline will
+// be calculated from the frameTime and interval.
 func (a *BeginFrameArgs) SetDeadline(deadline runtime.Timestamp) *BeginFrameArgs {
 	a.Deadline = &deadline
 	return a
 }
 
-// SetInterval sets the Interval optional argument. The interval between BeginFrames that is reported to the compositor, in milliseconds.
-// Defaults to a 60 frames/second interval, i.e. about 16.666 milliseconds.
+// SetInterval sets the Interval optional argument. The interval
+// between BeginFrames that is reported to the compositor, in
+// milliseconds. Defaults to a 60 frames/second interval, i.e. about
+// 16.666 milliseconds.
 func (a *BeginFrameArgs) SetInterval(interval float64) *BeginFrameArgs {
 	a.Interval = &interval
 	return a
 }
 
-// SetScreenshot sets the Screenshot optional argument. If set, a screenshot of the frame will be captured and returned in the response. Otherwise,
-// no screenshot will be captured.
+// SetScreenshot sets the Screenshot optional argument. If set, a
+// screenshot of the frame will be captured and returned in the
+// response. Otherwise, no screenshot will be captured.
 func (a *BeginFrameArgs) SetScreenshot(screenshot ScreenshotParams) *BeginFrameArgs {
 	a.Screenshot = &screenshot
 	return a

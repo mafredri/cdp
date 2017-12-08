@@ -50,7 +50,8 @@ type CaptureScreenshotArgs struct {
 	Format  *string   `json:"format,omitempty"`
 	Quality *int      `json:"quality,omitempty"` // Compression quality from range [0..100] (jpeg only).
 	Clip    *Viewport `json:"clip,omitempty"`    // Capture the screenshot of a given region only.
-	// FromSurface Capture the screenshot from the surface, rather than the view. Defaults to true.
+	// FromSurface Capture the screenshot from the surface, rather than the view.
+	// Defaults to true.
 	//
 	// Note: This property is experimental.
 	FromSurface *bool `json:"fromSurface,omitempty"`
@@ -63,7 +64,8 @@ func NewCaptureScreenshotArgs() *CaptureScreenshotArgs {
 	return args
 }
 
-// SetFormat sets the Format optional argument. Image compression format (defaults to png).
+// SetFormat sets the Format optional argument. Image compression
+// format (defaults to png).
 //
 // Values: "jpeg", "png".
 func (a *CaptureScreenshotArgs) SetFormat(format string) *CaptureScreenshotArgs {
@@ -71,19 +73,22 @@ func (a *CaptureScreenshotArgs) SetFormat(format string) *CaptureScreenshotArgs 
 	return a
 }
 
-// SetQuality sets the Quality optional argument. Compression quality from range [0..100] (jpeg only).
+// SetQuality sets the Quality optional argument. Compression quality
+// from range [0..100] (jpeg only).
 func (a *CaptureScreenshotArgs) SetQuality(quality int) *CaptureScreenshotArgs {
 	a.Quality = &quality
 	return a
 }
 
-// SetClip sets the Clip optional argument. Capture the screenshot of a given region only.
+// SetClip sets the Clip optional argument. Capture the screenshot of
+// a given region only.
 func (a *CaptureScreenshotArgs) SetClip(clip Viewport) *CaptureScreenshotArgs {
 	a.Clip = &clip
 	return a
 }
 
-// SetFromSurface sets the FromSurface optional argument. Capture the screenshot from the surface, rather than the view. Defaults to true.
+// SetFromSurface sets the FromSurface optional argument. Capture the
+// screenshot from the surface, rather than the view. Defaults to true.
 //
 // Note: This property is experimental.
 func (a *CaptureScreenshotArgs) SetFromSurface(fromSurface bool) *CaptureScreenshotArgs {
@@ -150,8 +155,9 @@ func NewHandleJavaScriptDialogArgs(accept bool) *HandleJavaScriptDialogArgs {
 	return args
 }
 
-// SetPromptText sets the PromptText optional argument. The text to enter into the dialog prompt before accepting. Used only if this is a prompt
-// dialog.
+// SetPromptText sets the PromptText optional argument. The text to
+// enter into the dialog prompt before accepting. Used only if this is
+// a prompt dialog.
 func (a *HandleJavaScriptDialogArgs) SetPromptText(promptText string) *HandleJavaScriptDialogArgs {
 	a.PromptText = &promptText
 	return a
@@ -177,7 +183,8 @@ func (a *NavigateArgs) SetReferrer(referrer string) *NavigateArgs {
 	return a
 }
 
-// SetTransitionType sets the TransitionType optional argument. Intended transition type.
+// SetTransitionType sets the TransitionType optional argument.
+// Intended transition type.
 func (a *NavigateArgs) SetTransitionType(transitionType TransitionType) *NavigateArgs {
 	a.TransitionType = transitionType
 	return a
@@ -218,75 +225,87 @@ func NewPrintToPDFArgs() *PrintToPDFArgs {
 	return args
 }
 
-// SetLandscape sets the Landscape optional argument. Paper orientation. Defaults to false.
+// SetLandscape sets the Landscape optional argument. Paper
+// orientation. Defaults to false.
 func (a *PrintToPDFArgs) SetLandscape(landscape bool) *PrintToPDFArgs {
 	a.Landscape = &landscape
 	return a
 }
 
-// SetDisplayHeaderFooter sets the DisplayHeaderFooter optional argument. Display header and footer. Defaults to false.
+// SetDisplayHeaderFooter sets the DisplayHeaderFooter optional argument.
+// Display header and footer. Defaults to false.
 func (a *PrintToPDFArgs) SetDisplayHeaderFooter(displayHeaderFooter bool) *PrintToPDFArgs {
 	a.DisplayHeaderFooter = &displayHeaderFooter
 	return a
 }
 
-// SetPrintBackground sets the PrintBackground optional argument. Print background graphics. Defaults to false.
+// SetPrintBackground sets the PrintBackground optional argument.
+// Print background graphics. Defaults to false.
 func (a *PrintToPDFArgs) SetPrintBackground(printBackground bool) *PrintToPDFArgs {
 	a.PrintBackground = &printBackground
 	return a
 }
 
-// SetScale sets the Scale optional argument. Scale of the webpage rendering. Defaults to 1.
+// SetScale sets the Scale optional argument. Scale of the webpage
+// rendering. Defaults to 1.
 func (a *PrintToPDFArgs) SetScale(scale float64) *PrintToPDFArgs {
 	a.Scale = &scale
 	return a
 }
 
-// SetPaperWidth sets the PaperWidth optional argument. Paper width in inches. Defaults to 8.5 inches.
+// SetPaperWidth sets the PaperWidth optional argument. Paper width in
+// inches. Defaults to 8.5 inches.
 func (a *PrintToPDFArgs) SetPaperWidth(paperWidth float64) *PrintToPDFArgs {
 	a.PaperWidth = &paperWidth
 	return a
 }
 
-// SetPaperHeight sets the PaperHeight optional argument. Paper height in inches. Defaults to 11 inches.
+// SetPaperHeight sets the PaperHeight optional argument. Paper height
+// in inches. Defaults to 11 inches.
 func (a *PrintToPDFArgs) SetPaperHeight(paperHeight float64) *PrintToPDFArgs {
 	a.PaperHeight = &paperHeight
 	return a
 }
 
-// SetMarginTop sets the MarginTop optional argument. Top margin in inches. Defaults to 1cm (~0.4 inches).
+// SetMarginTop sets the MarginTop optional argument. Top margin in
+// inches. Defaults to 1cm (~0.4 inches).
 func (a *PrintToPDFArgs) SetMarginTop(marginTop float64) *PrintToPDFArgs {
 	a.MarginTop = &marginTop
 	return a
 }
 
-// SetMarginBottom sets the MarginBottom optional argument. Bottom margin in inches. Defaults to 1cm (~0.4 inches).
+// SetMarginBottom sets the MarginBottom optional argument. Bottom
+// margin in inches. Defaults to 1cm (~0.4 inches).
 func (a *PrintToPDFArgs) SetMarginBottom(marginBottom float64) *PrintToPDFArgs {
 	a.MarginBottom = &marginBottom
 	return a
 }
 
-// SetMarginLeft sets the MarginLeft optional argument. Left margin in inches. Defaults to 1cm (~0.4 inches).
+// SetMarginLeft sets the MarginLeft optional argument. Left margin in
+// inches. Defaults to 1cm (~0.4 inches).
 func (a *PrintToPDFArgs) SetMarginLeft(marginLeft float64) *PrintToPDFArgs {
 	a.MarginLeft = &marginLeft
 	return a
 }
 
-// SetMarginRight sets the MarginRight optional argument. Right margin in inches. Defaults to 1cm (~0.4 inches).
+// SetMarginRight sets the MarginRight optional argument. Right margin
+// in inches. Defaults to 1cm (~0.4 inches).
 func (a *PrintToPDFArgs) SetMarginRight(marginRight float64) *PrintToPDFArgs {
 	a.MarginRight = &marginRight
 	return a
 }
 
-// SetPageRanges sets the PageRanges optional argument. Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means
-// print all pages.
+// SetPageRanges sets the PageRanges optional argument. Paper ranges
+// to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which
+// means print all pages.
 func (a *PrintToPDFArgs) SetPageRanges(pageRanges string) *PrintToPDFArgs {
 	a.PageRanges = &pageRanges
 	return a
 }
 
-// SetIgnoreInvalidPageRanges sets the IgnoreInvalidPageRanges optional argument. Whether to silently ignore invalid but successfully parsed page ranges, such as '3-2'.
-// Defaults to false.
+// SetIgnoreInvalidPageRanges sets the IgnoreInvalidPageRanges optional argument.
+// Whether to silently ignore invalid but successfully parsed page
+// ranges, such as '3-2'. Defaults to false.
 func (a *PrintToPDFArgs) SetIgnoreInvalidPageRanges(ignoreInvalidPageRanges bool) *PrintToPDFArgs {
 	a.IgnoreInvalidPageRanges = &ignoreInvalidPageRanges
 	return a
@@ -310,13 +329,16 @@ func NewReloadArgs() *ReloadArgs {
 	return args
 }
 
-// SetIgnoreCache sets the IgnoreCache optional argument. If true, browser cache is ignored (as if the user pressed Shift+refresh).
+// SetIgnoreCache sets the IgnoreCache optional argument. If true,
+// browser cache is ignored (as if the user pressed Shift+refresh).
 func (a *ReloadArgs) SetIgnoreCache(ignoreCache bool) *ReloadArgs {
 	a.IgnoreCache = &ignoreCache
 	return a
 }
 
-// SetScriptToEvaluateOnLoad sets the ScriptToEvaluateOnLoad optional argument. If set, the script will be injected into all frames of the inspected page after reload.
+// SetScriptToEvaluateOnLoad sets the ScriptToEvaluateOnLoad optional argument.
+// If set, the script will be injected into all frames of the inspected
+// page after reload.
 func (a *ReloadArgs) SetScriptToEvaluateOnLoad(scriptToEvaluateOnLoad string) *ReloadArgs {
 	a.ScriptToEvaluateOnLoad = &scriptToEvaluateOnLoad
 	return a
@@ -389,8 +411,8 @@ func NewSetAutoAttachToCreatedPagesArgs(autoAttach bool) *SetAutoAttachToCreated
 
 // SetDownloadBehaviorArgs represents the arguments for SetDownloadBehavior in the Page domain.
 type SetDownloadBehaviorArgs struct {
-	// Behavior Whether to allow all or deny all download requests, or use default Chrome behavior if
-	// available (otherwise deny).
+	// Behavior Whether to allow all or deny all download requests, or use default
+	// Chrome behavior if available (otherwise deny).
 	//
 	// Values: "deny", "allow", "default".
 	Behavior     string  `json:"behavior"`
@@ -404,7 +426,9 @@ func NewSetDownloadBehaviorArgs(behavior string) *SetDownloadBehaviorArgs {
 	return args
 }
 
-// SetDownloadPath sets the DownloadPath optional argument. The default path to save downloaded files to. This is required if behavior is set to 'allow'
+// SetDownloadPath sets the DownloadPath optional argument. The
+// default path to save downloaded files to. This is required if
+// behavior is set to 'allow'
 func (a *SetDownloadBehaviorArgs) SetDownloadPath(downloadPath string) *SetDownloadBehaviorArgs {
 	a.DownloadPath = &downloadPath
 	return a
@@ -441,7 +465,8 @@ func NewStartScreencastArgs() *StartScreencastArgs {
 	return args
 }
 
-// SetFormat sets the Format optional argument. Image compression format.
+// SetFormat sets the Format optional argument. Image compression
+// format.
 //
 // Values: "jpeg", "png".
 func (a *StartScreencastArgs) SetFormat(format string) *StartScreencastArgs {
@@ -449,25 +474,29 @@ func (a *StartScreencastArgs) SetFormat(format string) *StartScreencastArgs {
 	return a
 }
 
-// SetQuality sets the Quality optional argument. Compression quality from range [0..100].
+// SetQuality sets the Quality optional argument. Compression quality
+// from range [0..100].
 func (a *StartScreencastArgs) SetQuality(quality int) *StartScreencastArgs {
 	a.Quality = &quality
 	return a
 }
 
-// SetMaxWidth sets the MaxWidth optional argument. Maximum screenshot width.
+// SetMaxWidth sets the MaxWidth optional argument. Maximum screenshot
+// width.
 func (a *StartScreencastArgs) SetMaxWidth(maxWidth int) *StartScreencastArgs {
 	a.MaxWidth = &maxWidth
 	return a
 }
 
-// SetMaxHeight sets the MaxHeight optional argument. Maximum screenshot height.
+// SetMaxHeight sets the MaxHeight optional argument. Maximum
+// screenshot height.
 func (a *StartScreencastArgs) SetMaxHeight(maxHeight int) *StartScreencastArgs {
 	a.MaxHeight = &maxHeight
 	return a
 }
 
-// SetEveryNthFrame sets the EveryNthFrame optional argument. Send every n-th frame.
+// SetEveryNthFrame sets the EveryNthFrame optional argument. Send
+// every n-th frame.
 func (a *StartScreencastArgs) SetEveryNthFrame(everyNthFrame int) *StartScreencastArgs {
 	a.EveryNthFrame = &everyNthFrame
 	return a

@@ -61,34 +61,40 @@ func NewEvaluateOnCallFrameArgs(callFrameID CallFrameID, expression string) *Eva
 	return args
 }
 
-// SetObjectGroup sets the ObjectGroup optional argument. String object group name to put result into (allows rapid releasing resulting object handles
-// using `releaseObjectGroup`).
+// SetObjectGroup sets the ObjectGroup optional argument. String
+// object group name to put result into (allows rapid releasing
+// resulting object handles using `releaseObjectGroup`).
 func (a *EvaluateOnCallFrameArgs) SetObjectGroup(objectGroup string) *EvaluateOnCallFrameArgs {
 	a.ObjectGroup = &objectGroup
 	return a
 }
 
-// SetIncludeCommandLineAPI sets the IncludeCommandLineAPI optional argument. Specifies whether command line API should be available to the evaluated expression, defaults
-// to false.
+// SetIncludeCommandLineAPI sets the IncludeCommandLineAPI optional argument.
+// Specifies whether command line API should be available to the
+// evaluated expression, defaults to false.
 func (a *EvaluateOnCallFrameArgs) SetIncludeCommandLineAPI(includeCommandLineAPI bool) *EvaluateOnCallFrameArgs {
 	a.IncludeCommandLineAPI = &includeCommandLineAPI
 	return a
 }
 
-// SetSilent sets the Silent optional argument. In silent mode exceptions thrown during evaluation are not reported and do not pause
-// execution. Overrides `setPauseOnException` state.
+// SetSilent sets the Silent optional argument. In silent mode
+// exceptions thrown during evaluation are not reported and do not
+// pause execution. Overrides `setPauseOnException` state.
 func (a *EvaluateOnCallFrameArgs) SetSilent(silent bool) *EvaluateOnCallFrameArgs {
 	a.Silent = &silent
 	return a
 }
 
-// SetReturnByValue sets the ReturnByValue optional argument. Whether the result is expected to be a JSON object that should be sent by value.
+// SetReturnByValue sets the ReturnByValue optional argument. Whether
+// the result is expected to be a JSON object that should be sent by
+// value.
 func (a *EvaluateOnCallFrameArgs) SetReturnByValue(returnByValue bool) *EvaluateOnCallFrameArgs {
 	a.ReturnByValue = &returnByValue
 	return a
 }
 
-// SetGeneratePreview sets the GeneratePreview optional argument. Whether preview should be generated for the result.
+// SetGeneratePreview sets the GeneratePreview optional argument.
+// Whether preview should be generated for the result.
 //
 // Note: This property is experimental.
 func (a *EvaluateOnCallFrameArgs) SetGeneratePreview(generatePreview bool) *EvaluateOnCallFrameArgs {
@@ -96,7 +102,9 @@ func (a *EvaluateOnCallFrameArgs) SetGeneratePreview(generatePreview bool) *Eval
 	return a
 }
 
-// SetThrowOnSideEffect sets the ThrowOnSideEffect optional argument. Whether to throw an exception if side effect cannot be ruled out during evaluation.
+// SetThrowOnSideEffect sets the ThrowOnSideEffect optional argument.
+// Whether to throw an exception if side effect cannot be ruled out
+// during evaluation.
 func (a *EvaluateOnCallFrameArgs) SetThrowOnSideEffect(throwOnSideEffect bool) *EvaluateOnCallFrameArgs {
 	a.ThrowOnSideEffect = &throwOnSideEffect
 	return a
@@ -122,14 +130,17 @@ func NewGetPossibleBreakpointsArgs(start Location) *GetPossibleBreakpointsArgs {
 	return args
 }
 
-// SetEnd sets the End optional argument. End of range to search possible breakpoint locations in (excluding). When not specified, end
-// of scripts is used as end of range.
+// SetEnd sets the End optional argument. End of range to search
+// possible breakpoint locations in (excluding). When not specified,
+// end of scripts is used as end of range.
 func (a *GetPossibleBreakpointsArgs) SetEnd(end Location) *GetPossibleBreakpointsArgs {
 	a.End = &end
 	return a
 }
 
-// SetRestrictToFunction sets the RestrictToFunction optional argument. Only consider locations which are in the same (non-nested) function as start.
+// SetRestrictToFunction sets the RestrictToFunction optional argument.
+// Only consider locations which are in the same (non-nested) function
+// as start.
 func (a *GetPossibleBreakpointsArgs) SetRestrictToFunction(restrictToFunction bool) *GetPossibleBreakpointsArgs {
 	a.RestrictToFunction = &restrictToFunction
 	return a
@@ -236,13 +247,15 @@ func NewSearchInContentArgs(scriptID runtime.ScriptID, query string) *SearchInCo
 	return args
 }
 
-// SetCaseSensitive sets the CaseSensitive optional argument. If true, search is case sensitive.
+// SetCaseSensitive sets the CaseSensitive optional argument. If true,
+// search is case sensitive.
 func (a *SearchInContentArgs) SetCaseSensitive(caseSensitive bool) *SearchInContentArgs {
 	a.CaseSensitive = &caseSensitive
 	return a
 }
 
-// SetIsRegex sets the IsRegex optional argument. If true, treats string parameter as regex.
+// SetIsRegex sets the IsRegex optional argument. If true, treats
+// string parameter as regex.
 func (a *SearchInContentArgs) SetIsRegex(isRegex bool) *SearchInContentArgs {
 	a.IsRegex = &isRegex
 	return a
@@ -304,8 +317,9 @@ func NewSetBreakpointArgs(location Location) *SetBreakpointArgs {
 	return args
 }
 
-// SetCondition sets the Condition optional argument. Expression to use as a breakpoint condition. When specified, debugger will only stop on the
-// breakpoint if this expression evaluates to true.
+// SetCondition sets the Condition optional argument. Expression to
+// use as a breakpoint condition. When specified, debugger will only
+// stop on the breakpoint if this expression evaluates to true.
 func (a *SetBreakpointArgs) SetCondition(condition string) *SetBreakpointArgs {
 	a.Condition = &condition
 	return a
@@ -334,33 +348,38 @@ func NewSetBreakpointByURLArgs(lineNumber int) *SetBreakpointByURLArgs {
 	return args
 }
 
-// SetURL sets the URL optional argument. URL of the resources to set breakpoint on.
+// SetURL sets the URL optional argument. URL of the resources to set
+// breakpoint on.
 func (a *SetBreakpointByURLArgs) SetURL(url string) *SetBreakpointByURLArgs {
 	a.URL = &url
 	return a
 }
 
-// SetURLRegex sets the URLRegex optional argument. Regex pattern for the URLs of the resources to set breakpoints on. Either `url` or
+// SetURLRegex sets the URLRegex optional argument. Regex pattern for
+// the URLs of the resources to set breakpoints on. Either `url` or
 // `urlRegex` must be specified.
 func (a *SetBreakpointByURLArgs) SetURLRegex(urlRegex string) *SetBreakpointByURLArgs {
 	a.URLRegex = &urlRegex
 	return a
 }
 
-// SetScriptHash sets the ScriptHash optional argument. Script hash of the resources to set breakpoint on.
+// SetScriptHash sets the ScriptHash optional argument. Script hash of
+// the resources to set breakpoint on.
 func (a *SetBreakpointByURLArgs) SetScriptHash(scriptHash string) *SetBreakpointByURLArgs {
 	a.ScriptHash = &scriptHash
 	return a
 }
 
-// SetColumnNumber sets the ColumnNumber optional argument. Offset in the line to set breakpoint at.
+// SetColumnNumber sets the ColumnNumber optional argument. Offset in
+// the line to set breakpoint at.
 func (a *SetBreakpointByURLArgs) SetColumnNumber(columnNumber int) *SetBreakpointByURLArgs {
 	a.ColumnNumber = &columnNumber
 	return a
 }
 
-// SetCondition sets the Condition optional argument. Expression to use as a breakpoint condition. When specified, debugger will only stop on the
-// breakpoint if this expression evaluates to true.
+// SetCondition sets the Condition optional argument. Expression to
+// use as a breakpoint condition. When specified, debugger will only
+// stop on the breakpoint if this expression evaluates to true.
 func (a *SetBreakpointByURLArgs) SetCondition(condition string) *SetBreakpointByURLArgs {
 	a.Condition = &condition
 	return a
@@ -426,7 +445,8 @@ func NewSetScriptSourceArgs(scriptID runtime.ScriptID, scriptSource string) *Set
 	return args
 }
 
-// SetDryRun sets the DryRun optional argument. If true the change will not actually be applied. Dry run may be used to get result
+// SetDryRun sets the DryRun optional argument. If true the change
+// will not actually be applied. Dry run may be used to get result
 // description without actually modifying the code.
 func (a *SetScriptSourceArgs) SetDryRun(dryRun bool) *SetScriptSourceArgs {
 	a.DryRun = &dryRun
@@ -436,7 +456,7 @@ func (a *SetScriptSourceArgs) SetDryRun(dryRun bool) *SetScriptSourceArgs {
 // SetScriptSourceReply represents the return values for SetScriptSource in the Debugger domain.
 type SetScriptSourceReply struct {
 	CallFrames      []CallFrame         `json:"callFrames,omitempty"`      // New stack trace in case editing has happened while VM was stopped.
-	StackChanged    *bool               `json:"stackChanged,omitempty"`    // Whether current call stack  was modified after applying the changes.
+	StackChanged    *bool               `json:"stackChanged,omitempty"`    // Whether current call stack was modified after applying the changes.
 	AsyncStackTrace *runtime.StackTrace `json:"asyncStackTrace,omitempty"` // Async stack trace, if any.
 	// AsyncStackTraceID Async stack trace, if any.
 	//
@@ -477,8 +497,8 @@ func NewSetVariableValueArgs(scopeNumber int, variableName string, newValue runt
 
 // StepIntoArgs represents the arguments for StepInto in the Debugger domain.
 type StepIntoArgs struct {
-	// BreakOnAsyncCall Debugger will issue additional Debugger.paused notification if any async task is scheduled
-	// before next pause.
+	// BreakOnAsyncCall Debugger will issue additional Debugger.paused notification if any
+	// async task is scheduled before next pause.
 	//
 	// Note: This property is experimental.
 	BreakOnAsyncCall *bool `json:"breakOnAsyncCall,omitempty"`
@@ -491,8 +511,9 @@ func NewStepIntoArgs() *StepIntoArgs {
 	return args
 }
 
-// SetBreakOnAsyncCall sets the BreakOnAsyncCall optional argument. Debugger will issue additional Debugger.paused notification if any async task is scheduled
-// before next pause.
+// SetBreakOnAsyncCall sets the BreakOnAsyncCall optional argument.
+// Debugger will issue additional Debugger.paused notification if any
+// async task is scheduled before next pause.
 //
 // Note: This property is experimental.
 func (a *StepIntoArgs) SetBreakOnAsyncCall(breakOnAsyncCall bool) *StepIntoArgs {

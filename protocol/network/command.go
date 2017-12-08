@@ -40,49 +40,58 @@ func NewContinueInterceptedRequestArgs(interceptionID InterceptionID) *ContinueI
 	return args
 }
 
-// SetErrorReason sets the ErrorReason optional argument. If set this causes the request to fail with the given reason. Passing `Aborted` for requests
-// marked with `isNavigationRequest` also cancels the navigation. Must not be set in response
-// to an authChallenge.
+// SetErrorReason sets the ErrorReason optional argument. If set this
+// causes the request to fail with the given reason. Passing `Aborted`
+// for requests marked with `isNavigationRequest` also cancels the
+// navigation. Must not be set in response to an authChallenge.
 func (a *ContinueInterceptedRequestArgs) SetErrorReason(errorReason ErrorReason) *ContinueInterceptedRequestArgs {
 	a.ErrorReason = errorReason
 	return a
 }
 
-// SetRawResponse sets the RawResponse optional argument. If set the requests completes using with the provided base64 encoded raw response, including
-// HTTP status line and headers etc... Must not be set in response to an authChallenge.
+// SetRawResponse sets the RawResponse optional argument. If set the
+// requests completes using with the provided base64 encoded raw
+// response, including HTTP status line and headers etc... Must not be
+// set in response to an authChallenge.
 func (a *ContinueInterceptedRequestArgs) SetRawResponse(rawResponse string) *ContinueInterceptedRequestArgs {
 	a.RawResponse = &rawResponse
 	return a
 }
 
-// SetURL sets the URL optional argument. If set the request url will be modified in a way that's not observable by page. Must not be
-// set in response to an authChallenge.
+// SetURL sets the URL optional argument. If set the request url will
+// be modified in a way that's not observable by page. Must not be set
+// in response to an authChallenge.
 func (a *ContinueInterceptedRequestArgs) SetURL(url string) *ContinueInterceptedRequestArgs {
 	a.URL = &url
 	return a
 }
 
-// SetMethod sets the Method optional argument. If set this allows the request method to be overridden. Must not be set in response to an
+// SetMethod sets the Method optional argument. If set this allows the
+// request method to be overridden. Must not be set in response to an
 // authChallenge.
 func (a *ContinueInterceptedRequestArgs) SetMethod(method string) *ContinueInterceptedRequestArgs {
 	a.Method = &method
 	return a
 }
 
-// SetPostData sets the PostData optional argument. If set this allows postData to be set. Must not be set in response to an authChallenge.
+// SetPostData sets the PostData optional argument. If set this allows
+// postData to be set. Must not be set in response to an authChallenge.
 func (a *ContinueInterceptedRequestArgs) SetPostData(postData string) *ContinueInterceptedRequestArgs {
 	a.PostData = &postData
 	return a
 }
 
-// SetHeaders sets the Headers optional argument. If set this allows the request headers to be changed. Must not be set in response to an
+// SetHeaders sets the Headers optional argument. If set this allows
+// the request headers to be changed. Must not be set in response to an
 // authChallenge.
 func (a *ContinueInterceptedRequestArgs) SetHeaders(headers Headers) *ContinueInterceptedRequestArgs {
 	a.Headers = headers
 	return a
 }
 
-// SetAuthChallengeResponse sets the AuthChallengeResponse optional argument. Response to a requestIntercepted with an authChallenge. Must not be set otherwise.
+// SetAuthChallengeResponse sets the AuthChallengeResponse optional argument.
+// Response to a requestIntercepted with an authChallenge. Must not be
+// set otherwise.
 func (a *ContinueInterceptedRequestArgs) SetAuthChallengeResponse(authChallengeResponse AuthChallengeResponse) *ContinueInterceptedRequestArgs {
 	a.AuthChallengeResponse = &authChallengeResponse
 	return a
@@ -103,20 +112,23 @@ func NewDeleteCookiesArgs(name string) *DeleteCookiesArgs {
 	return args
 }
 
-// SetURL sets the URL optional argument. If specified, deletes all the cookies with the given name where domain and path match
-// provided URL.
+// SetURL sets the URL optional argument. If specified, deletes all
+// the cookies with the given name where domain and path match provided
+// URL.
 func (a *DeleteCookiesArgs) SetURL(url string) *DeleteCookiesArgs {
 	a.URL = &url
 	return a
 }
 
-// SetDomain sets the Domain optional argument. If specified, deletes only cookies with the exact domain.
+// SetDomain sets the Domain optional argument. If specified, deletes
+// only cookies with the exact domain.
 func (a *DeleteCookiesArgs) SetDomain(domain string) *DeleteCookiesArgs {
 	a.Domain = &domain
 	return a
 }
 
-// SetPath sets the Path optional argument. If specified, deletes only cookies with the exact path.
+// SetPath sets the Path optional argument. If specified, deletes only
+// cookies with the exact path.
 func (a *DeleteCookiesArgs) SetPath(path string) *DeleteCookiesArgs {
 	a.Path = &path
 	return a
@@ -127,7 +139,7 @@ type EmulateNetworkConditionsArgs struct {
 	Offline            bool           `json:"offline"`                  // True to emulate internet disconnection.
 	Latency            float64        `json:"latency"`                  // Minimum latency from request sent to response headers received (ms).
 	DownloadThroughput float64        `json:"downloadThroughput"`       // Maximal aggregated download throughput (bytes/sec). -1 disables download throttling.
-	UploadThroughput   float64        `json:"uploadThroughput"`         // Maximal aggregated upload throughput (bytes/sec).  -1 disables upload throttling.
+	UploadThroughput   float64        `json:"uploadThroughput"`         // Maximal aggregated upload throughput (bytes/sec). -1 disables upload throttling.
 	ConnectionType     ConnectionType `json:"connectionType,omitempty"` // Connection type if known.
 }
 
@@ -141,7 +153,8 @@ func NewEmulateNetworkConditionsArgs(offline bool, latency float64, downloadThro
 	return args
 }
 
-// SetConnectionType sets the ConnectionType optional argument. Connection type if known.
+// SetConnectionType sets the ConnectionType optional argument.
+// Connection type if known.
 func (a *EmulateNetworkConditionsArgs) SetConnectionType(connectionType ConnectionType) *EmulateNetworkConditionsArgs {
 	a.ConnectionType = connectionType
 	return a
@@ -149,11 +162,13 @@ func (a *EmulateNetworkConditionsArgs) SetConnectionType(connectionType Connecti
 
 // EnableArgs represents the arguments for Enable in the Network domain.
 type EnableArgs struct {
-	// MaxTotalBufferSize Buffer size in bytes to use when preserving network payloads (XHRs, etc).
+	// MaxTotalBufferSize Buffer size in bytes to use when preserving network payloads (XHRs,
+	// etc).
 	//
 	// Note: This property is experimental.
 	MaxTotalBufferSize *int `json:"maxTotalBufferSize,omitempty"`
-	// MaxResourceBufferSize Per-resource buffer size in bytes to use when preserving network payloads (XHRs, etc).
+	// MaxResourceBufferSize Per-resource buffer size in bytes to use when preserving network
+	// payloads (XHRs, etc).
 	//
 	// Note: This property is experimental.
 	MaxResourceBufferSize *int `json:"maxResourceBufferSize,omitempty"`
@@ -166,7 +181,9 @@ func NewEnableArgs() *EnableArgs {
 	return args
 }
 
-// SetMaxTotalBufferSize sets the MaxTotalBufferSize optional argument. Buffer size in bytes to use when preserving network payloads (XHRs, etc).
+// SetMaxTotalBufferSize sets the MaxTotalBufferSize optional argument.
+// Buffer size in bytes to use when preserving network payloads (XHRs,
+// etc).
 //
 // Note: This property is experimental.
 func (a *EnableArgs) SetMaxTotalBufferSize(maxTotalBufferSize int) *EnableArgs {
@@ -174,7 +191,9 @@ func (a *EnableArgs) SetMaxTotalBufferSize(maxTotalBufferSize int) *EnableArgs {
 	return a
 }
 
-// SetMaxResourceBufferSize sets the MaxResourceBufferSize optional argument. Per-resource buffer size in bytes to use when preserving network payloads (XHRs, etc).
+// SetMaxResourceBufferSize sets the MaxResourceBufferSize optional argument.
+// Per-resource buffer size in bytes to use when preserving network
+// payloads (XHRs, etc).
 //
 // Note: This property is experimental.
 func (a *EnableArgs) SetMaxResourceBufferSize(maxResourceBufferSize int) *EnableArgs {
@@ -216,7 +235,8 @@ func NewGetCookiesArgs() *GetCookiesArgs {
 	return args
 }
 
-// SetURLs sets the URLs optional argument. The list of URLs for which applicable cookies will be fetched
+// SetURLs sets the URLs optional argument. The list of URLs for which
+// applicable cookies will be fetched
 func (a *GetCookiesArgs) SetURLs(urls []string) *GetCookiesArgs {
 	a.URLs = urls
 	return a
@@ -291,13 +311,15 @@ func NewSearchInResponseBodyArgs(requestID RequestID, query string) *SearchInRes
 	return args
 }
 
-// SetCaseSensitive sets the CaseSensitive optional argument. If true, search is case sensitive.
+// SetCaseSensitive sets the CaseSensitive optional argument. If true,
+// search is case sensitive.
 func (a *SearchInResponseBodyArgs) SetCaseSensitive(caseSensitive bool) *SearchInResponseBodyArgs {
 	a.CaseSensitive = &caseSensitive
 	return a
 }
 
-// SetIsRegex sets the IsRegex optional argument. If true, treats string parameter as regex.
+// SetIsRegex sets the IsRegex optional argument. If true, treats
+// string parameter as regex.
 func (a *SearchInResponseBodyArgs) SetIsRegex(isRegex bool) *SearchInResponseBodyArgs {
 	a.IsRegex = &isRegex
 	return a
@@ -365,8 +387,9 @@ func NewSetCookieArgs(name string, value string) *SetCookieArgs {
 	return args
 }
 
-// SetURL sets the URL optional argument. The request-URI to associate with the setting of the cookie. This value can affect the
-// default domain and path values of the created cookie.
+// SetURL sets the URL optional argument. The request-URI to associate
+// with the setting of the cookie. This value can affect the default
+// domain and path values of the created cookie.
 func (a *SetCookieArgs) SetURL(url string) *SetCookieArgs {
 	a.URL = &url
 	return a
@@ -384,25 +407,29 @@ func (a *SetCookieArgs) SetPath(path string) *SetCookieArgs {
 	return a
 }
 
-// SetSecure sets the Secure optional argument. True if cookie is secure.
+// SetSecure sets the Secure optional argument. True if cookie is
+// secure.
 func (a *SetCookieArgs) SetSecure(secure bool) *SetCookieArgs {
 	a.Secure = &secure
 	return a
 }
 
-// SetHTTPOnly sets the HTTPOnly optional argument. True if cookie is http-only.
+// SetHTTPOnly sets the HTTPOnly optional argument. True if cookie is
+// http-only.
 func (a *SetCookieArgs) SetHTTPOnly(httpOnly bool) *SetCookieArgs {
 	a.HTTPOnly = &httpOnly
 	return a
 }
 
-// SetSameSite sets the SameSite optional argument. Cookie SameSite type.
+// SetSameSite sets the SameSite optional argument. Cookie SameSite
+// type.
 func (a *SetCookieArgs) SetSameSite(sameSite CookieSameSite) *SetCookieArgs {
 	a.SameSite = sameSite
 	return a
 }
 
-// SetExpires sets the Expires optional argument. Cookie expiration date, session cookie if not set
+// SetExpires sets the Expires optional argument. Cookie expiration
+// date, session cookie if not set
 func (a *SetCookieArgs) SetExpires(expires TimeSinceEpoch) *SetCookieArgs {
 	a.Expires = expires
 	return a

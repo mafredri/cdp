@@ -9,9 +9,11 @@ import (
 // StyleSheetID
 type StyleSheetID string
 
-// StyleSheetOrigin Stylesheet type: "injected" for stylesheets injected via extension, "user-agent" for user-agent
-// stylesheets, "inspector" for stylesheets created by the inspector (i.e. those holding the "via
-// inspector" rules), "regular" for regular stylesheets.
+// StyleSheetOrigin Stylesheet type: "injected" for stylesheets
+// injected via extension, "user-agent" for user-agent stylesheets,
+// "inspector" for stylesheets created by the inspector (i.e. those
+// holding the "via inspector" rules), "regular" for regular
+// stylesheets.
 type StyleSheetOrigin string
 
 // StyleSheetOrigin as enums.
@@ -42,7 +44,8 @@ type PseudoElementMatches struct {
 	Matches    []RuleMatch    `json:"matches"`    // Matches of CSS rules applicable to the pseudo style.
 }
 
-// InheritedStyleEntry Inherited CSS rule collection from ancestor node.
+// InheritedStyleEntry Inherited CSS rule collection from ancestor
+// node.
 type InheritedStyleEntry struct {
 	InlineStyle     *Style      `json:"inlineStyle,omitempty"` // The ancestor node's inline style, if any, in the style inheritance chain.
 	MatchedCSSRules []RuleMatch `json:"matchedCSSRules"`       // Matches of CSS rules matching the ancestor node in the style inheritance chain.
@@ -54,7 +57,8 @@ type RuleMatch struct {
 	MatchingSelectors []int `json:"matchingSelectors"` // Matching selector indices in the rule's selectorList selectors (0-based).
 }
 
-// Value Data for a simple selector (these are delimited by commas in a selector list).
+// Value Data for a simple selector (these are delimited by commas in
+// a selector list).
 type Value struct {
 	Text  string       `json:"text"`            // Value text.
 	Range *SourceRange `json:"range,omitempty"` // Value range in the underlying resource (if available).
@@ -83,7 +87,8 @@ type RuleUsage struct {
 	Used         bool         `json:"used"`         // Indicates whether the rule was actually used by some element in the page.
 }
 
-// SourceRange Text range within a resource. All numbers are zero-based.
+// SourceRange Text range within a resource. All numbers are
+// zero-based.
 type SourceRange struct {
 	StartLine   int `json:"startLine"`   // Start line of range.
 	StartColumn int `json:"startColumn"` // Start column of range (inclusive).
@@ -128,9 +133,10 @@ type Property struct {
 // Media CSS media rule descriptor.
 type Media struct {
 	Text string `json:"text"` // Media query text.
-	// Source Source of the media query: "mediaRule" if specified by a @media rule, "importRule" if
-	// specified by an @import rule, "linkedSheet" if specified by a "media" attribute in a linked
-	// stylesheet's LINK tag, "inlineSheet" if specified by a "media" attribute in an inline
+	// Source Source of the media query: "mediaRule" if specified by a @media
+	// rule, "importRule" if specified by an @import rule, "linkedSheet" if
+	// specified by a "media" attribute in a linked stylesheet's LINK tag,
+	// "inlineSheet" if specified by a "media" attribute in an inline
 	// stylesheet's STYLE tag.
 	//
 	// Values: "mediaRule", "importRule", "linkedSheet", "inlineSheet".
@@ -156,7 +162,8 @@ type MediaQueryExpression struct {
 	ComputedLength *float64     `json:"computedLength,omitempty"` // Computed length of media query expression (if applicable).
 }
 
-// PlatformFontUsage Information about amount of glyphs that were rendered with given font.
+// PlatformFontUsage Information about amount of glyphs that were
+// rendered with given font.
 type PlatformFontUsage struct {
 	FamilyName   string  `json:"familyName"`   // Font's family name reported by platform.
 	IsCustomFont bool    `json:"isCustomFont"` // Indicates if the font was downloaded or resolved locally.
@@ -177,7 +184,8 @@ type KeyframeRule struct {
 	Style        Style            `json:"style"`                  // Associated style declaration.
 }
 
-// StyleDeclarationEdit A descriptor of operation to mutate style declaration text.
+// StyleDeclarationEdit A descriptor of operation to mutate style
+// declaration text.
 type StyleDeclarationEdit struct {
 	StyleSheetID StyleSheetID `json:"styleSheetId"` // The css style sheet identifier.
 	Range        SourceRange  `json:"range"`        // The range of the style text in the enclosing stylesheet.
