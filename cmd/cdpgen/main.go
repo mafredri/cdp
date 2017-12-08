@@ -786,7 +786,7 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 			if desc == "" {
 				desc = "No description."
 			}
-			postDesc = "// " + desc
+			postDesc = "// " + enforceSingleLine(desc)
 		}
 
 		if !g.isCircularType {
@@ -796,6 +796,10 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 			g.Printf18("\t%s%s %s `json:\"%s\"` %s\n", preDesc, exportedName, ptype18, jsontag, postDesc)
 		}
 	}
+}
+
+func enforceSingleLine(s string) string {
+	return strings.Replace(s, "\n//", "", -1)
 }
 
 func (g *Generator) domainTypeStruct(d proto.Domain, t proto.AnyType) {

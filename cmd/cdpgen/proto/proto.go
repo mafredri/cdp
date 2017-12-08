@@ -371,6 +371,8 @@ func cleanDescription(d string) string {
 		{"&lt;", "<"}, {"&gt;", ">"},
 		// Fix typo...
 		{"&gt ", "> "},
+		{"\n", "\n// "},
+		{"// //", "//"}, // Clean up fixes by above, e.g. after \n\n.
 	}
 
 	for _, r := range replace {
