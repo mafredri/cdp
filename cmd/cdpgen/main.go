@@ -178,7 +178,7 @@ func main() {
 		panicErr(err)
 
 		comment := fmt.Sprintf("Package %s implements the %s domain. ", dLower, d.Name())
-		g.PackageHeader(fmt.Sprintf("// %s%s", comment, d.Desc(len(comment))))
+		g.PackageHeader(fmt.Sprintf("// %s%s", comment, d.Desc(0, len(comment))))
 		g.DomainDefinition(d)
 		g.writeFile("domain.go")
 
@@ -443,7 +443,7 @@ func (g *Generator) DomainInterface(d proto.Domain) {
 	g.hasContent = true
 
 	comment := "The " + d.Name() + " domain. "
-	desc := d.Desc(len(comment))
+	desc := d.Desc(0, len(comment))
 	if d.Deprecated {
 		desc = "\n//\n// Deprecated: " + desc
 	}
@@ -465,9 +465,9 @@ type %[3]s interface{`, comment, desc, d.Name())
 		if len(c.Returns) > 0 {
 			reply = fmt.Sprintf("(*%s.%s, error)", strings.ToLower(d.Name()), c.ReplyName(d))
 		}
-		desc := c.Desc(true, 0)
+		desc := c.Desc(true, 8, 0)
 		if c.Deprecated {
-			desc = strings.Replace(c.Desc(true, 12), "Deprecated, ", "", 1)
+			desc = strings.Replace(c.Desc(true, 8, 12), "Deprecated, ", "", 1)
 			desc = "Deprecated: " + strings.ToUpper(desc[0:1]) + desc[1:]
 		}
 		if desc != "" {
@@ -480,9 +480,9 @@ type %[3]s interface{`, comment, desc, d.Name())
 	}
 	for _, e := range d.Events {
 		eventClient := fmt.Sprintf("%sClient", e.EventName(d))
-		desc := e.Desc(true, 0)
+		desc := e.Desc(true, 8, 0)
 		if e.Deprecated {
-			desc = strings.Replace(e.Desc(true, 12), "Deprecated, ", "", 1)
+			desc = strings.Replace(e.Desc(true, 8, 12), "Deprecated, ", "", 1)
 			desc = "Deprecated: " + strings.ToUpper(desc[0:1]) + desc[1:]
 		}
 		if desc != "" {
@@ -509,7 +509,7 @@ type domainClient struct{ conn *rpcc.Conn }
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
-`, comment, d.Name(), d.Desc(len(comment)))
+`, comment, d.Name(), d.Desc(0, len(comment)))
 
 	for _, c := range d.Commands {
 		if c.Redirect != "" {
@@ -527,7 +527,7 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 		comment := fmt.Sprintf("%[1]s invokes the %[2]s method. ", c.Name(), d.Name())
 		g.Printf(`
 // %[2]s%[5]s
-func (d *domainClient) %[1]s(ctx context.Context%[3]s) %[4]s {`, c.Name(), comment, request, reply, c.Desc(true, len(comment)))
+func (d *domainClient) %[1]s(ctx context.Context%[3]s) %[4]s {`, c.Name(), comment, request, reply, c.Desc(true, 0, len(comment)))
 		if len(c.Returns) > 0 {
 			g.Printf(`
 	reply = new(%s)`, c.ReplyName(d))
@@ -690,11 +690,11 @@ func (g *Generator) DomainType(d proto.Domain, t proto.AnyType) {
 //
 // Provided as an alias to prevent circular dependencies.
 type %[1]s = internal.Page%[1]s
-`, t.Name(d), t.Desc(len(t.Name(d))+1))
+`, t.Name(d), t.Desc(0, len(t.Name(d))+1))
 	}
-	desc := t.Desc(len(t.Name(d)) + 1)
+	desc := t.Desc(0, len(t.Name(d))+1)
 	if t.Deprecated {
-		desc = "\n//\n// Deprecated: " + t.Desc(12)
+		desc = "\n//\n// Deprecated: " + t.Desc(0, 12)
 	}
 	if t.Experimental {
 		desc = desc + "\n//\n// Note: This type is experimental."
@@ -765,7 +765,7 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 
 		var preDesc, postDesc string
 
-		desc := prop.Desc(0)
+		desc := prop.Desc(8, 0)
 		var deprecated, localEnum, experimental string
 		if prop.Deprecated {
 			if desc == "" {
@@ -1194,7 +1194,7 @@ func TestNew%[1]s(t *testing.T) {
 			name = name[0 : len(name)-1]
 		}
 		comment := fmt.Sprintf("Set%[1]s sets the %[1]s optional argument. ", arg.ExportedName(d))
-		desc := arg.Desc(len(comment))
+		desc := arg.Desc(8, len(comment))
 		if arg.Deprecated {
 			if desc == "" {
 				desc = "This property should not be used."
@@ -1272,7 +1272,7 @@ type %[1]s interface {
 	Recv() (*%[3]s, error)
 	rpcc.Stream
 }
-`, eventClient, comment, e.ReplyName(d), e.Desc(true, len(comment)))
+`, eventClient, comment, e.ReplyName(d), e.Desc(true, 0, len(comment)))
 }
 
 func (g *Generator) domainEventReply(d proto.Domain, e proto.Event) {

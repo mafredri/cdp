@@ -52,8 +52,8 @@ func (d Domain) Type() string {
 }
 
 // Desc returns the domain decription.
-func (d Domain) Desc(offset int) string {
-	return cleanDescription(d.Description, offset)
+func (d Domain) Desc(indent, startOffset int) string {
+	return cleanDescription(d.Description, indent, startOffset)
 }
 
 // Command represents a command belonging to a domain, e.g. Network.setCookie.
@@ -75,11 +75,11 @@ func (c Command) Name() string {
 }
 
 // Desc returns a cleaned description.
-func (c Command) Desc(lineEndComment bool, offset int) string {
+func (c Command) Desc(lineEndComment bool, indent, startOffset int) string {
 	if lineEndComment {
-		return cleanDescription(c.Description, offset)
+		return cleanDescription(c.Description, indent, startOffset)
 	}
-	return lowerFirst(cleanDescription(c.Description, offset))
+	return lowerFirst(cleanDescription(c.Description, indent, startOffset))
 }
 
 // CmdName returns the full name of a command.
@@ -187,11 +187,11 @@ func (e Event) Name() string {
 }
 
 // Desc returns the cleaned description.
-func (e Event) Desc(lineEndComment bool, offset int) string {
+func (e Event) Desc(lineEndComment bool, indent, startOffset int) string {
 	if lineEndComment {
-		return cleanDescription(e.Description, offset)
+		return cleanDescription(e.Description, indent, startOffset)
 	}
-	return lowerFirst(cleanDescription(e.Description, offset))
+	return lowerFirst(cleanDescription(e.Description, indent, startOffset))
 }
 
 // EventName returns the name of the event as a go type.
@@ -236,8 +236,8 @@ type AnyType struct {
 }
 
 // Desc returns the cleaned description.
-func (at AnyType) Desc(offset int) string {
-	return cleanDescription(at.Description, offset)
+func (at AnyType) Desc(indent, startOffset int) string {
+	return cleanDescription(at.Description, indent, startOffset)
 }
 
 // ExportedName returns an exported name.
@@ -361,10 +361,10 @@ func lowerFirst(d string) string {
 	return strings.Join(desc, " ")
 }
 
-// Account 8 for tab indent and 3 for comment prefix (// ).
-const maxCommentLineLen = 80 - 8 - 3 - 1
+// Account 3 for comment prefix (// ).
+const maxCommentLineLen = 80 - 3
 
-func cleanDescription(d string, offset int) string {
+func cleanDescription(d string, indent, startOffset int) string {
 	replace := []struct {
 		old string
 		new string
@@ -388,11 +388,11 @@ func cleanDescription(d string, offset int) string {
 		ss := strings.Fields(s)
 
 		var split []string
-		n := offset
+		n := startOffset
 		s = ""
 		for _, sss := range ss {
 			n += len(sss) + 1
-			if n <= maxCommentLineLen {
+			if n < maxCommentLineLen-indent {
 				split = append(split, sss)
 				continue
 			}
