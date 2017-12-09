@@ -6,8 +6,8 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// DataReceivedClient is a client for DataReceived events. Fired when
-// data chunk was received over the network.
+// DataReceivedClient is a client for DataReceived events. Fired when data
+// chunk was received over the network.
 type DataReceivedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -41,8 +41,8 @@ type EventSourceMessageReceivedReply struct {
 	Data      string        `json:"data"`      // Message content.
 }
 
-// LoadingFailedClient is a client for LoadingFailed events. Fired
-// when HTTP request has failed to load.
+// LoadingFailedClient is a client for LoadingFailed events. Fired when HTTP
+// request has failed to load.
 type LoadingFailedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -57,9 +57,9 @@ type LoadingFinishedReply struct {
 	EncodedDataLength float64       `json:"encodedDataLength"` // Total number of bytes received for this request.
 }
 
-// RequestInterceptedClient is a client for RequestIntercepted events.
-// Details of an intercepted HTTP request, which must be either
-// allowed, blocked, modified or mocked.
+// RequestInterceptedClient is a client for RequestIntercepted events. Details
+// of an intercepted HTTP request, which must be either allowed, blocked,
+// modified or mocked.
 type RequestInterceptedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -72,8 +72,8 @@ type RequestServedFromCacheReply struct {
 	RequestID RequestID `json:"requestId"` // Request identifier.
 }
 
-// RequestWillBeSentClient is a client for RequestWillBeSent events.
-// Fired when page is about to send HTTP request.
+// RequestWillBeSentClient is a client for RequestWillBeSent events. Fired
+// when page is about to send HTTP request.
 type RequestWillBeSentClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -88,8 +88,8 @@ type ResourceChangedPriorityReply struct {
 	Timestamp   MonotonicTime    `json:"timestamp"`   // Timestamp.
 }
 
-// ResponseReceivedClient is a client for ResponseReceived events.
-// Fired when HTTP response is available.
+// ResponseReceivedClient is a client for ResponseReceived events. Fired when
+// HTTP response is available.
 type ResponseReceivedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -103,8 +103,8 @@ type WebSocketClosedReply struct {
 	Timestamp MonotonicTime `json:"timestamp"` // Timestamp.
 }
 
-// WebSocketCreatedClient is a client for WebSocketCreated events.
-// Fired upon WebSocket creation.
+// WebSocketCreatedClient is a client for WebSocketCreated events. Fired upon
+// WebSocket creation.
 type WebSocketCreatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -119,8 +119,8 @@ type WebSocketCreatedReply struct {
 	Initiator *Initiator `json:"initiator,omitempty"` // Request initiator.
 }
 
-// WebSocketFrameErrorClient is a client for WebSocketFrameError events.
-// Fired when WebSocket frame error occurs.
+// WebSocketFrameErrorClient is a client for WebSocketFrameError events. Fired
+// when WebSocket frame error occurs.
 type WebSocketFrameErrorClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -151,8 +151,8 @@ type WebSocketFrameReceivedReply struct {
 	Response  WebSocketFrame `json:"response"`  // WebSocket response data.
 }
 
-// WebSocketFrameSentClient is a client for WebSocketFrameSent events.
-// Fired when WebSocket frame is sent.
+// WebSocketFrameSentClient is a client for WebSocketFrameSent events. Fired
+// when WebSocket frame is sent.
 type WebSocketFrameSentClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

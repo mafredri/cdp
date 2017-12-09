@@ -51,8 +51,8 @@ type IndexedDBContentUpdatedReply struct {
 	ObjectStoreName string `json:"objectStoreName"` // ObjectStore to update.
 }
 
-// IndexedDBListUpdatedClient is a client for IndexedDBListUpdated events.
-// The origin's IndexedDB database list has been modified.
+// IndexedDBListUpdatedClient is a client for IndexedDBListUpdated events. The
+// origin's IndexedDB database list has been modified.
 type IndexedDBListUpdatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

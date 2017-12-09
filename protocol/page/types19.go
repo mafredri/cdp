@@ -9,14 +9,12 @@ import (
 	"github.com/mafredri/cdp/protocol/network"
 )
 
-// ResourceType Resource type as it was perceived by the rendering
-// engine.
+// ResourceType Resource type as it was perceived by the rendering engine.
 //
 // Provided as an alias to prevent circular dependencies.
 type ResourceType = internal.PageResourceType
 
-// ResourceType Resource type as it was perceived by the rendering
-// engine.
+// ResourceType Resource type as it was perceived by the rendering engine.
 //type ResourceType string
 
 // ResourceType as enums.

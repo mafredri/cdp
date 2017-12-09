@@ -29,8 +29,8 @@ type StickyPositionConstraint struct {
 	NearestLayerShiftingContainingBlock *LayerID `json:"nearestLayerShiftingContainingBlock,omitempty"` // The nearest sticky layer that shifts the containing block
 }
 
-// PictureTile Serialized fragment of layer picture along with its
-// offset within the layer.
+// PictureTile Serialized fragment of layer picture along with its offset
+// within the layer.
 type PictureTile struct {
 	X       float64 `json:"x"`       // Offset from owning layer left boundary
 	Y       float64 `json:"y"`       // Offset from owning layer top boundary

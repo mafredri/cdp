@@ -18,8 +18,8 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Enable invokes the ApplicationCache method. Enables application
-// cache domain notifications.
+// Enable invokes the ApplicationCache method. Enables application cache
+// domain notifications.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "ApplicationCache.enable", nil, nil, d.conn)
 	if err != nil {
@@ -28,9 +28,8 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 	return
 }
 
-// GetApplicationCacheForFrame invokes the ApplicationCache method.
-// Returns relevant application cache data for the document in given
-// frame.
+// GetApplicationCacheForFrame invokes the ApplicationCache method. Returns
+// relevant application cache data for the document in given frame.
 func (d *domainClient) GetApplicationCacheForFrame(ctx context.Context, args *GetApplicationCacheForFrameArgs) (reply *GetApplicationCacheForFrameReply, err error) {
 	reply = new(GetApplicationCacheForFrameReply)
 	if args != nil {
@@ -44,9 +43,9 @@ func (d *domainClient) GetApplicationCacheForFrame(ctx context.Context, args *Ge
 	return
 }
 
-// GetFramesWithManifests invokes the ApplicationCache method. Returns
-// array of frame identifiers with manifest urls for each frame
-// containing a document associated with some application cache.
+// GetFramesWithManifests invokes the ApplicationCache method. Returns array
+// of frame identifiers with manifest urls for each frame containing a document
+// associated with some application cache.
 func (d *domainClient) GetFramesWithManifests(ctx context.Context) (reply *GetFramesWithManifestsReply, err error) {
 	reply = new(GetFramesWithManifestsReply)
 	err = rpcc.Invoke(ctx, "ApplicationCache.getFramesWithManifests", nil, reply, d.conn)
@@ -56,8 +55,8 @@ func (d *domainClient) GetFramesWithManifests(ctx context.Context) (reply *GetFr
 	return
 }
 
-// GetManifestForFrame invokes the ApplicationCache method. Returns
-// manifest URL for document in the given frame.
+// GetManifestForFrame invokes the ApplicationCache method. Returns manifest
+// URL for document in the given frame.
 func (d *domainClient) GetManifestForFrame(ctx context.Context, args *GetManifestForFrameArgs) (reply *GetManifestForFrameReply, err error) {
 	reply = new(GetManifestForFrameReply)
 	if args != nil {

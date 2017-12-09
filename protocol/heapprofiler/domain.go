@@ -18,9 +18,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// AddInspectedHeapObject invokes the HeapProfiler method. Enables
-// console to refer to the node with given id via $x (see Command Line
-// API for more details $x functions).
+// AddInspectedHeapObject invokes the HeapProfiler method. Enables console to
+// refer to the node with given id via $x (see Command Line API for more
+// details $x functions).
 func (d *domainClient) AddInspectedHeapObject(ctx context.Context, args *AddInspectedHeapObjectArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "HeapProfiler.addInspectedHeapObject", args, nil, d.conn)

@@ -6,8 +6,8 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// AcceptedClient is a client for Accepted events. Informs that port
-// was successfully bound and got a specified connection id.
+// AcceptedClient is a client for Accepted events. Informs that port was
+// successfully bound and got a specified connection id.
 type AcceptedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

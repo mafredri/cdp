@@ -20,8 +20,8 @@ type DOMContentEventFiredReply struct {
 	Timestamp network.MonotonicTime `json:"timestamp"` // No description.
 }
 
-// FrameAttachedClient is a client for FrameAttached events. Fired
-// when frame has been attached to its parent.
+// FrameAttachedClient is a client for FrameAttached events. Fired when frame
+// has been attached to its parent.
 type FrameAttachedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -59,8 +59,8 @@ type FrameScheduledNavigationClient interface {
 type InterstitialHiddenReply struct {
 }
 
-// InterstitialShownClient is a client for InterstitialShown events.
-// Fired when interstitial page was shown
+// InterstitialShownClient is a client for InterstitialShown events. Fired
+// when interstitial page was shown
 type InterstitialShownClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -106,9 +106,8 @@ type JavascriptDialogOpeningReply struct {
 	DefaultPrompt *string    `json:"defaultPrompt,omitempty"` // Default dialog prompt.
 }
 
-// LifecycleEventClient is a client for LifecycleEvent events. Fired
-// for top level page lifecycle events such as navigation, load, paint,
-// etc.
+// LifecycleEventClient is a client for LifecycleEvent events. Fired for top
+// level page lifecycle events such as navigation, load, paint, etc.
 type LifecycleEventClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -121,8 +120,8 @@ type LoadEventFiredReply struct {
 	Timestamp network.MonotonicTime `json:"timestamp"` // No description.
 }
 
-// ScreencastFrameClient is a client for ScreencastFrame events.
-// Compressed image data requested by the `startScreencast`.
+// ScreencastFrameClient is a client for ScreencastFrame events. Compressed
+// image data requested by the `startScreencast`.
 type ScreencastFrameClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -138,8 +137,7 @@ type ScreencastFrameReply struct {
 }
 
 // ScreencastVisibilityChangedClient is a client for ScreencastVisibilityChanged events.
-// Fired when the page with currently enabled screencast was shown or
-// hidden `.
+// Fired when the page with currently enabled screencast was shown or hidden `.
 type ScreencastVisibilityChangedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -152,9 +150,8 @@ type ScreencastVisibilityChangedReply struct {
 	Visible bool `json:"visible"` // True if the page is visible.
 }
 
-// WindowOpenClient is a client for WindowOpen events. Fired when a
-// new window is going to be opened, via window.open(), link click,
-// form submission, etc.
+// WindowOpenClient is a client for WindowOpen events. Fired when a new window
+// is going to be opened, via window.open(), link click, form submission, etc.
 type WindowOpenClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

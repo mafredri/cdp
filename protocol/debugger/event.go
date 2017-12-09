@@ -9,8 +9,8 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// BreakpointResolvedClient is a client for BreakpointResolved events.
-// Fired when breakpoint is resolved to an actual script and location.
+// BreakpointResolvedClient is a client for BreakpointResolved events. Fired
+// when breakpoint is resolved to an actual script and location.
 type BreakpointResolvedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -24,9 +24,8 @@ type BreakpointResolvedReply struct {
 	Location     Location     `json:"location"`     // Actual breakpoint location.
 }
 
-// PausedClient is a client for Paused events. Fired when the virtual
-// machine stopped on breakpoint or exception or any other stop
-// criteria.
+// PausedClient is a client for Paused events. Fired when the virtual machine
+// stopped on breakpoint or exception or any other stop criteria.
 type PausedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -56,8 +55,8 @@ type PausedReply struct {
 	AsyncCallStackTraceID *runtime.StackTraceID `json:"asyncCallStackTraceId,omitempty"`
 }
 
-// ResumedClient is a client for Resumed events. Fired when the
-// virtual machine resumed execution.
+// ResumedClient is a client for Resumed events. Fired when the virtual
+// machine resumed execution.
 type ResumedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -69,8 +68,8 @@ type ResumedClient interface {
 type ResumedReply struct {
 }
 
-// ScriptFailedToParseClient is a client for ScriptFailedToParse events.
-// Fired when virtual machine fails to parse the script.
+// ScriptFailedToParseClient is a client for ScriptFailedToParse events. Fired
+// when virtual machine fails to parse the script.
 type ScriptFailedToParseClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -100,9 +99,9 @@ type ScriptFailedToParseReply struct {
 	StackTrace *runtime.StackTrace `json:"stackTrace,omitempty"`
 }
 
-// ScriptParsedClient is a client for ScriptParsed events. Fired when
-// virtual machine parses script. This event is also fired for all
-// known and uncollected scripts upon enabling debugger.
+// ScriptParsedClient is a client for ScriptParsed events. Fired when virtual
+// machine parses script. This event is also fired for all known and
+// uncollected scripts upon enabling debugger.
 type ScriptParsedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

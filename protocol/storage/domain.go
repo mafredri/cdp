@@ -18,8 +18,7 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// ClearDataForOrigin invokes the Storage method. Clears storage for
-// origin.
+// ClearDataForOrigin invokes the Storage method. Clears storage for origin.
 func (d *domainClient) ClearDataForOrigin(ctx context.Context, args *ClearDataForOriginArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Storage.clearDataForOrigin", args, nil, d.conn)
@@ -32,8 +31,8 @@ func (d *domainClient) ClearDataForOrigin(ctx context.Context, args *ClearDataFo
 	return
 }
 
-// GetUsageAndQuota invokes the Storage method. Returns usage and
-// quota in bytes.
+// GetUsageAndQuota invokes the Storage method. Returns usage and quota in
+// bytes.
 func (d *domainClient) GetUsageAndQuota(ctx context.Context, args *GetUsageAndQuotaArgs) (reply *GetUsageAndQuotaReply, err error) {
 	reply = new(GetUsageAndQuotaReply)
 	if args != nil {
@@ -47,9 +46,8 @@ func (d *domainClient) GetUsageAndQuota(ctx context.Context, args *GetUsageAndQu
 	return
 }
 
-// TrackCacheStorageForOrigin invokes the Storage method. Registers
-// origin to be notified when an update occurs to its cache storage
-// list.
+// TrackCacheStorageForOrigin invokes the Storage method. Registers origin to
+// be notified when an update occurs to its cache storage list.
 func (d *domainClient) TrackCacheStorageForOrigin(ctx context.Context, args *TrackCacheStorageForOriginArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Storage.trackCacheStorageForOrigin", args, nil, d.conn)
@@ -62,8 +60,8 @@ func (d *domainClient) TrackCacheStorageForOrigin(ctx context.Context, args *Tra
 	return
 }
 
-// TrackIndexedDBForOrigin invokes the Storage method. Registers
-// origin to be notified when an update occurs to its IndexedDB.
+// TrackIndexedDBForOrigin invokes the Storage method. Registers origin to be
+// notified when an update occurs to its IndexedDB.
 func (d *domainClient) TrackIndexedDBForOrigin(ctx context.Context, args *TrackIndexedDBForOriginArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Storage.trackIndexedDBForOrigin", args, nil, d.conn)
@@ -76,8 +74,8 @@ func (d *domainClient) TrackIndexedDBForOrigin(ctx context.Context, args *TrackI
 	return
 }
 
-// UntrackCacheStorageForOrigin invokes the Storage method.
-// Unregisters origin from receiving notifications for cache storage.
+// UntrackCacheStorageForOrigin invokes the Storage method. Unregisters origin
+// from receiving notifications for cache storage.
 func (d *domainClient) UntrackCacheStorageForOrigin(ctx context.Context, args *UntrackCacheStorageForOriginArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Storage.untrackCacheStorageForOrigin", args, nil, d.conn)
@@ -90,8 +88,8 @@ func (d *domainClient) UntrackCacheStorageForOrigin(ctx context.Context, args *U
 	return
 }
 
-// UntrackIndexedDBForOrigin invokes the Storage method. Unregisters
-// origin from receiving notifications for IndexedDB.
+// UntrackIndexedDBForOrigin invokes the Storage method. Unregisters origin
+// from receiving notifications for IndexedDB.
 func (d *domainClient) UntrackIndexedDBForOrigin(ctx context.Context, args *UntrackIndexedDBForOriginArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Storage.untrackIndexedDBForOrigin", args, nil, d.conn)

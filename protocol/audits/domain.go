@@ -11,8 +11,8 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// domainClient is a client for the Audits domain. Audits domain
-// allows investigation of page violations and possible improvements.
+// domainClient is a client for the Audits domain. Audits domain allows
+// investigation of page violations and possible improvements.
 type domainClient struct{ conn *rpcc.Conn }
 
 // NewClient returns a client for the Audits domain with the connection set to conn.
@@ -20,9 +20,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// GetEncodedResponse invokes the Audits method. Returns the response
-// body and size if it were re-encoded with the specified settings.
-// Only applies to images.
+// GetEncodedResponse invokes the Audits method. Returns the response body and
+// size if it were re-encoded with the specified settings. Only applies to
+// images.
 func (d *domainClient) GetEncodedResponse(ctx context.Context, args *GetEncodedResponseArgs) (reply *GetEncodedResponseReply, err error) {
 	reply = new(GetEncodedResponseReply)
 	if args != nil {

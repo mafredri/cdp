@@ -18,8 +18,8 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// ClearDeviceOrientationOverride invokes the DeviceOrientation method.
-// Clears the overridden Device Orientation.
+// ClearDeviceOrientationOverride invokes the DeviceOrientation method. Clears
+// the overridden Device Orientation.
 func (d *domainClient) ClearDeviceOrientationOverride(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "DeviceOrientation.clearDeviceOrientationOverride", nil, nil, d.conn)
 	if err != nil {

@@ -9,8 +9,8 @@ import (
 // NodeID Unique DOM node identifier.
 type NodeID int
 
-// BackendNodeID Unique DOM node identifier used to reference a node
-// that may not have been pushed to the front-end.
+// BackendNodeID Unique DOM node identifier used to reference a node that may
+// not have been pushed to the front-end.
 type BackendNodeID int
 
 // BackendNode Backend node with a friendly name.
@@ -88,8 +88,8 @@ type RGBA struct {
 	A *float64 `json:"a,omitempty"` // The alpha component, in the [0-1] range (default: 1).
 }
 
-// Quad An array of quad vertices, x immediately followed by y for
-// each point, points clock-wise.
+// Quad An array of quad vertices, x immediately followed by y for each point,
+// points clock-wise.
 type Quad []float64
 
 // BoxModel Box model.

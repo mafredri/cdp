@@ -163,8 +163,8 @@ type ApplicationCache interface {
 	NetworkStateUpdated(context.Context) (applicationcache.NetworkStateUpdatedClient, error)
 }
 
-// The Audits domain. Audits domain allows investigation of page
-// violations and possible improvements.
+// The Audits domain. Audits domain allows investigation of page violations
+// and possible improvements.
 //
 // Note: This domain is experimental.
 type Audits interface {
@@ -175,8 +175,8 @@ type Audits interface {
 	GetEncodedResponse(context.Context, *audits.GetEncodedResponseArgs) (*audits.GetEncodedResponseReply, error)
 }
 
-// The Browser domain. The Browser domain defines methods and events
-// for browser managing.
+// The Browser domain. The Browser domain defines methods and events for
+// browser managing.
 type Browser interface {
 	// Command Close
 	//
@@ -210,16 +210,14 @@ type Browser interface {
 	SetWindowBounds(context.Context, *browser.SetWindowBoundsArgs) error
 }
 
-// The CSS domain. This domain exposes CSS read/write operations. All
-// CSS objects (stylesheets, rules, and styles) have an associated `id`
-// used in subsequent operations on the related object. Each object
-// type has a specific `id` structure, and those are not
-// interchangeable between objects of different kinds. CSS objects can
-// be loaded using the `get*ForNode()` calls (which accept a DOM node
-// id). A client can also keep track of stylesheets via the
-// `styleSheetAdded`/`styleSheetRemoved` events and subsequently load
-// the required stylesheet contents using the `getStyleSheet[Text]()`
-// methods.
+// The CSS domain. This domain exposes CSS read/write operations. All CSS
+// objects (stylesheets, rules, and styles) have an associated `id` used in
+// subsequent operations on the related object. Each object type has a specific
+// `id` structure, and those are not interchangeable between objects of
+// different kinds. CSS objects can be loaded using the `get*ForNode()` calls
+// (which accept a DOM node id). A client can also keep track of stylesheets
+// via the `styleSheetAdded`/`styleSheetRemoved` events and subsequently load
+// the required stylesheet contents using the `getStyleSheet[Text]()` methods.
 //
 // Note: This domain is experimental.
 type CSS interface {
@@ -402,8 +400,7 @@ type CacheStorage interface {
 
 // The Console domain.
 //
-// Deprecated: This domain is deprecated - use Runtime or Log
-// instead.
+// Deprecated: This domain is deprecated - use Runtime or Log instead.
 type Console interface {
 	// Command ClearMessages
 	//
@@ -428,18 +425,17 @@ type Console interface {
 	MessageAdded(context.Context) (console.MessageAddedClient, error)
 }
 
-// The DOM domain. This domain exposes DOM read/write operations. Each
-// DOM Node is represented with its mirror object that has an `id`.
-// This `id` can be used to get additional information on the Node,
-// resolve it into the JavaScript object wrapper, etc. It is important
-// that client receives DOM events only for the nodes that are known to
-// the client. Backend keeps track of the nodes that were sent to the
-// client and never sends the same node twice. It is client's
-// responsibility to collect information about the nodes that were sent
-// to the client.
+// The DOM domain. This domain exposes DOM read/write operations. Each DOM
+// Node is represented with its mirror object that has an `id`. This `id` can
+// be used to get additional information on the Node, resolve it into the
+// JavaScript object wrapper, etc. It is important that client receives DOM
+// events only for the nodes that are known to the client. Backend keeps track
+// of the nodes that were sent to the client and never sends the same node
+// twice. It is client's responsibility to collect information about the nodes
+// that were sent to the client.
 //
-// Note that `iframe` owner elements will return
-// corresponding document elements as their child nodes.
+// Note that `iframe` owner elements will return corresponding
+// document elements as their child nodes.
 type DOM interface {
 	// Command CollectClassNamesFromSubtree
 	//
@@ -756,8 +752,8 @@ type DOM interface {
 }
 
 // The DOMDebugger domain. DOM debugging allows setting breakpoints on
-// particular DOM operations and events. JavaScript execution will stop
-// on these operations as if there was a regular breakpoint set.
+// particular DOM operations and events. JavaScript execution will stop on
+// these operations as if there was a regular breakpoint set.
 type DOMDebugger interface {
 	// Command GetEventListeners
 	//
@@ -892,8 +888,8 @@ type Database interface {
 }
 
 // The Debugger domain. Debugger domain exposes JavaScript debugging
-// capabilities. It allows setting and removing breakpoints, stepping
-// through execution, exploring stack traces, etc.
+// capabilities. It allows setting and removing breakpoints, stepping through
+// execution, exploring stack traces, etc.
 type Debugger interface {
 	// Command ContinueToLocation
 	//
@@ -1113,8 +1109,8 @@ type DeviceOrientation interface {
 	SetDeviceOrientationOverride(context.Context, *deviceorientation.SetDeviceOrientationOverrideArgs) error
 }
 
-// The Emulation domain. This domain emulates different environments
-// for the page.
+// The Emulation domain. This domain emulates different environments for the
+// page.
 type Emulation interface {
 	// Command CanEmulate
 	//
@@ -1241,8 +1237,8 @@ type Emulation interface {
 	VirtualTimePaused(context.Context) (emulation.VirtualTimePausedClient, error)
 }
 
-// The HeadlessExperimental domain. This domain provides experimental
-// commands only supported in headless mode.
+// The HeadlessExperimental domain. This domain provides experimental commands
+// only supported in headless mode.
 //
 // Note: This domain is experimental.
 type HeadlessExperimental interface {
@@ -1345,8 +1341,7 @@ type HeapProfiler interface {
 	ResetProfiles(context.Context) (heapprofiler.ResetProfilesClient, error)
 }
 
-// The IO domain. Input/Output operations for streams produced by
-// DevTools.
+// The IO domain. Input/Output operations for streams produced by DevTools.
 type IO interface {
 	// Command Close
 	//
@@ -1600,10 +1595,9 @@ type Memory interface {
 	SimulatePressureNotification(context.Context, *memory.SimulatePressureNotificationArgs) error
 }
 
-// The Network domain. Network domain allows tracking network
-// activities of the page. It exposes information about http, file,
-// data and other requests and responses, their headers, bodies,
-// timing, etc.
+// The Network domain. Network domain allows tracking network activities of
+// the page. It exposes information about http, file, data and other requests
+// and responses, their headers, bodies, timing, etc.
 type Network interface {
 	// Command CanClearBrowserCache
 	//
@@ -1858,8 +1852,8 @@ type Network interface {
 	WebSocketWillSendHandshakeRequest(context.Context) (network.WebSocketWillSendHandshakeRequestClient, error)
 }
 
-// The Overlay domain. This domain provides various functionality
-// related to drawing atop the inspected page.
+// The Overlay domain. This domain provides various functionality related to
+// drawing atop the inspected page.
 //
 // Note: This domain is experimental.
 type Overlay interface {
@@ -1963,8 +1957,8 @@ type Overlay interface {
 	ScreenshotRequested(context.Context) (overlay.ScreenshotRequestedClient, error)
 }
 
-// The Page domain. Actions and events related to the inspected page
-// belong to the page domain.
+// The Page domain. Actions and events related to the inspected page belong to
+// the page domain.
 type Page interface {
 	// Command AddScriptToEvaluateOnLoad
 	//
@@ -2355,13 +2349,12 @@ type Profiler interface {
 	ConsoleProfileStarted(context.Context) (profiler.ConsoleProfileStartedClient, error)
 }
 
-// The Runtime domain. Runtime domain exposes JavaScript runtime by
-// means of remote evaluation and mirror objects. Evaluation results
-// are returned as mirror object that expose object type, string
-// representation and unique identifier that can be used for further
-// object reference. Original objects are maintained in memory unless
-// they are either explicitly released or are released along with the
-// other objects in their object group.
+// The Runtime domain. Runtime domain exposes JavaScript runtime by means of
+// remote evaluation and mirror objects. Evaluation results are returned as
+// mirror object that expose object type, string representation and unique
+// identifier that can be used for further object reference. Original objects
+// are maintained in memory unless they are either explicitly released or are
+// released along with the other objects in their object group.
 type Runtime interface {
 	// Command AwaitPromise
 	//
@@ -2633,8 +2626,8 @@ type Storage interface {
 	IndexedDBListUpdated(context.Context) (storage.IndexedDBListUpdatedClient, error)
 }
 
-// The SystemInfo domain. The SystemInfo domain defines methods and
-// events for querying low-level system information.
+// The SystemInfo domain. The SystemInfo domain defines methods and events for
+// querying low-level system information.
 //
 // Note: This domain is experimental.
 type SystemInfo interface {
@@ -2644,8 +2637,8 @@ type SystemInfo interface {
 	GetInfo(context.Context) (*systeminfo.GetInfoReply, error)
 }
 
-// The Target domain. Supports additional targets discovery and allows
-// to attach to them.
+// The Target domain. Supports additional targets discovery and allows to
+// attach to them.
 type Target interface {
 	// Command ActivateTarget
 	//
@@ -2773,8 +2766,8 @@ type Target interface {
 	TargetInfoChanged(context.Context) (target.InfoChangedClient, error)
 }
 
-// The Tethering domain. The Tethering domain defines methods and
-// events for browser port binding.
+// The Tethering domain. The Tethering domain defines methods and events for
+// browser port binding.
 //
 // Note: This domain is experimental.
 type Tethering interface {

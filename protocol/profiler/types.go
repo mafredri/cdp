@@ -6,8 +6,8 @@ import (
 	"github.com/mafredri/cdp/protocol/runtime"
 )
 
-// ProfileNode Profile node. Holds callsite information, execution
-// statistics and child nodes.
+// ProfileNode Profile node. Holds callsite information, execution statistics
+// and child nodes.
 type ProfileNode struct {
 	ID            int                `json:"id"`                      // Unique id of the node.
 	CallFrame     runtime.CallFrame  `json:"callFrame"`               // Function location.
@@ -26,8 +26,8 @@ type Profile struct {
 	TimeDeltas []int         `json:"timeDeltas,omitempty"` // Time intervals between adjacent samples in microseconds. The first delta is relative to the profile startTime.
 }
 
-// PositionTickInfo Specifies a number of samples attributed to a
-// certain source position.
+// PositionTickInfo Specifies a number of samples attributed to a certain
+// source position.
 type PositionTickInfo struct {
 	Line  int `json:"line"`  // Source line number (1-based).
 	Ticks int `json:"ticks"` // Number of samples attributed to the source line.
@@ -61,8 +61,7 @@ type TypeObject struct {
 	Name string `json:"name"` // Name of a type collected with type profiling.
 }
 
-// TypeProfileEntry Source offset and types for a parameter or return
-// value.
+// TypeProfileEntry Source offset and types for a parameter or return value.
 //
 // Note: This type is experimental.
 type TypeProfileEntry struct {

@@ -4,11 +4,10 @@
 
 package internal
 
-// PageResourceType Resource type as it was perceived by the rendering
-// engine.
+// PageResourceType Resource type as it was perceived by the rendering engine.
 //
-// This type cannot be used directly. Use
-// page.ResourceType instead.
+// This type cannot be used directly. Use page.ResourceType
+// instead.
 type PageResourceType string
 
 func (e PageResourceType) Valid() bool {
@@ -26,6 +25,5 @@ func (e PageResourceType) String() string {
 
 // PageFrameID Unique frame identifier.
 //
-// This type cannot be used directly. Use page.FrameID
-// instead.
+// This type cannot be used directly. Use page.FrameID instead.
 type PageFrameID string

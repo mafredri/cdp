@@ -9,8 +9,7 @@ import (
 	"github.com/mafredri/cdp/protocol/network"
 )
 
-// ResourceType Resource type as it was perceived by the rendering
-// engine.
+// ResourceType Resource type as it was perceived by the rendering engine.
 //type ResourceType string
 
 // ResourceType as enums.

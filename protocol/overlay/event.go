@@ -24,8 +24,8 @@ type InspectNodeRequestedReply struct {
 }
 
 // NodeHighlightRequestedClient is a client for NodeHighlightRequested events.
-// Fired when the node should be highlighted. This happens after call
-// to `setInspectMode`.
+// Fired when the node should be highlighted. This happens after call to
+// `setInspectMode`.
 type NodeHighlightRequestedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -38,8 +38,8 @@ type NodeHighlightRequestedReply struct {
 	NodeID dom.NodeID `json:"nodeId"` // No description.
 }
 
-// ScreenshotRequestedClient is a client for ScreenshotRequested events.
-// Fired when user asks to capture screenshot of some area on the page.
+// ScreenshotRequestedClient is a client for ScreenshotRequested events. Fired
+// when user asks to capture screenshot of some area on the page.
 type ScreenshotRequestedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

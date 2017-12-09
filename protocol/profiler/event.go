@@ -24,8 +24,7 @@ type ConsoleProfileFinishedReply struct {
 }
 
 // ConsoleProfileStartedClient is a client for ConsoleProfileStarted events.
-// Sent when new profile recording is started using console.profile()
-// call.
+// Sent when new profile recording is started using console.profile() call.
 type ConsoleProfileStartedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

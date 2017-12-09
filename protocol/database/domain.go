@@ -18,8 +18,8 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// Disable invokes the Database method. Disables database tracking,
-// prevents database events from being sent to the client.
+// Disable invokes the Database method. Disables database tracking, prevents
+// database events from being sent to the client.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Database.disable", nil, nil, d.conn)
 	if err != nil {
@@ -28,8 +28,8 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 	return
 }
 
-// Enable invokes the Database method. Enables database tracking,
-// database events will now be delivered to the client.
+// Enable invokes the Database method. Enables database tracking, database
+// events will now be delivered to the client.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Database.enable", nil, nil, d.conn)
 	if err != nil {

@@ -19,8 +19,8 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 }
 
 // GetPartialAXTree invokes the Accessibility method. Fetches the
-// accessibility node and partial accessibility tree for this DOM node,
-// if it exists.
+// accessibility node and partial accessibility tree for this DOM node, if it
+// exists.
 func (d *domainClient) GetPartialAXTree(ctx context.Context, args *GetPartialAXTreeArgs) (reply *GetPartialAXTreeReply, err error) {
 	reply = new(GetPartialAXTreeReply)
 	if args != nil {

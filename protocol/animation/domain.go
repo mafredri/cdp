@@ -38,8 +38,8 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 	return
 }
 
-// GetCurrentTime invokes the Animation method. Returns the current
-// time of the an animation.
+// GetCurrentTime invokes the Animation method. Returns the current time of
+// the an animation.
 func (d *domainClient) GetCurrentTime(ctx context.Context, args *GetCurrentTimeArgs) (reply *GetCurrentTimeReply, err error) {
 	reply = new(GetCurrentTimeReply)
 	if args != nil {
@@ -53,8 +53,8 @@ func (d *domainClient) GetCurrentTime(ctx context.Context, args *GetCurrentTimeA
 	return
 }
 
-// GetPlaybackRate invokes the Animation method. Gets the playback
-// rate of the document timeline.
+// GetPlaybackRate invokes the Animation method. Gets the playback rate of the
+// document timeline.
 func (d *domainClient) GetPlaybackRate(ctx context.Context) (reply *GetPlaybackRateReply, err error) {
 	reply = new(GetPlaybackRateReply)
 	err = rpcc.Invoke(ctx, "Animation.getPlaybackRate", nil, reply, d.conn)
@@ -78,8 +78,8 @@ func (d *domainClient) ReleaseAnimations(ctx context.Context, args *ReleaseAnima
 	return
 }
 
-// ResolveAnimation invokes the Animation method. Gets the remote
-// object of the Animation.
+// ResolveAnimation invokes the Animation method. Gets the remote object of
+// the Animation.
 func (d *domainClient) ResolveAnimation(ctx context.Context, args *ResolveAnimationArgs) (reply *ResolveAnimationReply, err error) {
 	reply = new(ResolveAnimationReply)
 	if args != nil {
@@ -93,8 +93,8 @@ func (d *domainClient) ResolveAnimation(ctx context.Context, args *ResolveAnimat
 	return
 }
 
-// SeekAnimations invokes the Animation method. Seek a set of
-// animations to a particular time within each animation.
+// SeekAnimations invokes the Animation method. Seek a set of animations to a
+// particular time within each animation.
 func (d *domainClient) SeekAnimations(ctx context.Context, args *SeekAnimationsArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Animation.seekAnimations", args, nil, d.conn)
@@ -107,8 +107,8 @@ func (d *domainClient) SeekAnimations(ctx context.Context, args *SeekAnimationsA
 	return
 }
 
-// SetPaused invokes the Animation method. Sets the paused state of a
-// set of animations.
+// SetPaused invokes the Animation method. Sets the paused state of a set of
+// animations.
 func (d *domainClient) SetPaused(ctx context.Context, args *SetPausedArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Animation.setPaused", args, nil, d.conn)
@@ -121,8 +121,8 @@ func (d *domainClient) SetPaused(ctx context.Context, args *SetPausedArgs) (err 
 	return
 }
 
-// SetPlaybackRate invokes the Animation method. Sets the playback
-// rate of the document timeline.
+// SetPlaybackRate invokes the Animation method. Sets the playback rate of the
+// document timeline.
 func (d *domainClient) SetPlaybackRate(ctx context.Context, args *SetPlaybackRateArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Animation.setPlaybackRate", args, nil, d.conn)
@@ -135,8 +135,8 @@ func (d *domainClient) SetPlaybackRate(ctx context.Context, args *SetPlaybackRat
 	return
 }
 
-// SetTiming invokes the Animation method. Sets the timing of an
-// animation node.
+// SetTiming invokes the Animation method. Sets the timing of an animation
+// node.
 func (d *domainClient) SetTiming(ctx context.Context, args *SetTimingArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Animation.setTiming", args, nil, d.conn)

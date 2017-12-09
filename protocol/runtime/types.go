@@ -14,8 +14,7 @@ type ScriptID string
 // RemoteObjectID Unique object identifier.
 type RemoteObjectID string
 
-// UnserializableValue Primitive value which cannot be
-// JSON-stringified.
+// UnserializableValue Primitive value which cannot be JSON-stringified.
 type UnserializableValue string
 
 // UnserializableValue as enums.
@@ -135,16 +134,16 @@ type PropertyDescriptor struct {
 	Symbol       *RemoteObject `json:"symbol,omitempty"`    // Property symbol object, if the property is of the `symbol` type.
 }
 
-// InternalPropertyDescriptor Object internal property descriptor.
-// This property isn't normally visible in JavaScript code.
+// InternalPropertyDescriptor Object internal property descriptor. This
+// property isn't normally visible in JavaScript code.
 type InternalPropertyDescriptor struct {
 	Name  string        `json:"name"`            // Conventional property name.
 	Value *RemoteObject `json:"value,omitempty"` // The value associated with the property.
 }
 
-// CallArgument Represents function call argument. Either remote
-// object id `objectId`, primitive `value`, unserializable primitive
-// value or neither of (for undefined) them should be specified.
+// CallArgument Represents function call argument. Either remote object id
+// `objectId`, primitive `value`, unserializable primitive value or neither of
+// (for undefined) them should be specified.
 type CallArgument struct {
 	Value               json.RawMessage     `json:"value,omitempty"`               // Primitive value or serializable javascript object.
 	UnserializableValue UnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified.
@@ -162,8 +161,8 @@ type ExecutionContextDescription struct {
 	AuxData json.RawMessage    `json:"auxData,omitempty"` // Embedder-specific auxiliary data.
 }
 
-// ExceptionDetails Detailed information about exception (or error)
-// that was thrown during script compilation or execution.
+// ExceptionDetails Detailed information about exception (or error) that was
+// thrown during script compilation or execution.
 type ExceptionDetails struct {
 	ExceptionID        int                 `json:"exceptionId"`                  // Exception id.
 	Text               string              `json:"text"`                         // Exception text, which should be used together with exception object when available.
@@ -244,10 +243,9 @@ type StackTrace struct {
 // Note: This type is experimental.
 type UniqueDebuggerID string
 
-// StackTraceID If `debuggerId` is set stack trace comes from another
-// debugger and can be resolved there. This allows to track
-// cross-debugger calls. See `Runtime.StackTrace` and `Debugger.paused`
-// for usages.
+// StackTraceID If `debuggerId` is set stack trace comes from another debugger
+// and can be resolved there. This allows to track cross-debugger calls. See
+// `Runtime.StackTrace` and `Debugger.paused` for usages.
 //
 // Note: This type is experimental.
 type StackTraceID struct {

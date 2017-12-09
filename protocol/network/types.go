@@ -95,8 +95,8 @@ func (t *TimeSinceEpoch) UnmarshalJSON(data []byte) error {
 var _ json.Marshaler = (*TimeSinceEpoch)(nil)
 var _ json.Unmarshaler = (*TimeSinceEpoch)(nil)
 
-// MonotonicTime Monotonically increasing time in seconds since an
-// arbitrary point in the past.
+// MonotonicTime Monotonically increasing time in seconds since an arbitrary
+// point in the past.
 type MonotonicTime float64
 
 // String calls (time.Time).String().
@@ -161,8 +161,8 @@ func (h *Headers) UnmarshalJSON(data []byte) error {
 var _ json.Marshaler = (*Headers)(nil)
 var _ json.Unmarshaler = (*Headers)(nil)
 
-// ConnectionType The underlying connection technology that the
-// browser is supposedly using.
+// ConnectionType The underlying connection technology that the browser is
+// supposedly using.
 type ConnectionType string
 
 // ConnectionType as enums.
@@ -290,8 +290,7 @@ type Request struct {
 	IsLinkPreload  *bool  `json:"isLinkPreload,omitempty"` // Whether is loaded via link preload.
 }
 
-// SignedCertificateTimestamp Details of a signed certificate
-// timestamp (SCT).
+// SignedCertificateTimestamp Details of a signed certificate timestamp (SCT).
 type SignedCertificateTimestamp struct {
 	Status             string         `json:"status"`             // Validation status.
 	Origin             string         `json:"origin"`             // Origin.
@@ -429,8 +428,7 @@ type CookieParam struct {
 	Expires  TimeSinceEpoch `json:"expires,omitempty"`  // Cookie expiration date, session cookie if not set
 }
 
-// AuthChallenge Authorization challenge for HTTP status code 401 or
-// 407.
+// AuthChallenge Authorization challenge for HTTP status code 401 or 407.
 //
 // Note: This type is experimental.
 type AuthChallenge struct {
@@ -458,9 +456,9 @@ type AuthChallengeResponse struct {
 	Password *string `json:"password,omitempty"` // The password to provide, possibly empty. Should only be set if response is ProvideCredentials.
 }
 
-// InterceptionStage Stages of the interception to begin intercepting.
-// Request will intercept before the request is sent. Response will
-// intercept after the response is received.
+// InterceptionStage Stages of the interception to begin intercepting. Request
+// will intercept before the request is sent. Response will intercept after the
+// response is received.
 //
 // Note: This type is experimental.
 type InterceptionStage string

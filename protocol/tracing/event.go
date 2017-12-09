@@ -24,10 +24,10 @@ type BufferUsageReply struct {
 	Value       *float64 `json:"value,omitempty"`       // A number in range [0..1] that indicates the used size of event buffer as a fraction of its total size.
 }
 
-// DataCollectedClient is a client for DataCollected events. Contains
-// an bucket of collected trace events. When tracing is stopped
-// collected events will be send as a sequence of dataCollected events
-// followed by tracingComplete event.
+// DataCollectedClient is a client for DataCollected events. Contains an
+// bucket of collected trace events. When tracing is stopped collected events
+// will be send as a sequence of dataCollected events followed by
+// tracingComplete event.
 type DataCollectedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -40,9 +40,9 @@ type DataCollectedReply struct {
 	Value []json.RawMessage `json:"value"` // No description.
 }
 
-// CompleteClient is a client for TracingComplete events. Signals that
-// tracing is stopped and there is no trace buffers pending flush, all
-// data were delivered via dataCollected events.
+// CompleteClient is a client for TracingComplete events. Signals that tracing
+// is stopped and there is no trace buffers pending flush, all data were
+// delivered via dataCollected events.
 type CompleteClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

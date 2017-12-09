@@ -8,8 +8,8 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// ConsoleAPICalledClient is a client for ConsoleAPICalled events.
-// Issued when console API was called.
+// ConsoleAPICalledClient is a client for ConsoleAPICalled events. Issued when
+// console API was called.
 type ConsoleAPICalledClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -35,8 +35,8 @@ type ConsoleAPICalledReply struct {
 	Context *string `json:"context,omitempty"`
 }
 
-// ExceptionRevokedClient is a client for ExceptionRevoked events.
-// Issued when unhandled exception was revoked.
+// ExceptionRevokedClient is a client for ExceptionRevoked events. Issued when
+// unhandled exception was revoked.
 type ExceptionRevokedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -50,8 +50,8 @@ type ExceptionRevokedReply struct {
 	ExceptionID int    `json:"exceptionId"` // The id of revoked exception, as reported in `exceptionThrown`.
 }
 
-// ExceptionThrownClient is a client for ExceptionThrown events.
-// Issued when exception was thrown and unhandled.
+// ExceptionThrownClient is a client for ExceptionThrown events. Issued when
+// exception was thrown and unhandled.
 type ExceptionThrownClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -106,9 +106,9 @@ type ExecutionContextsClearedClient interface {
 type ExecutionContextsClearedReply struct {
 }
 
-// InspectRequestedClient is a client for InspectRequested events.
-// Issued when object should be inspected (for example, as a result of
-// inspect() command line API call).
+// InspectRequestedClient is a client for InspectRequested events. Issued when
+// object should be inspected (for example, as a result of inspect() command
+// line API call).
 type InspectRequestedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

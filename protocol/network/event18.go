@@ -19,8 +19,8 @@ type LoadingFailedReply struct {
 	BlockedReason BlockedReason             `json:"blockedReason,omitempty"` // The reason why loading was blocked, if any.
 }
 
-// LoadingFinishedClient is a client for LoadingFinished events. Fired
-// when HTTP request has finished loading.
+// LoadingFinishedClient is a client for LoadingFinished events. Fired when
+// HTTP request has finished loading.
 type LoadingFinishedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -84,8 +84,8 @@ type ResponseReceivedReply struct {
 	FrameID   *protocol.PageFrameID     `json:"frameId,omitempty"` // Frame identifier.
 }
 
-// WebSocketClosedClient is a client for WebSocketClosed events. Fired
-// when WebSocket is closed.
+// WebSocketClosedClient is a client for WebSocketClosed events. Fired when
+// WebSocket is closed.
 type WebSocketClosedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
