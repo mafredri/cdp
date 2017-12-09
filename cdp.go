@@ -434,8 +434,8 @@ type Console interface {
 // twice. It is client's responsibility to collect information about the nodes
 // that were sent to the client.
 //
-// Note that `iframe` owner elements will return corresponding
-// document elements as their child nodes.
+// Note that `iframe` owner elements will return corresponding document
+// elements as their child nodes.
 type DOM interface {
 	// Command CollectClassNamesFromSubtree
 	//

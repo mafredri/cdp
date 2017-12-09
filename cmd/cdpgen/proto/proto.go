@@ -389,6 +389,7 @@ func cleanDescription(d string, indent, startOffset int) string {
 
 		var split []string
 		n := startOffset
+		startOffset = 0 // Zero after first use.
 		s = ""
 		for _, sss := range ss {
 			n += len(sss) + 1

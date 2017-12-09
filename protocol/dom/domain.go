@@ -9,8 +9,8 @@
 // sends the same node twice. It is client's responsibility to collect
 // information about the nodes that were sent to the client.
 //
-// Note that `iframe` owner elements
-// will return corresponding document elements as their child nodes.
+// Note that `iframe` owner elements will return corresponding document
+// elements as their child nodes.
 package dom
 
 import (
@@ -29,8 +29,8 @@ import (
 // never sends the same node twice. It is client's responsibility to collect
 // information about the nodes that were sent to the client.
 //
-// Note that `iframe` owner
-// elements will return corresponding document elements as their child nodes.
+// Note that `iframe` owner elements will return corresponding document
+// elements as their child nodes.
 type domainClient struct{ conn *rpcc.Conn }
 
 // NewClient returns a client for the DOM domain with the connection set to conn.

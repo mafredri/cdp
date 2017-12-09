@@ -6,8 +6,7 @@ package internal
 
 // PageResourceType Resource type as it was perceived by the rendering engine.
 //
-// This type cannot be used directly. Use page.ResourceType
-// instead.
+// This type cannot be used directly. Use page.ResourceType instead.
 type PageResourceType string
 
 func (e PageResourceType) Valid() bool {
