@@ -216,6 +216,8 @@ type PrintToPDFArgs struct {
 	MarginRight             *float64 `json:"marginRight,omitempty"`             // Right margin in inches. Defaults to 1cm (~0.4 inches).
 	PageRanges              *string  `json:"pageRanges,omitempty"`              // Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.
 	IgnoreInvalidPageRanges *bool    `json:"ignoreInvalidPageRanges,omitempty"` // Whether to silently ignore invalid but successfully parsed page ranges, such as '3-2'. Defaults to false.
+	HeaderTemplate          *string  `json:"headerTemplate,omitempty"`          // HTML template for the print header. Should be valid HTML markup with following classes used to inject printing values into them: - date - formatted print date - title - document title - url - document location - pageNumber - current page number - totalPages - total pages in the document For example, <span class=title></span> would generate span containing the title.
+	FooterTemplate          *string  `json:"footerTemplate,omitempty"`          // HTML template for the print footer. Should use the same format as the `headerTemplate`.
 }
 
 // NewPrintToPDFArgs initializes PrintToPDFArgs with the required arguments.
@@ -311,6 +313,28 @@ func (a *PrintToPDFArgs) SetIgnoreInvalidPageRanges(ignoreInvalidPageRanges bool
 	return a
 }
 
+// SetHeaderTemplate sets the HeaderTemplate optional argument. HTML
+// template for the print header. Should be valid HTML markup with
+// following classes used to inject printing values into them: - date -
+// formatted print date - title - document title - url - document
+// location - pageNumber - current page number - totalPages - total
+// pages in the document
+//
+// For example, <span class=title></span> would generate span
+// containing the title.
+func (a *PrintToPDFArgs) SetHeaderTemplate(headerTemplate string) *PrintToPDFArgs {
+	a.HeaderTemplate = &headerTemplate
+	return a
+}
+
+// SetFooterTemplate sets the FooterTemplate optional argument. HTML
+// template for the print footer. Should use the same format as the
+// `headerTemplate`.
+func (a *PrintToPDFArgs) SetFooterTemplate(footerTemplate string) *PrintToPDFArgs {
+	a.FooterTemplate = &footerTemplate
+	return a
+}
+
 // PrintToPDFReply represents the return values for PrintToPDF in the Page domain.
 type PrintToPDFReply struct {
 	Data []byte `json:"data"` // Base64-encoded pdf data.
@@ -319,7 +343,7 @@ type PrintToPDFReply struct {
 // ReloadArgs represents the arguments for Reload in the Page domain.
 type ReloadArgs struct {
 	IgnoreCache            *bool   `json:"ignoreCache,omitempty"`            // If true, browser cache is ignored (as if the user pressed Shift+refresh).
-	ScriptToEvaluateOnLoad *string `json:"scriptToEvaluateOnLoad,omitempty"` // If set, the script will be injected into all frames of the inspected page after reload.
+	ScriptToEvaluateOnLoad *string `json:"scriptToEvaluateOnLoad,omitempty"` // If set, the script will be injected into all frames of the inspected page after reload. Argument will be ignored if reloading dataURL origin.
 }
 
 // NewReloadArgs initializes ReloadArgs with the required arguments.
@@ -338,7 +362,8 @@ func (a *ReloadArgs) SetIgnoreCache(ignoreCache bool) *ReloadArgs {
 
 // SetScriptToEvaluateOnLoad sets the ScriptToEvaluateOnLoad optional argument.
 // If set, the script will be injected into all frames of the inspected
-// page after reload.
+// page after reload. Argument will be ignored if reloading dataURL
+// origin.
 func (a *ReloadArgs) SetScriptToEvaluateOnLoad(scriptToEvaluateOnLoad string) *ReloadArgs {
 	a.ScriptToEvaluateOnLoad = &scriptToEvaluateOnLoad
 	return a
