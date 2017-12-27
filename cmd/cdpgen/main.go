@@ -765,9 +765,10 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 
 		var preDesc, postDesc string
 
-		desc := prop.Desc(8, 0)
+		desc := prop.Desc(8, len(exportedName)+1)
 		var deprecated, localEnum, experimental string
 		if prop.Deprecated {
+			desc = prop.Desc(8, 12)
 			if desc == "" {
 				desc = "This property should not be used."
 			}
