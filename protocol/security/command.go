@@ -2,6 +2,18 @@
 
 package security
 
+// SetIgnoreCertificateErrorsArgs represents the arguments for SetIgnoreCertificateErrors in the Security domain.
+type SetIgnoreCertificateErrorsArgs struct {
+	Ignore bool `json:"ignore"` // If true, all certificate errors will be ignored.
+}
+
+// NewSetIgnoreCertificateErrorsArgs initializes SetIgnoreCertificateErrorsArgs with the required arguments.
+func NewSetIgnoreCertificateErrorsArgs(ignore bool) *SetIgnoreCertificateErrorsArgs {
+	args := new(SetIgnoreCertificateErrorsArgs)
+	args.Ignore = ignore
+	return args
+}
+
 // HandleCertificateErrorArgs represents the arguments for HandleCertificateError in the Security domain.
 type HandleCertificateErrorArgs struct {
 	EventID int                    `json:"eventId"` // The ID of the event.

@@ -38,6 +38,20 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 	return
 }
 
+// SetIgnoreCertificateErrors invokes the Security method. Enable/disable
+// whether all certificate errors should be ignored.
+func (d *domainClient) SetIgnoreCertificateErrors(ctx context.Context, args *SetIgnoreCertificateErrorsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Security.setIgnoreCertificateErrors", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Security.setIgnoreCertificateErrors", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Security", Op: "SetIgnoreCertificateErrors", Err: err}
+	}
+	return
+}
+
 // HandleCertificateError invokes the Security method. Handles a certificate
 // error that fired a certificateError event.
 func (d *domainClient) HandleCertificateError(ctx context.Context, args *HandleCertificateErrorArgs) (err error) {
