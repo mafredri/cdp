@@ -50,8 +50,8 @@ type CaptureScreenshotArgs struct {
 	Format  *string   `json:"format,omitempty"`
 	Quality *int      `json:"quality,omitempty"` // Compression quality from range [0..100] (jpeg only).
 	Clip    *Viewport `json:"clip,omitempty"`    // Capture the screenshot of a given region only.
-	// FromSurface Capture the screenshot from the surface, rather than the view.
-	// Defaults to true.
+	// FromSurface Capture the screenshot from the surface, rather than
+	// the view. Defaults to true.
 	//
 	// Note: This property is experimental.
 	FromSurface *bool `json:"fromSurface,omitempty"`
@@ -436,8 +436,8 @@ func NewSetAutoAttachToCreatedPagesArgs(autoAttach bool) *SetAutoAttachToCreated
 
 // SetDownloadBehaviorArgs represents the arguments for SetDownloadBehavior in the Page domain.
 type SetDownloadBehaviorArgs struct {
-	// Behavior Whether to allow all or deny all download requests, or use default
-	// Chrome behavior if available (otherwise deny).
+	// Behavior Whether to allow all or deny all download requests, or use
+	// default Chrome behavior if available (otherwise deny).
 	//
 	// Values: "deny", "allow", "default".
 	Behavior     string  `json:"behavior"`

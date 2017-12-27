@@ -55,35 +55,35 @@ type SetDeviceMetricsOverrideArgs struct {
 	//
 	// Note: This property is experimental.
 	Scale *float64 `json:"scale,omitempty"`
-	// ScreenWidth Overriding screen width value in pixels (minimum 0, maximum
-	// 10000000).
+	// ScreenWidth Overriding screen width value in pixels (minimum 0,
+	// maximum 10000000).
 	//
 	// Note: This property is experimental.
 	ScreenWidth *int `json:"screenWidth,omitempty"`
-	// ScreenHeight Overriding screen height value in pixels (minimum 0, maximum
-	// 10000000).
+	// ScreenHeight Overriding screen height value in pixels (minimum 0,
+	// maximum 10000000).
 	//
 	// Note: This property is experimental.
 	ScreenHeight *int `json:"screenHeight,omitempty"`
-	// PositionX Overriding view X position on screen in pixels (minimum 0, maximum
-	// 10000000).
+	// PositionX Overriding view X position on screen in pixels (minimum
+	// 0, maximum 10000000).
 	//
 	// Note: This property is experimental.
 	PositionX *int `json:"positionX,omitempty"`
-	// PositionY Overriding view Y position on screen in pixels (minimum 0, maximum
-	// 10000000).
+	// PositionY Overriding view Y position on screen in pixels (minimum
+	// 0, maximum 10000000).
 	//
 	// Note: This property is experimental.
 	PositionY *int `json:"positionY,omitempty"`
-	// DontSetVisibleSize Do not set visible view size, rely upon explicit setVisibleSize
-	// call.
+	// DontSetVisibleSize Do not set visible view size, rely upon explicit
+	// setVisibleSize call.
 	//
 	// Note: This property is experimental.
 	DontSetVisibleSize *bool              `json:"dontSetVisibleSize,omitempty"`
 	ScreenOrientation  *ScreenOrientation `json:"screenOrientation,omitempty"` // Screen orientation override.
-	// Viewport If set, the visible area of the page will be overridden to this
-	// viewport. This viewport change is not observed by the page, e.g.
-	// viewport-relative elements do not change positions.
+	// Viewport If set, the visible area of the page will be overridden to
+	// this viewport. This viewport change is not observed by the page,
+	// e.g. viewport-relative elements do not change positions.
 	//
 	// Note: This property is experimental.
 	Viewport *page.Viewport `json:"viewport,omitempty"`
@@ -175,7 +175,8 @@ func (a *SetDeviceMetricsOverrideArgs) SetViewport(viewport page.Viewport) *SetD
 // SetEmitTouchEventsForMouseArgs represents the arguments for SetEmitTouchEventsForMouse in the Emulation domain.
 type SetEmitTouchEventsForMouseArgs struct {
 	Enabled bool `json:"enabled"` // Whether touch emulation based on mouse input should be enabled.
-	// Configuration Touch/gesture events configuration. Default: current platform.
+	// Configuration Touch/gesture events configuration. Default: current
+	// platform.
 	//
 	// Values: "mobile", "desktop".
 	Configuration *string `json:"configuration,omitempty"`

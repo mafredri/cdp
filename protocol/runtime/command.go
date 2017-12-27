@@ -270,12 +270,13 @@ type EvaluateReply struct {
 type GetPropertiesArgs struct {
 	ObjectID      RemoteObjectID `json:"objectId"`                // Identifier of the object to return properties for.
 	OwnProperties *bool          `json:"ownProperties,omitempty"` // If true, returns properties belonging only to the element itself, not to its prototype chain.
-	// AccessorPropertiesOnly If true, returns accessor properties (with getter/setter) only;
-	// internal properties are not returned either.
+	// AccessorPropertiesOnly If true, returns accessor properties (with
+	// getter/setter) only; internal properties are not returned either.
 	//
 	// Note: This property is experimental.
 	AccessorPropertiesOnly *bool `json:"accessorPropertiesOnly,omitempty"`
-	// GeneratePreview Whether preview should be generated for the results.
+	// GeneratePreview Whether preview should be generated for the
+	// results.
 	//
 	// Note: This property is experimental.
 	GeneratePreview *bool `json:"generatePreview,omitempty"`

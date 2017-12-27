@@ -42,8 +42,8 @@ type Frame struct {
 	URL            string                `json:"url"`                // Frame document's URL.
 	SecurityOrigin string                `json:"securityOrigin"`     // Frame document's security origin.
 	MimeType       string                `json:"mimeType"`           // Frame document's mimeType as determined by the browser.
-	// UnreachableURL If the frame failed to load, this contains the URL that could not
-	// be loaded.
+	// UnreachableURL If the frame failed to load, this contains the URL
+	// that could not be loaded.
 	//
 	// Note: This property is experimental.
 	UnreachableURL *string `json:"unreachableUrl,omitempty"`

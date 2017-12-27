@@ -445,10 +445,10 @@ type AuthChallenge struct {
 //
 // Note: This type is experimental.
 type AuthChallengeResponse struct {
-	// Response The decision on what to do in response to the authorization
-	// challenge. Default means deferring to the default behavior of the
-	// net stack, which will likely either the Cancel authentication or
-	// display a popup dialog box.
+	// Response The decision on what to do in response to the
+	// authorization challenge. Default means deferring to the default
+	// behavior of the net stack, which will likely either the Cancel
+	// authentication or display a popup dialog box.
 	//
 	// Values: "Default", "CancelAuth", "ProvideCredentials".
 	Response string  `json:"response"`

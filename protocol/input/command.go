@@ -202,9 +202,9 @@ func (a *DispatchMouseEventArgs) SetDeltaY(deltaY float64) *DispatchMouseEventAr
 
 // DispatchTouchEventArgs represents the arguments for DispatchTouchEvent in the Input domain.
 type DispatchTouchEventArgs struct {
-	// Type Type of the touch event. TouchEnd and TouchCancel must not contain
-	// any touch points, while TouchStart and TouchMove must contains at
-	// least one.
+	// Type Type of the touch event. TouchEnd and TouchCancel must not
+	// contain any touch points, while TouchStart and TouchMove must
+	// contains at least one.
 	//
 	// Values: "touchStart", "touchEnd", "touchMove", "touchCancel".
 	Type        string         `json:"type"`

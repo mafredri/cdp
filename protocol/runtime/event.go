@@ -27,9 +27,9 @@ type ConsoleAPICalledReply struct {
 	ExecutionContextID ExecutionContextID `json:"executionContextId"`   // Identifier of the context where the call was made.
 	Timestamp          Timestamp          `json:"timestamp"`            // Call timestamp.
 	StackTrace         *StackTrace        `json:"stackTrace,omitempty"` // Stack trace captured when the call was made.
-	// Context Console context descriptor for calls on non-default console context
-	// (not console.*): 'anonymous#unique-logger-id' for call on unnamed
-	// context, 'name#unique-logger-id' for call on named context.
+	// Context Console context descriptor for calls on non-default console
+	// context (not console.*): 'anonymous#unique-logger-id' for call on
+	// unnamed context, 'name#unique-logger-id' for call on named context.
 	//
 	// Note: This property is experimental.
 	Context *string `json:"context,omitempty"`

@@ -123,8 +123,8 @@ func NewSetDOMBreakpointArgs(nodeID dom.NodeID, typ DOMBreakpointType) *SetDOMBr
 // SetEventListenerBreakpointArgs represents the arguments for SetEventListenerBreakpoint in the DOMDebugger domain.
 type SetEventListenerBreakpointArgs struct {
 	EventName string `json:"eventName"` // DOM Event name to stop on (any DOM event will do).
-	// TargetName EventTarget interface name to stop on. If equal to `"*"` or not
-	// provided, will stop on any EventTarget.
+	// TargetName EventTarget interface name to stop on. If equal to `"*"`
+	// or not provided, will stop on any EventTarget.
 	//
 	// Note: This property is experimental.
 	TargetName *string `json:"targetName,omitempty"`

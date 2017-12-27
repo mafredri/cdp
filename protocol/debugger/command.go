@@ -497,8 +497,8 @@ func NewSetVariableValueArgs(scopeNumber int, variableName string, newValue runt
 
 // StepIntoArgs represents the arguments for StepInto in the Debugger domain.
 type StepIntoArgs struct {
-	// BreakOnAsyncCall Debugger will issue additional Debugger.paused notification if any
-	// async task is scheduled before next pause.
+	// BreakOnAsyncCall Debugger will issue additional Debugger.paused
+	// notification if any async task is scheduled before next pause.
 	//
 	// Note: This property is experimental.
 	BreakOnAsyncCall *bool `json:"breakOnAsyncCall,omitempty"`

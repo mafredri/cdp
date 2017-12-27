@@ -36,8 +36,9 @@ type StartArgs struct {
 	// Deprecated: Tracing options
 	Options                      *string  `json:"options,omitempty"`
 	BufferUsageReportingInterval *float64 `json:"bufferUsageReportingInterval,omitempty"` // If set, the agent will issue bufferUsage events at this interval, specified in milliseconds
-	// TransferMode Whether to report trace events as series of dataCollected events or
-	// to save trace to a stream (defaults to `ReportEvents`).
+	// TransferMode Whether to report trace events as series of
+	// dataCollected events or to save trace to a stream (defaults to
+	// `ReportEvents`).
 	//
 	// Values: "ReportEvents", "ReturnAsStream".
 	TransferMode      *string           `json:"transferMode,omitempty"`

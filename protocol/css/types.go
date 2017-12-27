@@ -130,11 +130,11 @@ type Property struct {
 // Media CSS media rule descriptor.
 type Media struct {
 	Text string `json:"text"` // Media query text.
-	// Source Source of the media query: "mediaRule" if specified by a @media
-	// rule, "importRule" if specified by an @import rule, "linkedSheet" if
-	// specified by a "media" attribute in a linked stylesheet's LINK tag,
-	// "inlineSheet" if specified by a "media" attribute in an inline
-	// stylesheet's STYLE tag.
+	// Source Source of the media query: "mediaRule" if specified by a
+	// @media rule, "importRule" if specified by an @import rule,
+	// "linkedSheet" if specified by a "media" attribute in a linked
+	// stylesheet's LINK tag, "inlineSheet" if specified by a "media"
+	// attribute in an inline stylesheet's STYLE tag.
 	//
 	// Values: "mediaRule", "importRule", "linkedSheet", "inlineSheet".
 	Source       string        `json:"source"`

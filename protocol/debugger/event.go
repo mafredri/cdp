@@ -47,9 +47,10 @@ type PausedReply struct {
 	//
 	// Note: This property is experimental.
 	AsyncStackTraceID *runtime.StackTraceID `json:"asyncStackTraceId,omitempty"`
-	// AsyncCallStackTraceID Just scheduled async call will have this stack trace as parent
-	// stack during async execution. This field is available only after
-	// `Debugger.stepInto` call with `breakOnAsynCall` flag.
+	// AsyncCallStackTraceID Just scheduled async call will have this
+	// stack trace as parent stack during async execution. This field is
+	// available only after `Debugger.stepInto` call with `breakOnAsynCall`
+	// flag.
 	//
 	// Note: This property is experimental.
 	AsyncCallStackTraceID *runtime.StackTraceID `json:"asyncCallStackTraceId,omitempty"`
@@ -92,8 +93,8 @@ type ScriptFailedToParseReply struct {
 	HasSourceURL            *bool                      `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
 	IsModule                *bool                      `json:"isModule,omitempty"`                // True, if this script is ES6 module.
 	Length                  *int                       `json:"length,omitempty"`                  // This script length.
-	// StackTrace JavaScript top stack frame of where the script parsed event was
-	// triggered if available.
+	// StackTrace JavaScript top stack frame of where the script parsed
+	// event was triggered if available.
 	//
 	// Note: This property is experimental.
 	StackTrace *runtime.StackTrace `json:"stackTrace,omitempty"`
@@ -120,8 +121,8 @@ type ScriptParsedReply struct {
 	ExecutionContextID      runtime.ExecutionContextID `json:"executionContextId"`                // Specifies script creation context.
 	Hash                    string                     `json:"hash"`                              // Content hash of the script.
 	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
-	// IsLiveEdit True, if this script is generated as a result of the live edit
-	// operation.
+	// IsLiveEdit True, if this script is generated as a result of the
+	// live edit operation.
 	//
 	// Note: This property is experimental.
 	IsLiveEdit   *bool   `json:"isLiveEdit,omitempty"`
@@ -129,8 +130,8 @@ type ScriptParsedReply struct {
 	HasSourceURL *bool   `json:"hasSourceURL,omitempty"` // True, if this script has sourceURL.
 	IsModule     *bool   `json:"isModule,omitempty"`     // True, if this script is ES6 module.
 	Length       *int    `json:"length,omitempty"`       // This script length.
-	// StackTrace JavaScript top stack frame of where the script parsed event was
-	// triggered if available.
+	// StackTrace JavaScript top stack frame of where the script parsed
+	// event was triggered if available.
 	//
 	// Note: This property is experimental.
 	StackTrace *runtime.StackTrace `json:"stackTrace,omitempty"`

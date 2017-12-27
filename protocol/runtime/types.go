@@ -45,7 +45,8 @@ type RemoteObject struct {
 	//
 	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol".
 	Type string `json:"type"`
-	// Subtype Object subtype hint. Specified for `object` type values only.
+	// Subtype Object subtype hint. Specified for `object` type values
+	// only.
 	//
 	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray".
 	Subtype             *string             `json:"subtype,omitempty"`
@@ -54,8 +55,8 @@ type RemoteObject struct {
 	UnserializableValue UnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified does not have `value`, but gets this property.
 	Description         *string             `json:"description,omitempty"`         // String representation of the object.
 	ObjectID            *RemoteObjectID     `json:"objectId,omitempty"`            // Unique object identifier (for non-primitive values).
-	// Preview Preview containing abbreviated property values. Specified for
-	// `object` type values only.
+	// Preview Preview containing abbreviated property values. Specified
+	// for `object` type values only.
 	//
 	// Note: This property is experimental.
 	Preview *ObjectPreview `json:"preview,omitempty"`
@@ -84,7 +85,8 @@ type ObjectPreview struct {
 	//
 	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol".
 	Type string `json:"type"`
-	// Subtype Object subtype hint. Specified for `object` type values only.
+	// Subtype Object subtype hint. Specified for `object` type values
+	// only.
 	//
 	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error".
 	Subtype     *string           `json:"subtype,omitempty"`
@@ -99,14 +101,15 @@ type ObjectPreview struct {
 // Note: This type is experimental.
 type PropertyPreview struct {
 	Name string `json:"name"` // Property name.
-	// Type Object type. Accessor means that the property itself is an accessor
-	// property.
+	// Type Object type. Accessor means that the property itself is an
+	// accessor property.
 	//
 	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol", "accessor".
 	Type         string         `json:"type"`
 	Value        *string        `json:"value,omitempty"`        // User-friendly property value string.
 	ValuePreview *ObjectPreview `json:"valuePreview,omitempty"` // Nested value preview.
-	// Subtype Object subtype hint. Specified for `object` type values only.
+	// Subtype Object subtype hint. Specified for `object` type values
+	// only.
 	//
 	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error".
 	Subtype *string `json:"subtype,omitempty"`
@@ -231,8 +234,8 @@ type StackTrace struct {
 	Description *string     `json:"description,omitempty"` // String label of this stack trace. For async traces this may be a name of the function that initiated the async call.
 	CallFrames  []CallFrame `json:"callFrames"`            // JavaScript function name.
 	Parent      *StackTrace `json:"parent,omitempty"`      // Asynchronous JavaScript stack trace that preceded this stack, if available.
-	// ParentID Asynchronous JavaScript stack trace that preceded this stack, if
-	// available.
+	// ParentID Asynchronous JavaScript stack trace that preceded this
+	// stack, if available.
 	//
 	// Note: This property is experimental.
 	ParentID *StackTraceID `json:"parentId,omitempty"`

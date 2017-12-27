@@ -162,13 +162,13 @@ func (a *EmulateNetworkConditionsArgs) SetConnectionType(connectionType Connecti
 
 // EnableArgs represents the arguments for Enable in the Network domain.
 type EnableArgs struct {
-	// MaxTotalBufferSize Buffer size in bytes to use when preserving network payloads (XHRs,
-	// etc).
+	// MaxTotalBufferSize Buffer size in bytes to use when preserving
+	// network payloads (XHRs, etc).
 	//
 	// Note: This property is experimental.
 	MaxTotalBufferSize *int `json:"maxTotalBufferSize,omitempty"`
-	// MaxResourceBufferSize Per-resource buffer size in bytes to use when preserving network
-	// payloads (XHRs, etc).
+	// MaxResourceBufferSize Per-resource buffer size in bytes to use when
+	// preserving network payloads (XHRs, etc).
 	//
 	// Note: This property is experimental.
 	MaxResourceBufferSize *int `json:"maxResourceBufferSize,omitempty"`
