@@ -422,18 +422,6 @@ func NewSetAdBlockingEnabledArgs(enabled bool) *SetAdBlockingEnabledArgs {
 	return args
 }
 
-// SetAutoAttachToCreatedPagesArgs represents the arguments for SetAutoAttachToCreatedPages in the Page domain.
-type SetAutoAttachToCreatedPagesArgs struct {
-	AutoAttach bool `json:"autoAttach"` // If true, browser will open a new inspector window for every page created from this one.
-}
-
-// NewSetAutoAttachToCreatedPagesArgs initializes SetAutoAttachToCreatedPagesArgs with the required arguments.
-func NewSetAutoAttachToCreatedPagesArgs(autoAttach bool) *SetAutoAttachToCreatedPagesArgs {
-	args := new(SetAutoAttachToCreatedPagesArgs)
-	args.AutoAttach = autoAttach
-	return args
-}
-
 // SetDownloadBehaviorArgs represents the arguments for SetDownloadBehavior in the Page domain.
 type SetDownloadBehaviorArgs struct {
 	// Behavior Whether to allow all or deny all download requests, or use

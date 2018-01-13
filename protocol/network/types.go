@@ -280,6 +280,7 @@ type Request struct {
 	Method           string                     `json:"method"`                     // HTTP request method.
 	Headers          Headers                    `json:"headers"`                    // HTTP request headers.
 	PostData         *string                    `json:"postData,omitempty"`         // HTTP POST request data.
+	HasPostData      *bool                      `json:"hasPostData,omitempty"`      // True when the request has POST data. Note that postData might still be omitted when this flag is true when the data is too long.
 	MixedContentType *security.MixedContentType `json:"mixedContentType,omitempty"` // The mixed content type of the request.
 	InitialPriority  ResourcePriority           `json:"initialPriority"`            // Priority of the resource request at the time request is sent.
 	// ReferrerPolicy The referrer policy of the request, as defined in

@@ -324,20 +324,6 @@ func (d *domainClient) SetAdBlockingEnabled(ctx context.Context, args *SetAdBloc
 	return
 }
 
-// SetAutoAttachToCreatedPages invokes the Page method. Controls whether
-// browser will open a new inspector window for connected pages.
-func (d *domainClient) SetAutoAttachToCreatedPages(ctx context.Context, args *SetAutoAttachToCreatedPagesArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.setAutoAttachToCreatedPages", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.setAutoAttachToCreatedPages", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "SetAutoAttachToCreatedPages", Err: err}
-	}
-	return
-}
-
 // SetDocumentContent invokes the Page method. Sets given markup as the
 // document's HTML.
 func (d *domainClient) SetDocumentContent(ctx context.Context, args *SetDocumentContentArgs) (err error) {
@@ -400,6 +386,16 @@ func (d *domainClient) StopLoading(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Page.stopLoading", nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "StopLoading", Err: err}
+	}
+	return
+}
+
+// Crash invokes the Page method. Crashes renderer on the IO thread, generates
+// minidumps.
+func (d *domainClient) Crash(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Page.crash", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "Crash", Err: err}
 	}
 	return
 }

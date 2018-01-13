@@ -172,6 +172,7 @@ type EnableArgs struct {
 	//
 	// Note: This property is experimental.
 	MaxResourceBufferSize *int `json:"maxResourceBufferSize,omitempty"`
+	MaxPostDataSize       *int `json:"maxPostDataSize,omitempty"` // Longest post body size (in bytes) that would be included in requestWillBeSent notification
 }
 
 // NewEnableArgs initializes EnableArgs with the required arguments.
@@ -198,6 +199,14 @@ func (a *EnableArgs) SetMaxTotalBufferSize(maxTotalBufferSize int) *EnableArgs {
 // Note: This property is experimental.
 func (a *EnableArgs) SetMaxResourceBufferSize(maxResourceBufferSize int) *EnableArgs {
 	a.MaxResourceBufferSize = &maxResourceBufferSize
+	return a
+}
+
+// SetMaxPostDataSize sets the MaxPostDataSize optional argument.
+// Longest post body size (in bytes) that would be included in
+// requestWillBeSent notification
+func (a *EnableArgs) SetMaxPostDataSize(maxPostDataSize int) *EnableArgs {
+	a.MaxPostDataSize = &maxPostDataSize
 	return a
 }
 
@@ -263,6 +272,23 @@ func NewGetResponseBodyArgs(requestID RequestID) *GetResponseBodyArgs {
 type GetResponseBodyReply struct {
 	Body          string `json:"body"`          // Response body.
 	Base64Encoded bool   `json:"base64Encoded"` // True, if content was sent as base64.
+}
+
+// GetRequestPostDataArgs represents the arguments for GetRequestPostData in the Network domain.
+type GetRequestPostDataArgs struct {
+	RequestID RequestID `json:"requestId"` // Identifier of the network request to get content for.
+}
+
+// NewGetRequestPostDataArgs initializes GetRequestPostDataArgs with the required arguments.
+func NewGetRequestPostDataArgs(requestID RequestID) *GetRequestPostDataArgs {
+	args := new(GetRequestPostDataArgs)
+	args.RequestID = requestID
+	return args
+}
+
+// GetRequestPostDataReply represents the return values for GetRequestPostData in the Network domain.
+type GetRequestPostDataReply struct {
+	PostData []byte `json:"postData"` // Base64-encoded request body.
 }
 
 // GetResponseBodyForInterceptionArgs represents the arguments for GetResponseBodyForInterception in the Network domain.

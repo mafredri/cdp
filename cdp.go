@@ -188,6 +188,20 @@ type Browser interface {
 	// Returns version information.
 	GetVersion(context.Context) (*browser.GetVersionReply, error)
 
+	// Command GetHistograms
+	//
+	// Get Chrome histograms.
+	//
+	// Note: This command is experimental.
+	GetHistograms(context.Context, *browser.GetHistogramsArgs) (*browser.GetHistogramsReply, error)
+
+	// Command GetHistogram
+	//
+	// Get a Chrome histogram by name.
+	//
+	// Note: This command is experimental.
+	GetHistogram(context.Context, *browser.GetHistogramArgs) (*browser.GetHistogramReply, error)
+
 	// Command GetWindowBounds
 	//
 	// Get position and size of the browser window.
@@ -1685,6 +1699,12 @@ type Network interface {
 	// Returns content served for the given request.
 	GetResponseBody(context.Context, *network.GetResponseBodyArgs) (*network.GetResponseBodyReply, error)
 
+	// Command GetRequestPostData
+	//
+	// Returns post data sent with the request. Returns an error when no
+	// data was sent with the request.
+	GetRequestPostData(context.Context, *network.GetRequestPostDataArgs) (*network.GetRequestPostDataReply, error)
+
 	// Command GetResponseBodyForInterception
 	//
 	// Returns content served for the given currently intercepted request.
@@ -2098,14 +2118,6 @@ type Page interface {
 	// Note: This command is experimental.
 	SetAdBlockingEnabled(context.Context, *page.SetAdBlockingEnabledArgs) error
 
-	// Command SetAutoAttachToCreatedPages
-	//
-	// Controls whether browser will open a new inspector window for
-	// connected pages.
-	//
-	// Note: This command is experimental.
-	SetAutoAttachToCreatedPages(context.Context, *page.SetAutoAttachToCreatedPagesArgs) error
-
 	// Command SetDocumentContent
 	//
 	// Sets given markup as the document's HTML.
@@ -2136,6 +2148,13 @@ type Page interface {
 	//
 	// Force the page stop all navigations and pending resource fetches.
 	StopLoading(context.Context) error
+
+	// Command Crash
+	//
+	// Crashes renderer on the IO thread, generates minidumps.
+	//
+	// Note: This command is experimental.
+	Crash(context.Context) error
 
 	// Command StopScreencast
 	//

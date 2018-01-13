@@ -203,6 +203,21 @@ func (d *domainClient) GetResponseBody(ctx context.Context, args *GetResponseBod
 	return
 }
 
+// GetRequestPostData invokes the Network method. Returns post data sent with
+// the request. Returns an error when no data was sent with the request.
+func (d *domainClient) GetRequestPostData(ctx context.Context, args *GetRequestPostDataArgs) (reply *GetRequestPostDataReply, err error) {
+	reply = new(GetRequestPostDataReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.getRequestPostData", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.getRequestPostData", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "GetRequestPostData", Err: err}
+	}
+	return
+}
+
 // GetResponseBodyForInterception invokes the Network method. Returns content
 // served for the given currently intercepted request.
 func (d *domainClient) GetResponseBodyForInterception(ctx context.Context, args *GetResponseBodyForInterceptionArgs) (reply *GetResponseBodyForInterceptionReply, err error) {

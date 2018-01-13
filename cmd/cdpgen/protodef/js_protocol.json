@@ -989,6 +989,60 @@
                             "$ref": "WindowState"
                         }
                     ]
+                },
+                {
+                    "id": "Bucket",
+                    "description": "Chrome histogram bucket.",
+                    "experimental": true,
+                    "type": "object",
+                    "properties": [
+                        {
+                            "name": "low",
+                            "description": "Minimum value (inclusive).",
+                            "type": "integer"
+                        },
+                        {
+                            "name": "high",
+                            "description": "Maximum value (exclusive).",
+                            "type": "integer"
+                        },
+                        {
+                            "name": "count",
+                            "description": "Number of samples.",
+                            "type": "integer"
+                        }
+                    ]
+                },
+                {
+                    "id": "Histogram",
+                    "description": "Chrome histogram.",
+                    "experimental": true,
+                    "type": "object",
+                    "properties": [
+                        {
+                            "name": "name",
+                            "description": "Name.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "sum",
+                            "description": "Sum of sample values.",
+                            "type": "integer"
+                        },
+                        {
+                            "name": "count",
+                            "description": "Total number of samples.",
+                            "type": "integer"
+                        },
+                        {
+                            "name": "buckets",
+                            "description": "Buckets.",
+                            "type": "array",
+                            "items": {
+                                "$ref": "Bucket"
+                            }
+                        }
+                    ]
                 }
             ],
             "commands": [
@@ -1024,6 +1078,48 @@
                             "name": "jsVersion",
                             "description": "V8 version.",
                             "type": "string"
+                        }
+                    ]
+                },
+                {
+                    "name": "getHistograms",
+                    "description": "Get Chrome histograms.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "query",
+                            "description": "Requested substring in name. Only histograms which have query as a\nsubstring in their name are extracted. An empty or absent query returns\nall histograms.",
+                            "optional": true,
+                            "type": "string"
+                        }
+                    ],
+                    "returns": [
+                        {
+                            "name": "histograms",
+                            "description": "Histograms.",
+                            "type": "array",
+                            "items": {
+                                "$ref": "Histogram"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "getHistogram",
+                    "description": "Get a Chrome histogram by name.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "name",
+                            "description": "Requested histogram name.",
+                            "type": "string"
+                        }
+                    ],
+                    "returns": [
+                        {
+                            "name": "histogram",
+                            "description": "Histogram.",
+                            "$ref": "Histogram"
                         }
                     ]
                 },
@@ -4063,6 +4159,7 @@
             "dependencies": [
                 "CSS",
                 "DOM",
+                "DOMDebugger",
                 "Page"
             ],
             "types": [
@@ -4219,6 +4316,15 @@
                             "description": "Whether this DOM node responds to mouse clicks. This includes nodes that have had click\nevent listeners attached via JavaScript as well as anchor tags that naturally navigate when\nclicked.",
                             "optional": true,
                             "type": "boolean"
+                        },
+                        {
+                            "name": "eventListeners",
+                            "description": "Details of the node's event listeners, if any.",
+                            "optional": true,
+                            "type": "array",
+                            "items": {
+                                "$ref": "DOMDebugger.EventListener"
+                            }
                         }
                     ]
                 },
@@ -4327,6 +4433,12 @@
                             "items": {
                                 "type": "string"
                             }
+                        },
+                        {
+                            "name": "includeEventListeners",
+                            "description": "Whether or not to retrieve details of DOM listeners (default false).",
+                            "optional": true,
+                            "type": "boolean"
                         }
                     ],
                     "returns": [
@@ -4982,6 +5094,12 @@
                             "description": "If set this specifies the maximum number of tasks that can be run before virtual is forced\nforwards to prevent deadlock.",
                             "optional": true,
                             "type": "integer"
+                        },
+                        {
+                            "name": "waitForNavigation",
+                            "description": "If set the virtual time policy change should be deferred until any frame starts navigating.\nNote any previous deferred policy change is superseded.",
+                            "optional": true,
+                            "type": "boolean"
                         }
                     ],
                     "returns": [
@@ -6999,6 +7117,12 @@
                             "type": "string"
                         },
                         {
+                            "name": "hasPostData",
+                            "description": "True when the request has POST data. Note that postData might still be omitted when this flag is true when the data is too long.",
+                            "optional": true,
+                            "type": "boolean"
+                        },
+                        {
                             "name": "mixedContentType",
                             "description": "The mixed content type of the request.",
                             "optional": true,
@@ -7814,6 +7938,12 @@
                             "experimental": true,
                             "optional": true,
                             "type": "integer"
+                        },
+                        {
+                            "name": "maxPostDataSize",
+                            "description": "Longest post body size (in bytes) that would be included in requestWillBeSent notification",
+                            "optional": true,
+                            "type": "integer"
                         }
                     ]
                 },
@@ -7897,6 +8027,24 @@
                             "name": "base64Encoded",
                             "description": "True, if content was sent as base64.",
                             "type": "boolean"
+                        }
+                    ]
+                },
+                {
+                    "name": "getRequestPostData",
+                    "description": "Returns post data sent with the request. Returns an error when no data was sent with the request.",
+                    "parameters": [
+                        {
+                            "name": "requestId",
+                            "description": "Identifier of the network request to get content for.",
+                            "$ref": "RequestId"
+                        }
+                    ],
+                    "returns": [
+                        {
+                            "name": "postData",
+                            "description": "Base64-encoded request body.",
+                            "type": "string"
                         }
                     ]
                 },
@@ -8261,6 +8409,12 @@
                             "name": "encodedDataLength",
                             "description": "Total number of bytes received for this request.",
                             "type": "number"
+                        },
+                        {
+                            "name": "blockedCrossSiteDocument",
+                            "description": "Set when response was blocked due to being cross-site document response.",
+                            "optional": true,
+                            "type": "boolean"
                         }
                     ]
                 },
@@ -9976,18 +10130,6 @@
                     ]
                 },
                 {
-                    "name": "setAutoAttachToCreatedPages",
-                    "description": "Controls whether browser will open a new inspector window for connected pages.",
-                    "experimental": true,
-                    "parameters": [
-                        {
-                            "name": "autoAttach",
-                            "description": "If true, browser will open a new inspector window for every page created from this one.",
-                            "type": "boolean"
-                        }
-                    ]
-                },
-                {
                     "name": "setDeviceMetricsOverride",
                     "description": "Overrides the values of device screen dimensions (window.screen.width, window.screen.height,\nwindow.innerWidth, window.innerHeight, and \"device-width\"/\"device-height\"-related CSS media\nquery results).",
                     "experimental": true,
@@ -10233,6 +10375,11 @@
                 {
                     "name": "stopLoading",
                     "description": "Force the page stop all navigations and pending resource fetches."
+                },
+                {
+                    "name": "crash",
+                    "description": "Crashes renderer on the IO thread, generates minidumps.",
+                    "experimental": true
                 },
                 {
                     "name": "stopScreencast",

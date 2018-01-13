@@ -39,6 +39,34 @@ func (d *domainClient) GetVersion(ctx context.Context) (reply *GetVersionReply, 
 	return
 }
 
+// GetHistograms invokes the Browser method. Get Chrome histograms.
+func (d *domainClient) GetHistograms(ctx context.Context, args *GetHistogramsArgs) (reply *GetHistogramsReply, err error) {
+	reply = new(GetHistogramsReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.getHistograms", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.getHistograms", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "GetHistograms", Err: err}
+	}
+	return
+}
+
+// GetHistogram invokes the Browser method. Get a Chrome histogram by name.
+func (d *domainClient) GetHistogram(ctx context.Context, args *GetHistogramArgs) (reply *GetHistogramReply, err error) {
+	reply = new(GetHistogramReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.getHistogram", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.getHistogram", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "GetHistogram", Err: err}
+	}
+	return
+}
+
 // GetWindowBounds invokes the Browser method. Get position and size of the
 // browser window.
 func (d *domainClient) GetWindowBounds(ctx context.Context, args *GetWindowBoundsArgs) (reply *GetWindowBoundsReply, err error) {

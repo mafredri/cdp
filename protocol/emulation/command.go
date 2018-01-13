@@ -303,6 +303,7 @@ type SetVirtualTimePolicyArgs struct {
 	Policy                            VirtualTimePolicy `json:"policy"`                                      // No description.
 	Budget                            *float64          `json:"budget,omitempty"`                            // If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
 	MaxVirtualTimeTaskStarvationCount *int              `json:"maxVirtualTimeTaskStarvationCount,omitempty"` // If set this specifies the maximum number of tasks that can be run before virtual is forced forwards to prevent deadlock.
+	WaitForNavigation                 *bool             `json:"waitForNavigation,omitempty"`                 // If set the virtual time policy change should be deferred until any frame starts navigating. Note any previous deferred policy change is superseded.
 }
 
 // NewSetVirtualTimePolicyArgs initializes SetVirtualTimePolicyArgs with the required arguments.
@@ -325,6 +326,15 @@ func (a *SetVirtualTimePolicyArgs) SetBudget(budget float64) *SetVirtualTimePoli
 // before virtual is forced forwards to prevent deadlock.
 func (a *SetVirtualTimePolicyArgs) SetMaxVirtualTimeTaskStarvationCount(maxVirtualTimeTaskStarvationCount int) *SetVirtualTimePolicyArgs {
 	a.MaxVirtualTimeTaskStarvationCount = &maxVirtualTimeTaskStarvationCount
+	return a
+}
+
+// SetWaitForNavigation sets the WaitForNavigation optional argument.
+// If set the virtual time policy change should be deferred until any
+// frame starts navigating. Note any previous deferred policy change is
+// superseded.
+func (a *SetVirtualTimePolicyArgs) SetWaitForNavigation(waitForNavigation bool) *SetVirtualTimePolicyArgs {
+	a.WaitForNavigation = &waitForNavigation
 	return a
 }
 
