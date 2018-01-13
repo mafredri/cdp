@@ -11,7 +11,8 @@ go:
 
 before_install:
   # Use --disable-setuid-sandbox to avoid core dump on Travis.
-  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 --disable-setuid-sandbox about:blank &
+  # And --no-sandbox (https://github.com/travis-ci/travis-ci/issues/8836).
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 --disable-setuid-sandbox --no-sandbox about:blank &
 
 script:
   - go test -browser
