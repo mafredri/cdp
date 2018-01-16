@@ -9,7 +9,7 @@ Initialize a new session client.
 
 	c := cdp.NewClient(conn) // cdp.Client with websocket connection.
 
-	sc, err := session.NewClient(context.TODO(), c)
+	sc, err := session.NewClient(c)
 	if err != nil {
 		// Handle error.
 	}

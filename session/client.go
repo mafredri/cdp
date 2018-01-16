@@ -2,6 +2,8 @@ package session
 
 import (
 	"context"
+	"errors"
+	"fmt"
 
 	"github.com/mafredri/cdp"
 	"github.com/mafredri/cdp/protocol/target"
@@ -10,6 +12,9 @@ import (
 
 // Client establishes session connections to targets.
 type Client struct {
+	ctx    context.Context
+	cancel context.CancelFunc
+
 	c  *cdp.Client
 	sC chan *session
 }
@@ -25,15 +30,19 @@ func (sc *Client) Dial(ctx context.Context, id target.ID) (*rpcc.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
-	sc.sC <- s
+	select {
+	case sc.sC <- s:
+	case <-sc.ctx.Done():
+		s.Close()
+		return nil, errors.New("Dial: Client is closed")
+	}
 	return s.Conn(), nil
 }
 
 // Close closes the Client and all active sessions. All rpcc.Conn
 // created by Dial will be closed.
 func (sc *Client) Close() error {
-	// TODO(maf): Make Close safe to be called multiple times.
-	close(sc.sC)
+	sc.cancel()
 	return nil
 }
 
@@ -41,23 +50,29 @@ func (sc *Client) watch(ev *sessionEvents, sessionCreated <-chan *session) {
 	defer ev.Close()
 
 	isClosing := func(err error) bool {
-		if cdp.ErrorCause(err) == rpcc.ErrConnClosing {
-			return true
+		switch cdp.ErrorCause(err) {
+		case rpcc.ErrConnClosing:
+			// Cleanup, the underlying connection was closed
+			// before the Client and the Client context does
+			// not inherit from rpcc.Conn.
+			sc.Close()
+		case context.Canceled:
+		default:
+			return false
 		}
-		return false
+		return true
 	}
 
 	sessions := make(map[target.SessionID]*session)
+	defer func() {
+		for _, ss := range sessions {
+			ss.Close()
+		}
+	}()
+
 	for {
 		select {
-		case s, ok := <-sessionCreated:
-			// Check if Client was closed.
-			if !ok {
-				for _, ss := range sessions {
-					ss.Close()
-				}
-				return
-			}
+		case s := <-sessionCreated:
 			sessions[s.ID] = s
 
 		// Checking detached should be sufficient for monitoring the
@@ -69,8 +84,8 @@ func (sc *Client) watch(ev *sessionEvents, sessionCreated <-chan *session) {
 				if isClosing(err) {
 					return
 				}
-				// TODO(maf): Remove panic.
-				panic(err)
+				// TODO(maf): Remove logging.
+				fmt.Printf("Client.watch: %v\n", err)
 			}
 
 			if s, ok := sessions[m.SessionID]; ok {
@@ -84,8 +99,8 @@ func (sc *Client) watch(ev *sessionEvents, sessionCreated <-chan *session) {
 				if isClosing(err) {
 					return
 				}
-				// TODO(maf): Remove panic.
-				panic(err)
+				// TODO(maf): Remove logging.
+				fmt.Printf("Client.watch: %v\n", err)
 			}
 
 			if s, ok := sessions[m.SessionID]; ok {
@@ -94,23 +109,30 @@ func (sc *Client) watch(ev *sessionEvents, sessionCreated <-chan *session) {
 				// amount of time. Blocking here can potentially
 				// delay other session messages but that should
 				// not happen.
-				s.Write([]byte(m.Message))
+				err = s.Write([]byte(m.Message))
+				if err != nil {
+					delete(sessions, s.ID)
+				}
 			}
 		}
 	}
 }
 
-// NewClient creates a new session client. The context is not inherited
-// by Client.
+// NewClient creates a new session client.
 //
 // The cdp.Client will be used to listen to events and invoke commands
 // on the Target domain. It will also be used by all rpcc.Conn created
 // by Dial.
-func NewClient(ctx context.Context, c *cdp.Client) (*Client, error) {
-	sc := &Client{c: c, sC: make(chan *session, 1)}
+func NewClient(c *cdp.Client) (*Client, error) {
+	sc := &Client{c: c, sC: make(chan *session)}
 
-	ev, err := newSessionEvents(ctx, c)
+	// TODO(mafredri): Inherit the context from rpcc.Conn in cdp.Client.
+	// cdp.Client does not yet expose the context, nor rpcc.Conn.
+	sc.ctx, sc.cancel = context.WithCancel(context.TODO())
+
+	ev, err := newSessionEvents(sc.ctx, c)
 	if err != nil {
+		sc.Close()
 		return nil, err
 	}
 
@@ -123,19 +145,19 @@ type sessionEvents struct {
 	message  target.ReceivedMessageFromTargetClient
 }
 
-func newSessionEvents(ctx context.Context, c *cdp.Client) (ev *sessionEvents, err error) {
-	ev = new(sessionEvents)
+func newSessionEvents(ctx context.Context, c *cdp.Client) (events *sessionEvents, err error) {
+	ev := new(sessionEvents)
 	defer func() {
 		if err != nil {
 			ev.Close()
 		}
 	}()
 
-	ev.detached, err = c.Target.DetachedFromTarget(nil)
+	ev.detached, err = c.Target.DetachedFromTarget(ctx)
 	if err != nil {
 		return nil, err
 	}
-	ev.message, err = c.Target.ReceivedMessageFromTarget(nil)
+	ev.message, err = c.Target.ReceivedMessageFromTarget(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -162,5 +184,5 @@ func (ev *sessionEvents) Close() (err error) {
 			}
 		}
 	}
-	return nil
+	return err
 }

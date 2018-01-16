@@ -16,10 +16,12 @@ import (
 type session struct {
 	ID       target.SessionID
 	TargetID target.ID
-	conn     *rpcc.Conn
 	recvC    chan []byte
 	send     func([]byte) error
 	detach   func()
+
+	init chan struct{} // Protect conn from early read.
+	conn *rpcc.Conn
 }
 
 // Ensure that session implements rpcc.Codec.
@@ -36,6 +38,8 @@ func (s *session) WriteRequest(r *rpcc.Request) error {
 
 // ReadResponse implements rpcc.Codec.
 func (s *session) ReadResponse(r *rpcc.Response) error {
+	<-s.init
+
 	select {
 	case m := <-s.recvC:
 		return json.Unmarshal(m, r)
@@ -49,8 +53,14 @@ func (s *session) ReadResponse(r *rpcc.Response) error {
 func (s *session) Conn() *rpcc.Conn { return s.conn }
 
 // Write forwards a target message to the session connection.
-func (s *session) Write(data []byte) {
-	s.recvC <- data
+// When write returns an error, the session is closed.
+func (s *session) Write(data []byte) error {
+	select {
+	case s.recvC <- data:
+		return nil
+	case <-s.conn.Context().Done():
+		return s.conn.Context().Err()
+	}
 }
 
 // Close closes the underlying *rpcc.Conn.
@@ -86,10 +96,10 @@ func dial(ctx context.Context, id target.ID, tc *cdp.Client) (s *session, err er
 		TargetID: id,
 		ID:       reply.SessionID,
 		recvC:    make(chan []byte, 1),
+		init:     make(chan struct{}),
 		send: func(data []byte) error {
+			<-s.init
 			// TODO(maf): Use async invocation.
-			// This context is unavailable until s.conn is assigned,
-			// but no messages will be sent before that happens.
 			return tc.Target.SendMessageToTarget(s.conn.Context(),
 				target.NewSendMessageToTargetArgs(string(data)).
 					SetSessionID(s.ID))
@@ -109,6 +119,7 @@ func dial(ctx context.Context, id target.ID, tc *cdp.Client) (s *session, err er
 	if err != nil {
 		return nil, err
 	}
+	close(s.init)
 
 	return s, nil
 }

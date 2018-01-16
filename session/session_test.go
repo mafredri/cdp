@@ -26,6 +26,11 @@ func TestClient(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
 
+	// Give time for goroutines to settle at the end (increases coverage).
+	defer func() {
+		time.Sleep(10 * time.Millisecond)
+	}()
+
 	devt := devtool.New("http://localhost:9222")
 	p, err := devt.Create(ctx)
 	if err != nil {
@@ -40,7 +45,7 @@ func TestClient(t *testing.T) {
 
 	c := cdp.NewClient(conn)
 
-	sc, err := session.NewClient(ctx, c)
+	sc, err := session.NewClient(c)
 	if err != nil {
 		t.Error(err)
 	}
@@ -51,6 +56,13 @@ func TestClient(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+
+	// Increase test coverage, slightly...
+	unusedConn, err := sc.Dial(ctx, createReply.TargetID)
+	if err != nil {
+		t.Error(err)
+	}
+	_ = unusedConn // Will be closed via sc.Close().
 
 	pageConn, err := sc.Dial(ctx, createReply.TargetID)
 	if err != nil {
