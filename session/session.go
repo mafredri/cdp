@@ -3,8 +3,8 @@ package session
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
-	"net"
 	"time"
 
 	"github.com/mafredri/cdp"
@@ -18,7 +18,6 @@ type session struct {
 	TargetID target.ID
 	recvC    chan []byte
 	send     func([]byte) error
-	detach   func()
 
 	init chan struct{} // Protect conn from early read.
 	conn *rpcc.Conn
@@ -44,7 +43,6 @@ func (s *session) ReadResponse(r *rpcc.Response) error {
 	case m := <-s.recvC:
 		return json.Unmarshal(m, r)
 	case <-s.conn.Context().Done():
-		s.detach()
 		return s.conn.Context().Err()
 	}
 }
@@ -65,17 +63,20 @@ func (s *session) Write(data []byte) error {
 
 // Close closes the underlying *rpcc.Conn.
 func (s *session) Close() error {
-	// Closing conn will trigger s.detach via ReadResponse.
 	return s.conn.Close()
 }
 
 var (
-	// We don't need to establish a connection because the codec does not
-	// use conn for transmission.
-	nilConn = rpcc.WithDialer(func(_ context.Context, _ string) (net.Conn, error) {
-		return nil, nil
-	})
-	codec = func(s *session) rpcc.DialOption {
+	// We only handle Close on conn to detach the session. The codec
+	// handles the actual transport (Read / Write) in this case.
+	sessionDetachConn = func(detach func() error) rpcc.DialOption {
+		return rpcc.WithDialer(
+			func(_ context.Context, _ string) (io.ReadWriteCloser, error) {
+				return &closeConn{close: detach}, nil
+			},
+		)
+	}
+	sessionCodec = func(s *session) rpcc.DialOption {
 		return rpcc.WithCodec(func(_ io.ReadWriter) rpcc.Codec {
 			return s
 		})
@@ -85,7 +86,7 @@ var (
 // dial attaches to the target via the provided *cdp.Client and creates
 // a lightweight RPC connection to the target. Communication is done via
 // the underlying *rpcc.Conn for the provided *cdp.Client.
-func dial(ctx context.Context, id target.ID, tc *cdp.Client) (s *session, err error) {
+func dial(ctx context.Context, id target.ID, tc *cdp.Client, detachTimeout time.Duration) (s *session, err error) {
 	args := target.NewAttachToTargetArgs(id)
 	reply, err := tc.Target.AttachToTarget(ctx, args)
 	if err != nil {
@@ -104,18 +105,26 @@ func dial(ctx context.Context, id target.ID, tc *cdp.Client) (s *session, err er
 				target.NewSendMessageToTargetArgs(string(data)).
 					SetSessionID(s.ID))
 		},
-		detach: func() {
-			ctx := context.Background()
-			ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
-			defer cancel()
-
-			// TODO(maf): Use async invocation and ignore error.
-			go tc.Target.DetachFromTarget(ctx,
-				target.NewDetachFromTargetArgs().SetSessionID(s.ID))
-		},
 	}
 
-	s.conn, err = rpcc.Dial("", nilConn, codec(s))
+	detach := func() error {
+		ctx, cancel := context.WithTimeout(context.Background(), detachTimeout)
+		defer cancel()
+
+		err := tc.Target.DetachFromTarget(ctx,
+			target.NewDetachFromTargetArgs().SetSessionID(s.ID))
+
+		err = cdp.ErrorCause(err)
+		if err == context.DeadlineExceeded {
+			return fmt.Errorf("session: detach timed out for session %s", s.ID)
+		}
+		if err != nil {
+			return wrapf(err, "session: detach failed for session %s", s.ID)
+		}
+		return nil
+	}
+
+	s.conn, err = rpcc.DialContext(ctx, "", sessionDetachConn(detach), sessionCodec(s))
 	if err != nil {
 		return nil, err
 	}

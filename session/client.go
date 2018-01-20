@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/mafredri/cdp"
 	"github.com/mafredri/cdp/protocol/target"
@@ -15,9 +16,25 @@ type Client struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
-	c  *cdp.Client
-	sC chan *session
+	c    *cdp.Client
+	sC   chan *session
+	done chan error
 }
+
+const (
+	// This timeout is used for invoking DetachFromTarget when a
+	// session connection is closed. Meaning we will wait until
+	// timeout for a confirmation response. If a response is not
+	// received in this time, it's still possible that the session
+	// will eventually close.
+	//
+	// The default timeout is a compromise between not blocking for
+	// extended periods of time and allowing slow connections to
+	// deliver the message.
+	//
+	// TODO(mafredri): Should we allow configuring the timeout?
+	defaultDetachTimeout = 5 * time.Second
+)
 
 // Dial establishes a target session and creates a lightweight rpcc.Conn
 // that uses SendMessageToTarget and ReceivedMessageFromTarget from the
@@ -26,7 +43,7 @@ type Client struct {
 // Dial will invoke AttachToTarget. Close (rpcc.Conn) will invoke
 // DetachFromTarget.
 func (sc *Client) Dial(ctx context.Context, id target.ID) (*rpcc.Conn, error) {
-	s, err := dial(ctx, id, sc.c)
+	s, err := dial(ctx, id, sc.c, defaultDetachTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +51,7 @@ func (sc *Client) Dial(ctx context.Context, id target.ID) (*rpcc.Conn, error) {
 	case sc.sC <- s:
 	case <-sc.ctx.Done():
 		s.Close()
-		return nil, errors.New("Dial: Client is closed")
+		return nil, errors.New("session.Client: Dial failed: Client is closed")
 	}
 	return s.Conn(), nil
 }
@@ -43,10 +60,16 @@ func (sc *Client) Dial(ctx context.Context, id target.ID) (*rpcc.Conn, error) {
 // created by Dial will be closed.
 func (sc *Client) Close() error {
 	sc.cancel()
+	if sc.done != nil {
+		err := <-sc.done
+		if err != nil {
+			return wrapf(err, "session.Client: close failed")
+		}
+	}
 	return nil
 }
 
-func (sc *Client) watch(ev *sessionEvents, sessionCreated <-chan *session) {
+func (sc *Client) watch(ev *sessionEvents, created <-chan *session, done chan<- error) {
 	defer ev.Close()
 
 	isClosing := func(err error) bool {
@@ -55,7 +78,7 @@ func (sc *Client) watch(ev *sessionEvents, sessionCreated <-chan *session) {
 			// Cleanup, the underlying connection was closed
 			// before the Client and the Client context does
 			// not inherit from rpcc.Conn.
-			sc.Close()
+			sc.cancel()
 		case context.Canceled:
 		default:
 			return false
@@ -65,14 +88,21 @@ func (sc *Client) watch(ev *sessionEvents, sessionCreated <-chan *session) {
 
 	sessions := make(map[target.SessionID]*session)
 	defer func() {
+		var errs []error
 		for _, ss := range sessions {
-			ss.Close()
+			// TODO(mafredri): Speed up by closing sessions concurrently.
+			err := ss.Close()
+			if err != nil {
+				errs = append(errs, err)
+			}
 		}
+		done <- multiError(errs)
+		close(done)
 	}()
 
 	for {
 		select {
-		case s := <-sessionCreated:
+		case s := <-created:
 			sessions[s.ID] = s
 
 		// Checking detached should be sufficient for monitoring the
@@ -124,7 +154,10 @@ func (sc *Client) watch(ev *sessionEvents, sessionCreated <-chan *session) {
 // on the Target domain. It will also be used by all rpcc.Conn created
 // by Dial.
 func NewClient(c *cdp.Client) (*Client, error) {
-	sc := &Client{c: c, sC: make(chan *session)}
+	sc := &Client{
+		c:  c,
+		sC: make(chan *session),
+	}
 
 	// TODO(mafredri): Inherit the context from rpcc.Conn in cdp.Client.
 	// cdp.Client does not yet expose the context, nor rpcc.Conn.
@@ -136,7 +169,8 @@ func NewClient(c *cdp.Client) (*Client, error) {
 		return nil, err
 	}
 
-	go sc.watch(ev, sc.sC)
+	sc.done = make(chan error, 1)
+	go sc.watch(ev, sc.sC, sc.done)
 	return sc, nil
 }
 
