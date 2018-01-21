@@ -2,11 +2,11 @@ package session
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"time"
 
 	"github.com/mafredri/cdp"
+	"github.com/mafredri/cdp/internal/errors"
 	"github.com/mafredri/cdp/protocol/target"
 	"github.com/mafredri/cdp/rpcc"
 )
@@ -61,10 +61,7 @@ func (sc *Client) Dial(ctx context.Context, id target.ID) (*rpcc.Conn, error) {
 func (sc *Client) Close() error {
 	sc.cancel()
 	if sc.done != nil {
-		err := <-sc.done
-		if err != nil {
-			return wrapf(err, "session.Client: close failed")
-		}
+		errors.Wrapf(<-sc.done, "session.Client: close failed")
 	}
 	return nil
 }
@@ -88,15 +85,12 @@ func (sc *Client) watch(ev *sessionEvents, created <-chan *session, done chan<- 
 
 	sessions := make(map[target.SessionID]*session)
 	defer func() {
-		var errs []error
+		var err []error
 		for _, ss := range sessions {
 			// TODO(mafredri): Speed up by closing sessions concurrently.
-			err := ss.Close()
-			if err != nil {
-				errs = append(errs, err)
-			}
+			err = append(err, ss.Close())
 		}
-		done <- multiError(errs)
+		done <- errors.Merge(err...)
 		close(done)
 	}()
 

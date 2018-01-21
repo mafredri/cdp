@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/mafredri/cdp"
+	"github.com/mafredri/cdp/internal/errors"
 	"github.com/mafredri/cdp/protocol/target"
 	"github.com/mafredri/cdp/rpcc"
 )
@@ -118,10 +119,7 @@ func dial(ctx context.Context, id target.ID, tc *cdp.Client, detachTimeout time.
 		if err == context.DeadlineExceeded {
 			return fmt.Errorf("session: detach timed out for session %s", s.ID)
 		}
-		if err != nil {
-			return wrapf(err, "session: detach failed for session %s", s.ID)
-		}
-		return nil
+		return errors.Wrapf(err, "session: detach failed for session %s", s.ID)
 	}
 
 	s.conn, err = rpcc.DialContext(ctx, "", sessionDetachConn(detach), sessionCodec(s))
