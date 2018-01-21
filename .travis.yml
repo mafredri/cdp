@@ -6,7 +6,7 @@ addons:
   chrome: stable
 
 go:
-  - 1.8.x
+  - 1.9.x
   - tip
 
 before_install:
