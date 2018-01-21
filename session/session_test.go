@@ -10,47 +10,11 @@ import (
 	"time"
 
 	"github.com/mafredri/cdp"
-	"github.com/mafredri/cdp/devtool"
+	"github.com/mafredri/cdp/internal/testutil"
 	"github.com/mafredri/cdp/protocol/page"
 	"github.com/mafredri/cdp/protocol/runtime"
-	"github.com/mafredri/cdp/protocol/target"
-	"github.com/mafredri/cdp/rpcc"
 	"github.com/mafredri/cdp/session"
 )
-
-type testClient struct {
-	t    *testing.T
-	conn *rpcc.Conn
-	cl   *cdp.Client
-}
-
-func (c *testClient) NewPage(ctx context.Context) *testTarget {
-	return newTestTarget(c.t, ctx, c.cl)
-}
-
-func getClient(t *testing.T, ctx context.Context) *testClient {
-	// TODO(mafredri): Uncomment helper when no longer testing Go 1.8.
-	// t.Helper()
-	if !*browserFlag {
-		t.Skip("This test only runs in the browser, skipping")
-	}
-
-	devt := devtool.New("http://localhost:9222")
-	v, err := devt.Version(ctx)
-	if err != nil {
-		t.Fatal(err)
-	}
-	conn, err := rpcc.DialContext(ctx, v.WebSocketDebuggerURL)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	return &testClient{
-		t:    t,
-		conn: conn,
-		cl:   cdp.NewClient(conn),
-	}
-}
 
 func TestClient(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
@@ -61,9 +25,9 @@ func TestClient(t *testing.T) {
 		time.Sleep(10 * time.Millisecond)
 	}()
 
-	c := getClient(t, ctx)
+	c := testutil.NewClient(ctx, t)
 
-	sc, err := session.NewClient(c.cl)
+	sc, err := session.NewClient(c.Client)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -74,7 +38,7 @@ func TestClient(t *testing.T) {
 	// defer newPage.Close()
 
 	// Test session usage.
-	pageConn, err := sc.Dial(ctx, newPage.ID)
+	pageConn, err := sc.Dial(ctx, newPage.ID())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -132,25 +96,25 @@ func TestClient_CloseClient(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
 
-	c := getClient(t, ctx)
+	c := testutil.NewClient(ctx, t)
 
 	// Test connection closure, should close session client.
-	sc, err := session.NewClient(c.cl)
+	sc, err := session.NewClient(c.Client)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer sc.Close()
 
-	newPage := newTestTarget(t, ctx, c.cl)
+	newPage := c.NewPage(ctx)
 	defer newPage.Close()
 
-	_, err = sc.Dial(ctx, newPage.ID) // Closed by sc.Close().
+	_, err = sc.Dial(ctx, newPage.ID()) // Closed by sc.Close().
 	if err != nil {
 		t.Error(err)
 	}
 
 	sc.Close()
-	_, err = sc.Dial(ctx, newPage.ID)
+	_, err = sc.Dial(ctx, newPage.ID())
 	if err == nil {
 		t.Error("Dial: expected error after Close, got nil")
 	}
@@ -159,21 +123,21 @@ func TestClient_CloseUnderlyingConn(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
 
-	c := getClient(t, ctx)
+	c := testutil.NewClient(ctx, t)
 
 	// Get a target ID for use in Dial (doesn't matter that it's closed).
 	p := c.NewPage(ctx)
 	p.Close()
-	targetID := p.ID
+	targetID := p.ID()
 
 	// Test connection closure, should close session client.
-	sc, err := session.NewClient(c.cl)
+	sc, err := session.NewClient(c.Client)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer sc.Close()
 
-	c.conn.Close()
+	c.Conn.Close()
 	time.Sleep(10 * time.Millisecond) // Give time for context propagation.
 
 	_, err = sc.Dial(ctx, targetID)
@@ -186,41 +150,13 @@ func TestClient_NewClientOnClosedConn(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
 
-	c := getClient(t, ctx)
-	c.conn.Close()
+	c := testutil.NewClient(ctx, t)
+	c.Conn.Close()
 
-	_, err := session.NewClient(c.cl)
+	_, err := session.NewClient(c.Client)
 	if err == nil {
 		t.Error("NewClient: rpcc.Conn is closed, expected error, got nil ")
 	}
-}
-
-type testTarget struct {
-	t   *testing.T
-	ctx context.Context
-	c   *cdp.Client
-	ID  target.ID
-}
-
-func (t *testTarget) Close() {
-	reply, err := t.c.Target.CloseTarget(t.ctx,
-		target.NewCloseTargetArgs(t.ID))
-	if err != nil {
-		t.t.Error(err)
-	}
-	if !reply.Success {
-		t.t.Error("close target failed")
-	}
-}
-
-func newTestTarget(t *testing.T, ctx context.Context, c *cdp.Client) *testTarget {
-	reply, err := c.Target.CreateTarget(ctx,
-		target.NewCreateTargetArgs("about:blank"))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	return &testTarget{t: t, ctx: ctx, c: c, ID: reply.TargetID}
 }
 
 var (
