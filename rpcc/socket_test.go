@@ -3,37 +3,19 @@ package rpcc
 import (
 	"errors"
 	"io"
-	"net"
 	"testing"
-	"time"
 )
 
 type fakeSocketConn struct {
 	nextReaderCount int
 	nextWriterCount int
 	nextWriterErr   error
-	addr            *testAddr
 	closed          bool
 	reader          *fakeReader
 	writer          *fakeWriteCloser
 	writerErr       error
 	deadlineErr     error
 }
-
-// Implements net.Addr.
-type testAddr struct {
-	net string
-	str string
-}
-
-func (a *testAddr) Network() string { return a.net }
-func (a *testAddr) String() string  { return a.str }
-
-// Implement websocketConn.
-func (c *fakeSocketConn) LocalAddr() net.Addr                { return c.addr }
-func (c *fakeSocketConn) RemoteAddr() net.Addr               { return c.addr }
-func (c *fakeSocketConn) SetReadDeadline(t time.Time) error  { return c.deadlineErr }
-func (c *fakeSocketConn) SetWriteDeadline(t time.Time) error { return c.deadlineErr }
 
 func (c *fakeSocketConn) NextReader() (int, io.Reader, error) {
 	c.nextReaderCount++
@@ -78,34 +60,9 @@ func (c *fakeWriteCloser) Close() error {
 	return c.err
 }
 
-func TestSocket_netConn(t *testing.T) {
-	fakeConn := &fakeSocketConn{addr: &testAddr{net: "tcp", str: "127.0.0.1:80"}}
-	conn := &wsNetConn{conn: fakeConn}
-
-	addr := conn.LocalAddr()
-	if addr != fakeConn.addr {
-		t.Errorf("LocalAddr() wrong addr: got %v, want %v", addr, fakeConn.addr)
-	}
-	addr = conn.RemoteAddr()
-	if addr != fakeConn.addr {
-		t.Errorf("RemoteAddr() wrong addr: got %v, want %v", addr, fakeConn.addr)
-	}
-
-	err := conn.SetDeadline(time.Now())
-	if err != nil {
-		t.Errorf("SetDeadline() returned error, got %v, want nil", err)
-	}
-
-	fakeConn.deadlineErr = errors.New("error")
-	err = conn.SetDeadline(time.Now())
-	if err != fakeConn.deadlineErr {
-		t.Errorf("SetDeadline() want error, got %v", err)
-	}
-}
-
 func TestSocket_Read(t *testing.T) {
 	fakeConn := &fakeSocketConn{}
-	conn := &wsNetConn{conn: fakeConn}
+	conn := &wsReadWriteCloser{wsConn: fakeConn}
 	conn.Read(nil)
 	if fakeConn.nextReaderCount != 1 {
 		t.Errorf("expected NextReader to be called once, got %d", fakeConn.nextReaderCount)
@@ -141,7 +98,7 @@ func TestSocket_Read(t *testing.T) {
 
 func TestSocket_Write(t *testing.T) {
 	fakeConn := &fakeSocketConn{}
-	conn := &wsNetConn{conn: fakeConn}
+	conn := &wsReadWriteCloser{wsConn: fakeConn}
 
 	_, err := conn.Write(nil)
 	if err != nil {
@@ -175,7 +132,7 @@ func TestSocket_Write(t *testing.T) {
 
 func TestSocket_Close(t *testing.T) {
 	fakeConn := &fakeSocketConn{}
-	conn := &wsNetConn{conn: fakeConn}
+	conn := &wsReadWriteCloser{wsConn: fakeConn}
 
 	conn.Close()
 	if !fakeConn.closed {

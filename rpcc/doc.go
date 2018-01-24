@@ -22,7 +22,7 @@ The user must close the connection when finnished with it:
 A custom dialer can be used to change the websocket lib or communicate
 over other protocols.
 
-	netDial := func(ctx context.Context, addr string) (net.Conn, error) {
+	netDial := func(ctx context.Context, addr string) (io.ReadWriteCloser, error) {
 		conn, err := net.Dial("tcp", addr)
 		if err != nil {
 			// Handle error.
