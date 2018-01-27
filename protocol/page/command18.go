@@ -82,7 +82,7 @@ func (a *NavigateArgs) SetTransitionType(transitionType TransitionType) *Navigat
 
 // SetFrameID sets the FrameID optional argument. Frame id to
 // navigate, if not specified navigates the top frame.
-func (a *NavigateArgs) SetFrameID(frameID FrameID) *NavigateArgs {
+func (a *NavigateArgs) SetFrameID(frameID protocol.PageFrameID) *NavigateArgs {
 	a.FrameID = &frameID
 	return a
 }
