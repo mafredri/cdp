@@ -6,7 +6,6 @@ package dom
 
 import (
 	"github.com/mafredri/cdp/protocol/internal"
-	"github.com/mafredri/cdp/protocol/page"
 )
 
 // GetFrameOwnerArgs represents the arguments for GetFrameOwner in the DOM domain.
@@ -15,7 +14,7 @@ type GetFrameOwnerArgs struct {
 }
 
 // NewGetFrameOwnerArgs initializes GetFrameOwnerArgs with the required arguments.
-func NewGetFrameOwnerArgs(frameID page.FrameID) *GetFrameOwnerArgs {
+func NewGetFrameOwnerArgs(frameID internal.PageFrameID) *GetFrameOwnerArgs {
 	args := new(GetFrameOwnerArgs)
 	args.FrameID = frameID
 	return args
