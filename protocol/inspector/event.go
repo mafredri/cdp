@@ -32,3 +32,16 @@ type TargetCrashedClient interface {
 // TargetCrashedReply is the reply for TargetCrashed events.
 type TargetCrashedReply struct {
 }
+
+// TargetReloadedAfterCrashClient is a client for TargetReloadedAfterCrash events.
+// Fired when debugging target has reloaded after crash
+type TargetReloadedAfterCrashClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*TargetReloadedAfterCrashReply, error)
+	rpcc.Stream
+}
+
+// TargetReloadedAfterCrashReply is the reply for TargetReloadedAfterCrash events.
+type TargetReloadedAfterCrashReply struct {
+}

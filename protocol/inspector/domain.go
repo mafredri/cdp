@@ -79,3 +79,24 @@ func (c *targetCrashedClient) Recv() (*TargetCrashedReply, error) {
 	}
 	return event, nil
 }
+
+func (d *domainClient) TargetReloadedAfterCrash(ctx context.Context) (TargetReloadedAfterCrashClient, error) {
+	s, err := rpcc.NewStream(ctx, "Inspector.targetReloadedAfterCrash", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &targetReloadedAfterCrashClient{Stream: s}, nil
+}
+
+type targetReloadedAfterCrashClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *targetReloadedAfterCrashClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *targetReloadedAfterCrashClient) Recv() (*TargetReloadedAfterCrashReply, error) {
+	event := new(TargetReloadedAfterCrashReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Inspector", Op: "TargetReloadedAfterCrash Recv", Err: err}
+	}
+	return event, nil
+}

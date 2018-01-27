@@ -51,6 +51,41 @@ func NewGetResourceContentArgs(frameID FrameID, url string) *GetResourceContentA
 	return args
 }
 
+// NavigateArgs represents the arguments for Navigate in the Page domain.
+type NavigateArgs struct {
+	URL            string         `json:"url"`                      // URL to navigate the page to.
+	Referrer       *string        `json:"referrer,omitempty"`       // Referrer URL.
+	TransitionType TransitionType `json:"transitionType,omitempty"` // Intended transition type.
+	FrameID        *FrameID       `json:"frameId,omitempty"`        // Frame id to navigate, if not specified navigates the top frame.
+}
+
+// NewNavigateArgs initializes NavigateArgs with the required arguments.
+func NewNavigateArgs(url string) *NavigateArgs {
+	args := new(NavigateArgs)
+	args.URL = url
+	return args
+}
+
+// SetReferrer sets the Referrer optional argument. Referrer URL.
+func (a *NavigateArgs) SetReferrer(referrer string) *NavigateArgs {
+	a.Referrer = &referrer
+	return a
+}
+
+// SetTransitionType sets the TransitionType optional argument.
+// Intended transition type.
+func (a *NavigateArgs) SetTransitionType(transitionType TransitionType) *NavigateArgs {
+	a.TransitionType = transitionType
+	return a
+}
+
+// SetFrameID sets the FrameID optional argument. Frame id to
+// navigate, if not specified navigates the top frame.
+func (a *NavigateArgs) SetFrameID(frameID FrameID) *NavigateArgs {
+	a.FrameID = &frameID
+	return a
+}
+
 // NavigateReply represents the return values for Navigate in the Page domain.
 type NavigateReply struct {
 	FrameID   FrameID           `json:"frameId"`             // Frame id that has navigated (or failed to navigate)

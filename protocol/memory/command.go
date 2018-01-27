@@ -32,3 +32,35 @@ func NewSimulatePressureNotificationArgs(level PressureLevel) *SimulatePressureN
 	args.Level = level
 	return args
 }
+
+// StartSamplingArgs represents the arguments for StartSampling in the Memory domain.
+type StartSamplingArgs struct {
+	SamplingInterval   *int  `json:"samplingInterval,omitempty"`   // Average number of bytes between samples.
+	SuppressRandomness *bool `json:"suppressRandomness,omitempty"` // Do not randomize intervals between samples.
+}
+
+// NewStartSamplingArgs initializes StartSamplingArgs with the required arguments.
+func NewStartSamplingArgs() *StartSamplingArgs {
+	args := new(StartSamplingArgs)
+
+	return args
+}
+
+// SetSamplingInterval sets the SamplingInterval optional argument.
+// Average number of bytes between samples.
+func (a *StartSamplingArgs) SetSamplingInterval(samplingInterval int) *StartSamplingArgs {
+	a.SamplingInterval = &samplingInterval
+	return a
+}
+
+// SetSuppressRandomness sets the SuppressRandomness optional argument.
+// Do not randomize intervals between samples.
+func (a *StartSamplingArgs) SetSuppressRandomness(suppressRandomness bool) *StartSamplingArgs {
+	a.SuppressRandomness = &suppressRandomness
+	return a
+}
+
+// GetSamplingProfileReply represents the return values for GetSamplingProfile in the Memory domain.
+type GetSamplingProfileReply struct {
+	Profile SamplingProfile `json:"profile"` // No description.
+}

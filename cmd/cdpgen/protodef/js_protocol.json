@@ -3686,6 +3686,23 @@
                     "name": "undo",
                     "description": "Undoes the last performed action.",
                     "experimental": true
+                },
+                {
+                    "name": "getFrameOwner",
+                    "description": "Returns iframe node that owns iframe with the given domain.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "frameId",
+                            "$ref": "Page.FrameId"
+                        }
+                    ],
+                    "returns": [
+                        {
+                            "name": "nodeId",
+                            "$ref": "NodeId"
+                        }
+                    ]
                 }
             ],
             "events": [
@@ -4325,6 +4342,12 @@
                             "items": {
                                 "$ref": "DOMDebugger.EventListener"
                             }
+                        },
+                        {
+                            "name": "currentSourceURL",
+                            "description": "The selected url for nodes with a srcset attribute.",
+                            "optional": true,
+                            "type": "string"
                         }
                     ]
                 },
@@ -5218,6 +5241,12 @@
                             "type": "number"
                         },
                         {
+                            "name": "noDisplayUpdates",
+                            "description": "Whether updates should not be committed and drawn onto the display. False by default. If\ntrue, only side effects of the BeginFrame will be run, such as layout and animations, but\nany visual updates may not be visible on the display or in screenshots.",
+                            "optional": true,
+                            "type": "boolean"
+                        },
+                        {
                             "name": "screenshot",
                             "description": "If set, a screenshot of the frame will be captured and returned in the response. Otherwise,\nno screenshot will be captured.",
                             "optional": true,
@@ -6037,11 +6066,6 @@
                             "type": "integer"
                         },
                         {
-                            "name": "timestamp",
-                            "description": "Time at which the event occurred.",
-                            "$ref": "TimeSinceEpoch"
-                        },
-                        {
                             "name": "button",
                             "description": "Mouse button.",
                             "type": "string",
@@ -6051,6 +6075,12 @@
                                 "middle",
                                 "right"
                             ]
+                        },
+                        {
+                            "name": "timestamp",
+                            "description": "Time at which the event occurred (default: current time).",
+                            "optional": true,
+                            "$ref": "TimeSinceEpoch"
                         },
                         {
                             "name": "deltaX",
@@ -6265,6 +6295,10 @@
                 {
                     "name": "targetCrashed",
                     "description": "Fired when debugging target has crashed"
+                },
+                {
+                    "name": "targetReloadedAfterCrash",
+                    "description": "Fired when debugging target has reloaded after crash"
                 }
             ]
         },
@@ -6857,6 +6891,45 @@
                         "moderate",
                         "critical"
                     ]
+                },
+                {
+                    "id": "SamplingProfileNode",
+                    "description": "Heap profile sample.",
+                    "type": "object",
+                    "properties": [
+                        {
+                            "name": "size",
+                            "description": "Size of the sampled allocation.",
+                            "type": "number"
+                        },
+                        {
+                            "name": "count",
+                            "description": "Number of sampled allocations of that size.",
+                            "type": "number"
+                        },
+                        {
+                            "name": "stack",
+                            "description": "Execution stack at the point of allocation.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "SamplingProfile",
+                    "description": "Array of heap profile samples.",
+                    "type": "object",
+                    "properties": [
+                        {
+                            "name": "samples",
+                            "type": "array",
+                            "items": {
+                                "$ref": "SamplingProfileNode"
+                            }
+                        }
+                    ]
                 }
             ],
             "commands": [
@@ -6899,6 +6972,38 @@
                             "name": "level",
                             "description": "Memory pressure level of the notification.",
                             "$ref": "PressureLevel"
+                        }
+                    ]
+                },
+                {
+                    "name": "startSampling",
+                    "description": "Start collecting native memory profile.",
+                    "parameters": [
+                        {
+                            "name": "samplingInterval",
+                            "description": "Average number of bytes between samples.",
+                            "optional": true,
+                            "type": "integer"
+                        },
+                        {
+                            "name": "suppressRandomness",
+                            "description": "Do not randomize intervals between samples.",
+                            "optional": true,
+                            "type": "boolean"
+                        }
+                    ]
+                },
+                {
+                    "name": "stopSampling",
+                    "description": "Stop collecting native memory profile."
+                },
+                {
+                    "name": "getSamplingProfile",
+                    "description": "Retrieve collected native memory profile.",
+                    "returns": [
+                        {
+                            "name": "profile",
+                            "$ref": "SamplingProfile"
                         }
                     ]
                 }
@@ -9887,6 +9992,12 @@
                             "description": "Intended transition type.",
                             "optional": true,
                             "$ref": "TransitionType"
+                        },
+                        {
+                            "name": "frameId",
+                            "description": "Frame id to navigate, if not specified navigates the top frame.",
+                            "optional": true,
+                            "$ref": "FrameId"
                         }
                     ],
                     "returns": [

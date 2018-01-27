@@ -542,6 +542,21 @@ func (d *domainClient) Undo(ctx context.Context) (err error) {
 	return
 }
 
+// GetFrameOwner invokes the DOM method. Returns iframe node that owns iframe
+// with the given domain.
+func (d *domainClient) GetFrameOwner(ctx context.Context, args *GetFrameOwnerArgs) (reply *GetFrameOwnerReply, err error) {
+	reply = new(GetFrameOwnerReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.getFrameOwner", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.getFrameOwner", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "GetFrameOwner", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) AttributeModified(ctx context.Context) (AttributeModifiedClient, error) {
 	s, err := rpcc.NewStream(ctx, "DOM.attributeModified", d.conn)
 	if err != nil {

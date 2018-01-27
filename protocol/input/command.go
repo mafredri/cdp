@@ -241,29 +241,35 @@ type EmulateTouchFromMouseEventArgs struct {
 	// Type Type of the mouse event.
 	//
 	// Values: "mousePressed", "mouseReleased", "mouseMoved", "mouseWheel".
-	Type      string         `json:"type"`
-	X         int            `json:"x"`         // X coordinate of the mouse pointer in DIP.
-	Y         int            `json:"y"`         // Y coordinate of the mouse pointer in DIP.
-	Timestamp TimeSinceEpoch `json:"timestamp"` // Time at which the event occurred.
+	Type string `json:"type"`
+	X    int    `json:"x"` // X coordinate of the mouse pointer in DIP.
+	Y    int    `json:"y"` // Y coordinate of the mouse pointer in DIP.
 	// Button Mouse button.
 	//
 	// Values: "none", "left", "middle", "right".
-	Button     string   `json:"button"`
-	DeltaX     *float64 `json:"deltaX,omitempty"`     // X delta in DIP for mouse wheel event (default: 0).
-	DeltaY     *float64 `json:"deltaY,omitempty"`     // Y delta in DIP for mouse wheel event (default: 0).
-	Modifiers  *int     `json:"modifiers,omitempty"`  // Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
-	ClickCount *int     `json:"clickCount,omitempty"` // Number of times the mouse button was clicked (default: 0).
+	Button     string         `json:"button"`
+	Timestamp  TimeSinceEpoch `json:"timestamp,omitempty"`  // Time at which the event occurred (default: current time).
+	DeltaX     *float64       `json:"deltaX,omitempty"`     // X delta in DIP for mouse wheel event (default: 0).
+	DeltaY     *float64       `json:"deltaY,omitempty"`     // Y delta in DIP for mouse wheel event (default: 0).
+	Modifiers  *int           `json:"modifiers,omitempty"`  // Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
+	ClickCount *int           `json:"clickCount,omitempty"` // Number of times the mouse button was clicked (default: 0).
 }
 
 // NewEmulateTouchFromMouseEventArgs initializes EmulateTouchFromMouseEventArgs with the required arguments.
-func NewEmulateTouchFromMouseEventArgs(typ string, x int, y int, timestamp TimeSinceEpoch, button string) *EmulateTouchFromMouseEventArgs {
+func NewEmulateTouchFromMouseEventArgs(typ string, x int, y int, button string) *EmulateTouchFromMouseEventArgs {
 	args := new(EmulateTouchFromMouseEventArgs)
 	args.Type = typ
 	args.X = x
 	args.Y = y
-	args.Timestamp = timestamp
 	args.Button = button
 	return args
+}
+
+// SetTimestamp sets the Timestamp optional argument. Time at which
+// the event occurred (default: current time).
+func (a *EmulateTouchFromMouseEventArgs) SetTimestamp(timestamp TimeSinceEpoch) *EmulateTouchFromMouseEventArgs {
+	a.Timestamp = timestamp
+	return a
 }
 
 // SetDeltaX sets the DeltaX optional argument. X delta in DIP for

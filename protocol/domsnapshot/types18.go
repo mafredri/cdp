@@ -37,4 +37,5 @@ type DOMNode struct {
 	PseudoType            *dom.PseudoType             `json:"pseudoType,omitempty"`            // Type of a pseudo element node.
 	IsClickable           *bool                       `json:"isClickable,omitempty"`           // Whether this DOM node responds to mouse clicks. This includes nodes that have had click event listeners attached via JavaScript as well as anchor tags that naturally navigate when clicked.
 	EventListeners        []domdebugger.EventListener `json:"eventListeners,omitempty"`        // Details of the node's event listeners, if any.
+	CurrentSourceURL      *string                     `json:"currentSourceURL,omitempty"`      // The selected url for nodes with a srcset attribute.
 }

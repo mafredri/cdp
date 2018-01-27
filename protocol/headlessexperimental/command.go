@@ -8,10 +8,11 @@ import (
 
 // BeginFrameArgs represents the arguments for BeginFrame in the HeadlessExperimental domain.
 type BeginFrameArgs struct {
-	FrameTime  *runtime.Timestamp `json:"frameTime,omitempty"`  // Timestamp of this BeginFrame (milliseconds since epoch). If not set, the current time will be used.
-	Deadline   *runtime.Timestamp `json:"deadline,omitempty"`   // Deadline of this BeginFrame (milliseconds since epoch). If not set, the deadline will be calculated from the frameTime and interval.
-	Interval   *float64           `json:"interval,omitempty"`   // The interval between BeginFrames that is reported to the compositor, in milliseconds. Defaults to a 60 frames/second interval, i.e. about 16.666 milliseconds.
-	Screenshot *ScreenshotParams  `json:"screenshot,omitempty"` // If set, a screenshot of the frame will be captured and returned in the response. Otherwise, no screenshot will be captured.
+	FrameTime        *runtime.Timestamp `json:"frameTime,omitempty"`        // Timestamp of this BeginFrame (milliseconds since epoch). If not set, the current time will be used.
+	Deadline         *runtime.Timestamp `json:"deadline,omitempty"`         // Deadline of this BeginFrame (milliseconds since epoch). If not set, the deadline will be calculated from the frameTime and interval.
+	Interval         *float64           `json:"interval,omitempty"`         // The interval between BeginFrames that is reported to the compositor, in milliseconds. Defaults to a 60 frames/second interval, i.e. about 16.666 milliseconds.
+	NoDisplayUpdates *bool              `json:"noDisplayUpdates,omitempty"` // Whether updates should not be committed and drawn onto the display. False by default. If true, only side effects of the BeginFrame will be run, such as layout and animations, but any visual updates may not be visible on the display or in screenshots.
+	Screenshot       *ScreenshotParams  `json:"screenshot,omitempty"`       // If set, a screenshot of the frame will be captured and returned in the response. Otherwise, no screenshot will be captured.
 }
 
 // NewBeginFrameArgs initializes BeginFrameArgs with the required arguments.
@@ -43,6 +44,16 @@ func (a *BeginFrameArgs) SetDeadline(deadline runtime.Timestamp) *BeginFrameArgs
 // 16.666 milliseconds.
 func (a *BeginFrameArgs) SetInterval(interval float64) *BeginFrameArgs {
 	a.Interval = &interval
+	return a
+}
+
+// SetNoDisplayUpdates sets the NoDisplayUpdates optional argument.
+// Whether updates should not be committed and drawn onto the display.
+// False by default. If true, only side effects of the BeginFrame will
+// be run, such as layout and animations, but any visual updates may
+// not be visible on the display or in screenshots.
+func (a *BeginFrameArgs) SetNoDisplayUpdates(noDisplayUpdates bool) *BeginFrameArgs {
+	a.NoDisplayUpdates = &noDisplayUpdates
 	return a
 }
 

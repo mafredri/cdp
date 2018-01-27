@@ -163,33 +163,6 @@ func (a *HandleJavaScriptDialogArgs) SetPromptText(promptText string) *HandleJav
 	return a
 }
 
-// NavigateArgs represents the arguments for Navigate in the Page domain.
-type NavigateArgs struct {
-	URL            string         `json:"url"`                      // URL to navigate the page to.
-	Referrer       *string        `json:"referrer,omitempty"`       // Referrer URL.
-	TransitionType TransitionType `json:"transitionType,omitempty"` // Intended transition type.
-}
-
-// NewNavigateArgs initializes NavigateArgs with the required arguments.
-func NewNavigateArgs(url string) *NavigateArgs {
-	args := new(NavigateArgs)
-	args.URL = url
-	return args
-}
-
-// SetReferrer sets the Referrer optional argument. Referrer URL.
-func (a *NavigateArgs) SetReferrer(referrer string) *NavigateArgs {
-	a.Referrer = &referrer
-	return a
-}
-
-// SetTransitionType sets the TransitionType optional argument.
-// Intended transition type.
-func (a *NavigateArgs) SetTransitionType(transitionType TransitionType) *NavigateArgs {
-	a.TransitionType = transitionType
-	return a
-}
-
 // NavigateToHistoryEntryArgs represents the arguments for NavigateToHistoryEntry in the Page domain.
 type NavigateToHistoryEntryArgs struct {
 	EntryID int `json:"entryId"` // Unique id of the entry to navigate to.

@@ -759,3 +759,8 @@ func NewSetOuterHTMLArgs(nodeID NodeID, outerHTML string) *SetOuterHTMLArgs {
 	args.OuterHTML = outerHTML
 	return args
 }
+
+// GetFrameOwnerReply represents the return values for GetFrameOwner in the DOM domain.
+type GetFrameOwnerReply struct {
+	NodeID NodeID `json:"nodeId"` // No description.
+}

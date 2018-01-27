@@ -64,3 +64,38 @@ func (d *domainClient) SimulatePressureNotification(ctx context.Context, args *S
 	}
 	return
 }
+
+// StartSampling invokes the Memory method. Start collecting native memory
+// profile.
+func (d *domainClient) StartSampling(ctx context.Context, args *StartSamplingArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Memory.startSampling", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Memory.startSampling", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Memory", Op: "StartSampling", Err: err}
+	}
+	return
+}
+
+// StopSampling invokes the Memory method. Stop collecting native memory
+// profile.
+func (d *domainClient) StopSampling(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Memory.stopSampling", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Memory", Op: "StopSampling", Err: err}
+	}
+	return
+}
+
+// GetSamplingProfile invokes the Memory method. Retrieve collected native
+// memory profile.
+func (d *domainClient) GetSamplingProfile(ctx context.Context) (reply *GetSamplingProfileReply, err error) {
+	reply = new(GetSamplingProfileReply)
+	err = rpcc.Invoke(ctx, "Memory.getSamplingProfile", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Memory", Op: "GetSamplingProfile", Err: err}
+	}
+	return
+}

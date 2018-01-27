@@ -679,6 +679,13 @@ type DOM interface {
 	// Note: This command is experimental.
 	Undo(context.Context) error
 
+	// Command GetFrameOwner
+	//
+	// Returns iframe node that owns iframe with the given domain.
+	//
+	// Note: This command is experimental.
+	GetFrameOwner(context.Context, *dom.GetFrameOwnerArgs) (*dom.GetFrameOwnerReply, error)
+
 	// Event AttributeModified
 	//
 	// Fired when `Element`'s attribute is modified.
@@ -1496,6 +1503,11 @@ type Inspector interface {
 	//
 	// Fired when debugging target has crashed
 	TargetCrashed(context.Context) (inspector.TargetCrashedClient, error)
+
+	// Event TargetReloadedAfterCrash
+	//
+	// Fired when debugging target has reloaded after crash
+	TargetReloadedAfterCrash(context.Context) (inspector.TargetReloadedAfterCrashClient, error)
 }
 
 // The LayerTree domain.
@@ -1607,6 +1619,21 @@ type Memory interface {
 	//
 	// Simulate a memory pressure notification in all processes.
 	SimulatePressureNotification(context.Context, *memory.SimulatePressureNotificationArgs) error
+
+	// Command StartSampling
+	//
+	// Start collecting native memory profile.
+	StartSampling(context.Context, *memory.StartSamplingArgs) error
+
+	// Command StopSampling
+	//
+	// Stop collecting native memory profile.
+	StopSampling(context.Context) error
+
+	// Command GetSamplingProfile
+	//
+	// Retrieve collected native memory profile.
+	GetSamplingProfile(context.Context) (*memory.GetSamplingProfileReply, error)
 }
 
 // The Network domain. Network domain allows tracking network activities of
