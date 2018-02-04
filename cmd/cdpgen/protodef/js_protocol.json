@@ -2234,7 +2234,7 @@
                 },
                 {
                     "name": "stopRuleUsageTracking",
-                    "description": "The list of rules with an indication of whether these were used",
+                    "description": "Stop tracking rule usage and return the list of rules that were used since last call to\n`takeCoverageDelta` (or since start of coverage instrumentation)",
                     "returns": [
                         {
                             "name": "ruleUsage",
@@ -6998,8 +6998,18 @@
                     "description": "Stop collecting native memory profile."
                 },
                 {
+                    "name": "getAllTimeSamplingProfile",
+                    "description": "Retrieve native memory allocations profile collected since process startup.",
+                    "returns": [
+                        {
+                            "name": "profile",
+                            "$ref": "SamplingProfile"
+                        }
+                    ]
+                },
+                {
                     "name": "getSamplingProfile",
-                    "description": "Retrieve collected native memory profile.",
+                    "description": "Retrieve native memory allocations profile collected since last\n`startSampling` call.",
                     "returns": [
                         {
                             "name": "profile",
@@ -10118,6 +10128,12 @@
                             "description": "HTML template for the print footer. Should use the same format as the `headerTemplate`.",
                             "optional": true,
                             "type": "string"
+                        },
+                        {
+                            "name": "preferCSSPageSize",
+                            "description": "Whether or not to prefer page size as defined by css. Defaults to false,\nin which case the content will be scaled to fit the paper size.",
+                            "optional": true,
+                            "type": "boolean"
                         }
                     ],
                     "returns": [
@@ -11900,17 +11916,6 @@
                             "deprecated": true,
                             "optional": true,
                             "$ref": "TargetID"
-                        }
-                    ]
-                },
-                {
-                    "name": "setAttachToFrames",
-                    "experimental": true,
-                    "parameters": [
-                        {
-                            "name": "value",
-                            "description": "Whether to attach to frames.",
-                            "type": "boolean"
                         }
                     ]
                 },

@@ -344,7 +344,9 @@ type CSS interface {
 
 	// Command StopRuleUsageTracking
 	//
-	// The list of rules with an indication of whether these were used
+	// Stop tracking rule usage and return the list of rules that were
+	// used since last call to `takeCoverageDelta` (or since start of
+	// coverage instrumentation)
 	StopRuleUsageTracking(context.Context) (*css.StopRuleUsageTrackingReply, error)
 
 	// Command TakeCoverageDelta
@@ -1630,9 +1632,16 @@ type Memory interface {
 	// Stop collecting native memory profile.
 	StopSampling(context.Context) error
 
+	// Command GetAllTimeSamplingProfile
+	//
+	// Retrieve native memory allocations profile collected since process
+	// startup.
+	GetAllTimeSamplingProfile(context.Context) (*memory.GetAllTimeSamplingProfileReply, error)
+
 	// Command GetSamplingProfile
 	//
-	// Retrieve collected native memory profile.
+	// Retrieve native memory allocations profile collected since last
+	// `startSampling` call.
 	GetSamplingProfile(context.Context) (*memory.GetSamplingProfileReply, error)
 }
 
@@ -2752,11 +2761,6 @@ type Target interface {
 	//
 	// Sends protocol message over session with given id.
 	SendMessageToTarget(context.Context, *target.SendMessageToTargetArgs) error
-
-	// Command SetAttachToFrames
-	//
-	// Note: This command is experimental.
-	SetAttachToFrames(context.Context, *target.SetAttachToFramesArgs) error
 
 	// Command SetAutoAttach
 	//

@@ -157,19 +157,6 @@ func (d *domainClient) SendMessageToTarget(ctx context.Context, args *SendMessag
 	return
 }
 
-// SetAttachToFrames invokes the Target method.
-func (d *domainClient) SetAttachToFrames(ctx context.Context, args *SetAttachToFramesArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.setAttachToFrames", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Target.setAttachToFrames", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Target", Op: "SetAttachToFrames", Err: err}
-	}
-	return
-}
-
 // SetAutoAttach invokes the Target method. Controls whether to automatically
 // attach to new targets which are considered to be related to this one. When
 // turned on, attaches to all existing related targets as well. When turned

@@ -213,18 +213,6 @@ func (a *SendMessageToTargetArgs) SetTargetID(targetID ID) *SendMessageToTargetA
 	return a
 }
 
-// SetAttachToFramesArgs represents the arguments for SetAttachToFrames in the Target domain.
-type SetAttachToFramesArgs struct {
-	Value bool `json:"value"` // Whether to attach to frames.
-}
-
-// NewSetAttachToFramesArgs initializes SetAttachToFramesArgs with the required arguments.
-func NewSetAttachToFramesArgs(value bool) *SetAttachToFramesArgs {
-	args := new(SetAttachToFramesArgs)
-	args.Value = value
-	return args
-}
-
 // SetAutoAttachArgs represents the arguments for SetAutoAttach in the Target domain.
 type SetAutoAttachArgs struct {
 	AutoAttach             bool `json:"autoAttach"`             // Whether to auto-attach to related targets.

@@ -60,6 +60,11 @@ func (a *StartSamplingArgs) SetSuppressRandomness(suppressRandomness bool) *Star
 	return a
 }
 
+// GetAllTimeSamplingProfileReply represents the return values for GetAllTimeSamplingProfile in the Memory domain.
+type GetAllTimeSamplingProfileReply struct {
+	Profile SamplingProfile `json:"profile"` // No description.
+}
+
 // GetSamplingProfileReply represents the return values for GetSamplingProfile in the Memory domain.
 type GetSamplingProfileReply struct {
 	Profile SamplingProfile `json:"profile"` // No description.

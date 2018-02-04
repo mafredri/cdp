@@ -89,8 +89,19 @@ func (d *domainClient) StopSampling(ctx context.Context) (err error) {
 	return
 }
 
-// GetSamplingProfile invokes the Memory method. Retrieve collected native
-// memory profile.
+// GetAllTimeSamplingProfile invokes the Memory method. Retrieve native memory
+// allocations profile collected since process startup.
+func (d *domainClient) GetAllTimeSamplingProfile(ctx context.Context) (reply *GetAllTimeSamplingProfileReply, err error) {
+	reply = new(GetAllTimeSamplingProfileReply)
+	err = rpcc.Invoke(ctx, "Memory.getAllTimeSamplingProfile", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Memory", Op: "GetAllTimeSamplingProfile", Err: err}
+	}
+	return
+}
+
+// GetSamplingProfile invokes the Memory method. Retrieve native memory
+// allocations profile collected since last `startSampling` call.
 func (d *domainClient) GetSamplingProfile(ctx context.Context) (reply *GetSamplingProfileReply, err error) {
 	reply = new(GetSamplingProfileReply)
 	err = rpcc.Invoke(ctx, "Memory.getSamplingProfile", nil, reply, d.conn)

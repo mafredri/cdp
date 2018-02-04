@@ -311,8 +311,9 @@ func (d *domainClient) StartRuleUsageTracking(ctx context.Context) (err error) {
 	return
 }
 
-// StopRuleUsageTracking invokes the CSS method. The list of rules with an
-// indication of whether these were used
+// StopRuleUsageTracking invokes the CSS method. Stop tracking rule usage and
+// return the list of rules that were used since last call to
+// `takeCoverageDelta` (or since start of coverage instrumentation)
 func (d *domainClient) StopRuleUsageTracking(ctx context.Context) (reply *StopRuleUsageTrackingReply, err error) {
 	reply = new(StopRuleUsageTrackingReply)
 	err = rpcc.Invoke(ctx, "CSS.stopRuleUsageTracking", nil, reply, d.conn)
