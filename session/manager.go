@@ -83,6 +83,13 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 		return true
 	}
 
+	sendErr := func(err error) {
+		select {
+		case errC <- err:
+		default:
+		}
+	}
+
 	sessions := make(map[target.SessionID]*session)
 	defer func() {
 		var err []error
@@ -109,10 +116,7 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 				if isClosing(err) {
 					return
 				}
-				select {
-				case errC <- errors.Wrapf(err, "Manager.watch: error receiving detached event"):
-				default:
-				}
+				sendErr(errors.Wrapf(err, "Manager.watch: error receiving detached event"))
 				continue
 			}
 
@@ -127,10 +131,7 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 				if isClosing(err) {
 					return
 				}
-				select {
-				case errC <- errors.Wrapf(err, "Manager.watch: error receiving message event"):
-				default:
-				}
+				sendErr(errors.Wrapf(err, "Manager.watch: error receiving message event"))
 				continue
 			}
 
