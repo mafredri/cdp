@@ -16,7 +16,7 @@ import (
 	"github.com/mafredri/cdp/session"
 )
 
-func TestClient(t *testing.T) {
+func TestManager(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
 
@@ -27,18 +27,18 @@ func TestClient(t *testing.T) {
 
 	c := testutil.NewClient(ctx, t)
 
-	sc, err := session.NewClient(c.Client)
+	m, err := session.NewManager(c.Client)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sc.Close()
+	defer m.Close()
 
 	newPage := c.NewPage(ctx)
 	// Close later.
 	// defer newPage.Close()
 
 	// Test session usage.
-	pageConn, err := sc.Dial(ctx, newPage.ID())
+	pageConn, err := m.Dial(ctx, newPage.ID())
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -92,34 +92,34 @@ func TestClient(t *testing.T) {
 	}
 }
 
-func TestClient_CloseClient(t *testing.T) {
+func TestManager_Close(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
 
 	c := testutil.NewClient(ctx, t)
 
 	// Test connection closure, should close session client.
-	sc, err := session.NewClient(c.Client)
+	m, err := session.NewManager(c.Client)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sc.Close()
+	defer m.Close()
 
 	newPage := c.NewPage(ctx)
 	defer newPage.Close()
 
-	_, err = sc.Dial(ctx, newPage.ID()) // Closed by sc.Close().
+	_, err = m.Dial(ctx, newPage.ID()) // Closed by sc.Close().
 	if err != nil {
 		t.Error(err)
 	}
 
-	sc.Close()
-	_, err = sc.Dial(ctx, newPage.ID())
+	m.Close()
+	_, err = m.Dial(ctx, newPage.ID())
 	if err == nil {
 		t.Error("Dial: expected error after Close, got nil")
 	}
 }
-func TestClient_CloseUnderlyingConn(t *testing.T) {
+func TestManager_CloseUnderlyingConn(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
 
@@ -130,32 +130,32 @@ func TestClient_CloseUnderlyingConn(t *testing.T) {
 	p.Close()
 	targetID := p.ID()
 
-	// Test connection closure, should close session client.
-	sc, err := session.NewClient(c.Client)
+	// Test connection closure, should close session Manager.
+	m, err := session.NewManager(c.Client)
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer sc.Close()
+	defer m.Close()
 
 	c.Conn.Close()
 	time.Sleep(10 * time.Millisecond) // Give time for context propagation.
 
-	_, err = sc.Dial(ctx, targetID)
+	_, err = m.Dial(ctx, targetID)
 	if err == nil {
 		t.Error("Dial succeeded on a closed connection")
 	}
 }
 
-func TestClient_NewClientOnClosedConn(t *testing.T) {
+func TestManager_NewOnClosedConn(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
 
 	c := testutil.NewClient(ctx, t)
 	c.Conn.Close()
 
-	_, err := session.NewClient(c.Client)
+	_, err := session.NewManager(c.Client)
 	if err == nil {
-		t.Error("NewClient: rpcc.Conn is closed, expected error, got nil ")
+		t.Error("NewManager: rpcc.Conn is closed, expected error, got nil ")
 	}
 }
 

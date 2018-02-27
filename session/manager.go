@@ -11,8 +11,8 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// Client establishes session connections to targets.
-type Client struct {
+// Manager establishes session connections to targets.
+type Manager struct {
 	ctx    context.Context
 	cancel context.CancelFunc
 
@@ -42,40 +42,40 @@ const (
 //
 // Dial will invoke AttachToTarget. Close (rpcc.Conn) will invoke
 // DetachFromTarget.
-func (sc *Client) Dial(ctx context.Context, id target.ID) (*rpcc.Conn, error) {
-	s, err := dial(ctx, id, sc.c, defaultDetachTimeout)
+func (m *Manager) Dial(ctx context.Context, id target.ID) (*rpcc.Conn, error) {
+	s, err := dial(ctx, id, m.c, defaultDetachTimeout)
 	if err != nil {
 		return nil, err
 	}
 	select {
-	case sc.sC <- s:
-	case <-sc.ctx.Done():
+	case m.sC <- s:
+	case <-m.ctx.Done():
 		s.Close()
-		return nil, errors.New("session.Client: Dial failed: Client is closed")
+		return nil, errors.New("session.Manager: Dial failed: Manager is closed")
 	}
 	return s.Conn(), nil
 }
 
-// Close closes the Client and all active sessions. All rpcc.Conn
+// Close closes the Manager and all active sessions. All rpcc.Conn
 // created by Dial will be closed.
-func (sc *Client) Close() error {
-	sc.cancel()
-	if sc.done != nil {
-		errors.Wrapf(<-sc.done, "session.Client: close failed")
+func (m *Manager) Close() error {
+	m.cancel()
+	if m.done != nil {
+		errors.Wrapf(<-m.done, "session.Manager: close failed")
 	}
 	return nil
 }
 
-func (sc *Client) watch(ev *sessionEvents, created <-chan *session, done chan<- error) {
+func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done chan<- error) {
 	defer ev.Close()
 
 	isClosing := func(err error) bool {
 		switch cdp.ErrorCause(err) {
 		case rpcc.ErrConnClosing:
 			// Cleanup, the underlying connection was closed
-			// before the Client and the Client context does
-			// not inherit from rpcc.Conn.
-			sc.cancel()
+			// before the Manager and its context does not
+			// inherit from rpcc.Conn.
+			m.cancel()
 		case context.Canceled:
 		default:
 			return false
@@ -103,37 +103,37 @@ func (sc *Client) watch(ev *sessionEvents, created <-chan *session, done chan<- 
 		// session. A DetachedFromTarget event is always sent before
 		// TargetDestroyed.
 		case <-ev.detached.Ready():
-			m, err := ev.detached.Recv()
+			ev, err := ev.detached.Recv()
 			if err != nil {
 				if isClosing(err) {
 					return
 				}
 				// TODO(maf): Remove logging.
-				fmt.Printf("Client.watch: %v\n", err)
+				fmt.Printf("Manager.watch: %v\n", err)
 			}
 
-			if s, ok := sessions[m.SessionID]; ok {
+			if s, ok := sessions[ev.SessionID]; ok {
 				delete(sessions, s.ID)
 				s.Close()
 			}
 
 		case <-ev.message.Ready():
-			m, err := ev.message.Recv()
+			ev, err := ev.message.Recv()
 			if err != nil {
 				if isClosing(err) {
 					return
 				}
 				// TODO(maf): Remove logging.
-				fmt.Printf("Client.watch: %v\n", err)
+				fmt.Printf("Manager.watch: %v\n", err)
 			}
 
-			if s, ok := sessions[m.SessionID]; ok {
+			if s, ok := sessions[ev.SessionID]; ok {
 				// We rely on the implementation of *rpcc.Conn
 				// to read this message in a reasonably short
 				// amount of time. Blocking here can potentially
 				// delay other session messages but that should
 				// not happen.
-				err = s.Write([]byte(m.Message))
+				err = s.Write([]byte(ev.Message))
 				if err != nil {
 					delete(sessions, s.ID)
 				}
@@ -142,30 +142,30 @@ func (sc *Client) watch(ev *sessionEvents, created <-chan *session, done chan<- 
 	}
 }
 
-// NewClient creates a new session client.
+// NewManager creates a new session Manager.
 //
 // The cdp.Client will be used to listen to events and invoke commands
 // on the Target domain. It will also be used by all rpcc.Conn created
 // by Dial.
-func NewClient(c *cdp.Client) (*Client, error) {
-	sc := &Client{
+func NewManager(c *cdp.Client) (*Manager, error) {
+	m := &Manager{
 		c:  c,
 		sC: make(chan *session),
 	}
 
 	// TODO(mafredri): Inherit the context from rpcc.Conn in cdp.Client.
 	// cdp.Client does not yet expose the context, nor rpcc.Conn.
-	sc.ctx, sc.cancel = context.WithCancel(context.TODO())
+	m.ctx, m.cancel = context.WithCancel(context.TODO())
 
-	ev, err := newSessionEvents(sc.ctx, c)
+	ev, err := newSessionEvents(m.ctx, c)
 	if err != nil {
-		sc.Close()
+		m.Close()
 		return nil, err
 	}
 
-	sc.done = make(chan error, 1)
-	go sc.watch(ev, sc.sC, sc.done)
-	return sc, nil
+	m.done = make(chan error, 1)
+	go m.watch(ev, m.sC, m.done)
+	return m, nil
 }
 
 type sessionEvents struct {

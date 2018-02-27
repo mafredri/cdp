@@ -1,23 +1,23 @@
 /*
 
-Package session implements a session Client for establishing session connections
-to targets (via the Target domain). Session connections allow a single websocket
-connection (from the provided cdp.Client) to be used for communicating with
-multiple targets.
+Package session implements a session Manager for establishing session
+connections to targets (via the Target domain). Session connections allow a
+single websocket connection (from the provided cdp.Client) to be used for
+communicating with multiple targets.
 
-Initialize a new session client.
+Initialize a new session Manager.
 
 	c := cdp.NewClient(conn) // cdp.Client with websocket connection.
 
-	sc, err := session.NewClient(c)
+	m, err := session.NewManager(c)
 	if err != nil {
 		// Handle error.
 	}
-	defer sc.Close() // Cleanup.
+	defer m.Close() // Cleanup.
 
 Establish a new session connection to targetID.
 
-	pageConn, err := sc.Dial(context.TODO(), targetID)
+	pageConn, err := m.Dial(context.TODO(), targetID)
 	if err != nil {
 		// Handle error.
 	}
