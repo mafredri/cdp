@@ -2,7 +2,6 @@ package session
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/mafredri/cdp"
@@ -19,6 +18,7 @@ type Manager struct {
 	c    *cdp.Client
 	sC   chan *session
 	done chan error
+	errC chan error
 }
 
 const (
@@ -66,7 +66,7 @@ func (m *Manager) Close() error {
 	return nil
 }
 
-func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done chan<- error) {
+func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC chan<- error) {
 	defer ev.Close()
 
 	isClosing := func(err error) bool {
@@ -92,6 +92,7 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done chan<- 
 		}
 		done <- errors.Merge(err...)
 		close(done)
+		close(errC)
 	}()
 
 	for {
@@ -108,8 +109,11 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done chan<- 
 				if isClosing(err) {
 					return
 				}
-				// TODO(maf): Remove logging.
-				fmt.Printf("Manager.watch: %v\n", err)
+				select {
+				case errC <- errors.Wrapf(err, "Manager.watch: error receiving detached event"):
+				default:
+				}
+				continue
 			}
 
 			if s, ok := sessions[ev.SessionID]; ok {
@@ -123,8 +127,11 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done chan<- 
 				if isClosing(err) {
 					return
 				}
-				// TODO(maf): Remove logging.
-				fmt.Printf("Manager.watch: %v\n", err)
+				select {
+				case errC <- errors.Wrapf(err, "Manager.watch: error receiving message event"):
+				default:
+				}
+				continue
 			}
 
 			if s, ok := sessions[ev.SessionID]; ok {
@@ -142,6 +149,15 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done chan<- 
 	}
 }
 
+// Err is a channel that blocks until the Manager encounters an error.
+// The channel is closed if Manager is closed.
+//
+// Errors could happen if the debug target sends events that cannot be
+// decoded from JSON.
+func (m *Manager) Err() <-chan error {
+	return m.errC
+}
+
 // NewManager creates a new session Manager.
 //
 // The cdp.Client will be used to listen to events and invoke commands
@@ -149,8 +165,9 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done chan<- 
 // by Dial.
 func NewManager(c *cdp.Client) (*Manager, error) {
 	m := &Manager{
-		c:  c,
-		sC: make(chan *session),
+		c:    c,
+		sC:   make(chan *session),
+		errC: make(chan error, 1),
 	}
 
 	// TODO(mafredri): Inherit the context from rpcc.Conn in cdp.Client.
@@ -159,12 +176,13 @@ func NewManager(c *cdp.Client) (*Manager, error) {
 
 	ev, err := newSessionEvents(m.ctx, c)
 	if err != nil {
+		close(m.errC)
 		m.Close()
 		return nil, err
 	}
 
 	m.done = make(chan error, 1)
-	go m.watch(ev, m.sC, m.done)
+	go m.watch(ev, m.sC, m.done, m.errC)
 	return m, nil
 }
 

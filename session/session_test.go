@@ -119,6 +119,26 @@ func TestManager_Close(t *testing.T) {
 		t.Error("Dial: expected error after Close, got nil")
 	}
 }
+
+func TestManager_ClosesErrorChan(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
+	defer cancel()
+
+	c := testutil.NewClient(ctx, t)
+	m, err := session.NewManager(c.Client)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	go func() {
+		m.Close()
+	}()
+
+	for range m.Err() {
+		t.Fatal("channel should have been closed")
+	}
+}
+
 func TestManager_CloseUnderlyingConn(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()

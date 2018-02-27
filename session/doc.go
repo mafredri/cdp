@@ -29,5 +29,15 @@ Use the session connection.
 	err = pageClient.Page.Enable(context.TODO())
 	// ...
 
+If session connections are behaving unexpectedly, you can debug the session
+Manager by checking the error channel.
+
+	go func() {
+		for err := range m.Err() {
+			log.Println(err)
+		}
+		// Manager is closed.
+	}()
+
 */
 package session
