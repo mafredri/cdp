@@ -113,6 +113,33 @@ events is important:
 Use the Ready channel to detect which synchronized event client is ready to
 Recv.
 
+The session package can be used to control multiple targets (e.g. pages) with a
+single websocket connection.
+
+	c := cdp.NewClient(conn) // conn created via rpcc.Dial.
+	m, err := session.NewManager(c)
+	if err != nil {
+		// Handle error.
+	}
+	defer m.Close()
+
+	newPage, err := c.Target.CreateTarget(ctx,
+		target.NewCreateTargetArgs("about:blank"))
+	if err != nil {
+		// Handle error.
+	}
+
+	// newPageConn uses the underlying conn without establishing a new
+	// websocket connection.
+	newPageConn, err := m.Dial(context.TODO(), newPage.TargetID)
+	if err != nil {
+		// Handle error.
+	}
+	defer newPageConn.Close()
+
+	newPageClient := cdp.NewClient(newPageConn)
+	// ...
+
 */
 package cdp
 
