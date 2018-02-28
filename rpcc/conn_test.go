@@ -304,6 +304,23 @@ func TestConn_StreamRecv(t *testing.T) {
 	}
 }
 
+func TestConn_Context(t *testing.T) {
+	srv := newTestServer(t, nil)
+	defer srv.Close()
+
+	ctx := srv.conn.Context()
+	if ctx == nil {
+		t.Fatal("Context is nil")
+	}
+
+	srv.conn.Close()
+	select {
+	case <-ctx.Done():
+	case <-time.After(time.Second):
+		t.Error("Timeout waiting for context to be done")
+	}
+}
+
 func TestDialContext_PanicOnNilContext(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {

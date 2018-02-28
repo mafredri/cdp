@@ -295,6 +295,11 @@ var (
 	_ error = (*ResponseError)(nil)
 )
 
+// Context returns the underlying context for this connection.
+func (c *Conn) Context() context.Context {
+	return c.ctx
+}
+
 // recv decodes and handles RPC responses. Responses to RPC requests
 // are forwarded to the pending call, if any. RPC Notifications are
 // forwarded by calling notify, synchronously.
