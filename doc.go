@@ -123,7 +123,7 @@ single websocket connection.
 	}
 	defer m.Close()
 
-	newPage, err := c.Target.CreateTarget(ctx,
+	newPage, err := c.Target.CreateTarget(context.TODO(),
 		target.NewCreateTargetArgs("about:blank"))
 	if err != nil {
 		// Handle error.
