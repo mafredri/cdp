@@ -23,7 +23,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 // BeginFrame invokes the HeadlessExperimental method. Sends a BeginFrame to
 // the target and returns when the frame was completed. Optionally captures a
 // screenshot from the resulting frame. Requires that the target was created
-// with enabled BeginFrameControl.
+// with enabled BeginFrameControl. Designed for use with
+// --run-all-compositor-stages-before-draw, see also https://goo.gl/3zHXhB for
+// more background.
 func (d *domainClient) BeginFrame(ctx context.Context, args *BeginFrameArgs) (reply *BeginFrameReply, err error) {
 	reply = new(BeginFrameReply)
 	if args != nil {
@@ -55,27 +57,6 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 		err = &internal.OpError{Domain: "HeadlessExperimental", Op: "Enable", Err: err}
 	}
 	return
-}
-
-func (d *domainClient) MainFrameReadyForScreenshots(ctx context.Context) (MainFrameReadyForScreenshotsClient, error) {
-	s, err := rpcc.NewStream(ctx, "HeadlessExperimental.mainFrameReadyForScreenshots", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &mainFrameReadyForScreenshotsClient{Stream: s}, nil
-}
-
-type mainFrameReadyForScreenshotsClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *mainFrameReadyForScreenshotsClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *mainFrameReadyForScreenshotsClient) Recv() (*MainFrameReadyForScreenshotsReply, error) {
-	event := new(MainFrameReadyForScreenshotsReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "HeadlessExperimental", Op: "MainFrameReadyForScreenshots Recv", Err: err}
-	}
-	return event, nil
 }
 
 func (d *domainClient) NeedsBeginFramesChanged(ctx context.Context) (NeedsBeginFramesChangedClient, error) {

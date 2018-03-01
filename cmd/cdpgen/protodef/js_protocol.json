@@ -1082,6 +1082,21 @@
                     ]
                 },
                 {
+                    "name": "getCommandLine",
+                    "description": "Returns the command line switches for the browser process if, and only if\n--enable-automation is on the commandline.",
+                    "experimental": true,
+                    "returns": [
+                        {
+                            "name": "arguments",
+                            "description": "Commandline parameters",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
+                },
+                {
                     "name": "getHistograms",
                     "description": "Get Chrome histograms.",
                     "experimental": true,
@@ -1732,6 +1747,53 @@
                     ]
                 },
                 {
+                    "id": "FontFace",
+                    "description": "Properties of a web font: https://www.w3.org/TR/2008/REC-CSS2-20080411/fonts.html#font-descriptions",
+                    "type": "object",
+                    "properties": [
+                        {
+                            "name": "fontFamily",
+                            "description": "The font-family.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "fontStyle",
+                            "description": "The font-style.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "fontVariant",
+                            "description": "The font-variant.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "fontWeight",
+                            "description": "The font-weight.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "fontStretch",
+                            "description": "The font-stretch.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "unicodeRange",
+                            "description": "The unicode-range.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "src",
+                            "description": "The src.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "platformFontFamily",
+                            "description": "The resolved platform font family",
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
                     "id": "CSSKeyframesRule",
                     "description": "CSS keyframes rule representation.",
                     "type": "object",
@@ -2262,7 +2324,15 @@
             "events": [
                 {
                     "name": "fontsUpdated",
-                    "description": "Fires whenever a web font gets loaded."
+                    "description": "Fires whenever a web font is updated.  A non-empty font parameter indicates a successfully loaded\nweb font",
+                    "parameters": [
+                        {
+                            "name": "font",
+                            "description": "The web font that has loaded.",
+                            "optional": true,
+                            "$ref": "FontFace"
+                        }
+                    ]
                 },
                 {
                     "name": "mediaQueryResultChanged",
@@ -4329,6 +4399,12 @@
                             "$ref": "DOM.PseudoType"
                         },
                         {
+                            "name": "shadowRootType",
+                            "description": "Shadow root type.",
+                            "optional": true,
+                            "$ref": "DOM.ShadowRootType"
+                        },
+                        {
                             "name": "isClickable",
                             "description": "Whether this DOM node responds to mouse clicks. This includes nodes that have had click\nevent listeners attached via JavaScript as well as anchor tags that naturally navigate when\nclicked.",
                             "optional": true,
@@ -4363,12 +4439,12 @@
                         },
                         {
                             "name": "startCharacterIndex",
-                            "description": "The starting index in characters, for this post layout textbox substring.",
+                            "description": "The starting index in characters, for this post layout textbox substring. Characters that would be represented as a surrogate pair in UTF-16 have length 2.",
                             "type": "integer"
                         },
                         {
                             "name": "numCharacters",
-                            "description": "The number of characters in this post layout textbox substring.",
+                            "description": "The number of characters in this post layout textbox substring. Characters that would be represented as a surrogate pair in UTF-16 have length 2.",
                             "type": "integer"
                         }
                     ]
@@ -5220,7 +5296,7 @@
             "commands": [
                 {
                     "name": "beginFrame",
-                    "description": "Sends a BeginFrame to the target and returns when the frame was completed. Optionally captures a\nscreenshot from the resulting frame. Requires that the target was created with enabled\nBeginFrameControl.",
+                    "description": "Sends a BeginFrame to the target and returns when the frame was completed. Optionally captures a\nscreenshot from the resulting frame. Requires that the target was created with enabled\nBeginFrameControl. Designed for use with --run-all-compositor-stages-before-draw, see also\nhttps://goo.gl/3zHXhB for more background.",
                     "parameters": [
                         {
                             "name": "frameTime",
@@ -5248,7 +5324,7 @@
                         },
                         {
                             "name": "screenshot",
-                            "description": "If set, a screenshot of the frame will be captured and returned in the response. Otherwise,\nno screenshot will be captured.",
+                            "description": "If set, a screenshot of the frame will be captured and returned in the response. Otherwise,\nno screenshot will be captured. Note that capturing a screenshot can fail, for example,\nduring renderer initialization. In such a case, no screenshot data will be returned.",
                             "optional": true,
                             "$ref": "ScreenshotParams"
                         }
@@ -5256,12 +5332,7 @@
                     "returns": [
                         {
                             "name": "hasDamage",
-                            "description": "Whether the BeginFrame resulted in damage and, thus, a new frame was committed to the\ndisplay.",
-                            "type": "boolean"
-                        },
-                        {
-                            "name": "mainFrameContentUpdated",
-                            "description": "Whether the main frame submitted a new display frame in response to this BeginFrame.",
+                            "description": "Whether the BeginFrame resulted in damage and, thus, a new frame was committed to the\ndisplay. Reported for diagnostic uses, may be removed in the future.",
                             "type": "boolean"
                         },
                         {
@@ -5282,10 +5353,6 @@
                 }
             ],
             "events": [
-                {
-                    "name": "mainFrameReadyForScreenshots",
-                    "description": "Issued when the main frame has first submitted a frame to the browser. May only be fired while a\nBeginFrame is in flight. Before this event, screenshotting requests may fail."
-                },
                 {
                     "name": "needsBeginFramesChanged",
                     "description": "Issued when the target starts or stops needing BeginFrames.",
@@ -6999,7 +7066,17 @@
                 },
                 {
                     "name": "getAllTimeSamplingProfile",
-                    "description": "Retrieve native memory allocations profile collected since process startup.",
+                    "description": "Retrieve native memory allocations profile\ncollected since renderer process startup.",
+                    "returns": [
+                        {
+                            "name": "profile",
+                            "$ref": "SamplingProfile"
+                        }
+                    ]
+                },
+                {
+                    "name": "getBrowserSamplingProfile",
+                    "description": "Retrieve native memory allocations profile\ncollected since browser process startup.",
                     "returns": [
                         {
                             "name": "profile",

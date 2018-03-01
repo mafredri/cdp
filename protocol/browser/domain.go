@@ -39,6 +39,18 @@ func (d *domainClient) GetVersion(ctx context.Context) (reply *GetVersionReply, 
 	return
 }
 
+// GetCommandLine invokes the Browser method. Returns the command line
+// switches for the browser process if, and only if --enable-automation is on
+// the commandline.
+func (d *domainClient) GetCommandLine(ctx context.Context) (reply *GetCommandLineReply, err error) {
+	reply = new(GetCommandLineReply)
+	err = rpcc.Invoke(ctx, "Browser.getCommandLine", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "GetCommandLine", Err: err}
+	}
+	return
+}
+
 // GetHistograms invokes the Browser method. Get Chrome histograms.
 func (d *domainClient) GetHistograms(ctx context.Context, args *GetHistogramsArgs) (reply *GetHistogramsReply, err error) {
 	reply = new(GetHistogramsReply)

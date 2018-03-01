@@ -187,6 +187,11 @@ type EvaluateArgs struct {
 	GeneratePreview *bool `json:"generatePreview,omitempty"`
 	UserGesture     *bool `json:"userGesture,omitempty"`  // Whether execution should be treated as initiated by user in the UI.
 	AwaitPromise    *bool `json:"awaitPromise,omitempty"` // Whether execution should `await` for resulting value and return once awaited promise is resolved.
+	// ThrowOnSideEffect Whether to throw an exception if side effect
+	// cannot be ruled out during evaluation.
+	//
+	// Note: This property is experimental.
+	ThrowOnSideEffect *bool `json:"throwOnSideEffect,omitempty"`
 }
 
 // NewEvaluateArgs initializes EvaluateArgs with the required arguments.
@@ -257,6 +262,16 @@ func (a *EvaluateArgs) SetUserGesture(userGesture bool) *EvaluateArgs {
 // promise is resolved.
 func (a *EvaluateArgs) SetAwaitPromise(awaitPromise bool) *EvaluateArgs {
 	a.AwaitPromise = &awaitPromise
+	return a
+}
+
+// SetThrowOnSideEffect sets the ThrowOnSideEffect optional argument.
+// Whether to throw an exception if side effect cannot be ruled out
+// during evaluation.
+//
+// Note: This property is experimental.
+func (a *EvaluateArgs) SetThrowOnSideEffect(throwOnSideEffect bool) *EvaluateArgs {
+	a.ThrowOnSideEffect = &throwOnSideEffect
 	return a
 }
 

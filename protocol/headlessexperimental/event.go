@@ -6,21 +6,6 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
-// MainFrameReadyForScreenshotsClient is a client for MainFrameReadyForScreenshots events.
-// Issued when the main frame has first submitted a frame to the browser. May
-// only be fired while a BeginFrame is in flight. Before this event,
-// screenshotting requests may fail.
-type MainFrameReadyForScreenshotsClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*MainFrameReadyForScreenshotsReply, error)
-	rpcc.Stream
-}
-
-// MainFrameReadyForScreenshotsReply is the reply for MainFrameReadyForScreenshots events.
-type MainFrameReadyForScreenshotsReply struct {
-}
-
 // NeedsBeginFramesChangedClient is a client for NeedsBeginFramesChanged events.
 // Issued when the target starts or stops needing BeginFrames.
 type NeedsBeginFramesChangedClient interface {

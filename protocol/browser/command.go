@@ -15,6 +15,11 @@ type GetVersionReply struct {
 	JsVersion       string `json:"jsVersion"`       // V8 version.
 }
 
+// GetCommandLineReply represents the return values for GetCommandLine in the Browser domain.
+type GetCommandLineReply struct {
+	Arguments []string `json:"arguments"` // Commandline parameters
+}
+
 // GetHistogramsArgs represents the arguments for GetHistograms in the Browser domain.
 type GetHistogramsArgs struct {
 	Query *string `json:"query,omitempty"` // Requested substring in name. Only histograms which have query as a substring in their name are extracted. An empty or absent query returns all histograms.

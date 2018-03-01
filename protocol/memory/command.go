@@ -65,6 +65,11 @@ type GetAllTimeSamplingProfileReply struct {
 	Profile SamplingProfile `json:"profile"` // No description.
 }
 
+// GetBrowserSamplingProfileReply represents the return values for GetBrowserSamplingProfile in the Memory domain.
+type GetBrowserSamplingProfileReply struct {
+	Profile SamplingProfile `json:"profile"` // No description.
+}
+
 // GetSamplingProfileReply represents the return values for GetSamplingProfile in the Memory domain.
 type GetSamplingProfileReply struct {
 	Profile SamplingProfile `json:"profile"` // No description.

@@ -90,12 +90,23 @@ func (d *domainClient) StopSampling(ctx context.Context) (err error) {
 }
 
 // GetAllTimeSamplingProfile invokes the Memory method. Retrieve native memory
-// allocations profile collected since process startup.
+// allocations profile collected since renderer process startup.
 func (d *domainClient) GetAllTimeSamplingProfile(ctx context.Context) (reply *GetAllTimeSamplingProfileReply, err error) {
 	reply = new(GetAllTimeSamplingProfileReply)
 	err = rpcc.Invoke(ctx, "Memory.getAllTimeSamplingProfile", nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Memory", Op: "GetAllTimeSamplingProfile", Err: err}
+	}
+	return
+}
+
+// GetBrowserSamplingProfile invokes the Memory method. Retrieve native memory
+// allocations profile collected since browser process startup.
+func (d *domainClient) GetBrowserSamplingProfile(ctx context.Context) (reply *GetBrowserSamplingProfileReply, err error) {
+	reply = new(GetBrowserSamplingProfileReply)
+	err = rpcc.Invoke(ctx, "Memory.getBrowserSamplingProfile", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Memory", Op: "GetBrowserSamplingProfile", Err: err}
 	}
 	return
 }

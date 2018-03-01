@@ -7,7 +7,8 @@ import (
 )
 
 // FontsUpdatedClient is a client for FontsUpdated events. Fires whenever a
-// web font gets loaded.
+// web font is updated. A non-empty font parameter indicates a successfully
+// loaded web font
 type FontsUpdatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -17,6 +18,7 @@ type FontsUpdatedClient interface {
 
 // FontsUpdatedReply is the reply for FontsUpdated events.
 type FontsUpdatedReply struct {
+	Font *FontFace `json:"font,omitempty"` // The web font that has loaded.
 }
 
 // MediaQueryResultChangedClient is a client for MediaQueryResultChanged events.
