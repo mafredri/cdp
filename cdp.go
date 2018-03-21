@@ -188,13 +188,13 @@ type Browser interface {
 	// Returns version information.
 	GetVersion(context.Context) (*browser.GetVersionReply, error)
 
-	// Command GetCommandLine
+	// Command GetBrowserCommandLine
 	//
 	// Returns the command line switches for the browser process if, and
 	// only if --enable-automation is on the commandline.
 	//
 	// Note: This command is experimental.
-	GetCommandLine(context.Context) (*browser.GetCommandLineReply, error)
+	GetBrowserCommandLine(context.Context) (*browser.GetBrowserCommandLineReply, error)
 
 	// Command GetHistograms
 	//
@@ -1283,6 +1283,13 @@ type HeadlessExperimental interface {
 	// --run-all-compositor-stages-before-draw, see also
 	// https://goo.gl/3zHXhB for more background.
 	BeginFrame(context.Context, *headlessexperimental.BeginFrameArgs) (*headlessexperimental.BeginFrameReply, error)
+
+	// Command EnterDeterministicMode
+	//
+	// Puts the browser into deterministic mode. Only effective for
+	// subsequently created web contents. Only supported in headless mode.
+	// Once set there's no way of leaving deterministic mode.
+	EnterDeterministicMode(context.Context, *headlessexperimental.EnterDeterministicModeArgs) error
 
 	// Command Disable
 	//
@@ -2459,6 +2466,21 @@ type Runtime interface {
 	// Evaluates expression on global object.
 	Evaluate(context.Context, *runtime.EvaluateArgs) (*runtime.EvaluateReply, error)
 
+	// Command GetIsolateID
+	//
+	// Returns the isolate id.
+	//
+	// Note: This command is experimental.
+	GetIsolateID(context.Context) (*runtime.GetIsolateIDReply, error)
+
+	// Command GetHeapUsage
+	//
+	// Returns the JavaScript heap usage. It is the total usage of the
+	// corresponding isolate not scoped to a particular Runtime.
+	//
+	// Note: This command is experimental.
+	GetHeapUsage(context.Context) (*runtime.GetHeapUsageReply, error)
+
 	// Command GetProperties
 	//
 	// Returns properties of a given object. Object group of the result is
@@ -2498,6 +2520,14 @@ type Runtime interface {
 	//
 	// Note: This command is experimental.
 	SetCustomObjectFormatterEnabled(context.Context, *runtime.SetCustomObjectFormatterEnabledArgs) error
+
+	// Command TerminateExecution
+	//
+	// Terminate current or next JavaScript execution. Will cancel the
+	// termination when the outer-most script execution ends.
+	//
+	// Note: This command is experimental.
+	TerminateExecution(context.Context) error
 
 	// Event ConsoleAPICalled
 	//

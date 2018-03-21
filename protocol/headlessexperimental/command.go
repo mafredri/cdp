@@ -72,3 +72,22 @@ type BeginFrameReply struct {
 	HasDamage      bool   `json:"hasDamage"`                // Whether the BeginFrame resulted in damage and, thus, a new frame was committed to the display. Reported for diagnostic uses, may be removed in the future.
 	ScreenshotData []byte `json:"screenshotData,omitempty"` // Base64-encoded image data of the screenshot, if one was requested and successfully taken.
 }
+
+// EnterDeterministicModeArgs represents the arguments for EnterDeterministicMode in the HeadlessExperimental domain.
+type EnterDeterministicModeArgs struct {
+	InitialDate *float64 `json:"initialDate,omitempty"` // Number of seconds since the Epoch
+}
+
+// NewEnterDeterministicModeArgs initializes EnterDeterministicModeArgs with the required arguments.
+func NewEnterDeterministicModeArgs() *EnterDeterministicModeArgs {
+	args := new(EnterDeterministicModeArgs)
+
+	return args
+}
+
+// SetInitialDate sets the InitialDate optional argument. Number of
+// seconds since the Epoch
+func (a *EnterDeterministicModeArgs) SetInitialDate(initialDate float64) *EnterDeterministicModeArgs {
+	a.InitialDate = &initialDate
+	return a
+}

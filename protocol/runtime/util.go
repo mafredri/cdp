@@ -29,8 +29,8 @@ func (r RemoteObject) String() string {
 			return r.Preview.String()
 		}
 	default:
-		if r.UnserializableValue.Valid() {
-			return r.UnserializableValue.String()
+		if r.UnserializableValue != nil {
+			return string(*r.UnserializableValue)
 		}
 	}
 

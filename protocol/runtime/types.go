@@ -15,46 +15,25 @@ type ScriptID string
 type RemoteObjectID string
 
 // UnserializableValue Primitive value which cannot be JSON-stringified.
+// Includes values `-0`, `NaN`, `Infinity`, `-Infinity`, and bigint literals.
 type UnserializableValue string
-
-// UnserializableValue as enums.
-const (
-	UnserializableValueNotSet           UnserializableValue = ""
-	UnserializableValueInfinity         UnserializableValue = "Infinity"
-	UnserializableValueNaN              UnserializableValue = "NaN"
-	UnserializableValueNegativeInfinity UnserializableValue = "-Infinity"
-	UnserializableValueNegative0        UnserializableValue = "-0"
-)
-
-func (e UnserializableValue) Valid() bool {
-	switch e {
-	case "Infinity", "NaN", "-Infinity", "-0":
-		return true
-	default:
-		return false
-	}
-}
-
-func (e UnserializableValue) String() string {
-	return string(e)
-}
 
 // RemoteObject Mirror object referencing original JavaScript object.
 type RemoteObject struct {
 	// Type Object type.
 	//
-	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol".
+	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol", "bigint".
 	Type string `json:"type"`
 	// Subtype Object subtype hint. Specified for `object` type values
 	// only.
 	//
 	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray".
-	Subtype             *string             `json:"subtype,omitempty"`
-	ClassName           *string             `json:"className,omitempty"`           // Object class (constructor) name. Specified for `object` type values only.
-	Value               json.RawMessage     `json:"value,omitempty"`               // Remote object value in case of primitive values or JSON values (if it was requested).
-	UnserializableValue UnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified does not have `value`, but gets this property.
-	Description         *string             `json:"description,omitempty"`         // String representation of the object.
-	ObjectID            *RemoteObjectID     `json:"objectId,omitempty"`            // Unique object identifier (for non-primitive values).
+	Subtype             *string              `json:"subtype,omitempty"`
+	ClassName           *string              `json:"className,omitempty"`           // Object class (constructor) name. Specified for `object` type values only.
+	Value               json.RawMessage      `json:"value,omitempty"`               // Remote object value in case of primitive values or JSON values (if it was requested).
+	UnserializableValue *UnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified does not have `value`, but gets this property.
+	Description         *string              `json:"description,omitempty"`         // String representation of the object.
+	ObjectID            *RemoteObjectID      `json:"objectId,omitempty"`            // Unique object identifier (for non-primitive values).
 	// Preview Preview containing abbreviated property values. Specified
 	// for `object` type values only.
 	//
@@ -83,7 +62,7 @@ type CustomPreview struct {
 type ObjectPreview struct {
 	// Type Object type.
 	//
-	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol".
+	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol", "bigint".
 	Type string `json:"type"`
 	// Subtype Object subtype hint. Specified for `object` type values
 	// only.
@@ -104,7 +83,7 @@ type PropertyPreview struct {
 	// Type Object type. Accessor means that the property itself is an
 	// accessor property.
 	//
-	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol", "accessor".
+	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol", "accessor", "bigint".
 	Type         string         `json:"type"`
 	Value        *string        `json:"value,omitempty"`        // User-friendly property value string.
 	ValuePreview *ObjectPreview `json:"valuePreview,omitempty"` // Nested value preview.
@@ -148,9 +127,9 @@ type InternalPropertyDescriptor struct {
 // `objectId`, primitive `value`, unserializable primitive value or neither of
 // (for undefined) them should be specified.
 type CallArgument struct {
-	Value               json.RawMessage     `json:"value,omitempty"`               // Primitive value or serializable javascript object.
-	UnserializableValue UnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified.
-	ObjectID            *RemoteObjectID     `json:"objectId,omitempty"`            // Remote object handle.
+	Value               json.RawMessage      `json:"value,omitempty"`               // Primitive value or serializable javascript object.
+	UnserializableValue *UnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified.
+	ObjectID            *RemoteObjectID      `json:"objectId,omitempty"`            // Remote object handle.
 }
 
 // ExecutionContextID Id of an execution context.

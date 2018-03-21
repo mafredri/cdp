@@ -15,8 +15,8 @@ type GetVersionReply struct {
 	JsVersion       string `json:"jsVersion"`       // V8 version.
 }
 
-// GetCommandLineReply represents the return values for GetCommandLine in the Browser domain.
-type GetCommandLineReply struct {
+// GetBrowserCommandLineReply represents the return values for GetBrowserCommandLine in the Browser domain.
+type GetBrowserCommandLineReply struct {
 	Arguments []string `json:"arguments"` // Commandline parameters
 }
 

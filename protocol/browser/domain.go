@@ -39,14 +39,14 @@ func (d *domainClient) GetVersion(ctx context.Context) (reply *GetVersionReply, 
 	return
 }
 
-// GetCommandLine invokes the Browser method. Returns the command line
+// GetBrowserCommandLine invokes the Browser method. Returns the command line
 // switches for the browser process if, and only if --enable-automation is on
 // the commandline.
-func (d *domainClient) GetCommandLine(ctx context.Context) (reply *GetCommandLineReply, err error) {
-	reply = new(GetCommandLineReply)
-	err = rpcc.Invoke(ctx, "Browser.getCommandLine", nil, reply, d.conn)
+func (d *domainClient) GetBrowserCommandLine(ctx context.Context) (reply *GetBrowserCommandLineReply, err error) {
+	reply = new(GetBrowserCommandLineReply)
+	err = rpcc.Invoke(ctx, "Browser.getBrowserCommandLine", nil, reply, d.conn)
 	if err != nil {
-		err = &internal.OpError{Domain: "Browser", Op: "GetCommandLine", Err: err}
+		err = &internal.OpError{Domain: "Browser", Op: "GetBrowserCommandLine", Err: err}
 	}
 	return
 }

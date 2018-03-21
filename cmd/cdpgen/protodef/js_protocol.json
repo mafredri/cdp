@@ -1082,7 +1082,7 @@
                     ]
                 },
                 {
-                    "name": "getCommandLine",
+                    "name": "getBrowserCommandLine",
                     "description": "Returns the command line switches for the browser process if, and only if\n--enable-automation is on the commandline.",
                     "experimental": true,
                     "returns": [
@@ -4439,12 +4439,12 @@
                         },
                         {
                             "name": "startCharacterIndex",
-                            "description": "The starting index in characters, for this post layout textbox substring. Characters that would be represented as a surrogate pair in UTF-16 have length 2.",
+                            "description": "The starting index in characters, for this post layout textbox substring. Characters that\nwould be represented as a surrogate pair in UTF-16 have length 2.",
                             "type": "integer"
                         },
                         {
                             "name": "numCharacters",
-                            "description": "The number of characters in this post layout textbox substring. Characters that would be represented as a surrogate pair in UTF-16 have length 2.",
+                            "description": "The number of characters in this post layout textbox substring. Characters that would be\nrepresented as a surrogate pair in UTF-16 have length 2.",
                             "type": "integer"
                         }
                     ]
@@ -4482,6 +4482,12 @@
                         {
                             "name": "styleIndex",
                             "description": "Index into the `computedStyles` array returned by `getSnapshot`.",
+                            "optional": true,
+                            "type": "integer"
+                        },
+                        {
+                            "name": "paintOrder",
+                            "description": "Global paint order index, which is determined by the stacking order of the nodes. Nodes\nthat are painted together will have the same index. Only provided if includePaintOrder in\ngetSnapshot was true.",
                             "optional": true,
                             "type": "integer"
                         }
@@ -4536,6 +4542,12 @@
                         {
                             "name": "includeEventListeners",
                             "description": "Whether or not to retrieve details of DOM listeners (default false).",
+                            "optional": true,
+                            "type": "boolean"
+                        },
+                        {
+                            "name": "includePaintOrder",
+                            "description": "Whether to determine and include the paint order index of LayoutTreeNodes (default false).",
                             "optional": true,
                             "type": "boolean"
                         }
@@ -5340,6 +5352,18 @@
                             "description": "Base64-encoded image data of the screenshot, if one was requested and successfully taken.",
                             "optional": true,
                             "type": "string"
+                        }
+                    ]
+                },
+                {
+                    "name": "enterDeterministicMode",
+                    "description": "Puts the browser into deterministic mode.  Only effective for subsequently created web contents.\nOnly supported in headless mode.  Once set there's no way of leaving deterministic mode.",
+                    "parameters": [
+                        {
+                            "name": "initialDate",
+                            "description": "Number of seconds since the Epoch",
+                            "optional": true,
+                            "type": "number"
                         }
                     ]
                 },
@@ -6970,8 +6994,8 @@
                             "type": "number"
                         },
                         {
-                            "name": "count",
-                            "description": "Number of sampled allocations of that size.",
+                            "name": "total",
+                            "description": "Total bytes attributed to this sample.",
                             "type": "number"
                         },
                         {
@@ -8738,6 +8762,12 @@
                             "description": "Frame identifier.",
                             "optional": true,
                             "$ref": "Page.FrameId"
+                        },
+                        {
+                            "name": "hasUserGesture",
+                            "description": "Whether the request is initiated by a user gesture. Defaults to false.",
+                            "optional": true,
+                            "type": "boolean"
                         }
                     ]
                 },

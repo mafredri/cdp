@@ -63,6 +63,7 @@ type RequestWillBeSentReply struct {
 	RedirectResponse *Response                  `json:"redirectResponse,omitempty"` // Redirect response data.
 	Type             *internal.PageResourceType `json:"type,omitempty"`             // Type of this resource.
 	FrameID          *internal.PageFrameID      `json:"frameId,omitempty"`          // Frame identifier.
+	HasUserGesture   *bool                      `json:"hasUserGesture,omitempty"`   // Whether the request is initiated by a user gesture. Defaults to false.
 }
 
 // ResourceChangedPriorityClient is a client for ResourceChangedPriority events.

@@ -121,6 +121,28 @@ func (d *domainClient) Evaluate(ctx context.Context, args *EvaluateArgs) (reply 
 	return
 }
 
+// GetIsolateID invokes the Runtime method. Returns the isolate id.
+func (d *domainClient) GetIsolateID(ctx context.Context) (reply *GetIsolateIDReply, err error) {
+	reply = new(GetIsolateIDReply)
+	err = rpcc.Invoke(ctx, "Runtime.getIsolateId", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Runtime", Op: "GetIsolateID", Err: err}
+	}
+	return
+}
+
+// GetHeapUsage invokes the Runtime method. Returns the JavaScript heap usage.
+// It is the total usage of the corresponding isolate not scoped to a
+// particular Runtime.
+func (d *domainClient) GetHeapUsage(ctx context.Context) (reply *GetHeapUsageReply, err error) {
+	reply = new(GetHeapUsageReply)
+	err = rpcc.Invoke(ctx, "Runtime.getHeapUsage", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Runtime", Op: "GetHeapUsage", Err: err}
+	}
+	return
+}
+
 // GetProperties invokes the Runtime method. Returns properties of a given
 // object. Object group of the result is inherited from the target object.
 func (d *domainClient) GetProperties(ctx context.Context, args *GetPropertiesArgs) (reply *GetPropertiesReply, err error) {
@@ -227,6 +249,17 @@ func (d *domainClient) SetCustomObjectFormatterEnabled(ctx context.Context, args
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "SetCustomObjectFormatterEnabled", Err: err}
+	}
+	return
+}
+
+// TerminateExecution invokes the Runtime method. Terminate current or next
+// JavaScript execution. Will cancel the termination when the outer-most script
+// execution ends.
+func (d *domainClient) TerminateExecution(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Runtime.terminateExecution", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Runtime", Op: "TerminateExecution", Err: err}
 	}
 	return
 }

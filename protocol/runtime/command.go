@@ -281,6 +281,17 @@ type EvaluateReply struct {
 	ExceptionDetails *ExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details.
 }
 
+// GetIsolateIDReply represents the return values for GetIsolateID in the Runtime domain.
+type GetIsolateIDReply struct {
+	ID string `json:"id"` // The isolate id.
+}
+
+// GetHeapUsageReply represents the return values for GetHeapUsage in the Runtime domain.
+type GetHeapUsageReply struct {
+	UsedSize  float64 `json:"usedSize"`  // Used heap size in bytes.
+	TotalSize float64 `json:"totalSize"` // Allocated heap size in bytes.
+}
+
 // GetPropertiesArgs represents the arguments for GetProperties in the Runtime domain.
 type GetPropertiesArgs struct {
 	ObjectID      RemoteObjectID `json:"objectId"`                // Identifier of the object to return properties for.
@@ -365,7 +376,8 @@ type GlobalLexicalScopeNamesReply struct {
 
 // QueryObjectsArgs represents the arguments for QueryObjects in the Runtime domain.
 type QueryObjectsArgs struct {
-	PrototypeObjectID RemoteObjectID `json:"prototypeObjectId"` // Identifier of the prototype to return objects for.
+	PrototypeObjectID RemoteObjectID `json:"prototypeObjectId"`     // Identifier of the prototype to return objects for.
+	ObjectGroup       *string        `json:"objectGroup,omitempty"` // Symbolic group name that can be used to release the results.
 }
 
 // NewQueryObjectsArgs initializes QueryObjectsArgs with the required arguments.
@@ -373,6 +385,13 @@ func NewQueryObjectsArgs(prototypeObjectID RemoteObjectID) *QueryObjectsArgs {
 	args := new(QueryObjectsArgs)
 	args.PrototypeObjectID = prototypeObjectID
 	return args
+}
+
+// SetObjectGroup sets the ObjectGroup optional argument. Symbolic
+// group name that can be used to release the results.
+func (a *QueryObjectsArgs) SetObjectGroup(objectGroup string) *QueryObjectsArgs {
+	a.ObjectGroup = &objectGroup
+	return a
 }
 
 // QueryObjectsReply represents the return values for QueryObjects in the Runtime domain.

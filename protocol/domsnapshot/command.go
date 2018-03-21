@@ -6,6 +6,7 @@ package domsnapshot
 type GetSnapshotArgs struct {
 	ComputedStyleWhitelist []string `json:"computedStyleWhitelist"`          // Whitelist of computed styles to return.
 	IncludeEventListeners  *bool    `json:"includeEventListeners,omitempty"` // Whether or not to retrieve details of DOM listeners (default false).
+	IncludePaintOrder      *bool    `json:"includePaintOrder,omitempty"`     // Whether to determine and include the paint order index of LayoutTreeNodes (default false).
 }
 
 // NewGetSnapshotArgs initializes GetSnapshotArgs with the required arguments.
@@ -19,6 +20,14 @@ func NewGetSnapshotArgs(computedStyleWhitelist []string) *GetSnapshotArgs {
 // Whether or not to retrieve details of DOM listeners (default false).
 func (a *GetSnapshotArgs) SetIncludeEventListeners(includeEventListeners bool) *GetSnapshotArgs {
 	a.IncludeEventListeners = &includeEventListeners
+	return a
+}
+
+// SetIncludePaintOrder sets the IncludePaintOrder optional argument.
+// Whether to determine and include the paint order index of
+// LayoutTreeNodes (default false).
+func (a *GetSnapshotArgs) SetIncludePaintOrder(includePaintOrder bool) *GetSnapshotArgs {
+	a.IncludePaintOrder = &includePaintOrder
 	return a
 }
 
