@@ -189,7 +189,7 @@ type PrintToPDFArgs struct {
 	MarginRight             *float64 `json:"marginRight,omitempty"`             // Right margin in inches. Defaults to 1cm (~0.4 inches).
 	PageRanges              *string  `json:"pageRanges,omitempty"`              // Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.
 	IgnoreInvalidPageRanges *bool    `json:"ignoreInvalidPageRanges,omitempty"` // Whether to silently ignore invalid but successfully parsed page ranges, such as '3-2'. Defaults to false.
-	HeaderTemplate          *string  `json:"headerTemplate,omitempty"`          // HTML template for the print header. Should be valid HTML markup with following classes used to inject printing values into them: - date - formatted print date - title - document title - url - document location - pageNumber - current page number - totalPages - total pages in the document For example, <span class=title></span> would generate span containing the title.
+	HeaderTemplate          *string  `json:"headerTemplate,omitempty"`          // HTML template for the print header. Should be valid HTML markup with following classes used to inject printing values into them: - `date`: formatted print date - `title`: document title - `url`: document location - `pageNumber`: current page number - `totalPages`: total pages in the document For example, `<span class=title></span>` would generate span containing the title.
 	FooterTemplate          *string  `json:"footerTemplate,omitempty"`          // HTML template for the print footer. Should use the same format as the `headerTemplate`.
 	PreferCSSPageSize       *bool    `json:"preferCSSPageSize,omitempty"`       // Whether or not to prefer page size as defined by css. Defaults to false, in which case the content will be scaled to fit the paper size.
 }
@@ -289,12 +289,12 @@ func (a *PrintToPDFArgs) SetIgnoreInvalidPageRanges(ignoreInvalidPageRanges bool
 
 // SetHeaderTemplate sets the HeaderTemplate optional argument. HTML
 // template for the print header. Should be valid HTML markup with
-// following classes used to inject printing values into them: - date -
-// formatted print date - title - document title - url - document
-// location - pageNumber - current page number - totalPages - total
-// pages in the document
+// following classes used to inject printing values into them: -
+// `date`: formatted print date - `title`: document title - `url`:
+// document location - `pageNumber`: current page number -
+// `totalPages`: total pages in the document
 //
-// For example, <span class=title></span> would generate span
+// For example, `<span class=title></span>` would generate span
 // containing the title.
 func (a *PrintToPDFArgs) SetHeaderTemplate(headerTemplate string) *PrintToPDFArgs {
 	a.HeaderTemplate = &headerTemplate

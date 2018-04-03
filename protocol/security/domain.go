@@ -69,7 +69,7 @@ func (d *domainClient) HandleCertificateError(ctx context.Context, args *HandleC
 // SetOverrideCertificateErrors invokes the Security method. Enable/disable
 // overriding certificate errors. If enabled, all certificate error events need
 // to be handled by the DevTools client and should be answered with
-// handleCertificateError commands.
+// `handleCertificateError` commands.
 func (d *domainClient) SetOverrideCertificateErrors(ctx context.Context, args *SetOverrideCertificateErrorsArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Security.setOverrideCertificateErrors", args, nil, d.conn)
