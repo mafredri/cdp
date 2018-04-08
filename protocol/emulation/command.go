@@ -340,7 +340,8 @@ func (a *SetVirtualTimePolicyArgs) SetWaitForNavigation(waitForNavigation bool) 
 
 // SetVirtualTimePolicyReply represents the return values for SetVirtualTimePolicy in the Emulation domain.
 type SetVirtualTimePolicyReply struct {
-	VirtualTimeBase runtime.Timestamp `json:"virtualTimeBase"` // Absolute timestamp at which virtual time was first enabled (milliseconds since epoch).
+	VirtualTimeBase      runtime.Timestamp `json:"virtualTimeBase"`      // Absolute timestamp at which virtual time was first enabled (milliseconds since epoch).
+	VirtualTimeTicksBase float64           `json:"virtualTimeTicksBase"` // Absolute timestamp at which virtual time was first enabled (up time in milliseconds).
 }
 
 // SetVisibleSizeArgs represents the arguments for SetVisibleSize in the Emulation domain.

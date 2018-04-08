@@ -324,6 +324,20 @@ func (d *domainClient) SetAdBlockingEnabled(ctx context.Context, args *SetAdBloc
 	return
 }
 
+// SetBypassCSP invokes the Page method. Enable page Content Security Policy
+// by-passing.
+func (d *domainClient) SetBypassCSP(ctx context.Context, args *SetBypassCSPArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setBypassCSP", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setBypassCSP", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetBypassCSP", Err: err}
+	}
+	return
+}
+
 // SetDocumentContent invokes the Page method. Sets given markup as the
 // document's HTML.
 func (d *domainClient) SetDocumentContent(ctx context.Context, args *SetDocumentContentArgs) (err error) {
@@ -721,6 +735,27 @@ func (c *loadEventFiredClient) Recv() (*LoadEventFiredReply, error) {
 	event := new(LoadEventFiredReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "LoadEventFired Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) NavigatedWithinDocument(ctx context.Context) (NavigatedWithinDocumentClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.navigatedWithinDocument", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &navigatedWithinDocumentClient{Stream: s}, nil
+}
+
+type navigatedWithinDocumentClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *navigatedWithinDocumentClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *navigatedWithinDocumentClient) Recv() (*NavigatedWithinDocumentReply, error) {
+	event := new(NavigatedWithinDocumentReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "NavigatedWithinDocument Recv", Err: err}
 	}
 	return event, nil
 }

@@ -405,6 +405,18 @@ func NewSetAdBlockingEnabledArgs(enabled bool) *SetAdBlockingEnabledArgs {
 	return args
 }
 
+// SetBypassCSPArgs represents the arguments for SetBypassCSP in the Page domain.
+type SetBypassCSPArgs struct {
+	Enabled bool `json:"enabled"` // Whether to bypass page CSP.
+}
+
+// NewSetBypassCSPArgs initializes SetBypassCSPArgs with the required arguments.
+func NewSetBypassCSPArgs(enabled bool) *SetBypassCSPArgs {
+	args := new(SetBypassCSPArgs)
+	args.Enabled = enabled
+	return args
+}
+
 // SetDownloadBehaviorArgs represents the arguments for SetDownloadBehavior in the Page domain.
 type SetDownloadBehaviorArgs struct {
 	// Behavior Whether to allow all or deny all download requests, or use

@@ -118,3 +118,18 @@ type LoadEventFiredClient interface {
 	Recv() (*LoadEventFiredReply, error)
 	rpcc.Stream
 }
+
+// NavigatedWithinDocumentReply is the reply for NavigatedWithinDocument events.
+type NavigatedWithinDocumentReply struct {
+	FrameID FrameID `json:"frameId"` // Id of the frame.
+	URL     string  `json:"url"`     // Frame's new url.
+}
+
+// ScreencastFrameClient is a client for ScreencastFrame events. Compressed
+// image data requested by the `startScreencast`.
+type ScreencastFrameClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*ScreencastFrameReply, error)
+	rpcc.Stream
+}

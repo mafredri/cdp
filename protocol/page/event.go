@@ -100,10 +100,11 @@ type JavascriptDialogOpeningClient interface {
 
 // JavascriptDialogOpeningReply is the reply for JavascriptDialogOpening events.
 type JavascriptDialogOpeningReply struct {
-	URL           string     `json:"url"`                     // Frame url.
-	Message       string     `json:"message"`                 // Message that will be displayed by the dialog.
-	Type          DialogType `json:"type"`                    // Dialog type.
-	DefaultPrompt *string    `json:"defaultPrompt,omitempty"` // Default dialog prompt.
+	URL               string     `json:"url"`                     // Frame url.
+	Message           string     `json:"message"`                 // Message that will be displayed by the dialog.
+	Type              DialogType `json:"type"`                    // Dialog type.
+	HasBrowserHandler bool       `json:"hasBrowserHandler"`       // True iff browser is capable showing or acting on the given dialog. When browser has no dialog handler for given target, calling alert while Page domain is engaged will stall the page execution. Execution can be resumed via calling Page.handleJavaScriptDialog.
+	DefaultPrompt     *string    `json:"defaultPrompt,omitempty"` // Default dialog prompt.
 }
 
 // LifecycleEventClient is a client for LifecycleEvent events. Fired for top
@@ -120,12 +121,13 @@ type LoadEventFiredReply struct {
 	Timestamp network.MonotonicTime `json:"timestamp"` // No description.
 }
 
-// ScreencastFrameClient is a client for ScreencastFrame events. Compressed
-// image data requested by the `startScreencast`.
-type ScreencastFrameClient interface {
+// NavigatedWithinDocumentClient is a client for NavigatedWithinDocument events.
+// Fired when same-document navigation happens, e.g. due to history API usage
+// or anchor navigation.
+type NavigatedWithinDocumentClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
-	Recv() (*ScreencastFrameReply, error)
+	Recv() (*NavigatedWithinDocumentReply, error)
 	rpcc.Stream
 }
 

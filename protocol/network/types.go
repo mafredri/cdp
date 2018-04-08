@@ -305,18 +305,44 @@ type SignedCertificateTimestamp struct {
 
 // SecurityDetails Security details about a request.
 type SecurityDetails struct {
-	Protocol                       string                       `json:"protocol"`                       // Protocol name (e.g. "TLS 1.2" or "QUIC").
-	KeyExchange                    string                       `json:"keyExchange"`                    // Key Exchange used by the connection, or the empty string if not applicable.
-	KeyExchangeGroup               *string                      `json:"keyExchangeGroup,omitempty"`     // (EC)DH group used by the connection, if applicable.
-	Cipher                         string                       `json:"cipher"`                         // Cipher name.
-	Mac                            *string                      `json:"mac,omitempty"`                  // TLS MAC. Note that AEAD ciphers do not have separate MACs.
-	CertificateID                  security.CertificateID       `json:"certificateId"`                  // Certificate ID value.
-	SubjectName                    string                       `json:"subjectName"`                    // Certificate subject name.
-	SanList                        []string                     `json:"sanList"`                        // Subject Alternative Name (SAN) DNS names and IP addresses.
-	Issuer                         string                       `json:"issuer"`                         // Name of the issuing CA.
-	ValidFrom                      TimeSinceEpoch               `json:"validFrom"`                      // Certificate valid from date.
-	ValidTo                        TimeSinceEpoch               `json:"validTo"`                        // Certificate valid to (expiration) date
-	SignedCertificateTimestampList []SignedCertificateTimestamp `json:"signedCertificateTimestampList"` // List of signed certificate timestamps (SCTs).
+	Protocol                          string                            `json:"protocol"`                          // Protocol name (e.g. "TLS 1.2" or "QUIC").
+	KeyExchange                       string                            `json:"keyExchange"`                       // Key Exchange used by the connection, or the empty string if not applicable.
+	KeyExchangeGroup                  *string                           `json:"keyExchangeGroup,omitempty"`        // (EC)DH group used by the connection, if applicable.
+	Cipher                            string                            `json:"cipher"`                            // Cipher name.
+	Mac                               *string                           `json:"mac,omitempty"`                     // TLS MAC. Note that AEAD ciphers do not have separate MACs.
+	CertificateID                     security.CertificateID            `json:"certificateId"`                     // Certificate ID value.
+	SubjectName                       string                            `json:"subjectName"`                       // Certificate subject name.
+	SanList                           []string                          `json:"sanList"`                           // Subject Alternative Name (SAN) DNS names and IP addresses.
+	Issuer                            string                            `json:"issuer"`                            // Name of the issuing CA.
+	ValidFrom                         TimeSinceEpoch                    `json:"validFrom"`                         // Certificate valid from date.
+	ValidTo                           TimeSinceEpoch                    `json:"validTo"`                           // Certificate valid to (expiration) date
+	SignedCertificateTimestampList    []SignedCertificateTimestamp      `json:"signedCertificateTimestampList"`    // List of signed certificate timestamps (SCTs).
+	CertificateTransparencyCompliance CertificateTransparencyCompliance `json:"certificateTransparencyCompliance"` // Whether the request complied with Certificate Transparency policy
+}
+
+// CertificateTransparencyCompliance Whether the request complied with
+// Certificate Transparency policy.
+type CertificateTransparencyCompliance string
+
+// CertificateTransparencyCompliance as enums.
+const (
+	CertificateTransparencyComplianceNotSet       CertificateTransparencyCompliance = ""
+	CertificateTransparencyComplianceUnknown      CertificateTransparencyCompliance = "unknown"
+	CertificateTransparencyComplianceNotCompliant CertificateTransparencyCompliance = "not-compliant"
+	CertificateTransparencyComplianceCompliant    CertificateTransparencyCompliance = "compliant"
+)
+
+func (e CertificateTransparencyCompliance) Valid() bool {
+	switch e {
+	case "unknown", "not-compliant", "compliant":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e CertificateTransparencyCompliance) String() string {
+	return string(e)
 }
 
 // BlockedReason The reason why request was blocked.

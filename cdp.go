@@ -2171,6 +2171,13 @@ type Page interface {
 	// Note: This command is experimental.
 	SetAdBlockingEnabled(context.Context, *page.SetAdBlockingEnabledArgs) error
 
+	// Command SetBypassCSP
+	//
+	// Enable page Content Security Policy by-passing.
+	//
+	// Note: This command is experimental.
+	SetBypassCSP(context.Context, *page.SetBypassCSPArgs) error
+
 	// Command SetDocumentContent
 	//
 	// Sets given markup as the document's HTML.
@@ -2298,6 +2305,14 @@ type Page interface {
 
 	// Event LoadEventFired
 	LoadEventFired(context.Context) (page.LoadEventFiredClient, error)
+
+	// Event NavigatedWithinDocument
+	//
+	// Fired when same-document navigation happens, e.g. due to history
+	// API usage or anchor navigation.
+	//
+	// Note: This event is experimental.
+	NavigatedWithinDocument(context.Context) (page.NavigatedWithinDocumentClient, error)
 
 	// Event ScreencastFrame
 	//
