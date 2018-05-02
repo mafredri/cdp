@@ -233,6 +233,24 @@ func (d *domainClient) GetResponseBodyForInterception(ctx context.Context, args 
 	return
 }
 
+// TakeResponseBodyForInterceptionAsStream invokes the Network method. Returns
+// a handle to the stream representing the response body. Note that after this
+// command, the intercepted request can't be continued as is -- you either need
+// to cancel it or to provide the response body. The stream only supports
+// sequential read, IO.read will fail if the position is specified.
+func (d *domainClient) TakeResponseBodyForInterceptionAsStream(ctx context.Context, args *TakeResponseBodyForInterceptionAsStreamArgs) (reply *TakeResponseBodyForInterceptionAsStreamReply, err error) {
+	reply = new(TakeResponseBodyForInterceptionAsStreamReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.takeResponseBodyForInterceptionAsStream", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.takeResponseBodyForInterceptionAsStream", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "TakeResponseBodyForInterceptionAsStream", Err: err}
+	}
+	return
+}
+
 // ReplayXHR invokes the Network method. This method sends a new
 // XMLHttpRequest which is identical to the original one. The following
 // parameters should be identical: method, url, async, request body, extra

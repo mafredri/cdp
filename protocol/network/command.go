@@ -4,6 +4,7 @@ package network
 
 import (
 	"github.com/mafredri/cdp/protocol/debugger"
+	"github.com/mafredri/cdp/protocol/io"
 )
 
 // CanClearBrowserCacheReply represents the return values for CanClearBrowserCache in the Network domain.
@@ -307,6 +308,23 @@ func NewGetResponseBodyForInterceptionArgs(interceptionID InterceptionID) *GetRe
 type GetResponseBodyForInterceptionReply struct {
 	Body          string `json:"body"`          // Response body.
 	Base64Encoded bool   `json:"base64Encoded"` // True, if content was sent as base64.
+}
+
+// TakeResponseBodyForInterceptionAsStreamArgs represents the arguments for TakeResponseBodyForInterceptionAsStream in the Network domain.
+type TakeResponseBodyForInterceptionAsStreamArgs struct {
+	InterceptionID InterceptionID `json:"interceptionId"` // No description.
+}
+
+// NewTakeResponseBodyForInterceptionAsStreamArgs initializes TakeResponseBodyForInterceptionAsStreamArgs with the required arguments.
+func NewTakeResponseBodyForInterceptionAsStreamArgs(interceptionID InterceptionID) *TakeResponseBodyForInterceptionAsStreamArgs {
+	args := new(TakeResponseBodyForInterceptionAsStreamArgs)
+	args.InterceptionID = interceptionID
+	return args
+}
+
+// TakeResponseBodyForInterceptionAsStreamReply represents the return values for TakeResponseBodyForInterceptionAsStream in the Network domain.
+type TakeResponseBodyForInterceptionAsStreamReply struct {
+	Stream io.StreamHandle `json:"stream"` // No description.
 }
 
 // ReplayXHRArgs represents the arguments for ReplayXHR in the Network domain.

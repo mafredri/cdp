@@ -199,6 +199,9 @@ func (t *Timestamp) UnmarshalJSON(data []byte) error {
 var _ json.Marshaler = (*Timestamp)(nil)
 var _ json.Unmarshaler = (*Timestamp)(nil)
 
+// TimeDelta Number of milliseconds.
+type TimeDelta float64
+
 // CallFrame Stack entry for runtime errors and assertions.
 type CallFrame struct {
 	FunctionName string   `json:"functionName"` // JavaScript function name.

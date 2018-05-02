@@ -21,7 +21,7 @@ func NewCloseArgs(handle StreamHandle) *CloseArgs {
 // ReadArgs represents the arguments for Read in the IO domain.
 type ReadArgs struct {
 	Handle StreamHandle `json:"handle"`           // Handle of the stream to read.
-	Offset *int         `json:"offset,omitempty"` // Seek to the specified offset before reading (if not specificed, proceed with offset following the last read).
+	Offset *int         `json:"offset,omitempty"` // Seek to the specified offset before reading (if not specificed, proceed with offset following the last read). Some types of streams may only support sequential reads.
 	Size   *int         `json:"size,omitempty"`   // Maximum number of bytes to read (left upon the agent discretion if not specified).
 }
 
@@ -34,7 +34,8 @@ func NewReadArgs(handle StreamHandle) *ReadArgs {
 
 // SetOffset sets the Offset optional argument. Seek to the specified
 // offset before reading (if not specificed, proceed with offset
-// following the last read).
+// following the last read). Some types of streams may only support
+// sequential reads.
 func (a *ReadArgs) SetOffset(offset int) *ReadArgs {
 	a.Offset = &offset
 	return a

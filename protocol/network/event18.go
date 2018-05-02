@@ -35,6 +35,7 @@ type RequestInterceptedReply struct {
 	FrameID             protocol.PageFrameID      `json:"frameId"`                       // The id of the frame that initiated the request.
 	ResourceType        protocol.PageResourceType `json:"resourceType"`                  // How the requested resource will be used.
 	IsNavigationRequest bool                      `json:"isNavigationRequest"`           // Whether this is a navigation request, which can abort the navigation completely.
+	IsDownload          *bool                     `json:"isDownload,omitempty"`          // Set if the request is a navigation that will result in a download. Only present after response is received from the server (i.e. HeadersReceived stage).
 	RedirectURL         *string                   `json:"redirectUrl,omitempty"`         // Redirect location, only sent if a redirect was intercepted.
 	AuthChallenge       *AuthChallenge            `json:"authChallenge,omitempty"`       // Details of the Authorization Challenge encountered. If this is set then continueInterceptedRequest must contain an authChallengeResponse.
 	ResponseErrorReason ErrorReason               `json:"responseErrorReason,omitempty"` // Response error if intercepted at response stage or if redirect occurred while intercepting request.

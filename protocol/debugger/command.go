@@ -51,6 +51,11 @@ type EvaluateOnCallFrameArgs struct {
 	// Note: This property is experimental.
 	GeneratePreview   *bool `json:"generatePreview,omitempty"`
 	ThrowOnSideEffect *bool `json:"throwOnSideEffect,omitempty"` // Whether to throw an exception if side effect cannot be ruled out during evaluation.
+	// Timeout Terminate execution after timing out (number of
+	// milliseconds).
+	//
+	// Note: This property is experimental.
+	Timeout *runtime.TimeDelta `json:"timeout,omitempty"`
 }
 
 // NewEvaluateOnCallFrameArgs initializes EvaluateOnCallFrameArgs with the required arguments.
@@ -107,6 +112,15 @@ func (a *EvaluateOnCallFrameArgs) SetGeneratePreview(generatePreview bool) *Eval
 // during evaluation.
 func (a *EvaluateOnCallFrameArgs) SetThrowOnSideEffect(throwOnSideEffect bool) *EvaluateOnCallFrameArgs {
 	a.ThrowOnSideEffect = &throwOnSideEffect
+	return a
+}
+
+// SetTimeout sets the Timeout optional argument. Terminate execution
+// after timing out (number of milliseconds).
+//
+// Note: This property is experimental.
+func (a *EvaluateOnCallFrameArgs) SetTimeout(timeout runtime.TimeDelta) *EvaluateOnCallFrameArgs {
+	a.Timeout = &timeout
 	return a
 }
 
@@ -389,6 +403,32 @@ func (a *SetBreakpointByURLArgs) SetCondition(condition string) *SetBreakpointBy
 type SetBreakpointByURLReply struct {
 	BreakpointID BreakpointID `json:"breakpointId"` // Id of the created breakpoint for further reference.
 	Locations    []Location   `json:"locations"`    // List of the locations this breakpoint resolved into upon addition.
+}
+
+// SetBreakpointOnFunctionCallArgs represents the arguments for SetBreakpointOnFunctionCall in the Debugger domain.
+type SetBreakpointOnFunctionCallArgs struct {
+	ObjectID  runtime.RemoteObjectID `json:"objectId"`            // Function object id.
+	Condition *string                `json:"condition,omitempty"` // Expression to use as a breakpoint condition. When specified, debugger will stop on the breakpoint if this expression evaluates to true.
+}
+
+// NewSetBreakpointOnFunctionCallArgs initializes SetBreakpointOnFunctionCallArgs with the required arguments.
+func NewSetBreakpointOnFunctionCallArgs(objectID runtime.RemoteObjectID) *SetBreakpointOnFunctionCallArgs {
+	args := new(SetBreakpointOnFunctionCallArgs)
+	args.ObjectID = objectID
+	return args
+}
+
+// SetCondition sets the Condition optional argument. Expression to
+// use as a breakpoint condition. When specified, debugger will stop on
+// the breakpoint if this expression evaluates to true.
+func (a *SetBreakpointOnFunctionCallArgs) SetCondition(condition string) *SetBreakpointOnFunctionCallArgs {
+	a.Condition = &condition
+	return a
+}
+
+// SetBreakpointOnFunctionCallReply represents the return values for SetBreakpointOnFunctionCall in the Debugger domain.
+type SetBreakpointOnFunctionCallReply struct {
+	BreakpointID BreakpointID `json:"breakpointId"` // Id of the created breakpoint for further reference.
 }
 
 // SetBreakpointsActiveArgs represents the arguments for SetBreakpointsActive in the Debugger domain.

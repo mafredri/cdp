@@ -192,6 +192,11 @@ type EvaluateArgs struct {
 	//
 	// Note: This property is experimental.
 	ThrowOnSideEffect *bool `json:"throwOnSideEffect,omitempty"`
+	// Timeout Terminate execution after timing out (number of
+	// milliseconds).
+	//
+	// Note: This property is experimental.
+	Timeout *TimeDelta `json:"timeout,omitempty"`
 }
 
 // NewEvaluateArgs initializes EvaluateArgs with the required arguments.
@@ -272,6 +277,15 @@ func (a *EvaluateArgs) SetAwaitPromise(awaitPromise bool) *EvaluateArgs {
 // Note: This property is experimental.
 func (a *EvaluateArgs) SetThrowOnSideEffect(throwOnSideEffect bool) *EvaluateArgs {
 	a.ThrowOnSideEffect = &throwOnSideEffect
+	return a
+}
+
+// SetTimeout sets the Timeout optional argument. Terminate execution
+// after timing out (number of milliseconds).
+//
+// Note: This property is experimental.
+func (a *EvaluateArgs) SetTimeout(timeout TimeDelta) *EvaluateArgs {
+	a.Timeout = &timeout
 	return a
 }
 

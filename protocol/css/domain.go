@@ -201,7 +201,7 @@ func (d *domainClient) GetPlatformFontsForNode(ctx context.Context, args *GetPla
 }
 
 // GetStyleSheetText invokes the CSS method. Returns the current textual
-// content and the URL for a stylesheet.
+// content for a stylesheet.
 func (d *domainClient) GetStyleSheetText(ctx context.Context, args *GetStyleSheetTextArgs) (reply *GetStyleSheetTextReply, err error) {
 	reply = new(GetStyleSheetTextReply)
 	if args != nil {

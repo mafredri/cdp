@@ -4,9 +4,10 @@ package domsnapshot
 
 // GetSnapshotArgs represents the arguments for GetSnapshot in the DOMSnapshot domain.
 type GetSnapshotArgs struct {
-	ComputedStyleWhitelist []string `json:"computedStyleWhitelist"`          // Whitelist of computed styles to return.
-	IncludeEventListeners  *bool    `json:"includeEventListeners,omitempty"` // Whether or not to retrieve details of DOM listeners (default false).
-	IncludePaintOrder      *bool    `json:"includePaintOrder,omitempty"`     // Whether to determine and include the paint order index of LayoutTreeNodes (default false).
+	ComputedStyleWhitelist     []string `json:"computedStyleWhitelist"`               // Whitelist of computed styles to return.
+	IncludeEventListeners      *bool    `json:"includeEventListeners,omitempty"`      // Whether or not to retrieve details of DOM listeners (default false).
+	IncludePaintOrder          *bool    `json:"includePaintOrder,omitempty"`          // Whether to determine and include the paint order index of LayoutTreeNodes (default false).
+	IncludeUserAgentShadowTree *bool    `json:"includeUserAgentShadowTree,omitempty"` // Whether to include UA shadow tree in the snapshot (default false).
 }
 
 // NewGetSnapshotArgs initializes GetSnapshotArgs with the required arguments.
@@ -28,6 +29,13 @@ func (a *GetSnapshotArgs) SetIncludeEventListeners(includeEventListeners bool) *
 // LayoutTreeNodes (default false).
 func (a *GetSnapshotArgs) SetIncludePaintOrder(includePaintOrder bool) *GetSnapshotArgs {
 	a.IncludePaintOrder = &includePaintOrder
+	return a
+}
+
+// SetIncludeUserAgentShadowTree sets the IncludeUserAgentShadowTree optional argument.
+// Whether to include UA shadow tree in the snapshot (default false).
+func (a *GetSnapshotArgs) SetIncludeUserAgentShadowTree(includeUserAgentShadowTree bool) *GetSnapshotArgs {
+	a.IncludeUserAgentShadowTree = &includeUserAgentShadowTree
 	return a
 }
 

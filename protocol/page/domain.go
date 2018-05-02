@@ -414,6 +414,31 @@ func (d *domainClient) Crash(ctx context.Context) (err error) {
 	return
 }
 
+// Close invokes the Page method. Tries to close page, running its
+// beforeunload hooks, if any.
+func (d *domainClient) Close(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Page.close", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "Close", Err: err}
+	}
+	return
+}
+
+// SetWebLifecycleState invokes the Page method. Tries to update the web
+// lifecycle state of the page. It will transition the page to the given state
+// according to: https://github.com/WICG/web-lifecycle/
+func (d *domainClient) SetWebLifecycleState(ctx context.Context, args *SetWebLifecycleStateArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setWebLifecycleState", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setWebLifecycleState", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetWebLifecycleState", Err: err}
+	}
+	return
+}
+
 // StopScreencast invokes the Page method. Stops sending each frame in the
 // `screencastFrame`.
 func (d *domainClient) StopScreencast(ctx context.Context) (err error) {

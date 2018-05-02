@@ -289,6 +289,23 @@ func (d *domainClient) SetBreakpointByURL(ctx context.Context, args *SetBreakpoi
 	return
 }
 
+// SetBreakpointOnFunctionCall invokes the Debugger method. Sets JavaScript
+// breakpoint before each call to the given function. If another function was
+// created from the same source as a given one, calling it will also trigger
+// the breakpoint.
+func (d *domainClient) SetBreakpointOnFunctionCall(ctx context.Context, args *SetBreakpointOnFunctionCallArgs) (reply *SetBreakpointOnFunctionCallReply, err error) {
+	reply = new(SetBreakpointOnFunctionCallReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.setBreakpointOnFunctionCall", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.setBreakpointOnFunctionCall", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Debugger", Op: "SetBreakpointOnFunctionCall", Err: err}
+	}
+	return
+}
+
 // SetBreakpointsActive invokes the Debugger method. Activates / deactivates
 // all breakpoints on the page.
 func (d *domainClient) SetBreakpointsActive(ctx context.Context, args *SetBreakpointsActiveArgs) (err error) {

@@ -311,7 +311,7 @@ type CSS interface {
 
 	// Command GetStyleSheetText
 	//
-	// Returns the current textual content and the URL for a stylesheet.
+	// Returns the current textual content for a stylesheet.
 	GetStyleSheetText(context.Context, *css.GetStyleSheetTextArgs) (*css.GetStyleSheetTextReply, error)
 
 	// Command SetEffectivePropertyValueForNode
@@ -1046,6 +1046,15 @@ type Debugger interface {
 	// survive page reloads.
 	SetBreakpointByURL(context.Context, *debugger.SetBreakpointByURLArgs) (*debugger.SetBreakpointByURLReply, error)
 
+	// Command SetBreakpointOnFunctionCall
+	//
+	// Sets JavaScript breakpoint before each call to the given function.
+	// If another function was created from the same source as a given one,
+	// calling it will also trigger the breakpoint.
+	//
+	// Note: This command is experimental.
+	SetBreakpointOnFunctionCall(context.Context, *debugger.SetBreakpointOnFunctionCallArgs) (*debugger.SetBreakpointOnFunctionCallReply, error)
+
 	// Command SetBreakpointsActive
 	//
 	// Activates / deactivates all breakpoints on the page.
@@ -1765,6 +1774,17 @@ type Network interface {
 	// Note: This command is experimental.
 	GetResponseBodyForInterception(context.Context, *network.GetResponseBodyForInterceptionArgs) (*network.GetResponseBodyForInterceptionReply, error)
 
+	// Command TakeResponseBodyForInterceptionAsStream
+	//
+	// Returns a handle to the stream representing the response body. Note
+	// that after this command, the intercepted request can't be continued
+	// as is -- you either need to cancel it or to provide the response
+	// body. The stream only supports sequential read, IO.read will fail if
+	// the position is specified.
+	//
+	// Note: This command is experimental.
+	TakeResponseBodyForInterceptionAsStream(context.Context, *network.TakeResponseBodyForInterceptionAsStreamArgs) (*network.TakeResponseBodyForInterceptionAsStreamReply, error)
+
 	// Command ReplayXHR
 	//
 	// This method sends a new XMLHttpRequest which is identical to the
@@ -2215,6 +2235,22 @@ type Page interface {
 	//
 	// Note: This command is experimental.
 	Crash(context.Context) error
+
+	// Command Close
+	//
+	// Tries to close page, running its beforeunload hooks, if any.
+	//
+	// Note: This command is experimental.
+	Close(context.Context) error
+
+	// Command SetWebLifecycleState
+	//
+	// Tries to update the web lifecycle state of the page. It will
+	// transition the page to the given state according to:
+	// https://github.com/WICG/web-lifecycle/
+	//
+	// Note: This command is experimental.
+	SetWebLifecycleState(context.Context, *page.SetWebLifecycleStateArgs) error
 
 	// Command StopScreencast
 	//

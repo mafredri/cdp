@@ -509,3 +509,18 @@ func (a *StartScreencastArgs) SetEveryNthFrame(everyNthFrame int) *StartScreenca
 	a.EveryNthFrame = &everyNthFrame
 	return a
 }
+
+// SetWebLifecycleStateArgs represents the arguments for SetWebLifecycleState in the Page domain.
+type SetWebLifecycleStateArgs struct {
+	// State Target lifecycle state
+	//
+	// Values: "frozen", "active".
+	State string `json:"state"`
+}
+
+// NewSetWebLifecycleStateArgs initializes SetWebLifecycleStateArgs with the required arguments.
+func NewSetWebLifecycleStateArgs(state string) *SetWebLifecycleStateArgs {
+	args := new(SetWebLifecycleStateArgs)
+	args.State = state
+	return args
+}
