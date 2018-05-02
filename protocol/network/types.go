@@ -225,8 +225,8 @@ type ResourceTiming struct {
 	DNSEnd       float64 `json:"dnsEnd"`       // Finished DNS address resolve.
 	ConnectStart float64 `json:"connectStart"` // Started connecting to the remote host.
 	ConnectEnd   float64 `json:"connectEnd"`   // Connected to the remote host.
-	SslStart     float64 `json:"sslStart"`     // Started SSL handshake.
-	SslEnd       float64 `json:"sslEnd"`       // Finished SSL handshake.
+	SSLStart     float64 `json:"sslStart"`     // Started SSL handshake.
+	SSLEnd       float64 `json:"sslEnd"`       // Finished SSL handshake.
 	// WorkerStart Started running ServiceWorker.
 	//
 	// Note: This property is experimental.
@@ -309,7 +309,7 @@ type SecurityDetails struct {
 	KeyExchange                       string                            `json:"keyExchange"`                       // Key Exchange used by the connection, or the empty string if not applicable.
 	KeyExchangeGroup                  *string                           `json:"keyExchangeGroup,omitempty"`        // (EC)DH group used by the connection, if applicable.
 	Cipher                            string                            `json:"cipher"`                            // Cipher name.
-	Mac                               *string                           `json:"mac,omitempty"`                     // TLS MAC. Note that AEAD ciphers do not have separate MACs.
+	MAC                               *string                           `json:"mac,omitempty"`                     // TLS MAC. Note that AEAD ciphers do not have separate MACs.
 	CertificateID                     security.CertificateID            `json:"certificateId"`                     // Certificate ID value.
 	SubjectName                       string                            `json:"subjectName"`                       // Certificate subject name.
 	SanList                           []string                          `json:"sanList"`                           // Subject Alternative Name (SAN) DNS names and IP addresses.

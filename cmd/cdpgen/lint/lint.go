@@ -127,4 +127,6 @@ var commonInitialisms = map[string]bool{
 
 	"DOM": true,
 	"GPU": true,
+	"SSL": true,
+	"MAC": true,
 }
