@@ -11,6 +11,7 @@ import (
 // to be called before loading the next.
 type syncMessageStore struct {
 	mu      sync.Mutex
+	conn    *Conn // Used as validation.
 	writers map[string]streamWriter
 	backlog []*message
 	pending bool
@@ -26,6 +27,12 @@ func newSyncMessageStore() *syncMessageStore {
 func (s *syncMessageStore) subscribe(method string, w streamWriter, conn *Conn) (unsubscribe func(), err error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+
+	if s.conn == nil {
+		s.conn = conn
+	} else if conn != s.conn {
+		return nil, fmt.Errorf("rpcc: same Conn must be used")
+	}
 
 	if _, ok := s.writers[method]; ok {
 		return nil, fmt.Errorf("%s already subscribed", method)
@@ -126,57 +133,64 @@ func Sync(s ...Stream) (err error) {
 	}
 
 	store := newSyncMessageStore()
+	var swap []func(bool) func()
+
 	defer func() {
+		// Perform swap, mutex lock (streamClient.mu) is still active.
+		for _, s := range swap {
+			defer s(err == nil)()
+		}
 		if err != nil {
 			store.close()
 		}
 	}()
 
-	var conn *Conn
-	var swap []func()
-
 	for _, ss := range s {
-		sc, ok := ss.(*streamClient)
-		if !ok {
-			return fmt.Errorf("rpcc: Sync: bad Stream type: %T", ss)
-		}
-		if conn == nil {
-			conn = sc.conn
-		}
-		if sc.conn != conn {
-			return errors.New("rpcc: Sync: all Streams must share same Conn")
-		}
-
-		// The Stream lock must be held until the
-		// swap has been done for all streams.
-		sc.mu.Lock()
-		defer sc.mu.Unlock()
-
-		if sc.remove == nil {
-			return errors.New("rpcc: Sync: Stream is closed")
-		}
-
-		// Allow store to manage messages to streamClient.
-		unsub, err := store.subscribe(sc.method, sc, sc.conn)
+		swapFn, err := ss.Sync(store)
 		if err != nil {
-			return errors.New("rpcc: Sync: " + err.Error())
+			return err
 		}
-
-		// Delay listener swap until all Streams have been
-		// processed so that we can abort on error.
-		swap = append(swap, func() {
-			sc.remove()       // Prevent direct events from Conn.
-			sc.remove = unsub // Remove from store on Close.
-
-			// Clear stream messages to prevent sync issues.
-			sc.mbuf.clear()
-		})
-	}
-
-	// Perform swap, mutex lock (streamClient.mu) is still active.
-	for _, s := range swap {
-		s()
+		swap = append(swap, swapFn)
 	}
 
 	return nil
+}
+
+func (s *streamClient) Sync(storer interface{}) (activate func(bool) func(), err error) {
+	// The Stream lock must be held until the
+	// swap has been done for all streams.
+	s.mu.Lock()
+	defer func() {
+		if err != nil {
+			s.mu.Unlock()
+		}
+	}()
+
+	store, ok := storer.(*syncMessageStore)
+	if !ok {
+		return nil, fmt.Errorf("streamClient: Sync: bad store %T must be of type *syncMessageStore", storer)
+	}
+
+	if s.remove == nil {
+		return nil, errors.New("rpcc: Sync: Stream is closed")
+	}
+
+	// Allow store to manage messages to streamClient.
+	unsub, err := store.subscribe(s.method, s, s.conn)
+	if err != nil {
+		return nil, errors.New("rpcc: Sync: " + err.Error())
+	}
+
+	// Delay listener swap until all Streams have been
+	// processed so that we can abort on error.
+	return func(ok bool) func() {
+		if ok {
+			s.remove()       // Prevent direct events from Conn.
+			s.remove = unsub // Remove from store on Close.
+
+			// Clear stream messages to prevent sync issues.
+			s.mbuf.clear()
+		}
+		return func() { s.mu.Unlock() }
+	}, nil
 }

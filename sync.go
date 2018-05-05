@@ -1,18 +1,8 @@
 package cdp
 
 import (
-	"fmt"
-
 	"github.com/mafredri/cdp/rpcc"
 )
-
-type eventClient interface {
-	rpcc.Stream
-}
-
-type getStreamer interface {
-	GetStream() rpcc.Stream
-}
 
 // Sync takes two or more event clients and sets them into synchronous operation,
 // relative to each other. This operation cannot be undone. If an error is
@@ -30,14 +20,6 @@ type getStreamer interface {
 // order of arrival. If an event for both A and B is triggered, in that order,
 // it will not be possible to receive the event from B before the event from A
 // has been received.
-func Sync(c ...eventClient) error {
-	var s []rpcc.Stream
-	for _, cc := range c {
-		cs, ok := cc.(getStreamer)
-		if !ok {
-			return fmt.Errorf("cdp: Sync: bad eventClient type: %T", cc)
-		}
-		s = append(s, cs.GetStream())
-	}
-	return rpcc.Sync(s...)
+func Sync(eventClients ...rpcc.Stream) error {
+	return rpcc.Sync(eventClients...)
 }
