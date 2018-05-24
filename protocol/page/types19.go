@@ -19,20 +19,21 @@ type ResourceType = internal.PageResourceType
 
 // ResourceType as enums.
 const (
-	ResourceTypeNotSet      ResourceType = ""
-	ResourceTypeDocument    ResourceType = "Document"
-	ResourceTypeStylesheet  ResourceType = "Stylesheet"
-	ResourceTypeImage       ResourceType = "Image"
-	ResourceTypeMedia       ResourceType = "Media"
-	ResourceTypeFont        ResourceType = "Font"
-	ResourceTypeScript      ResourceType = "Script"
-	ResourceTypeTextTrack   ResourceType = "TextTrack"
-	ResourceTypeXHR         ResourceType = "XHR"
-	ResourceTypeFetch       ResourceType = "Fetch"
-	ResourceTypeEventSource ResourceType = "EventSource"
-	ResourceTypeWebSocket   ResourceType = "WebSocket"
-	ResourceTypeManifest    ResourceType = "Manifest"
-	ResourceTypeOther       ResourceType = "Other"
+	ResourceTypeNotSet         ResourceType = ""
+	ResourceTypeDocument       ResourceType = "Document"
+	ResourceTypeStylesheet     ResourceType = "Stylesheet"
+	ResourceTypeImage          ResourceType = "Image"
+	ResourceTypeMedia          ResourceType = "Media"
+	ResourceTypeFont           ResourceType = "Font"
+	ResourceTypeScript         ResourceType = "Script"
+	ResourceTypeTextTrack      ResourceType = "TextTrack"
+	ResourceTypeXHR            ResourceType = "XHR"
+	ResourceTypeFetch          ResourceType = "Fetch"
+	ResourceTypeEventSource    ResourceType = "EventSource"
+	ResourceTypeWebSocket      ResourceType = "WebSocket"
+	ResourceTypeManifest       ResourceType = "Manifest"
+	ResourceTypeSignedExchange ResourceType = "SignedExchange"
+	ResourceTypeOther          ResourceType = "Other"
 )
 
 // FrameID Unique frame identifier.

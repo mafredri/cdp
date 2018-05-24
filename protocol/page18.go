@@ -9,7 +9,7 @@ type PageResourceType string
 
 func (e PageResourceType) Valid() bool {
 	switch e {
-	case "Document", "Stylesheet", "Image", "Media", "Font", "Script", "TextTrack", "XHR", "Fetch", "EventSource", "WebSocket", "Manifest", "Other":
+	case "Document", "Stylesheet", "Image", "Media", "Font", "Script", "TextTrack", "XHR", "Fetch", "EventSource", "WebSocket", "Manifest", "SignedExchange", "Other":
 		return true
 	default:
 		return false

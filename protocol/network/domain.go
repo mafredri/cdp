@@ -574,6 +574,27 @@ func (c *resourceChangedPriorityClient) Recv() (*ResourceChangedPriorityReply, e
 	return event, nil
 }
 
+func (d *domainClient) SignedExchangeReceived(ctx context.Context) (SignedExchangeReceivedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.signedExchangeReceived", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &signedExchangeReceivedClient{Stream: s}, nil
+}
+
+type signedExchangeReceivedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *signedExchangeReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *signedExchangeReceivedClient) Recv() (*SignedExchangeReceivedReply, error) {
+	event := new(SignedExchangeReceivedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "SignedExchangeReceived Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) ResponseReceived(ctx context.Context) (ResponseReceivedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Network.responseReceived", d.conn)
 	if err != nil {

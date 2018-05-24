@@ -22,6 +22,26 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// Disable invokes the DOMSnapshot method. Disables DOM snapshot agent for the
+// given page.
+func (d *domainClient) Disable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "DOMSnapshot.disable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "DOMSnapshot", Op: "Disable", Err: err}
+	}
+	return
+}
+
+// Enable invokes the DOMSnapshot method. Enables DOM snapshot agent for the
+// given page.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "DOMSnapshot.enable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "DOMSnapshot", Op: "Enable", Err: err}
+	}
+	return
+}
+
 // GetSnapshot invokes the DOMSnapshot method. Returns a document snapshot,
 // including the full DOM tree of the root node (including iframes, template
 // contents, and imported documents) in a flattened array, as well as layout

@@ -38,11 +38,13 @@ const (
 	ErrorReasonNameNotResolved      ErrorReason = "NameNotResolved"
 	ErrorReasonInternetDisconnected ErrorReason = "InternetDisconnected"
 	ErrorReasonAddressUnreachable   ErrorReason = "AddressUnreachable"
+	ErrorReasonBlockedByClient      ErrorReason = "BlockedByClient"
+	ErrorReasonBlockedByResponse    ErrorReason = "BlockedByResponse"
 )
 
 func (e ErrorReason) Valid() bool {
 	switch e {
-	case "Failed", "Aborted", "TimedOut", "AccessDenied", "ConnectionClosed", "ConnectionReset", "ConnectionRefused", "ConnectionAborted", "ConnectionFailed", "NameNotResolved", "InternetDisconnected", "AddressUnreachable":
+	case "Failed", "Aborted", "TimedOut", "AccessDenied", "ConnectionClosed", "ConnectionReset", "ConnectionRefused", "ConnectionAborted", "ConnectionFailed", "NameNotResolved", "InternetDisconnected", "AddressUnreachable", "BlockedByClient", "BlockedByResponse":
 		return true
 	default:
 		return false
@@ -351,17 +353,18 @@ type BlockedReason string
 // BlockedReason as enums.
 const (
 	BlockedReasonNotSet            BlockedReason = ""
+	BlockedReasonOther             BlockedReason = "other"
 	BlockedReasonCsp               BlockedReason = "csp"
 	BlockedReasonMixedContent      BlockedReason = "mixed-content"
 	BlockedReasonOrigin            BlockedReason = "origin"
 	BlockedReasonInspector         BlockedReason = "inspector"
 	BlockedReasonSubresourceFilter BlockedReason = "subresource-filter"
-	BlockedReasonOther             BlockedReason = "other"
+	BlockedReasonContentType       BlockedReason = "content-type"
 )
 
 func (e BlockedReason) Valid() bool {
 	switch e {
-	case "csp", "mixed-content", "origin", "inspector", "subresource-filter", "other":
+	case "other", "csp", "mixed-content", "origin", "inspector", "subresource-filter", "content-type":
 		return true
 	default:
 		return false
@@ -421,10 +424,10 @@ type WebSocketFrame struct {
 type Initiator struct {
 	// Type Type of this initiator.
 	//
-	// Values: "parser", "script", "preload", "other".
+	// Values: "parser", "script", "preload", "SignedExchange", "other".
 	Type       string              `json:"type"`
 	Stack      *runtime.StackTrace `json:"stack,omitempty"`      // Initiator JavaScript stack trace, set for Script only.
-	URL        *string             `json:"url,omitempty"`        // Initiator URL, set for Parser type or for Script type (when script is importing module).
+	URL        *string             `json:"url,omitempty"`        // Initiator URL, set for Parser type or for Script type (when script is importing module) or for SignedExchange type.
 	LineNumber *float64            `json:"lineNumber,omitempty"` // Initiator line number, set for Parser type or for Script type (when script is importing module) (0-based).
 }
 
@@ -508,4 +511,39 @@ func (e InterceptionStage) Valid() bool {
 
 func (e InterceptionStage) String() string {
 	return string(e)
+}
+
+// SignedExchangeSignature Information about a signed exchange signature.
+// https://wicg.github.io/webpackage/draft-yasskin-httpbis-origin-signed-exchanges-impl.html#rfc.section.3.1
+//
+// Note: This type is experimental.
+type SignedExchangeSignature struct {
+	Label       string `json:"label"`       // Signed exchange signature label.
+	Integrity   string `json:"integrity"`   // Signed exchange signature integrity.
+	CertURL     string `json:"certUrl"`     // Signed exchange signature cert Url.
+	ValidityURL string `json:"validityUrl"` // Signed exchange signature validity Url.
+	Date        int    `json:"date"`        // Signed exchange signature date.
+	Expires     int    `json:"expires"`     // Signed exchange signature expires.
+}
+
+// SignedExchangeHeader Information about a signed exchange header.
+// https://wicg.github.io/webpackage/draft-yasskin-httpbis-origin-signed-exchanges-impl.html#cbor-representation
+//
+// Note: This type is experimental.
+type SignedExchangeHeader struct {
+	RequestURL      string                    `json:"requestUrl"`      // Signed exchange request URL.
+	RequestMethod   string                    `json:"requestMethod"`   // Signed exchange request method.
+	ResponseCode    int                       `json:"responseCode"`    // Signed exchange response code.
+	ResponseHeaders Headers                   `json:"responseHeaders"` // Signed exchange response headers.
+	Signatures      []SignedExchangeSignature `json:"signatures"`      // Signed exchange response signature.
+}
+
+// SignedExchangeInfo Information about a signed exchange response.
+//
+// Note: This type is experimental.
+type SignedExchangeInfo struct {
+	OuterResponse   Response              `json:"outerResponse"`             // The outer response of signed HTTP exchange which was received from network.
+	Header          *SignedExchangeHeader `json:"header,omitempty"`          // Information about the signed exchange header.
+	SecurityDetails *SecurityDetails      `json:"securityDetails,omitempty"` // Security details for the signed exchange header.
+	Errors          []string              `json:"errors,omitempty"`          // Errors occurred while handling the signed exchagne.
 }

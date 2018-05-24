@@ -163,7 +163,7 @@ const (
 	AXPropertyNameRelevant         AXPropertyName = "relevant"
 	AXPropertyNameRoot             AXPropertyName = "root"
 	AXPropertyNameAutocomplete     AXPropertyName = "autocomplete"
-	AXPropertyNameHaspopup         AXPropertyName = "haspopup"
+	AXPropertyNameHasPopup         AXPropertyName = "hasPopup"
 	AXPropertyNameLevel            AXPropertyName = "level"
 	AXPropertyNameMultiselectable  AXPropertyName = "multiselectable"
 	AXPropertyNameOrientation      AXPropertyName = "orientation"
@@ -190,7 +190,7 @@ const (
 
 func (e AXPropertyName) Valid() bool {
 	switch e {
-	case "busy", "disabled", "hidden", "hiddenRoot", "invalid", "keyshortcuts", "roledescription", "live", "atomic", "relevant", "root", "autocomplete", "haspopup", "level", "multiselectable", "orientation", "multiline", "readonly", "required", "valuemin", "valuemax", "valuetext", "checked", "expanded", "modal", "pressed", "selected", "activedescendant", "controls", "describedby", "details", "errormessage", "flowto", "labelledby", "owns":
+	case "busy", "disabled", "hidden", "hiddenRoot", "invalid", "keyshortcuts", "roledescription", "live", "atomic", "relevant", "root", "autocomplete", "hasPopup", "level", "multiselectable", "orientation", "multiline", "readonly", "required", "valuemin", "valuemax", "valuetext", "checked", "expanded", "modal", "pressed", "selected", "activedescendant", "controls", "describedby", "details", "errormessage", "flowto", "labelledby", "owns":
 		return true
 	default:
 		return false

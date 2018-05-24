@@ -89,6 +89,21 @@ type ResourceChangedPriorityReply struct {
 	Timestamp   MonotonicTime    `json:"timestamp"`   // Timestamp.
 }
 
+// SignedExchangeReceivedClient is a client for SignedExchangeReceived events.
+// Fired when a signed exchange was received over the network
+type SignedExchangeReceivedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*SignedExchangeReceivedReply, error)
+	rpcc.Stream
+}
+
+// SignedExchangeReceivedReply is the reply for SignedExchangeReceived events.
+type SignedExchangeReceivedReply struct {
+	RequestID RequestID          `json:"requestId"` // Request identifier.
+	Info      SignedExchangeInfo `json:"info"`      // Information about the signed exchange response.
+}
+
 // ResponseReceivedClient is a client for ResponseReceived events. Fired when
 // HTTP response is available.
 type ResponseReceivedClient interface {

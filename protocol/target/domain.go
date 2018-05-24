@@ -75,6 +75,17 @@ func (d *domainClient) CreateBrowserContext(ctx context.Context) (reply *CreateB
 	return
 }
 
+// GetBrowserContexts invokes the Target method. Returns all browser contexts
+// created with `Target.createBrowserContext` method.
+func (d *domainClient) GetBrowserContexts(ctx context.Context) (reply *GetBrowserContextsReply, err error) {
+	reply = new(GetBrowserContextsReply)
+	err = rpcc.Invoke(ctx, "Target.getBrowserContexts", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Target", Op: "GetBrowserContexts", Err: err}
+	}
+	return
+}
+
 // CreateTarget invokes the Target method. Creates a new page.
 func (d *domainClient) CreateTarget(ctx context.Context, args *CreateTargetArgs) (reply *CreateTargetReply, err error) {
 	reply = new(CreateTargetReply)
@@ -102,14 +113,14 @@ func (d *domainClient) DetachFromTarget(ctx context.Context, args *DetachFromTar
 	return
 }
 
-// DisposeBrowserContext invokes the Target method. Deletes a BrowserContext,
-// will fail of any open page uses it.
-func (d *domainClient) DisposeBrowserContext(ctx context.Context, args *DisposeBrowserContextArgs) (reply *DisposeBrowserContextReply, err error) {
-	reply = new(DisposeBrowserContextReply)
+// DisposeBrowserContext invokes the Target method. Deletes a BrowserContext.
+// All the belonging pages will be closed without calling their beforeunload
+// hooks.
+func (d *domainClient) DisposeBrowserContext(ctx context.Context, args *DisposeBrowserContextArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.disposeBrowserContext", args, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Target.disposeBrowserContext", args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.disposeBrowserContext", nil, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Target.disposeBrowserContext", nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "DisposeBrowserContext", Err: err}

@@ -39,4 +39,5 @@ type DOMNode struct {
 	IsClickable           *bool                       `json:"isClickable,omitempty"`           // Whether this DOM node responds to mouse clicks. This includes nodes that have had click event listeners attached via JavaScript as well as anchor tags that naturally navigate when clicked.
 	EventListeners        []domdebugger.EventListener `json:"eventListeners,omitempty"`        // Details of the node's event listeners, if any.
 	CurrentSourceURL      *string                     `json:"currentSourceURL,omitempty"`      // The selected url for nodes with a srcset attribute.
+	OriginURL             *string                     `json:"originURL,omitempty"`             // The url of the script (if any) that generates this node.
 }

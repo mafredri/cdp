@@ -53,12 +53,17 @@ type CreateBrowserContextReply struct {
 	BrowserContextID BrowserContextID `json:"browserContextId"` // The id of the context created.
 }
 
+// GetBrowserContextsReply represents the return values for GetBrowserContexts in the Target domain.
+type GetBrowserContextsReply struct {
+	BrowserContextIDs []BrowserContextID `json:"browserContextIds"` // An array of browser context ids.
+}
+
 // CreateTargetArgs represents the arguments for CreateTarget in the Target domain.
 type CreateTargetArgs struct {
 	URL              string            `json:"url"`                        // The initial URL the page will be navigated to.
 	Width            *int              `json:"width,omitempty"`            // Frame width in DIP (headless chrome only).
 	Height           *int              `json:"height,omitempty"`           // Frame height in DIP (headless chrome only).
-	BrowserContextID *BrowserContextID `json:"browserContextId,omitempty"` // The browser context to create the page in (headless chrome only).
+	BrowserContextID *BrowserContextID `json:"browserContextId,omitempty"` // The browser context to create the page in.
 	// EnableBeginFrameControl Whether BeginFrames for this target will be
 	// controlled via DevTools (headless chrome only, not supported on
 	// MacOS yet, false by default).
@@ -89,7 +94,7 @@ func (a *CreateTargetArgs) SetHeight(height int) *CreateTargetArgs {
 }
 
 // SetBrowserContextID sets the BrowserContextID optional argument.
-// The browser context to create the page in (headless chrome only).
+// The browser context to create the page in.
 func (a *CreateTargetArgs) SetBrowserContextID(browserContextID BrowserContextID) *CreateTargetArgs {
 	a.BrowserContextID = &browserContextID
 	return a
@@ -152,11 +157,6 @@ func NewDisposeBrowserContextArgs(browserContextID BrowserContextID) *DisposeBro
 	args := new(DisposeBrowserContextArgs)
 	args.BrowserContextID = browserContextID
 	return args
-}
-
-// DisposeBrowserContextReply represents the return values for DisposeBrowserContext in the Target domain.
-type DisposeBrowserContextReply struct {
-	Success bool `json:"success"` // No description.
 }
 
 // GetTargetInfoArgs represents the arguments for GetTargetInfo in the Target domain.

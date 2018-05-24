@@ -842,6 +842,16 @@ type DOMDebugger interface {
 //
 // Note: This domain is experimental.
 type DOMSnapshot interface {
+	// Command Disable
+	//
+	// Disables DOM snapshot agent for the given page.
+	Disable(context.Context) error
+
+	// Command Enable
+	//
+	// Enables DOM snapshot agent for the given page.
+	Enable(context.Context) error
+
 	// Command GetSnapshot
 	//
 	// Returns a document snapshot, including the full DOM tree of the
@@ -1292,13 +1302,6 @@ type HeadlessExperimental interface {
 	// --run-all-compositor-stages-before-draw, see also
 	// https://goo.gl/3zHXhB for more background.
 	BeginFrame(context.Context, *headlessexperimental.BeginFrameArgs) (*headlessexperimental.BeginFrameReply, error)
-
-	// Command EnterDeterministicMode
-	//
-	// Puts the browser into deterministic mode. Only effective for
-	// subsequently created web contents. Only supported in headless mode.
-	// Once set there's no way of leaving deterministic mode.
-	EnterDeterministicMode(context.Context, *headlessexperimental.EnterDeterministicModeArgs) error
 
 	// Command Disable
 	//
@@ -1903,6 +1906,13 @@ type Network interface {
 	//
 	// Note: This event is experimental.
 	ResourceChangedPriority(context.Context) (network.ResourceChangedPriorityClient, error)
+
+	// Event SignedExchangeReceived
+	//
+	// Fired when a signed exchange was received over the network
+	//
+	// Note: This event is experimental.
+	SignedExchangeReceived(context.Context) (network.SignedExchangeReceivedClient, error)
 
 	// Event ResponseReceived
 	//
@@ -2819,6 +2829,14 @@ type Target interface {
 	// Note: This command is experimental.
 	CreateBrowserContext(context.Context) (*target.CreateBrowserContextReply, error)
 
+	// Command GetBrowserContexts
+	//
+	// Returns all browser contexts created with
+	// `Target.createBrowserContext` method.
+	//
+	// Note: This command is experimental.
+	GetBrowserContexts(context.Context) (*target.GetBrowserContextsReply, error)
+
 	// Command CreateTarget
 	//
 	// Creates a new page.
@@ -2831,10 +2849,11 @@ type Target interface {
 
 	// Command DisposeBrowserContext
 	//
-	// Deletes a BrowserContext, will fail of any open page uses it.
+	// Deletes a BrowserContext. All the belonging pages will be closed
+	// without calling their beforeunload hooks.
 	//
 	// Note: This command is experimental.
-	DisposeBrowserContext(context.Context, *target.DisposeBrowserContextArgs) (*target.DisposeBrowserContextReply, error)
+	DisposeBrowserContext(context.Context, *target.DisposeBrowserContextArgs) error
 
 	// Command GetTargetInfo
 	//

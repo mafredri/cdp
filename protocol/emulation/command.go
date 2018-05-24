@@ -4,8 +4,8 @@ package emulation
 
 import (
 	"github.com/mafredri/cdp/protocol/dom"
+	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/page"
-	"github.com/mafredri/cdp/protocol/runtime"
 )
 
 // CanEmulateReply represents the return values for CanEmulate in the Emulation domain.
@@ -300,10 +300,11 @@ func (a *SetTouchEmulationEnabledArgs) SetMaxTouchPoints(maxTouchPoints int) *Se
 
 // SetVirtualTimePolicyArgs represents the arguments for SetVirtualTimePolicy in the Emulation domain.
 type SetVirtualTimePolicyArgs struct {
-	Policy                            VirtualTimePolicy `json:"policy"`                                      // No description.
-	Budget                            *float64          `json:"budget,omitempty"`                            // If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
-	MaxVirtualTimeTaskStarvationCount *int              `json:"maxVirtualTimeTaskStarvationCount,omitempty"` // If set this specifies the maximum number of tasks that can be run before virtual is forced forwards to prevent deadlock.
-	WaitForNavigation                 *bool             `json:"waitForNavigation,omitempty"`                 // If set the virtual time policy change should be deferred until any frame starts navigating. Note any previous deferred policy change is superseded.
+	Policy                            VirtualTimePolicy      `json:"policy"`                                      // No description.
+	Budget                            *float64               `json:"budget,omitempty"`                            // If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
+	MaxVirtualTimeTaskStarvationCount *int                   `json:"maxVirtualTimeTaskStarvationCount,omitempty"` // If set this specifies the maximum number of tasks that can be run before virtual is forced forwards to prevent deadlock.
+	WaitForNavigation                 *bool                  `json:"waitForNavigation,omitempty"`                 // If set the virtual time policy change should be deferred until any frame starts navigating. Note any previous deferred policy change is superseded.
+	InitialVirtualTime                network.TimeSinceEpoch `json:"initialVirtualTime,omitempty"`                // If set, base::Time::Now will be overridden to initially return this value.
 }
 
 // NewSetVirtualTimePolicyArgs initializes SetVirtualTimePolicyArgs with the required arguments.
@@ -338,10 +339,17 @@ func (a *SetVirtualTimePolicyArgs) SetWaitForNavigation(waitForNavigation bool) 
 	return a
 }
 
+// SetInitialVirtualTime sets the InitialVirtualTime optional argument.
+// If set, base::Time::Now will be overridden to initially return this
+// value.
+func (a *SetVirtualTimePolicyArgs) SetInitialVirtualTime(initialVirtualTime network.TimeSinceEpoch) *SetVirtualTimePolicyArgs {
+	a.InitialVirtualTime = initialVirtualTime
+	return a
+}
+
 // SetVirtualTimePolicyReply represents the return values for SetVirtualTimePolicy in the Emulation domain.
 type SetVirtualTimePolicyReply struct {
-	VirtualTimeBase      runtime.Timestamp `json:"virtualTimeBase"`      // Absolute timestamp at which virtual time was first enabled (milliseconds since epoch).
-	VirtualTimeTicksBase float64           `json:"virtualTimeTicksBase"` // Absolute timestamp at which virtual time was first enabled (up time in milliseconds).
+	VirtualTimeTicksBase float64 `json:"virtualTimeTicksBase"` // Absolute timestamp at which virtual time was first enabled (up time in milliseconds).
 }
 
 // SetVisibleSizeArgs represents the arguments for SetVisibleSize in the Emulation domain.

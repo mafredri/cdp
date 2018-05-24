@@ -39,22 +39,6 @@ func (d *domainClient) BeginFrame(ctx context.Context, args *BeginFrameArgs) (re
 	return
 }
 
-// EnterDeterministicMode invokes the HeadlessExperimental method. Puts the
-// browser into deterministic mode. Only effective for subsequently created web
-// contents. Only supported in headless mode. Once set there's no way of
-// leaving deterministic mode.
-func (d *domainClient) EnterDeterministicMode(ctx context.Context, args *EnterDeterministicModeArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "HeadlessExperimental.enterDeterministicMode", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "HeadlessExperimental.enterDeterministicMode", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "HeadlessExperimental", Op: "EnterDeterministicMode", Err: err}
-	}
-	return
-}
-
 // Disable invokes the HeadlessExperimental method. Disables headless events
 // for the target.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
