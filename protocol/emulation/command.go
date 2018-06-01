@@ -172,6 +172,18 @@ func (a *SetDeviceMetricsOverrideArgs) SetViewport(viewport page.Viewport) *SetD
 	return a
 }
 
+// SetScrollbarsHiddenArgs represents the arguments for SetScrollbarsHidden in the Emulation domain.
+type SetScrollbarsHiddenArgs struct {
+	Hidden bool `json:"hidden"` // Whether scrollbars should be always hidden.
+}
+
+// NewSetScrollbarsHiddenArgs initializes SetScrollbarsHiddenArgs with the required arguments.
+func NewSetScrollbarsHiddenArgs(hidden bool) *SetScrollbarsHiddenArgs {
+	args := new(SetScrollbarsHiddenArgs)
+	args.Hidden = hidden
+	return args
+}
+
 // SetEmitTouchEventsForMouseArgs represents the arguments for SetEmitTouchEventsForMouse in the Emulation domain.
 type SetEmitTouchEventsForMouseArgs struct {
 	Enabled bool `json:"enabled"` // Whether touch emulation based on mouse input should be enabled.
@@ -364,4 +376,32 @@ func NewSetVisibleSizeArgs(width int, height int) *SetVisibleSizeArgs {
 	args.Width = width
 	args.Height = height
 	return args
+}
+
+// SetUserAgentOverrideArgs represents the arguments for SetUserAgentOverride in the Emulation domain.
+type SetUserAgentOverrideArgs struct {
+	UserAgent      string  `json:"userAgent"`                // User agent to use.
+	AcceptLanguage *string `json:"acceptLanguage,omitempty"` // Browser langugage to emulate.
+	Platform       *string `json:"platform,omitempty"`       // The platform navigator.platform should return.
+}
+
+// NewSetUserAgentOverrideArgs initializes SetUserAgentOverrideArgs with the required arguments.
+func NewSetUserAgentOverrideArgs(userAgent string) *SetUserAgentOverrideArgs {
+	args := new(SetUserAgentOverrideArgs)
+	args.UserAgent = userAgent
+	return args
+}
+
+// SetAcceptLanguage sets the AcceptLanguage optional argument.
+// Browser langugage to emulate.
+func (a *SetUserAgentOverrideArgs) SetAcceptLanguage(acceptLanguage string) *SetUserAgentOverrideArgs {
+	a.AcceptLanguage = &acceptLanguage
+	return a
+}
+
+// SetPlatform sets the Platform optional argument. The platform
+// navigator.platform should return.
+func (a *SetUserAgentOverrideArgs) SetPlatform(platform string) *SetUserAgentOverrideArgs {
+	a.Platform = &platform
+	return a
 }

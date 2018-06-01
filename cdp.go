@@ -1206,6 +1206,11 @@ type Emulation interface {
 	// media query results).
 	SetDeviceMetricsOverride(context.Context, *emulation.SetDeviceMetricsOverrideArgs) error
 
+	// Command SetScrollbarsHidden
+	//
+	// Note: This command is experimental.
+	SetScrollbarsHidden(context.Context, *emulation.SetScrollbarsHiddenArgs) error
+
 	// Command SetEmitTouchEventsForMouse
 	//
 	// Note: This command is experimental.
@@ -1224,7 +1229,8 @@ type Emulation interface {
 
 	// Command SetNavigatorOverrides
 	//
-	// Overrides value returned by the javascript navigator object.
+	// Deprecated: Overrides value returned by the javascript navigator
+	// object.
 	//
 	// Note: This command is experimental.
 	SetNavigatorOverrides(context.Context, *emulation.SetNavigatorOverridesArgs) error
@@ -1264,6 +1270,11 @@ type Emulation interface {
 	//
 	// Note: This command is experimental.
 	SetVisibleSize(context.Context, *emulation.SetVisibleSizeArgs) error
+
+	// Command SetUserAgentOverride
+	//
+	// Allows overriding user agent with the given string.
+	SetUserAgentOverride(context.Context, *emulation.SetUserAgentOverrideArgs) error
 
 	// Event VirtualTimeAdvanced
 	//
@@ -1856,11 +1867,6 @@ type Network interface {
 	//
 	// Note: This command is experimental.
 	SetRequestInterception(context.Context, *network.SetRequestInterceptionArgs) error
-
-	// Command SetUserAgentOverride
-	//
-	// Allows overriding user agent with the given string.
-	SetUserAgentOverride(context.Context, *network.SetUserAgentOverrideArgs) error
 
 	// Event DataReceived
 	//

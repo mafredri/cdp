@@ -518,12 +518,15 @@ func (e InterceptionStage) String() string {
 //
 // Note: This type is experimental.
 type SignedExchangeSignature struct {
-	Label       string `json:"label"`       // Signed exchange signature label.
-	Integrity   string `json:"integrity"`   // Signed exchange signature integrity.
-	CertURL     string `json:"certUrl"`     // Signed exchange signature cert Url.
-	ValidityURL string `json:"validityUrl"` // Signed exchange signature validity Url.
-	Date        int    `json:"date"`        // Signed exchange signature date.
-	Expires     int    `json:"expires"`     // Signed exchange signature expires.
+	Label        string   `json:"label"`                  // Signed exchange signature label.
+	Signature    string   `json:"signature"`              // The hex string of signed exchange signature.
+	Integrity    string   `json:"integrity"`              // Signed exchange signature integrity.
+	CertURL      *string  `json:"certUrl,omitempty"`      // Signed exchange signature cert Url.
+	CertSha256   *string  `json:"certSha256,omitempty"`   // The hex string of signed exchange signature cert sha256.
+	ValidityURL  string   `json:"validityUrl"`            // Signed exchange signature validity Url.
+	Date         int      `json:"date"`                   // Signed exchange signature date.
+	Expires      int      `json:"expires"`                // Signed exchange signature expires.
+	Certificates []string `json:"certificates,omitempty"` // The encoded certificates.
 }
 
 // SignedExchangeHeader Information about a signed exchange header.
@@ -538,6 +541,44 @@ type SignedExchangeHeader struct {
 	Signatures      []SignedExchangeSignature `json:"signatures"`      // Signed exchange response signature.
 }
 
+// SignedExchangeErrorField Field type for a signed exchange related error.
+//
+// Note: This type is experimental.
+type SignedExchangeErrorField string
+
+// SignedExchangeErrorField as enums.
+const (
+	SignedExchangeErrorFieldNotSet               SignedExchangeErrorField = ""
+	SignedExchangeErrorFieldSignatureSig         SignedExchangeErrorField = "signatureSig"
+	SignedExchangeErrorFieldSignatureIntegrity   SignedExchangeErrorField = "signatureIntegrity"
+	SignedExchangeErrorFieldSignatureCertURL     SignedExchangeErrorField = "signatureCertUrl"
+	SignedExchangeErrorFieldSignatureCertSha256  SignedExchangeErrorField = "signatureCertSha256"
+	SignedExchangeErrorFieldSignatureValidityURL SignedExchangeErrorField = "signatureValidityUrl"
+	SignedExchangeErrorFieldSignatureTimestamps  SignedExchangeErrorField = "signatureTimestamps"
+)
+
+func (e SignedExchangeErrorField) Valid() bool {
+	switch e {
+	case "signatureSig", "signatureIntegrity", "signatureCertUrl", "signatureCertSha256", "signatureValidityUrl", "signatureTimestamps":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e SignedExchangeErrorField) String() string {
+	return string(e)
+}
+
+// SignedExchangeError Information about a signed exchange response.
+//
+// Note: This type is experimental.
+type SignedExchangeError struct {
+	Message        string                   `json:"message"`                  // Error message.
+	SignatureIndex *int                     `json:"signatureIndex,omitempty"` // The index of the signature which caused the error.
+	ErrorField     SignedExchangeErrorField `json:"errorField,omitempty"`     // The field which caused the error.
+}
+
 // SignedExchangeInfo Information about a signed exchange response.
 //
 // Note: This type is experimental.
@@ -545,5 +586,5 @@ type SignedExchangeInfo struct {
 	OuterResponse   Response              `json:"outerResponse"`             // The outer response of signed HTTP exchange which was received from network.
 	Header          *SignedExchangeHeader `json:"header,omitempty"`          // Information about the signed exchange header.
 	SecurityDetails *SecurityDetails      `json:"securityDetails,omitempty"` // Security details for the signed exchange header.
-	Errors          []string              `json:"errors,omitempty"`          // Errors occurred while handling the signed exchagne.
+	Errors          []SignedExchangeError `json:"errors,omitempty"`          // Errors occurred while handling the signed exchagne.
 }

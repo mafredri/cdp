@@ -106,6 +106,19 @@ func (d *domainClient) SetDeviceMetricsOverride(ctx context.Context, args *SetDe
 	return
 }
 
+// SetScrollbarsHidden invokes the Emulation method.
+func (d *domainClient) SetScrollbarsHidden(ctx context.Context, args *SetScrollbarsHiddenArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setScrollbarsHidden", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setScrollbarsHidden", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetScrollbarsHidden", Err: err}
+	}
+	return
+}
+
 // SetEmitTouchEventsForMouse invokes the Emulation method.
 func (d *domainClient) SetEmitTouchEventsForMouse(ctx context.Context, args *SetEmitTouchEventsForMouseArgs) (err error) {
 	if args != nil {
@@ -233,6 +246,20 @@ func (d *domainClient) SetVisibleSize(ctx context.Context, args *SetVisibleSizeA
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetVisibleSize", Err: err}
+	}
+	return
+}
+
+// SetUserAgentOverride invokes the Emulation method. Allows overriding user
+// agent with the given string.
+func (d *domainClient) SetUserAgentOverride(ctx context.Context, args *SetUserAgentOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setUserAgentOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setUserAgentOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetUserAgentOverride", Err: err}
 	}
 	return
 }

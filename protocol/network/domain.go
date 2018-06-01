@@ -392,20 +392,6 @@ func (d *domainClient) SetRequestInterception(ctx context.Context, args *SetRequ
 	return
 }
 
-// SetUserAgentOverride invokes the Network method. Allows overriding user
-// agent with the given string.
-func (d *domainClient) SetUserAgentOverride(ctx context.Context, args *SetUserAgentOverrideArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setUserAgentOverride", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Network.setUserAgentOverride", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "SetUserAgentOverride", Err: err}
-	}
-	return
-}
-
 func (d *domainClient) DataReceived(ctx context.Context) (DataReceivedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Network.dataReceived", d.conn)
 	if err != nil {

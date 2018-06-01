@@ -533,15 +533,3 @@ func NewSetRequestInterceptionArgs(patterns []RequestPattern) *SetRequestInterce
 	args.Patterns = patterns
 	return args
 }
-
-// SetUserAgentOverrideArgs represents the arguments for SetUserAgentOverride in the Network domain.
-type SetUserAgentOverrideArgs struct {
-	UserAgent string `json:"userAgent"` // User agent to use.
-}
-
-// NewSetUserAgentOverrideArgs initializes SetUserAgentOverrideArgs with the required arguments.
-func NewSetUserAgentOverrideArgs(userAgent string) *SetUserAgentOverrideArgs {
-	args := new(SetUserAgentOverrideArgs)
-	args.UserAgent = userAgent
-	return args
-}
