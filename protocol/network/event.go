@@ -55,7 +55,7 @@ type LoadingFinishedReply struct {
 	RequestID                RequestID     `json:"requestId"`                          // Request identifier.
 	Timestamp                MonotonicTime `json:"timestamp"`                          // Timestamp.
 	EncodedDataLength        float64       `json:"encodedDataLength"`                  // Total number of bytes received for this request.
-	BlockedCrossSiteDocument *bool         `json:"blockedCrossSiteDocument,omitempty"` // Set when response was blocked due to being cross-site document response.
+	ShouldReportCorbBlocking *bool         `json:"shouldReportCorbBlocking,omitempty"` // Set when 1) response was blocked by Cross-Origin Read Blocking and also 2) this needs to be reported to the DevTools console.
 }
 
 // RequestInterceptedClient is a client for RequestIntercepted events. Details

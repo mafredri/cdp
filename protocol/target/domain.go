@@ -63,6 +63,28 @@ func (d *domainClient) CloseTarget(ctx context.Context, args *CloseTargetArgs) (
 	return
 }
 
+// ExposeDevToolsProtocol invokes the Target method. Inject object to the
+// target's main frame that provides a communication channel with browser
+// target.
+//
+// Injected object will be available as `window[bindingName]`.
+//
+// The object has the follwing API: - `binding.send(json)` - a method to send
+// messages over the remote debugging protocol - `binding.onmessage = json =>
+// handleMessage(json)` - a callback that will be called for the protocol
+// notifications and command responses.
+func (d *domainClient) ExposeDevToolsProtocol(ctx context.Context, args *ExposeDevToolsProtocolArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Target.exposeDevToolsProtocol", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Target.exposeDevToolsProtocol", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Target", Op: "ExposeDevToolsProtocol", Err: err}
+	}
+	return
+}
+
 // CreateBrowserContext invokes the Target method. Creates a new empty
 // BrowserContext. Similar to an incognito profile but you can have more than
 // one.
@@ -314,6 +336,27 @@ func (c *destroyedClient) Recv() (*DestroyedReply, error) {
 	event := new(DestroyedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Target", Op: "TargetDestroyed Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) TargetCrashed(ctx context.Context) (CrashedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Target.targetCrashed", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &crashedClient{Stream: s}, nil
+}
+
+type crashedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *crashedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *crashedClient) Recv() (*CrashedReply, error) {
+	event := new(CrashedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Target", Op: "TargetCrashed Recv", Err: err}
 	}
 	return event, nil
 }

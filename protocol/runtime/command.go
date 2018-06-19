@@ -528,3 +528,46 @@ func NewSetCustomObjectFormatterEnabledArgs(enabled bool) *SetCustomObjectFormat
 	args.Enabled = enabled
 	return args
 }
+
+// SetMaxCallStackSizeToCaptureArgs represents the arguments for SetMaxCallStackSizeToCapture in the Runtime domain.
+type SetMaxCallStackSizeToCaptureArgs struct {
+	Size int `json:"size"` // No description.
+}
+
+// NewSetMaxCallStackSizeToCaptureArgs initializes SetMaxCallStackSizeToCaptureArgs with the required arguments.
+func NewSetMaxCallStackSizeToCaptureArgs(size int) *SetMaxCallStackSizeToCaptureArgs {
+	args := new(SetMaxCallStackSizeToCaptureArgs)
+	args.Size = size
+	return args
+}
+
+// AddBindingArgs represents the arguments for AddBinding in the Runtime domain.
+type AddBindingArgs struct {
+	Name               string              `json:"name"`                         // No description.
+	ExecutionContextID *ExecutionContextID `json:"executionContextId,omitempty"` // No description.
+}
+
+// NewAddBindingArgs initializes AddBindingArgs with the required arguments.
+func NewAddBindingArgs(name string) *AddBindingArgs {
+	args := new(AddBindingArgs)
+	args.Name = name
+	return args
+}
+
+// SetExecutionContextID sets the ExecutionContextID optional argument.
+func (a *AddBindingArgs) SetExecutionContextID(executionContextID ExecutionContextID) *AddBindingArgs {
+	a.ExecutionContextID = &executionContextID
+	return a
+}
+
+// RemoveBindingArgs represents the arguments for RemoveBinding in the Runtime domain.
+type RemoveBindingArgs struct {
+	Name string `json:"name"` // No description.
+}
+
+// NewRemoveBindingArgs initializes RemoveBindingArgs with the required arguments.
+func NewRemoveBindingArgs(name string) *RemoveBindingArgs {
+	args := new(RemoveBindingArgs)
+	args.Name = name
+	return args
+}

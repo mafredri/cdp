@@ -278,7 +278,8 @@ func (e ResourcePriority) String() string {
 
 // Request HTTP request data.
 type Request struct {
-	URL              string                     `json:"url"`                        // Request URL.
+	URL              string                     `json:"url"`                        // Request URL (without fragment).
+	URLFragment      *string                    `json:"urlFragment,omitempty"`      // Fragment of the requested URL starting with hash, if present.
 	Method           string                     `json:"method"`                     // HTTP request method.
 	Headers          Headers                    `json:"headers"`                    // HTTP request headers.
 	PostData         *string                    `json:"postData,omitempty"`         // HTTP POST request data.
@@ -360,11 +361,12 @@ const (
 	BlockedReasonInspector         BlockedReason = "inspector"
 	BlockedReasonSubresourceFilter BlockedReason = "subresource-filter"
 	BlockedReasonContentType       BlockedReason = "content-type"
+	BlockedReasonCollapsedByClient BlockedReason = "collapsed-by-client"
 )
 
 func (e BlockedReason) Valid() bool {
 	switch e {
-	case "other", "csp", "mixed-content", "origin", "inspector", "subresource-filter", "content-type":
+	case "other", "csp", "mixed-content", "origin", "inspector", "subresource-filter", "content-type", "collapsed-by-client":
 		return true
 	default:
 		return false

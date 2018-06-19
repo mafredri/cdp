@@ -184,6 +184,18 @@ func NewSetScrollbarsHiddenArgs(hidden bool) *SetScrollbarsHiddenArgs {
 	return args
 }
 
+// SetDocumentCookieDisabledArgs represents the arguments for SetDocumentCookieDisabled in the Emulation domain.
+type SetDocumentCookieDisabledArgs struct {
+	Disabled bool `json:"disabled"` // Whether document.coookie API should be disabled.
+}
+
+// NewSetDocumentCookieDisabledArgs initializes SetDocumentCookieDisabledArgs with the required arguments.
+func NewSetDocumentCookieDisabledArgs(disabled bool) *SetDocumentCookieDisabledArgs {
+	args := new(SetDocumentCookieDisabledArgs)
+	args.Disabled = disabled
+	return args
+}
+
 // SetEmitTouchEventsForMouseArgs represents the arguments for SetEmitTouchEventsForMouse in the Emulation domain.
 type SetEmitTouchEventsForMouseArgs struct {
 	Enabled bool `json:"enabled"` // Whether touch emulation based on mouse input should be enabled.

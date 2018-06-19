@@ -8,6 +8,22 @@ import (
 	"github.com/mafredri/cdp/rpcc"
 )
 
+// BindingCalledClient is a client for BindingCalled events. Notification is
+// issued every time when binding is called.
+type BindingCalledClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*BindingCalledReply, error)
+	rpcc.Stream
+}
+
+// BindingCalledReply is the reply for BindingCalled events.
+type BindingCalledReply struct {
+	Name               string             `json:"name"`               // No description.
+	Payload            string             `json:"payload"`            // No description.
+	ExecutionContextID ExecutionContextID `json:"executionContextId"` // Identifier of the context where the call was made.
+}
+
 // ConsoleAPICalledClient is a client for ConsoleAPICalled events. Issued when
 // console API was called.
 type ConsoleAPICalledClient interface {

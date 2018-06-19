@@ -417,6 +417,30 @@ func NewSetBypassCSPArgs(enabled bool) *SetBypassCSPArgs {
 	return args
 }
 
+// SetFontFamiliesArgs represents the arguments for SetFontFamilies in the Page domain.
+type SetFontFamiliesArgs struct {
+	FontFamilies FontFamilies `json:"fontFamilies"` // Specifies font families to set. If a font family is not specified, it won't be changed.
+}
+
+// NewSetFontFamiliesArgs initializes SetFontFamiliesArgs with the required arguments.
+func NewSetFontFamiliesArgs(fontFamilies FontFamilies) *SetFontFamiliesArgs {
+	args := new(SetFontFamiliesArgs)
+	args.FontFamilies = fontFamilies
+	return args
+}
+
+// SetFontSizesArgs represents the arguments for SetFontSizes in the Page domain.
+type SetFontSizesArgs struct {
+	FontSizes FontSizes `json:"fontSizes"` // Specifies font sizes to set. If a font size is not specified, it won't be changed.
+}
+
+// NewSetFontSizesArgs initializes SetFontSizesArgs with the required arguments.
+func NewSetFontSizesArgs(fontSizes FontSizes) *SetFontSizesArgs {
+	args := new(SetFontSizesArgs)
+	args.FontSizes = fontSizes
+	return args
+}
+
 // SetDownloadBehaviorArgs represents the arguments for SetDownloadBehavior in the Page domain.
 type SetDownloadBehaviorArgs struct {
 	// Behavior Whether to allow all or deny all download requests, or use

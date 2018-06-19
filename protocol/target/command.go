@@ -48,6 +48,26 @@ type CloseTargetReply struct {
 	Success bool `json:"success"` // No description.
 }
 
+// ExposeDevToolsProtocolArgs represents the arguments for ExposeDevToolsProtocol in the Target domain.
+type ExposeDevToolsProtocolArgs struct {
+	TargetID    ID      `json:"targetId"`              // No description.
+	BindingName *string `json:"bindingName,omitempty"` // Binding name, 'cdp' if not specified.
+}
+
+// NewExposeDevToolsProtocolArgs initializes ExposeDevToolsProtocolArgs with the required arguments.
+func NewExposeDevToolsProtocolArgs(targetID ID) *ExposeDevToolsProtocolArgs {
+	args := new(ExposeDevToolsProtocolArgs)
+	args.TargetID = targetID
+	return args
+}
+
+// SetBindingName sets the BindingName optional argument. Binding
+// name, 'cdp' if not specified.
+func (a *ExposeDevToolsProtocolArgs) SetBindingName(bindingName string) *ExposeDevToolsProtocolArgs {
+	a.BindingName = &bindingName
+	return a
+}
+
 // CreateBrowserContextReply represents the return values for CreateBrowserContext in the Target domain.
 type CreateBrowserContextReply struct {
 	BrowserContextID BrowserContextID `json:"browserContextId"` // The id of the context created.

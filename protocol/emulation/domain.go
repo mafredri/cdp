@@ -119,6 +119,19 @@ func (d *domainClient) SetScrollbarsHidden(ctx context.Context, args *SetScrollb
 	return
 }
 
+// SetDocumentCookieDisabled invokes the Emulation method.
+func (d *domainClient) SetDocumentCookieDisabled(ctx context.Context, args *SetDocumentCookieDisabledArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setDocumentCookieDisabled", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setDocumentCookieDisabled", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetDocumentCookieDisabled", Err: err}
+	}
+	return
+}
+
 // SetEmitTouchEventsForMouse invokes the Emulation method.
 func (d *domainClient) SetEmitTouchEventsForMouse(ctx context.Context, args *SetEmitTouchEventsForMouseArgs) (err error) {
 	if args != nil {

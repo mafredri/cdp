@@ -90,6 +90,22 @@ type DestroyedReply struct {
 	TargetID ID `json:"targetId"` // No description.
 }
 
+// CrashedClient is a client for TargetCrashed events. Issued when a target
+// has crashed.
+type CrashedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*CrashedReply, error)
+	rpcc.Stream
+}
+
+// CrashedReply is the reply for TargetCrashed events.
+type CrashedReply struct {
+	TargetID  ID     `json:"targetId"`  // No description.
+	Status    string `json:"status"`    // Termination status type.
+	ErrorCode int    `json:"errorCode"` // Termination error code.
+}
+
 // InfoChangedClient is a client for TargetInfoChanged events. Issued when
 // some information about a target has changed. This only happens between
 // `targetCreated` and `targetDestroyed`.

@@ -338,6 +338,32 @@ func (d *domainClient) SetBypassCSP(ctx context.Context, args *SetBypassCSPArgs)
 	return
 }
 
+// SetFontFamilies invokes the Page method. Set generic font families.
+func (d *domainClient) SetFontFamilies(ctx context.Context, args *SetFontFamiliesArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setFontFamilies", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setFontFamilies", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetFontFamilies", Err: err}
+	}
+	return
+}
+
+// SetFontSizes invokes the Page method. Set default font sizes.
+func (d *domainClient) SetFontSizes(ctx context.Context, args *SetFontSizesArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setFontSizes", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setFontSizes", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetFontSizes", Err: err}
+	}
+	return
+}
+
 // SetDocumentContent invokes the Page method. Sets given markup as the
 // document's HTML.
 func (d *domainClient) SetDocumentContent(ctx context.Context, args *SetDocumentContentArgs) (err error) {

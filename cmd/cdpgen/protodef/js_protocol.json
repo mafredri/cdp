@@ -5122,6 +5122,17 @@
                     ]
                 },
                 {
+                    "name": "setDocumentCookieDisabled",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "disabled",
+                            "description": "Whether document.coookie API should be disabled.",
+                            "type": "boolean"
+                        }
+                    ]
+                },
+                {
                     "name": "setEmitTouchEventsForMouse",
                     "experimental": true,
                     "parameters": [
@@ -7371,7 +7382,13 @@
                     "properties": [
                         {
                             "name": "url",
-                            "description": "Request URL.",
+                            "description": "Request URL (without fragment).",
+                            "type": "string"
+                        },
+                        {
+                            "name": "urlFragment",
+                            "description": "Fragment of the requested URL starting with hash, if present.",
+                            "optional": true,
                             "type": "string"
                         },
                         {
@@ -7578,7 +7595,8 @@
                         "origin",
                         "inspector",
                         "subresource-filter",
-                        "content-type"
+                        "content-type",
+                        "collapsed-by-client"
                     ]
                 },
                 {
@@ -8900,8 +8918,8 @@
                             "type": "number"
                         },
                         {
-                            "name": "blockedCrossSiteDocument",
-                            "description": "Set when response was blocked due to being cross-site document response.",
+                            "name": "shouldReportCorbBlocking",
+                            "description": "Set when 1) response was blocked by Cross-Origin Read Blocking and also\n2) this needs to be reported to the DevTools console.",
                             "optional": true,
                             "type": "boolean"
                         }
@@ -9680,6 +9698,8 @@
                         "WebSocket",
                         "Manifest",
                         "SignedExchange",
+                        "Ping",
+                        "CSPViolationReport",
                         "Other"
                     ]
                 },
@@ -10073,6 +10093,76 @@
                             "name": "scale",
                             "description": "Page scale factor.",
                             "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "id": "FontFamilies",
+                    "description": "Generic font families collection.",
+                    "experimental": true,
+                    "type": "object",
+                    "properties": [
+                        {
+                            "name": "standard",
+                            "description": "The standard font-family.",
+                            "optional": true,
+                            "type": "string"
+                        },
+                        {
+                            "name": "fixed",
+                            "description": "The fixed font-family.",
+                            "optional": true,
+                            "type": "string"
+                        },
+                        {
+                            "name": "serif",
+                            "description": "The serif font-family.",
+                            "optional": true,
+                            "type": "string"
+                        },
+                        {
+                            "name": "sansSerif",
+                            "description": "The sansSerif font-family.",
+                            "optional": true,
+                            "type": "string"
+                        },
+                        {
+                            "name": "cursive",
+                            "description": "The cursive font-family.",
+                            "optional": true,
+                            "type": "string"
+                        },
+                        {
+                            "name": "fantasy",
+                            "description": "The fantasy font-family.",
+                            "optional": true,
+                            "type": "string"
+                        },
+                        {
+                            "name": "pictograph",
+                            "description": "The pictograph font-family.",
+                            "optional": true,
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
+                    "id": "FontSizes",
+                    "description": "Default font sizes.",
+                    "experimental": true,
+                    "type": "object",
+                    "properties": [
+                        {
+                            "name": "standard",
+                            "description": "Default standard font size.",
+                            "optional": true,
+                            "type": "integer"
+                        },
+                        {
+                            "name": "fixed",
+                            "description": "Default fixed font size.",
+                            "optional": true,
+                            "type": "integer"
                         }
                     ]
                 }
@@ -10770,6 +10860,30 @@
                             "name": "gamma",
                             "description": "Mock gamma",
                             "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "name": "setFontFamilies",
+                    "description": "Set generic font families.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "fontFamilies",
+                            "description": "Specifies font families to set. If a font family is not specified, it won't be changed.",
+                            "$ref": "FontFamilies"
+                        }
+                    ]
+                },
+                {
+                    "name": "setFontSizes",
+                    "description": "Set default font sizes.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "fontSizes",
+                            "description": "Specifies font sizes to set. If a font size is not specified, it won't be changed.",
+                            "$ref": "FontSizes"
                         }
                     ]
                 },
@@ -12240,6 +12354,23 @@
                     ]
                 },
                 {
+                    "name": "exposeDevToolsProtocol",
+                    "description": "Inject object to the target's main frame that provides a communication\nchannel with browser target.\n\nInjected object will be available as `window[bindingName]`.\n\nThe object has the follwing API:\n- `binding.send(json)` - a method to send messages over the remote debugging protocol\n- `binding.onmessage = json => handleMessage(json)` - a callback that will be called for the protocol notifications and command responses.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "targetId",
+                            "$ref": "TargetID"
+                        },
+                        {
+                            "name": "bindingName",
+                            "description": "Binding name, 'cdp' if not specified.",
+                            "optional": true,
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
                     "name": "createBrowserContext",
                     "description": "Creates a new empty BrowserContext. Similar to an incognito profile but you can have more than\none.",
                     "experimental": true,
@@ -12516,6 +12647,26 @@
                         {
                             "name": "targetId",
                             "$ref": "TargetID"
+                        }
+                    ]
+                },
+                {
+                    "name": "targetCrashed",
+                    "description": "Issued when a target has crashed.",
+                    "parameters": [
+                        {
+                            "name": "targetId",
+                            "$ref": "TargetID"
+                        },
+                        {
+                            "name": "status",
+                            "description": "Termination status type.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "errorCode",
+                            "description": "Termination error code.",
+                            "type": "integer"
                         }
                     ]
                 },

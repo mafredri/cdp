@@ -1211,6 +1211,11 @@ type Emulation interface {
 	// Note: This command is experimental.
 	SetScrollbarsHidden(context.Context, *emulation.SetScrollbarsHiddenArgs) error
 
+	// Command SetDocumentCookieDisabled
+	//
+	// Note: This command is experimental.
+	SetDocumentCookieDisabled(context.Context, *emulation.SetDocumentCookieDisabledArgs) error
+
 	// Command SetEmitTouchEventsForMouse
 	//
 	// Note: This command is experimental.
@@ -2214,6 +2219,20 @@ type Page interface {
 	// Note: This command is experimental.
 	SetBypassCSP(context.Context, *page.SetBypassCSPArgs) error
 
+	// Command SetFontFamilies
+	//
+	// Set generic font families.
+	//
+	// Note: This command is experimental.
+	SetFontFamilies(context.Context, *page.SetFontFamiliesArgs) error
+
+	// Command SetFontSizes
+	//
+	// Set default font sizes.
+	//
+	// Note: This command is experimental.
+	SetFontSizes(context.Context, *page.SetFontSizesArgs) error
+
 	// Command SetDocumentContent
 	//
 	// Sets given markup as the document's HTML.
@@ -2588,6 +2607,11 @@ type Runtime interface {
 	// Note: This command is experimental.
 	SetCustomObjectFormatterEnabled(context.Context, *runtime.SetCustomObjectFormatterEnabledArgs) error
 
+	// Command SetMaxCallStackSizeToCapture
+	//
+	// Note: This command is experimental.
+	SetMaxCallStackSizeToCapture(context.Context, *runtime.SetMaxCallStackSizeToCaptureArgs) error
+
 	// Command TerminateExecution
 	//
 	// Terminate current or next JavaScript execution. Will cancel the
@@ -2595,6 +2619,36 @@ type Runtime interface {
 	//
 	// Note: This command is experimental.
 	TerminateExecution(context.Context) error
+
+	// Command AddBinding
+	//
+	// If executionContextId is empty, adds binding with the given name on
+	// the global objects of all inspected contexts, including those
+	// created later, bindings survive reloads. If executionContextId is
+	// specified, adds binding only on global object of given execution
+	// context. Binding function takes exactly one argument, this argument
+	// should be string, in case of any other input, function throws an
+	// exception. Each binding function call produces Runtime.bindingCalled
+	// notification.
+	//
+	// Note: This command is experimental.
+	AddBinding(context.Context, *runtime.AddBindingArgs) error
+
+	// Command RemoveBinding
+	//
+	// This method does not remove binding function from global object but
+	// unsubscribes current runtime agent from Runtime.bindingCalled
+	// notifications.
+	//
+	// Note: This command is experimental.
+	RemoveBinding(context.Context, *runtime.RemoveBindingArgs) error
+
+	// Event BindingCalled
+	//
+	// Notification is issued every time when binding is called.
+	//
+	// Note: This event is experimental.
+	BindingCalled(context.Context) (runtime.BindingCalledClient, error)
 
 	// Event ConsoleAPICalled
 	//
@@ -2827,6 +2881,21 @@ type Target interface {
 	// Closes the target. If the target is a page that gets closed too.
 	CloseTarget(context.Context, *target.CloseTargetArgs) (*target.CloseTargetReply, error)
 
+	// Command ExposeDevToolsProtocol
+	//
+	// Inject object to the target's main frame that provides a
+	// communication channel with browser target.
+	//
+	// Injected object will be available as `window[bindingName]`.
+	//
+	// The object has the follwing API: - `binding.send(json)` - a method
+	// to send messages over the remote debugging protocol -
+	// `binding.onmessage = json => handleMessage(json)` - a callback that
+	// will be called for the protocol notifications and command responses.
+	//
+	// Note: This command is experimental.
+	ExposeDevToolsProtocol(context.Context, *target.ExposeDevToolsProtocolArgs) error
+
 	// Command CreateBrowserContext
 	//
 	// Creates a new empty BrowserContext. Similar to an incognito profile
@@ -2934,6 +3003,11 @@ type Target interface {
 	//
 	// Issued when a target is destroyed.
 	TargetDestroyed(context.Context) (target.DestroyedClient, error)
+
+	// Event TargetCrashed
+	//
+	// Issued when a target has crashed.
+	TargetCrashed(context.Context) (target.CrashedClient, error)
 
 	// Event TargetInfoChanged
 	//

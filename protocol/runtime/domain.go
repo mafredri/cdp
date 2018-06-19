@@ -253,6 +253,19 @@ func (d *domainClient) SetCustomObjectFormatterEnabled(ctx context.Context, args
 	return
 }
 
+// SetMaxCallStackSizeToCapture invokes the Runtime method.
+func (d *domainClient) SetMaxCallStackSizeToCapture(ctx context.Context, args *SetMaxCallStackSizeToCaptureArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Runtime.setMaxCallStackSizeToCapture", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Runtime.setMaxCallStackSizeToCapture", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Runtime", Op: "SetMaxCallStackSizeToCapture", Err: err}
+	}
+	return
+}
+
 // TerminateExecution invokes the Runtime method. Terminate current or next
 // JavaScript execution. Will cancel the termination when the outer-most script
 // execution ends.
@@ -262,6 +275,62 @@ func (d *domainClient) TerminateExecution(ctx context.Context) (err error) {
 		err = &internal.OpError{Domain: "Runtime", Op: "TerminateExecution", Err: err}
 	}
 	return
+}
+
+// AddBinding invokes the Runtime method. If executionContextId is empty, adds
+// binding with the given name on the global objects of all inspected contexts,
+// including those created later, bindings survive reloads. If
+// executionContextId is specified, adds binding only on global object of given
+// execution context. Binding function takes exactly one argument, this
+// argument should be string, in case of any other input, function throws an
+// exception. Each binding function call produces Runtime.bindingCalled
+// notification.
+func (d *domainClient) AddBinding(ctx context.Context, args *AddBindingArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Runtime.addBinding", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Runtime.addBinding", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Runtime", Op: "AddBinding", Err: err}
+	}
+	return
+}
+
+// RemoveBinding invokes the Runtime method. This method does not remove
+// binding function from global object but unsubscribes current runtime agent
+// from Runtime.bindingCalled notifications.
+func (d *domainClient) RemoveBinding(ctx context.Context, args *RemoveBindingArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Runtime.removeBinding", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Runtime.removeBinding", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Runtime", Op: "RemoveBinding", Err: err}
+	}
+	return
+}
+
+func (d *domainClient) BindingCalled(ctx context.Context) (BindingCalledClient, error) {
+	s, err := rpcc.NewStream(ctx, "Runtime.bindingCalled", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &bindingCalledClient{Stream: s}, nil
+}
+
+type bindingCalledClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *bindingCalledClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *bindingCalledClient) Recv() (*BindingCalledReply, error) {
+	event := new(BindingCalledReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Runtime", Op: "BindingCalled Recv", Err: err}
+	}
+	return event, nil
 }
 
 func (d *domainClient) ConsoleAPICalled(ctx context.Context) (ConsoleAPICalledClient, error) {
