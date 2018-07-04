@@ -181,14 +181,20 @@ func NewDisposeBrowserContextArgs(browserContextID BrowserContextID) *DisposeBro
 
 // GetTargetInfoArgs represents the arguments for GetTargetInfo in the Target domain.
 type GetTargetInfoArgs struct {
-	TargetID ID `json:"targetId"` // No description.
+	TargetID *ID `json:"targetId,omitempty"` // No description.
 }
 
 // NewGetTargetInfoArgs initializes GetTargetInfoArgs with the required arguments.
-func NewGetTargetInfoArgs(targetID ID) *GetTargetInfoArgs {
+func NewGetTargetInfoArgs() *GetTargetInfoArgs {
 	args := new(GetTargetInfoArgs)
-	args.TargetID = targetID
+
 	return args
+}
+
+// SetTargetID sets the TargetID optional argument.
+func (a *GetTargetInfoArgs) SetTargetID(targetID ID) *GetTargetInfoArgs {
+	a.TargetID = &targetID
+	return a
 }
 
 // GetTargetInfoReply represents the return values for GetTargetInfo in the Target domain.

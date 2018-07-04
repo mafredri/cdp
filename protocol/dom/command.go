@@ -213,6 +213,46 @@ type GetBoxModelReply struct {
 	Model BoxModel `json:"model"` // Box model for the node.
 }
 
+// GetContentQuadsArgs represents the arguments for GetContentQuads in the DOM domain.
+type GetContentQuadsArgs struct {
+	NodeID        *NodeID                 `json:"nodeId,omitempty"`        // Identifier of the node.
+	BackendNodeID *BackendNodeID          `json:"backendNodeId,omitempty"` // Identifier of the backend node.
+	ObjectID      *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node wrapper.
+}
+
+// NewGetContentQuadsArgs initializes GetContentQuadsArgs with the required arguments.
+func NewGetContentQuadsArgs() *GetContentQuadsArgs {
+	args := new(GetContentQuadsArgs)
+
+	return args
+}
+
+// SetNodeID sets the NodeID optional argument. Identifier of the
+// node.
+func (a *GetContentQuadsArgs) SetNodeID(nodeID NodeID) *GetContentQuadsArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument.
+// Identifier of the backend node.
+func (a *GetContentQuadsArgs) SetBackendNodeID(backendNodeID BackendNodeID) *GetContentQuadsArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
+}
+
+// SetObjectID sets the ObjectID optional argument. JavaScript object
+// id of the node wrapper.
+func (a *GetContentQuadsArgs) SetObjectID(objectID runtime.RemoteObjectID) *GetContentQuadsArgs {
+	a.ObjectID = &objectID
+	return a
+}
+
+// GetContentQuadsReply represents the return values for GetContentQuads in the DOM domain.
+type GetContentQuadsReply struct {
+	Quads []Quad `json:"quads"` // Quads that describe node layout relative to viewport.
+}
+
 // GetDocumentArgs represents the arguments for GetDocument in the DOM domain.
 type GetDocumentArgs struct {
 	Depth  *int  `json:"depth,omitempty"`  // The maximum depth at which children should be retrieved, defaults to 1. Use -1 for the entire subtree or provide an integer larger than 0.

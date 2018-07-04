@@ -59,3 +59,21 @@ func (d *domainClient) GetSnapshot(ctx context.Context, args *GetSnapshotArgs) (
 	}
 	return
 }
+
+// CaptureSnapshot invokes the DOMSnapshot method. Returns a document
+// snapshot, including the full DOM tree of the root node (including iframes,
+// template contents, and imported documents) in a flattened array, as well as
+// layout and white-listed computed style information for the nodes. Shadow DOM
+// in the returned DOM tree is flattened.
+func (d *domainClient) CaptureSnapshot(ctx context.Context, args *CaptureSnapshotArgs) (reply *CaptureSnapshotReply, err error) {
+	reply = new(CaptureSnapshotReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOMSnapshot.captureSnapshot", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOMSnapshot.captureSnapshot", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOMSnapshot", Op: "CaptureSnapshot", Err: err}
+	}
+	return
+}

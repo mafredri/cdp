@@ -517,6 +517,14 @@ type DOM interface {
 	// Returns boxes for the given node.
 	GetBoxModel(context.Context, *dom.GetBoxModelArgs) (*dom.GetBoxModelReply, error)
 
+	// Command GetContentQuads
+	//
+	// Returns quads that describe node position on the page. This method
+	// might return multiple quads for inline nodes.
+	//
+	// Note: This command is experimental.
+	GetContentQuads(context.Context, *dom.GetContentQuadsArgs) (*dom.GetContentQuadsReply, error)
+
 	// Command GetDocument
 	//
 	// Returns the root DOM node (and optionally the subtree) to the
@@ -854,12 +862,21 @@ type DOMSnapshot interface {
 
 	// Command GetSnapshot
 	//
+	// Deprecated: Returns a document snapshot, including the full DOM
+	// tree of the root node (including iframes, template contents, and
+	// imported documents) in a flattened array, as well as layout and
+	// white-listed computed style information for the nodes. Shadow DOM in
+	// the returned DOM tree is flattened.
+	GetSnapshot(context.Context, *domsnapshot.GetSnapshotArgs) (*domsnapshot.GetSnapshotReply, error)
+
+	// Command CaptureSnapshot
+	//
 	// Returns a document snapshot, including the full DOM tree of the
 	// root node (including iframes, template contents, and imported
 	// documents) in a flattened array, as well as layout and white-listed
 	// computed style information for the nodes. Shadow DOM in the returned
 	// DOM tree is flattened.
-	GetSnapshot(context.Context, *domsnapshot.GetSnapshotArgs) (*domsnapshot.GetSnapshotReply, error)
+	CaptureSnapshot(context.Context, *domsnapshot.CaptureSnapshotArgs) (*domsnapshot.CaptureSnapshotReply, error)
 }
 
 // The DOMStorage domain. Query and modify DOM storage.

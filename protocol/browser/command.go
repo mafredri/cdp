@@ -23,6 +23,7 @@ type GetBrowserCommandLineReply struct {
 // GetHistogramsArgs represents the arguments for GetHistograms in the Browser domain.
 type GetHistogramsArgs struct {
 	Query *string `json:"query,omitempty"` // Requested substring in name. Only histograms which have query as a substring in their name are extracted. An empty or absent query returns all histograms.
+	Delta *bool   `json:"delta,omitempty"` // If true, retrieve delta since last call.
 }
 
 // NewGetHistogramsArgs initializes GetHistogramsArgs with the required arguments.
@@ -40,6 +41,13 @@ func (a *GetHistogramsArgs) SetQuery(query string) *GetHistogramsArgs {
 	return a
 }
 
+// SetDelta sets the Delta optional argument. If true, retrieve delta
+// since last call.
+func (a *GetHistogramsArgs) SetDelta(delta bool) *GetHistogramsArgs {
+	a.Delta = &delta
+	return a
+}
+
 // GetHistogramsReply represents the return values for GetHistograms in the Browser domain.
 type GetHistogramsReply struct {
 	Histograms []Histogram `json:"histograms"` // Histograms.
@@ -47,7 +55,8 @@ type GetHistogramsReply struct {
 
 // GetHistogramArgs represents the arguments for GetHistogram in the Browser domain.
 type GetHistogramArgs struct {
-	Name string `json:"name"` // Requested histogram name.
+	Name  string `json:"name"`            // Requested histogram name.
+	Delta *bool  `json:"delta,omitempty"` // If true, retrieve delta since last call.
 }
 
 // NewGetHistogramArgs initializes GetHistogramArgs with the required arguments.
@@ -55,6 +64,13 @@ func NewGetHistogramArgs(name string) *GetHistogramArgs {
 	args := new(GetHistogramArgs)
 	args.Name = name
 	return args
+}
+
+// SetDelta sets the Delta optional argument. If true, retrieve delta
+// since last call.
+func (a *GetHistogramArgs) SetDelta(delta bool) *GetHistogramArgs {
+	a.Delta = &delta
+	return a
 }
 
 // GetHistogramReply represents the return values for GetHistogram in the Browser domain.

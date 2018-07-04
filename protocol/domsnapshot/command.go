@@ -45,3 +45,22 @@ type GetSnapshotReply struct {
 	LayoutTreeNodes []LayoutTreeNode `json:"layoutTreeNodes"` // The nodes in the layout tree.
 	ComputedStyles  []ComputedStyle  `json:"computedStyles"`  // Whitelisted ComputedStyle properties for each node in the layout tree.
 }
+
+// CaptureSnapshotArgs represents the arguments for CaptureSnapshot in the DOMSnapshot domain.
+type CaptureSnapshotArgs struct {
+	ComputedStyles []string `json:"computedStyles"` // Whitelist of computed styles to return.
+}
+
+// NewCaptureSnapshotArgs initializes CaptureSnapshotArgs with the required arguments.
+func NewCaptureSnapshotArgs(computedStyles []string) *CaptureSnapshotArgs {
+	args := new(CaptureSnapshotArgs)
+	args.ComputedStyles = computedStyles
+	return args
+}
+
+// CaptureSnapshotReply represents the return values for CaptureSnapshot in the DOMSnapshot domain.
+type CaptureSnapshotReply struct {
+	Nodes   DOMTreeSnapshot    `json:"nodes"`   // The nodes in the DOM tree. The DOMNode at index 0 corresponds to the root document.
+	Layout  LayoutTreeSnapshot `json:"layout"`  // The nodes in the layout tree.
+	Strings []string           `json:"strings"` // Shared string table that all string properties refer to with indexes.
+}

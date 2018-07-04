@@ -159,6 +159,22 @@ func (d *domainClient) GetBoxModel(ctx context.Context, args *GetBoxModelArgs) (
 	return
 }
 
+// GetContentQuads invokes the DOM method. Returns quads that describe node
+// position on the page. This method might return multiple quads for inline
+// nodes.
+func (d *domainClient) GetContentQuads(ctx context.Context, args *GetContentQuadsArgs) (reply *GetContentQuadsReply, err error) {
+	reply = new(GetContentQuadsReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.getContentQuads", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.getContentQuads", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "GetContentQuads", Err: err}
+	}
+	return
+}
+
 // GetDocument invokes the DOM method. Returns the root DOM node (and
 // optionally the subtree) to the caller.
 func (d *domainClient) GetDocument(ctx context.Context, args *GetDocumentArgs) (reply *GetDocumentReply, err error) {
