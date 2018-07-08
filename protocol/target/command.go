@@ -17,6 +17,11 @@ func NewActivateTargetArgs(targetID ID) *ActivateTargetArgs {
 // AttachToTargetArgs represents the arguments for AttachToTarget in the Target domain.
 type AttachToTargetArgs struct {
 	TargetID ID `json:"targetId"` // No description.
+	// Flatten Enables "flat" access to the session via specifying
+	// sessionId attribute in the commands.
+	//
+	// Note: This property is experimental.
+	Flatten *bool `json:"flatten,omitempty"`
 }
 
 // NewAttachToTargetArgs initializes AttachToTargetArgs with the required arguments.
@@ -24,6 +29,16 @@ func NewAttachToTargetArgs(targetID ID) *AttachToTargetArgs {
 	args := new(AttachToTargetArgs)
 	args.TargetID = targetID
 	return args
+}
+
+// SetFlatten sets the Flatten optional argument. Enables "flat"
+// access to the session via specifying sessionId attribute in the
+// commands.
+//
+// Note: This property is experimental.
+func (a *AttachToTargetArgs) SetFlatten(flatten bool) *AttachToTargetArgs {
+	a.Flatten = &flatten
+	return a
 }
 
 // AttachToTargetReply represents the return values for AttachToTarget in the Target domain.
