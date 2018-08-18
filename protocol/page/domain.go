@@ -475,6 +475,44 @@ func (d *domainClient) StopScreencast(ctx context.Context) (err error) {
 	return
 }
 
+// SetProduceCompilationCache invokes the Page method. Forces compilation
+// cache to be generated for every subresource script.
+func (d *domainClient) SetProduceCompilationCache(ctx context.Context, args *SetProduceCompilationCacheArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setProduceCompilationCache", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setProduceCompilationCache", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetProduceCompilationCache", Err: err}
+	}
+	return
+}
+
+// AddCompilationCache invokes the Page method. Seeds compilation cache for
+// given url. Compilation cache does not survive cross-process navigation.
+func (d *domainClient) AddCompilationCache(ctx context.Context, args *AddCompilationCacheArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.addCompilationCache", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.addCompilationCache", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "AddCompilationCache", Err: err}
+	}
+	return
+}
+
+// ClearCompilationCache invokes the Page method. Clears seeded compilation
+// cache.
+func (d *domainClient) ClearCompilationCache(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Page.clearCompilationCache", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "ClearCompilationCache", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) DOMContentEventFired(ctx context.Context) (DOMContentEventFiredClient, error) {
 	s, err := rpcc.NewStream(ctx, "Page.domContentEventFired", d.conn)
 	if err != nil {
@@ -870,6 +908,27 @@ func (c *windowOpenClient) Recv() (*WindowOpenReply, error) {
 	event := new(WindowOpenReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "WindowOpen Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) CompilationCacheProduced(ctx context.Context) (CompilationCacheProducedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.compilationCacheProduced", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &compilationCacheProducedClient{Stream: s}, nil
+}
+
+type compilationCacheProducedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *compilationCacheProducedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *compilationCacheProducedClient) Recv() (*CompilationCacheProducedReply, error) {
+	event := new(CompilationCacheProducedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "CompilationCacheProduced Recv", Err: err}
 	}
 	return event, nil
 }

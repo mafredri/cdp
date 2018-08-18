@@ -548,3 +548,29 @@ func NewSetWebLifecycleStateArgs(state string) *SetWebLifecycleStateArgs {
 	args.State = state
 	return args
 }
+
+// SetProduceCompilationCacheArgs represents the arguments for SetProduceCompilationCache in the Page domain.
+type SetProduceCompilationCacheArgs struct {
+	Enabled bool `json:"enabled"` // No description.
+}
+
+// NewSetProduceCompilationCacheArgs initializes SetProduceCompilationCacheArgs with the required arguments.
+func NewSetProduceCompilationCacheArgs(enabled bool) *SetProduceCompilationCacheArgs {
+	args := new(SetProduceCompilationCacheArgs)
+	args.Enabled = enabled
+	return args
+}
+
+// AddCompilationCacheArgs represents the arguments for AddCompilationCache in the Page domain.
+type AddCompilationCacheArgs struct {
+	URL  string `json:"url"`  // No description.
+	Data []byte `json:"data"` // Base64-encoded data
+}
+
+// NewAddCompilationCacheArgs initializes AddCompilationCacheArgs with the required arguments.
+func NewAddCompilationCacheArgs(url string, data []byte) *AddCompilationCacheArgs {
+	args := new(AddCompilationCacheArgs)
+	args.URL = url
+	args.Data = data
+	return args
+}

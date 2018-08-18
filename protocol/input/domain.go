@@ -32,6 +32,20 @@ func (d *domainClient) DispatchKeyEvent(ctx context.Context, args *DispatchKeyEv
 	return
 }
 
+// InsertText invokes the Input method. This method emulates inserting text
+// that doesn't come from a key press, for example an emoji keyboard or an IME.
+func (d *domainClient) InsertText(ctx context.Context, args *InsertTextArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Input.insertText", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Input.insertText", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Input", Op: "InsertText", Err: err}
+	}
+	return
+}
+
 // DispatchMouseEvent invokes the Input method. Dispatches a mouse event to
 // the page.
 func (d *domainClient) DispatchMouseEvent(ctx context.Context, args *DispatchMouseEventArgs) (err error) {

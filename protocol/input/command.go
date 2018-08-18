@@ -127,6 +127,18 @@ func (a *DispatchKeyEventArgs) SetLocation(location int) *DispatchKeyEventArgs {
 	return a
 }
 
+// InsertTextArgs represents the arguments for InsertText in the Input domain.
+type InsertTextArgs struct {
+	Text string `json:"text"` // The text to insert.
+}
+
+// NewInsertTextArgs initializes InsertTextArgs with the required arguments.
+func NewInsertTextArgs(text string) *InsertTextArgs {
+	args := new(InsertTextArgs)
+	args.Text = text
+	return args
+}
+
 // DispatchMouseEventArgs represents the arguments for DispatchMouseEvent in the Input domain.
 type DispatchMouseEventArgs struct {
 	// Type Type of the mouse event.

@@ -168,3 +168,19 @@ type WindowOpenReply struct {
 	WindowFeatures []string `json:"windowFeatures"` // An array of enabled window features.
 	UserGesture    bool     `json:"userGesture"`    // Whether or not it was triggered by user gesture.
 }
+
+// CompilationCacheProducedClient is a client for CompilationCacheProduced events.
+// Issued for every compilation cache generated. Is only available if
+// Page.setGenerateCompilationCache is enabled.
+type CompilationCacheProducedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*CompilationCacheProducedReply, error)
+	rpcc.Stream
+}
+
+// CompilationCacheProducedReply is the reply for CompilationCacheProduced events.
+type CompilationCacheProducedReply struct {
+	URL  string `json:"url"`  // No description.
+	Data []byte `json:"data"` // Base64-encoded data
+}

@@ -60,7 +60,6 @@ func NewCaptureSnapshotArgs(computedStyles []string) *CaptureSnapshotArgs {
 
 // CaptureSnapshotReply represents the return values for CaptureSnapshot in the DOMSnapshot domain.
 type CaptureSnapshotReply struct {
-	Nodes   DOMTreeSnapshot    `json:"nodes"`   // The nodes in the DOM tree. The DOMNode at index 0 corresponds to the root document.
-	Layout  LayoutTreeSnapshot `json:"layout"`  // The nodes in the layout tree.
-	Strings []string           `json:"strings"` // Shared string table that all string properties refer to with indexes.
+	Documents []DocumentSnapshot `json:"documents"` // The nodes in the DOM tree. The DOMNode at index 0 corresponds to the root document.
+	Strings   []string           `json:"strings"`   // Shared string table that all string properties refer to with indexes.
 }

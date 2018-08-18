@@ -35,4 +35,13 @@ type SamplingProfileNode struct {
 // SamplingProfile Array of heap profile samples.
 type SamplingProfile struct {
 	Samples []SamplingProfileNode `json:"samples"` // No description.
+	Modules []Module              `json:"modules"` // No description.
+}
+
+// Module Executable module information
+type Module struct {
+	Name        string  `json:"name"`        // Name of the module.
+	UUID        string  `json:"uuid"`        // UUID of the module.
+	BaseAddress string  `json:"baseAddress"` // Base address where the module is loaded into memory. Encoded as a decimal or hexadecimal (0x prefixed) string.
+	Size        float64 `json:"size"`        // Size of the module in bytes.
 }

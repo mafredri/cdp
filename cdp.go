@@ -1490,6 +1490,14 @@ type Input interface {
 	// Dispatches a key event to the page.
 	DispatchKeyEvent(context.Context, *input.DispatchKeyEventArgs) error
 
+	// Command InsertText
+	//
+	// This method emulates inserting text that doesn't come from a key
+	// press, for example an emoji keyboard or an IME.
+	//
+	// Note: This command is experimental.
+	InsertText(context.Context, *input.InsertTextArgs) error
+
 	// Command DispatchMouseEvent
 	//
 	// Dispatches a mouse event to the page.
@@ -2311,6 +2319,29 @@ type Page interface {
 	// Note: This command is experimental.
 	StopScreencast(context.Context) error
 
+	// Command SetProduceCompilationCache
+	//
+	// Forces compilation cache to be generated for every subresource
+	// script.
+	//
+	// Note: This command is experimental.
+	SetProduceCompilationCache(context.Context, *page.SetProduceCompilationCacheArgs) error
+
+	// Command AddCompilationCache
+	//
+	// Seeds compilation cache for given url. Compilation cache does not
+	// survive cross-process navigation.
+	//
+	// Note: This command is experimental.
+	AddCompilationCache(context.Context, *page.AddCompilationCacheArgs) error
+
+	// Command ClearCompilationCache
+	//
+	// Clears seeded compilation cache.
+	//
+	// Note: This command is experimental.
+	ClearCompilationCache(context.Context) error
+
 	// Event DOMContentEventFired
 	DOMContentEventFired(context.Context) (page.DOMContentEventFiredClient, error)
 
@@ -2422,6 +2453,14 @@ type Page interface {
 	// Fired when a new window is going to be opened, via window.open(),
 	// link click, form submission, etc.
 	WindowOpen(context.Context) (page.WindowOpenClient, error)
+
+	// Event CompilationCacheProduced
+	//
+	// Issued for every compilation cache generated. Is only available if
+	// Page.setGenerateCompilationCache is enabled.
+	//
+	// Note: This event is experimental.
+	CompilationCacheProduced(context.Context) (page.CompilationCacheProducedClient, error)
 }
 
 // The Performance domain.
@@ -2892,6 +2931,13 @@ type Target interface {
 	//
 	// Attaches to the target with given id.
 	AttachToTarget(context.Context, *target.AttachToTargetArgs) (*target.AttachToTargetReply, error)
+
+	// Command AttachToBrowserTarget
+	//
+	// Attaches to the browser target, only uses flat sessionId mode.
+	//
+	// Note: This command is experimental.
+	AttachToBrowserTarget(context.Context) (*target.AttachToBrowserTargetReply, error)
 
 	// Command CloseTarget
 	//

@@ -46,6 +46,11 @@ type AttachToTargetReply struct {
 	SessionID SessionID `json:"sessionId"` // Id assigned to the session.
 }
 
+// AttachToBrowserTargetReply represents the return values for AttachToBrowserTarget in the Target domain.
+type AttachToBrowserTargetReply struct {
+	SessionID SessionID `json:"sessionId"` // Id assigned to the session.
+}
+
 // CloseTargetArgs represents the arguments for CloseTarget in the Target domain.
 type CloseTargetArgs struct {
 	TargetID ID `json:"targetId"` // No description.
@@ -258,6 +263,11 @@ func (a *SendMessageToTargetArgs) SetTargetID(targetID ID) *SendMessageToTargetA
 type SetAutoAttachArgs struct {
 	AutoAttach             bool `json:"autoAttach"`             // Whether to auto-attach to related targets.
 	WaitForDebuggerOnStart bool `json:"waitForDebuggerOnStart"` // Whether to pause new targets when attaching to them. Use `Runtime.runIfWaitingForDebugger` to run paused targets.
+	// Flatten Enables "flat" access to the session via specifying
+	// sessionId attribute in the commands.
+	//
+	// Note: This property is experimental.
+	Flatten *bool `json:"flatten,omitempty"`
 }
 
 // NewSetAutoAttachArgs initializes SetAutoAttachArgs with the required arguments.
@@ -266,6 +276,16 @@ func NewSetAutoAttachArgs(autoAttach bool, waitForDebuggerOnStart bool) *SetAuto
 	args.AutoAttach = autoAttach
 	args.WaitForDebuggerOnStart = waitForDebuggerOnStart
 	return args
+}
+
+// SetFlatten sets the Flatten optional argument. Enables "flat"
+// access to the session via specifying sessionId attribute in the
+// commands.
+//
+// Note: This property is experimental.
+func (a *SetAutoAttachArgs) SetFlatten(flatten bool) *SetAutoAttachArgs {
+	a.Flatten = &flatten
+	return a
 }
 
 // SetDiscoverTargetsArgs represents the arguments for SetDiscoverTargets in the Target domain.

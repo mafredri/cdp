@@ -4441,18 +4441,6 @@
                             "type": "integer"
                         },
                         {
-                            "name": "importedDocumentIndex",
-                            "description": "Index of the imported document's node of a link element in the `domNodes` array returned by\n`getSnapshot`, if any.",
-                            "optional": true,
-                            "type": "integer"
-                        },
-                        {
-                            "name": "templateContentIndex",
-                            "description": "Index of the content node of a template element in the `domNodes` array returned by\n`getSnapshot`.",
-                            "optional": true,
-                            "type": "integer"
-                        },
-                        {
                             "name": "pseudoType",
                             "description": "Type of a pseudo element node.",
                             "optional": true,
@@ -4666,8 +4654,65 @@
                     }
                 },
                 {
-                    "id": "DOMTreeSnapshot",
-                    "description": "DOM tree snapshot.",
+                    "id": "DocumentSnapshot",
+                    "description": "Document snapshot.",
+                    "type": "object",
+                    "properties": [
+                        {
+                            "name": "documentURL",
+                            "description": "Document URL that `Document` or `FrameOwner` node points to.",
+                            "$ref": "StringIndex"
+                        },
+                        {
+                            "name": "baseURL",
+                            "description": "Base URL that `Document` or `FrameOwner` node uses for URL completion.",
+                            "$ref": "StringIndex"
+                        },
+                        {
+                            "name": "contentLanguage",
+                            "description": "Contains the document's content language.",
+                            "$ref": "StringIndex"
+                        },
+                        {
+                            "name": "encodingName",
+                            "description": "Contains the document's character set encoding.",
+                            "$ref": "StringIndex"
+                        },
+                        {
+                            "name": "publicId",
+                            "description": "`DocumentType` node's publicId.",
+                            "$ref": "StringIndex"
+                        },
+                        {
+                            "name": "systemId",
+                            "description": "`DocumentType` node's systemId.",
+                            "$ref": "StringIndex"
+                        },
+                        {
+                            "name": "frameId",
+                            "description": "Frame ID for frame owner elements and also for the document node.",
+                            "$ref": "StringIndex"
+                        },
+                        {
+                            "name": "nodes",
+                            "description": "A table with dom nodes.",
+                            "$ref": "NodeTreeSnapshot"
+                        },
+                        {
+                            "name": "layout",
+                            "description": "The nodes in the layout tree.",
+                            "$ref": "LayoutTreeSnapshot"
+                        },
+                        {
+                            "name": "textBoxes",
+                            "description": "The post-layout inline text nodes.",
+                            "$ref": "TextBoxSnapshot"
+                        }
+                    ]
+                },
+                {
+                    "id": "NodeTreeSnapshot",
+                    "description": "Table containing nodes.",
                     "type": "object",
                     "properties": [
                         {
@@ -4725,15 +4770,6 @@
                             }
                         },
                         {
-                            "name": "layoutNodeIndex",
-                            "description": "The index of the node's related layout tree node in the `layoutTreeNodes` array returned by\n`captureSnapshot`, if any.",
-                            "optional": true,
-                            "type": "array",
-                            "items": {
-                                "type": "integer"
-                            }
-                        },
-                        {
                             "name": "textValue",
                             "description": "Only set for textarea elements, contains the text value.",
                             "optional": true,
@@ -4758,62 +4794,8 @@
                             "$ref": "RareBooleanData"
                         },
                         {
-                            "name": "documentURL",
-                            "description": "Document URL that `Document` or `FrameOwner` node points to.",
-                            "optional": true,
-                            "$ref": "RareStringData"
-                        },
-                        {
-                            "name": "baseURL",
-                            "description": "Base URL that `Document` or `FrameOwner` node uses for URL completion.",
-                            "optional": true,
-                            "$ref": "RareStringData"
-                        },
-                        {
-                            "name": "contentLanguage",
-                            "description": "Only set for documents, contains the document's content language.",
-                            "optional": true,
-                            "$ref": "RareStringData"
-                        },
-                        {
-                            "name": "documentEncoding",
-                            "description": "Only set for documents, contains the document's character set encoding.",
-                            "optional": true,
-                            "$ref": "RareStringData"
-                        },
-                        {
-                            "name": "publicId",
-                            "description": "`DocumentType` node's publicId.",
-                            "optional": true,
-                            "$ref": "RareStringData"
-                        },
-                        {
-                            "name": "systemId",
-                            "description": "`DocumentType` node's systemId.",
-                            "optional": true,
-                            "$ref": "RareStringData"
-                        },
-                        {
-                            "name": "frameId",
-                            "description": "Frame ID for frame owner elements and also for the document node.",
-                            "optional": true,
-                            "$ref": "RareStringData"
-                        },
-                        {
                             "name": "contentDocumentIndex",
-                            "description": "The index of a frame owner element's content document in the `domNodes` array returned by\n`captureSnapshot`, if any.",
-                            "optional": true,
-                            "$ref": "RareIntegerData"
-                        },
-                        {
-                            "name": "importedDocumentIndex",
-                            "description": "Index of the imported document's node of a link element in the `domNodes` array returned by\n`captureSnapshot`, if any.",
-                            "optional": true,
-                            "$ref": "RareIntegerData"
-                        },
-                        {
-                            "name": "templateContentIndex",
-                            "description": "Index of the content node of a template element in the `domNodes` array returned by\n`captureSnapshot`.",
+                            "description": "The index of the document in the list of the snapshot documents.",
                             "optional": true,
                             "$ref": "RareIntegerData"
                         },
@@ -4840,45 +4822,6 @@
                             "description": "The url of the script (if any) that generates this node.",
                             "optional": true,
                             "$ref": "RareStringData"
-                        }
-                    ]
-                },
-                {
-                    "id": "TextBoxSnapshot",
-                    "description": "Details of post layout rendered text positions. The exact layout should not be regarded as\nstable and may change between versions.",
-                    "type": "object",
-                    "properties": [
-                        {
-                            "name": "layoutIndex",
-                            "description": "Intex of th elayout tree node that owns this box collection.",
-                            "type": "array",
-                            "items": {
-                                "type": "integer"
-                            }
-                        },
-                        {
-                            "name": "bounds",
-                            "description": "The absolute position bounding box.",
-                            "type": "array",
-                            "items": {
-                                "$ref": "Rectangle"
-                            }
-                        },
-                        {
-                            "name": "start",
-                            "description": "The starting index in characters, for this post layout textbox substring. Characters that\nwould be represented as a surrogate pair in UTF-16 have length 2.",
-                            "type": "array",
-                            "items": {
-                                "type": "integer"
-                            }
-                        },
-                        {
-                            "name": "length",
-                            "description": "The number of characters in this post layout textbox substring. Characters that would be\nrepresented as a surrogate pair in UTF-16 have length 2.",
-                            "type": "array",
-                            "items": {
-                                "type": "integer"
-                            }
                         }
                     ]
                 },
@@ -4918,25 +4861,44 @@
                             "items": {
                                 "$ref": "StringIndex"
                             }
-                        },
-                        {
-                            "name": "textBoxes",
-                            "description": "The post-layout inline text nodes",
-                            "$ref": "TextBoxSnapshot"
                         }
                     ]
                 },
                 {
-                    "id": "StylesSnapshot",
-                    "description": "Computed style snapshot.",
+                    "id": "TextBoxSnapshot",
+                    "description": "Details of post layout rendered text positions. The exact layout should not be regarded as\nstable and may change between versions.",
                     "type": "object",
                     "properties": [
                         {
-                            "name": "values",
-                            "description": "Whitelisted ComputedStyle property values referenced by styleIndex.",
+                            "name": "layoutIndex",
+                            "description": "Intex of th elayout tree node that owns this box collection.",
                             "type": "array",
                             "items": {
-                                "$ref": "ArrayOfStrings"
+                                "type": "integer"
+                            }
+                        },
+                        {
+                            "name": "bounds",
+                            "description": "The absolute position bounding box.",
+                            "type": "array",
+                            "items": {
+                                "$ref": "Rectangle"
+                            }
+                        },
+                        {
+                            "name": "start",
+                            "description": "The starting index in characters, for this post layout textbox substring. Characters that\nwould be represented as a surrogate pair in UTF-16 have length 2.",
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
+                            }
+                        },
+                        {
+                            "name": "length",
+                            "description": "The number of characters in this post layout textbox substring. Characters that would be\nrepresented as a surrogate pair in UTF-16 have length 2.",
+                            "type": "array",
+                            "items": {
+                                "type": "integer"
                             }
                         }
                     ]
@@ -5025,14 +4987,12 @@
                     ],
                     "returns": [
                         {
-                            "name": "nodes",
+                            "name": "documents",
                             "description": "The nodes in the DOM tree. The DOMNode at index 0 corresponds to the root document.",
-                            "$ref": "DOMTreeSnapshot"
-                        },
-                        {
-                            "name": "layout",
-                            "description": "The nodes in the layout tree.",
-                            "$ref": "LayoutTreeSnapshot"
+                            "type": "array",
+                            "items": {
+                                "$ref": "DocumentSnapshot"
+                            }
                         },
                         {
                             "name": "strings",
@@ -6524,6 +6484,18 @@
                     ]
                 },
                 {
+                    "name": "insertText",
+                    "description": "This method emulates inserting text that doesn't come from a key press,\nfor example an emoji keyboard or an IME.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "text",
+                            "description": "The text to insert.",
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
                     "name": "dispatchMouseEvent",
                     "description": "Dispatches a mouse event to the page.",
                     "parameters": [
@@ -7518,6 +7490,40 @@
                             "items": {
                                 "$ref": "SamplingProfileNode"
                             }
+                        },
+                        {
+                            "name": "modules",
+                            "type": "array",
+                            "items": {
+                                "$ref": "Module"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "id": "Module",
+                    "description": "Executable module information",
+                    "type": "object",
+                    "properties": [
+                        {
+                            "name": "name",
+                            "description": "Name of the module.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "uuid",
+                            "description": "UUID of the module.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "baseAddress",
+                            "description": "Base address where the module is loaded into memory. Encoded as a decimal\nor hexadecimal (0x prefixed) string.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "size",
+                            "description": "Size of the module in bytes.",
+                            "type": "number"
                         }
                     ]
                 }
@@ -11495,6 +11501,38 @@
                     "name": "stopScreencast",
                     "description": "Stops sending each frame in the `screencastFrame`.",
                     "experimental": true
+                },
+                {
+                    "name": "setProduceCompilationCache",
+                    "description": "Forces compilation cache to be generated for every subresource script.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "enabled",
+                            "type": "boolean"
+                        }
+                    ]
+                },
+                {
+                    "name": "addCompilationCache",
+                    "description": "Seeds compilation cache for given url. Compilation cache does not survive\ncross-process navigation.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "url",
+                            "type": "string"
+                        },
+                        {
+                            "name": "data",
+                            "description": "Base64-encoded data",
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
+                    "name": "clearCompilationCache",
+                    "description": "Clears seeded compilation cache.",
+                    "experimental": true
                 }
             ],
             "events": [
@@ -11793,6 +11831,22 @@
                             "name": "userGesture",
                             "description": "Whether or not it was triggered by user gesture.",
                             "type": "boolean"
+                        }
+                    ]
+                },
+                {
+                    "name": "compilationCacheProduced",
+                    "description": "Issued for every compilation cache generated. Is only available\nif Page.setGenerateCompilationCache is enabled.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "url",
+                            "type": "string"
+                        },
+                        {
+                            "name": "data",
+                            "description": "Base64-encoded data",
+                            "type": "string"
                         }
                     ]
                 }
@@ -12777,6 +12831,18 @@
                     ]
                 },
                 {
+                    "name": "attachToBrowserTarget",
+                    "description": "Attaches to the browser target, only uses flat sessionId mode.",
+                    "experimental": true,
+                    "returns": [
+                        {
+                            "name": "sessionId",
+                            "description": "Id assigned to the session.",
+                            "$ref": "SessionID"
+                        }
+                    ]
+                },
+                {
                     "name": "closeTarget",
                     "description": "Closes the target. If the target is a page that gets closed too.",
                     "parameters": [
@@ -12977,6 +13043,13 @@
                         {
                             "name": "waitForDebuggerOnStart",
                             "description": "Whether to pause new targets when attaching to them. Use `Runtime.runIfWaitingForDebugger`\nto run paused targets.",
+                            "type": "boolean"
+                        },
+                        {
+                            "name": "flatten",
+                            "description": "Enables \"flat\" access to the session via specifying sessionId attribute in the commands.",
+                            "experimental": true,
+                            "optional": true,
                             "type": "boolean"
                         }
                     ]

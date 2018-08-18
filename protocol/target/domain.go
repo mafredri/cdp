@@ -48,6 +48,17 @@ func (d *domainClient) AttachToTarget(ctx context.Context, args *AttachToTargetA
 	return
 }
 
+// AttachToBrowserTarget invokes the Target method. Attaches to the browser
+// target, only uses flat sessionId mode.
+func (d *domainClient) AttachToBrowserTarget(ctx context.Context) (reply *AttachToBrowserTargetReply, err error) {
+	reply = new(AttachToBrowserTargetReply)
+	err = rpcc.Invoke(ctx, "Target.attachToBrowserTarget", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Target", Op: "AttachToBrowserTarget", Err: err}
+	}
+	return
+}
+
 // CloseTarget invokes the Target method. Closes the target. If the target is
 // a page that gets closed too.
 func (d *domainClient) CloseTarget(ctx context.Context, args *CloseTargetArgs) (reply *CloseTargetReply, err error) {
