@@ -16,7 +16,16 @@ import (
 	"github.com/mafredri/cdp/session"
 )
 
+func checkBrowser(t *testing.T) {
+	t.Helper()
+	if !*browserFlag {
+		t.Skip("Test requires browser, skipping...")
+	}
+}
+
 func TestManager(t *testing.T) {
+	checkBrowser(t)
+
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
 
@@ -34,8 +43,6 @@ func TestManager(t *testing.T) {
 	defer m.Close()
 
 	newPage := c.NewPage(ctx)
-	// Close later.
-	// defer newPage.Close()
 
 	// Test session usage.
 	pageConn, err := m.Dial(ctx, newPage.ID())
@@ -93,6 +100,8 @@ func TestManager(t *testing.T) {
 }
 
 func TestManager_Close(t *testing.T) {
+	checkBrowser(t)
+
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
 
@@ -121,6 +130,8 @@ func TestManager_Close(t *testing.T) {
 }
 
 func TestManager_ClosesErrorChan(t *testing.T) {
+	checkBrowser(t)
+
 	ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
 	defer cancel()
 
@@ -140,6 +151,8 @@ func TestManager_ClosesErrorChan(t *testing.T) {
 }
 
 func TestManager_CloseUnderlyingConn(t *testing.T) {
+	checkBrowser(t)
+
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
 
@@ -167,6 +180,8 @@ func TestManager_CloseUnderlyingConn(t *testing.T) {
 }
 
 func TestManager_NewOnClosedConn(t *testing.T) {
+	checkBrowser(t)
+
 	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
 	defer cancel()
 
