@@ -15,9 +15,9 @@ before_install:
   - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 --disable-setuid-sandbox --no-sandbox about:blank &
 
 script:
-  - go test . -browser
-  - go test ./session -browser -race -covermode=atomic -coverprofile=session_coverage.out
   - go list -f '{{if len .TestGoFiles}}-coverprofile={{.Name}}_coverage.out {{.ImportPath}}{{end}}' ./... | xargs -L1 go test -race -covermode=atomic
+  - go test ./session -browser -race -covermode=atomic -coverprofile=session_coverage.out
+  - go test . -browser
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
