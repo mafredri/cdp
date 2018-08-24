@@ -17,7 +17,7 @@ Object
 Array(0)
 Array(4)
 1257894000000
-Wed Nov 11 2009 01:00:00 GMT+0200 (EET)
+Wed Nov 11 2009 01:00:00 GMT+0200 (Eastern European Standard Time)
 /\/.*\//g
 /\/$^\//
 Symbol(=))
@@ -34,7 +34,7 @@ Promise
 Promise
 Uint8Array(2)
 Int8Array(0)
-function () {}
+function() {}
 () => {}
 "foo"
 String("bar")
@@ -51,11 +51,11 @@ null
 Object {}
 Object {:^): "^_^", ping: "pong", t: -10}
 Object {a: 1}
-Object {a: true, b: false, c: Object, d: Array(0), e: Wed Nov 11 2009 01:00:00 GMT+0200 (EET), ...}
+Object {a: true, b: false, c: Object, d: Array(0), e: Wed Nov 11 2009 01:00:00 GMT+0200 (Eastern European Standard Time), ...}
 Array(0) []
 Array(4) [1, 2.333, 666, Object]
 1257894000000
-Wed Nov 11 2009 01:00:00 GMT+0200 (EET)
+Wed Nov 11 2009 01:00:00 GMT+0200 (Eastern European Standard Time)
 /\/.*\//g
 /\/$^\//
 Symbol(=))
@@ -72,5 +72,5 @@ Promise {[[PromiseStatus]]: "pending", [[PromiseValue]]: undefined}
 Promise {[[PromiseStatus]]: "resolved", [[PromiseValue]]: "'ello"}
 Uint8Array(2) [1, 0]
 Int8Array(0) []
-function () {}
+function() {}
 () => {}
