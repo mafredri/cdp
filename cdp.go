@@ -178,6 +178,21 @@ type Audits interface {
 // The Browser domain. The Browser domain defines methods and events for
 // browser managing.
 type Browser interface {
+	// Command GrantPermissions
+	//
+	// Grant specific permissions to the given origin and reject all
+	// others.
+	//
+	// Note: This command is experimental.
+	GrantPermissions(context.Context, *browser.GrantPermissionsArgs) error
+
+	// Command ResetPermissions
+	//
+	// Reset all permission management for all origins.
+	//
+	// Note: This command is experimental.
+	ResetPermissions(context.Context, *browser.ResetPermissionsArgs) error
+
 	// Command Close
 	//
 	// Close browser gracefully.

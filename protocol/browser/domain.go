@@ -20,6 +20,34 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// GrantPermissions invokes the Browser method. Grant specific permissions to
+// the given origin and reject all others.
+func (d *domainClient) GrantPermissions(ctx context.Context, args *GrantPermissionsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.grantPermissions", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.grantPermissions", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "GrantPermissions", Err: err}
+	}
+	return
+}
+
+// ResetPermissions invokes the Browser method. Reset all permission
+// management for all origins.
+func (d *domainClient) ResetPermissions(ctx context.Context, args *ResetPermissionsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.resetPermissions", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.resetPermissions", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "ResetPermissions", Err: err}
+	}
+	return
+}
+
 // Close invokes the Browser method. Close browser gracefully.
 func (d *domainClient) Close(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Browser.close", nil, nil, d.conn)

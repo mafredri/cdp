@@ -6,6 +6,49 @@ import (
 	"github.com/mafredri/cdp/protocol/target"
 )
 
+// GrantPermissionsArgs represents the arguments for GrantPermissions in the Browser domain.
+type GrantPermissionsArgs struct {
+	Origin           string                   `json:"origin"`                     // No description.
+	Permissions      []PermissionType         `json:"permissions"`                // No description.
+	BrowserContextID *target.BrowserContextID `json:"browserContextId,omitempty"` // BrowserContext to override permissions. When omitted, default browser context is used.
+}
+
+// NewGrantPermissionsArgs initializes GrantPermissionsArgs with the required arguments.
+func NewGrantPermissionsArgs(origin string, permissions []PermissionType) *GrantPermissionsArgs {
+	args := new(GrantPermissionsArgs)
+	args.Origin = origin
+	args.Permissions = permissions
+	return args
+}
+
+// SetBrowserContextID sets the BrowserContextID optional argument.
+// BrowserContext to override permissions. When omitted, default
+// browser context is used.
+func (a *GrantPermissionsArgs) SetBrowserContextID(browserContextID target.BrowserContextID) *GrantPermissionsArgs {
+	a.BrowserContextID = &browserContextID
+	return a
+}
+
+// ResetPermissionsArgs represents the arguments for ResetPermissions in the Browser domain.
+type ResetPermissionsArgs struct {
+	BrowserContextID *target.BrowserContextID `json:"browserContextId,omitempty"` // BrowserContext to reset permissions. When omitted, default browser context is used.
+}
+
+// NewResetPermissionsArgs initializes ResetPermissionsArgs with the required arguments.
+func NewResetPermissionsArgs() *ResetPermissionsArgs {
+	args := new(ResetPermissionsArgs)
+
+	return args
+}
+
+// SetBrowserContextID sets the BrowserContextID optional argument.
+// BrowserContext to reset permissions. When omitted, default browser
+// context is used.
+func (a *ResetPermissionsArgs) SetBrowserContextID(browserContextID target.BrowserContextID) *ResetPermissionsArgs {
+	a.BrowserContextID = &browserContextID
+	return a
+}
+
 // GetVersionReply represents the return values for GetVersion in the Browser domain.
 type GetVersionReply struct {
 	ProtocolVersion string `json:"protocolVersion"` // Protocol version.

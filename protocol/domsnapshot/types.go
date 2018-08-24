@@ -16,12 +16,13 @@ type InlineTextBox struct {
 
 // LayoutTreeNode Details of an element in the DOM tree with a LayoutObject.
 type LayoutTreeNode struct {
-	DOMNodeIndex    int             `json:"domNodeIndex"`              // The index of the related DOM node in the `domNodes` array returned by `getSnapshot`.
-	BoundingBox     dom.Rect        `json:"boundingBox"`               // The absolute position bounding box.
-	LayoutText      *string         `json:"layoutText,omitempty"`      // Contents of the LayoutText, if any.
-	InlineTextNodes []InlineTextBox `json:"inlineTextNodes,omitempty"` // The post-layout inline text nodes, if any.
-	StyleIndex      *int            `json:"styleIndex,omitempty"`      // Index into the `computedStyles` array returned by `getSnapshot`.
-	PaintOrder      *int            `json:"paintOrder,omitempty"`      // Global paint order index, which is determined by the stacking order of the nodes. Nodes that are painted together will have the same index. Only provided if includePaintOrder in getSnapshot was true.
+	DOMNodeIndex      int             `json:"domNodeIndex"`                // The index of the related DOM node in the `domNodes` array returned by `getSnapshot`.
+	BoundingBox       dom.Rect        `json:"boundingBox"`                 // The absolute position bounding box.
+	LayoutText        *string         `json:"layoutText,omitempty"`        // Contents of the LayoutText, if any.
+	InlineTextNodes   []InlineTextBox `json:"inlineTextNodes,omitempty"`   // The post-layout inline text nodes, if any.
+	StyleIndex        *int            `json:"styleIndex,omitempty"`        // Index into the `computedStyles` array returned by `getSnapshot`.
+	PaintOrder        *int            `json:"paintOrder,omitempty"`        // Global paint order index, which is determined by the stacking order of the nodes. Nodes that are painted together will have the same index. Only provided if includePaintOrder in getSnapshot was true.
+	IsStackingContext *bool           `json:"isStackingContext,omitempty"` // Set to true to indicate the element begins a new stacking context.
 }
 
 // ComputedStyle A subset of the full ComputedStyle as defined by the request
@@ -98,10 +99,11 @@ type NodeTreeSnapshot struct {
 // LayoutTreeSnapshot Details of an element in the DOM tree with a
 // LayoutObject.
 type LayoutTreeSnapshot struct {
-	NodeIndex []int            `json:"nodeIndex"` // The index of the related DOM node in the `domNodes` array returned by `getSnapshot`.
-	Styles    []ArrayOfStrings `json:"styles"`    // Index into the `computedStyles` array returned by `captureSnapshot`.
-	Bounds    []Rectangle      `json:"bounds"`    // The absolute position bounding box.
-	Text      []StringIndex    `json:"text"`      // Contents of the LayoutText, if any.
+	NodeIndex        []int            `json:"nodeIndex"`        // The index of the related DOM node in the `domNodes` array returned by `getSnapshot`.
+	Styles           []ArrayOfStrings `json:"styles"`           // Index into the `computedStyles` array returned by `captureSnapshot`.
+	Bounds           []Rectangle      `json:"bounds"`           // The absolute position bounding box.
+	Text             []StringIndex    `json:"text"`             // Contents of the LayoutText, if any.
+	StackingContexts RareBooleanData  `json:"stackingContexts"` // Stacking context information.
 }
 
 // TextBoxSnapshot Details of post layout rendered text positions. The exact

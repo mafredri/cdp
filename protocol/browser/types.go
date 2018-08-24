@@ -45,6 +45,44 @@ type Bounds struct {
 	WindowState WindowState `json:"windowState,omitempty"` // The window state. Default to normal.
 }
 
+// PermissionType
+//
+// Note: This type is experimental.
+type PermissionType string
+
+// PermissionType as enums.
+const (
+	PermissionTypeNotSet                   PermissionType = ""
+	PermissionTypeAccessibilityEvents      PermissionType = "accessibilityEvents"
+	PermissionTypeAudioCapture             PermissionType = "audioCapture"
+	PermissionTypeBackgroundSync           PermissionType = "backgroundSync"
+	PermissionTypeClipboardRead            PermissionType = "clipboardRead"
+	PermissionTypeClipboardWrite           PermissionType = "clipboardWrite"
+	PermissionTypeDurableStorage           PermissionType = "durableStorage"
+	PermissionTypeFlash                    PermissionType = "flash"
+	PermissionTypeGeolocation              PermissionType = "geolocation"
+	PermissionTypeMidi                     PermissionType = "midi"
+	PermissionTypeMidiSysex                PermissionType = "midiSysex"
+	PermissionTypeNotifications            PermissionType = "notifications"
+	PermissionTypePaymentHandler           PermissionType = "paymentHandler"
+	PermissionTypeProtectedMediaIdentifier PermissionType = "protectedMediaIdentifier"
+	PermissionTypeSensors                  PermissionType = "sensors"
+	PermissionTypeVideoCapture             PermissionType = "videoCapture"
+)
+
+func (e PermissionType) Valid() bool {
+	switch e {
+	case "accessibilityEvents", "audioCapture", "backgroundSync", "clipboardRead", "clipboardWrite", "durableStorage", "flash", "geolocation", "midi", "midiSysex", "notifications", "paymentHandler", "protectedMediaIdentifier", "sensors", "videoCapture":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e PermissionType) String() string {
+	return string(e)
+}
+
 // Bucket Chrome histogram bucket.
 //
 // Note: This type is experimental.
