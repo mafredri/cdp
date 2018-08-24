@@ -1156,7 +1156,11 @@ func New%[1]s(%[2]s) *%[1]s {
 		g.Printf(newfmt, c.ArgsName(d), c.ArgsSignature(d), c.ArgsAssign("args", d), c.ArgsName(d))
 	} else {
 		sig := c.ArgsSignature(d)
-		g.Printf19(newfmt, c.ArgsName(d), sig, c.ArgsAssign("args", d), c.ArgsName(d))
+		sig19 := sig
+		if d.Name() == "DOM" {
+			sig19 = strings.Replace(sig, "page.FrameID", "internal.PageFrameID", 1)
+		}
+		g.Printf19(newfmt, c.ArgsName(d), sig19, c.ArgsAssign("args", d), c.ArgsName(d))
 		sig18 := strings.Replace(sig, "page.FrameID", "protocol.PageFrameID", 1)
 		sig18 = strings.Replace(sig18, "page.ResourceType", "protocol.PageResourceType", 1)
 		if d.Name() == "Page" {
@@ -1212,13 +1216,25 @@ func TestNew%[1]s(t *testing.T) {
 		if arg.Experimental {
 			desc += "\n//\n// Note: This property is experimental."
 		}
-		g.Printf(`
-// %[8]s%[6]s
-func (a *%[2]s) Set%[1]s(%[3]s %[4]s) *%[2]s {
-	a.%[5]s%[1]s = %[7]s%[3]s
+		setMethodFmt := fmt.Sprintf(`
+// %[7]s%[5]s
+func (a *%[2]s) Set%[1]s(%[3]s %%[1]s) *%[2]s {
+	a.%[4]s%[1]s = %[6]s%[3]s
 	return a
 }
-`, arg.ExportedName(d), c.ArgsName(d), name, arg.GoType("cdp", d), OptionalPropPrefix, desc, ptr, comment)
+`, arg.ExportedName(d), c.ArgsName(d), name, OptionalPropPrefix, desc, ptr, comment)
+
+		argType := arg.GoType("cdp", d)
+		if g.isCircularType {
+			argType18 := argType
+			if argType == "FrameID" {
+				argType18 = "protocol.PageFrameID"
+			}
+			g.Printf19(setMethodFmt, argType)
+			g.Printf18(setMethodFmt, argType18)
+		} else {
+			g.Printf(setMethodFmt, argType)
+		}
 	}
 }
 
