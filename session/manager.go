@@ -61,7 +61,7 @@ func (m *Manager) Dial(ctx context.Context, id target.ID) (*rpcc.Conn, error) {
 func (m *Manager) Close() error {
 	m.cancel()
 	if m.done != nil {
-		errors.Wrapf(<-m.done, "session.Manager: close failed")
+		return errors.Wrapf(<-m.done, "session.Manager: close failed")
 	}
 	return nil
 }
