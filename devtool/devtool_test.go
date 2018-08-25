@@ -3,6 +3,7 @@ package devtool
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"flag"
 	"fmt"
 	"io"
@@ -17,22 +18,33 @@ import (
 var update = flag.Bool("update", false, "update .golden files")
 
 type testHandler struct {
+	t      *testing.T
 	status int
 	body   []byte
 	buf    *bytes.Buffer
 }
 
+func newTestHandler(t *testing.T) *testHandler {
+	return &testHandler{t: t}
+}
+
 func (h *testHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if !strings.HasPrefix(r.RequestURI, "/json") {
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Only /json endpoint is supported!"))
+		_, err := w.Write([]byte("Only /json endpoint is supported!"))
+		if err != nil {
+			h.t.Error(err)
+		}
 		return
 	}
 	if h.buf != nil {
 		fmt.Fprintln(h.buf, r.Method, r.RequestURI)
 	}
 	w.WriteHeader(h.status)
-	w.Write(h.body)
+	_, err := w.Write(h.body)
+	if err != nil {
+		h.t.Error(err)
+	}
 }
 
 func read(t *testing.T, name string) []byte {
@@ -52,7 +64,7 @@ func TestDevTools_WithClient(t *testing.T) {
 }
 
 func TestDevTools(t *testing.T) {
-	th := &testHandler{}
+	th := newTestHandler(t)
 	srv := httptest.NewServer(th)
 	defer srv.Close()
 
@@ -61,6 +73,9 @@ func TestDevTools(t *testing.T) {
 	var buf bytes.Buffer
 	th.buf = &buf
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	tests := []struct {
 		name   string
 		status int
@@ -68,25 +83,25 @@ func TestDevTools(t *testing.T) {
 		fn     func() (interface{}, error)
 	}{
 		{"CreateURL", http.StatusOK, read(t, filepath.Join("testdata", "new.json")), func() (interface{}, error) {
-			target, err := devt.CreateURL(nil, "https://www.google.com")
+			target, err := devt.CreateURL(ctx, "https://www.google.com")
 			return target, err
 		}},
 		{"Create", http.StatusOK, read(t, filepath.Join("testdata", "new.json")), func() (interface{}, error) {
-			target, err := devt.Create(nil)
+			target, err := devt.Create(ctx)
 			return target, err
 		}},
 		{"Get", http.StatusOK, read(t, filepath.Join("testdata", "list.json")), func() (interface{}, error) {
-			target, err := devt.Get(nil, Page)
+			target, err := devt.Get(ctx, Page)
 			return target, err
 		}},
 		{"Close", http.StatusOK, []byte("Target is closing"), func() (interface{}, error) {
-			return nil, devt.Close(nil, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
+			return nil, devt.Close(ctx, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
 		}},
 		{"Activate", http.StatusOK, []byte("Target activated"), func() (interface{}, error) {
-			return nil, devt.Activate(nil, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
+			return nil, devt.Activate(ctx, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
 		}},
 		{"Version", http.StatusOK, read(t, filepath.Join("testdata", "version.json")), func() (interface{}, error) {
-			v, err := devt.Version(nil)
+			v, err := devt.Version(ctx)
 			return v, err
 		}},
 	}
@@ -118,13 +133,16 @@ func TestDevTools(t *testing.T) {
 }
 
 func TestDevTools_Error(t *testing.T) {
-	th := &testHandler{}
+	th := newTestHandler(t)
 	srv := httptest.NewServer(th)
 	defer srv.Close()
 
 	devt := New(srv.URL)
 
 	var buf bytes.Buffer
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	tests := []struct {
 		name   string
@@ -133,25 +151,25 @@ func TestDevTools_Error(t *testing.T) {
 		fn     func() (interface{}, error)
 	}{
 		{"Create", http.StatusNotFound, []byte("Not found"), func() (interface{}, error) {
-			target, err := devt.Create(nil)
+			target, err := devt.Create(ctx)
 			return target, err
 		}},
 		{"Get", http.StatusNotFound, []byte("Not found"), func() (interface{}, error) {
-			target, err := devt.Get(nil, Page)
+			target, err := devt.Get(ctx, Page)
 			return target, err
 		}},
 		{"Get ServiceWorker", http.StatusOK, read(t, filepath.Join("testdata", "list.json")), func() (interface{}, error) {
-			target, err := devt.Get(nil, ServiceWorker)
+			target, err := devt.Get(ctx, ServiceWorker)
 			return target, err
 		}},
 		{"Close", http.StatusNotFound, []byte("Could not close target id: ddd908ca-4d8c-4783-a089-c9456c463eef"), func() (interface{}, error) {
-			return nil, devt.Close(nil, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
+			return nil, devt.Close(ctx, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
 		}},
 		{"Activate", http.StatusNotFound, []byte("Could not close target id: ddd908ca-4d8c-4783-a089-c9456c463eef"), func() (interface{}, error) {
-			return nil, devt.Activate(nil, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
+			return nil, devt.Activate(ctx, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
 		}},
 		{"Version", http.StatusNotFound, []byte("Not found"), func() (interface{}, error) {
-			v, err := devt.Version(nil)
+			v, err := devt.Version(ctx)
 			return v, err
 		}},
 	}
@@ -183,27 +201,30 @@ func TestDevTools_Error(t *testing.T) {
 }
 
 func TestDevTools_InvalidURL(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	tests := []struct {
 		name string
 		url  string
 		fn   func(devt *DevTools) error
 	}{
 		{"Create", "", func(devt *DevTools) (err error) {
-			_, err = devt.Create(nil)
+			_, err = devt.Create(ctx)
 			return
 		}},
 		{"Get", "", func(devt *DevTools) (err error) {
-			_, err = devt.Get(nil, Page)
+			_, err = devt.Get(ctx, Page)
 			return
 		}},
 		{"Close", "", func(devt *DevTools) (err error) {
-			return devt.Close(nil, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
+			return devt.Close(ctx, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
 		}},
 		{"Activate", "", func(devt *DevTools) (err error) {
-			return devt.Activate(nil, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
+			return devt.Activate(ctx, &Target{ID: "ddd908ca-4d8c-4783-a089-c9456c463eef"})
 		}},
 		{"Version", "", func(devt *DevTools) (err error) {
-			_, err = devt.Version(nil)
+			_, err = devt.Version(ctx)
 			return
 		}},
 	}

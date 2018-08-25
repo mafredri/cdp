@@ -23,8 +23,11 @@ func TestNewStream_AfterClose(t *testing.T) {
 	srv := newTestServer(t, nil)
 	defer srv.Close()
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	srv.conn.Close()
-	_, err := NewStream(nil, "test", srv.conn)
+	_, err := NewStream(ctx, "test", srv.conn)
 	if err != ErrConnClosing {
 		t.Errorf("NewStream() after closed conn; got %v, want %v", err, ErrConnClosing)
 	}

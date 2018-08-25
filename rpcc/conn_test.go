@@ -46,8 +46,14 @@ func newTestServer(t testing.TB, respond func(*websocket.Conn, *Request) error) 
 		}
 		ts.wsConn = conn
 
-		conn.SetReadDeadline(time.Now().Add(timeout))
-		conn.SetWriteDeadline(time.Now().Add(timeout))
+		err = conn.SetReadDeadline(time.Now().Add(timeout))
+		if err != nil {
+			t.Fatal(err)
+		}
+		err = conn.SetWriteDeadline(time.Now().Add(timeout))
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		close(setupDone)
 		defer conn.Close()
@@ -69,7 +75,10 @@ func newTestServer(t testing.TB, respond func(*websocket.Conn, *Request) error) 
 	if err != nil {
 		t.Fatal(err)
 	}
-	ts.conn.SetCompressionLevel(flate.BestSpeed)
+	err = ts.conn.SetCompressionLevel(flate.BestSpeed)
+	if err != nil {
+		t.Error(err)
+	}
 
 	<-setupDone
 	return ts
@@ -89,8 +98,11 @@ func TestConn_Invoke(t *testing.T) {
 	})
 	defer srv.Close()
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	var reply string
-	err := Invoke(nil, "test.Hello", nil, &reply, srv.conn)
+	err := Invoke(ctx, "test.Hello", nil, &reply, srv.conn)
 	if err != nil {
 		t.Error(err)
 	}
@@ -99,7 +111,7 @@ func TestConn_Invoke(t *testing.T) {
 		t.Errorf("test.Hello: got reply %q, want %q", reply, "hello")
 	}
 
-	err = Invoke(nil, "test.World", nil, &reply, srv.conn)
+	err = Invoke(ctx, "test.World", nil, &reply, srv.conn)
 	if err != nil {
 		t.Error(err)
 	}
@@ -121,7 +133,10 @@ func TestConn_InvokeError(t *testing.T) {
 	})
 	defer srv.Close()
 
-	switch err := Invoke(nil, "test.Hello", nil, nil, srv.conn).(type) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	switch err := Invoke(ctx, "test.Hello", nil, nil, srv.conn).(type) {
 	case *ResponseError:
 		if err.Message != want {
 			t.Errorf("Invoke err.Message: got %q, want %q", err.Message, want)
@@ -135,8 +150,11 @@ func TestConn_InvokeRemoteDisconnected(t *testing.T) {
 	srv := newTestServer(t, nil)
 	defer srv.Close()
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	srv.wsConn.Close()
-	err := Invoke(nil, "test.Hello", nil, nil, srv.conn)
+	err := Invoke(ctx, "test.Hello", nil, nil, srv.conn)
 	if err == nil {
 		t.Error("Invoke error: got nil, want error")
 	}
@@ -146,8 +164,11 @@ func TestConn_InvokeConnectionClosed(t *testing.T) {
 	srv := newTestServer(t, nil)
 	defer srv.Close()
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	srv.conn.Close()
-	err := Invoke(nil, "test.Hello", nil, nil, srv.conn)
+	err := Invoke(ctx, "test.Hello", nil, nil, srv.conn)
 	if err != ErrConnClosing {
 		t.Errorf("Invoke error: got %v, want ErrConnClosing", err)
 	}
@@ -198,8 +219,11 @@ func TestConn_DecodeError(t *testing.T) {
 	})
 	defer srv.Close()
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	var reply string
-	err := Invoke(nil, "test.DecodeError", nil, &reply, srv.conn)
+	err := Invoke(ctx, "test.DecodeError", nil, &reply, srv.conn)
 	if err == nil || !strings.HasPrefix(err.Error(), "rpcc: decoding") {
 		t.Errorf("test.DecodeError: got %v, want error with %v", err, "rpcc: decoding")
 	}
@@ -221,7 +245,10 @@ func TestConn_EncodeFailed(t *testing.T) {
 		codec:   enc,
 	}
 
-	err := Invoke(nil, "test.Hello", nil, nil, conn)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	err := Invoke(ctx, "test.Hello", nil, nil, conn)
 	if err != enc.err {
 		t.Errorf("Encode: got %v, want %v", err, enc.err)
 	}
@@ -231,25 +258,30 @@ func TestConn_Notify(t *testing.T) {
 	srv := newTestServer(t, nil)
 	defer srv.Close()
 
-	s, err := NewStream(nil, "test.Notify", srv.conn)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s, err := NewStream(ctx, "test.Notify", srv.conn)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer s.Close()
 
+	errc := make(chan error, 1)
 	go func() {
 		resp := Response{
 			Method: "test.Notify",
 			Args:   []byte(`"hello"`),
 		}
-		if err := srv.wsConn.WriteJSON(&resp); err != nil {
-			t.Fatal(err)
-		}
+		errc <- srv.wsConn.WriteJSON(&resp)
 	}()
 
 	var reply string
 	if err = s.RecvMsg(&reply); err != nil {
 		t.Error(err)
+	}
+	if err = <-errc; err != nil {
+		t.Fatal(err)
 	}
 
 	want := "hello"
@@ -267,7 +299,10 @@ func TestConn_StreamRecv(t *testing.T) {
 	srv := newTestServer(t, nil)
 	defer srv.Close()
 
-	s, err := NewStream(nil, "test.Stream", srv.conn)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s, err := NewStream(ctx, "test.Stream", srv.conn)
 	if err != nil {
 		t.Fatal(err)
 	}

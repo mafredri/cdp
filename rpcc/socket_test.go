@@ -14,7 +14,6 @@ type fakeSocketConn struct {
 	reader          *fakeReader
 	writer          *fakeWriteCloser
 	writerErr       error
-	deadlineErr     error
 }
 
 func (c *fakeSocketConn) NextReader() (int, io.Reader, error) {
@@ -63,7 +62,10 @@ func (c *fakeWriteCloser) Close() error {
 func TestSocket_Read(t *testing.T) {
 	fakeConn := &fakeSocketConn{}
 	conn := &wsReadWriteCloser{wsConn: fakeConn}
-	conn.Read(nil)
+	_, err := conn.Read(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if fakeConn.nextReaderCount != 1 {
 		t.Errorf("expected NextReader to be called once, got %d", fakeConn.nextReaderCount)
 	}
@@ -74,7 +76,10 @@ func TestSocket_Read(t *testing.T) {
 	prevReader := fakeConn.reader
 	// Should fetch next reader on EOF.
 	fakeConn.reader.err = io.EOF
-	conn.Read(nil)
+	_, err = conn.Read(nil)
+	if err != nil {
+		t.Fatal(err)
+	}
 	if prevReader.count != 2 {
 		t.Errorf("expected Read to be called 2 times on previous reader, got %d", prevReader.count)
 	}
