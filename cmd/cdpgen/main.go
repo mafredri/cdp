@@ -400,7 +400,7 @@ func (g *Generator) CdpClient(domains []proto.Domain) {
 		newFields.Printf("\t\t%s: %s.NewClient(conn),\n", d.Name(), strings.ToLower(d.Name()))
 	}
 	g.Printf(`
-// Client represents a Chrome Debugging Protocol client that can be used to
+// Client represents a Chrome DevTools Protocol client that can be used to
 // invoke methods or listen to events in every CDP domain. The Client consumes
 // a rpcc connection, used to invoke the methods.
 type Client struct {

@@ -316,7 +316,7 @@ func (c *Conn) recv(notify func(string, []byte), done func(error)) {
 		// Check if this is an RPC notification from the server.
 		if resp.Method != "" {
 			// Method represents the event that was triggered over the
-			// Chrome Debugging Protocol. We do not expect to receive
+			// Chrome DevTools Protocol. We do not expect to receive
 			// RPC requests, if this was one, the ID field would be set.
 			notify(resp.Method, resp.Args)
 			continue

@@ -50,7 +50,7 @@ func Example_advanced() {
 		return
 	}
 
-	// Connect to WebSocket URL (page) that speaks the Chrome Debugging Protocol.
+	// Connect to WebSocket URL (page) that speaks the Chrome DevTools Protocol.
 	conn, err := rpcc.DialContext(ctx, pt.WebSocketDebuggerURL)
 	if err != nil {
 		fmt.Println(err)

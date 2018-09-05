@@ -1,6 +1,6 @@
 /*
 
-Package cdp provides type-safe bindings for the Chrome Debugging
+Package cdp provides type-safe bindings for the Chrome DevTools
 Protocol (CDP) and can be used with any debug target that implements it.
 
 The cdp Client requires an rpcc connection (*rpcc.Conn):
@@ -31,7 +31,7 @@ devtool documentation for more):
 Domain methods
 
 Domain methods are used to perform actions or request data over the
-Chrome Debugging Protocol.
+Chrome DevTools Protocol.
 
 Methods can be invoked from the Client:
 
@@ -63,7 +63,7 @@ closed:
 	// ...
 
 Enable (if available) must be called before events are transmitted over
-the Chrome Debugging Protocol:
+the Chrome DevTools Protocol:
 
 	err := c.Page.Enable(ctx)
 	if err != nil {

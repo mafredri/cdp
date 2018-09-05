@@ -35,7 +35,7 @@ func run(timeout time.Duration) error {
 		}
 	}
 
-	// Initiate a new RPC connection to the Chrome Debugging Protocol target.
+	// Initiate a new RPC connection to the Chrome DevTools Protocol target.
 	conn, err := rpcc.DialContext(ctx, pt.WebSocketDebuggerURL)
 	if err != nil {
 		return err
