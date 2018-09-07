@@ -2,7 +2,7 @@
 
 [![Build Status][travis-badge]][travis] [![Coverage Status][codecov-badge]][codecov] [![Go Report Card][goreportcard-badge]][goreportcard] [![GoDoc][godoc-badge]][godoc]
 
-Package `cdp` provides type-safe bindings for the [Chrome DevTools Protocol][devtool-protocol] (CDP), written in the Go programming language. The bindings are generated (by [cdpgen][cdpgen]) from the latest [tip-of-tree (tot)][tip-of-tree] protocol definitions and are mainly intended for use with Google Chrome or Chromium, however, they can be used with any debug target ([Node.js][node-debugging], [Edge][edge-diagnostics-adapter], [Safari][ios-webkit-debug-proxy], etc.) that implement the protocol.
+Package `cdp` provides type-safe bindings for the [Chrome DevTools Protocol][chrome-devtools-protocol] (CDP), written in the Go programming language. The bindings are generated (by [cdpgen][cdpgen]) from the latest [tip-of-tree (tot)][tip-of-tree] protocol definitions and are mainly intended for use with Google Chrome or Chromium, however, they can be used with any debug target ([Node.js][node-debugging], [Edge DevTools Protocol][edge-devtools-protocol], [Safari][ios-webkit-debug-proxy], etc.) that implement the protocol.
 
 This package can be used for any kind of browser automation, scripting or debugging via the Chrome DevTools Protocol.
 
@@ -159,7 +159,7 @@ The Go implementation of gRPC ([grpc-go](https://github.com/grpc/grpc-go)) has b
 
 ## Resources
 
-* [Chrome DevTools Protocol][devtool-protocol]
+* [Chrome DevTools Protocol][chrome-devtools-protocol]
     * [Viewer (latest tip-of-tree)][tip-of-tree] official protocol API docs
     * [Repository (GitHub)](https://github.com/chromedevtools/devtools-protocol) please [file issues](https://github.com/ChromeDevTools/devtools-protocol/issues) at this repo if you have concerns or problems with the Chrome DevTools Protocol
     * [Mailing list](https://groups.google.com/forum/#!forum/chrome-debugging-protocol)
@@ -173,10 +173,10 @@ The Go implementation of gRPC ([grpc-go](https://github.com/grpc/grpc-go)) has b
 [advanced-example]: https://github.com/mafredri/cdp/blob/master/example_advanced_test.go
 [logging-example]: https://github.com/mafredri/cdp/blob/master/example_logging_test.go
 
-[devtool-protocol]: https://chromedevtools.github.io/devtools-protocol/
+[chrome-devtools-protocol]: https://chromedevtools.github.io/devtools-protocol/
 [tip-of-tree]: https://chromedevtools.github.io/devtools-protocol/tot/
 [node-debugging]: https://nodejs.org/en/docs/guides/debugging-getting-started/
-[edge-diagnostics-adapter]: https://github.com/Microsoft/edge-diagnostics-adapter
+[edge-devtools-protocol]: https://docs.microsoft.com/en-us/microsoft-edge/devtools-protocol/
 [ios-webkit-debug-proxy]: https://github.com/google/ios-webkit-debug-proxy
 
 [travis]: https://travis-ci.org/mafredri/cdp
