@@ -137,7 +137,7 @@ func main() {
 			g.Printf("// +build !go1.9\n\n")
 			g.PackageHeader("")
 			for _, t := range d.Types {
-				if t.Name(d) == "FrameID" || t.Name(d) == "ResourceType" {
+				if t.Name(d) == "FrameID" {
 					t.IDName = "Page" + t.IDName
 					g.DomainType(d, t)
 				}
@@ -155,7 +155,7 @@ func main() {
 			g.Printf("// +build go1.9\n\n")
 			g.PackageHeader("")
 			for _, t := range d.Types {
-				if t.Name(d) == "FrameID" || t.Name(d) == "ResourceType" {
+				if t.Name(d) == "FrameID" {
 					idName := t.Name(d)
 					t.IDName = "Page" + t.IDName
 					t.Description = fmt.Sprintf("%s\n\nThis type cannot be used directly. Use page.%s instead.", t.Description, idName)
@@ -682,7 +682,7 @@ func (g *Generator) DomainType(d proto.Domain, t proto.AnyType) {
 
 	g.beginType()
 	var comment string
-	if d.Name() == "Page" && (t.Name(d) == "FrameID" || t.Name(d) == "ResourceType") {
+	if d.Name() == "Page" && (t.Name(d) == "FrameID") {
 		g.markCircularType()
 		comment = "//"
 		g.Printf19(`
@@ -727,7 +727,7 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 		ptype19 := ptype
 		ptype18 := ptype
 
-		if ptype == "page.FrameID" || ptype == "page.ResourceType" {
+		if ptype == "page.FrameID" {
 			g.markCircularType()
 			if g.pkg == "network" || g.pkg == "dom" {
 				// Domain-local type (alias) for go1.9.
@@ -736,7 +736,7 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 			ptype18 = strings.Replace(ptype18, ".", "", 1)
 			ptype18 = "protocol." + strings.Title(ptype18)
 		}
-		if g.pkg == "page" && (ptype == "FrameID" || ptype == "ResourceType") {
+		if g.pkg == "page" && (ptype == "FrameID") {
 			g.markCircularType()
 			ptype18 = "protocol.Page" + ptype18
 		}
@@ -972,27 +972,25 @@ func (g *Generator) domainTypeEnum(d proto.Domain, t proto.AnyType) {
 	if realEnum {
 		g.Printf("int\n\n")
 
-		if name != "PageResourceType" {
-			format := `
+		format := `
 // %s as enums.
 const (
 	%sNotSet %s = iota`
-			if !isCircular {
-				g.Printf(format, name, name, name)
-			} else {
-				g.Printf19(format, name, name, name)
-				g.Printf18(format, name, name, "protocol."+d.Name()+name)
-			}
-			for _, e := range t.Enum {
-				g.Printf("\n\t%s%s", name, e.Name())
-			}
-			g.Printf(`
+		if !isCircular {
+			g.Printf(format, name, name, name)
+		} else {
+			g.Printf19(format, name, name, name)
+			g.Printf18(format, name, name, "protocol."+d.Name()+name)
+		}
+		for _, e := range t.Enum {
+			g.Printf("\n\t%s%s", name, e.Name())
+		}
+		g.Printf(`
 )
 `)
-			if isCircular {
-				g.commitType()
-				g.beginType()
-			}
+		if isCircular {
+			g.commitType()
+			g.beginType()
 		}
 		g.Printf(`
 // Valid returns true if enum is set.
@@ -1044,33 +1042,31 @@ func (e *%[1]s) UnmarshalJSON(data []byte) error {
 	} else {
 		g.Printf("string\n\n")
 
-		if name != "PageResourceType" {
-			g.Printf(`
+		g.Printf(`
 // %s as enums.
 const (`, name)
-			format := "\n\t%s%s %s = %q"
-			if !isCircular {
-				g.Printf(format, name, "NotSet", name, "")
-			} else {
-				g.Printf19(format, name, "NotSet", name, "")
-				g.Printf18(format, name, "NotSet", "protocol."+d.Name()+name, "")
-			}
+		format := "\n\t%s%s %s = %q"
+		if !isCircular {
+			g.Printf(format, name, "NotSet", name, "")
+		} else {
+			g.Printf19(format, name, "NotSet", name, "")
+			g.Printf18(format, name, "NotSet", "protocol."+d.Name()+name, "")
+		}
 
-			for _, e := range t.Enum {
-				if !isCircular {
-					g.Printf(format, name, e.Name(), name, e)
-				} else {
-					g.Printf19(format, name, e.Name(), name, e)
-					g.Printf18(format, name, e.Name(), "protocol."+d.Name()+name, e)
-				}
+		for _, e := range t.Enum {
+			if !isCircular {
+				g.Printf(format, name, e.Name(), name, e)
+			} else {
+				g.Printf19(format, name, e.Name(), name, e)
+				g.Printf18(format, name, e.Name(), "protocol."+d.Name()+name, e)
 			}
-			g.Printf(`
+		}
+		g.Printf(`
 )
 `)
-			if isCircular {
-				g.commitType()
-				g.beginType()
-			}
+		if isCircular {
+			g.commitType()
+			g.beginType()
 		}
 
 		var enumValues []string
@@ -1162,10 +1158,8 @@ func New%[1]s(%[2]s) *%[1]s {
 		}
 		g.Printf19(newfmt, c.ArgsName(d), sig19, c.ArgsAssign("args", d), c.ArgsName(d))
 		sig18 := strings.Replace(sig, "page.FrameID", "protocol.PageFrameID", 1)
-		sig18 = strings.Replace(sig18, "page.ResourceType", "protocol.PageResourceType", 1)
 		if d.Name() == "Page" {
 			sig18 = strings.Replace(sig, "FrameID", "protocol.PageFrameID", 1)
-			sig18 = strings.Replace(sig18, "ResourceType", "protocol.PageResourceType", 1)
 		}
 		g.Printf18(newfmt, c.ArgsName(d), sig18, c.ArgsAssign("args", d), c.ArgsName(d))
 	}
