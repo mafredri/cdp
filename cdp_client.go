@@ -40,6 +40,7 @@ import (
 	"github.com/mafredri/cdp/protocol/storage"
 	"github.com/mafredri/cdp/protocol/systeminfo"
 	"github.com/mafredri/cdp/protocol/target"
+	"github.com/mafredri/cdp/protocol/testing"
 	"github.com/mafredri/cdp/protocol/tethering"
 	"github.com/mafredri/cdp/protocol/tracing"
 	"github.com/mafredri/cdp/rpcc"
@@ -86,6 +87,7 @@ type Client struct {
 	Storage              Storage
 	SystemInfo           SystemInfo
 	Target               Target
+	Testing              Testing
 	Tethering            Tethering
 	Tracing              Tracing
 }
@@ -131,6 +133,7 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Storage:              storage.NewClient(conn),
 		SystemInfo:           systeminfo.NewClient(conn),
 		Target:               target.NewClient(conn),
+		Testing:              testing.NewClient(conn),
 		Tethering:            tethering.NewClient(conn),
 		Tracing:              tracing.NewClient(conn),
 	}

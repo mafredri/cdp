@@ -38,4 +38,6 @@ type DOMNode struct {
 	EventListeners       []domdebugger.EventListener `json:"eventListeners,omitempty"`       // Details of the node's event listeners, if any.
 	CurrentSourceURL     *string                     `json:"currentSourceURL,omitempty"`     // The selected url for nodes with a srcset attribute.
 	OriginURL            *string                     `json:"originURL,omitempty"`            // The url of the script (if any) that generates this node.
+	ScrollOffsetX        *float64                    `json:"scrollOffsetX,omitempty"`        // Scroll offsets, set when this node is a Document.
+	ScrollOffsetY        *float64                    `json:"scrollOffsetY,omitempty"`        // No description.
 }

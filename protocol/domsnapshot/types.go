@@ -9,7 +9,7 @@ import (
 // InlineTextBox Details of post layout rendered text positions. The exact
 // layout should not be regarded as stable and may change between versions.
 type InlineTextBox struct {
-	BoundingBox         dom.Rect `json:"boundingBox"`         // The absolute position bounding box.
+	BoundingBox         dom.Rect `json:"boundingBox"`         // The bounding box in document coordinates. Note that scroll offset of the document is ignored.
 	StartCharacterIndex int      `json:"startCharacterIndex"` // The starting index in characters, for this post layout textbox substring. Characters that would be represented as a surrogate pair in UTF-16 have length 2.
 	NumCharacters       int      `json:"numCharacters"`       // The number of characters in this post layout textbox substring. Characters that would be represented as a surrogate pair in UTF-16 have length 2.
 }
@@ -17,7 +17,7 @@ type InlineTextBox struct {
 // LayoutTreeNode Details of an element in the DOM tree with a LayoutObject.
 type LayoutTreeNode struct {
 	DOMNodeIndex      int             `json:"domNodeIndex"`                // The index of the related DOM node in the `domNodes` array returned by `getSnapshot`.
-	BoundingBox       dom.Rect        `json:"boundingBox"`                 // The absolute position bounding box.
+	BoundingBox       dom.Rect        `json:"boundingBox"`                 // The bounding box in document coordinates. Note that scroll offset of the document is ignored.
 	LayoutText        *string         `json:"layoutText,omitempty"`        // Contents of the LayoutText, if any.
 	InlineTextNodes   []InlineTextBox `json:"inlineTextNodes,omitempty"`   // The post-layout inline text nodes, if any.
 	StyleIndex        *int            `json:"styleIndex,omitempty"`        // Index into the `computedStyles` array returned by `getSnapshot`.
@@ -65,16 +65,18 @@ type Rectangle []float64
 
 // DocumentSnapshot Document snapshot.
 type DocumentSnapshot struct {
-	DocumentURL     StringIndex        `json:"documentURL"`     // Document URL that `Document` or `FrameOwner` node points to.
-	BaseURL         StringIndex        `json:"baseURL"`         // Base URL that `Document` or `FrameOwner` node uses for URL completion.
-	ContentLanguage StringIndex        `json:"contentLanguage"` // Contains the document's content language.
-	EncodingName    StringIndex        `json:"encodingName"`    // Contains the document's character set encoding.
-	PublicID        StringIndex        `json:"publicId"`        // `DocumentType` node's publicId.
-	SystemID        StringIndex        `json:"systemId"`        // `DocumentType` node's systemId.
-	FrameID         StringIndex        `json:"frameId"`         // Frame ID for frame owner elements and also for the document node.
-	Nodes           NodeTreeSnapshot   `json:"nodes"`           // A table with dom nodes.
-	Layout          LayoutTreeSnapshot `json:"layout"`          // The nodes in the layout tree.
-	TextBoxes       TextBoxSnapshot    `json:"textBoxes"`       // The post-layout inline text nodes.
+	DocumentURL     StringIndex        `json:"documentURL"`             // Document URL that `Document` or `FrameOwner` node points to.
+	BaseURL         StringIndex        `json:"baseURL"`                 // Base URL that `Document` or `FrameOwner` node uses for URL completion.
+	ContentLanguage StringIndex        `json:"contentLanguage"`         // Contains the document's content language.
+	EncodingName    StringIndex        `json:"encodingName"`            // Contains the document's character set encoding.
+	PublicID        StringIndex        `json:"publicId"`                // `DocumentType` node's publicId.
+	SystemID        StringIndex        `json:"systemId"`                // `DocumentType` node's systemId.
+	FrameID         StringIndex        `json:"frameId"`                 // Frame ID for frame owner elements and also for the document node.
+	Nodes           NodeTreeSnapshot   `json:"nodes"`                   // A table with dom nodes.
+	Layout          LayoutTreeSnapshot `json:"layout"`                  // The nodes in the layout tree.
+	TextBoxes       TextBoxSnapshot    `json:"textBoxes"`               // The post-layout inline text nodes.
+	ScrollOffsetX   *float64           `json:"scrollOffsetX,omitempty"` // Scroll offsets.
+	ScrollOffsetY   *float64           `json:"scrollOffsetY,omitempty"` // No description.
 }
 
 // NodeTreeSnapshot Table containing nodes.

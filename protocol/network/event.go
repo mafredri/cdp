@@ -50,6 +50,25 @@ type LoadingFailedClient interface {
 	rpcc.Stream
 }
 
+// LoadingFailedReply is the reply for LoadingFailed events.
+type LoadingFailedReply struct {
+	RequestID     RequestID     `json:"requestId"`               // Request identifier.
+	Timestamp     MonotonicTime `json:"timestamp"`               // Timestamp.
+	Type          ResourceType  `json:"type"`                    // Resource type.
+	ErrorText     string        `json:"errorText"`               // User friendly error message.
+	Canceled      *bool         `json:"canceled,omitempty"`      // True if loading was canceled.
+	BlockedReason BlockedReason `json:"blockedReason,omitempty"` // The reason why loading was blocked, if any.
+}
+
+// LoadingFinishedClient is a client for LoadingFinished events. Fired when
+// HTTP request has finished loading.
+type LoadingFinishedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*LoadingFinishedReply, error)
+	rpcc.Stream
+}
+
 // LoadingFinishedReply is the reply for LoadingFinished events.
 type LoadingFinishedReply struct {
 	RequestID                RequestID     `json:"requestId"`                          // Request identifier.

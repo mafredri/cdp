@@ -4,21 +4,5 @@
 
 package protocol
 
-// PageResourceType Resource type as it was perceived by the rendering engine.
-type PageResourceType string
-
-func (e PageResourceType) Valid() bool {
-	switch e {
-	case "Document", "Stylesheet", "Image", "Media", "Font", "Script", "TextTrack", "XHR", "Fetch", "EventSource", "WebSocket", "Manifest", "SignedExchange", "Ping", "CSPViolationReport", "Other":
-		return true
-	default:
-		return false
-	}
-}
-
-func (e PageResourceType) String() string {
-	return string(e)
-}
-
 // PageFrameID Unique frame identifier.
 type PageFrameID string

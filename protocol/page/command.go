@@ -574,3 +574,23 @@ func NewAddCompilationCacheArgs(url string, data []byte) *AddCompilationCacheArg
 	args.Data = data
 	return args
 }
+
+// GenerateTestReportArgs represents the arguments for GenerateTestReport in the Page domain.
+type GenerateTestReportArgs struct {
+	Message string  `json:"message"`         // Message to be displayed in the report.
+	Group   *string `json:"group,omitempty"` // Specifies the endpoint group to deliver the report to.
+}
+
+// NewGenerateTestReportArgs initializes GenerateTestReportArgs with the required arguments.
+func NewGenerateTestReportArgs(message string) *GenerateTestReportArgs {
+	args := new(GenerateTestReportArgs)
+	args.Message = message
+	return args
+}
+
+// SetGroup sets the Group optional argument. Specifies the endpoint
+// group to deliver the report to.
+func (a *GenerateTestReportArgs) SetGroup(group string) *GenerateTestReportArgs {
+	a.Group = &group
+	return a
+}

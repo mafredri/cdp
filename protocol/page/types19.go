@@ -9,35 +9,6 @@ import (
 	"github.com/mafredri/cdp/protocol/network"
 )
 
-// ResourceType Resource type as it was perceived by the rendering engine.
-//
-// Provided as an alias to prevent circular dependencies.
-type ResourceType = internal.PageResourceType
-
-// ResourceType Resource type as it was perceived by the rendering engine.
-//type ResourceType string
-
-// ResourceType as enums.
-const (
-	ResourceTypeNotSet             ResourceType = ""
-	ResourceTypeDocument           ResourceType = "Document"
-	ResourceTypeStylesheet         ResourceType = "Stylesheet"
-	ResourceTypeImage              ResourceType = "Image"
-	ResourceTypeMedia              ResourceType = "Media"
-	ResourceTypeFont               ResourceType = "Font"
-	ResourceTypeScript             ResourceType = "Script"
-	ResourceTypeTextTrack          ResourceType = "TextTrack"
-	ResourceTypeXHR                ResourceType = "XHR"
-	ResourceTypeFetch              ResourceType = "Fetch"
-	ResourceTypeEventSource        ResourceType = "EventSource"
-	ResourceTypeWebSocket          ResourceType = "WebSocket"
-	ResourceTypeManifest           ResourceType = "Manifest"
-	ResourceTypeSignedExchange     ResourceType = "SignedExchange"
-	ResourceTypePing               ResourceType = "Ping"
-	ResourceTypeCSPViolationReport ResourceType = "CSPViolationReport"
-	ResourceTypeOther              ResourceType = "Other"
-)
-
 // FrameID Unique frame identifier.
 //
 // Provided as an alias to prevent circular dependencies.
@@ -60,17 +31,4 @@ type Frame struct {
 	//
 	// Note: This property is experimental.
 	UnreachableURL *string `json:"unreachableUrl,omitempty"`
-}
-
-// FrameResource Information about the Resource on the page.
-//
-// Note: This type is experimental.
-type FrameResource struct {
-	URL          string                 `json:"url"`                    // Resource URL.
-	Type         ResourceType           `json:"type"`                   // Type of this resource.
-	MimeType     string                 `json:"mimeType"`               // Resource mimeType as determined by the browser.
-	LastModified network.TimeSinceEpoch `json:"lastModified,omitempty"` // last-modified timestamp as reported by server.
-	ContentSize  *float64               `json:"contentSize,omitempty"`  // Resource content size.
-	Failed       *bool                  `json:"failed,omitempty"`       // True if the resource failed to load.
-	Canceled     *bool                  `json:"canceled,omitempty"`     // True if the resource was canceled during loading.
 }

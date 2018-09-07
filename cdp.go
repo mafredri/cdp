@@ -42,6 +42,7 @@ import (
 	"github.com/mafredri/cdp/protocol/storage"
 	"github.com/mafredri/cdp/protocol/systeminfo"
 	"github.com/mafredri/cdp/protocol/target"
+	"github.com/mafredri/cdp/protocol/testing"
 	"github.com/mafredri/cdp/protocol/tethering"
 	"github.com/mafredri/cdp/protocol/tracing"
 )
@@ -197,6 +198,13 @@ type Browser interface {
 	//
 	// Close browser gracefully.
 	Close(context.Context) error
+
+	// Command Crash
+	//
+	// Crashes browser on the main thread.
+	//
+	// Note: This command is experimental.
+	Crash(context.Context) error
 
 	// Command GetVersion
 	//
@@ -2357,6 +2365,13 @@ type Page interface {
 	// Note: This command is experimental.
 	ClearCompilationCache(context.Context) error
 
+	// Command GenerateTestReport
+	//
+	// Generates a report for testing.
+	//
+	// Note: This command is experimental.
+	GenerateTestReport(context.Context, *page.GenerateTestReportArgs) error
+
 	// Event DOMContentEventFired
 	DOMContentEventFired(context.Context) (page.DOMContentEventFiredClient, error)
 
@@ -3092,6 +3107,17 @@ type Target interface {
 	// Issued when some information about a target has changed. This only
 	// happens between `targetCreated` and `targetDestroyed`.
 	TargetInfoChanged(context.Context) (target.InfoChangedClient, error)
+}
+
+// The Testing domain. Testing domain is a dumping ground for the capabilities
+// requires for browser or app testing that do not fit other domains.
+//
+// Note: This domain is experimental.
+type Testing interface {
+	// Command GenerateTestReport
+	//
+	// Generates a report for testing.
+	GenerateTestReport(context.Context, *testing.GenerateTestReportArgs) error
 }
 
 // The Tethering domain. The Tethering domain defines methods and events for

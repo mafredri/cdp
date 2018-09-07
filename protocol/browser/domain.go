@@ -57,6 +57,15 @@ func (d *domainClient) Close(ctx context.Context) (err error) {
 	return
 }
 
+// Crash invokes the Browser method. Crashes browser on the main thread.
+func (d *domainClient) Crash(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Browser.crash", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "Crash", Err: err}
+	}
+	return
+}
+
 // GetVersion invokes the Browser method. Returns version information.
 func (d *domainClient) GetVersion(ctx context.Context) (reply *GetVersionReply, err error) {
 	reply = new(GetVersionReply)

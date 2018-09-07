@@ -1123,6 +1123,11 @@
                     "description": "Close browser gracefully."
                 },
                 {
+                    "name": "crash",
+                    "description": "Crashes browser on the main thread.",
+                    "experimental": true
+                },
+                {
                     "name": "getVersion",
                     "description": "Returns version information.",
                     "returns": [
@@ -4134,7 +4139,8 @@
             "description": "DOM debugging allows setting breakpoints on particular DOM operations and events. JavaScript\nexecution will stop on these operations as if there was a regular breakpoint set.",
             "dependencies": [
                 "DOM",
-                "Debugger"
+                "Debugger",
+                "Runtime"
             ],
             "types": [
                 {
@@ -4537,6 +4543,17 @@
                             "description": "The url of the script (if any) that generates this node.",
                             "optional": true,
                             "type": "string"
+                        },
+                        {
+                            "name": "scrollOffsetX",
+                            "description": "Scroll offsets, set when this node is a Document.",
+                            "optional": true,
+                            "type": "number"
+                        },
+                        {
+                            "name": "scrollOffsetY",
+                            "optional": true,
+                            "type": "number"
                         }
                     ]
                 },
@@ -4547,7 +4564,7 @@
                     "properties": [
                         {
                             "name": "boundingBox",
-                            "description": "The absolute position bounding box.",
+                            "description": "The bounding box in document coordinates. Note that scroll offset of the document is ignored.",
                             "$ref": "DOM.Rect"
                         },
                         {
@@ -4574,7 +4591,7 @@
                         },
                         {
                             "name": "boundingBox",
-                            "description": "The absolute position bounding box.",
+                            "description": "The bounding box in document coordinates. Note that scroll offset of the document is ignored.",
                             "$ref": "DOM.Rect"
                         },
                         {
@@ -4772,6 +4789,17 @@
                             "name": "textBoxes",
                             "description": "The post-layout inline text nodes.",
                             "$ref": "TextBoxSnapshot"
+                        },
+                        {
+                            "name": "scrollOffsetX",
+                            "description": "Scroll offsets.",
+                            "optional": true,
+                            "type": "number"
+                        },
+                        {
+                            "name": "scrollOffsetY",
+                            "optional": true,
+                            "type": "number"
                         }
                     ]
                 },
@@ -7705,6 +7733,29 @@
             ],
             "types": [
                 {
+                    "id": "ResourceType",
+                    "description": "Resource type as it was perceived by the rendering engine.",
+                    "type": "string",
+                    "enum": [
+                        "Document",
+                        "Stylesheet",
+                        "Image",
+                        "Media",
+                        "Font",
+                        "Script",
+                        "TextTrack",
+                        "XHR",
+                        "Fetch",
+                        "EventSource",
+                        "WebSocket",
+                        "Manifest",
+                        "SignedExchange",
+                        "Ping",
+                        "CSPViolationReport",
+                        "Other"
+                    ]
+                },
+                {
                     "id": "LoaderId",
                     "description": "Unique loader identifier.",
                     "type": "string"
@@ -8306,7 +8357,7 @@
                         {
                             "name": "type",
                             "description": "Type of this resource.",
-                            "$ref": "Page.ResourceType"
+                            "$ref": "ResourceType"
                         },
                         {
                             "name": "response",
@@ -8564,7 +8615,7 @@
                             "name": "resourceType",
                             "description": "If set, only requests for matching resource types will be intercepted.",
                             "optional": true,
-                            "$ref": "Page.ResourceType"
+                            "$ref": "ResourceType"
                         },
                         {
                             "name": "interceptionStage",
@@ -9385,7 +9436,7 @@
                         {
                             "name": "type",
                             "description": "Resource type.",
-                            "$ref": "Page.ResourceType"
+                            "$ref": "ResourceType"
                         },
                         {
                             "name": "errorText",
@@ -9455,7 +9506,7 @@
                         {
                             "name": "resourceType",
                             "description": "How the requested resource will be used.",
-                            "$ref": "Page.ResourceType"
+                            "$ref": "ResourceType"
                         },
                         {
                             "name": "isNavigationRequest",
@@ -9560,7 +9611,7 @@
                             "name": "type",
                             "description": "Type of this resource.",
                             "optional": true,
-                            "$ref": "Page.ResourceType"
+                            "$ref": "ResourceType"
                         },
                         {
                             "name": "frameId",
@@ -9637,7 +9688,7 @@
                         {
                             "name": "type",
                             "description": "Resource type.",
-                            "$ref": "Page.ResourceType"
+                            "$ref": "ResourceType"
                         },
                         {
                             "name": "response",
@@ -10185,32 +10236,10 @@
             "dependencies": [
                 "Debugger",
                 "DOM",
-                "Network"
+                "Network",
+                "Runtime"
             ],
             "types": [
-                {
-                    "id": "ResourceType",
-                    "description": "Resource type as it was perceived by the rendering engine.",
-                    "type": "string",
-                    "enum": [
-                        "Document",
-                        "Stylesheet",
-                        "Image",
-                        "Media",
-                        "Font",
-                        "Script",
-                        "TextTrack",
-                        "XHR",
-                        "Fetch",
-                        "EventSource",
-                        "WebSocket",
-                        "Manifest",
-                        "SignedExchange",
-                        "Ping",
-                        "CSPViolationReport",
-                        "Other"
-                    ]
-                },
                 {
                     "id": "FrameId",
                     "description": "Unique frame identifier.",
@@ -10281,7 +10310,7 @@
                         {
                             "name": "type",
                             "description": "Type of this resource.",
-                            "$ref": "ResourceType"
+                            "$ref": "Network.ResourceType"
                         },
                         {
                             "name": "mimeType",
@@ -10377,6 +10406,7 @@
                     "enum": [
                         "link",
                         "typed",
+                        "address_bar",
                         "auto_bookmark",
                         "auto_subframe",
                         "manual_subframe",
@@ -11603,6 +11633,24 @@
                     "name": "clearCompilationCache",
                     "description": "Clears seeded compilation cache.",
                     "experimental": true
+                },
+                {
+                    "name": "generateTestReport",
+                    "description": "Generates a report for testing.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "message",
+                            "description": "Message to be displayed in the report.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "group",
+                            "description": "Specifies the endpoint group to deliver the report to.",
+                            "optional": true,
+                            "type": "string"
+                        }
+                    ]
                 }
             ],
             "events": [
@@ -13549,6 +13597,33 @@
                             "description": "Compression format of returned stream.",
                             "optional": true,
                             "$ref": "StreamCompression"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "domain": "Testing",
+            "description": "Testing domain is a dumping ground for the capabilities requires for browser or app testing that do not fit other\ndomains.",
+            "experimental": true,
+            "dependencies": [
+                "Page"
+            ],
+            "commands": [
+                {
+                    "name": "generateTestReport",
+                    "description": "Generates a report for testing.",
+                    "parameters": [
+                        {
+                            "name": "message",
+                            "description": "Message to be displayed in the report.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "group",
+                            "description": "Specifies the endpoint group to deliver the report to.",
+                            "optional": true,
+                            "type": "string"
                         }
                     ]
                 }

@@ -6,6 +6,19 @@ import (
 	"github.com/mafredri/cdp/protocol/network"
 )
 
+// FrameResource Information about the Resource on the page.
+//
+// Note: This type is experimental.
+type FrameResource struct {
+	URL          string                 `json:"url"`                    // Resource URL.
+	Type         network.ResourceType   `json:"type"`                   // Type of this resource.
+	MimeType     string                 `json:"mimeType"`               // Resource mimeType as determined by the browser.
+	LastModified network.TimeSinceEpoch `json:"lastModified,omitempty"` // last-modified timestamp as reported by server.
+	ContentSize  *float64               `json:"contentSize,omitempty"`  // Resource content size.
+	Failed       *bool                  `json:"failed,omitempty"`       // True if the resource failed to load.
+	Canceled     *bool                  `json:"canceled,omitempty"`     // True if the resource was canceled during loading.
+}
+
 // FrameResourceTree Information about the Frame hierarchy along with their
 // cached resources.
 //
@@ -33,6 +46,7 @@ const (
 	TransitionTypeNotSet           TransitionType = ""
 	TransitionTypeLink             TransitionType = "link"
 	TransitionTypeTyped            TransitionType = "typed"
+	TransitionTypeAddressBar       TransitionType = "address_bar"
 	TransitionTypeAutoBookmark     TransitionType = "auto_bookmark"
 	TransitionTypeAutoSubframe     TransitionType = "auto_subframe"
 	TransitionTypeManualSubframe   TransitionType = "manual_subframe"
@@ -47,7 +61,7 @@ const (
 
 func (e TransitionType) Valid() bool {
 	switch e {
-	case "link", "typed", "auto_bookmark", "auto_subframe", "manual_subframe", "generated", "auto_toplevel", "form_submit", "reload", "keyword", "keyword_generated", "other":
+	case "link", "typed", "address_bar", "auto_bookmark", "auto_subframe", "manual_subframe", "generated", "auto_toplevel", "form_submit", "reload", "keyword", "keyword_generated", "other":
 		return true
 	default:
 		return false

@@ -11,6 +11,43 @@ import (
 	"github.com/mafredri/cdp/protocol/security"
 )
 
+// ResourceType Resource type as it was perceived by the rendering engine.
+type ResourceType string
+
+// ResourceType as enums.
+const (
+	ResourceTypeNotSet             ResourceType = ""
+	ResourceTypeDocument           ResourceType = "Document"
+	ResourceTypeStylesheet         ResourceType = "Stylesheet"
+	ResourceTypeImage              ResourceType = "Image"
+	ResourceTypeMedia              ResourceType = "Media"
+	ResourceTypeFont               ResourceType = "Font"
+	ResourceTypeScript             ResourceType = "Script"
+	ResourceTypeTextTrack          ResourceType = "TextTrack"
+	ResourceTypeXHR                ResourceType = "XHR"
+	ResourceTypeFetch              ResourceType = "Fetch"
+	ResourceTypeEventSource        ResourceType = "EventSource"
+	ResourceTypeWebSocket          ResourceType = "WebSocket"
+	ResourceTypeManifest           ResourceType = "Manifest"
+	ResourceTypeSignedExchange     ResourceType = "SignedExchange"
+	ResourceTypePing               ResourceType = "Ping"
+	ResourceTypeCSPViolationReport ResourceType = "CSPViolationReport"
+	ResourceTypeOther              ResourceType = "Other"
+)
+
+func (e ResourceType) Valid() bool {
+	switch e {
+	case "Document", "Stylesheet", "Image", "Media", "Font", "Script", "TextTrack", "XHR", "Fetch", "EventSource", "WebSocket", "Manifest", "SignedExchange", "Ping", "CSPViolationReport", "Other":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ResourceType) String() string {
+	return string(e)
+}
+
 // LoaderID Unique loader identifier.
 type LoaderID string
 
@@ -422,6 +459,14 @@ type WebSocketFrame struct {
 	PayloadData string  `json:"payloadData"` // WebSocke frame payload data.
 }
 
+// CachedResource Information about the cached resource.
+type CachedResource struct {
+	URL      string       `json:"url"`                // Resource URL. This is the url of the original network request.
+	Type     ResourceType `json:"type"`               // Type of this resource.
+	Response *Response    `json:"response,omitempty"` // Cached response data.
+	BodySize float64      `json:"bodySize"`           // Cached response body size.
+}
+
 // Initiator Information about the request initiator.
 type Initiator struct {
 	// Type Type of this initiator.
@@ -513,6 +558,15 @@ func (e InterceptionStage) Valid() bool {
 
 func (e InterceptionStage) String() string {
 	return string(e)
+}
+
+// RequestPattern Request pattern for interception.
+//
+// Note: This type is experimental.
+type RequestPattern struct {
+	URLPattern        *string           `json:"urlPattern,omitempty"`        // Wildcards ('*' -> zero or more, '?' -> exactly one) are allowed. Escape character is backslash. Omitting is equivalent to "*".
+	ResourceType      ResourceType      `json:"resourceType,omitempty"`      // If set, only requests for matching resource types will be intercepted.
+	InterceptionStage InterceptionStage `json:"interceptionStage,omitempty"` // Stage at which to begin intercepting requests. Default is Request.
 }
 
 // SignedExchangeSignature Information about a signed exchange signature.

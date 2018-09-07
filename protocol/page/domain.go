@@ -513,6 +513,19 @@ func (d *domainClient) ClearCompilationCache(ctx context.Context) (err error) {
 	return
 }
 
+// GenerateTestReport invokes the Page method. Generates a report for testing.
+func (d *domainClient) GenerateTestReport(ctx context.Context, args *GenerateTestReportArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.generateTestReport", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.generateTestReport", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GenerateTestReport", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) DOMContentEventFired(ctx context.Context) (DOMContentEventFiredClient, error) {
 	s, err := rpcc.NewStream(ctx, "Page.domContentEventFired", d.conn)
 	if err != nil {

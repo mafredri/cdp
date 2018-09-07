@@ -2,12 +2,15 @@
 
 package protocol
 
-import "github.com/mafredri/cdp/protocol/page"
+import (
+	"github.com/mafredri/cdp/protocol/network"
+	"github.com/mafredri/cdp/protocol/page"
+)
 
 // PageResourceType is provided for backwards compatibility with Go 1.8.
 //
-// Deprecated: Use page.ResourceType instead.
-type PageResourceType = page.ResourceType
+// Deprecated: Use network.ResourceType instead.
+type PageResourceType = network.ResourceType
 
 // PageFrameID is provided for backwards compatibility with Go 1.8.
 //
