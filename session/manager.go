@@ -71,23 +71,14 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 
 	isClosing := func(err error) bool {
 		switch cdp.ErrorCause(err) {
-		case rpcc.ErrConnClosing:
+		case rpcc.ErrConnClosing, context.Canceled:
 			// Cleanup, the underlying connection was closed
 			// before the Manager and its context does not
 			// inherit from rpcc.Conn.
 			m.cancel()
-		case context.Canceled:
-		default:
-			return false
+			return true
 		}
-		return true
-	}
-
-	sendErr := func(err error) {
-		select {
-		case errC <- err:
-		default:
-		}
+		return false
 	}
 
 	sessions := make(map[target.SessionID]*session)
@@ -116,7 +107,8 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 				if isClosing(err) {
 					return
 				}
-				sendErr(errors.Wrapf(err, "Manager.watch: error receiving detached event"))
+				err = errors.Wrapf(err, "Manager.watch: error receiving detached event")
+				sendOrDiscardErr(errC, err)
 				continue
 			}
 
@@ -131,7 +123,8 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 				if isClosing(err) {
 					return
 				}
-				sendErr(errors.Wrapf(err, "Manager.watch: error receiving message event"))
+				err = errors.Wrapf(err, "Manager.watch: error receiving message event")
+				sendOrDiscardErr(errC, err)
 				continue
 			}
 
@@ -147,6 +140,13 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 				}
 			}
 		}
+	}
+}
+
+func sendOrDiscardErr(errC chan<- error, err error) {
+	select {
+	case errC <- err:
+	default:
 	}
 }
 

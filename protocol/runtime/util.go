@@ -48,8 +48,6 @@ func (r ObjectPreview) String() string {
 		desc = *r.Description
 	}
 
-	var b bytes.Buffer
-
 	switch r.Type {
 	case "object":
 		var stype string
@@ -60,54 +58,66 @@ func (r ObjectPreview) String() string {
 		case "null":
 			return "null"
 		case "array", "typedarray":
-			if desc != "" {
-				b.WriteString(desc)
-				b.WriteByte(' ')
-			}
-			b.WriteByte('[')
-			for _, prop := range r.Properties {
-				b.WriteString(prop.string(false))
-				b.WriteString(", ")
-			}
-			if b.Len() >= 2 && len(r.Properties) > 0 {
-				b.Truncate(b.Len() - 2)
-			}
-			b.WriteByte(']')
-			return b.String()
+			return r.arrayString(desc)
 		case "date", "regexp":
 			return desc
 		default:
 			if val, ok := primitiveValue(r.Properties); ok {
-				fmt.Fprintf(&b, "%s(%s)", desc, val)
-				return b.String()
+				return fmt.Sprintf("%s(%s)", desc, val)
 			}
 		}
 
-		b.WriteString(desc)
-		b.WriteString(" {")
-		for _, prop := range r.Properties {
-			b.WriteString(prop.String())
-			b.WriteString(", ")
-		}
-		for _, entry := range r.Entries {
-			b.WriteString(entry.String())
-			b.WriteString(", ")
-		}
-
-		if r.Overflow {
-			b.WriteString("...")
-		} else if b.Len() >= 2 && (len(r.Properties) > 0 || len(r.Entries) > 0) {
-			b.Truncate(b.Len() - 2)
-		}
-
-		b.WriteByte('}')
-		return b.String()
+		return r.objectString(desc)
 	case "string":
-		fmt.Fprintf(&b, "%q", desc)
-		return b.String()
+		return fmt.Sprintf("%q", desc)
 	default:
 		return desc
 	}
+}
+
+func (r ObjectPreview) objectString(desc string) string {
+	var b bytes.Buffer
+
+	b.WriteString(desc)
+	b.WriteString(" {")
+	for _, prop := range r.Properties {
+		b.WriteString(prop.String())
+		b.WriteString(", ")
+	}
+	for _, entry := range r.Entries {
+		b.WriteString(entry.String())
+		b.WriteString(", ")
+	}
+
+	if r.Overflow {
+		b.WriteString("...")
+	} else if b.Len() >= 2 && (len(r.Properties) > 0 || len(r.Entries) > 0) {
+		b.Truncate(b.Len() - 2)
+	}
+
+	b.WriteByte('}')
+
+	return b.String()
+}
+
+func (r ObjectPreview) arrayString(desc string) string {
+	var b bytes.Buffer
+
+	if desc != "" {
+		b.WriteString(desc)
+		b.WriteByte(' ')
+	}
+	b.WriteByte('[')
+	for _, prop := range r.Properties {
+		b.WriteString(prop.string(false))
+		b.WriteString(", ")
+	}
+	if b.Len() >= 2 && len(r.Properties) > 0 {
+		b.Truncate(b.Len() - 2)
+	}
+	b.WriteByte(']')
+
+	return b.String()
 }
 
 // String returns a human readable string of the property.

@@ -270,48 +270,31 @@ func nameInDomain(d Domain, name, _ string) string {
 	return name
 }
 
-// GoType returns the Go representation for a protocol type.
-func (at AnyType) GoType(pkg string, d Domain) string {
+func (at AnyType) getType() string {
 	if at.Ref != "" {
-		var prefix string
-		if strings.ContainsRune(at.Ref, '.') {
-			s := strings.Split(at.Ref, ".")
-			prefix = strings.ToLower(s[0]) + "."
-			s[0] = lint.Name(strings.Title(s[0]))
-			s[1] = lint.Name(strings.Title(s[1]))
-
-			// Remove stutter, e.g. SecuritySecurityState.
-			if strings.Index(s[1], s[0]) == 0 || s[1] == s[0] {
-				s[1] = strings.Replace(s[1], s[0], "", 1)
-			}
-
-			// Fix types that reference their own domain.
-			if s[0] == d.Name() {
-				prefix = ""
-				at.Ref = s[1]
-			}
-			return prefix + strings.Title(lint.Name(s[1]))
-		}
-		return prefix + nameInDomain(d, at.Ref, "")
+		return "reference"
 	}
-
-	// Special handling for domain types named "Timestamp".
 	if (at.IDName == "Timestamp" || at.IDName == "TimeSinceEpoch" || at.IDName == "MonotonicTime") && at.Type == "number" {
-		return "time.Time"
+		return "time"
 	}
-
-	// Special handling for enums.
 	if at.IsEnum() {
 		return "enum"
 	}
-
-	// By using a []byte here, Base64-encoded images are automatically
-	// decoded by json.Unmarshal.
 	if at.Type == "string" && strings.HasPrefix(at.Description, "Base64-encoded") {
-		return "[]byte"
+		return "base64"
 	}
+	if at.Type == "object" && len(at.Properties) == 0 {
+		if at.IDName != "" {
+			return "raw"
+		}
+		return "any"
+	}
+	return at.Type
+}
 
-	switch at.Type {
+// GoType returns the Go representation for a protocol type.
+func (at AnyType) GoType(pkg string, d Domain) string {
+	switch at.getType() {
 	case "any":
 		return "json.RawMessage"
 	case "boolean":
@@ -323,24 +306,51 @@ func (at AnyType) GoType(pkg string, d Domain) string {
 	case "integer":
 		return "int"
 	case "object":
-		if len(at.Properties) == 0 {
-			if at.IDName != "" {
-				// return "map[string]interface{}"
-				return "RawMessage"
-			}
-			return "json.RawMessage"
-		}
 		return "struct"
 	case "array":
-		if at.Items == nil {
-			log.Panicf("items are nil for array in type: %v", at)
-		}
 		return "[]" + at.Items.GoType(pkg, d)
+	case "reference":
+		return at.refType(d)
+	case "time":
+		return "time.Time"
+	case "enum":
+		// Enums are handled specially.
+		return "enum"
+	case "base64":
+		// By using a []byte here, Base64-encoded images are
+		// automatically decoded by json.Unmarshal.
+		return "[]byte"
+	case "raw":
+		// Special []byte, without bas64 decoding.
+		return "RawMessage"
 	default:
 		log.Panicf("unhandled type: %#v", at)
 	}
 
 	panic("unreachable")
+}
+
+func (at AnyType) refType(d Domain) string {
+	var prefix string
+	if strings.ContainsRune(at.Ref, '.') {
+		s := strings.Split(at.Ref, ".")
+		prefix = strings.ToLower(s[0]) + "."
+		s[0] = lint.Name(strings.Title(s[0]))
+		s[1] = lint.Name(strings.Title(s[1]))
+
+		// Remove stutter, e.g. SecuritySecurityState.
+		if strings.Index(s[1], s[0]) == 0 || s[1] == s[0] {
+			s[1] = strings.Replace(s[1], s[0], "", 1)
+		}
+
+		// Fix types that reference their own domain.
+		if s[0] == d.Name() {
+			prefix = ""
+			at.Ref = s[1]
+		}
+		return prefix + strings.Title(lint.Name(s[1]))
+	}
+	return prefix + nameInDomain(d, at.Ref, "")
 }
 
 // IsEnum returns true if type is an enum.
