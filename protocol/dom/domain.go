@@ -319,17 +319,17 @@ func (d *domainClient) PushNodeByPathToFrontend(ctx context.Context, args *PushN
 	return
 }
 
-// PushNodesByBackendIdsToFrontend invokes the DOM method. Requests that a
+// PushNodesByBackendIDsToFrontend invokes the DOM method. Requests that a
 // batch of nodes is sent to the caller given their backend node ids.
-func (d *domainClient) PushNodesByBackendIdsToFrontend(ctx context.Context, args *PushNodesByBackendIdsToFrontendArgs) (reply *PushNodesByBackendIdsToFrontendReply, err error) {
-	reply = new(PushNodesByBackendIdsToFrontendReply)
+func (d *domainClient) PushNodesByBackendIDsToFrontend(ctx context.Context, args *PushNodesByBackendIDsToFrontendArgs) (reply *PushNodesByBackendIDsToFrontendReply, err error) {
+	reply = new(PushNodesByBackendIDsToFrontendReply)
 	if args != nil {
 		err = rpcc.Invoke(ctx, "DOM.pushNodesByBackendIdsToFrontend", args, reply, d.conn)
 	} else {
 		err = rpcc.Invoke(ctx, "DOM.pushNodesByBackendIdsToFrontend", nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "DOM", Op: "PushNodesByBackendIdsToFrontend", Err: err}
+		err = &internal.OpError{Domain: "DOM", Op: "PushNodesByBackendIDsToFrontend", Err: err}
 	}
 	return
 }

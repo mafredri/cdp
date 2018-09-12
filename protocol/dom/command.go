@@ -498,20 +498,20 @@ type PushNodeByPathToFrontendReply struct {
 	NodeID NodeID `json:"nodeId"` // Id of the node for given path.
 }
 
-// PushNodesByBackendIdsToFrontendArgs represents the arguments for PushNodesByBackendIdsToFrontend in the DOM domain.
-type PushNodesByBackendIdsToFrontendArgs struct {
+// PushNodesByBackendIDsToFrontendArgs represents the arguments for PushNodesByBackendIDsToFrontend in the DOM domain.
+type PushNodesByBackendIDsToFrontendArgs struct {
 	BackendNodeIDs []BackendNodeID `json:"backendNodeIds"` // The array of backend node ids.
 }
 
-// NewPushNodesByBackendIdsToFrontendArgs initializes PushNodesByBackendIdsToFrontendArgs with the required arguments.
-func NewPushNodesByBackendIdsToFrontendArgs(backendNodeIDs []BackendNodeID) *PushNodesByBackendIdsToFrontendArgs {
-	args := new(PushNodesByBackendIdsToFrontendArgs)
+// NewPushNodesByBackendIDsToFrontendArgs initializes PushNodesByBackendIDsToFrontendArgs with the required arguments.
+func NewPushNodesByBackendIDsToFrontendArgs(backendNodeIDs []BackendNodeID) *PushNodesByBackendIDsToFrontendArgs {
+	args := new(PushNodesByBackendIDsToFrontendArgs)
 	args.BackendNodeIDs = backendNodeIDs
 	return args
 }
 
-// PushNodesByBackendIdsToFrontendReply represents the return values for PushNodesByBackendIdsToFrontend in the DOM domain.
-type PushNodesByBackendIdsToFrontendReply struct {
+// PushNodesByBackendIDsToFrontendReply represents the return values for PushNodesByBackendIDsToFrontend in the DOM domain.
+type PushNodesByBackendIDsToFrontendReply struct {
 	NodeIDs []NodeID `json:"nodeIds"` // The array of ids of pushed nodes that correspond to the backend ids specified in backendNodeIds.
 }
 

@@ -617,13 +617,13 @@ type DOM interface {
 	// Note: This command is experimental.
 	PushNodeByPathToFrontend(context.Context, *dom.PushNodeByPathToFrontendArgs) (*dom.PushNodeByPathToFrontendReply, error)
 
-	// Command PushNodesByBackendIdsToFrontend
+	// Command PushNodesByBackendIDsToFrontend
 	//
 	// Requests that a batch of nodes is sent to the caller given their
 	// backend node ids.
 	//
 	// Note: This command is experimental.
-	PushNodesByBackendIdsToFrontend(context.Context, *dom.PushNodesByBackendIdsToFrontendArgs) (*dom.PushNodesByBackendIdsToFrontendReply, error)
+	PushNodesByBackendIDsToFrontend(context.Context, *dom.PushNodesByBackendIDsToFrontendArgs) (*dom.PushNodesByBackendIDsToFrontendReply, error)
 
 	// Command QuerySelector
 	//

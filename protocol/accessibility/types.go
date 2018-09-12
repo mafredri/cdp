@@ -21,7 +21,7 @@ const (
 	AXValueTypeTristate           AXValueType = "tristate"
 	AXValueTypeBooleanOrUndefined AXValueType = "booleanOrUndefined"
 	AXValueTypeIDRef              AXValueType = "idref"
-	AXValueTypeIdrefList          AXValueType = "idrefList"
+	AXValueTypeIDRefList          AXValueType = "idrefList"
 	AXValueTypeInteger            AXValueType = "integer"
 	AXValueTypeNode               AXValueType = "node"
 	AXValueTypeNodeList           AXValueType = "nodeList"
