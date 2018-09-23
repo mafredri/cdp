@@ -29,7 +29,7 @@ $ go get -u github.com/mafredri/cdp
 
 ## Documentation
 
-See [API documentation][godoc] for package, API descriptions and examples. Examples can also be found in this repository, see the [simple][simple-example], [advanced][advanced-example] and [logging][logging-example] examples.
+See [API documentation][godoc] for package, API descriptions and examples. Examples can also be found in this repository, see the [simple][simple-example], [advanced][advanced-example], [logging][logging-example] and [incognito](incognit-example) examples.
 
 ## Usage
 
@@ -172,6 +172,7 @@ The Go implementation of gRPC ([grpc-go](https://github.com/grpc/grpc-go)) has b
 [simple-example]: https://github.com/mafredri/cdp/blob/master/example_test.go
 [advanced-example]: https://github.com/mafredri/cdp/blob/master/example_advanced_test.go
 [logging-example]: https://github.com/mafredri/cdp/blob/master/example_logging_test.go
+[incognito-example]: https://github.com/mafredri/cdp/blob/master/example_incognito_test.go
 
 [chrome-devtools-protocol]: https://chromedevtools.github.io/devtools-protocol/
 [tip-of-tree]: https://chromedevtools.github.io/devtools-protocol/tot/
