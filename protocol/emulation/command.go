@@ -13,6 +13,18 @@ type CanEmulateReply struct {
 	Result bool `json:"result"` // True if emulation is supported.
 }
 
+// SetFocusEmulationEnabledArgs represents the arguments for SetFocusEmulationEnabled in the Emulation domain.
+type SetFocusEmulationEnabledArgs struct {
+	Enabled bool `json:"enabled"` // Whether to enable to disable focus emulation.
+}
+
+// NewSetFocusEmulationEnabledArgs initializes SetFocusEmulationEnabledArgs with the required arguments.
+func NewSetFocusEmulationEnabledArgs(enabled bool) *SetFocusEmulationEnabledArgs {
+	args := new(SetFocusEmulationEnabledArgs)
+	args.Enabled = enabled
+	return args
+}
+
 // SetCPUThrottlingRateArgs represents the arguments for SetCPUThrottlingRate in the Emulation domain.
 type SetCPUThrottlingRateArgs struct {
 	Rate float64 `json:"rate"` // Throttling rate as a slowdown factor (1 is no throttle, 2 is 2x slowdown, etc).

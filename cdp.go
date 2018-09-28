@@ -58,6 +58,13 @@ type Accessibility interface {
 	//
 	// Note: This command is experimental.
 	GetPartialAXTree(context.Context, *accessibility.GetPartialAXTreeArgs) (*accessibility.GetPartialAXTreeReply, error)
+
+	// Command GetFullAXTree
+	//
+	// Fetches the entire accessibility tree
+	//
+	// Note: This command is experimental.
+	GetFullAXTree(context.Context) (*accessibility.GetFullAXTreeReply, error)
 }
 
 // The Animation domain.
@@ -1224,6 +1231,13 @@ type Emulation interface {
 	//
 	// Note: This command is experimental.
 	ResetPageScaleFactor(context.Context) error
+
+	// Command SetFocusEmulationEnabled
+	//
+	// Enables or disables simulating a focused and active page.
+	//
+	// Note: This command is experimental.
+	SetFocusEmulationEnabled(context.Context, *emulation.SetFocusEmulationEnabledArgs) error
 
 	// Command SetCPUThrottlingRate
 	//

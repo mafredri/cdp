@@ -33,3 +33,14 @@ func (d *domainClient) GetPartialAXTree(ctx context.Context, args *GetPartialAXT
 	}
 	return
 }
+
+// GetFullAXTree invokes the Accessibility method. Fetches the entire
+// accessibility tree
+func (d *domainClient) GetFullAXTree(ctx context.Context) (reply *GetFullAXTreeReply, err error) {
+	reply = new(GetFullAXTreeReply)
+	err = rpcc.Invoke(ctx, "Accessibility.getFullAXTree", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Accessibility", Op: "GetFullAXTree", Err: err}
+	}
+	return
+}

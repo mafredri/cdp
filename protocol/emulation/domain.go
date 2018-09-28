@@ -61,6 +61,20 @@ func (d *domainClient) ResetPageScaleFactor(ctx context.Context) (err error) {
 	return
 }
 
+// SetFocusEmulationEnabled invokes the Emulation method. Enables or disables
+// simulating a focused and active page.
+func (d *domainClient) SetFocusEmulationEnabled(ctx context.Context, args *SetFocusEmulationEnabledArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setFocusEmulationEnabled", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setFocusEmulationEnabled", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetFocusEmulationEnabled", Err: err}
+	}
+	return
+}
+
 // SetCPUThrottlingRate invokes the Emulation method. Enables CPU throttling
 // to emulate slow CPUs.
 func (d *domainClient) SetCPUThrottlingRate(ctx context.Context, args *SetCPUThrottlingRateArgs) (err error) {

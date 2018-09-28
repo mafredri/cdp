@@ -28,6 +28,13 @@ type AddScriptToEvaluateOnLoadReply struct {
 // AddScriptToEvaluateOnNewDocumentArgs represents the arguments for AddScriptToEvaluateOnNewDocument in the Page domain.
 type AddScriptToEvaluateOnNewDocumentArgs struct {
 	Source string `json:"source"` // No description.
+	// WorldName If specified, creates an isolated world with the given
+	// name and evaluates given script in it. This world name will be used
+	// as the ExecutionContextDescription::name when the corresponding
+	// event is emitted.
+	//
+	// Note: This property is experimental.
+	WorldName *string `json:"worldName,omitempty"`
 }
 
 // NewAddScriptToEvaluateOnNewDocumentArgs initializes AddScriptToEvaluateOnNewDocumentArgs with the required arguments.
@@ -35,6 +42,18 @@ func NewAddScriptToEvaluateOnNewDocumentArgs(source string) *AddScriptToEvaluate
 	args := new(AddScriptToEvaluateOnNewDocumentArgs)
 	args.Source = source
 	return args
+}
+
+// SetWorldName sets the WorldName optional argument. If specified,
+// creates an isolated world with the given name and evaluates given
+// script in it. This world name will be used as the
+// ExecutionContextDescription::name when the corresponding event is
+// emitted.
+//
+// Note: This property is experimental.
+func (a *AddScriptToEvaluateOnNewDocumentArgs) SetWorldName(worldName string) *AddScriptToEvaluateOnNewDocumentArgs {
+	a.WorldName = &worldName
+	return a
 }
 
 // AddScriptToEvaluateOnNewDocumentReply represents the return values for AddScriptToEvaluateOnNewDocument in the Page domain.

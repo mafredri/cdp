@@ -361,6 +361,20 @@
                             }
                         }
                     ]
+                },
+                {
+                    "name": "getFullAXTree",
+                    "description": "Fetches the entire accessibility tree",
+                    "experimental": true,
+                    "returns": [
+                        {
+                            "name": "nodes",
+                            "type": "array",
+                            "items": {
+                                "$ref": "AXNode"
+                            }
+                        }
+                    ]
                 }
             ]
         },
@@ -5494,6 +5508,18 @@
                     "name": "resetPageScaleFactor",
                     "description": "Requests that page scale factor is reset to initial values.",
                     "experimental": true
+                },
+                {
+                    "name": "setFocusEmulationEnabled",
+                    "description": "Enables or disables simulating a focused and active page.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "enabled",
+                            "description": "Whether to enable to disable focus emulation.",
+                            "type": "boolean"
+                        }
+                    ]
                 },
                 {
                     "name": "setCPUThrottlingRate",
@@ -10731,6 +10757,13 @@
                     "parameters": [
                         {
                             "name": "source",
+                            "type": "string"
+                        },
+                        {
+                            "name": "worldName",
+                            "description": "If specified, creates an isolated world with the given name and evaluates given script in it.\nThis world name will be used as the ExecutionContextDescription::name when the corresponding\nevent is emitted.",
+                            "experimental": true,
+                            "optional": true,
                             "type": "string"
                         }
                     ],
