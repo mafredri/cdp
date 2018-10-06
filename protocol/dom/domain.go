@@ -206,7 +206,8 @@ func (d *domainClient) GetFlattenedDocument(ctx context.Context, args *GetFlatte
 }
 
 // GetNodeForLocation invokes the DOM method. Returns node id at given
-// location.
+// location. Depending on whether DOM domain is enabled, nodeId is either
+// returned or not.
 func (d *domainClient) GetNodeForLocation(ctx context.Context, args *GetNodeForLocationArgs) (reply *GetNodeForLocationReply, err error) {
 	reply = new(GetNodeForLocationReply)
 	if args != nil {

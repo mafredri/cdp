@@ -569,7 +569,8 @@ type DOM interface {
 
 	// Command GetNodeForLocation
 	//
-	// Returns node id at given location.
+	// Returns node id at given location. Depending on whether DOM domain
+	// is enabled, nodeId is either returned or not.
 	//
 	// Note: This command is experimental.
 	GetNodeForLocation(context.Context, *dom.GetNodeForLocationArgs) (*dom.GetNodeForLocationReply, error)
@@ -2518,6 +2519,16 @@ type Performance interface {
 	//
 	// Enable collecting and reporting metrics.
 	Enable(context.Context) error
+
+	// Command SetTimeDomain
+	//
+	// Sets time domain to use for collecting and reporting duration
+	// metrics. Note that this must be called before enabling metrics
+	// collection. Calling this method while metrics collection is enabled
+	// returns an error.
+	//
+	// Note: This command is experimental.
+	SetTimeDomain(context.Context, *performance.SetTimeDomainArgs) error
 
 	// Command GetMetrics
 	//

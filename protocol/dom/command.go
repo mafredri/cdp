@@ -346,7 +346,8 @@ func (a *GetNodeForLocationArgs) SetIncludeUserAgentShadowDOM(includeUserAgentSh
 
 // GetNodeForLocationReply represents the return values for GetNodeForLocation in the DOM domain.
 type GetNodeForLocationReply struct {
-	NodeID NodeID `json:"nodeId"` // Id of the node at given coordinates.
+	BackendNodeID BackendNodeID `json:"backendNodeId"`    // Resulting node.
+	NodeID        *NodeID       `json:"nodeId,omitempty"` // Id of the node at given coordinates, only when enabled.
 }
 
 // GetOuterHTMLArgs represents the arguments for GetOuterHTML in the DOM domain.

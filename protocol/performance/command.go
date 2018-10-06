@@ -2,6 +2,21 @@
 
 package performance
 
+// SetTimeDomainArgs represents the arguments for SetTimeDomain in the Performance domain.
+type SetTimeDomainArgs struct {
+	// TimeDomain Time domain
+	//
+	// Values: "timeTicks", "threadTicks".
+	TimeDomain string `json:"timeDomain"`
+}
+
+// NewSetTimeDomainArgs initializes SetTimeDomainArgs with the required arguments.
+func NewSetTimeDomainArgs(timeDomain string) *SetTimeDomainArgs {
+	args := new(SetTimeDomainArgs)
+	args.TimeDomain = timeDomain
+	return args
+}
+
 // GetMetricsReply represents the return values for GetMetrics in the Performance domain.
 type GetMetricsReply struct {
 	Metrics []Metric `json:"metrics"` // Current values for run-time metrics.

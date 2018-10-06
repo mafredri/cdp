@@ -3362,7 +3362,7 @@
                 },
                 {
                     "name": "getNodeForLocation",
-                    "description": "Returns node id at given location.",
+                    "description": "Returns node id at given location. Depending on whether DOM domain is enabled, nodeId is\neither returned or not.",
                     "experimental": true,
                     "parameters": [
                         {
@@ -3384,8 +3384,14 @@
                     ],
                     "returns": [
                         {
+                            "name": "backendNodeId",
+                            "description": "Resulting node.",
+                            "$ref": "BackendNodeId"
+                        },
+                        {
                             "name": "nodeId",
-                            "description": "Id of the node at given coordinates.",
+                            "description": "Id of the node at given coordinates, only when enabled.",
+                            "optional": true,
                             "$ref": "NodeId"
                         }
                     ]
@@ -12032,6 +12038,22 @@
                 {
                     "name": "enable",
                     "description": "Enable collecting and reporting metrics."
+                },
+                {
+                    "name": "setTimeDomain",
+                    "description": "Sets time domain to use for collecting and reporting duration metrics.\nNote that this must be called before enabling metrics collection. Calling\nthis method while metrics collection is enabled returns an error.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "timeDomain",
+                            "description": "Time domain",
+                            "type": "string",
+                            "enum": [
+                                "timeTicks",
+                                "threadTicks"
+                            ]
+                        }
+                    ]
                 },
                 {
                     "name": "getMetrics",

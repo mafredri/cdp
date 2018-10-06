@@ -38,6 +38,22 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 	return
 }
 
+// SetTimeDomain invokes the Performance method. Sets time domain to use for
+// collecting and reporting duration metrics. Note that this must be called
+// before enabling metrics collection. Calling this method while metrics
+// collection is enabled returns an error.
+func (d *domainClient) SetTimeDomain(ctx context.Context, args *SetTimeDomainArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Performance.setTimeDomain", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Performance.setTimeDomain", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Performance", Op: "SetTimeDomain", Err: err}
+	}
+	return
+}
+
 // GetMetrics invokes the Performance method. Retrieve current values of
 // run-time metrics.
 func (d *domainClient) GetMetrics(ctx context.Context) (reply *GetMetricsReply, err error) {
