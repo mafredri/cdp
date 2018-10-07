@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"regexp"
 )
 
 // DevToolsOption represents a function that sets a DevTools option.
@@ -69,15 +68,13 @@ func (d *DevTools) Create(ctx context.Context) (*Target, error) {
 	return d.CreateURL(ctx, "")
 }
 
-var httpRe = regexp.MustCompile("^https?://")
-
 // CreateURL is like Create but opens the provided URL. The URL must be
 // valid and begin with "http://" or "https://".
 func (d *DevTools) CreateURL(ctx context.Context, openURL string) (*Target, error) {
 	var escapedQueryURL string
 
 	if openURL != "" {
-		if !httpRe.MatchString(openURL) {
+		if parsed, err := url.Parse(openURL); err != nil || !parsed.IsAbs() {
 			return nil, errors.New("devtool: CreateURL: invalid openURL: " + openURL)
 		}
 		escapedQueryURL = "?" + url.QueryEscape(openURL)
