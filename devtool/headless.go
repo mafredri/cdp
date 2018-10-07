@@ -3,11 +3,14 @@ package devtool
 import (
 	"context"
 	"errors"
+	"regexp"
 
 	"github.com/mafredri/cdp"
 	"github.com/mafredri/cdp/protocol/target"
 	"github.com/mafredri/cdp/rpcc"
 )
+
+var httpRe = regexp.MustCompile("^https?://")
 
 // headlessCreateURL tries to create a new target for Headless Chrome that does
 // not support the json new endpoint. A rpcc connection is established to the
