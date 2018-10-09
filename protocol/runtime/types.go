@@ -165,12 +165,12 @@ func (t Timestamp) String() string {
 	return t.Time().String()
 }
 
-// Time parses the Unix time with millisecond accuracy.
+// Time parses the Unix time.
 func (t Timestamp) Time() time.Time {
-	secs := int64(t)
-	// The Unix time in t only has ms accuracy.
-	ms := int64((float64(t) - float64(secs)) * 1000000)
-	return time.Unix(secs, ms*1000)
+	ts := float64(t) / 1000
+	secs := int64(ts)
+	nsecs := int64((ts - float64(secs)) * 1000000000)
+	return time.Unix(secs, nsecs)
 }
 
 // MarshalJSON implements json.Marshaler. Encodes to null if t is zero.

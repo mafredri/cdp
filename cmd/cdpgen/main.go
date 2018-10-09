@@ -814,6 +814,14 @@ func (g *Generator) domainTypeStruct(d proto.Domain, t proto.AnyType) {
 }
 
 func (g *Generator) domainTypeTime(d proto.Domain, t proto.AnyType) {
+	var div int
+	if d.Name() == "Runtime" {
+		// Runtime domain denotes timestamps in milliseconds.
+		div = 1000
+	} else {
+		div = 1
+	}
+
 	g.Printf(`float64
 
 // String calls (time.Time).String().
@@ -821,12 +829,12 @@ func (t %[1]s) String() string {
 	return t.Time().String()
 }
 
-// Time parses the Unix time with millisecond accuracy.
+// Time parses the Unix time.
 func (t %[1]s) Time() time.Time {
-	secs := int64(t)
-	// The Unix time in t only has ms accuracy.
-	ms := int64((float64(t)-float64(secs))*1000000)
-	return time.Unix(secs, ms*1000)
+	ts := float64(t) / %[3]d
+	secs := int64(ts)
+	nsecs := int64((ts - float64(secs)) * 1000000000)
+	return time.Unix(secs, nsecs)
 }
 
 // MarshalJSON implements json.Marshaler. Encodes to null if t is zero.
@@ -854,7 +862,7 @@ func (t *%[1]s) UnmarshalJSON(data []byte) error {
 
 var _ json.Marshaler = (*%[1]s)(nil)
 var _ json.Unmarshaler = (*%[1]s)(nil)
-`, t.Name(d), g.pkg)
+`, t.Name(d), g.pkg, div)
 
 	g.TestPrintf(`
 func Test%[1]s_Marshal(t *testing.T) {
