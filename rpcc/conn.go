@@ -240,9 +240,10 @@ type Conn struct {
 	compressionLevel func(level int) error
 
 	mu      sync.Mutex // Protects following.
-	closed  bool
 	reqSeq  uint64
 	pending map[uint64]*rpcCall
+	closed  bool
+	err     error // Safe after close or context cancellation.
 
 	reqMu sync.Mutex // Protects following.
 	req   Request
@@ -378,7 +379,7 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 	c.mu.Lock()
 	if c.closed {
 		c.mu.Unlock()
-		return ErrConnClosing
+		return c.err
 	}
 	c.reqSeq++
 	reqID := c.reqSeq
@@ -440,7 +441,7 @@ func (c *Conn) listen(method string, w streamWriter) (func(), error) {
 	defer c.streamMu.Unlock()
 
 	if c.streams == nil {
-		return nil, ErrConnClosing
+		return nil, c.err
 	}
 
 	stream, ok := c.streams[method]
@@ -454,35 +455,60 @@ func (c *Conn) listen(method string, w streamWriter) (func(), error) {
 	return unsub, nil
 }
 
-// Close closes the connection.
-func (c *Conn) close(err error) error {
-	c.cancel()
+type closeError struct {
+	msg string
+	err error
+}
 
+func (e *closeError) Cause() error {
+	return e.err
+}
+
+func (e *closeError) Error() string {
+	return fmt.Sprintf("%s: %v", e.msg, e.err)
+}
+
+// Close closes the connection. Subsequent calls to Close will return the error
+// that closed the connection.
+func (c *Conn) close(err error) error {
 	c.mu.Lock()
 	if c.closed {
 		c.mu.Unlock()
-		return ErrConnClosing
+		return c.err
 	}
 	c.closed = true
 	if err == nil {
 		err = ErrConnClosing
+	} else {
+		err = &closeError{msg: ErrConnClosing.Error(), err: err}
 	}
+	c.err = err
 	for id, call := range c.pending {
 		delete(c.pending, id)
 		call.done(err)
 	}
-	c.mu.Unlock()
 
-	// Stop sending on all streams.
+	// Conn can be nil if DialContext did not complete.
+	if c.conn != nil {
+		wserr := c.conn.Close()
+		if wserr != nil && err == ErrConnClosing {
+			err = wserr
+			c.err = &closeError{msg: ErrConnClosing.Error(), err: err}
+		}
+	}
+
+	// Stop sending on all streams by signaling that the connection is
+	// closed after ensuring that c.err has settled.
 	c.streamMu.Lock()
 	c.streams = nil
 	c.streamMu.Unlock()
 
-	// Conn can be nil if DialContext did not complete.
-	if c.conn != nil {
-		err = c.conn.Close()
-	}
+	c.cancel() // Delay cancel until c.err has settled.
+	c.mu.Unlock()
 
+	if err == ErrConnClosing {
+		return nil
+	}
 	return err
 }
 

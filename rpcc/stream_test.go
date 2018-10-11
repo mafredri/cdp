@@ -198,7 +198,7 @@ func TestStream_RecvAfterConnClose(t *testing.T) {
 	conn.notify("test", []byte(`"message2"`))
 	conn.notify("test", []byte(`"message3"`))
 
-	connCancel()
+	conn.Close()
 
 	for i := 0; i < 3; i++ {
 		var reply string
@@ -210,7 +210,7 @@ func TestStream_RecvAfterConnClose(t *testing.T) {
 
 	err = s.RecvMsg(nil)
 	if err != ErrConnClosing {
-		t.Errorf("err got %v, want ErrConnClosing", err)
+		t.Errorf("err got %v, want %v", err, ErrConnClosing)
 	}
 }
 

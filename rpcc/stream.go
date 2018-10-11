@@ -172,7 +172,7 @@ func (s *streamClient) watch() {
 	case <-s.ctx.Done():
 		s.close(s.ctx.Err())
 	case <-s.conn.ctx.Done():
-		s.close(ErrConnClosing)
+		s.close(s.conn.err)
 	case <-s.done:
 	}
 }
