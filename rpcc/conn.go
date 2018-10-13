@@ -242,17 +242,15 @@ type Conn struct {
 	mu      sync.Mutex // Protects following.
 	reqSeq  uint64
 	pending map[uint64]*rpcCall
+	streams map[string]*streamClients
 	closed  bool
-	err     error // Safe after close or context cancellation.
+	err     error // Protected by mu and closed until context is cancelled.
 
 	reqMu sync.Mutex // Protects following.
 	req   Request
 	// Encodes and decodes JSON onto conn. Encoding is
 	// guarded by mutex and decoding is done by recv.
 	codec Codec
-
-	streamMu sync.Mutex // Protects following.
-	streams  map[string]*streamClients
 }
 
 // Response represents an RPC response or notification sent by the server.
@@ -422,23 +420,22 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 // notify handles RPC notifications and sends them
 // to the appropriate stream listeners.
 func (c *Conn) notify(method string, data []byte) {
-	c.streamMu.Lock()
+	c.mu.Lock()
 	stream := c.streams[method]
-	c.streamMu.Unlock()
-
 	if stream != nil {
 		// Stream writer must be able to handle incoming writes
 		// even after it has been removed (unsubscribed).
 		stream.write(method, data)
 	}
+	c.mu.Unlock()
 }
 
 // listen registers a new stream listener (chan) for the RPC notification
 // method. Returns a function for removing the listener. Error if the
 // connection is closed.
 func (c *Conn) listen(method string, w streamWriter) (func(), error) {
-	c.streamMu.Lock()
-	defer c.streamMu.Unlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
 	if c.streams == nil {
 		return nil, c.err
@@ -472,8 +469,9 @@ func (e *closeError) Error() string {
 // that closed the connection.
 func (c *Conn) close(err error) error {
 	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	if c.closed {
-		c.mu.Unlock()
 		return c.err
 	}
 	c.closed = true
@@ -487,6 +485,9 @@ func (c *Conn) close(err error) error {
 		delete(c.pending, id)
 		call.done(err)
 	}
+	// Stop sending on all streams by signaling
+	// that the connection is closed.
+	c.streams = nil
 
 	// Conn can be nil if DialContext did not complete.
 	if c.conn != nil {
@@ -497,14 +498,9 @@ func (c *Conn) close(err error) error {
 		}
 	}
 
-	// Stop sending on all streams by signaling that the connection is
-	// closed after ensuring that c.err has settled.
-	c.streamMu.Lock()
-	c.streams = nil
-	c.streamMu.Unlock()
-
-	c.cancel() // Delay cancel until c.err has settled.
-	c.mu.Unlock()
+	// Delay cancel until c.err has settled, at this point any active
+	// streams will be closed.
+	c.cancel()
 
 	if err == ErrConnClosing {
 		return nil
