@@ -14,10 +14,19 @@ type HeapSnapshotObjectID string
 type SamplingHeapProfileNode struct {
 	CallFrame runtime.CallFrame         `json:"callFrame"` // Function location.
 	SelfSize  float64                   `json:"selfSize"`  // Allocations size in bytes for the node excluding children.
+	ID        int                       `json:"id"`        // Node id. Ids are unique across all profiles collected between startSampling and stopSampling.
 	Children  []SamplingHeapProfileNode `json:"children"`  // Child nodes.
 }
 
-// SamplingHeapProfile Profile.
+// SamplingHeapProfileSample A single sample from a sampling profile.
+type SamplingHeapProfileSample struct {
+	Size    float64 `json:"size"`    // Allocation size in bytes attributed to the sample.
+	NodeID  int     `json:"nodeId"`  // Id of the corresponding profile tree node.
+	Ordinal float64 `json:"ordinal"` // Time-ordered sample ordinal number. It is unique across all profiles retrieved between startSampling and stopSampling.
+}
+
+// SamplingHeapProfile Sampling profile.
 type SamplingHeapProfile struct {
-	Head SamplingHeapProfileNode `json:"head"` // No description.
+	Head    SamplingHeapProfileNode     `json:"head"`    // No description.
+	Samples []SamplingHeapProfileSample `json:"samples"` // No description.
 }

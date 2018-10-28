@@ -5,15 +5,43 @@ package cachestorage
 // CacheID Unique identifier of the Cache object.
 type CacheID string
 
+// CachedResponseType type of HTTP response cached
+type CachedResponseType string
+
+// CachedResponseType as enums.
+const (
+	CachedResponseTypeNotSet         CachedResponseType = ""
+	CachedResponseTypeBasic          CachedResponseType = "basic"
+	CachedResponseTypeCors           CachedResponseType = "cors"
+	CachedResponseTypeDefault        CachedResponseType = "default"
+	CachedResponseTypeError          CachedResponseType = "error"
+	CachedResponseTypeOpaqueResponse CachedResponseType = "opaqueResponse"
+	CachedResponseTypeOpaqueRedirect CachedResponseType = "opaqueRedirect"
+)
+
+func (e CachedResponseType) Valid() bool {
+	switch e {
+	case "basic", "cors", "default", "error", "opaqueResponse", "opaqueRedirect":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e CachedResponseType) String() string {
+	return string(e)
+}
+
 // DataEntry Data entry.
 type DataEntry struct {
-	RequestURL         string   `json:"requestURL"`         // Request URL.
-	RequestMethod      string   `json:"requestMethod"`      // Request method.
-	RequestHeaders     []Header `json:"requestHeaders"`     // Request headers
-	ResponseTime       float64  `json:"responseTime"`       // Number of seconds since epoch.
-	ResponseStatus     int      `json:"responseStatus"`     // HTTP response status code.
-	ResponseStatusText string   `json:"responseStatusText"` // HTTP response status text.
-	ResponseHeaders    []Header `json:"responseHeaders"`    // Response headers
+	RequestURL         string             `json:"requestURL"`         // Request URL.
+	RequestMethod      string             `json:"requestMethod"`      // Request method.
+	RequestHeaders     []Header           `json:"requestHeaders"`     // Request headers
+	ResponseTime       float64            `json:"responseTime"`       // Number of seconds since epoch.
+	ResponseStatus     int                `json:"responseStatus"`     // HTTP response status code.
+	ResponseStatusText string             `json:"responseStatusText"` // HTTP response status text.
+	ResponseType       CachedResponseType `json:"responseType"`       // HTTP response type
+	ResponseHeaders    []Header           `json:"responseHeaders"`    // Response headers
 }
 
 // Cache Cache identifier.

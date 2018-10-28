@@ -51,6 +51,18 @@ import (
 //
 // Note: This domain is experimental.
 type Accessibility interface {
+	// Command Disable
+	//
+	// Disables the accessibility domain.
+	Disable(context.Context) error
+
+	// Command Enable
+	//
+	// Enables the accessibility domain which causes `AXNodeId`s to remain
+	// consistent between method calls. This turns on accessibility for the
+	// page, which can impact performance until accessibility is disabled.
+	Enable(context.Context) error
+
 	// Command GetPartialAXTree
 	//
 	// Fetches the accessibility node and partial accessibility tree for

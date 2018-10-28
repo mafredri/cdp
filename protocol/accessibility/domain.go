@@ -18,6 +18,28 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// Disable invokes the Accessibility method. Disables the accessibility
+// domain.
+func (d *domainClient) Disable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Accessibility.disable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Accessibility", Op: "Disable", Err: err}
+	}
+	return
+}
+
+// Enable invokes the Accessibility method. Enables the accessibility domain
+// which causes `AXNodeId`s to remain consistent between method calls. This
+// turns on accessibility for the page, which can impact performance until
+// accessibility is disabled.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Accessibility.enable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Accessibility", Op: "Enable", Err: err}
+	}
+	return
+}
+
 // GetPartialAXTree invokes the Accessibility method. Fetches the
 // accessibility node and partial accessibility tree for this DOM node, if it
 // exists.

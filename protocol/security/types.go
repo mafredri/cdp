@@ -59,12 +59,13 @@ func (e State) String() string {
 // StateExplanation An explanation of an factor contributing to the security
 // state.
 type StateExplanation struct {
-	SecurityState    State            `json:"securityState"`    // Security state representing the severity of the factor being explained.
-	Title            string           `json:"title"`            // Title describing the type of factor.
-	Summary          string           `json:"summary"`          // Short phrase describing the type of factor.
-	Description      string           `json:"description"`      // Full text explanation of the factor.
-	MixedContentType MixedContentType `json:"mixedContentType"` // The type of mixed content described by the explanation.
-	Certificate      []string         `json:"certificate"`      // Page certificate.
+	SecurityState    State            `json:"securityState"`             // Security state representing the severity of the factor being explained.
+	Title            string           `json:"title"`                     // Title describing the type of factor.
+	Summary          string           `json:"summary"`                   // Short phrase describing the type of factor.
+	Description      string           `json:"description"`               // Full text explanation of the factor.
+	MixedContentType MixedContentType `json:"mixedContentType"`          // The type of mixed content described by the explanation.
+	Certificate      []string         `json:"certificate"`               // Page certificate.
+	Recommendations  []string         `json:"recommendations,omitempty"` // Recommendations to fix any issues.
 }
 
 // InsecureContentStatus Information about insecure content on the page.

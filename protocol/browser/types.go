@@ -56,6 +56,7 @@ const (
 	PermissionTypeAccessibilityEvents      PermissionType = "accessibilityEvents"
 	PermissionTypeAudioCapture             PermissionType = "audioCapture"
 	PermissionTypeBackgroundSync           PermissionType = "backgroundSync"
+	PermissionTypeBackgroundFetch          PermissionType = "backgroundFetch"
 	PermissionTypeClipboardRead            PermissionType = "clipboardRead"
 	PermissionTypeClipboardWrite           PermissionType = "clipboardWrite"
 	PermissionTypeDurableStorage           PermissionType = "durableStorage"
@@ -72,7 +73,7 @@ const (
 
 func (e PermissionType) Valid() bool {
 	switch e {
-	case "accessibilityEvents", "audioCapture", "backgroundSync", "clipboardRead", "clipboardWrite", "durableStorage", "flash", "geolocation", "midi", "midiSysex", "notifications", "paymentHandler", "protectedMediaIdentifier", "sensors", "videoCapture":
+	case "accessibilityEvents", "audioCapture", "backgroundSync", "backgroundFetch", "clipboardRead", "clipboardWrite", "durableStorage", "flash", "geolocation", "midi", "midiSysex", "notifications", "paymentHandler", "protectedMediaIdentifier", "sensors", "videoCapture":
 		return true
 	default:
 		return false

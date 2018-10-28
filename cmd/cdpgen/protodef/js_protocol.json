@@ -210,10 +210,14 @@
                     "enum": [
                         "busy",
                         "disabled",
+                        "editable",
+                        "focusable",
+                        "focused",
                         "hidden",
                         "hiddenRoot",
                         "invalid",
                         "keyshortcuts",
+                        "settable",
                         "roledescription",
                         "live",
                         "atomic",
@@ -321,6 +325,14 @@
                 }
             ],
             "commands": [
+                {
+                    "name": "disable",
+                    "description": "Disables the accessibility domain."
+                },
+                {
+                    "name": "enable",
+                    "description": "Enables the accessibility domain which causes `AXNodeId`s to remain consistent between method calls.\nThis turns on accessibility for the page, which can impact performance until accessibility is disabled."
+                },
                 {
                     "name": "getPartialAXTree",
                     "description": "Fetches the accessibility node and partial accessibility tree for this DOM node, if it exists.",
@@ -1025,6 +1037,7 @@
                         "accessibilityEvents",
                         "audioCapture",
                         "backgroundSync",
+                        "backgroundFetch",
                         "clipboardRead",
                         "clipboardWrite",
                         "durableStorage",
@@ -2485,6 +2498,19 @@
                     "type": "string"
                 },
                 {
+                    "id": "CachedResponseType",
+                    "description": "type of HTTP response cached",
+                    "type": "string",
+                    "enum": [
+                        "basic",
+                        "cors",
+                        "default",
+                        "error",
+                        "opaqueResponse",
+                        "opaqueRedirect"
+                    ]
+                },
+                {
                     "id": "DataEntry",
                     "description": "Data entry.",
                     "type": "object",
@@ -2521,6 +2547,11 @@
                             "name": "responseStatusText",
                             "description": "HTTP response status text.",
                             "type": "string"
+                        },
+                        {
+                            "name": "responseType",
+                            "description": "HTTP response type",
+                            "$ref": "CachedResponseType"
                         },
                         {
                             "name": "responseHeaders",
@@ -3913,7 +3944,14 @@
                     ],
                     "returns": [
                         {
+                            "name": "backendNodeId",
+                            "description": "Resulting node.",
+                            "$ref": "BackendNodeId"
+                        },
+                        {
                             "name": "nodeId",
+                            "description": "Id of the node at given coordinates, only when enabled.",
+                            "optional": true,
                             "$ref": "NodeId"
                         }
                     ]
@@ -12156,6 +12194,15 @@
                         {
                             "name": "certificate",
                             "description": "Page certificate.",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        {
+                            "name": "recommendations",
+                            "description": "Recommendations to fix any issues.",
+                            "optional": true,
                             "type": "array",
                             "items": {
                                 "type": "string"
