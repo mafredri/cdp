@@ -4,6 +4,7 @@ package css
 
 import (
 	"github.com/mafredri/cdp/protocol/dom"
+	"github.com/mafredri/cdp/protocol/page"
 )
 
 // AddRuleArgs represents the arguments for AddRule in the CSS domain.
@@ -42,6 +43,18 @@ func NewCollectClassNamesArgs(styleSheetID StyleSheetID) *CollectClassNamesArgs 
 // CollectClassNamesReply represents the return values for CollectClassNames in the CSS domain.
 type CollectClassNamesReply struct {
 	ClassNames []string `json:"classNames"` // Class name list.
+}
+
+// CreateStyleSheetArgs represents the arguments for CreateStyleSheet in the CSS domain.
+type CreateStyleSheetArgs struct {
+	FrameID page.FrameID `json:"frameId"` // Identifier of the frame where "via-inspector" stylesheet should be created.
+}
+
+// NewCreateStyleSheetArgs initializes CreateStyleSheetArgs with the required arguments.
+func NewCreateStyleSheetArgs(frameID page.FrameID) *CreateStyleSheetArgs {
+	args := new(CreateStyleSheetArgs)
+	args.FrameID = frameID
+	return args
 }
 
 // CreateStyleSheetReply represents the return values for CreateStyleSheet in the CSS domain.

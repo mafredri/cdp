@@ -2,6 +2,10 @@
 
 package applicationcache
 
+import (
+	"github.com/mafredri/cdp/protocol/page"
+)
+
 // Resource Detailed application cache resource information.
 type Resource struct {
 	URL  string `json:"url"`  // Resource url.
@@ -16,4 +20,11 @@ type ApplicationCache struct {
 	CreationTime float64    `json:"creationTime"` // Application cache creation time.
 	UpdateTime   float64    `json:"updateTime"`   // Application cache update time.
 	Resources    []Resource `json:"resources"`    // Application cache resources.
+}
+
+// FrameWithManifest Frame identifier - manifest URL pair.
+type FrameWithManifest struct {
+	FrameID     page.FrameID `json:"frameId"`     // Frame identifier.
+	ManifestURL string       `json:"manifestURL"` // Manifest URL.
+	Status      int          `json:"status"`      // Application cache status.
 }
