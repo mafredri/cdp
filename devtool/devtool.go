@@ -91,7 +91,8 @@ func (d *DevTools) CreateURL(ctx context.Context, openURL string) (*Target, erro
 	// Returned by Headless Chrome that does
 	// not support the "/json/new" endpoint.
 	case http.StatusInternalServerError:
-		err2 := err
+		err2 := parseError("CreateUrl: StatusInternalServerError", resp.Body)
+
 		v, err := d.Version(ctx)
 		if err != nil {
 			return nil, errors.Merge(err, err2)
