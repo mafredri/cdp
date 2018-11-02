@@ -3,6 +3,7 @@
 package dom
 
 import (
+	"github.com/mafredri/cdp/protocol/internal"
 	"github.com/mafredri/cdp/protocol/runtime"
 )
 
@@ -798,6 +799,18 @@ func NewSetOuterHTMLArgs(nodeID NodeID, outerHTML string) *SetOuterHTMLArgs {
 	args := new(SetOuterHTMLArgs)
 	args.NodeID = nodeID
 	args.OuterHTML = outerHTML
+	return args
+}
+
+// GetFrameOwnerArgs represents the arguments for GetFrameOwner in the DOM domain.
+type GetFrameOwnerArgs struct {
+	FrameID internal.PageFrameID `json:"frameId"` // No description.
+}
+
+// NewGetFrameOwnerArgs initializes GetFrameOwnerArgs with the required arguments.
+func NewGetFrameOwnerArgs(frameID internal.PageFrameID) *GetFrameOwnerArgs {
+	args := new(GetFrameOwnerArgs)
+	args.FrameID = frameID
 	return args
 }
 

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 
 	"github.com/mafredri/cdp/protocol/dom"
+	"github.com/mafredri/cdp/protocol/page"
 	"github.com/mafredri/cdp/protocol/runtime"
 )
 
@@ -24,6 +25,34 @@ func NewGetHighlightObjectForTestArgs(nodeID dom.NodeID) *GetHighlightObjectForT
 // GetHighlightObjectForTestReply represents the return values for GetHighlightObjectForTest in the Overlay domain.
 type GetHighlightObjectForTestReply struct {
 	Highlight json.RawMessage `json:"highlight"` // Highlight data for the node.
+}
+
+// HighlightFrameArgs represents the arguments for HighlightFrame in the Overlay domain.
+type HighlightFrameArgs struct {
+	FrameID             page.FrameID `json:"frameId"`                       // Identifier of the frame to highlight.
+	ContentColor        *dom.RGBA    `json:"contentColor,omitempty"`        // The content box highlight fill color (default: transparent).
+	ContentOutlineColor *dom.RGBA    `json:"contentOutlineColor,omitempty"` // The content box highlight outline color (default: transparent).
+}
+
+// NewHighlightFrameArgs initializes HighlightFrameArgs with the required arguments.
+func NewHighlightFrameArgs(frameID page.FrameID) *HighlightFrameArgs {
+	args := new(HighlightFrameArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// SetContentColor sets the ContentColor optional argument. The
+// content box highlight fill color (default: transparent).
+func (a *HighlightFrameArgs) SetContentColor(contentColor dom.RGBA) *HighlightFrameArgs {
+	a.ContentColor = &contentColor
+	return a
+}
+
+// SetContentOutlineColor sets the ContentOutlineColor optional argument.
+// The content box highlight outline color (default: transparent).
+func (a *HighlightFrameArgs) SetContentOutlineColor(contentOutlineColor dom.RGBA) *HighlightFrameArgs {
+	a.ContentOutlineColor = &contentOutlineColor
+	return a
 }
 
 // HighlightNodeArgs represents the arguments for HighlightNode in the Overlay domain.
