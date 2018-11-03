@@ -7,7 +7,9 @@ addons:
 
 go:
   - 1.9.x
-  - tip
+  - 1.10.x
+  - 1.11.x
+  - master
 
 before_install:
   # Use --disable-setuid-sandbox to avoid core dump on Travis.
@@ -25,3 +27,5 @@ after_success:
 
 matrix:
   fast_finish: true
+  allow_failures:
+    - go: master
