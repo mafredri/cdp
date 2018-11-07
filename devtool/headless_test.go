@@ -65,6 +65,7 @@ func TestDevTools_HeadlessCreateURL(t *testing.T) {
 	mh := &multiHandler{
 		t: t,
 		h: []http.Handler{
+			&testHandler{hostnameLookup: true},
 			&testHandler{status: 500},
 			&testHandler{status: 200, body: []byte(`{
 				"Browser": "HeadlessChrome/60.0.3578.30"
