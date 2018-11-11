@@ -12,10 +12,10 @@ import (
 
 var httpRe = regexp.MustCompile("^https?://")
 
-// headlessCreateURL tries to create a new target for Headless Chrome that does
-// not support the json new endpoint. A rpcc connection is established to the
-// "/devtools/browser" endpoint and "Target.createTarget" is issued.
-func headlessCreateURL(ctx context.Context, d *DevTools, openURL string) (*Target, error) {
+// fallbackHeadlessCreateURL tries to create a new target for Headless Chrome
+// that does not support the json new endpoint. A rpcc connection is established
+// to the "/devtools/browser" endpoint and "Target.createTarget" is issued.
+func fallbackHeadlessCreateURL(ctx context.Context, d *DevTools, openURL string) (*Target, error) {
 	// Context must be set, rpcc DialContext panics on nil context.
 	if ctx == nil {
 		ctx = context.Background()

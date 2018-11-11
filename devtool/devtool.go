@@ -3,11 +3,12 @@ package devtool
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
+
+	"github.com/mafredri/cdp/internal/errors"
 )
 
 // DevToolsOption represents a function that sets a DevTools option.
@@ -90,7 +91,19 @@ func (d *DevTools) CreateURL(ctx context.Context, openURL string) (*Target, erro
 	// Returned by Headless Chrome that does
 	// not support the "/json/new" endpoint.
 	case http.StatusInternalServerError:
-		return headlessCreateURL(ctx, d, openURL)
+		err2 := parseError("CreateUrl: StatusInternalServerError", resp.Body)
+
+		v, err := d.Version(ctx)
+		if err != nil {
+			return nil, err2
+		}
+
+		if v.WebSocketDebuggerURL != "" {
+			// This version is too new since it has a debugger URL set.
+			return nil, err2
+		}
+
+		return fallbackHeadlessCreateURL(ctx, d, openURL)
 
 	case http.StatusOK:
 		t := new(Target)

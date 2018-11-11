@@ -66,6 +66,9 @@ func TestDevTools_HeadlessCreateURL(t *testing.T) {
 		t: t,
 		h: []http.Handler{
 			&testHandler{status: 500},
+			&testHandler{status: 200, body: []byte(`{
+				"Browser": "HeadlessChrome/60.0.3578.30"
+			}`)},
 			&wsHandler{t: t, message: &target.CreateTargetReply{TargetID: "abcd-abcd-abcd-abcd"}},
 			&testHandler{status: 200, body: []byte(`[{"id": "abcd-abcd-abcd-abcd"}]`)},
 		},
@@ -83,5 +86,33 @@ func TestDevTools_HeadlessCreateURL(t *testing.T) {
 	want := "abcd-abcd-abcd-abcd"
 	if targ.ID != want {
 		t.Errorf("Target.ID: got %q, want %q", targ.ID, want)
+	}
+}
+
+func TestDevTools_HeadlessCreateURLFail(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	mh := &multiHandler{
+		t: t,
+		h: []http.Handler{
+			&testHandler{status: 500},
+			&testHandler{status: 200, body: []byte(`{
+				"Browser": "HeadlessChrome/71.0.3578.30",
+				"webSocketDebuggerUrl": "ws://localhost:9222/devtools/browser/14731399-e013-4802-a8b6-500b3870288e"
+			}`)},
+			&wsHandler{t: t, message: &target.CreateTargetReply{TargetID: "abcd-abcd-abcd-abcd"}},
+			&testHandler{status: 200, body: []byte(`[{"id": "abcd-abcd-abcd-abcd"}]`)},
+		},
+	}
+
+	srv := httptest.NewServer(mh)
+	defer srv.Close()
+
+	devt := New(srv.URL)
+	targ, err := devt.Create(ctx)
+	if err == nil {
+		t.Log(targ)
+		t.Error("want err != nil, got nil")
 	}
 }
