@@ -22,6 +22,10 @@ type testHandler struct {
 	status int
 	body   []byte
 	buf    *bytes.Buffer
+
+	// This is used to inform testHandler that a
+	// hostname lookup will be performed next.
+	hostnameLookup bool
 }
 
 func newTestHandler(t *testing.T) *testHandler {
@@ -35,6 +39,12 @@ func (h *testHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			h.t.Error(err)
 		}
+		return
+	}
+	if h.hostnameLookup {
+		h.hostnameLookup = false
+		w.WriteHeader(200)
+		w.Write([]byte("{}"))
 		return
 	}
 	if h.buf != nil {
@@ -69,6 +79,7 @@ func TestDevTools(t *testing.T) {
 	defer srv.Close()
 
 	devt := New(srv.URL)
+	th.hostnameLookup = true
 
 	var buf bytes.Buffer
 	th.buf = &buf
@@ -138,6 +149,7 @@ func TestDevTools_Error(t *testing.T) {
 	defer srv.Close()
 
 	devt := New(srv.URL)
+	th.hostnameLookup = true
 
 	var buf bytes.Buffer
 
