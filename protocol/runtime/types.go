@@ -27,7 +27,7 @@ type RemoteObject struct {
 	// Subtype Object subtype hint. Specified for `object` type values
 	// only.
 	//
-	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray".
+	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview".
 	Subtype             *string              `json:"subtype,omitempty"`
 	ClassName           *string              `json:"className,omitempty"`           // Object class (constructor) name. Specified for `object` type values only.
 	Value               json.RawMessage      `json:"value,omitempty"`               // Remote object value in case of primitive values or JSON values (if it was requested).

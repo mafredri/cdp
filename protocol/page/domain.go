@@ -73,6 +73,22 @@ func (d *domainClient) CaptureScreenshot(ctx context.Context, args *CaptureScree
 	return
 }
 
+// CaptureSnapshot invokes the Page method. Returns a snapshot of the page as
+// a string. For MHTML format, the serialization includes iframes, shadow DOM,
+// external resources, and element-inline styles.
+func (d *domainClient) CaptureSnapshot(ctx context.Context, args *CaptureSnapshotArgs) (reply *CaptureSnapshotReply, err error) {
+	reply = new(CaptureSnapshotReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.captureSnapshot", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.captureSnapshot", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "CaptureSnapshot", Err: err}
+	}
+	return
+}
+
 // CreateIsolatedWorld invokes the Page method. Creates an isolated world for
 // the given frame.
 func (d *domainClient) CreateIsolatedWorld(ctx context.Context, args *CreateIsolatedWorldArgs) (reply *CreateIsolatedWorldReply, err error) {

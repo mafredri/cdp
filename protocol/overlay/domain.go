@@ -202,6 +202,20 @@ func (d *domainClient) SetShowScrollBottleneckRects(ctx context.Context, args *S
 	return
 }
 
+// SetShowHitTestBorders invokes the Overlay method. Requests that backend
+// shows hit-test borders on layers
+func (d *domainClient) SetShowHitTestBorders(ctx context.Context, args *SetShowHitTestBordersArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowHitTestBorders", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowHitTestBorders", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowHitTestBorders", Err: err}
+	}
+	return
+}
+
 // SetShowViewportSizeOnResize invokes the Overlay method. Paints viewport
 // size upon main frame resize.
 func (d *domainClient) SetShowViewportSizeOnResize(ctx context.Context, args *SetShowViewportSizeOnResizeArgs) (err error) {

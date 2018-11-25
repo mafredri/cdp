@@ -289,7 +289,7 @@ func NewGetRequestPostDataArgs(requestID RequestID) *GetRequestPostDataArgs {
 
 // GetRequestPostDataReply represents the return values for GetRequestPostData in the Network domain.
 type GetRequestPostDataReply struct {
-	PostData []byte `json:"postData"` // Base64-encoded request body.
+	PostData string `json:"postData"` // Request body string, omitting files from multipart requests
 }
 
 // GetResponseBodyForInterceptionArgs represents the arguments for GetResponseBodyForInterception in the Network domain.

@@ -21,6 +21,7 @@ import (
 	"github.com/mafredri/cdp/protocol/domsnapshot"
 	"github.com/mafredri/cdp/protocol/domstorage"
 	"github.com/mafredri/cdp/protocol/emulation"
+	"github.com/mafredri/cdp/protocol/fetch"
 	"github.com/mafredri/cdp/protocol/headlessexperimental"
 	"github.com/mafredri/cdp/protocol/heapprofiler"
 	"github.com/mafredri/cdp/protocol/indexeddb"
@@ -272,6 +273,13 @@ type Browser interface {
 	//
 	// Note: This command is experimental.
 	SetWindowBounds(context.Context, *browser.SetWindowBoundsArgs) error
+
+	// Command SetDockTile
+	//
+	// Set dock tile details, platform-specific.
+	//
+	// Note: This command is experimental.
+	SetDockTile(context.Context, *browser.SetDockTileArgs) error
 }
 
 // The CSS domain. This domain exposes CSS read/write operations. All CSS
@@ -1371,6 +1379,85 @@ type Emulation interface {
 	VirtualTimePaused(context.Context) (emulation.VirtualTimePausedClient, error)
 }
 
+// The Fetch domain. A domain for letting clients substitute browser's network
+// layer with client code.
+//
+// Note: This domain is experimental.
+type Fetch interface {
+	// Command Disable
+	//
+	// Disables the fetch domain.
+	Disable(context.Context) error
+
+	// Command Enable
+	//
+	// Enables issuing of requestPaused events. A request will be paused
+	// until client calls one of failRequest, fulfillRequest or
+	// continueRequest/continueWithAuth.
+	Enable(context.Context, *fetch.EnableArgs) error
+
+	// Command FailRequest
+	//
+	// Causes the request to fail with specified reason.
+	FailRequest(context.Context, *fetch.FailRequestArgs) error
+
+	// Command FulfillRequest
+	//
+	// Provides response to the request.
+	FulfillRequest(context.Context, *fetch.FulfillRequestArgs) error
+
+	// Command ContinueRequest
+	//
+	// Continues the request, optionally modifying some of its parameters.
+	ContinueRequest(context.Context, *fetch.ContinueRequestArgs) error
+
+	// Command ContinueWithAuth
+	//
+	// Continues a request supplying authChallengeResponse following
+	// authRequired event.
+	ContinueWithAuth(context.Context, *fetch.ContinueWithAuthArgs) error
+
+	// Command GetResponseBody
+	//
+	// Causes the body of the response to be received from the server and
+	// returned as a single string. May only be issued for a request that
+	// is paused in the Response stage and is mutually exclusive with
+	// takeResponseBodyForInterceptionAsStream. Calling other methods that
+	// affect the request or disabling fetch domain before body is received
+	// results in an undefined behavior.
+	GetResponseBody(context.Context, *fetch.GetResponseBodyArgs) (*fetch.GetResponseBodyReply, error)
+
+	// Command TakeResponseBodyAsStream
+	//
+	// Returns a handle to the stream representing the response body. The
+	// request must be paused in the HeadersReceived stage. Note that after
+	// this command the request can't be continued as is -- client either
+	// needs to cancel it or to provide the response body. The stream only
+	// supports sequential read, IO.read will fail if the position is
+	// specified. This method is mutually exclusive with getResponseBody.
+	// Calling other methods that affect the request or disabling fetch
+	// domain before body is received results in an undefined behavior.
+	TakeResponseBodyAsStream(context.Context, *fetch.TakeResponseBodyAsStreamArgs) (*fetch.TakeResponseBodyAsStreamReply, error)
+
+	// Event RequestPaused
+	//
+	// Issued when the domain is enabled and the request URL matches the
+	// specified filter. The request is paused until the client responds
+	// with one of continueRequest, failRequest or fulfillRequest. The
+	// stage of the request can be determined by presence of
+	// responseErrorReason and responseStatusCode -- the request is at the
+	// response stage if either of these fields is present and in the
+	// request stage otherwise.
+	RequestPaused(context.Context) (fetch.RequestPausedClient, error)
+
+	// Event AuthRequired
+	//
+	// Issued when the domain is enabled with handleAuthRequests set to
+	// true. The request is paused until client responds with
+	// continueWithAuth.
+	AuthRequired(context.Context) (fetch.AuthRequiredClient, error)
+}
+
 // The HeadlessExperimental domain. This domain provides experimental commands
 // only supported in headless mode.
 //
@@ -2119,6 +2206,11 @@ type Overlay interface {
 	// Requests that backend shows scroll bottleneck rects
 	SetShowScrollBottleneckRects(context.Context, *overlay.SetShowScrollBottleneckRectsArgs) error
 
+	// Command SetShowHitTestBorders
+	//
+	// Requests that backend shows hit-test borders on layers
+	SetShowHitTestBorders(context.Context, *overlay.SetShowHitTestBordersArgs) error
+
 	// Command SetShowViewportSizeOnResize
 	//
 	// Paints viewport size upon main frame resize.
@@ -2172,6 +2264,15 @@ type Page interface {
 	//
 	// Capture page screenshot.
 	CaptureScreenshot(context.Context, *page.CaptureScreenshotArgs) (*page.CaptureScreenshotReply, error)
+
+	// Command CaptureSnapshot
+	//
+	// Returns a snapshot of the page as a string. For MHTML format, the
+	// serialization includes iframes, shadow DOM, external resources, and
+	// element-inline styles.
+	//
+	// Note: This command is experimental.
+	CaptureSnapshot(context.Context, *page.CaptureSnapshotArgs) (*page.CaptureSnapshotReply, error)
 
 	// Command CreateIsolatedWorld
 	//
@@ -2984,6 +3085,11 @@ type SystemInfo interface {
 	//
 	// Returns information about the system.
 	GetInfo(context.Context) (*systeminfo.GetInfoReply, error)
+
+	// Command GetProcessInfo
+	//
+	// Returns information about all running processes.
+	GetProcessInfo(context.Context) (*systeminfo.GetProcessInfoReply, error)
 }
 
 // The Target domain. Supports additional targets discovery and allows to

@@ -19,6 +19,7 @@ import (
 	"github.com/mafredri/cdp/protocol/domsnapshot"
 	"github.com/mafredri/cdp/protocol/domstorage"
 	"github.com/mafredri/cdp/protocol/emulation"
+	"github.com/mafredri/cdp/protocol/fetch"
 	"github.com/mafredri/cdp/protocol/headlessexperimental"
 	"github.com/mafredri/cdp/protocol/heapprofiler"
 	"github.com/mafredri/cdp/protocol/indexeddb"
@@ -66,6 +67,7 @@ type Client struct {
 	Debugger             Debugger
 	DeviceOrientation    DeviceOrientation
 	Emulation            Emulation
+	Fetch                Fetch
 	HeadlessExperimental HeadlessExperimental
 	HeapProfiler         HeapProfiler
 	IO                   IO
@@ -112,6 +114,7 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Debugger:             debugger.NewClient(conn),
 		DeviceOrientation:    deviceorientation.NewClient(conn),
 		Emulation:            emulation.NewClient(conn),
+		Fetch:                fetch.NewClient(conn),
 		HeadlessExperimental: headlessexperimental.NewClient(conn),
 		HeapProfiler:         heapprofiler.NewClient(conn),
 		IO:                   io.NewClient(conn),

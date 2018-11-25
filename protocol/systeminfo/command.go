@@ -9,3 +9,8 @@ type GetInfoReply struct {
 	ModelVersion string  `json:"modelVersion"` // A platform-dependent description of the version of the machine. On Mac OS, this is, for example, '10.1'. Will be the empty string if not supported.
 	CommandLine  string  `json:"commandLine"`  // The command line string used to launch the browser. Will be the empty string if not supported.
 }
+
+// GetProcessInfoReply represents the return values for GetProcessInfo in the SystemInfo domain.
+type GetProcessInfoReply struct {
+	ProcessInfo []ProcessInfo `json:"processInfo"` // An array of process info blocks.
+}

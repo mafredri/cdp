@@ -140,14 +140,22 @@ type GetWindowBoundsReply struct {
 
 // GetWindowForTargetArgs represents the arguments for GetWindowForTarget in the Browser domain.
 type GetWindowForTargetArgs struct {
-	TargetID target.ID `json:"targetId"` // Devtools agent host id.
+	TargetID *target.ID `json:"targetId,omitempty"` // Devtools agent host id. If called as a part of the session, associated targetId is used.
 }
 
 // NewGetWindowForTargetArgs initializes GetWindowForTargetArgs with the required arguments.
-func NewGetWindowForTargetArgs(targetID target.ID) *GetWindowForTargetArgs {
+func NewGetWindowForTargetArgs() *GetWindowForTargetArgs {
 	args := new(GetWindowForTargetArgs)
-	args.TargetID = targetID
+
 	return args
+}
+
+// SetTargetID sets the TargetID optional argument. Devtools agent
+// host id. If called as a part of the session, associated targetId is
+// used.
+func (a *GetWindowForTargetArgs) SetTargetID(targetID target.ID) *GetWindowForTargetArgs {
+	a.TargetID = &targetID
+	return a
 }
 
 // GetWindowForTargetReply represents the return values for GetWindowForTarget in the Browser domain.
@@ -168,4 +176,29 @@ func NewSetWindowBoundsArgs(windowID WindowID, bounds Bounds) *SetWindowBoundsAr
 	args.WindowID = windowID
 	args.Bounds = bounds
 	return args
+}
+
+// SetDockTileArgs represents the arguments for SetDockTile in the Browser domain.
+type SetDockTileArgs struct {
+	BadgeLabel *string `json:"badgeLabel,omitempty"` // No description.
+	Image      *string `json:"image,omitempty"`      // Png encoded image.
+}
+
+// NewSetDockTileArgs initializes SetDockTileArgs with the required arguments.
+func NewSetDockTileArgs() *SetDockTileArgs {
+	args := new(SetDockTileArgs)
+
+	return args
+}
+
+// SetBadgeLabel sets the BadgeLabel optional argument.
+func (a *SetDockTileArgs) SetBadgeLabel(badgeLabel string) *SetDockTileArgs {
+	a.BadgeLabel = &badgeLabel
+	return a
+}
+
+// SetImage sets the Image optional argument. Png encoded image.
+func (a *SetDockTileArgs) SetImage(image string) *SetDockTileArgs {
+	a.Image = &image
+	return a
 }

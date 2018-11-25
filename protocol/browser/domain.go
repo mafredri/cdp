@@ -159,3 +159,17 @@ func (d *domainClient) SetWindowBounds(ctx context.Context, args *SetWindowBound
 	}
 	return
 }
+
+// SetDockTile invokes the Browser method. Set dock tile details,
+// platform-specific.
+func (d *domainClient) SetDockTile(ctx context.Context, args *SetDockTileArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.setDockTile", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.setDockTile", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "SetDockTile", Err: err}
+	}
+	return
+}

@@ -30,3 +30,14 @@ func (d *domainClient) GetInfo(ctx context.Context) (reply *GetInfoReply, err er
 	}
 	return
 }
+
+// GetProcessInfo invokes the SystemInfo method. Returns information about all
+// running processes.
+func (d *domainClient) GetProcessInfo(ctx context.Context) (reply *GetProcessInfoReply, err error) {
+	reply = new(GetProcessInfoReply)
+	err = rpcc.Invoke(ctx, "SystemInfo.getProcessInfo", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "SystemInfo", Op: "GetProcessInfo", Err: err}
+	}
+	return
+}

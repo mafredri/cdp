@@ -241,6 +241,18 @@ func NewSetShowScrollBottleneckRectsArgs(show bool) *SetShowScrollBottleneckRect
 	return args
 }
 
+// SetShowHitTestBordersArgs represents the arguments for SetShowHitTestBorders in the Overlay domain.
+type SetShowHitTestBordersArgs struct {
+	Show bool `json:"show"` // True for showing hit-test borders
+}
+
+// NewSetShowHitTestBordersArgs initializes SetShowHitTestBordersArgs with the required arguments.
+func NewSetShowHitTestBordersArgs(show bool) *SetShowHitTestBordersArgs {
+	args := new(SetShowHitTestBordersArgs)
+	args.Show = show
+	return args
+}
+
 // SetShowViewportSizeOnResizeArgs represents the arguments for SetShowViewportSizeOnResize in the Overlay domain.
 type SetShowViewportSizeOnResizeArgs struct {
 	Show bool `json:"show"` // Whether to paint size or not.

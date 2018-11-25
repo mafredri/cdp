@@ -121,6 +121,35 @@ type CaptureScreenshotReply struct {
 	Data []byte `json:"data"` // Base64-encoded image data.
 }
 
+// CaptureSnapshotArgs represents the arguments for CaptureSnapshot in the Page domain.
+type CaptureSnapshotArgs struct {
+	// Format Format (defaults to mhtml).
+	//
+	// Values: "mhtml".
+	Format *string `json:"format,omitempty"`
+}
+
+// NewCaptureSnapshotArgs initializes CaptureSnapshotArgs with the required arguments.
+func NewCaptureSnapshotArgs() *CaptureSnapshotArgs {
+	args := new(CaptureSnapshotArgs)
+
+	return args
+}
+
+// SetFormat sets the Format optional argument. Format (defaults to
+// mhtml).
+//
+// Values: "mhtml".
+func (a *CaptureSnapshotArgs) SetFormat(format string) *CaptureSnapshotArgs {
+	a.Format = &format
+	return a
+}
+
+// CaptureSnapshotReply represents the return values for CaptureSnapshot in the Page domain.
+type CaptureSnapshotReply struct {
+	Data string `json:"data"` // Serialized page data.
+}
+
 // CreateIsolatedWorldArgs represents the arguments for CreateIsolatedWorld in the Page domain.
 type CreateIsolatedWorldArgs struct {
 	FrameID             FrameID `json:"frameId"`                       // Id of the frame in which the isolated world should be created.

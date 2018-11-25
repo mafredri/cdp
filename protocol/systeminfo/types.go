@@ -21,3 +21,10 @@ type GPUInfo struct {
 	FeatureStatus        json.RawMessage `json:"featureStatus,omitempty"` // An optional dictionary of graphics features and their status.
 	DriverBugWorkarounds []string        `json:"driverBugWorkarounds"`    // An optional array of GPU driver bug workarounds.
 }
+
+// ProcessInfo Represents process info.
+type ProcessInfo struct {
+	Type    string  `json:"type"`    // Specifies process type.
+	ID      int     `json:"id"`      // Specifies process id.
+	CPUTime float64 `json:"cpuTime"` // Specifies cumulative CPU usage in seconds across all threads of the process since the process start.
+}
