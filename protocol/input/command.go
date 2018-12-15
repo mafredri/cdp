@@ -151,8 +151,9 @@ type DispatchMouseEventArgs struct {
 	Timestamp TimeSinceEpoch `json:"timestamp,omitempty"` // Time at which the event occurred.
 	// Button Mouse button (default: "none").
 	//
-	// Values: "none", "left", "middle", "right".
+	// Values: "none", "left", "middle", "right", "back", "forward".
 	Button     *string  `json:"button,omitempty"`
+	Buttons    *int     `json:"buttons,omitempty"`    // A number indicating which buttons are pressed on the mouse when a mouse event is triggered. Left=1, Right=2, Middle=4, Back=8, Forward=16, None=0.
 	ClickCount *int     `json:"clickCount,omitempty"` // Number of times the mouse button was clicked (default: 0).
 	DeltaX     *float64 `json:"deltaX,omitempty"`     // X delta in CSS pixels for mouse wheel event (default: 0).
 	DeltaY     *float64 `json:"deltaY,omitempty"`     // Y delta in CSS pixels for mouse wheel event (default: 0).
@@ -185,9 +186,17 @@ func (a *DispatchMouseEventArgs) SetTimestamp(timestamp TimeSinceEpoch) *Dispatc
 // SetButton sets the Button optional argument. Mouse button (default:
 // "none").
 //
-// Values: "none", "left", "middle", "right".
+// Values: "none", "left", "middle", "right", "back", "forward".
 func (a *DispatchMouseEventArgs) SetButton(button string) *DispatchMouseEventArgs {
 	a.Button = &button
+	return a
+}
+
+// SetButtons sets the Buttons optional argument. A number indicating
+// which buttons are pressed on the mouse when a mouse event is
+// triggered. Left=1, Right=2, Middle=4, Back=8, Forward=16, None=0.
+func (a *DispatchMouseEventArgs) SetButtons(buttons int) *DispatchMouseEventArgs {
+	a.Buttons = &buttons
 	return a
 }
 

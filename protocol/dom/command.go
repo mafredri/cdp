@@ -743,6 +743,23 @@ func (a *SetFileInputFilesArgs) SetObjectID(objectID runtime.RemoteObjectID) *Se
 	return a
 }
 
+// GetFileInfoArgs represents the arguments for GetFileInfo in the DOM domain.
+type GetFileInfoArgs struct {
+	ObjectID runtime.RemoteObjectID `json:"objectId"` // JavaScript object id of the node wrapper.
+}
+
+// NewGetFileInfoArgs initializes GetFileInfoArgs with the required arguments.
+func NewGetFileInfoArgs(objectID runtime.RemoteObjectID) *GetFileInfoArgs {
+	args := new(GetFileInfoArgs)
+	args.ObjectID = objectID
+	return args
+}
+
+// GetFileInfoReply represents the return values for GetFileInfo in the DOM domain.
+type GetFileInfoReply struct {
+	Path string `json:"path"` // No description.
+}
+
 // SetInspectedNodeArgs represents the arguments for SetInspectedNode in the DOM domain.
 type SetInspectedNodeArgs struct {
 	NodeID NodeID `json:"nodeId"` // DOM node id to be accessible by means of $x command line API.

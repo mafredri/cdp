@@ -492,6 +492,21 @@ func (d *domainClient) SetFileInputFiles(ctx context.Context, args *SetFileInput
 	return
 }
 
+// GetFileInfo invokes the DOM method. Returns file information for the given
+// File wrapper.
+func (d *domainClient) GetFileInfo(ctx context.Context, args *GetFileInfoArgs) (reply *GetFileInfoReply, err error) {
+	reply = new(GetFileInfoReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.getFileInfo", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.getFileInfo", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "GetFileInfo", Err: err}
+	}
+	return
+}
+
 // SetInspectedNode invokes the DOM method. Enables console to refer to the
 // node with given id via $x (see Command Line API for more details $x
 // functions).

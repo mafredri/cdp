@@ -178,20 +178,6 @@ func (d *domainClient) Resume(ctx context.Context) (err error) {
 	return
 }
 
-// ScheduleStepIntoAsync invokes the Debugger method. This method is
-// deprecated - use Debugger.stepInto with breakOnAsyncCall and
-// Debugger.pauseOnAsyncTask instead. Steps into next scheduled async task if
-// any is scheduled before next pause. Returns success when async task is
-// actually scheduled, returns error if no task were scheduled or another
-// scheduleStepIntoAsync was called.
-func (d *domainClient) ScheduleStepIntoAsync(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Debugger.scheduleStepIntoAsync", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Debugger", Op: "ScheduleStepIntoAsync", Err: err}
-	}
-	return
-}
-
 // SearchInContent invokes the Debugger method. Searches for given string in
 // script content.
 func (d *domainClient) SearchInContent(ctx context.Context, args *SearchInContentArgs) (reply *SearchInContentReply, err error) {

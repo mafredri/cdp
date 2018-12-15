@@ -47,7 +47,7 @@ type RequestCacheNamesReply struct {
 
 // RequestCachedResponseArgs represents the arguments for RequestCachedResponse in the CacheStorage domain.
 type RequestCachedResponseArgs struct {
-	CacheID    CacheID `json:"cacheId"`    // Id of cache that contains the enty.
+	CacheID    CacheID `json:"cacheId"`    // Id of cache that contains the entry.
 	RequestURL string  `json:"requestURL"` // URL spec of the request.
 }
 
@@ -66,9 +66,10 @@ type RequestCachedResponseReply struct {
 
 // RequestEntriesArgs represents the arguments for RequestEntries in the CacheStorage domain.
 type RequestEntriesArgs struct {
-	CacheID   CacheID `json:"cacheId"`   // ID of cache to get entries from.
-	SkipCount int     `json:"skipCount"` // Number of records to skip.
-	PageSize  int     `json:"pageSize"`  // Number of records to fetch.
+	CacheID    CacheID `json:"cacheId"`              // ID of cache to get entries from.
+	SkipCount  int     `json:"skipCount"`            // Number of records to skip.
+	PageSize   int     `json:"pageSize"`             // Number of records to fetch.
+	PathFilter *string `json:"pathFilter,omitempty"` // If present, only return the entries containing this substring in the path
 }
 
 // NewRequestEntriesArgs initializes RequestEntriesArgs with the required arguments.
@@ -78,6 +79,13 @@ func NewRequestEntriesArgs(cacheID CacheID, skipCount int, pageSize int) *Reques
 	args.SkipCount = skipCount
 	args.PageSize = pageSize
 	return args
+}
+
+// SetPathFilter sets the PathFilter optional argument. If present,
+// only return the entries containing this substring in the path
+func (a *RequestEntriesArgs) SetPathFilter(pathFilter string) *RequestEntriesArgs {
+	a.PathFilter = &pathFilter
+	return a
 }
 
 // RequestEntriesReply represents the return values for RequestEntries in the CacheStorage domain.

@@ -223,7 +223,7 @@ type WebSocketCreatedReply struct {
 }
 
 // WebSocketFrameErrorClient is a client for WebSocketFrameError events. Fired
-// when WebSocket frame error occurs.
+// when WebSocket message error occurs.
 type WebSocketFrameErrorClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -235,11 +235,11 @@ type WebSocketFrameErrorClient interface {
 type WebSocketFrameErrorReply struct {
 	RequestID    RequestID     `json:"requestId"`    // Request identifier.
 	Timestamp    MonotonicTime `json:"timestamp"`    // Timestamp.
-	ErrorMessage string        `json:"errorMessage"` // WebSocket frame error message.
+	ErrorMessage string        `json:"errorMessage"` // WebSocket error message.
 }
 
 // WebSocketFrameReceivedClient is a client for WebSocketFrameReceived events.
-// Fired when WebSocket frame is received.
+// Fired when WebSocket message is received.
 type WebSocketFrameReceivedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -255,7 +255,7 @@ type WebSocketFrameReceivedReply struct {
 }
 
 // WebSocketFrameSentClient is a client for WebSocketFrameSent events. Fired
-// when WebSocket frame is sent.
+// when WebSocket message is sent.
 type WebSocketFrameSentClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

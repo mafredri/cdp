@@ -164,6 +164,16 @@ func (d *domainClient) GetNavigationHistory(ctx context.Context) (reply *GetNavi
 	return
 }
 
+// ResetNavigationHistory invokes the Page method. Resets navigation history
+// for the current page.
+func (d *domainClient) ResetNavigationHistory(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Page.resetNavigationHistory", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "ResetNavigationHistory", Err: err}
+	}
+	return
+}
+
 // GetResourceContent invokes the Page method. Returns content of the given
 // resource.
 func (d *domainClient) GetResourceContent(ctx context.Context, args *GetResourceContentArgs) (reply *GetResourceContentReply, err error) {
@@ -538,6 +548,16 @@ func (d *domainClient) GenerateTestReport(ctx context.Context, args *GenerateTes
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "GenerateTestReport", Err: err}
+	}
+	return
+}
+
+// WaitForDebugger invokes the Page method. Pauses page execution. Can be
+// resumed using generic Runtime.runIfWaitingForDebugger.
+func (d *domainClient) WaitForDebugger(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Page.waitForDebugger", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "WaitForDebugger", Err: err}
 	}
 	return
 }

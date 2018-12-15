@@ -719,6 +719,13 @@ type DOM interface {
 	// Sets files for the given file input element.
 	SetFileInputFiles(context.Context, *dom.SetFileInputFilesArgs) error
 
+	// Command GetFileInfo
+	//
+	// Returns file information for the given File wrapper.
+	//
+	// Note: This command is experimental.
+	GetFileInfo(context.Context, *dom.GetFileInfoArgs) (*dom.GetFileInfoReply, error)
+
 	// Command SetInspectedNode
 	//
 	// Enables console to refer to the node with given id via $x (see
@@ -1065,18 +1072,6 @@ type Debugger interface {
 	//
 	// Resumes JavaScript execution.
 	Resume(context.Context) error
-
-	// Command ScheduleStepIntoAsync
-	//
-	// This method is deprecated - use Debugger.stepInto with
-	// breakOnAsyncCall and Debugger.pauseOnAsyncTask instead. Steps into
-	// next scheduled async task if any is scheduled before next pause.
-	// Returns success when async task is actually scheduled, returns error
-	// if no task were scheduled or another scheduleStepIntoAsync was
-	// called.
-	//
-	// Note: This command is experimental.
-	ScheduleStepIntoAsync(context.Context) error
 
 	// Command SearchInContent
 	//
@@ -2104,17 +2099,17 @@ type Network interface {
 
 	// Event WebSocketFrameError
 	//
-	// Fired when WebSocket frame error occurs.
+	// Fired when WebSocket message error occurs.
 	WebSocketFrameError(context.Context) (network.WebSocketFrameErrorClient, error)
 
 	// Event WebSocketFrameReceived
 	//
-	// Fired when WebSocket frame is received.
+	// Fired when WebSocket message is received.
 	WebSocketFrameReceived(context.Context) (network.WebSocketFrameReceivedClient, error)
 
 	// Event WebSocketFrameSent
 	//
-	// Fired when WebSocket frame is sent.
+	// Fired when WebSocket message is sent.
 	WebSocketFrameSent(context.Context) (network.WebSocketFrameSentClient, error)
 
 	// Event WebSocketHandshakeResponseReceived
@@ -2308,6 +2303,11 @@ type Page interface {
 	// Returns navigation history for the current page.
 	GetNavigationHistory(context.Context) (*page.GetNavigationHistoryReply, error)
 
+	// Command ResetNavigationHistory
+	//
+	// Resets navigation history for the current page.
+	ResetNavigationHistory(context.Context) error
+
 	// Command GetResourceContent
 	//
 	// Returns content of the given resource.
@@ -2499,6 +2499,14 @@ type Page interface {
 	//
 	// Note: This command is experimental.
 	GenerateTestReport(context.Context, *page.GenerateTestReportArgs) error
+
+	// Command WaitForDebugger
+	//
+	// Pauses page execution. Can be resumed using generic
+	// Runtime.runIfWaitingForDebugger.
+	//
+	// Note: This command is experimental.
+	WaitForDebugger(context.Context) error
 
 	// Event DOMContentEventFired
 	DOMContentEventFired(context.Context) (page.DOMContentEventFiredClient, error)
