@@ -157,6 +157,10 @@ type DispatchMouseEventArgs struct {
 	ClickCount *int     `json:"clickCount,omitempty"` // Number of times the mouse button was clicked (default: 0).
 	DeltaX     *float64 `json:"deltaX,omitempty"`     // X delta in CSS pixels for mouse wheel event (default: 0).
 	DeltaY     *float64 `json:"deltaY,omitempty"`     // Y delta in CSS pixels for mouse wheel event (default: 0).
+	// PointerType Pointer type (default: "mouse").
+	//
+	// Values: "mouse", "pen".
+	PointerType *string `json:"pointerType,omitempty"`
 }
 
 // NewDispatchMouseEventArgs initializes DispatchMouseEventArgs with the required arguments.
@@ -218,6 +222,15 @@ func (a *DispatchMouseEventArgs) SetDeltaX(deltaX float64) *DispatchMouseEventAr
 // for mouse wheel event (default: 0).
 func (a *DispatchMouseEventArgs) SetDeltaY(deltaY float64) *DispatchMouseEventArgs {
 	a.DeltaY = &deltaY
+	return a
+}
+
+// SetPointerType sets the PointerType optional argument. Pointer type
+// (default: "mouse").
+//
+// Values: "mouse", "pen".
+func (a *DispatchMouseEventArgs) SetPointerType(pointerType string) *DispatchMouseEventArgs {
+	a.PointerType = &pointerType
 	return a
 }
 

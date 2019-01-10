@@ -298,15 +298,6 @@ func (d *domainClient) RemoveScriptToEvaluateOnNewDocument(ctx context.Context, 
 	return
 }
 
-// RequestAppBanner invokes the Page method.
-func (d *domainClient) RequestAppBanner(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Page.requestAppBanner", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "RequestAppBanner", Err: err}
-	}
-	return
-}
-
 // ScreencastFrameAck invokes the Page method. Acknowledges that a screencast
 // frame has been received by the frontend.
 func (d *domainClient) ScreencastFrameAck(ctx context.Context, args *ScreencastFrameAckArgs) (err error) {

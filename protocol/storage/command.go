@@ -5,7 +5,7 @@ package storage
 // ClearDataForOriginArgs represents the arguments for ClearDataForOrigin in the Storage domain.
 type ClearDataForOriginArgs struct {
 	Origin       string `json:"origin"`       // Security origin.
-	StorageTypes string `json:"storageTypes"` // Comma separated origin names.
+	StorageTypes string `json:"storageTypes"` // Comma separated list of StorageType to clear.
 }
 
 // NewClearDataForOriginArgs initializes ClearDataForOriginArgs with the required arguments.

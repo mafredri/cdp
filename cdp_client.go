@@ -9,6 +9,7 @@ import (
 	"github.com/mafredri/cdp/protocol/audits"
 	"github.com/mafredri/cdp/protocol/browser"
 	"github.com/mafredri/cdp/protocol/cachestorage"
+	"github.com/mafredri/cdp/protocol/cast"
 	"github.com/mafredri/cdp/protocol/console"
 	"github.com/mafredri/cdp/protocol/css"
 	"github.com/mafredri/cdp/protocol/database"
@@ -58,6 +59,7 @@ type Client struct {
 	Browser              Browser
 	CSS                  CSS
 	CacheStorage         CacheStorage
+	Cast                 Cast
 	Console              Console
 	DOM                  DOM
 	DOMDebugger          DOMDebugger
@@ -105,6 +107,7 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Browser:              browser.NewClient(conn),
 		CSS:                  css.NewClient(conn),
 		CacheStorage:         cachestorage.NewClient(conn),
+		Cast:                 cast.NewClient(conn),
 		Console:              console.NewClient(conn),
 		DOM:                  dom.NewClient(conn),
 		DOMDebugger:          domdebugger.NewClient(conn),
