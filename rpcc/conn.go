@@ -2,6 +2,7 @@ package rpcc
 
 import (
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -39,8 +40,8 @@ func WithCodec(f func(conn io.ReadWriter) Codec) DialOption {
 // connection. It can be used to replace the WebSocket library used by this
 // package or to communicate over a different protocol.
 //
-// This option overrides the default WebSocket dialer and both
-// WithWriteBufferSize and WithCompression become no-op.
+// This option overrides the default WebSocket dialer and all of:
+// WithCompression, WithTLSConfig and WithWriteBufferSize become no-op.
 func WithDialer(f func(ctx context.Context, addr string) (io.ReadWriteCloser, error)) DialOption {
 	return func(o *dialOptions) {
 		o.dialer = f
@@ -69,15 +70,22 @@ func WithCompression() DialOption {
 	}
 }
 
+// WithTLSClientConfig specifies the TLS configuration to use with tls.Client.
+func WithTLSClientConfig(c *tls.Config) DialOption {
+	return func(o *dialOptions) {
+		o.wsDialer.TLSClientConfig = c
+	}
+}
+
 type dialOptions struct {
 	codec    func(io.ReadWriter) Codec
 	dialer   func(context.Context, string) (io.ReadWriteCloser, error)
 	wsDialer websocket.Dialer
 }
 
-// Dial connects to target and returns an active connection.
-// The target should be a WebSocket URL, format:
-// "ws://localhost:9222/target".
+// Dial connects to target and returns an active connection. The target
+// should be a WebSocket URL, "ws://" for HTTP and "wss://" for HTTPS.
+// Example: "ws://localhost:9222/target".
 func Dial(target string, opts ...DialOption) (*Conn, error) {
 	return DialContext(context.Background(), target, opts...)
 }
