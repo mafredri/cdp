@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+
+	"golang.org/x/xerrors"
 )
 
 type causer interface {
@@ -51,12 +53,17 @@ type wrapped struct {
 
 var _ error = (*wrapped)(nil)
 var _ causer = (*wrapped)(nil)
+var _ xerrors.Wrapper = (*wrapped)(nil)
 
 func (e *wrapped) Error() string {
 	return fmt.Sprintf("%s: %s", e.msg, e.err)
 }
 
 func (e *wrapped) Cause() error {
+	return e.err
+}
+
+func (e *wrapped) Unwrap() error {
 	return e.err
 }
 
@@ -72,7 +79,7 @@ func Merge(err ...error) error {
 	if len(errs) == 0 {
 		return nil
 	}
-	return &merged{s: err}
+	return &merged{s: errs}
 }
 
 type merged struct {
@@ -80,6 +87,7 @@ type merged struct {
 }
 
 var _ error = (*merged)(nil)
+var _ xerrors.Wrapper = (*merged)(nil)
 
 func (e *merged) Error() string {
 	var m []string
@@ -87,4 +95,10 @@ func (e *merged) Error() string {
 		m = append(m, err.Error())
 	}
 	return strings.Join(m, ": ")
+}
+
+// Unwrap returns the first error since there
+// is no way to create a chain of errors.
+func (e *merged) Unwrap() error {
+	return e.s[0]
 }
