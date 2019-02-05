@@ -197,7 +197,7 @@ type Version struct {
 	AndroidPackage string `json:"Android-Package"`
 
 	// Present in Chrome >= 62. Generic browser websocket URL.
-	WebSocketDebuggerURL string `json:"websocketDebuggerUrl"`
+	WebSocketDebuggerURL string `json:"webSocketDebuggerUrl"`
 }
 
 // Version returns the version information for the DevTools endpoint.
