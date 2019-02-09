@@ -133,6 +133,20 @@ func (d *domainClient) SetInspectMode(ctx context.Context, args *SetInspectModeA
 	return
 }
 
+// SetShowAdHighlights invokes the Overlay method. Highlights owner element of
+// all frames detected to be ads.
+func (d *domainClient) SetShowAdHighlights(ctx context.Context, args *SetShowAdHighlightsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowAdHighlights", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowAdHighlights", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowAdHighlights", Err: err}
+	}
+	return
+}
+
 // SetPausedInDebuggerMessage invokes the Overlay method.
 func (d *domainClient) SetPausedInDebuggerMessage(ctx context.Context, args *SetPausedInDebuggerMessageArgs) (err error) {
 	if args != nil {
@@ -302,6 +316,27 @@ func (c *screenshotRequestedClient) Recv() (*ScreenshotRequestedReply, error) {
 	event := new(ScreenshotRequestedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Overlay", Op: "ScreenshotRequested Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) InspectModeCanceled(ctx context.Context) (InspectModeCanceledClient, error) {
+	s, err := rpcc.NewStream(ctx, "Overlay.inspectModeCanceled", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &inspectModeCanceledClient{Stream: s}, nil
+}
+
+type inspectModeCanceledClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *inspectModeCanceledClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *inspectModeCanceledClient) Recv() (*InspectModeCanceledReply, error) {
+	event := new(InspectModeCanceledReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Overlay", Op: "InspectModeCanceled Recv", Err: err}
 	}
 	return event, nil
 }

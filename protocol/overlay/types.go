@@ -19,7 +19,6 @@ type HighlightConfig struct {
 	EventTargetColor   *dom.RGBA `json:"eventTargetColor,omitempty"`   // The event target element highlight fill color (default: transparent).
 	ShapeColor         *dom.RGBA `json:"shapeColor,omitempty"`         // The shape outside fill color (default: transparent).
 	ShapeMarginColor   *dom.RGBA `json:"shapeMarginColor,omitempty"`   // The shape margin fill color (default: transparent).
-	SelectorList       *string   `json:"selectorList,omitempty"`       // Selectors to highlight relevant nodes.
 	CSSGridColor       *dom.RGBA `json:"cssGridColor,omitempty"`       // The grid layout color (default: transparent).
 }
 
@@ -28,15 +27,16 @@ type InspectMode string
 
 // InspectMode as enums.
 const (
-	InspectModeNotSet               InspectMode = ""
-	InspectModeSearchForNode        InspectMode = "searchForNode"
-	InspectModeSearchForUAShadowDOM InspectMode = "searchForUAShadowDOM"
-	InspectModeNone                 InspectMode = "none"
+	InspectModeNotSet                InspectMode = ""
+	InspectModeSearchForNode         InspectMode = "searchForNode"
+	InspectModeSearchForUAShadowDOM  InspectMode = "searchForUAShadowDOM"
+	InspectModeCaptureAreaScreenshot InspectMode = "captureAreaScreenshot"
+	InspectModeNone                  InspectMode = "none"
 )
 
 func (e InspectMode) Valid() bool {
 	switch e {
-	case "searchForNode", "searchForUAShadowDOM", "none":
+	case "searchForNode", "searchForUAShadowDOM", "captureAreaScreenshot", "none":
 		return true
 	default:
 		return false

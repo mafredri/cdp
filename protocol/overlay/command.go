@@ -61,6 +61,7 @@ type HighlightNodeArgs struct {
 	NodeID          *dom.NodeID             `json:"nodeId,omitempty"`        // Identifier of the node to highlight.
 	BackendNodeID   *dom.BackendNodeID      `json:"backendNodeId,omitempty"` // Identifier of the backend node to highlight.
 	ObjectID        *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node to be highlighted.
+	Selector        *string                 `json:"selector,omitempty"`      // Selectors to highlight relevant nodes.
 }
 
 // NewHighlightNodeArgs initializes HighlightNodeArgs with the required arguments.
@@ -88,6 +89,13 @@ func (a *HighlightNodeArgs) SetBackendNodeID(backendNodeID dom.BackendNodeID) *H
 // id of the node to be highlighted.
 func (a *HighlightNodeArgs) SetObjectID(objectID runtime.RemoteObjectID) *HighlightNodeArgs {
 	a.ObjectID = &objectID
+	return a
+}
+
+// SetSelector sets the Selector optional argument. Selectors to
+// highlight relevant nodes.
+func (a *HighlightNodeArgs) SetSelector(selector string) *HighlightNodeArgs {
+	a.Selector = &selector
 	return a
 }
 
@@ -172,6 +180,18 @@ func NewSetInspectModeArgs(mode InspectMode) *SetInspectModeArgs {
 func (a *SetInspectModeArgs) SetHighlightConfig(highlightConfig HighlightConfig) *SetInspectModeArgs {
 	a.HighlightConfig = &highlightConfig
 	return a
+}
+
+// SetShowAdHighlightsArgs represents the arguments for SetShowAdHighlights in the Overlay domain.
+type SetShowAdHighlightsArgs struct {
+	Show bool `json:"show"` // True for showing ad highlights
+}
+
+// NewSetShowAdHighlightsArgs initializes SetShowAdHighlightsArgs with the required arguments.
+func NewSetShowAdHighlightsArgs(show bool) *SetShowAdHighlightsArgs {
+	args := new(SetShowAdHighlightsArgs)
+	args.Show = show
+	return args
 }
 
 // SetPausedInDebuggerMessageArgs represents the arguments for SetPausedInDebuggerMessage in the Overlay domain.

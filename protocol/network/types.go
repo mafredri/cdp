@@ -592,7 +592,6 @@ type SignedExchangeSignature struct {
 // Note: This type is experimental.
 type SignedExchangeHeader struct {
 	RequestURL      string                    `json:"requestUrl"`      // Signed exchange request URL.
-	RequestMethod   string                    `json:"requestMethod"`   // Signed exchange request method.
 	ResponseCode    int                       `json:"responseCode"`    // Signed exchange response code.
 	ResponseHeaders Headers                   `json:"responseHeaders"` // Signed exchange response headers.
 	Signatures      []SignedExchangeSignature `json:"signatures"`      // Signed exchange response signature.

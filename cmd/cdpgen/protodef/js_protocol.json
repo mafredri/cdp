@@ -1049,7 +1049,8 @@
                         "paymentHandler",
                         "protectedMediaIdentifier",
                         "sensors",
-                        "videoCapture"
+                        "videoCapture",
+                        "idleDetection"
                     ]
                 },
                 {
@@ -2121,12 +2122,6 @@
                         {
                             "name": "computedFontWeight",
                             "description": "The computed font weight for this node, as a CSS computed value string (e.g. 'normal' or\n'100').",
-                            "optional": true,
-                            "type": "string"
-                        },
-                        {
-                            "name": "computedBodyFontSize",
-                            "description": "The computed font size for the document body, as a computed CSS value string (e.g. '16px').",
                             "optional": true,
                             "type": "string"
                         }
@@ -3523,7 +3518,7 @@
                         },
                         {
                             "name": "nodeId",
-                            "description": "Id of the node at given coordinates, only when enabled.",
+                            "description": "Id of the node at given coordinates, only when enabled and requested document.",
                             "optional": true,
                             "$ref": "NodeId"
                         }
@@ -3877,6 +3872,12 @@
                             "description": "Symbolic group name that can be used to release multiple objects.",
                             "optional": true,
                             "type": "string"
+                        },
+                        {
+                            "name": "executionContextId",
+                            "description": "Execution context in which to resolve the node.",
+                            "optional": true,
+                            "$ref": "Runtime.ExecutionContextId"
                         }
                     ],
                     "returns": [
@@ -4070,7 +4071,7 @@
                         },
                         {
                             "name": "nodeId",
-                            "description": "Id of the node at given coordinates, only when enabled.",
+                            "description": "Id of the node at given coordinates, only when enabled and requested document.",
                             "optional": true,
                             "$ref": "NodeId"
                         }
@@ -6239,8 +6240,8 @@
                         },
                         {
                             "name": "version",
-                            "description": "Database version.",
-                            "type": "integer"
+                            "description": "Database version (type is not 'integer', as the standard\nrequires the version number to be 'unsigned long long')",
+                            "type": "number"
                         },
                         {
                             "name": "objectStores",
@@ -7856,6 +7857,10 @@
                     "name": "prepareForLeakDetection"
                 },
                 {
+                    "name": "forciblyPurgeJavaScriptMemory",
+                    "description": "Simulate OomIntervention by purging V8 memory."
+                },
+                {
                     "name": "setPressureNotificationsSuppressed",
                     "description": "Enable/disable suppressing memory pressure notifications in all processes.",
                     "parameters": [
@@ -8901,11 +8906,6 @@
                         {
                             "name": "requestUrl",
                             "description": "Signed exchange request URL.",
-                            "type": "string"
-                        },
-                        {
-                            "name": "requestMethod",
-                            "description": "Signed exchange request method.",
                             "type": "string"
                         },
                         {
@@ -10143,12 +10143,6 @@
                             "$ref": "DOM.RGBA"
                         },
                         {
-                            "name": "selectorList",
-                            "description": "Selectors to highlight relevant nodes.",
-                            "optional": true,
-                            "type": "string"
-                        },
-                        {
                             "name": "cssGridColor",
                             "description": "The grid layout color (default: transparent).",
                             "optional": true,
@@ -10162,6 +10156,7 @@
                     "enum": [
                         "searchForNode",
                         "searchForUAShadowDOM",
+                        "captureAreaScreenshot",
                         "none"
                     ]
                 }
@@ -10246,6 +10241,12 @@
                             "description": "JavaScript object id of the node to be highlighted.",
                             "optional": true,
                             "$ref": "Runtime.RemoteObjectId"
+                        },
+                        {
+                            "name": "selector",
+                            "description": "Selectors to highlight relevant nodes.",
+                            "optional": true,
+                            "type": "string"
                         }
                     ]
                 },
@@ -10324,6 +10325,17 @@
                             "description": "A descriptor for the highlight appearance of hovered-over nodes. May be omitted if `enabled\n== false`.",
                             "optional": true,
                             "$ref": "HighlightConfig"
+                        }
+                    ]
+                },
+                {
+                    "name": "setShowAdHighlights",
+                    "description": "Highlights owner element of all frames detected to be ads.",
+                    "parameters": [
+                        {
+                            "name": "show",
+                            "description": "True for showing ad highlights",
+                            "type": "boolean"
                         }
                     ]
                 },
@@ -10443,10 +10455,14 @@
                     "parameters": [
                         {
                             "name": "viewport",
-                            "description": "Viewport to capture, in CSS.",
+                            "description": "Viewport to capture, in device independent pixels (dip).",
                             "$ref": "Page.Viewport"
                         }
                     ]
+                },
+                {
+                    "name": "inspectModeCanceled",
+                    "description": "Fired when user cancels the inspect mode."
                 }
             ]
         },
@@ -10819,6 +10835,12 @@
                             "name": "scale",
                             "description": "Scale relative to the ideal viewport (size at width=device-width).",
                             "type": "number"
+                        },
+                        {
+                            "name": "zoom",
+                            "description": "Page zoom factor (CSS to device independent pixels ratio).",
+                            "optional": true,
+                            "type": "number"
                         }
                     ]
                 },
@@ -10829,22 +10851,22 @@
                     "properties": [
                         {
                             "name": "x",
-                            "description": "X offset in CSS pixels.",
+                            "description": "X offset in device independent pixels (dip).",
                             "type": "number"
                         },
                         {
                             "name": "y",
-                            "description": "Y offset in CSS pixels",
+                            "description": "Y offset in device independent pixels (dip).",
                             "type": "number"
                         },
                         {
                             "name": "width",
-                            "description": "Rectangle width in CSS pixels",
+                            "description": "Rectangle width in device independent pixels (dip).",
                             "type": "number"
                         },
                         {
                             "name": "height",
-                            "description": "Rectangle height in CSS pixels",
+                            "description": "Rectangle height in device independent pixels (dip).",
                             "type": "number"
                         },
                         {

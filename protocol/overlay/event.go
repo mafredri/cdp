@@ -49,5 +49,18 @@ type ScreenshotRequestedClient interface {
 
 // ScreenshotRequestedReply is the reply for ScreenshotRequested events.
 type ScreenshotRequestedReply struct {
-	Viewport page.Viewport `json:"viewport"` // Viewport to capture, in CSS.
+	Viewport page.Viewport `json:"viewport"` // Viewport to capture, in device independent pixels (dip).
+}
+
+// InspectModeCanceledClient is a client for InspectModeCanceled events. Fired
+// when user cancels the inspect mode.
+type InspectModeCanceledClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*InspectModeCanceledReply, error)
+	rpcc.Stream
+}
+
+// InspectModeCanceledReply is the reply for InspectModeCanceled events.
+type InspectModeCanceledReply struct {
 }

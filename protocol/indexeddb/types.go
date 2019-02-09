@@ -9,7 +9,7 @@ import (
 // DatabaseWithObjectStores Database with an array of object stores.
 type DatabaseWithObjectStores struct {
 	Name         string        `json:"name"`         // Database name.
-	Version      int           `json:"version"`      // Database version.
+	Version      float64       `json:"version"`      // Database version (type is not 'integer', as the standard requires the version number to be 'unsigned long long')
 	ObjectStores []ObjectStore `json:"objectStores"` // Object stores in this database.
 }
 

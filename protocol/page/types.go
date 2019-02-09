@@ -162,21 +162,22 @@ type LayoutViewport struct {
 
 // VisualViewport Visual viewport position, dimensions, and scale.
 type VisualViewport struct {
-	OffsetX      float64 `json:"offsetX"`      // Horizontal offset relative to the layout viewport (CSS pixels).
-	OffsetY      float64 `json:"offsetY"`      // Vertical offset relative to the layout viewport (CSS pixels).
-	PageX        float64 `json:"pageX"`        // Horizontal offset relative to the document (CSS pixels).
-	PageY        float64 `json:"pageY"`        // Vertical offset relative to the document (CSS pixels).
-	ClientWidth  float64 `json:"clientWidth"`  // Width (CSS pixels), excludes scrollbar if present.
-	ClientHeight float64 `json:"clientHeight"` // Height (CSS pixels), excludes scrollbar if present.
-	Scale        float64 `json:"scale"`        // Scale relative to the ideal viewport (size at width=device-width).
+	OffsetX      float64  `json:"offsetX"`        // Horizontal offset relative to the layout viewport (CSS pixels).
+	OffsetY      float64  `json:"offsetY"`        // Vertical offset relative to the layout viewport (CSS pixels).
+	PageX        float64  `json:"pageX"`          // Horizontal offset relative to the document (CSS pixels).
+	PageY        float64  `json:"pageY"`          // Vertical offset relative to the document (CSS pixels).
+	ClientWidth  float64  `json:"clientWidth"`    // Width (CSS pixels), excludes scrollbar if present.
+	ClientHeight float64  `json:"clientHeight"`   // Height (CSS pixels), excludes scrollbar if present.
+	Scale        float64  `json:"scale"`          // Scale relative to the ideal viewport (size at width=device-width).
+	Zoom         *float64 `json:"zoom,omitempty"` // Page zoom factor (CSS to device independent pixels ratio).
 }
 
 // Viewport Viewport for capturing screenshot.
 type Viewport struct {
-	X      float64 `json:"x"`      // X offset in CSS pixels.
-	Y      float64 `json:"y"`      // Y offset in CSS pixels
-	Width  float64 `json:"width"`  // Rectangle width in CSS pixels
-	Height float64 `json:"height"` // Rectangle height in CSS pixels
+	X      float64 `json:"x"`      // X offset in device independent pixels (dip).
+	Y      float64 `json:"y"`      // Y offset in device independent pixels (dip).
+	Width  float64 `json:"width"`  // Rectangle width in device independent pixels (dip).
+	Height float64 `json:"height"` // Rectangle height in device independent pixels (dip).
 	Scale  float64 `json:"scale"`  // Page scale factor.
 }
 

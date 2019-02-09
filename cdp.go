@@ -1857,6 +1857,11 @@ type Memory interface {
 	// Command PrepareForLeakDetection
 	PrepareForLeakDetection(context.Context) error
 
+	// Command ForciblyPurgeJavaScriptMemory
+	//
+	// Simulate OomIntervention by purging V8 memory.
+	ForciblyPurgeJavaScriptMemory(context.Context) error
+
 	// Command SetPressureNotificationsSuppressed
 	//
 	// Enable/disable suppressing memory pressure notifications in all
@@ -2228,6 +2233,11 @@ type Overlay interface {
 	// 'inspectNodeRequested' event upon element selection.
 	SetInspectMode(context.Context, *overlay.SetInspectModeArgs) error
 
+	// Command SetShowAdHighlights
+	//
+	// Highlights owner element of all frames detected to be ads.
+	SetShowAdHighlights(context.Context, *overlay.SetShowAdHighlightsArgs) error
+
 	// Command SetPausedInDebuggerMessage
 	SetPausedInDebuggerMessage(context.Context, *overlay.SetPausedInDebuggerMessageArgs) error
 
@@ -2281,6 +2291,11 @@ type Overlay interface {
 	// Fired when user asks to capture screenshot of some area on the
 	// page.
 	ScreenshotRequested(context.Context) (overlay.ScreenshotRequestedClient, error)
+
+	// Event InspectModeCanceled
+	//
+	// Fired when user cancels the inspect mode.
+	InspectModeCanceled(context.Context) (overlay.InspectModeCanceledClient, error)
 }
 
 // The Page domain. Actions and events related to the inspected page belong to

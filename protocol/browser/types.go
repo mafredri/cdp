@@ -69,11 +69,12 @@ const (
 	PermissionTypeProtectedMediaIdentifier PermissionType = "protectedMediaIdentifier"
 	PermissionTypeSensors                  PermissionType = "sensors"
 	PermissionTypeVideoCapture             PermissionType = "videoCapture"
+	PermissionTypeIdleDetection            PermissionType = "idleDetection"
 )
 
 func (e PermissionType) Valid() bool {
 	switch e {
-	case "accessibilityEvents", "audioCapture", "backgroundSync", "backgroundFetch", "clipboardRead", "clipboardWrite", "durableStorage", "flash", "geolocation", "midi", "midiSysex", "notifications", "paymentHandler", "protectedMediaIdentifier", "sensors", "videoCapture":
+	case "accessibilityEvents", "audioCapture", "backgroundSync", "backgroundFetch", "clipboardRead", "clipboardWrite", "durableStorage", "flash", "geolocation", "midi", "midiSysex", "notifications", "paymentHandler", "protectedMediaIdentifier", "sensors", "videoCapture", "idleDetection":
 		return true
 	default:
 		return false

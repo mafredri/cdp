@@ -348,7 +348,7 @@ func (a *GetNodeForLocationArgs) SetIncludeUserAgentShadowDOM(includeUserAgentSh
 // GetNodeForLocationReply represents the return values for GetNodeForLocation in the DOM domain.
 type GetNodeForLocationReply struct {
 	BackendNodeID BackendNodeID `json:"backendNodeId"`    // Resulting node.
-	NodeID        *NodeID       `json:"nodeId,omitempty"` // Id of the node at given coordinates, only when enabled.
+	NodeID        *NodeID       `json:"nodeId,omitempty"` // Id of the node at given coordinates, only when enabled and requested document.
 }
 
 // GetOuterHTMLArgs represents the arguments for GetOuterHTML in the DOM domain.
@@ -630,9 +630,10 @@ type RequestNodeReply struct {
 
 // ResolveNodeArgs represents the arguments for ResolveNode in the DOM domain.
 type ResolveNodeArgs struct {
-	NodeID        *NodeID        `json:"nodeId,omitempty"`        // Id of the node to resolve.
-	BackendNodeID *BackendNodeID `json:"backendNodeId,omitempty"` // Backend identifier of the node to resolve.
-	ObjectGroup   *string        `json:"objectGroup,omitempty"`   // Symbolic group name that can be used to release multiple objects.
+	NodeID             *NodeID                     `json:"nodeId,omitempty"`             // Id of the node to resolve.
+	BackendNodeID      *BackendNodeID              `json:"backendNodeId,omitempty"`      // Backend identifier of the node to resolve.
+	ObjectGroup        *string                     `json:"objectGroup,omitempty"`        // Symbolic group name that can be used to release multiple objects.
+	ExecutionContextID *runtime.ExecutionContextID `json:"executionContextId,omitempty"` // Execution context in which to resolve the node.
 }
 
 // NewResolveNodeArgs initializes ResolveNodeArgs with the required arguments.
@@ -660,6 +661,13 @@ func (a *ResolveNodeArgs) SetBackendNodeID(backendNodeID BackendNodeID) *Resolve
 // group name that can be used to release multiple objects.
 func (a *ResolveNodeArgs) SetObjectGroup(objectGroup string) *ResolveNodeArgs {
 	a.ObjectGroup = &objectGroup
+	return a
+}
+
+// SetExecutionContextID sets the ExecutionContextID optional argument.
+// Execution context in which to resolve the node.
+func (a *ResolveNodeArgs) SetExecutionContextID(executionContextID runtime.ExecutionContextID) *ResolveNodeArgs {
+	a.ExecutionContextID = &executionContextID
 	return a
 }
 
@@ -834,5 +842,5 @@ func NewGetFrameOwnerArgs(frameID internal.PageFrameID) *GetFrameOwnerArgs {
 // GetFrameOwnerReply represents the return values for GetFrameOwner in the DOM domain.
 type GetFrameOwnerReply struct {
 	BackendNodeID BackendNodeID `json:"backendNodeId"`    // Resulting node.
-	NodeID        *NodeID       `json:"nodeId,omitempty"` // Id of the node at given coordinates, only when enabled.
+	NodeID        *NodeID       `json:"nodeId,omitempty"` // Id of the node at given coordinates, only when enabled and requested document.
 }
