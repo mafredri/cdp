@@ -150,3 +150,26 @@ func TestSyncError(t *testing.T) {
 
 	}
 }
+
+func TestStreamSyncNotifyDeadlock(t *testing.T) {
+	conn, cancel := newTestStreamConn()
+	defer cancel()
+
+	ctx := context.Background()
+
+	s1, err := NewStream(ctx, "test1", conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s2, err := NewStream(ctx, "test2", conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	go conn.notify("test1", []byte(`{"hello": "world"}`))
+
+	err = Sync(s1, s2)
+	if err != nil {
+		t.Fatal(err)
+	}
+}
