@@ -167,9 +167,34 @@ func TestStreamSyncNotifyDeadlock(t *testing.T) {
 	}
 
 	go conn.notify("test1", []byte(`{"hello": "world"}`))
+	go conn.notify("test2", []byte(`{"hello": "world"}`))
 
+	// This could cause a deadlock due to competition for same mutexes:
+	// https://github.com/mafredri/cdp/issues/90
+	// https://github.com/mafredri/cdp/pull/91
 	err = Sync(s1, s2)
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestStreamSyncSameStreamDeadlock(t *testing.T) {
+	conn, cancel := newTestStreamConn()
+	defer cancel()
+
+	ctx := context.Background()
+
+	s1, err := NewStream(ctx, "test1", conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	s2, err := NewStream(ctx, "test2", conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = Sync(s1, s2, s1)
+	if err == nil {
+		t.Error("Same stream passed multiple times: want error, got nil")
 	}
 }

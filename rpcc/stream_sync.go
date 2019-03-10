@@ -125,6 +125,14 @@ func Sync(s ...Stream) (err error) {
 		return errors.New("rpcc: Sync: two or more streams must be provided")
 	}
 
+	set := make(map[Stream]struct{})
+	for _, ss := range s {
+		if _, ok := set[ss]; ok {
+			return errors.New("rpcc: Sync: same instance of stream passed multiple times")
+		}
+		set[ss] = struct{}{}
+	}
+
 	store := newSyncMessageStore()
 	defer func() {
 		if err != nil {
