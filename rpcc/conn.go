@@ -423,10 +423,11 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 func (c *Conn) notify(method string, data []byte) {
 	c.streamMu.Lock()
 	stream := c.streams[method]
+	c.streamMu.Unlock()
+
 	if stream != nil {
 		stream.write(method, data)
 	}
-	c.streamMu.Unlock()
 }
 
 // listen registers a new stream listener (chan) for the RPC notification
