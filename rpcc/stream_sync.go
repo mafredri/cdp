@@ -75,6 +75,13 @@ func (s *syncMessageStore) write(m message) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	w, ok := s.writers[m.method]
+	if !ok {
+		// Exit early if writer has already
+		// unsubscribed or store is closed.
+		return
+	}
+
 	m.next = s.load
 	if s.pending {
 		s.backlog = append(s.backlog, &m)
@@ -82,7 +89,6 @@ func (s *syncMessageStore) write(m message) {
 	}
 
 	s.pending = true
-	w := s.writers[m.method]
 	w.write(m)
 }
 
@@ -92,16 +98,24 @@ func (s *syncMessageStore) load() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if len(s.backlog) == 0 {
-		s.pending = false
-		return
-	}
+	// Keep going until we can write the next message
+	// or the backlog is empty.
+	for {
+		if len(s.backlog) == 0 {
+			s.pending = false
+			return
+		}
 
-	m := s.backlog[0]
-	w := s.writers[m.method]
-	w.write(*m)
-	s.backlog[0] = nil // Remove reference from underlying array.
-	s.backlog = s.backlog[1:]
+		m := s.backlog[0]
+		s.backlog[0] = nil // Remove reference from underlying array.
+		s.backlog = s.backlog[1:]
+
+		// Check if the writer has already unsubscribed.
+		if w, ok := s.writers[m.method]; ok {
+			w.write(*m)
+			return
+		}
+	}
 }
 
 // Sync takes two or more streams and sets them into synchronous operation,
