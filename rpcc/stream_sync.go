@@ -50,7 +50,20 @@ func (s *syncMessageStore) subscribe(method string, w streamWriter, conn *Conn) 
 			s.backlog = nil
 			s.closers = nil
 		}
+
+		// If the next message belongs to this writer, there will be
+		// no one left to consume it, therefore we must manually call
+		// load after releasing the mutex.
+		var next func()
+		if len(s.backlog) > 0 && s.backlog[0].method == method {
+			next = s.backlog[0].next // Really a (*syncMessageStore).load().
+		}
+
 		s.mu.Unlock()
+
+		if next != nil {
+			next()
+		}
 	}
 	s.closers = append(s.closers, unsub)
 
