@@ -92,6 +92,22 @@ func (d *domainClient) RequestData(ctx context.Context, args *RequestDataArgs) (
 	return
 }
 
+// GetKeyGeneratorCurrentNumber invokes the IndexedDB method. Gets the auto
+// increment number of an object store. Only meaningful when
+// objectStore.autoIncrement is true.
+func (d *domainClient) GetKeyGeneratorCurrentNumber(ctx context.Context, args *GetKeyGeneratorCurrentNumberArgs) (reply *GetKeyGeneratorCurrentNumberReply, err error) {
+	reply = new(GetKeyGeneratorCurrentNumberReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "IndexedDB.getKeyGeneratorCurrentNumber", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "IndexedDB.getKeyGeneratorCurrentNumber", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "IndexedDB", Op: "GetKeyGeneratorCurrentNumber", Err: err}
+	}
+	return
+}
+
 // RequestDatabase invokes the IndexedDB method. Requests database with given
 // name in given frame.
 func (d *domainClient) RequestDatabase(ctx context.Context, args *RequestDatabaseArgs) (reply *RequestDatabaseReply, err error) {

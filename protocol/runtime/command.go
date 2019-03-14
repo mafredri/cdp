@@ -360,7 +360,11 @@ func (a *GetPropertiesArgs) SetGeneratePreview(generatePreview bool) *GetPropert
 type GetPropertiesReply struct {
 	Result             []PropertyDescriptor         `json:"result"`                       // Object properties.
 	InternalProperties []InternalPropertyDescriptor `json:"internalProperties,omitempty"` // Internal object properties (only of the element itself).
-	ExceptionDetails   *ExceptionDetails            `json:"exceptionDetails,omitempty"`   // Exception details.
+	// PrivateProperties Object private properties.
+	//
+	// Note: This property is experimental.
+	PrivateProperties []PrivatePropertyDescriptor `json:"privateProperties,omitempty"`
+	ExceptionDetails  *ExceptionDetails           `json:"exceptionDetails,omitempty"` // Exception details.
 }
 
 // GlobalLexicalScopeNamesArgs represents the arguments for GlobalLexicalScopeNames in the Runtime domain.

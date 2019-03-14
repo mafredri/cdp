@@ -9,6 +9,7 @@ import (
 	"github.com/mafredri/cdp/protocol/animation"
 	"github.com/mafredri/cdp/protocol/applicationcache"
 	"github.com/mafredri/cdp/protocol/audits"
+	"github.com/mafredri/cdp/protocol/backgroundservice"
 	"github.com/mafredri/cdp/protocol/browser"
 	"github.com/mafredri/cdp/protocol/cachestorage"
 	"github.com/mafredri/cdp/protocol/cast"
@@ -197,6 +198,43 @@ type Audits interface {
 	GetEncodedResponse(context.Context, *audits.GetEncodedResponseArgs) (*audits.GetEncodedResponseReply, error)
 }
 
+// The BackgroundService domain. Defines events for background web platform
+// features.
+//
+// Note: This domain is experimental.
+type BackgroundService interface {
+	// Command StartObserving
+	//
+	// Enables event updates for the service.
+	StartObserving(context.Context, *backgroundservice.StartObservingArgs) error
+
+	// Command StopObserving
+	//
+	// Disables event updates for the service.
+	StopObserving(context.Context, *backgroundservice.StopObservingArgs) error
+
+	// Command SetRecording
+	//
+	// Set the recording state for the service.
+	SetRecording(context.Context, *backgroundservice.SetRecordingArgs) error
+
+	// Command ClearEvents
+	//
+	// Clears all stored data for the service.
+	ClearEvents(context.Context, *backgroundservice.ClearEventsArgs) error
+
+	// Event RecordingStateChanged
+	//
+	// Called when the recording state for the service has been updated.
+	RecordingStateChanged(context.Context) (backgroundservice.RecordingStateChangedClient, error)
+
+	// Event BackgroundServiceEventReceived
+	//
+	// Called with all existing backgroundServiceEvents when enabled, and
+	// all new events afterwards if enabled and recording.
+	BackgroundServiceEventReceived(context.Context) (backgroundservice.EventReceivedClient, error)
+}
+
 // The Browser domain. The Browser domain defines methods and events for
 // browser managing.
 type Browser interface {
@@ -226,6 +264,13 @@ type Browser interface {
 	//
 	// Note: This command is experimental.
 	Crash(context.Context) error
+
+	// Command CrashGPUProcess
+	//
+	// Crashes GPU process.
+	//
+	// Note: This command is experimental.
+	CrashGPUProcess(context.Context) error
 
 	// Command GetVersion
 	//
@@ -1401,13 +1446,6 @@ type Emulation interface {
 	// Allows overriding user agent with the given string.
 	SetUserAgentOverride(context.Context, *emulation.SetUserAgentOverrideArgs) error
 
-	// Event VirtualTimeAdvanced
-	//
-	// Notification sent after the virtual time has advanced.
-	//
-	// Note: This event is experimental.
-	VirtualTimeAdvanced(context.Context) (emulation.VirtualTimeAdvancedClient, error)
-
 	// Event VirtualTimeBudgetExpired
 	//
 	// Notification sent after the virtual time budget for the current
@@ -1415,13 +1453,6 @@ type Emulation interface {
 	//
 	// Note: This event is experimental.
 	VirtualTimeBudgetExpired(context.Context) (emulation.VirtualTimeBudgetExpiredClient, error)
-
-	// Event VirtualTimePaused
-	//
-	// Notification sent after the virtual time has paused.
-	//
-	// Note: This event is experimental.
-	VirtualTimePaused(context.Context) (emulation.VirtualTimePausedClient, error)
 }
 
 // The Fetch domain. A domain for letting clients substitute browser's network
@@ -1653,6 +1684,12 @@ type IndexedDB interface {
 	//
 	// Requests data from object store or index.
 	RequestData(context.Context, *indexeddb.RequestDataArgs) (*indexeddb.RequestDataReply, error)
+
+	// Command GetKeyGeneratorCurrentNumber
+	//
+	// Gets the auto increment number of an object store. Only meaningful
+	// when objectStore.autoIncrement is true.
+	GetKeyGeneratorCurrentNumber(context.Context, *indexeddb.GetKeyGeneratorCurrentNumberArgs) (*indexeddb.GetKeyGeneratorCurrentNumberReply, error)
 
 	// Command RequestDatabase
 	//

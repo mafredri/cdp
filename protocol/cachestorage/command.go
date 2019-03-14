@@ -47,15 +47,17 @@ type RequestCacheNamesReply struct {
 
 // RequestCachedResponseArgs represents the arguments for RequestCachedResponse in the CacheStorage domain.
 type RequestCachedResponseArgs struct {
-	CacheID    CacheID `json:"cacheId"`    // Id of cache that contains the entry.
-	RequestURL string  `json:"requestURL"` // URL spec of the request.
+	CacheID        CacheID  `json:"cacheId"`        // Id of cache that contains the entry.
+	RequestURL     string   `json:"requestURL"`     // URL spec of the request.
+	RequestHeaders []Header `json:"requestHeaders"` // headers of the request.
 }
 
 // NewRequestCachedResponseArgs initializes RequestCachedResponseArgs with the required arguments.
-func NewRequestCachedResponseArgs(cacheID CacheID, requestURL string) *RequestCachedResponseArgs {
+func NewRequestCachedResponseArgs(cacheID CacheID, requestURL string, requestHeaders []Header) *RequestCachedResponseArgs {
 	args := new(RequestCachedResponseArgs)
 	args.CacheID = cacheID
 	args.RequestURL = requestURL
+	args.RequestHeaders = requestHeaders
 	return args
 }
 

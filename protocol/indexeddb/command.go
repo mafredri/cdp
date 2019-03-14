@@ -85,6 +85,27 @@ type RequestDataReply struct {
 	HasMore                bool        `json:"hasMore"`                // If true, there are more entries to fetch in the given range.
 }
 
+// GetKeyGeneratorCurrentNumberArgs represents the arguments for GetKeyGeneratorCurrentNumber in the IndexedDB domain.
+type GetKeyGeneratorCurrentNumberArgs struct {
+	SecurityOrigin  string `json:"securityOrigin"`  // Security origin.
+	DatabaseName    string `json:"databaseName"`    // Database name.
+	ObjectStoreName string `json:"objectStoreName"` // Object store name.
+}
+
+// NewGetKeyGeneratorCurrentNumberArgs initializes GetKeyGeneratorCurrentNumberArgs with the required arguments.
+func NewGetKeyGeneratorCurrentNumberArgs(securityOrigin string, databaseName string, objectStoreName string) *GetKeyGeneratorCurrentNumberArgs {
+	args := new(GetKeyGeneratorCurrentNumberArgs)
+	args.SecurityOrigin = securityOrigin
+	args.DatabaseName = databaseName
+	args.ObjectStoreName = objectStoreName
+	return args
+}
+
+// GetKeyGeneratorCurrentNumberReply represents the return values for GetKeyGeneratorCurrentNumber in the IndexedDB domain.
+type GetKeyGeneratorCurrentNumberReply struct {
+	CurrentNumber float64 `json:"currentNumber"` // the current value of key generator, to become the next inserted key into the object store.
+}
+
 // RequestDatabaseArgs represents the arguments for RequestDatabase in the IndexedDB domain.
 type RequestDatabaseArgs struct {
 	SecurityOrigin string `json:"securityOrigin"` // Security origin.
