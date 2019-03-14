@@ -111,6 +111,9 @@ type Stream interface {
 	// RecvMsg will return ErrStreamClosing once all pending messages
 	// have been received.
 	Close() error
+	// Sync is used internally to synchronize Streams. It is made
+	// public here so that Stream synchronization can be mocked.
+	Sync(store interface{}) (activate func(ok bool) (done func()), err error)
 }
 
 // NewStream creates a new stream that listens to notifications from the

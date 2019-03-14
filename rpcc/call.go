@@ -1,6 +1,8 @@
 package rpcc
 
-import "context"
+import (
+	"context"
+)
 
 type rpcCall struct {
 	Method string

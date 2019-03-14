@@ -2,6 +2,7 @@ package rpcc
 
 import (
 	"context"
+	"errors"
 	"strconv"
 	"testing"
 
@@ -78,6 +79,9 @@ type fakeStream struct{}
 func (s *fakeStream) Ready() <-chan struct{}      { return nil }
 func (s *fakeStream) RecvMsg(m interface{}) error { return nil }
 func (s *fakeStream) Close() error                { return nil }
+func (s *fakeStream) Sync(store interface{}) (func(bool) func(), error) {
+	return nil, errors.New("fake stream")
+}
 
 var (
 	_ Stream = (*fakeStream)(nil)
