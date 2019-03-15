@@ -38,32 +38,23 @@ func (s *syncMessageStore) subscribe(method string, w streamWriter, conn *Conn) 
 
 	s.writers[method] = w
 
+	var once sync.Once
 	unsub := func() {
-		remove()
+		once.Do(func() {
+			remove() // Prevent new messages for writer.
 
-		s.mu.Lock()
-		delete(s.writers, method)
-		if len(s.writers) == 0 {
-			// Either close has been called
-			// or all streams have closed.
-			s.writers = nil
-			s.backlog = nil
-			s.closers = nil
-		}
+			s.mu.Lock()
+			defer s.mu.Unlock()
 
-		// If the next message belongs to this writer, there will be
-		// no one left to consume it, therefore we must manually call
-		// load after releasing the mutex.
-		var next func()
-		if len(s.backlog) > 0 && s.backlog[0].method == method {
-			next = s.backlog[0].next // Really a (*syncMessageStore).load().
-		}
-
-		s.mu.Unlock()
-
-		if next != nil {
-			next()
-		}
+			delete(s.writers, method)
+			if len(s.writers) == 0 {
+				// Either close has been called
+				// or all streams have closed.
+				s.writers = nil
+				s.backlog = nil
+				s.closers = nil
+			}
+		})
 	}
 	s.closers = append(s.closers, unsub)
 
@@ -125,6 +116,10 @@ func (s *syncMessageStore) load() {
 
 		// Check if the writer has already unsubscribed.
 		if w, ok := s.writers[m.method]; ok {
+			// A write here means that this message must be
+			// processed (calling m.next) by the recipient.
+			// Failure to do so will prevent future messages
+			// from being delivered.
 			w.write(*m)
 			return
 		}
@@ -200,8 +195,11 @@ func Sync(s ...Stream) (err error) {
 		// Delay listener swap until all Streams have been
 		// processed so that we can abort on error.
 		swap = append(swap, func() {
-			sc.remove()       // Prevent direct events from Conn.
-			sc.remove = unsub // Remove from store on Close.
+			sc.remove() // Prevent direct events from Conn.
+			sc.remove = func() {
+				unsub()         // Remove from store on Close.
+				sc.mbuf.clear() // Ensure pending message is processed.
+			}
 
 			// Clear stream messages to prevent sync issues.
 			sc.mbuf.clear()

@@ -3,6 +3,8 @@ package rpcc
 import (
 	"context"
 	"strconv"
+	"strings"
+	"sync"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -197,4 +199,89 @@ func TestStreamSyncSameStreamDeadlock(t *testing.T) {
 	if err == nil {
 		t.Error("Same stream passed multiple times: want error, got nil")
 	}
+}
+
+// This test is partially an observability test, order can be tweaked to try to
+// catch data races in Streams using syncMessageStore. It also tries to catch
+// issues with missing messages.
+func TestStreamSyncClosingStreams(t *testing.T) {
+	conn, cancel := newTestStreamConn()
+	defer cancel()
+
+	ctx := context.Background()
+
+	testStreams := []struct {
+		name string
+	}{
+		{name: "test1"},
+		{name: "test2"},
+		{name: "test3"},
+		{name: "test4"},
+		{name: "test5"},
+	}
+
+	var streams []Stream
+	for _, s := range testStreams {
+		ss, err := NewStream(ctx, s.name, conn)
+		if err != nil {
+			t.Fatal(err)
+		}
+		streams = append(streams, ss)
+	}
+
+	readySteadyGo := make(chan struct{})
+
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+
+		<-readySteadyGo
+		go streams[2].Close()
+		conn.notify("test1", []byte("test1.0"))
+		conn.notify("test2", []byte("test2.0"))
+		conn.notify("test3", []byte("test3.0"))
+		conn.notify("test3", []byte("test3.1"))
+		conn.notify("test3", []byte("test3.2"))
+		conn.notify("test4", []byte("test4.0"))
+		conn.notify("test4", []byte("test4.1"))
+		streams[3].Close()
+		conn.notify("test5", []byte("test5.0"))
+	}()
+
+	for i, s := range streams {
+		i := i
+		s := s
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			<-readySteadyGo
+			<-s.Ready()
+			var m []byte
+			err := s.RecvMsg(&m)
+			if i != 2 && i != 3 && err != nil {
+				t.Error(err)
+			}
+			sm := string(m)
+			if i != 2 && i != 3 {
+				if sm == "" {
+					t.Error("missing message", i)
+				} else if !strings.HasSuffix(sm, ".0") {
+					t.Error("wrong message", i, sm)
+				}
+			}
+			t.Log(sm)
+		}()
+	}
+
+	err := Sync(streams...)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	close(readySteadyGo)
+
+	wg.Wait()
+	t.Log("The end.")
 }

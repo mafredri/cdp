@@ -280,7 +280,7 @@ func (s *streamClient) close(err error) error {
 		err = ErrStreamClosing
 	}
 
-	remove()    // Unsubscribe first to prevent incoming messages.
+	remove()    // Unsubscribe to prevent new messages.
 	s.err = err // Set err before cancel as reads are protected by context.
 	close(s.done)
 
