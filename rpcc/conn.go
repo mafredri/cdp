@@ -423,10 +423,13 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 func (c *Conn) notify(method string, data []byte) {
 	c.streamMu.Lock()
 	stream := c.streams[method]
+	c.streamMu.Unlock()
+
 	if stream != nil {
+		// Stream writer must be able to handle incoming writes
+		// even after it has been removed (unsubscribed).
 		stream.write(method, data)
 	}
-	c.streamMu.Unlock()
 }
 
 // listen registers a new stream listener (chan) for the RPC notification
@@ -447,7 +450,8 @@ func (c *Conn) listen(method string, w streamWriter) (func(), error) {
 	}
 	seq := stream.add(w)
 
-	return func() { stream.remove(seq) }, nil
+	unsub := func() { stream.remove(seq) }
+	return unsub, nil
 }
 
 // Close closes the connection.
