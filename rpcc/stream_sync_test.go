@@ -213,11 +213,11 @@ func TestStreamSyncClosingStreams(t *testing.T) {
 	testStreams := []struct {
 		name string
 	}{
+		{name: "test0"},
 		{name: "test1"},
 		{name: "test2"},
 		{name: "test3"},
 		{name: "test4"},
-		{name: "test5"},
 	}
 
 	var streams []Stream
@@ -238,15 +238,15 @@ func TestStreamSyncClosingStreams(t *testing.T) {
 
 		<-readySteadyGo
 		go streams[2].Close()
+		conn.notify("test0", []byte("test0.0"))
 		conn.notify("test1", []byte("test1.0"))
 		conn.notify("test2", []byte("test2.0"))
+		conn.notify("test2", []byte("test2.1"))
+		conn.notify("test2", []byte("test2.2"))
 		conn.notify("test3", []byte("test3.0"))
 		conn.notify("test3", []byte("test3.1"))
-		conn.notify("test3", []byte("test3.2"))
-		conn.notify("test4", []byte("test4.0"))
-		conn.notify("test4", []byte("test4.1"))
 		streams[3].Close()
-		conn.notify("test5", []byte("test5.0"))
+		conn.notify("test4", []byte("test4.0"))
 	}()
 
 	for i, s := range streams {
