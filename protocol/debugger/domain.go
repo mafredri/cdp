@@ -48,9 +48,13 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // Enable invokes the Debugger method. Enables debugger for the given page.
 // Clients should not assume that the debugging has been enabled until the
 // result for this command is received.
-func (d *domainClient) Enable(ctx context.Context) (reply *EnableReply, err error) {
+func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (reply *EnableReply, err error) {
 	reply = new(EnableReply)
-	err = rpcc.Invoke(ctx, "Debugger.enable", nil, reply, d.conn)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.enable", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.enable", nil, reply, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "Enable", Err: err}
 	}

@@ -2894,9 +2894,9 @@
                             }
                         },
                         {
-                            "name": "hasMore",
-                            "description": "If true, there are more entries to fetch in the given range.",
-                            "type": "boolean"
+                            "name": "returnCount",
+                            "description": "Count of returned entries from this storage. If pathFilter is empty, it\nis the count of all entries from this storage.",
+                            "type": "number"
                         }
                     ]
                 }
@@ -6702,8 +6702,8 @@
                     ]
                 },
                 {
-                    "name": "getKeyGeneratorCurrentNumber",
-                    "description": "Gets the auto increment number of an object store. Only meaningful\nwhen objectStore.autoIncrement is true.",
+                    "name": "getMetadata",
+                    "description": "Gets metadata of an object store",
                     "parameters": [
                         {
                             "name": "securityOrigin",
@@ -6723,8 +6723,13 @@
                     ],
                     "returns": [
                         {
-                            "name": "currentNumber",
-                            "description": "the current value of key generator, to become the next inserted\nkey into the object store.",
+                            "name": "entriesCount",
+                            "description": "the entries count",
+                            "type": "number"
+                        },
+                        {
+                            "name": "keyGeneratorValue",
+                            "description": "the current value of key generator, to become the next inserted\nkey into the object store. Valid if objectStore.autoIncrement\nis true.",
                             "type": "number"
                         }
                     ]
@@ -10321,6 +10326,7 @@
                         "searchForNode",
                         "searchForUAShadowDOM",
                         "captureAreaScreenshot",
+                        "showDistances",
                         "none"
                     ]
                 }
@@ -10576,16 +10582,6 @@
                         {
                             "name": "show",
                             "description": "Whether to paint size or not.",
-                            "type": "boolean"
-                        }
-                    ]
-                },
-                {
-                    "name": "setSuspended",
-                    "parameters": [
-                        {
-                            "name": "suspended",
-                            "description": "Whether overlay should be suspended and not consume any resources until resumed.",
                             "type": "boolean"
                         }
                     ]
@@ -11108,6 +11104,20 @@
                             "optional": true,
                             "type": "integer"
                         }
+                    ]
+                },
+                {
+                    "id": "ClientNavigationReason",
+                    "experimental": true,
+                    "type": "string",
+                    "enum": [
+                        "formSubmissionGet",
+                        "formSubmissionPost",
+                        "httpHeaderRefresh",
+                        "scriptInitiated",
+                        "metaTagRefresh",
+                        "pageBlockInterstitial",
+                        "reload"
                     ]
                 }
             ],
@@ -12129,7 +12139,7 @@
                 {
                     "name": "frameClearedScheduledNavigation",
                     "description": "Fired when frame no longer has a scheduled navigation.",
-                    "experimental": true,
+                    "deprecated": true,
                     "parameters": [
                         {
                             "name": "frameId",
@@ -12165,9 +12175,31 @@
                     "experimental": true
                 },
                 {
+                    "name": "frameRequestedNavigation",
+                    "description": "Fired when a renderer-initiated navigation is requested.\nNavigation may still be cancelled after the event is issued.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "frameId",
+                            "description": "Id of the frame that has scheduled a navigation.",
+                            "$ref": "FrameId"
+                        },
+                        {
+                            "name": "reason",
+                            "description": "The reason for the navigation.",
+                            "$ref": "ClientNavigationReason"
+                        },
+                        {
+                            "name": "url",
+                            "description": "The destination URL for the requested navigation.",
+                            "type": "string"
+                        }
+                    ]
+                },
+                {
                     "name": "frameScheduledNavigation",
                     "description": "Fired when frame schedules a potential navigation.",
-                    "experimental": true,
+                    "deprecated": true,
                     "parameters": [
                         {
                             "name": "frameId",
@@ -12577,6 +12609,7 @@
                 {
                     "id": "InsecureContentStatus",
                     "description": "Information about insecure content on the page.",
+                    "deprecated": true,
                     "type": "object",
                     "properties": [
                         {
@@ -12725,6 +12758,7 @@
                         {
                             "name": "insecureContentStatus",
                             "description": "Information about insecure content on the page.",
+                            "deprecated": true,
                             "$ref": "InsecureContentStatus"
                         },
                         {
@@ -14103,33 +14137,6 @@
                             "description": "Compression format of returned stream.",
                             "optional": true,
                             "$ref": "StreamCompression"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "domain": "Testing",
-            "description": "Testing domain is a dumping ground for the capabilities requires for browser or app testing that do not fit other\ndomains.",
-            "experimental": true,
-            "dependencies": [
-                "Page"
-            ],
-            "commands": [
-                {
-                    "name": "generateTestReport",
-                    "description": "Generates a report for testing.",
-                    "parameters": [
-                        {
-                            "name": "message",
-                            "description": "Message to be displayed in the report.",
-                            "type": "string"
-                        },
-                        {
-                            "name": "group",
-                            "description": "Specifies the endpoint group to deliver the report to.",
-                            "optional": true,
-                            "type": "string"
                         }
                     ]
                 }

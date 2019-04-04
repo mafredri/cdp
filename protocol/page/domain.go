@@ -679,6 +679,27 @@ func (c *frameResizedClient) Recv() (*FrameResizedReply, error) {
 	return event, nil
 }
 
+func (d *domainClient) FrameRequestedNavigation(ctx context.Context) (FrameRequestedNavigationClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.frameRequestedNavigation", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &frameRequestedNavigationClient{Stream: s}, nil
+}
+
+type frameRequestedNavigationClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameRequestedNavigationClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *frameRequestedNavigationClient) Recv() (*FrameRequestedNavigationReply, error) {
+	event := new(FrameRequestedNavigationReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "FrameRequestedNavigation Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) FrameScheduledNavigation(ctx context.Context) (FrameScheduledNavigationClient, error) {
 	s, err := rpcc.NewStream(ctx, "Page.frameScheduledNavigation", d.conn)
 	if err != nil {

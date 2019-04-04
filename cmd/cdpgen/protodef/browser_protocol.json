@@ -332,6 +332,15 @@
                 {
                     "name": "enable",
                     "description": "Enables debugger for the given page. Clients should not assume that the debugging has been\nenabled until the result for this command is received.",
+                    "parameters": [
+                        {
+                            "name": "maxScriptsCacheSize",
+                            "description": "The maximum size in bytes of collected scripts (not referenced by other heap objects)\nthe debugger can hold. Puts no limit if paramter is omitted.",
+                            "experimental": true,
+                            "optional": true,
+                            "type": "number"
+                        }
+                    ],
                     "returns": [
                         {
                             "name": "debuggerId",
@@ -3042,7 +3051,7 @@
                         },
                         {
                             "name": "stackTrace",
-                            "description": "Stack trace captured when the call was made.",
+                            "description": "Stack trace captured when the call was made. The async stack chain is automatically reported for\nthe following call types: `assert`, `error`, `trace`, `warning`. For other types the async call\nchain can be retrieved using `Debugger.getStackTrace` and `stackTrace.parentId` field.",
                             "optional": true,
                             "$ref": "StackTrace"
                         },

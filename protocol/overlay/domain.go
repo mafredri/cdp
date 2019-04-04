@@ -244,19 +244,6 @@ func (d *domainClient) SetShowViewportSizeOnResize(ctx context.Context, args *Se
 	return
 }
 
-// SetSuspended invokes the Overlay method.
-func (d *domainClient) SetSuspended(ctx context.Context, args *SetSuspendedArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.setSuspended", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Overlay.setSuspended", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Overlay", Op: "SetSuspended", Err: err}
-	}
-	return
-}
-
 func (d *domainClient) InspectNodeRequested(ctx context.Context) (InspectNodeRequestedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Overlay.inspectNodeRequested", d.conn)
 	if err != nil {

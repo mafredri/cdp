@@ -31,12 +31,13 @@ const (
 	InspectModeSearchForNode         InspectMode = "searchForNode"
 	InspectModeSearchForUAShadowDOM  InspectMode = "searchForUAShadowDOM"
 	InspectModeCaptureAreaScreenshot InspectMode = "captureAreaScreenshot"
+	InspectModeShowDistances         InspectMode = "showDistances"
 	InspectModeNone                  InspectMode = "none"
 )
 
 func (e InspectMode) Valid() bool {
 	switch e {
-	case "searchForNode", "searchForUAShadowDOM", "captureAreaScreenshot", "none":
+	case "searchForNode", "searchForUAShadowDOM", "captureAreaScreenshot", "showDistances", "none":
 		return true
 	default:
 		return false

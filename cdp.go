@@ -45,7 +45,6 @@ import (
 	"github.com/mafredri/cdp/protocol/storage"
 	"github.com/mafredri/cdp/protocol/systeminfo"
 	"github.com/mafredri/cdp/protocol/target"
-	"github.com/mafredri/cdp/protocol/testing"
 	"github.com/mafredri/cdp/protocol/tethering"
 	"github.com/mafredri/cdp/protocol/tracing"
 )
@@ -1118,7 +1117,7 @@ type Debugger interface {
 	// Enables debugger for the given page. Clients should not assume that
 	// the debugging has been enabled until the result for this command is
 	// received.
-	Enable(context.Context) (*debugger.EnableReply, error)
+	Enable(context.Context, *debugger.EnableArgs) (*debugger.EnableReply, error)
 
 	// Command EvaluateOnCallFrame
 	//
@@ -1685,11 +1684,10 @@ type IndexedDB interface {
 	// Requests data from object store or index.
 	RequestData(context.Context, *indexeddb.RequestDataArgs) (*indexeddb.RequestDataReply, error)
 
-	// Command GetKeyGeneratorCurrentNumber
+	// Command GetMetadata
 	//
-	// Gets the auto increment number of an object store. Only meaningful
-	// when objectStore.autoIncrement is true.
-	GetKeyGeneratorCurrentNumber(context.Context, *indexeddb.GetKeyGeneratorCurrentNumberArgs) (*indexeddb.GetKeyGeneratorCurrentNumberReply, error)
+	// Gets metadata of an object store
+	GetMetadata(context.Context, *indexeddb.GetMetadataArgs) (*indexeddb.GetMetadataReply, error)
 
 	// Command RequestDatabase
 	//
@@ -2308,9 +2306,6 @@ type Overlay interface {
 	// Paints viewport size upon main frame resize.
 	SetShowViewportSizeOnResize(context.Context, *overlay.SetShowViewportSizeOnResizeArgs) error
 
-	// Command SetSuspended
-	SetSuspended(context.Context, *overlay.SetSuspendedArgs) error
-
 	// Event InspectNodeRequested
 	//
 	// Fired when the node should be inspected. This happens after call to
@@ -2615,9 +2610,7 @@ type Page interface {
 
 	// Event FrameClearedScheduledNavigation
 	//
-	// Fired when frame no longer has a scheduled navigation.
-	//
-	// Note: This event is experimental.
+	// Deprecated: Fired when frame no longer has a scheduled navigation.
 	FrameClearedScheduledNavigation(context.Context) (page.FrameClearedScheduledNavigationClient, error)
 
 	// Event FrameDetached
@@ -2636,11 +2629,17 @@ type Page interface {
 	// Note: This event is experimental.
 	FrameResized(context.Context) (page.FrameResizedClient, error)
 
-	// Event FrameScheduledNavigation
+	// Event FrameRequestedNavigation
 	//
-	// Fired when frame schedules a potential navigation.
+	// Fired when a renderer-initiated navigation is requested. Navigation
+	// may still be canceled after the event is issued.
 	//
 	// Note: This event is experimental.
+	FrameRequestedNavigation(context.Context) (page.FrameRequestedNavigationClient, error)
+
+	// Event FrameScheduledNavigation
+	//
+	// Deprecated: Fired when frame schedules a potential navigation.
 	FrameScheduledNavigation(context.Context) (page.FrameScheduledNavigationClient, error)
 
 	// Event FrameStartedLoading
@@ -3355,17 +3354,6 @@ type Target interface {
 	// Issued when some information about a target has changed. This only
 	// happens between `targetCreated` and `targetDestroyed`.
 	TargetInfoChanged(context.Context) (target.InfoChangedClient, error)
-}
-
-// The Testing domain. Testing domain is a dumping ground for the capabilities
-// requires for browser or app testing that do not fit other domains.
-//
-// Note: This domain is experimental.
-type Testing interface {
-	// Command GenerateTestReport
-	//
-	// Generates a report for testing.
-	GenerateTestReport(context.Context, *testing.GenerateTestReportArgs) error
 }
 
 // The Tethering domain. The Tethering domain defines methods and events for

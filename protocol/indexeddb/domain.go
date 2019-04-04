@@ -92,18 +92,16 @@ func (d *domainClient) RequestData(ctx context.Context, args *RequestDataArgs) (
 	return
 }
 
-// GetKeyGeneratorCurrentNumber invokes the IndexedDB method. Gets the auto
-// increment number of an object store. Only meaningful when
-// objectStore.autoIncrement is true.
-func (d *domainClient) GetKeyGeneratorCurrentNumber(ctx context.Context, args *GetKeyGeneratorCurrentNumberArgs) (reply *GetKeyGeneratorCurrentNumberReply, err error) {
-	reply = new(GetKeyGeneratorCurrentNumberReply)
+// GetMetadata invokes the IndexedDB method. Gets metadata of an object store
+func (d *domainClient) GetMetadata(ctx context.Context, args *GetMetadataArgs) (reply *GetMetadataReply, err error) {
+	reply = new(GetMetadataReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "IndexedDB.getKeyGeneratorCurrentNumber", args, reply, d.conn)
+		err = rpcc.Invoke(ctx, "IndexedDB.getMetadata", args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "IndexedDB.getKeyGeneratorCurrentNumber", nil, reply, d.conn)
+		err = rpcc.Invoke(ctx, "IndexedDB.getMetadata", nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "IndexedDB", Op: "GetKeyGeneratorCurrentNumber", Err: err}
+		err = &internal.OpError{Domain: "IndexedDB", Op: "GetMetadata", Err: err}
 	}
 	return
 }

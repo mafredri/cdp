@@ -93,5 +93,5 @@ func (a *RequestEntriesArgs) SetPathFilter(pathFilter string) *RequestEntriesArg
 // RequestEntriesReply represents the return values for RequestEntries in the CacheStorage domain.
 type RequestEntriesReply struct {
 	CacheDataEntries []DataEntry `json:"cacheDataEntries"` // Array of object store data entries.
-	HasMore          bool        `json:"hasMore"`          // If true, there are more entries to fetch in the given range.
+	ReturnCount      float64     `json:"returnCount"`      // Count of returned entries from this storage. If pathFilter is empty, it is the count of all entries from this storage.
 }

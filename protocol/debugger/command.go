@@ -30,6 +30,34 @@ func (a *ContinueToLocationArgs) SetTargetCallFrames(targetCallFrames string) *C
 	return a
 }
 
+// EnableArgs represents the arguments for Enable in the Debugger domain.
+type EnableArgs struct {
+	// MaxScriptsCacheSize The maximum size in bytes of collected scripts
+	// (not referenced by other heap objects) the debugger can hold. Puts
+	// no limit if parameter is omitted.
+	//
+	// Note: This property is experimental.
+	MaxScriptsCacheSize *float64 `json:"maxScriptsCacheSize,omitempty"`
+}
+
+// NewEnableArgs initializes EnableArgs with the required arguments.
+func NewEnableArgs() *EnableArgs {
+	args := new(EnableArgs)
+
+	return args
+}
+
+// SetMaxScriptsCacheSize sets the MaxScriptsCacheSize optional argument.
+// The maximum size in bytes of collected scripts (not referenced by
+// other heap objects) the debugger can hold. Puts no limit if
+// parameter is omitted.
+//
+// Note: This property is experimental.
+func (a *EnableArgs) SetMaxScriptsCacheSize(maxScriptsCacheSize float64) *EnableArgs {
+	a.MaxScriptsCacheSize = &maxScriptsCacheSize
+	return a
+}
+
 // EnableReply represents the return values for Enable in the Debugger domain.
 type EnableReply struct {
 	// DebuggerID Unique identifier of the debugger.

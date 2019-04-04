@@ -37,9 +37,12 @@ type StateChangedClient interface {
 
 // StateChangedReply is the reply for SecurityStateChanged events.
 type StateChangedReply struct {
-	SecurityState         State                 `json:"securityState"`         // Security state.
-	SchemeIsCryptographic bool                  `json:"schemeIsCryptographic"` // True if the page was loaded over cryptographic transport such as HTTPS.
-	Explanations          []StateExplanation    `json:"explanations"`          // List of explanations for the security state. If the overall security state is `insecure` or `warning`, at least one corresponding explanation should be included.
-	InsecureContentStatus InsecureContentStatus `json:"insecureContentStatus"` // Information about insecure content on the page.
-	Summary               *string               `json:"summary,omitempty"`     // Overrides user-visible description of the state.
+	SecurityState         State              `json:"securityState"`         // Security state.
+	SchemeIsCryptographic bool               `json:"schemeIsCryptographic"` // True if the page was loaded over cryptographic transport such as HTTPS.
+	Explanations          []StateExplanation `json:"explanations"`          // List of explanations for the security state. If the overall security state is `insecure` or `warning`, at least one corresponding explanation should be included.
+	// InsecureContentStatus is deprecated.
+	//
+	// Deprecated: Information about insecure content on the page.
+	InsecureContentStatus InsecureContentStatus `json:"insecureContentStatus"`
+	Summary               *string               `json:"summary,omitempty"` // Overrides user-visible description of the state.
 }

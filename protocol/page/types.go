@@ -201,3 +201,33 @@ type FontSizes struct {
 	Standard *int `json:"standard,omitempty"` // Default standard font size.
 	Fixed    *int `json:"fixed,omitempty"`    // Default fixed font size.
 }
+
+// ClientNavigationReason
+//
+// Note: This type is experimental.
+type ClientNavigationReason string
+
+// ClientNavigationReason as enums.
+const (
+	ClientNavigationReasonNotSet                ClientNavigationReason = ""
+	ClientNavigationReasonFormSubmissionGet     ClientNavigationReason = "formSubmissionGet"
+	ClientNavigationReasonFormSubmissionPost    ClientNavigationReason = "formSubmissionPost"
+	ClientNavigationReasonHTTPHeaderRefresh     ClientNavigationReason = "httpHeaderRefresh"
+	ClientNavigationReasonScriptInitiated       ClientNavigationReason = "scriptInitiated"
+	ClientNavigationReasonMetaTagRefresh        ClientNavigationReason = "metaTagRefresh"
+	ClientNavigationReasonPageBlockInterstitial ClientNavigationReason = "pageBlockInterstitial"
+	ClientNavigationReasonReload                ClientNavigationReason = "reload"
+)
+
+func (e ClientNavigationReason) Valid() bool {
+	switch e {
+	case "formSubmissionGet", "formSubmissionPost", "httpHeaderRefresh", "scriptInitiated", "metaTagRefresh", "pageBlockInterstitial", "reload":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ClientNavigationReason) String() string {
+	return string(e)
+}

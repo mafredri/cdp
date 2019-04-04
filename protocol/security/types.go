@@ -68,7 +68,9 @@ type StateExplanation struct {
 	Recommendations  []string         `json:"recommendations,omitempty"` // Recommendations to fix any issues.
 }
 
-// InsecureContentStatus Information about insecure content on the page.
+// InsecureContentStatus
+//
+// Deprecated: Information about insecure content on the page.
 type InsecureContentStatus struct {
 	RanMixedContent                bool  `json:"ranMixedContent"`                // True if the page was loaded over HTTPS and ran mixed (HTTP) content such as scripts.
 	DisplayedMixedContent          bool  `json:"displayedMixedContent"`          // True if the page was loaded over HTTPS and displayed mixed (HTTP) content such as images.

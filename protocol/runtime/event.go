@@ -42,7 +42,7 @@ type ConsoleAPICalledReply struct {
 	Args               []RemoteObject     `json:"args"`                 // Call arguments.
 	ExecutionContextID ExecutionContextID `json:"executionContextId"`   // Identifier of the context where the call was made.
 	Timestamp          Timestamp          `json:"timestamp"`            // Call timestamp.
-	StackTrace         *StackTrace        `json:"stackTrace,omitempty"` // Stack trace captured when the call was made.
+	StackTrace         *StackTrace        `json:"stackTrace,omitempty"` // Stack trace captured when the call was made. The async stack chain is automatically reported for the following call types: `assert`, `error`, `trace`, `warning`. For other types the async call chain can be retrieved using `Debugger.getStackTrace` and `stackTrace.parentId` field.
 	// Context Console context descriptor for calls on non-default console
 	// context (not console.*): 'anonymous#unique-logger-id' for call on
 	// unnamed context, 'name#unique-logger-id' for call on named context.

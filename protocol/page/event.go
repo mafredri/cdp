@@ -92,6 +92,23 @@ type FrameResizedClient interface {
 type FrameResizedReply struct {
 }
 
+// FrameRequestedNavigationClient is a client for FrameRequestedNavigation events.
+// Fired when a renderer-initiated navigation is requested. Navigation may
+// still be canceled after the event is issued.
+type FrameRequestedNavigationClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*FrameRequestedNavigationReply, error)
+	rpcc.Stream
+}
+
+// FrameRequestedNavigationReply is the reply for FrameRequestedNavigation events.
+type FrameRequestedNavigationReply struct {
+	FrameID FrameID                `json:"frameId"` // Id of the frame that has scheduled a navigation.
+	Reason  ClientNavigationReason `json:"reason"`  // The reason for the navigation.
+	URL     string                 `json:"url"`     // The destination URL for the requested navigation.
+}
+
 // FrameScheduledNavigationClient is a client for FrameScheduledNavigation events.
 // Fired when frame schedules a potential navigation.
 type FrameScheduledNavigationClient interface {

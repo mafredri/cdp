@@ -284,15 +284,3 @@ func NewSetShowViewportSizeOnResizeArgs(show bool) *SetShowViewportSizeOnResizeA
 	args.Show = show
 	return args
 }
-
-// SetSuspendedArgs represents the arguments for SetSuspended in the Overlay domain.
-type SetSuspendedArgs struct {
-	Suspended bool `json:"suspended"` // Whether overlay should be suspended and not consume any resources until resumed.
-}
-
-// NewSetSuspendedArgs initializes SetSuspendedArgs with the required arguments.
-func NewSetSuspendedArgs(suspended bool) *SetSuspendedArgs {
-	args := new(SetSuspendedArgs)
-	args.Suspended = suspended
-	return args
-}
