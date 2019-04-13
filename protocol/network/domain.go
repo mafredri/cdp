@@ -379,7 +379,7 @@ func (d *domainClient) SetExtraHTTPHeaders(ctx context.Context, args *SetExtraHT
 }
 
 // SetRequestInterception invokes the Network method. Sets the requests to
-// intercept that match a the provided patterns and optionally resource types.
+// intercept that match the provided patterns and optionally resource types.
 func (d *domainClient) SetRequestInterception(ctx context.Context, args *SetRequestInterceptionArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Network.setRequestInterception", args, nil, d.conn)

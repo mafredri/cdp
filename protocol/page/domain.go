@@ -132,6 +132,16 @@ func (d *domainClient) GetAppManifest(ctx context.Context) (reply *GetAppManifes
 	return
 }
 
+// GetInstallabilityErrors invokes the Page method.
+func (d *domainClient) GetInstallabilityErrors(ctx context.Context) (reply *GetInstallabilityErrorsReply, err error) {
+	reply = new(GetInstallabilityErrorsReply)
+	err = rpcc.Invoke(ctx, "Page.getInstallabilityErrors", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetInstallabilityErrors", Err: err}
+	}
+	return
+}
+
 // GetFrameTree invokes the Page method. Returns present frame tree structure.
 func (d *domainClient) GetFrameTree(ctx context.Context) (reply *GetFrameTreeReply, err error) {
 	reply = new(GetFrameTreeReply)

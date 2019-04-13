@@ -191,6 +191,11 @@ type GetAppManifestReply struct {
 	Data   *string            `json:"data,omitempty"` // Manifest content.
 }
 
+// GetInstallabilityErrorsReply represents the return values for GetInstallabilityErrors in the Page domain.
+type GetInstallabilityErrorsReply struct {
+	Errors []string `json:"errors"` // No description.
+}
+
 // GetFrameTreeReply represents the return values for GetFrameTree in the Page domain.
 type GetFrameTreeReply struct {
 	FrameTree FrameTree `json:"frameTree"` // Present frame tree structure.

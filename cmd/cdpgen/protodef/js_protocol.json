@@ -9700,7 +9700,7 @@
                 },
                 {
                     "name": "setRequestInterception",
-                    "description": "Sets the requests to intercept that match a the provided patterns and optionally resource types.",
+                    "description": "Sets the requests to intercept that match the provided patterns and optionally resource types.",
                     "experimental": true,
                     "parameters": [
                         {
@@ -9925,6 +9925,12 @@
                             "description": "Response headers if intercepted at the response stage or if redirect occurred while\nintercepting request or auth retry occurred.",
                             "optional": true,
                             "$ref": "Headers"
+                        },
+                        {
+                            "name": "requestId",
+                            "description": "If the intercepted request had a corresponding requestWillBeSent event fired for it, then\nthis requestId will be the same as the requestId present in the requestWillBeSent event.",
+                            "optional": true,
+                            "$ref": "RequestId"
                         }
                     ]
                 },
@@ -11331,6 +11337,19 @@
                             "description": "Manifest content.",
                             "optional": true,
                             "type": "string"
+                        }
+                    ]
+                },
+                {
+                    "name": "getInstallabilityErrors",
+                    "experimental": true,
+                    "returns": [
+                        {
+                            "name": "errors",
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
                         }
                     ]
                 },
@@ -13982,6 +14001,15 @@
                     ]
                 },
                 {
+                    "id": "StreamFormat",
+                    "description": "Data format of a trace. Can be either the legacy JSON format or the\nprotocol buffer format. Note that the JSON format will be deprecated soon.",
+                    "type": "string",
+                    "enum": [
+                        "json",
+                        "proto"
+                    ]
+                },
+                {
                     "id": "StreamCompression",
                     "description": "Compression type to use for traces returned via streams.",
                     "type": "string",
@@ -14072,6 +14100,12 @@
                             ]
                         },
                         {
+                            "name": "streamFormat",
+                            "description": "Trace data format to use. This only applies when using `ReturnAsStream`\ntransfer mode (defaults to `json`).",
+                            "optional": true,
+                            "$ref": "StreamFormat"
+                        },
+                        {
                             "name": "streamCompression",
                             "description": "Compression format to use. This only applies when using `ReturnAsStream`\ntransfer mode (defaults to `none`)",
                             "optional": true,
@@ -14131,6 +14165,12 @@
                             "description": "A handle of the stream that holds resulting trace data.",
                             "optional": true,
                             "$ref": "IO.StreamHandle"
+                        },
+                        {
+                            "name": "traceFormat",
+                            "description": "Trace data format of returned stream.",
+                            "optional": true,
+                            "$ref": "StreamFormat"
                         },
                         {
                             "name": "streamCompression",
@@ -14488,6 +14528,12 @@
                             "items": {
                                 "$ref": "HeaderEntry"
                             }
+                        },
+                        {
+                            "name": "networkId",
+                            "description": "If the intercepted request had a corresponding Network.requestWillBeSent event fired for it,\nthen this networkId will be the same as the requestId present in the requestWillBeSent event.",
+                            "optional": true,
+                            "$ref": "RequestId"
                         }
                     ]
                 },

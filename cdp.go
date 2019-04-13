@@ -2114,8 +2114,8 @@ type Network interface {
 
 	// Command SetRequestInterception
 	//
-	// Sets the requests to intercept that match a the provided patterns
-	// and optionally resource types.
+	// Sets the requests to intercept that match the provided patterns and
+	// optionally resource types.
 	//
 	// Note: This command is experimental.
 	SetRequestInterception(context.Context, *network.SetRequestInterceptionArgs) error
@@ -2383,6 +2383,11 @@ type Page interface {
 
 	// Command GetAppManifest
 	GetAppManifest(context.Context) (*page.GetAppManifestReply, error)
+
+	// Command GetInstallabilityErrors
+	//
+	// Note: This command is experimental.
+	GetInstallabilityErrors(context.Context) (*page.GetInstallabilityErrorsReply, error)
 
 	// Command GetFrameTree
 	//

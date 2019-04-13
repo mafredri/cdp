@@ -42,6 +42,7 @@ type StartArgs struct {
 	//
 	// Values: "ReportEvents", "ReturnAsStream".
 	TransferMode      *string           `json:"transferMode,omitempty"`
+	StreamFormat      StreamFormat      `json:"streamFormat,omitempty"`      // Trace data format to use. This only applies when using `ReturnAsStream` transfer mode (defaults to `json`).
 	StreamCompression StreamCompression `json:"streamCompression,omitempty"` // Compression format to use. This only applies when using `ReturnAsStream` transfer mode (defaults to `none`)
 	TraceConfig       *TraceConfig      `json:"traceConfig,omitempty"`       // No description.
 }
@@ -85,6 +86,14 @@ func (a *StartArgs) SetBufferUsageReportingInterval(bufferUsageReportingInterval
 // Values: "ReportEvents", "ReturnAsStream".
 func (a *StartArgs) SetTransferMode(transferMode string) *StartArgs {
 	a.TransferMode = &transferMode
+	return a
+}
+
+// SetStreamFormat sets the StreamFormat optional argument. Trace data
+// format to use. This only applies when using `ReturnAsStream`
+// transfer mode (defaults to `json`).
+func (a *StartArgs) SetStreamFormat(streamFormat StreamFormat) *StartArgs {
+	a.StreamFormat = streamFormat
 	return a
 }
 

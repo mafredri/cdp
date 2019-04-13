@@ -101,6 +101,7 @@ type RequestInterceptedReply struct {
 	ResponseErrorReason ErrorReason          `json:"responseErrorReason,omitempty"` // Response error if intercepted at response stage or if redirect occurred while intercepting request.
 	ResponseStatusCode  *int                 `json:"responseStatusCode,omitempty"`  // Response code if intercepted at response stage or if redirect occurred while intercepting request or auth retry occurred.
 	ResponseHeaders     Headers              `json:"responseHeaders,omitempty"`     // Response headers if intercepted at the response stage or if redirect occurred while intercepting request or auth retry occurred.
+	RequestID           *RequestID           `json:"requestId,omitempty"`           // If the intercepted request had a corresponding requestWillBeSent event fired for it, then this requestId will be the same as the requestId present in the requestWillBeSent event.
 }
 
 // RequestServedFromCacheClient is a client for RequestServedFromCache events.
