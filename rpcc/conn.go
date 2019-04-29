@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"net/http"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -122,6 +123,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	if netDial == nil {
 		netDial = func(ctx context.Context, addr string) (io.ReadWriteCloser, error) {
 			ws := &c.dialOpts.wsDialer
+			ws.Proxy = http.ProxyFromEnvironment
 
 			if ws.WriteBufferSize == 0 {
 				// Set the default size for use in writeLimiter.
