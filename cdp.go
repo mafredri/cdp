@@ -47,6 +47,7 @@ import (
 	"github.com/mafredri/cdp/protocol/target"
 	"github.com/mafredri/cdp/protocol/tethering"
 	"github.com/mafredri/cdp/protocol/tracing"
+	"github.com/mafredri/cdp/protocol/webaudio"
 )
 
 // The Accessibility domain.
@@ -1203,6 +1204,11 @@ type Debugger interface {
 	// Sets JavaScript breakpoint at a given location.
 	SetBreakpoint(context.Context, *debugger.SetBreakpointArgs) (*debugger.SetBreakpointReply, error)
 
+	// Command SetInstrumentationBreakpoint
+	//
+	// Sets instrumentation breakpoint.
+	SetInstrumentationBreakpoint(context.Context, *debugger.SetInstrumentationBreakpointArgs) (*debugger.SetInstrumentationBreakpointReply, error)
+
 	// Command SetBreakpointByURL
 	//
 	// Sets JavaScript breakpoint at given location specified either by
@@ -1429,6 +1435,13 @@ type Emulation interface {
 	//
 	// Note: This command is experimental.
 	SetVirtualTimePolicy(context.Context, *emulation.SetVirtualTimePolicyArgs) (*emulation.SetVirtualTimePolicyReply, error)
+
+	// Command SetTimezoneOverride
+	//
+	// Overrides default host system timezone with the specified one.
+	//
+	// Note: This command is experimental.
+	SetTimezoneOverride(context.Context, *emulation.SetTimezoneOverrideArgs) error
 
 	// Command SetVisibleSize
 	//
@@ -2661,6 +2674,13 @@ type Page interface {
 	// Note: This event is experimental.
 	FrameStoppedLoading(context.Context) (page.FrameStoppedLoadingClient, error)
 
+	// Event DownloadWillBegin
+	//
+	// Fired when page is about to start a download.
+	//
+	// Note: This event is experimental.
+	DownloadWillBegin(context.Context) (page.DownloadWillBeginClient, error)
+
 	// Event InterstitialHidden
 	//
 	// Fired when interstitial page was hidden
@@ -3427,4 +3447,42 @@ type Tracing interface {
 	// Signals that tracing is stopped and there is no trace buffers
 	// pending flush, all data were delivered via dataCollected events.
 	TracingComplete(context.Context) (tracing.CompleteClient, error)
+}
+
+// The WebAudio domain. This domain allows inspection of Web Audio API.
+// https://webaudio.github.io/web-audio-api/
+//
+// Note: This domain is experimental.
+type WebAudio interface {
+	// Command Enable
+	//
+	// Enables the WebAudio domain and starts sending context lifetime
+	// events.
+	Enable(context.Context) error
+
+	// Command Disable
+	//
+	// Disables the WebAudio domain.
+	Disable(context.Context) error
+
+	// Command GetRealtimeData
+	//
+	// Fetch the realtime data from the registered contexts.
+	GetRealtimeData(context.Context, *webaudio.GetRealtimeDataArgs) (*webaudio.GetRealtimeDataReply, error)
+
+	// Event ContextCreated
+	//
+	// Notifies that a new BaseAudioContext has been created.
+	ContextCreated(context.Context) (webaudio.ContextCreatedClient, error)
+
+	// Event ContextDestroyed
+	//
+	// Notifies that existing BaseAudioContext has been destroyed.
+	ContextDestroyed(context.Context) (webaudio.ContextDestroyedClient, error)
+
+	// Event ContextChanged
+	//
+	// Notifies that existing BaseAudioContext has changed some properties
+	// (id stays the same)..
+	ContextChanged(context.Context) (webaudio.ContextChangedClient, error)
 }

@@ -261,6 +261,20 @@ func (d *domainClient) SetVirtualTimePolicy(ctx context.Context, args *SetVirtua
 	return
 }
 
+// SetTimezoneOverride invokes the Emulation method. Overrides default host
+// system timezone with the specified one.
+func (d *domainClient) SetTimezoneOverride(ctx context.Context, args *SetTimezoneOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setTimezoneOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setTimezoneOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetTimezoneOverride", Err: err}
+	}
+	return
+}
+
 // SetVisibleSize invokes the Emulation method. Resizes the frame/viewport of
 // the page. Note that this does not affect the frame's container (e.g. browser
 // window). Can be used to produce screenshots of the specified size. Not

@@ -260,6 +260,21 @@ func (d *domainClient) SetBreakpoint(ctx context.Context, args *SetBreakpointArg
 	return
 }
 
+// SetInstrumentationBreakpoint invokes the Debugger method. Sets
+// instrumentation breakpoint.
+func (d *domainClient) SetInstrumentationBreakpoint(ctx context.Context, args *SetInstrumentationBreakpointArgs) (reply *SetInstrumentationBreakpointReply, err error) {
+	reply = new(SetInstrumentationBreakpointReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.setInstrumentationBreakpoint", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.setInstrumentationBreakpoint", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Debugger", Op: "SetInstrumentationBreakpoint", Err: err}
+	}
+	return
+}
+
 // SetBreakpointByURL invokes the Debugger method. Sets JavaScript breakpoint
 // at given location specified either by URL or URL regex. Once this command is
 // issued, all existing parsed scripts will have breakpoints resolved and

@@ -8,10 +8,12 @@ import (
 
 // GPUDevice Describes a single graphics processor (GPU).
 type GPUDevice struct {
-	VendorID     float64 `json:"vendorId"`     // PCI ID of the GPU vendor, if available; 0 otherwise.
-	DeviceID     float64 `json:"deviceId"`     // PCI ID of the GPU device, if available; 0 otherwise.
-	VendorString string  `json:"vendorString"` // String description of the GPU vendor, if the PCI ID is not available.
-	DeviceString string  `json:"deviceString"` // String description of the GPU device, if the PCI ID is not available.
+	VendorID      float64 `json:"vendorId"`      // PCI ID of the GPU vendor, if available; 0 otherwise.
+	DeviceID      float64 `json:"deviceId"`      // PCI ID of the GPU device, if available; 0 otherwise.
+	VendorString  string  `json:"vendorString"`  // String description of the GPU vendor, if the PCI ID is not available.
+	DeviceString  string  `json:"deviceString"`  // String description of the GPU device, if the PCI ID is not available.
+	DriverVendor  string  `json:"driverVendor"`  // String description of the GPU driver vendor.
+	DriverVersion string  `json:"driverVersion"` // String description of the GPU driver version.
 }
 
 // GPUInfo Provides information about the GPU(s) on the system.

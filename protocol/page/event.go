@@ -104,7 +104,7 @@ type FrameRequestedNavigationClient interface {
 
 // FrameRequestedNavigationReply is the reply for FrameRequestedNavigation events.
 type FrameRequestedNavigationReply struct {
-	FrameID FrameID                `json:"frameId"` // Id of the frame that has scheduled a navigation.
+	FrameID FrameID                `json:"frameId"` // Id of the frame that is being navigated.
 	Reason  ClientNavigationReason `json:"reason"`  // The reason for the navigation.
 	URL     string                 `json:"url"`     // The destination URL for the requested navigation.
 }
@@ -155,6 +155,21 @@ type FrameStoppedLoadingClient interface {
 // FrameStoppedLoadingReply is the reply for FrameStoppedLoading events.
 type FrameStoppedLoadingReply struct {
 	FrameID FrameID `json:"frameId"` // Id of the frame that has stopped loading.
+}
+
+// DownloadWillBeginClient is a client for DownloadWillBegin events. Fired
+// when page is about to start a download.
+type DownloadWillBeginClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DownloadWillBeginReply, error)
+	rpcc.Stream
+}
+
+// DownloadWillBeginReply is the reply for DownloadWillBegin events.
+type DownloadWillBeginReply struct {
+	FrameID FrameID `json:"frameId"` // Id of the frame that caused download to begin.
+	URL     string  `json:"url"`     // URL of the resource being downloaded.
 }
 
 // InterstitialHiddenClient is a client for InterstitialHidden events. Fired

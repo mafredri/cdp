@@ -12,7 +12,8 @@ import (
 
 // GetHighlightObjectForTestArgs represents the arguments for GetHighlightObjectForTest in the Overlay domain.
 type GetHighlightObjectForTestArgs struct {
-	NodeID dom.NodeID `json:"nodeId"` // Id of the node to get highlight object for.
+	NodeID          dom.NodeID `json:"nodeId"`                    // Id of the node to get highlight object for.
+	IncludeDistance *bool      `json:"includeDistance,omitempty"` // Whether to include distance info.
 }
 
 // NewGetHighlightObjectForTestArgs initializes GetHighlightObjectForTestArgs with the required arguments.
@@ -20,6 +21,13 @@ func NewGetHighlightObjectForTestArgs(nodeID dom.NodeID) *GetHighlightObjectForT
 	args := new(GetHighlightObjectForTestArgs)
 	args.NodeID = nodeID
 	return args
+}
+
+// SetIncludeDistance sets the IncludeDistance optional argument.
+// Whether to include distance info.
+func (a *GetHighlightObjectForTestArgs) SetIncludeDistance(includeDistance bool) *GetHighlightObjectForTestArgs {
+	a.IncludeDistance = &includeDistance
+	return a
 }
 
 // GetHighlightObjectForTestReply represents the return values for GetHighlightObjectForTest in the Overlay domain.

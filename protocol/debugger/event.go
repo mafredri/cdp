@@ -38,7 +38,7 @@ type PausedReply struct {
 	CallFrames []CallFrame `json:"callFrames"` // Call stack the virtual machine stopped on.
 	// Reason Pause reason.
 	//
-	// Values: "XHR", "DOM", "EventListener", "exception", "assert", "debugCommand", "promiseRejection", "OOM", "other", "ambiguous".
+	// Values: "ambiguous", "assert", "debugCommand", "DOM", "EventListener", "exception", "instrumentation", "OOM", "other", "promiseRejection", "XHR".
 	Reason          string              `json:"reason"`
 	Data            json.RawMessage     `json:"data,omitempty"`            // Object containing break-specific auxiliary properties.
 	HitBreakpoints  []string            `json:"hitBreakpoints,omitempty"`  // Hit breakpoints IDs

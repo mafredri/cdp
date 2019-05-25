@@ -773,6 +773,27 @@ func (c *frameStoppedLoadingClient) Recv() (*FrameStoppedLoadingReply, error) {
 	return event, nil
 }
 
+func (d *domainClient) DownloadWillBegin(ctx context.Context) (DownloadWillBeginClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.downloadWillBegin", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &downloadWillBeginClient{Stream: s}, nil
+}
+
+type downloadWillBeginClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *downloadWillBeginClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *downloadWillBeginClient) Recv() (*DownloadWillBeginReply, error) {
+	event := new(DownloadWillBeginReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "DownloadWillBegin Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) InterstitialHidden(ctx context.Context) (InterstitialHiddenClient, error) {
 	s, err := rpcc.NewStream(ctx, "Page.interstitialHidden", d.conn)
 	if err != nil {

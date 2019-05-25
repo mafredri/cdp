@@ -373,6 +373,26 @@ type SetBreakpointReply struct {
 	ActualLocation Location     `json:"actualLocation"` // Location this breakpoint resolved into.
 }
 
+// SetInstrumentationBreakpointArgs represents the arguments for SetInstrumentationBreakpoint in the Debugger domain.
+type SetInstrumentationBreakpointArgs struct {
+	// Instrumentation Instrumentation name.
+	//
+	// Values: "beforeScriptExecution", "beforeScriptWithSourceMapExecution".
+	Instrumentation string `json:"instrumentation"`
+}
+
+// NewSetInstrumentationBreakpointArgs initializes SetInstrumentationBreakpointArgs with the required arguments.
+func NewSetInstrumentationBreakpointArgs(instrumentation string) *SetInstrumentationBreakpointArgs {
+	args := new(SetInstrumentationBreakpointArgs)
+	args.Instrumentation = instrumentation
+	return args
+}
+
+// SetInstrumentationBreakpointReply represents the return values for SetInstrumentationBreakpoint in the Debugger domain.
+type SetInstrumentationBreakpointReply struct {
+	BreakpointID BreakpointID `json:"breakpointId"` // Id of the created breakpoint for further reference.
+}
+
 // SetBreakpointByURLArgs represents the arguments for SetBreakpointByURL in the Debugger domain.
 type SetBreakpointByURLArgs struct {
 	LineNumber   int     `json:"lineNumber"`             // Line number to set breakpoint at.

@@ -388,6 +388,18 @@ type SetVirtualTimePolicyReply struct {
 	VirtualTimeTicksBase float64 `json:"virtualTimeTicksBase"` // Absolute timestamp at which virtual time was first enabled (up time in milliseconds).
 }
 
+// SetTimezoneOverrideArgs represents the arguments for SetTimezoneOverride in the Emulation domain.
+type SetTimezoneOverrideArgs struct {
+	TimezoneID string `json:"timezoneId"` // The timezone identifier. If empty, disables the override and restores default host system timezone.
+}
+
+// NewSetTimezoneOverrideArgs initializes SetTimezoneOverrideArgs with the required arguments.
+func NewSetTimezoneOverrideArgs(timezoneID string) *SetTimezoneOverrideArgs {
+	args := new(SetTimezoneOverrideArgs)
+	args.TimezoneID = timezoneID
+	return args
+}
+
 // SetVisibleSizeArgs represents the arguments for SetVisibleSize in the Emulation domain.
 type SetVisibleSizeArgs struct {
 	Width  int `json:"width"`  // Frame width (DIP).

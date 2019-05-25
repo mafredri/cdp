@@ -45,6 +45,7 @@ import (
 	"github.com/mafredri/cdp/protocol/target"
 	"github.com/mafredri/cdp/protocol/tethering"
 	"github.com/mafredri/cdp/protocol/tracing"
+	"github.com/mafredri/cdp/protocol/webaudio"
 	"github.com/mafredri/cdp/rpcc"
 )
 
@@ -94,6 +95,7 @@ type Client struct {
 	Target               Target
 	Tethering            Tethering
 	Tracing              Tracing
+	WebAudio             WebAudio
 }
 
 // NewClient returns a new Client that uses conn
@@ -142,5 +144,6 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Target:               target.NewClient(conn),
 		Tethering:            tethering.NewClient(conn),
 		Tracing:              tracing.NewClient(conn),
+		WebAudio:             webaudio.NewClient(conn),
 	}
 }

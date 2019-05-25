@@ -72,13 +72,13 @@ type StateExplanation struct {
 //
 // Deprecated: Information about insecure content on the page.
 type InsecureContentStatus struct {
-	RanMixedContent                bool  `json:"ranMixedContent"`                // True if the page was loaded over HTTPS and ran mixed (HTTP) content such as scripts.
-	DisplayedMixedContent          bool  `json:"displayedMixedContent"`          // True if the page was loaded over HTTPS and displayed mixed (HTTP) content such as images.
-	ContainedMixedForm             bool  `json:"containedMixedForm"`             // True if the page was loaded over HTTPS and contained a form targeting an insecure url.
-	RanContentWithCertErrors       bool  `json:"ranContentWithCertErrors"`       // True if the page was loaded over HTTPS without certificate errors, and ran content such as scripts that were loaded with certificate errors.
-	DisplayedContentWithCertErrors bool  `json:"displayedContentWithCertErrors"` // True if the page was loaded over HTTPS without certificate errors, and displayed content such as images that were loaded with certificate errors.
-	RanInsecureContentStyle        State `json:"ranInsecureContentStyle"`        // Security state representing a page that ran insecure content.
-	DisplayedInsecureContentStyle  State `json:"displayedInsecureContentStyle"`  // Security state representing a page that displayed insecure content.
+	RanMixedContent                bool  `json:"ranMixedContent"`                // Always false.
+	DisplayedMixedContent          bool  `json:"displayedMixedContent"`          // Always false.
+	ContainedMixedForm             bool  `json:"containedMixedForm"`             // Always false.
+	RanContentWithCertErrors       bool  `json:"ranContentWithCertErrors"`       // Always false.
+	DisplayedContentWithCertErrors bool  `json:"displayedContentWithCertErrors"` // Always false.
+	RanInsecureContentStyle        State `json:"ranInsecureContentStyle"`        // Always set to unknown.
+	DisplayedInsecureContentStyle  State `json:"displayedInsecureContentStyle"`  // Always set to unknown.
 }
 
 // CertificateErrorAction The action to take when a certificate error occurs.
