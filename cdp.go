@@ -48,6 +48,7 @@ import (
 	"github.com/mafredri/cdp/protocol/tethering"
 	"github.com/mafredri/cdp/protocol/tracing"
 	"github.com/mafredri/cdp/protocol/webaudio"
+	"github.com/mafredri/cdp/protocol/webauthn"
 )
 
 // The Accessibility domain.
@@ -3485,4 +3486,31 @@ type WebAudio interface {
 	// Notifies that existing BaseAudioContext has changed some properties
 	// (id stays the same)..
 	ContextChanged(context.Context) (webaudio.ContextChangedClient, error)
+}
+
+// The WebAuthn domain. This domain allows configuring virtual authenticators
+// to test the WebAuthn API.
+//
+// Note: This domain is experimental.
+type WebAuthn interface {
+	// Command Enable
+	//
+	// Enable the WebAuthn domain and start intercepting credential
+	// storage and retrieval with a virtual authenticator.
+	Enable(context.Context) error
+
+	// Command Disable
+	//
+	// Disable the WebAuthn domain.
+	Disable(context.Context) error
+
+	// Command AddVirtualAuthenticator
+	//
+	// Creates and adds a virtual authenticator.
+	AddVirtualAuthenticator(context.Context, *webauthn.AddVirtualAuthenticatorArgs) (*webauthn.AddVirtualAuthenticatorReply, error)
+
+	// Command RemoveVirtualAuthenticator
+	//
+	// Removes the given authenticator.
+	RemoveVirtualAuthenticator(context.Context, *webauthn.RemoveVirtualAuthenticatorArgs) error
 }

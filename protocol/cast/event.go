@@ -18,7 +18,7 @@ type SinksUpdatedClient interface {
 
 // SinksUpdatedReply is the reply for SinksUpdated events.
 type SinksUpdatedReply struct {
-	SinkNames []string `json:"sinkNames"` // No description.
+	Sinks []Sink `json:"sinks"` // No description.
 }
 
 // IssueUpdatedClient is a client for IssueUpdated events. This is fired

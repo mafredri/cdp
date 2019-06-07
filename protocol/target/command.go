@@ -110,6 +110,8 @@ type CreateTargetArgs struct {
 	//
 	// Note: This property is experimental.
 	EnableBeginFrameControl *bool `json:"enableBeginFrameControl,omitempty"`
+	NewWindow               *bool `json:"newWindow,omitempty"`  // Whether to create a new Window or Tab (chrome-only, false by default).
+	Background              *bool `json:"background,omitempty"` // Whether to create the target in background or foreground (chrome-only, false by default).
 }
 
 // NewCreateTargetArgs initializes CreateTargetArgs with the required arguments.
@@ -148,6 +150,21 @@ func (a *CreateTargetArgs) SetBrowserContextID(browserContextID BrowserContextID
 // Note: This property is experimental.
 func (a *CreateTargetArgs) SetEnableBeginFrameControl(enableBeginFrameControl bool) *CreateTargetArgs {
 	a.EnableBeginFrameControl = &enableBeginFrameControl
+	return a
+}
+
+// SetNewWindow sets the NewWindow optional argument. Whether to
+// create a new Window or Tab (chrome-only, false by default).
+func (a *CreateTargetArgs) SetNewWindow(newWindow bool) *CreateTargetArgs {
+	a.NewWindow = &newWindow
+	return a
+}
+
+// SetBackground sets the Background optional argument. Whether to
+// create the target in background or foreground (chrome-only, false by
+// default).
+func (a *CreateTargetArgs) SetBackground(background bool) *CreateTargetArgs {
+	a.Background = &background
 	return a
 }
 

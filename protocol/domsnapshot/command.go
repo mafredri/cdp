@@ -48,7 +48,8 @@ type GetSnapshotReply struct {
 
 // CaptureSnapshotArgs represents the arguments for CaptureSnapshot in the DOMSnapshot domain.
 type CaptureSnapshotArgs struct {
-	ComputedStyles []string `json:"computedStyles"` // Whitelist of computed styles to return.
+	ComputedStyles  []string `json:"computedStyles"`            // Whitelist of computed styles to return.
+	IncludeDOMRects *bool    `json:"includeDOMRects,omitempty"` // Whether to include DOM rectangles (offsetRects, clientRects, scrollRects) into the snapshot
 }
 
 // NewCaptureSnapshotArgs initializes CaptureSnapshotArgs with the required arguments.
@@ -56,6 +57,14 @@ func NewCaptureSnapshotArgs(computedStyles []string) *CaptureSnapshotArgs {
 	args := new(CaptureSnapshotArgs)
 	args.ComputedStyles = computedStyles
 	return args
+}
+
+// SetIncludeDOMRects sets the IncludeDOMRects optional argument.
+// Whether to include DOM rectangles (offsetRects, clientRects,
+// scrollRects) into the snapshot
+func (a *CaptureSnapshotArgs) SetIncludeDOMRects(includeDOMRects bool) *CaptureSnapshotArgs {
+	a.IncludeDOMRects = &includeDOMRects
+	return a
 }
 
 // CaptureSnapshotReply represents the return values for CaptureSnapshot in the DOMSnapshot domain.
