@@ -18,6 +18,11 @@ func init() {
 	lint.SetInitialism("GPU", true)
 	lint.SetInitialism("SSL", true)
 	lint.SetInitialism("MAC", true)
+	lint.SetInitialism("U2F", true)
+	lint.SetInitialism("CTAP", true)
+	lint.SetInitialism("USB", true)
+	lint.SetInitialism("NFC", true)
+	lint.SetInitialism("BLE", true)
 }
 
 // Name returns a different name if it should be different.

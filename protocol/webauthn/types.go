@@ -11,8 +11,8 @@ type AuthenticatorProtocol string
 // AuthenticatorProtocol as enums.
 const (
 	AuthenticatorProtocolNotSet AuthenticatorProtocol = ""
-	AuthenticatorProtocolU2f    AuthenticatorProtocol = "u2f"
-	AuthenticatorProtocolCtap2  AuthenticatorProtocol = "ctap2"
+	AuthenticatorProtocolU2F    AuthenticatorProtocol = "u2f"
+	AuthenticatorProtocolCTAP2  AuthenticatorProtocol = "ctap2"
 )
 
 func (e AuthenticatorProtocol) Valid() bool {
@@ -34,9 +34,9 @@ type AuthenticatorTransport string
 // AuthenticatorTransport as enums.
 const (
 	AuthenticatorTransportNotSet   AuthenticatorTransport = ""
-	AuthenticatorTransportUsb      AuthenticatorTransport = "usb"
-	AuthenticatorTransportNfc      AuthenticatorTransport = "nfc"
-	AuthenticatorTransportBle      AuthenticatorTransport = "ble"
+	AuthenticatorTransportUSB      AuthenticatorTransport = "usb"
+	AuthenticatorTransportNFC      AuthenticatorTransport = "nfc"
+	AuthenticatorTransportBLE      AuthenticatorTransport = "ble"
 	AuthenticatorTransportCable    AuthenticatorTransport = "cable"
 	AuthenticatorTransportInternal AuthenticatorTransport = "internal"
 )
