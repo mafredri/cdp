@@ -23,6 +23,7 @@ func init() {
 	lint.SetInitialism("USB", true)
 	lint.SetInitialism("NFC", true)
 	lint.SetInitialism("BLE", true)
+	lint.SetInitialism("RP", true) // RPID => Relaying Party (ID).
 }
 
 // Name returns a different name if it should be different.
