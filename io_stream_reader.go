@@ -12,11 +12,16 @@ import (
 
 // IOStreamReader represents a stream reader.
 type IOStreamReader struct {
-	next func(pos, size int) (*cdpio.ReadReply, error)
-	r    io.Reader
-	pos  int
-	eof  bool
+	next  func(pos, size int) (*cdpio.ReadReply, error)
+	close func() error
+	r     io.Reader
+	pos   int
+	eof   bool
 }
+
+var (
+	_ io.ReadCloser = (*IOStreamReader)(nil)
+)
 
 // NewIOStreamReader returns a new reader for io.Streams.
 func NewIOStreamReader(ctx context.Context, c *Client, handle cdpio.StreamHandle) *IOStreamReader {
@@ -25,6 +30,10 @@ func NewIOStreamReader(ctx context.Context, c *Client, handle cdpio.StreamHandle
 		next: func(pos, size int) (*cdpio.ReadReply, error) {
 			args.SetOffset(pos).SetSize(size)
 			return c.IO.Read(ctx, args)
+		},
+		close: func() error {
+			// TODO(mafredri): We should probably not use this context here as it could be cancelled.
+			return c.IO.Close(ctx, cdpio.NewCloseArgs(handle))
 		},
 	}
 }
@@ -39,6 +48,7 @@ func (r *IOStreamReader) read(p []byte) (n int, err error) {
 	return n, err
 }
 
+// Read a chunk of the stream.
 func (r *IOStreamReader) Read(p []byte) (n int, err error) {
 	if r.r != nil {
 		// Continue reading from buffer.
@@ -85,4 +95,9 @@ func (r *IOStreamReader) Read(p []byte) (n int, err error) {
 	}
 
 	return r.read(p)
+}
+
+// Close the stream, discard any temporary backing storage.
+func (r *IOStreamReader) Close() error {
+	return r.close()
 }
