@@ -257,6 +257,18 @@ func NewSetShowPaintRectsArgs(result bool) *SetShowPaintRectsArgs {
 	return args
 }
 
+// SetShowLayoutShiftRegionsArgs represents the arguments for SetShowLayoutShiftRegions in the Overlay domain.
+type SetShowLayoutShiftRegionsArgs struct {
+	Result bool `json:"result"` // True for showing layout shift regions
+}
+
+// NewSetShowLayoutShiftRegionsArgs initializes SetShowLayoutShiftRegionsArgs with the required arguments.
+func NewSetShowLayoutShiftRegionsArgs(result bool) *SetShowLayoutShiftRegionsArgs {
+	args := new(SetShowLayoutShiftRegionsArgs)
+	args.Result = result
+	return args
+}
+
 // SetShowScrollBottleneckRectsArgs represents the arguments for SetShowScrollBottleneckRects in the Overlay domain.
 type SetShowScrollBottleneckRectsArgs struct {
 	Show bool `json:"show"` // True for showing scroll bottleneck rects

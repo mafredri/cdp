@@ -202,6 +202,20 @@ func (d *domainClient) SetShowPaintRects(ctx context.Context, args *SetShowPaint
 	return
 }
 
+// SetShowLayoutShiftRegions invokes the Overlay method. Requests that backend
+// shows layout shift regions
+func (d *domainClient) SetShowLayoutShiftRegions(ctx context.Context, args *SetShowLayoutShiftRegionsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowLayoutShiftRegions", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowLayoutShiftRegions", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowLayoutShiftRegions", Err: err}
+	}
+	return
+}
+
 // SetShowScrollBottleneckRects invokes the Overlay method. Requests that
 // backend shows scroll bottleneck rects
 func (d *domainClient) SetShowScrollBottleneckRects(ctx context.Context, args *SetShowScrollBottleneckRectsArgs) (err error) {

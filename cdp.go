@@ -2305,6 +2305,11 @@ type Overlay interface {
 	// Requests that backend shows paint rectangles
 	SetShowPaintRects(context.Context, *overlay.SetShowPaintRectsArgs) error
 
+	// Command SetShowLayoutShiftRegions
+	//
+	// Requests that backend shows layout shift regions
+	SetShowLayoutShiftRegions(context.Context, *overlay.SetShowLayoutShiftRegionsArgs) error
+
 	// Command SetShowScrollBottleneckRects
 	//
 	// Requests that backend shows scroll bottleneck rects
@@ -3513,4 +3518,20 @@ type WebAuthn interface {
 	//
 	// Removes the given authenticator.
 	RemoveVirtualAuthenticator(context.Context, *webauthn.RemoveVirtualAuthenticatorArgs) error
+
+	// Command AddCredential
+	//
+	// Adds the credential to the specified authenticator.
+	AddCredential(context.Context, *webauthn.AddCredentialArgs) error
+
+	// Command GetCredentials
+	//
+	// Returns all the credentials stored in the given virtual
+	// authenticator.
+	GetCredentials(context.Context, *webauthn.GetCredentialsArgs) (*webauthn.GetCredentialsReply, error)
+
+	// Command ClearCredentials
+	//
+	// Clears all the credentials from the specified device.
+	ClearCredentials(context.Context, *webauthn.ClearCredentialsArgs) error
 }

@@ -5,6 +5,7 @@ package page
 import (
 	"github.com/mafredri/cdp/protocol/debugger"
 	"github.com/mafredri/cdp/protocol/dom"
+	"github.com/mafredri/cdp/protocol/io"
 	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/runtime"
 )
@@ -331,6 +332,12 @@ type PrintToPDFArgs struct {
 	HeaderTemplate          *string  `json:"headerTemplate,omitempty"`          // HTML template for the print header. Should be valid HTML markup with following classes used to inject printing values into them: - `date`: formatted print date - `title`: document title - `url`: document location - `pageNumber`: current page number - `totalPages`: total pages in the document For example, `<span class=title></span>` would generate span containing the title.
 	FooterTemplate          *string  `json:"footerTemplate,omitempty"`          // HTML template for the print footer. Should use the same format as the `headerTemplate`.
 	PreferCSSPageSize       *bool    `json:"preferCSSPageSize,omitempty"`       // Whether or not to prefer page size as defined by css. Defaults to false, in which case the content will be scaled to fit the paper size.
+	// TransferMode return as stream
+	//
+	// Values: "ReturnAsBase64", "ReturnAsStream".
+	//
+	// Note: This property is experimental.
+	TransferMode *string `json:"transferMode,omitempty"`
 }
 
 // NewPrintToPDFArgs initializes PrintToPDFArgs with the required arguments.
@@ -457,9 +464,24 @@ func (a *PrintToPDFArgs) SetPreferCSSPageSize(preferCSSPageSize bool) *PrintToPD
 	return a
 }
 
+// SetTransferMode sets the TransferMode optional argument. return as
+// stream
+//
+// Values: "ReturnAsBase64", "ReturnAsStream".
+//
+// Note: This property is experimental.
+func (a *PrintToPDFArgs) SetTransferMode(transferMode string) *PrintToPDFArgs {
+	a.TransferMode = &transferMode
+	return a
+}
+
 // PrintToPDFReply represents the return values for PrintToPDF in the Page domain.
 type PrintToPDFReply struct {
-	Data []byte `json:"data"` // Base64-encoded pdf data.
+	Data []byte `json:"data"` // Base64-encoded pdf data. Empty if |returnAsStream| is specified.
+	// Stream A handle of the stream that holds resulting PDF data.
+	//
+	// Note: This property is experimental.
+	Stream *io.StreamHandle `json:"stream,omitempty"`
 }
 
 // ReloadArgs represents the arguments for Reload in the Page domain.

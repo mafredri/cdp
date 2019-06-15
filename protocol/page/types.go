@@ -17,15 +17,20 @@ type FrameID = internal.PageFrameID
 
 // Frame Information about the Frame on the page.
 type Frame struct {
-	ID             FrameID          `json:"id"`                 // Frame unique identifier.
-	ParentID       *FrameID         `json:"parentId,omitempty"` // Parent frame identifier.
-	LoaderID       network.LoaderID `json:"loaderId"`           // Identifier of the loader associated with this frame.
-	Name           *string          `json:"name,omitempty"`     // Frame's name as specified in the tag.
-	URL            string           `json:"url"`                // Frame document's URL.
-	SecurityOrigin string           `json:"securityOrigin"`     // Frame document's security origin.
-	MimeType       string           `json:"mimeType"`           // Frame document's mimeType as determined by the browser.
+	ID       FrameID          `json:"id"`                 // Frame unique identifier.
+	ParentID *FrameID         `json:"parentId,omitempty"` // Parent frame identifier.
+	LoaderID network.LoaderID `json:"loaderId"`           // Identifier of the loader associated with this frame.
+	Name     *string          `json:"name,omitempty"`     // Frame's name as specified in the tag.
+	URL      string           `json:"url"`                // Frame document's URL without fragment.
+	// URLFragment Frame document's URL fragment including the '#'.
+	//
+	// Note: This property is experimental.
+	URLFragment    *string `json:"urlFragment,omitempty"`
+	SecurityOrigin string  `json:"securityOrigin"` // Frame document's security origin.
+	MimeType       string  `json:"mimeType"`       // Frame document's mimeType as determined by the browser.
 	// UnreachableURL If the frame failed to load, this contains the URL
-	// that could not be loaded.
+	// that could not be loaded. Note that unlike url above, this URL may
+	// contain a fragment.
 	//
 	// Note: This property is experimental.
 	UnreachableURL *string `json:"unreachableUrl,omitempty"`

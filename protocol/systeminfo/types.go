@@ -16,12 +16,71 @@ type GPUDevice struct {
 	DriverVersion string  `json:"driverVersion"` // String description of the GPU driver version.
 }
 
+// Size Describes the width and height dimensions of an entity.
+type Size struct {
+	Width  int `json:"width"`  // Width in pixels.
+	Height int `json:"height"` // Height in pixels.
+}
+
+// VideoDecodeAcceleratorCapability Describes a supported video decoding
+// profile with its associated minimum and maximum resolutions.
+type VideoDecodeAcceleratorCapability struct {
+	Profile       string `json:"profile"`       // Video codec profile that is supported, e.g. VP9 Profile 2.
+	MaxResolution Size   `json:"maxResolution"` // Maximum video dimensions in pixels supported for this |profile|.
+	MinResolution Size   `json:"minResolution"` // Minimum video dimensions in pixels supported for this |profile|.
+}
+
+// VideoEncodeAcceleratorCapability Describes a supported video encoding
+// profile with its associated maximum resolution and maximum framerate.
+type VideoEncodeAcceleratorCapability struct {
+	Profile                 string `json:"profile"`                 // Video codec profile that is supported, e.g H264 Main.
+	MaxResolution           Size   `json:"maxResolution"`           // Maximum video dimensions in pixels supported for this |profile|.
+	MaxFramerateNumerator   int    `json:"maxFramerateNumerator"`   // Maximum encoding framerate in frames per second supported for this |profile|, as fraction's numerator and denominator, e.g. 24/1 fps, 24000/1001 fps, etc.
+	MaxFramerateDenominator int    `json:"maxFramerateDenominator"` // No description.
+}
+
+// SubsamplingFormat YUV subsampling type of the pixels of a given image.
+type SubsamplingFormat string
+
+// SubsamplingFormat as enums.
+const (
+	SubsamplingFormatNotSet SubsamplingFormat = ""
+	SubsamplingFormatYuv420 SubsamplingFormat = "yuv420"
+	SubsamplingFormatYuv422 SubsamplingFormat = "yuv422"
+	SubsamplingFormatYuv444 SubsamplingFormat = "yuv444"
+)
+
+func (e SubsamplingFormat) Valid() bool {
+	switch e {
+	case "yuv420", "yuv422", "yuv444":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e SubsamplingFormat) String() string {
+	return string(e)
+}
+
+// ImageDecodeAcceleratorCapability Describes a supported image decoding
+// profile with its associated minimum and maximum resolutions and subsampling.
+type ImageDecodeAcceleratorCapability struct {
+	ImageType     string              `json:"imageType"`     // Image coded, e.g. Jpeg.
+	MaxDimensions Size                `json:"maxDimensions"` // Maximum supported dimensions of the image in pixels.
+	MinDimensions Size                `json:"minDimensions"` // Minimum supported dimensions of the image in pixels.
+	Subsamplings  []SubsamplingFormat `json:"subsamplings"`  // Optional array of supported subsampling formats, e.g. 4:2:0, if known.
+}
+
 // GPUInfo Provides information about the GPU(s) on the system.
 type GPUInfo struct {
-	Devices              []GPUDevice     `json:"devices"`                 // The graphics devices on the system. Element 0 is the primary GPU.
-	AuxAttributes        json.RawMessage `json:"auxAttributes,omitempty"` // An optional dictionary of additional GPU related attributes.
-	FeatureStatus        json.RawMessage `json:"featureStatus,omitempty"` // An optional dictionary of graphics features and their status.
-	DriverBugWorkarounds []string        `json:"driverBugWorkarounds"`    // An optional array of GPU driver bug workarounds.
+	Devices              []GPUDevice                        `json:"devices"`                 // The graphics devices on the system. Element 0 is the primary GPU.
+	AuxAttributes        json.RawMessage                    `json:"auxAttributes,omitempty"` // An optional dictionary of additional GPU related attributes.
+	FeatureStatus        json.RawMessage                    `json:"featureStatus,omitempty"` // An optional dictionary of graphics features and their status.
+	DriverBugWorkarounds []string                           `json:"driverBugWorkarounds"`    // An optional array of GPU driver bug workarounds.
+	VideoDecoding        []VideoDecodeAcceleratorCapability `json:"videoDecoding"`           // Supported accelerated video decoding capabilities.
+	VideoEncoding        []VideoEncodeAcceleratorCapability `json:"videoEncoding"`           // Supported accelerated video encoding capabilities.
+	ImageDecoding        []ImageDecodeAcceleratorCapability `json:"imageDecoding"`           // Supported accelerated image decoding capabilities.
 }
 
 // ProcessInfo Represents process info.

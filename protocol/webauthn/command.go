@@ -30,3 +30,46 @@ func NewRemoveVirtualAuthenticatorArgs(authenticatorID AuthenticatorID) *RemoveV
 	args.AuthenticatorID = authenticatorID
 	return args
 }
+
+// AddCredentialArgs represents the arguments for AddCredential in the WebAuthn domain.
+type AddCredentialArgs struct {
+	AuthenticatorID AuthenticatorID `json:"authenticatorId"` // No description.
+	Credential      Credential      `json:"credential"`      // No description.
+}
+
+// NewAddCredentialArgs initializes AddCredentialArgs with the required arguments.
+func NewAddCredentialArgs(authenticatorID AuthenticatorID, credential Credential) *AddCredentialArgs {
+	args := new(AddCredentialArgs)
+	args.AuthenticatorID = authenticatorID
+	args.Credential = credential
+	return args
+}
+
+// GetCredentialsArgs represents the arguments for GetCredentials in the WebAuthn domain.
+type GetCredentialsArgs struct {
+	AuthenticatorID AuthenticatorID `json:"authenticatorId"` // No description.
+}
+
+// NewGetCredentialsArgs initializes GetCredentialsArgs with the required arguments.
+func NewGetCredentialsArgs(authenticatorID AuthenticatorID) *GetCredentialsArgs {
+	args := new(GetCredentialsArgs)
+	args.AuthenticatorID = authenticatorID
+	return args
+}
+
+// GetCredentialsReply represents the return values for GetCredentials in the WebAuthn domain.
+type GetCredentialsReply struct {
+	Credentials []Credential `json:"credentials"` // No description.
+}
+
+// ClearCredentialsArgs represents the arguments for ClearCredentials in the WebAuthn domain.
+type ClearCredentialsArgs struct {
+	AuthenticatorID AuthenticatorID `json:"authenticatorId"` // No description.
+}
+
+// NewClearCredentialsArgs initializes ClearCredentialsArgs with the required arguments.
+func NewClearCredentialsArgs(authenticatorID AuthenticatorID) *ClearCredentialsArgs {
+	args := new(ClearCredentialsArgs)
+	args.AuthenticatorID = authenticatorID
+	return args
+}
