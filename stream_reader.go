@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/base64"
-	"errors"
 	"io"
 	"strings"
 
@@ -48,19 +47,24 @@ func (r *StreamReader) Read(p []byte) (n int, err error) {
 	if r.eof {
 		return 0, io.EOF
 	}
-	if len(p) < 1 {
+	if len(p) == 0 {
+		return 0, nil
+	}
+
+	// Chrome might have an off-by-one when deciding the maximum
+	// size (at least for base64 encoded data), usually it will
+	// overflow. We subtract one to make sure it fits into p.
+	size := len(p) - 1
+	if size < 1 {
 		// Safety-check to avoid crashing Chrome (e.g. via SetSize(-1)).
-		return 0, errors.New("cdp: StreamReader.Read: p must be larger than zero")
+		size = 1
 	}
 
 	reply, err := r.c.IO.Read(
 		r.ctx,
 		cdpio.NewReadArgs(r.handle).
 			SetOffset(r.pos).
-			// Chrome might have an off-by-one when deciding
-			// the maximum size, usually it will overflow.
-			// We subtract one to make sure it fits into p.
-			SetSize(len(p)-1),
+			SetSize(size),
 	)
 	if err != nil {
 		return 0, err
