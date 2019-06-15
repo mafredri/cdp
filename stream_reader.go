@@ -10,8 +10,8 @@ import (
 	cdpio "github.com/mafredri/cdp/protocol/io"
 )
 
-// StreamReader represents a stream reader.
-type StreamReader struct {
+// IOStreamReader represents a stream reader.
+type IOStreamReader struct {
 	ctx    context.Context
 	handle cdpio.StreamHandle
 	r      io.Reader
@@ -21,15 +21,15 @@ type StreamReader struct {
 }
 
 // NewStreamReader returns a new reader for io.Streams.
-func NewStreamReader(ctx context.Context, c *Client, handle cdpio.StreamHandle) *StreamReader {
-	return &StreamReader{
+func NewIOStreamReader(ctx context.Context, c *Client, handle cdpio.StreamHandle) *IOStreamReader {
+	return &IOStreamReader{
 		ctx:    ctx,
 		handle: handle,
 		c:      c,
 	}
 }
 
-func (r *StreamReader) read(p []byte) (n int, err error) {
+func (r *IOStreamReader) read(p []byte) (n int, err error) {
 	n, err = r.r.Read(p)
 	r.pos += n
 	if !r.eof && err == io.EOF {
@@ -39,7 +39,7 @@ func (r *StreamReader) read(p []byte) (n int, err error) {
 	return n, err
 }
 
-func (r *StreamReader) Read(p []byte) (n int, err error) {
+func (r *IOStreamReader) Read(p []byte) (n int, err error) {
 	if r.r != nil {
 		// Continue reading from buffer.
 		return r.read(p)
