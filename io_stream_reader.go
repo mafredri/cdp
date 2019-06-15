@@ -12,20 +12,20 @@ import (
 
 // IOStreamReader represents a stream reader.
 type IOStreamReader struct {
-	ctx    context.Context
-	handle cdpio.StreamHandle
-	r      io.Reader
-	pos    int
-	eof    bool
-	c      *Client
+	next func(pos, size int) (*cdpio.ReadReply, error)
+	r    io.Reader
+	pos  int
+	eof  bool
 }
 
-// NewStreamReader returns a new reader for io.Streams.
+// NewIOStreamReader returns a new reader for io.Streams.
 func NewIOStreamReader(ctx context.Context, c *Client, handle cdpio.StreamHandle) *IOStreamReader {
+	args := cdpio.NewReadArgs(handle)
 	return &IOStreamReader{
-		ctx:    ctx,
-		handle: handle,
-		c:      c,
+		next: func(pos, size int) (*cdpio.ReadReply, error) {
+			args.SetOffset(pos).SetSize(size)
+			return c.IO.Read(ctx, args)
+		},
 	}
 }
 
@@ -60,12 +60,7 @@ func (r *IOStreamReader) Read(p []byte) (n int, err error) {
 		size = 1
 	}
 
-	reply, err := r.c.IO.Read(
-		r.ctx,
-		cdpio.NewReadArgs(r.handle).
-			SetOffset(r.pos).
-			SetSize(size),
-	)
+	reply, err := r.next(r.pos, size)
 	if err != nil {
 		return 0, err
 	}
