@@ -1,6 +1,7 @@
 package cdp
 
 import (
+	"context"
 	"encoding/base64"
 	"io"
 	"io/ioutil"
@@ -22,6 +23,25 @@ func TestIOStreamReader_base64Decode(t *testing.T) {
 	r := &IOStreamReader{
 		next: func(pos, size int) (*cdpio.ReadReply, error) {
 			return newReply(base64.StdEncoding.EncodeToString([]byte(want)), true, true), nil
+		},
+	}
+
+	b, err := ioutil.ReadAll(r)
+	if err != nil {
+		t.Error(err)
+	}
+
+	got := string(b)
+	if got != want {
+		t.Errorf("want %q, got %q", want, got)
+	}
+}
+
+func TestIOStreamReader_string(t *testing.T) {
+	want := "Hello world"
+	r := &IOStreamReader{
+		next: func(pos, size int) (*cdpio.ReadReply, error) {
+			return newReply(want, false, true), nil
 		},
 	}
 
@@ -72,5 +92,12 @@ func TestIOStreamReader_replyTooBig(t *testing.T) {
 	}
 	if got != want {
 		t.Errorf("want %q, got %q", want, got)
+	}
+}
+
+func TestNewIOStreamReader(t *testing.T) {
+	r := NewIOStreamReader(context.Background(), nil, "")
+	if r == nil {
+		t.Error("want reader, got nil")
 	}
 }
