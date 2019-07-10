@@ -339,6 +339,60 @@ func TestConn_StreamRecv(t *testing.T) {
 	}
 }
 
+func TestConn_PropagateError(t *testing.T) {
+	srv := newTestServer(t, nil)
+	defer srv.Close()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	s1, err := NewStream(ctx, "test.Stream1", srv.conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s1.Close()
+	s2, err := NewStream(ctx, "test.Stream2", srv.conn)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer s2.Close()
+
+	errC := make(chan error, 2)
+	go func() {
+		errC <- Invoke(ctx, "test.Invoke", nil, nil, srv.conn)
+	}()
+	go func() {
+		var reply string
+		errC <- s1.RecvMsg(&reply)
+	}()
+
+	// Give a little time for both Invoke & Recv.
+	time.Sleep(5 * time.Millisecond)
+
+	srv.wsConn.Close()
+
+	// Give a little time for connection to close.
+	time.Sleep(5 * time.Millisecond)
+
+	lastErr := Invoke(ctx, "test.Invoke", nil, nil, srv.conn)
+	if lastErr == nil {
+		t.Error("RecvMsg on closed connection: got nil, want an error")
+	}
+
+	var reply string
+	err = s2.RecvMsg(&reply)
+	if err != lastErr {
+		t.Errorf("Error was not repeated, got %v, want %v", err, lastErr)
+	}
+
+	for i := 0; i < 2; i++ {
+		err := <-errC
+		if err != lastErr {
+			t.Errorf("Error was not repeated, got %v, want %v", err, lastErr)
+		}
+	}
+}
+
 func TestConn_Context(t *testing.T) {
 	srv := newTestServer(t, nil)
 	defer srv.Close()
