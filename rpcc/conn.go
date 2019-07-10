@@ -406,10 +406,19 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 	}
 
 	if err != nil {
-		// Remove reference on error, avoid
-		// unnecessary work in recv.
 		c.mu.Lock()
-		delete(c.pending, reqID)
+		if c.closed {
+			// There is a chance that WriteRequest is executed in
+			// parallel with the closing of Conn. If it happens,
+			// err will be a "use of closed network connection"
+			// error, but we want to return the error that closed
+			// Conn.
+			err = c.err
+		} else {
+			// Remove reference on error, avoid
+			// unnecessary work in recv.
+			delete(c.pending, reqID)
+		}
 		c.mu.Unlock()
 		return err
 	}
