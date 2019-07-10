@@ -80,7 +80,7 @@ type LoadingFinishedReply struct {
 
 // RequestInterceptedClient is a client for RequestIntercepted events. Details
 // of an intercepted HTTP request, which must be either allowed, blocked,
-// modified or mocked.
+// modified or mocked. Deprecated, use Fetch.requestPaused instead.
 type RequestInterceptedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

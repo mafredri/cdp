@@ -80,7 +80,8 @@ func (d *domainClient) ClearBrowserCookies(ctx context.Context) (err error) {
 // with any modifications, or blocks it, or completes it with the provided
 // response bytes. If a network fetch occurs as a result which encounters a
 // redirect an additional Network.requestIntercepted event will be sent with
-// the same InterceptionId.
+// the same InterceptionId. Deprecated, use Fetch.continueRequest,
+// Fetch.fulfillRequest and Fetch.failRequest instead.
 func (d *domainClient) ContinueInterceptedRequest(ctx context.Context, args *ContinueInterceptedRequestArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Network.continueInterceptedRequest", args, nil, d.conn)
@@ -380,6 +381,7 @@ func (d *domainClient) SetExtraHTTPHeaders(ctx context.Context, args *SetExtraHT
 
 // SetRequestInterception invokes the Network method. Sets the requests to
 // intercept that match the provided patterns and optionally resource types.
+// Deprecated, please use Fetch.enable instead.
 func (d *domainClient) SetRequestInterception(ctx context.Context, args *SetRequestInterceptionArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Network.setRequestInterception", args, nil, d.conn)

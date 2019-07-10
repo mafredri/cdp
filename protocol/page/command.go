@@ -801,3 +801,38 @@ func (a *GenerateTestReportArgs) SetGroup(group string) *GenerateTestReportArgs 
 	a.Group = &group
 	return a
 }
+
+// SetInterceptFileChooserDialogArgs represents the arguments for SetInterceptFileChooserDialog in the Page domain.
+type SetInterceptFileChooserDialogArgs struct {
+	Enabled bool `json:"enabled"` // No description.
+}
+
+// NewSetInterceptFileChooserDialogArgs initializes SetInterceptFileChooserDialogArgs with the required arguments.
+func NewSetInterceptFileChooserDialogArgs(enabled bool) *SetInterceptFileChooserDialogArgs {
+	args := new(SetInterceptFileChooserDialogArgs)
+	args.Enabled = enabled
+	return args
+}
+
+// HandleFileChooserArgs represents the arguments for HandleFileChooser in the Page domain.
+type HandleFileChooserArgs struct {
+	// Action
+	//
+	// Values: "accept", "cancel", "fallback".
+	Action string   `json:"action"`
+	Files  []string `json:"files,omitempty"` // Array of absolute file paths to set, only respected with `accept` action.
+}
+
+// NewHandleFileChooserArgs initializes HandleFileChooserArgs with the required arguments.
+func NewHandleFileChooserArgs(action string) *HandleFileChooserArgs {
+	args := new(HandleFileChooserArgs)
+	args.Action = action
+	return args
+}
+
+// SetFiles sets the Files optional argument. Array of absolute file
+// paths to set, only respected with `accept` action.
+func (a *HandleFileChooserArgs) SetFiles(files []string) *HandleFileChooserArgs {
+	a.Files = files
+	return a
+}

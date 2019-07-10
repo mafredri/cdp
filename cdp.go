@@ -1983,12 +1983,13 @@ type Network interface {
 
 	// Command ContinueInterceptedRequest
 	//
-	// Response to Network.requestIntercepted which either modifies the
-	// request to continue with any modifications, or blocks it, or
-	// completes it with the provided response bytes. If a network fetch
-	// occurs as a result which encounters a redirect an additional
+	// Deprecated: Response to Network.requestIntercepted which either
+	// modifies the request to continue with any modifications, or blocks
+	// it, or completes it with the provided response bytes. If a network
+	// fetch occurs as a result which encounters a redirect an additional
 	// Network.requestIntercepted event will be sent with the same
-	// InterceptionId.
+	// InterceptionId. use Fetch.continueRequest,
+	// Fetch.fulfillRequest and Fetch.failRequest instead.
 	//
 	// Note: This command is experimental.
 	ContinueInterceptedRequest(context.Context, *network.ContinueInterceptedRequestArgs) error
@@ -2128,8 +2129,9 @@ type Network interface {
 
 	// Command SetRequestInterception
 	//
-	// Sets the requests to intercept that match the provided patterns and
-	// optionally resource types.
+	// Deprecated: Sets the requests to intercept that match the provided
+	// patterns and optionally resource types. please use
+	// Fetch.enable instead.
 	//
 	// Note: This command is experimental.
 	SetRequestInterception(context.Context, *network.SetRequestInterceptionArgs) error
@@ -2156,8 +2158,9 @@ type Network interface {
 
 	// Event RequestIntercepted
 	//
-	// Details of an intercepted HTTP request, which must be either
-	// allowed, blocked, modified or mocked.
+	// Deprecated: Details of an intercepted HTTP request, which must be
+	// either allowed, blocked, modified or mocked. use
+	// Fetch.requestPaused instead.
 	//
 	// Note: This event is experimental.
 	RequestIntercepted(context.Context) (network.RequestInterceptedClient, error)
@@ -2624,8 +2627,31 @@ type Page interface {
 	// Note: This command is experimental.
 	WaitForDebugger(context.Context) error
 
+	// Command SetInterceptFileChooserDialog
+	//
+	// Intercept file chooser requests and transfer control to protocol
+	// clients. When file chooser interception is enabled, native file
+	// chooser dialog is not shown. Instead, a protocol event
+	// `Page.fileChooserOpened` is emitted. File chooser can be handled
+	// with `page.handleFileChooser` command.
+	//
+	// Note: This command is experimental.
+	SetInterceptFileChooserDialog(context.Context, *page.SetInterceptFileChooserDialogArgs) error
+
+	// Command HandleFileChooser
+	//
+	// Accepts or cancels an intercepted file chooser dialog.
+	//
+	// Note: This command is experimental.
+	HandleFileChooser(context.Context, *page.HandleFileChooserArgs) error
+
 	// Event DOMContentEventFired
 	DOMContentEventFired(context.Context) (page.DOMContentEventFiredClient, error)
+
+	// Event FileChooserOpened
+	//
+	// Emitted only when `page.interceptFileChooser` is enabled.
+	FileChooserOpened(context.Context) (page.FileChooserOpenedClient, error)
 
 	// Event FrameAttached
 	//
@@ -3534,4 +3560,10 @@ type WebAuthn interface {
 	//
 	// Clears all the credentials from the specified device.
 	ClearCredentials(context.Context, *webauthn.ClearCredentialsArgs) error
+
+	// Command SetUserVerified
+	//
+	// Sets whether User Verification succeeds or fails for an
+	// authenticator. The default is true.
+	SetUserVerified(context.Context, *webauthn.SetUserVerifiedArgs) error
 }

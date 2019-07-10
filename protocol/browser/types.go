@@ -71,11 +71,13 @@ const (
 	PermissionTypeSensors                  PermissionType = "sensors"
 	PermissionTypeVideoCapture             PermissionType = "videoCapture"
 	PermissionTypeIdleDetection            PermissionType = "idleDetection"
+	PermissionTypeWakeLockScreen           PermissionType = "wakeLockScreen"
+	PermissionTypeWakeLockSystem           PermissionType = "wakeLockSystem"
 )
 
 func (e PermissionType) Valid() bool {
 	switch e {
-	case "accessibilityEvents", "audioCapture", "backgroundSync", "backgroundFetch", "clipboardRead", "clipboardWrite", "durableStorage", "flash", "geolocation", "midi", "midiSysex", "notifications", "paymentHandler", "periodicBackgroundSync", "protectedMediaIdentifier", "sensors", "videoCapture", "idleDetection":
+	case "accessibilityEvents", "audioCapture", "backgroundSync", "backgroundFetch", "clipboardRead", "clipboardWrite", "durableStorage", "flash", "geolocation", "midi", "midiSysex", "notifications", "paymentHandler", "periodicBackgroundSync", "protectedMediaIdentifier", "sensors", "videoCapture", "idleDetection", "wakeLockScreen", "wakeLockSystem":
 		return true
 	default:
 		return false

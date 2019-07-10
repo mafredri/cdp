@@ -563,6 +563,37 @@ func (d *domainClient) WaitForDebugger(ctx context.Context) (err error) {
 	return
 }
 
+// SetInterceptFileChooserDialog invokes the Page method. Intercept file
+// chooser requests and transfer control to protocol clients. When file chooser
+// interception is enabled, native file chooser dialog is not shown. Instead, a
+// protocol event `Page.fileChooserOpened` is emitted. File chooser can be
+// handled with `page.handleFileChooser` command.
+func (d *domainClient) SetInterceptFileChooserDialog(ctx context.Context, args *SetInterceptFileChooserDialogArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setInterceptFileChooserDialog", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setInterceptFileChooserDialog", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetInterceptFileChooserDialog", Err: err}
+	}
+	return
+}
+
+// HandleFileChooser invokes the Page method. Accepts or cancels an
+// intercepted file chooser dialog.
+func (d *domainClient) HandleFileChooser(ctx context.Context, args *HandleFileChooserArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.handleFileChooser", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.handleFileChooser", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "HandleFileChooser", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) DOMContentEventFired(ctx context.Context) (DOMContentEventFiredClient, error) {
 	s, err := rpcc.NewStream(ctx, "Page.domContentEventFired", d.conn)
 	if err != nil {
@@ -580,6 +611,27 @@ func (c *dOMContentEventFiredClient) Recv() (*DOMContentEventFiredReply, error) 
 	event := new(DOMContentEventFiredReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "DOMContentEventFired Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) FileChooserOpened(ctx context.Context) (FileChooserOpenedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.fileChooserOpened", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &fileChooserOpenedClient{Stream: s}, nil
+}
+
+type fileChooserOpenedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *fileChooserOpenedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *fileChooserOpenedClient) Recv() (*FileChooserOpenedReply, error) {
+	event := new(FileChooserOpenedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "FileChooserOpened Recv", Err: err}
 	}
 	return event, nil
 }

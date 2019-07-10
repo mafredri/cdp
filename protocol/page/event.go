@@ -21,6 +21,23 @@ type DOMContentEventFiredReply struct {
 	Timestamp network.MonotonicTime `json:"timestamp"` // No description.
 }
 
+// FileChooserOpenedClient is a client for FileChooserOpened events. Emitted
+// only when `page.interceptFileChooser` is enabled.
+type FileChooserOpenedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*FileChooserOpenedReply, error)
+	rpcc.Stream
+}
+
+// FileChooserOpenedReply is the reply for FileChooserOpened events.
+type FileChooserOpenedReply struct {
+	// Mode
+	//
+	// Values: "selectSingle", "selectMultiple".
+	Mode string `json:"mode"`
+}
+
 // FrameAttachedClient is a client for FrameAttached events. Fired when frame
 // has been attached to its parent.
 type FrameAttachedClient interface {

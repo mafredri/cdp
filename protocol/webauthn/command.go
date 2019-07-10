@@ -73,3 +73,17 @@ func NewClearCredentialsArgs(authenticatorID AuthenticatorID) *ClearCredentialsA
 	args.AuthenticatorID = authenticatorID
 	return args
 }
+
+// SetUserVerifiedArgs represents the arguments for SetUserVerified in the WebAuthn domain.
+type SetUserVerifiedArgs struct {
+	AuthenticatorID AuthenticatorID `json:"authenticatorId"` // No description.
+	IsUserVerified  bool            `json:"isUserVerified"`  // No description.
+}
+
+// NewSetUserVerifiedArgs initializes SetUserVerifiedArgs with the required arguments.
+func NewSetUserVerifiedArgs(authenticatorID AuthenticatorID, isUserVerified bool) *SetUserVerifiedArgs {
+	args := new(SetUserVerifiedArgs)
+	args.AuthenticatorID = authenticatorID
+	args.IsUserVerified = isUserVerified
+	return args
+}

@@ -110,3 +110,17 @@ func (d *domainClient) ClearCredentials(ctx context.Context, args *ClearCredenti
 	}
 	return
 }
+
+// SetUserVerified invokes the WebAuthn method. Sets whether User Verification
+// succeeds or fails for an authenticator. The default is true.
+func (d *domainClient) SetUserVerified(ctx context.Context, args *SetUserVerifiedArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "WebAuthn.setUserVerified", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "WebAuthn.setUserVerified", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "WebAuthn", Op: "SetUserVerified", Err: err}
+	}
+	return
+}

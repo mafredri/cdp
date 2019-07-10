@@ -52,6 +52,7 @@ type CompleteClient interface {
 
 // CompleteReply is the reply for TracingComplete events.
 type CompleteReply struct {
+	DataLossOccurred  bool              `json:"dataLossOccurred"`            // Indicates whether some trace data is known to have been lost, e.g. because the trace ring buffer wrapped around.
 	Stream            *io.StreamHandle  `json:"stream,omitempty"`            // A handle of the stream that holds resulting trace data.
 	TraceFormat       StreamFormat      `json:"traceFormat,omitempty"`       // Trace data format of returned stream.
 	StreamCompression StreamCompression `json:"streamCompression,omitempty"` // Compression format of returned stream.

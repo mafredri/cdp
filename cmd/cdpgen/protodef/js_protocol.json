@@ -983,7 +983,8 @@
                         "backgroundFetch",
                         "backgroundSync",
                         "pushMessaging",
-                        "notifications"
+                        "notifications",
+                        "paymentHandler"
                     ]
                 },
                 {
@@ -1200,7 +1201,9 @@
                         "protectedMediaIdentifier",
                         "sensors",
                         "videoCapture",
-                        "idleDetection"
+                        "idleDetection",
+                        "wakeLockScreen",
+                        "wakeLockSystem"
                     ]
                 },
                 {
@@ -9173,6 +9176,11 @@
                             "items": {
                                 "$ref": "SignedExchangeSignature"
                             }
+                        },
+                        {
+                            "name": "headerIntegrity",
+                            "description": "Signed exchange header integrity hash in the form of \"sha256-<base64-hash-value>\".",
+                            "type": "string"
                         }
                     ]
                 },
@@ -9297,8 +9305,9 @@
                 },
                 {
                     "name": "continueInterceptedRequest",
-                    "description": "Response to Network.requestIntercepted which either modifies the request to continue with any\nmodifications, or blocks it, or completes it with the provided response bytes. If a network\nfetch occurs as a result which encounters a redirect an additional Network.requestIntercepted\nevent will be sent with the same InterceptionId.",
+                    "description": "Response to Network.requestIntercepted which either modifies the request to continue with any\nmodifications, or blocks it, or completes it with the provided response bytes. If a network\nfetch occurs as a result which encounters a redirect an additional Network.requestIntercepted\nevent will be sent with the same InterceptionId.\nDeprecated, use Fetch.continueRequest, Fetch.fulfillRequest and Fetch.failRequest instead.",
                     "experimental": true,
+                    "deprecated": true,
                     "parameters": [
                         {
                             "name": "interceptionId",
@@ -9779,8 +9788,9 @@
                 },
                 {
                     "name": "setRequestInterception",
-                    "description": "Sets the requests to intercept that match the provided patterns and optionally resource types.",
+                    "description": "Sets the requests to intercept that match the provided patterns and optionally resource types.\nDeprecated, please use Fetch.enable instead.",
                     "experimental": true,
+                    "deprecated": true,
                     "parameters": [
                         {
                             "name": "patterns",
@@ -9942,8 +9952,9 @@
                 },
                 {
                     "name": "requestIntercepted",
-                    "description": "Details of an intercepted HTTP request, which must be either allowed, blocked, modified or\nmocked.",
+                    "description": "Details of an intercepted HTTP request, which must be either allowed, blocked, modified or\nmocked.\nDeprecated, use Fetch.requestPaused instead.",
                     "experimental": true,
+                    "deprecated": true,
                     "parameters": [
                         {
                             "name": "interceptionId",
@@ -12243,6 +12254,42 @@
                     "name": "waitForDebugger",
                     "description": "Pauses page execution. Can be resumed using generic Runtime.runIfWaitingForDebugger.",
                     "experimental": true
+                },
+                {
+                    "name": "setInterceptFileChooserDialog",
+                    "description": "Intercept file chooser requests and transfer control to protocol clients.\nWhen file chooser interception is enabled, native file chooser dialog is not shown.\nInstead, a protocol event `Page.fileChooserOpened` is emitted.\nFile chooser can be handled with `page.handleFileChooser` command.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "enabled",
+                            "type": "boolean"
+                        }
+                    ]
+                },
+                {
+                    "name": "handleFileChooser",
+                    "description": "Accepts or cancels an intercepted file chooser dialog.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "action",
+                            "type": "string",
+                            "enum": [
+                                "accept",
+                                "cancel",
+                                "fallback"
+                            ]
+                        },
+                        {
+                            "name": "files",
+                            "description": "Array of absolute file paths to set, only respected with `accept` action.",
+                            "optional": true,
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    ]
                 }
             ],
             "events": [
@@ -12252,6 +12299,20 @@
                         {
                             "name": "timestamp",
                             "$ref": "Network.MonotonicTime"
+                        }
+                    ]
+                },
+                {
+                    "name": "fileChooserOpened",
+                    "description": "Emitted only when `page.interceptFileChooser` is enabled.",
+                    "parameters": [
+                        {
+                            "name": "mode",
+                            "type": "string",
+                            "enum": [
+                                "selectSingle",
+                                "selectMultiple"
+                            ]
                         }
                     ]
                 },
@@ -12903,6 +12964,7 @@
                         {
                             "name": "schemeIsCryptographic",
                             "description": "True if the page was loaded over cryptographic transport such as HTTPS.",
+                            "deprecated": true,
                             "type": "boolean"
                         },
                         {
@@ -14451,6 +14513,11 @@
                     "description": "Signals that tracing is stopped and there is no trace buffers pending flush, all data were\ndelivered via dataCollected events.",
                     "parameters": [
                         {
+                            "name": "dataLossOccurred",
+                            "description": "Indicates whether some trace data is known to have been lost, e.g. because the trace ring\nbuffer wrapped around.",
+                            "type": "boolean"
+                        },
+                        {
                             "name": "stream",
                             "description": "A handle of the stream that holds resulting trace data.",
                             "optional": true,
@@ -15062,6 +15129,12 @@
                         {
                             "name": "hasUserVerification",
                             "type": "boolean"
+                        },
+                        {
+                            "name": "automaticPresenceSimulation",
+                            "description": "If set to true, tests of user presence will succeed immediately.\nOtherwise, they will not be resolved. Defaults to true.",
+                            "optional": true,
+                            "type": "boolean"
                         }
                     ]
                 },
@@ -15166,6 +15239,20 @@
                         {
                             "name": "authenticatorId",
                             "$ref": "AuthenticatorId"
+                        }
+                    ]
+                },
+                {
+                    "name": "setUserVerified",
+                    "description": "Sets whether User Verification succeeds or fails for an authenticator.\nThe default is true.",
+                    "parameters": [
+                        {
+                            "name": "authenticatorId",
+                            "$ref": "AuthenticatorId"
+                        },
+                        {
+                            "name": "isUserVerified",
+                            "type": "boolean"
                         }
                     ]
                 }

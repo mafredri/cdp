@@ -56,10 +56,11 @@ func (e AuthenticatorTransport) String() string {
 
 // VirtualAuthenticatorOptions
 type VirtualAuthenticatorOptions struct {
-	Protocol            AuthenticatorProtocol  `json:"protocol"`            // No description.
-	Transport           AuthenticatorTransport `json:"transport"`           // No description.
-	HasResidentKey      bool                   `json:"hasResidentKey"`      // No description.
-	HasUserVerification bool                   `json:"hasUserVerification"` // No description.
+	Protocol                    AuthenticatorProtocol  `json:"protocol"`                              // No description.
+	Transport                   AuthenticatorTransport `json:"transport"`                             // No description.
+	HasResidentKey              bool                   `json:"hasResidentKey"`                        // No description.
+	HasUserVerification         bool                   `json:"hasUserVerification"`                   // No description.
+	AutomaticPresenceSimulation *bool                  `json:"automaticPresenceSimulation,omitempty"` // If set to true, tests of user presence will succeed immediately. Otherwise, they will not be resolved. Defaults to true.
 }
 
 // Credential

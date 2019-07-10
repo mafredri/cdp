@@ -19,11 +19,12 @@ const (
 	ServiceNameBackgroundSync  ServiceName = "backgroundSync"
 	ServiceNamePushMessaging   ServiceName = "pushMessaging"
 	ServiceNameNotifications   ServiceName = "notifications"
+	ServiceNamePaymentHandler  ServiceName = "paymentHandler"
 )
 
 func (e ServiceName) Valid() bool {
 	switch e {
-	case "backgroundFetch", "backgroundSync", "pushMessaging", "notifications":
+	case "backgroundFetch", "backgroundSync", "pushMessaging", "notifications", "paymentHandler":
 		return true
 	default:
 		return false
