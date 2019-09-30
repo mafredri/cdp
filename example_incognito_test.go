@@ -16,12 +16,15 @@ import (
 )
 
 func Example_incognito() {
+	if !*testBrowser {
+		return	
+	}
 	err := func() error {
 		ctx, cancel := context.WithCancel(context.Background())
 		defer cancel()
 
 		// Fetch the websocket URL for the browser endpoint.
-		bver, err := devtool.New("http://localhost:9222").Version(ctx)
+		bver, err := devtool.New(fmt.Sprintf("http://localhost:%d", *remoteDebuggingPort)).Version(ctx)
 		if err != nil {
 			return err
 		}
