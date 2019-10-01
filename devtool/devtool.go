@@ -266,7 +266,8 @@ func (d *DevTools) resolveHost(ctx context.Context) error {
 
 	addrs, err := net.DefaultResolver.LookupHost(ctx, origHost)
 	if err != nil {
-		return err
+		log.Printf("error resolving host %s: %v\n", origHost, err)
+		addrs = append(addrs, origHost)
 	}
 
 	newURL := ""
