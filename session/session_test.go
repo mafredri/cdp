@@ -99,7 +99,7 @@ func TestManager(t *testing.T) {
 	}
 }
 
-func TestManagerInFlatProtocolMode(t *testing.T) {
+func TestManager_InFlatProtocolMode(t *testing.T) {
 	// This is a variation of the previous test, TestManager; the only
 	// difference is that here, we're using flat session mode.
 	checkBrowser(t)
@@ -211,6 +211,36 @@ func TestManager_Close(t *testing.T) {
 	}
 }
 
+func TestManager_Close_InFlatProtocolMode(t *testing.T) {
+	checkBrowser(t)
+
+	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
+	defer cancel()
+
+	c := testutil.NewClient(ctx, t)
+
+	// Test connection closure, should close session client.
+	m, err := session.NewManager(c.Client)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer m.Close()
+
+	newPage := c.NewPage(ctx)
+	defer newPage.Close()
+
+	_, err = m.Attach(ctx, newPage.ID()) // Closed by sc.Close().
+	if err != nil {
+		t.Error(err)
+	}
+
+	m.Close()
+	_, err = m.Attach(ctx, newPage.ID())
+	if err == nil {
+		t.Error("Attach: expected error after Close, got nil")
+	}
+}
+
 func TestManager_ClosesErrorChan(t *testing.T) {
 	checkBrowser(t)
 
@@ -258,6 +288,35 @@ func TestManager_CloseUnderlyingConn(t *testing.T) {
 	_, err = m.Dial(ctx, targetID)
 	if err == nil {
 		t.Error("Dial succeeded on a closed connection")
+	}
+}
+
+func TestManager_CloseUnderlyingConn_InFlatProtocolMode(t *testing.T) {
+	checkBrowser(t)
+
+	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
+	defer cancel()
+
+	c := testutil.NewClient(ctx, t)
+
+	// Get a target ID for use in Attach (doesn't matter that it's closed).
+	p := c.NewPage(ctx)
+	p.Close()
+	targetID := p.ID()
+
+	// Test connection closure, should close session Manager.
+	m, err := session.NewManager(c.Client)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer m.Close()
+
+	c.Conn.Close()
+	time.Sleep(10 * time.Millisecond) // Give time for context propagation.
+
+	_, err = m.Attach(ctx, targetID)
+	if err == nil {
+		t.Error("Attach succeeded on a closed connection")
 	}
 }
 
