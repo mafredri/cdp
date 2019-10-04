@@ -99,6 +99,88 @@ func TestManager(t *testing.T) {
 	}
 }
 
+func TestManagerInFlatProtocolMode(t *testing.T) {
+	// This is a variation of the previous test, TestManager; the only
+	// difference is that here, we're using flat session mode.
+	checkBrowser(t)
+
+	ctx, cancel := context.WithTimeout(context.TODO(), 10*time.Second)
+	defer cancel()
+
+	// Give time for goroutines to settle at the end (increases coverage).
+	defer func() {
+		time.Sleep(10 * time.Millisecond)
+	}()
+
+	c := testutil.NewClient(ctx, t)
+
+	m, err := session.NewManager(c.Client)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer m.Close()
+
+	newPage := c.NewPage(ctx)
+
+	// Test session usage; m.Attach creates a session in flat protocol mode.
+	pageConn, err := m.Attach(ctx, newPage.ID())
+	if err != nil {
+		t.Fatal(err)
+	}
+	// pageConn is a rpcc.SessionConn rather than an rpcc.Conn, but
+	// supports the Close method just as well.
+	defer pageConn.Close()
+
+	// To create a cdp client for a session, we pass the session id to
+	// a root client.
+	pageC := c.Client.NewSession(pageConn.SessionID)
+
+	err = pageC.Page.Enable(ctx)
+	if err != nil {
+		t.Error(err)
+	}
+	fired, err := pageC.Page.DOMContentEventFired(ctx)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer fired.Close()
+
+	// TODO(maf): Use testdata / sample HTML for test.
+	_, err = pageC.Page.Navigate(ctx,
+		page.NewNavigateArgs("https://www.google.com"))
+	if err != nil {
+		t.Error(err)
+	}
+
+	_, err = fired.Recv()
+	if err != nil {
+		t.Error(err)
+	}
+
+	eval, err := pageC.Runtime.Evaluate(ctx, runtime.NewEvaluateArgs(`document.title`))
+	if err != nil {
+		t.Error(err)
+	}
+
+	var title string
+	err = json.Unmarshal(eval.Result.Value, &title)
+	if err != nil {
+		t.Error(err)
+	}
+
+	if !strings.Contains(title, "Google") {
+		t.Error("bad title:", title)
+	}
+
+	// Close the page, this should also close pageConn.
+	newPage.Close()
+	select {
+	case <-pageConn.Context().Done():
+	case <-ctx.Done():
+		t.Error("timed out waiting for session to close")
+	}
+}
+
 func TestManager_Close(t *testing.T) {
 	checkBrowser(t)
 

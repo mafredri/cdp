@@ -13,17 +13,25 @@ import (
 
 // domainClient is a client for the WebAudio domain. This domain allows
 // inspection of Web Audio API. https://webaudio.github.io/web-audio-api/
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the WebAudio domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the WebAudio domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Enable invokes the WebAudio method. Enables the WebAudio domain and starts
 // sending context lifetime events.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "WebAudio.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "WebAudio.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAudio", Op: "Enable", Err: err}
 	}
@@ -32,7 +40,7 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 
 // Disable invokes the WebAudio method. Disables the WebAudio domain.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "WebAudio.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "WebAudio.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAudio", Op: "Disable", Err: err}
 	}
@@ -44,9 +52,9 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 func (d *domainClient) GetRealtimeData(ctx context.Context, args *GetRealtimeDataArgs) (reply *GetRealtimeDataReply, err error) {
 	reply = new(GetRealtimeDataReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "WebAudio.getRealtimeData", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAudio.getRealtimeData", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "WebAudio.getRealtimeData", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAudio.getRealtimeData", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAudio", Op: "GetRealtimeData", Err: err}
@@ -55,7 +63,7 @@ func (d *domainClient) GetRealtimeData(ctx context.Context, args *GetRealtimeDat
 }
 
 func (d *domainClient) ContextCreated(ctx context.Context) (ContextCreatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "WebAudio.contextCreated", d.conn)
+	s, err := rpcc.NewStream(ctx, "WebAudio.contextCreated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -76,7 +84,7 @@ func (c *contextCreatedClient) Recv() (*ContextCreatedReply, error) {
 }
 
 func (d *domainClient) ContextDestroyed(ctx context.Context) (ContextDestroyedClient, error) {
-	s, err := rpcc.NewStream(ctx, "WebAudio.contextDestroyed", d.conn)
+	s, err := rpcc.NewStream(ctx, "WebAudio.contextDestroyed", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +105,7 @@ func (c *contextDestroyedClient) Recv() (*ContextDestroyedReply, error) {
 }
 
 func (d *domainClient) ContextChanged(ctx context.Context) (ContextChangedClient, error) {
-	s, err := rpcc.NewStream(ctx, "WebAudio.contextChanged", d.conn)
+	s, err := rpcc.NewStream(ctx, "WebAudio.contextChanged", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

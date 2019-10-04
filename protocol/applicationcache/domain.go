@@ -11,17 +11,25 @@ import (
 )
 
 // domainClient is a client for the ApplicationCache domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the ApplicationCache domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the ApplicationCache domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Enable invokes the ApplicationCache method. Enables application cache
 // domain notifications.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "ApplicationCache.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "ApplicationCache.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "ApplicationCache", Op: "Enable", Err: err}
 	}
@@ -33,9 +41,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 func (d *domainClient) GetApplicationCacheForFrame(ctx context.Context, args *GetApplicationCacheForFrameArgs) (reply *GetApplicationCacheForFrameReply, err error) {
 	reply = new(GetApplicationCacheForFrameReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "ApplicationCache.getApplicationCacheForFrame", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ApplicationCache.getApplicationCacheForFrame", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "ApplicationCache.getApplicationCacheForFrame", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ApplicationCache.getApplicationCacheForFrame", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "ApplicationCache", Op: "GetApplicationCacheForFrame", Err: err}
@@ -48,7 +56,7 @@ func (d *domainClient) GetApplicationCacheForFrame(ctx context.Context, args *Ge
 // associated with some application cache.
 func (d *domainClient) GetFramesWithManifests(ctx context.Context) (reply *GetFramesWithManifestsReply, err error) {
 	reply = new(GetFramesWithManifestsReply)
-	err = rpcc.Invoke(ctx, "ApplicationCache.getFramesWithManifests", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "ApplicationCache.getFramesWithManifests", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "ApplicationCache", Op: "GetFramesWithManifests", Err: err}
 	}
@@ -60,9 +68,9 @@ func (d *domainClient) GetFramesWithManifests(ctx context.Context) (reply *GetFr
 func (d *domainClient) GetManifestForFrame(ctx context.Context, args *GetManifestForFrameArgs) (reply *GetManifestForFrameReply, err error) {
 	reply = new(GetManifestForFrameReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "ApplicationCache.getManifestForFrame", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ApplicationCache.getManifestForFrame", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "ApplicationCache.getManifestForFrame", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ApplicationCache.getManifestForFrame", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "ApplicationCache", Op: "GetManifestForFrame", Err: err}
@@ -71,7 +79,7 @@ func (d *domainClient) GetManifestForFrame(ctx context.Context, args *GetManifes
 }
 
 func (d *domainClient) ApplicationCacheStatusUpdated(ctx context.Context) (StatusUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "ApplicationCache.applicationCacheStatusUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "ApplicationCache.applicationCacheStatusUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -92,7 +100,7 @@ func (c *statusUpdatedClient) Recv() (*StatusUpdatedReply, error) {
 }
 
 func (d *domainClient) NetworkStateUpdated(ctx context.Context) (NetworkStateUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "ApplicationCache.networkStateUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "ApplicationCache.networkStateUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

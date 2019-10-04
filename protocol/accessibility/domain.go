@@ -11,17 +11,25 @@ import (
 )
 
 // domainClient is a client for the Accessibility domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Accessibility domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Accessibility domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Disable invokes the Accessibility method. Disables the accessibility
 // domain.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Accessibility.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Accessibility.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Accessibility", Op: "Disable", Err: err}
 	}
@@ -33,7 +41,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // turns on accessibility for the page, which can impact performance until
 // accessibility is disabled.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Accessibility.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Accessibility.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Accessibility", Op: "Enable", Err: err}
 	}
@@ -46,9 +54,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 func (d *domainClient) GetPartialAXTree(ctx context.Context, args *GetPartialAXTreeArgs) (reply *GetPartialAXTreeReply, err error) {
 	reply = new(GetPartialAXTreeReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Accessibility.getPartialAXTree", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Accessibility.getPartialAXTree", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Accessibility.getPartialAXTree", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Accessibility.getPartialAXTree", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Accessibility", Op: "GetPartialAXTree", Err: err}
@@ -60,7 +68,7 @@ func (d *domainClient) GetPartialAXTree(ctx context.Context, args *GetPartialAXT
 // accessibility tree
 func (d *domainClient) GetFullAXTree(ctx context.Context) (reply *GetFullAXTreeReply, err error) {
 	reply = new(GetFullAXTreeReply)
-	err = rpcc.Invoke(ctx, "Accessibility.getFullAXTree", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Accessibility.getFullAXTree", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Accessibility", Op: "GetFullAXTree", Err: err}
 	}

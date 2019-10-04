@@ -15,9 +15,10 @@ var (
 
 // message contains the invoked method name, data and next func.
 type message struct {
-	method string
-	data   []byte
-	next   func()
+	method    string
+	sessionID string
+	data      []byte
+	next      func()
 }
 
 // messageBuffer is an unbounded channel of message.
@@ -115,15 +116,15 @@ type Stream interface {
 
 // NewStream creates a new stream that listens to notifications from the
 // RPC server. This function is called by generated code.
-func NewStream(ctx context.Context, method string, conn *Conn) (Stream, error) {
+func NewStream(ctx context.Context, method, sessionID string, conn *Conn) (Stream, error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
 
-	return newStreamClient(ctx, method, conn)
+	return newStreamClient(ctx, method, sessionID, conn)
 }
 
-func newStreamClient(ctx context.Context, method string, conn *Conn) (*streamClient, error) {
+func newStreamClient(ctx context.Context, method, sessionID string, conn *Conn) (*streamClient, error) {
 	s := &streamClient{
 		conn:   conn,
 		method: method,
@@ -133,7 +134,7 @@ func newStreamClient(ctx context.Context, method string, conn *Conn) (*streamCli
 		done:   make(chan struct{}),
 	}
 
-	remove, err := conn.listen(method, s)
+	remove, err := conn.listen(method, sessionID, s)
 	if err != nil {
 		return nil, err
 	}
@@ -146,8 +147,9 @@ func newStreamClient(ctx context.Context, method string, conn *Conn) (*streamCli
 
 type streamClient struct {
 	// Used to sync streams.
-	conn   *Conn
-	method string
+	conn      *Conn
+	method    string
+	sessionID string
 
 	// User provided context.
 	ctx context.Context
@@ -333,8 +335,8 @@ func (s *streamClients) remove(seq uint64) {
 	s.mu.Unlock()
 }
 
-func (s *streamClients) write(method string, args []byte) {
-	m := message{method: method, data: args}
+func (s *streamClients) write(method, sessionID string, args []byte) {
+	m := message{method: method, sessionID: sessionID, data: args}
 
 	s.mu.Lock()
 	for _, w := range s.writers {

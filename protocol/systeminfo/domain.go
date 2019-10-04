@@ -13,18 +13,26 @@ import (
 
 // domainClient is a client for the SystemInfo domain. The SystemInfo domain
 // defines methods and events for querying low-level system information.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the SystemInfo domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the SystemInfo domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // GetInfo invokes the SystemInfo method. Returns information about the
 // system.
 func (d *domainClient) GetInfo(ctx context.Context) (reply *GetInfoReply, err error) {
 	reply = new(GetInfoReply)
-	err = rpcc.Invoke(ctx, "SystemInfo.getInfo", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "SystemInfo.getInfo", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "SystemInfo", Op: "GetInfo", Err: err}
 	}
@@ -35,7 +43,7 @@ func (d *domainClient) GetInfo(ctx context.Context) (reply *GetInfoReply, err er
 // running processes.
 func (d *domainClient) GetProcessInfo(ctx context.Context) (reply *GetProcessInfoReply, err error) {
 	reply = new(GetProcessInfoReply)
-	err = rpcc.Invoke(ctx, "SystemInfo.getProcessInfo", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "SystemInfo.getProcessInfo", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "SystemInfo", Op: "GetProcessInfo", Err: err}
 	}

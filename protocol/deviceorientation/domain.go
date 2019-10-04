@@ -11,17 +11,25 @@ import (
 )
 
 // domainClient is a client for the DeviceOrientation domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the DeviceOrientation domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the DeviceOrientation domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // ClearDeviceOrientationOverride invokes the DeviceOrientation method. Clears
 // the overridden Device Orientation.
 func (d *domainClient) ClearDeviceOrientationOverride(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DeviceOrientation.clearDeviceOrientationOverride", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "DeviceOrientation.clearDeviceOrientationOverride", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "DeviceOrientation", Op: "ClearDeviceOrientationOverride", Err: err}
 	}
@@ -32,9 +40,9 @@ func (d *domainClient) ClearDeviceOrientationOverride(ctx context.Context) (err 
 // Overrides the Device Orientation.
 func (d *domainClient) SetDeviceOrientationOverride(ctx context.Context, args *SetDeviceOrientationOverrideArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DeviceOrientation.setDeviceOrientationOverride", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DeviceOrientation.setDeviceOrientationOverride", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DeviceOrientation.setDeviceOrientationOverride", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DeviceOrientation.setDeviceOrientationOverride", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DeviceOrientation", Op: "SetDeviceOrientationOverride", Err: err}

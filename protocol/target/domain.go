@@ -13,19 +13,27 @@ import (
 
 // domainClient is a client for the Target domain. Supports additional targets
 // discovery and allows to attach to them.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Target domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Target domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // ActivateTarget invokes the Target method. Activates (focuses) the target.
 func (d *domainClient) ActivateTarget(ctx context.Context, args *ActivateTargetArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.activateTarget", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.activateTarget", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.activateTarget", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.activateTarget", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "ActivateTarget", Err: err}
@@ -38,9 +46,9 @@ func (d *domainClient) ActivateTarget(ctx context.Context, args *ActivateTargetA
 func (d *domainClient) AttachToTarget(ctx context.Context, args *AttachToTargetArgs) (reply *AttachToTargetReply, err error) {
 	reply = new(AttachToTargetReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.attachToTarget", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.attachToTarget", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.attachToTarget", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.attachToTarget", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "AttachToTarget", Err: err}
@@ -52,7 +60,7 @@ func (d *domainClient) AttachToTarget(ctx context.Context, args *AttachToTargetA
 // target, only uses flat sessionId mode.
 func (d *domainClient) AttachToBrowserTarget(ctx context.Context) (reply *AttachToBrowserTargetReply, err error) {
 	reply = new(AttachToBrowserTargetReply)
-	err = rpcc.Invoke(ctx, "Target.attachToBrowserTarget", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Target.attachToBrowserTarget", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "AttachToBrowserTarget", Err: err}
 	}
@@ -64,9 +72,9 @@ func (d *domainClient) AttachToBrowserTarget(ctx context.Context) (reply *Attach
 func (d *domainClient) CloseTarget(ctx context.Context, args *CloseTargetArgs) (reply *CloseTargetReply, err error) {
 	reply = new(CloseTargetReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.closeTarget", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.closeTarget", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.closeTarget", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.closeTarget", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "CloseTarget", Err: err}
@@ -86,9 +94,9 @@ func (d *domainClient) CloseTarget(ctx context.Context, args *CloseTargetArgs) (
 // notifications and command responses.
 func (d *domainClient) ExposeDevToolsProtocol(ctx context.Context, args *ExposeDevToolsProtocolArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.exposeDevToolsProtocol", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.exposeDevToolsProtocol", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.exposeDevToolsProtocol", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.exposeDevToolsProtocol", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "ExposeDevToolsProtocol", Err: err}
@@ -101,7 +109,7 @@ func (d *domainClient) ExposeDevToolsProtocol(ctx context.Context, args *ExposeD
 // one.
 func (d *domainClient) CreateBrowserContext(ctx context.Context) (reply *CreateBrowserContextReply, err error) {
 	reply = new(CreateBrowserContextReply)
-	err = rpcc.Invoke(ctx, "Target.createBrowserContext", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Target.createBrowserContext", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "CreateBrowserContext", Err: err}
 	}
@@ -112,7 +120,7 @@ func (d *domainClient) CreateBrowserContext(ctx context.Context) (reply *CreateB
 // created with `Target.createBrowserContext` method.
 func (d *domainClient) GetBrowserContexts(ctx context.Context) (reply *GetBrowserContextsReply, err error) {
 	reply = new(GetBrowserContextsReply)
-	err = rpcc.Invoke(ctx, "Target.getBrowserContexts", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Target.getBrowserContexts", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "GetBrowserContexts", Err: err}
 	}
@@ -123,9 +131,9 @@ func (d *domainClient) GetBrowserContexts(ctx context.Context) (reply *GetBrowse
 func (d *domainClient) CreateTarget(ctx context.Context, args *CreateTargetArgs) (reply *CreateTargetReply, err error) {
 	reply = new(CreateTargetReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.createTarget", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.createTarget", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.createTarget", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.createTarget", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "CreateTarget", Err: err}
@@ -136,9 +144,9 @@ func (d *domainClient) CreateTarget(ctx context.Context, args *CreateTargetArgs)
 // DetachFromTarget invokes the Target method. Detaches session with given id.
 func (d *domainClient) DetachFromTarget(ctx context.Context, args *DetachFromTargetArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.detachFromTarget", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.detachFromTarget", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.detachFromTarget", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.detachFromTarget", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "DetachFromTarget", Err: err}
@@ -151,9 +159,9 @@ func (d *domainClient) DetachFromTarget(ctx context.Context, args *DetachFromTar
 // hooks.
 func (d *domainClient) DisposeBrowserContext(ctx context.Context, args *DisposeBrowserContextArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.disposeBrowserContext", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.disposeBrowserContext", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.disposeBrowserContext", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.disposeBrowserContext", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "DisposeBrowserContext", Err: err}
@@ -166,9 +174,9 @@ func (d *domainClient) DisposeBrowserContext(ctx context.Context, args *DisposeB
 func (d *domainClient) GetTargetInfo(ctx context.Context, args *GetTargetInfoArgs) (reply *GetTargetInfoReply, err error) {
 	reply = new(GetTargetInfoReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.getTargetInfo", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.getTargetInfo", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.getTargetInfo", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.getTargetInfo", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "GetTargetInfo", Err: err}
@@ -180,7 +188,7 @@ func (d *domainClient) GetTargetInfo(ctx context.Context, args *GetTargetInfoArg
 // targets.
 func (d *domainClient) GetTargets(ctx context.Context) (reply *GetTargetsReply, err error) {
 	reply = new(GetTargetsReply)
-	err = rpcc.Invoke(ctx, "Target.getTargets", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Target.getTargets", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "GetTargets", Err: err}
 	}
@@ -191,9 +199,9 @@ func (d *domainClient) GetTargets(ctx context.Context) (reply *GetTargetsReply, 
 // session with given id.
 func (d *domainClient) SendMessageToTarget(ctx context.Context, args *SendMessageToTargetArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.sendMessageToTarget", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.sendMessageToTarget", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.sendMessageToTarget", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.sendMessageToTarget", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "SendMessageToTarget", Err: err}
@@ -207,9 +215,9 @@ func (d *domainClient) SendMessageToTarget(ctx context.Context, args *SendMessag
 // off, automatically detaches from all currently attached targets.
 func (d *domainClient) SetAutoAttach(ctx context.Context, args *SetAutoAttachArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.setAutoAttach", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.setAutoAttach", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.setAutoAttach", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.setAutoAttach", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "SetAutoAttach", Err: err}
@@ -222,9 +230,9 @@ func (d *domainClient) SetAutoAttach(ctx context.Context, args *SetAutoAttachArg
 // `targetCreated/targetInfoChanged/targetDestroyed` events.
 func (d *domainClient) SetDiscoverTargets(ctx context.Context, args *SetDiscoverTargetsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.setDiscoverTargets", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.setDiscoverTargets", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.setDiscoverTargets", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.setDiscoverTargets", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "SetDiscoverTargets", Err: err}
@@ -236,9 +244,9 @@ func (d *domainClient) SetDiscoverTargets(ctx context.Context, args *SetDiscover
 // the specified locations, when `setDiscoverTargets` was set to `true`.
 func (d *domainClient) SetRemoteLocations(ctx context.Context, args *SetRemoteLocationsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Target.setRemoteLocations", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.setRemoteLocations", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Target.setRemoteLocations", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Target.setRemoteLocations", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "SetRemoteLocations", Err: err}
@@ -247,7 +255,7 @@ func (d *domainClient) SetRemoteLocations(ctx context.Context, args *SetRemoteLo
 }
 
 func (d *domainClient) AttachedToTarget(ctx context.Context) (AttachedToTargetClient, error) {
-	s, err := rpcc.NewStream(ctx, "Target.attachedToTarget", d.conn)
+	s, err := rpcc.NewStream(ctx, "Target.attachedToTarget", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -268,7 +276,7 @@ func (c *attachedToTargetClient) Recv() (*AttachedToTargetReply, error) {
 }
 
 func (d *domainClient) DetachedFromTarget(ctx context.Context) (DetachedFromTargetClient, error) {
-	s, err := rpcc.NewStream(ctx, "Target.detachedFromTarget", d.conn)
+	s, err := rpcc.NewStream(ctx, "Target.detachedFromTarget", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -289,7 +297,7 @@ func (c *detachedFromTargetClient) Recv() (*DetachedFromTargetReply, error) {
 }
 
 func (d *domainClient) ReceivedMessageFromTarget(ctx context.Context) (ReceivedMessageFromTargetClient, error) {
-	s, err := rpcc.NewStream(ctx, "Target.receivedMessageFromTarget", d.conn)
+	s, err := rpcc.NewStream(ctx, "Target.receivedMessageFromTarget", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +318,7 @@ func (c *receivedMessageFromTargetClient) Recv() (*ReceivedMessageFromTargetRepl
 }
 
 func (d *domainClient) TargetCreated(ctx context.Context) (CreatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Target.targetCreated", d.conn)
+	s, err := rpcc.NewStream(ctx, "Target.targetCreated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -331,7 +339,7 @@ func (c *createdClient) Recv() (*CreatedReply, error) {
 }
 
 func (d *domainClient) TargetDestroyed(ctx context.Context) (DestroyedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Target.targetDestroyed", d.conn)
+	s, err := rpcc.NewStream(ctx, "Target.targetDestroyed", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -352,7 +360,7 @@ func (c *destroyedClient) Recv() (*DestroyedReply, error) {
 }
 
 func (d *domainClient) TargetCrashed(ctx context.Context) (CrashedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Target.targetCrashed", d.conn)
+	s, err := rpcc.NewStream(ctx, "Target.targetCrashed", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -373,7 +381,7 @@ func (c *crashedClient) Recv() (*CrashedReply, error) {
 }
 
 func (d *domainClient) TargetInfoChanged(ctx context.Context) (InfoChangedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Target.targetInfoChanged", d.conn)
+	s, err := rpcc.NewStream(ctx, "Target.targetInfoChanged", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

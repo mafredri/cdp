@@ -13,18 +13,26 @@ import (
 
 // domainClient is a client for the Emulation domain. This domain emulates
 // different environments for the page.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Emulation domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Emulation domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // CanEmulate invokes the Emulation method. Tells whether emulation is
 // supported.
 func (d *domainClient) CanEmulate(ctx context.Context) (reply *CanEmulateReply, err error) {
 	reply = new(CanEmulateReply)
-	err = rpcc.Invoke(ctx, "Emulation.canEmulate", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Emulation.canEmulate", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "CanEmulate", Err: err}
 	}
@@ -34,7 +42,7 @@ func (d *domainClient) CanEmulate(ctx context.Context) (reply *CanEmulateReply, 
 // ClearDeviceMetricsOverride invokes the Emulation method. Clears the
 // overridden device metrics.
 func (d *domainClient) ClearDeviceMetricsOverride(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Emulation.clearDeviceMetricsOverride", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Emulation.clearDeviceMetricsOverride", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "ClearDeviceMetricsOverride", Err: err}
 	}
@@ -44,7 +52,7 @@ func (d *domainClient) ClearDeviceMetricsOverride(ctx context.Context) (err erro
 // ClearGeolocationOverride invokes the Emulation method. Clears the
 // overridden Geolocation Position and Error.
 func (d *domainClient) ClearGeolocationOverride(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Emulation.clearGeolocationOverride", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Emulation.clearGeolocationOverride", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "ClearGeolocationOverride", Err: err}
 	}
@@ -54,7 +62,7 @@ func (d *domainClient) ClearGeolocationOverride(ctx context.Context) (err error)
 // ResetPageScaleFactor invokes the Emulation method. Requests that page scale
 // factor is reset to initial values.
 func (d *domainClient) ResetPageScaleFactor(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Emulation.resetPageScaleFactor", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Emulation.resetPageScaleFactor", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "ResetPageScaleFactor", Err: err}
 	}
@@ -65,9 +73,9 @@ func (d *domainClient) ResetPageScaleFactor(ctx context.Context) (err error) {
 // simulating a focused and active page.
 func (d *domainClient) SetFocusEmulationEnabled(ctx context.Context, args *SetFocusEmulationEnabledArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setFocusEmulationEnabled", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setFocusEmulationEnabled", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setFocusEmulationEnabled", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setFocusEmulationEnabled", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetFocusEmulationEnabled", Err: err}
@@ -79,9 +87,9 @@ func (d *domainClient) SetFocusEmulationEnabled(ctx context.Context, args *SetFo
 // to emulate slow CPUs.
 func (d *domainClient) SetCPUThrottlingRate(ctx context.Context, args *SetCPUThrottlingRateArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setCPUThrottlingRate", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setCPUThrottlingRate", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setCPUThrottlingRate", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setCPUThrottlingRate", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetCPUThrottlingRate", Err: err}
@@ -94,9 +102,9 @@ func (d *domainClient) SetCPUThrottlingRate(ctx context.Context, args *SetCPUThr
 // override is used if the content does not specify one.
 func (d *domainClient) SetDefaultBackgroundColorOverride(ctx context.Context, args *SetDefaultBackgroundColorOverrideArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setDefaultBackgroundColorOverride", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setDefaultBackgroundColorOverride", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setDefaultBackgroundColorOverride", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setDefaultBackgroundColorOverride", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetDefaultBackgroundColorOverride", Err: err}
@@ -110,9 +118,9 @@ func (d *domainClient) SetDefaultBackgroundColorOverride(ctx context.Context, ar
 // "device-width"/"device-height"-related CSS media query results).
 func (d *domainClient) SetDeviceMetricsOverride(ctx context.Context, args *SetDeviceMetricsOverrideArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setDeviceMetricsOverride", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setDeviceMetricsOverride", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setDeviceMetricsOverride", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setDeviceMetricsOverride", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetDeviceMetricsOverride", Err: err}
@@ -123,9 +131,9 @@ func (d *domainClient) SetDeviceMetricsOverride(ctx context.Context, args *SetDe
 // SetScrollbarsHidden invokes the Emulation method.
 func (d *domainClient) SetScrollbarsHidden(ctx context.Context, args *SetScrollbarsHiddenArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setScrollbarsHidden", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setScrollbarsHidden", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setScrollbarsHidden", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setScrollbarsHidden", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetScrollbarsHidden", Err: err}
@@ -136,9 +144,9 @@ func (d *domainClient) SetScrollbarsHidden(ctx context.Context, args *SetScrollb
 // SetDocumentCookieDisabled invokes the Emulation method.
 func (d *domainClient) SetDocumentCookieDisabled(ctx context.Context, args *SetDocumentCookieDisabledArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setDocumentCookieDisabled", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setDocumentCookieDisabled", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setDocumentCookieDisabled", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setDocumentCookieDisabled", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetDocumentCookieDisabled", Err: err}
@@ -149,9 +157,9 @@ func (d *domainClient) SetDocumentCookieDisabled(ctx context.Context, args *SetD
 // SetEmitTouchEventsForMouse invokes the Emulation method.
 func (d *domainClient) SetEmitTouchEventsForMouse(ctx context.Context, args *SetEmitTouchEventsForMouseArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setEmitTouchEventsForMouse", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setEmitTouchEventsForMouse", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setEmitTouchEventsForMouse", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setEmitTouchEventsForMouse", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetEmitTouchEventsForMouse", Err: err}
@@ -163,9 +171,9 @@ func (d *domainClient) SetEmitTouchEventsForMouse(ctx context.Context, args *Set
 // CSS media queries.
 func (d *domainClient) SetEmulatedMedia(ctx context.Context, args *SetEmulatedMediaArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setEmulatedMedia", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setEmulatedMedia", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setEmulatedMedia", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setEmulatedMedia", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetEmulatedMedia", Err: err}
@@ -178,9 +186,9 @@ func (d *domainClient) SetEmulatedMedia(ctx context.Context, args *SetEmulatedMe
 // position unavailable.
 func (d *domainClient) SetGeolocationOverride(ctx context.Context, args *SetGeolocationOverrideArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setGeolocationOverride", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setGeolocationOverride", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setGeolocationOverride", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setGeolocationOverride", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetGeolocationOverride", Err: err}
@@ -192,9 +200,9 @@ func (d *domainClient) SetGeolocationOverride(ctx context.Context, args *SetGeol
 // returned by the javascript navigator object.
 func (d *domainClient) SetNavigatorOverrides(ctx context.Context, args *SetNavigatorOverridesArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setNavigatorOverrides", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setNavigatorOverrides", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setNavigatorOverrides", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setNavigatorOverrides", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetNavigatorOverrides", Err: err}
@@ -206,9 +214,9 @@ func (d *domainClient) SetNavigatorOverrides(ctx context.Context, args *SetNavig
 // scale factor.
 func (d *domainClient) SetPageScaleFactor(ctx context.Context, args *SetPageScaleFactorArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setPageScaleFactor", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setPageScaleFactor", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setPageScaleFactor", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setPageScaleFactor", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetPageScaleFactor", Err: err}
@@ -220,9 +228,9 @@ func (d *domainClient) SetPageScaleFactor(ctx context.Context, args *SetPageScal
 // execution in the page.
 func (d *domainClient) SetScriptExecutionDisabled(ctx context.Context, args *SetScriptExecutionDisabledArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setScriptExecutionDisabled", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setScriptExecutionDisabled", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setScriptExecutionDisabled", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setScriptExecutionDisabled", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetScriptExecutionDisabled", Err: err}
@@ -234,9 +242,9 @@ func (d *domainClient) SetScriptExecutionDisabled(ctx context.Context, args *Set
 // platforms which do not support them.
 func (d *domainClient) SetTouchEmulationEnabled(ctx context.Context, args *SetTouchEmulationEnabledArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setTouchEmulationEnabled", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setTouchEmulationEnabled", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setTouchEmulationEnabled", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setTouchEmulationEnabled", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetTouchEmulationEnabled", Err: err}
@@ -251,9 +259,9 @@ func (d *domainClient) SetTouchEmulationEnabled(ctx context.Context, args *SetTo
 func (d *domainClient) SetVirtualTimePolicy(ctx context.Context, args *SetVirtualTimePolicyArgs) (reply *SetVirtualTimePolicyReply, err error) {
 	reply = new(SetVirtualTimePolicyReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setVirtualTimePolicy", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setVirtualTimePolicy", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setVirtualTimePolicy", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setVirtualTimePolicy", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetVirtualTimePolicy", Err: err}
@@ -265,9 +273,9 @@ func (d *domainClient) SetVirtualTimePolicy(ctx context.Context, args *SetVirtua
 // system timezone with the specified one.
 func (d *domainClient) SetTimezoneOverride(ctx context.Context, args *SetTimezoneOverrideArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setTimezoneOverride", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setTimezoneOverride", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setTimezoneOverride", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setTimezoneOverride", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetTimezoneOverride", Err: err}
@@ -281,9 +289,9 @@ func (d *domainClient) SetTimezoneOverride(ctx context.Context, args *SetTimezon
 // supported on Android.
 func (d *domainClient) SetVisibleSize(ctx context.Context, args *SetVisibleSizeArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setVisibleSize", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setVisibleSize", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setVisibleSize", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setVisibleSize", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetVisibleSize", Err: err}
@@ -295,9 +303,9 @@ func (d *domainClient) SetVisibleSize(ctx context.Context, args *SetVisibleSizeA
 // agent with the given string.
 func (d *domainClient) SetUserAgentOverride(ctx context.Context, args *SetUserAgentOverrideArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Emulation.setUserAgentOverride", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setUserAgentOverride", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Emulation.setUserAgentOverride", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Emulation.setUserAgentOverride", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetUserAgentOverride", Err: err}
@@ -306,7 +314,7 @@ func (d *domainClient) SetUserAgentOverride(ctx context.Context, args *SetUserAg
 }
 
 func (d *domainClient) VirtualTimeBudgetExpired(ctx context.Context) (VirtualTimeBudgetExpiredClient, error) {
-	s, err := rpcc.NewStream(ctx, "Emulation.virtualTimeBudgetExpired", d.conn)
+	s, err := rpcc.NewStream(ctx, "Emulation.virtualTimeBudgetExpired", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

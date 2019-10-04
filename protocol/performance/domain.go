@@ -11,17 +11,25 @@ import (
 )
 
 // domainClient is a client for the Performance domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Performance domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Performance domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Disable invokes the Performance method. Disable collecting and reporting
 // metrics.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Performance.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Performance.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Performance", Op: "Disable", Err: err}
 	}
@@ -31,7 +39,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // Enable invokes the Performance method. Enable collecting and reporting
 // metrics.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Performance.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Performance.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Performance", Op: "Enable", Err: err}
 	}
@@ -44,9 +52,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 // collection is enabled returns an error.
 func (d *domainClient) SetTimeDomain(ctx context.Context, args *SetTimeDomainArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Performance.setTimeDomain", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Performance.setTimeDomain", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Performance.setTimeDomain", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Performance.setTimeDomain", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Performance", Op: "SetTimeDomain", Err: err}
@@ -58,7 +66,7 @@ func (d *domainClient) SetTimeDomain(ctx context.Context, args *SetTimeDomainArg
 // run-time metrics.
 func (d *domainClient) GetMetrics(ctx context.Context) (reply *GetMetricsReply, err error) {
 	reply = new(GetMetricsReply)
-	err = rpcc.Invoke(ctx, "Performance.getMetrics", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Performance.getMetrics", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Performance", Op: "GetMetrics", Err: err}
 	}
@@ -66,7 +74,7 @@ func (d *domainClient) GetMetrics(ctx context.Context) (reply *GetMetricsReply, 
 }
 
 func (d *domainClient) Metrics(ctx context.Context) (MetricsClient, error) {
-	s, err := rpcc.NewStream(ctx, "Performance.metrics", d.conn)
+	s, err := rpcc.NewStream(ctx, "Performance.metrics", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

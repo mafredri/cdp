@@ -15,20 +15,28 @@ import (
 // domainClient is a client for the Debugger domain. Debugger domain exposes
 // JavaScript debugging capabilities. It allows setting and removing
 // breakpoints, stepping through execution, exploring stack traces, etc.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Debugger domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Debugger domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // ContinueToLocation invokes the Debugger method. Continues execution until
 // specific location is reached.
 func (d *domainClient) ContinueToLocation(ctx context.Context, args *ContinueToLocationArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.continueToLocation", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.continueToLocation", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.continueToLocation", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.continueToLocation", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "ContinueToLocation", Err: err}
@@ -38,7 +46,7 @@ func (d *domainClient) ContinueToLocation(ctx context.Context, args *ContinueToL
 
 // Disable invokes the Debugger method. Disables debugger for given page.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Debugger.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Debugger.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "Disable", Err: err}
 	}
@@ -51,9 +59,9 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (reply *EnableReply, err error) {
 	reply = new(EnableReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.enable", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.enable", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.enable", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.enable", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "Enable", Err: err}
@@ -66,9 +74,9 @@ func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (reply *Ena
 func (d *domainClient) EvaluateOnCallFrame(ctx context.Context, args *EvaluateOnCallFrameArgs) (reply *EvaluateOnCallFrameReply, err error) {
 	reply = new(EvaluateOnCallFrameReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.evaluateOnCallFrame", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.evaluateOnCallFrame", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.evaluateOnCallFrame", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.evaluateOnCallFrame", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "EvaluateOnCallFrame", Err: err}
@@ -82,9 +90,9 @@ func (d *domainClient) EvaluateOnCallFrame(ctx context.Context, args *EvaluateOn
 func (d *domainClient) GetPossibleBreakpoints(ctx context.Context, args *GetPossibleBreakpointsArgs) (reply *GetPossibleBreakpointsReply, err error) {
 	reply = new(GetPossibleBreakpointsReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.getPossibleBreakpoints", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.getPossibleBreakpoints", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.getPossibleBreakpoints", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.getPossibleBreakpoints", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "GetPossibleBreakpoints", Err: err}
@@ -97,9 +105,9 @@ func (d *domainClient) GetPossibleBreakpoints(ctx context.Context, args *GetPoss
 func (d *domainClient) GetScriptSource(ctx context.Context, args *GetScriptSourceArgs) (reply *GetScriptSourceReply, err error) {
 	reply = new(GetScriptSourceReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.getScriptSource", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.getScriptSource", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.getScriptSource", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.getScriptSource", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "GetScriptSource", Err: err}
@@ -112,9 +120,9 @@ func (d *domainClient) GetScriptSource(ctx context.Context, args *GetScriptSourc
 func (d *domainClient) GetStackTrace(ctx context.Context, args *GetStackTraceArgs) (reply *GetStackTraceReply, err error) {
 	reply = new(GetStackTraceReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.getStackTrace", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.getStackTrace", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.getStackTrace", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.getStackTrace", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "GetStackTrace", Err: err}
@@ -124,7 +132,7 @@ func (d *domainClient) GetStackTrace(ctx context.Context, args *GetStackTraceArg
 
 // Pause invokes the Debugger method. Stops on the next JavaScript statement.
 func (d *domainClient) Pause(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Debugger.pause", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Debugger.pause", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "Pause", Err: err}
 	}
@@ -134,9 +142,9 @@ func (d *domainClient) Pause(ctx context.Context) (err error) {
 // PauseOnAsyncCall invokes the Debugger method.
 func (d *domainClient) PauseOnAsyncCall(ctx context.Context, args *PauseOnAsyncCallArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.pauseOnAsyncCall", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.pauseOnAsyncCall", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.pauseOnAsyncCall", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.pauseOnAsyncCall", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "PauseOnAsyncCall", Err: err}
@@ -148,9 +156,9 @@ func (d *domainClient) PauseOnAsyncCall(ctx context.Context, args *PauseOnAsyncC
 // breakpoint.
 func (d *domainClient) RemoveBreakpoint(ctx context.Context, args *RemoveBreakpointArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.removeBreakpoint", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.removeBreakpoint", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.removeBreakpoint", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.removeBreakpoint", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "RemoveBreakpoint", Err: err}
@@ -163,9 +171,9 @@ func (d *domainClient) RemoveBreakpoint(ctx context.Context, args *RemoveBreakpo
 func (d *domainClient) RestartFrame(ctx context.Context, args *RestartFrameArgs) (reply *RestartFrameReply, err error) {
 	reply = new(RestartFrameReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.restartFrame", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.restartFrame", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.restartFrame", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.restartFrame", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "RestartFrame", Err: err}
@@ -175,7 +183,7 @@ func (d *domainClient) RestartFrame(ctx context.Context, args *RestartFrameArgs)
 
 // Resume invokes the Debugger method. Resumes JavaScript execution.
 func (d *domainClient) Resume(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Debugger.resume", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Debugger.resume", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "Resume", Err: err}
 	}
@@ -187,9 +195,9 @@ func (d *domainClient) Resume(ctx context.Context) (err error) {
 func (d *domainClient) SearchInContent(ctx context.Context, args *SearchInContentArgs) (reply *SearchInContentReply, err error) {
 	reply = new(SearchInContentReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.searchInContent", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.searchInContent", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.searchInContent", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.searchInContent", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SearchInContent", Err: err}
@@ -201,9 +209,9 @@ func (d *domainClient) SearchInContent(ctx context.Context, args *SearchInConten
 // async call stacks tracking.
 func (d *domainClient) SetAsyncCallStackDepth(ctx context.Context, args *SetAsyncCallStackDepthArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setAsyncCallStackDepth", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setAsyncCallStackDepth", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setAsyncCallStackDepth", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setAsyncCallStackDepth", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetAsyncCallStackDepth", Err: err}
@@ -218,9 +226,9 @@ func (d *domainClient) SetAsyncCallStackDepth(ctx context.Context, args *SetAsyn
 // to 'step out' if unsuccessful.
 func (d *domainClient) SetBlackboxPatterns(ctx context.Context, args *SetBlackboxPatternsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setBlackboxPatterns", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setBlackboxPatterns", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setBlackboxPatterns", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setBlackboxPatterns", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetBlackboxPatterns", Err: err}
@@ -235,9 +243,9 @@ func (d *domainClient) SetBlackboxPatterns(ctx context.Context, args *SetBlackbo
 // changed. First interval isn't blackboxed. Array should be sorted.
 func (d *domainClient) SetBlackboxedRanges(ctx context.Context, args *SetBlackboxedRangesArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setBlackboxedRanges", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setBlackboxedRanges", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setBlackboxedRanges", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setBlackboxedRanges", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetBlackboxedRanges", Err: err}
@@ -250,9 +258,9 @@ func (d *domainClient) SetBlackboxedRanges(ctx context.Context, args *SetBlackbo
 func (d *domainClient) SetBreakpoint(ctx context.Context, args *SetBreakpointArgs) (reply *SetBreakpointReply, err error) {
 	reply = new(SetBreakpointReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setBreakpoint", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setBreakpoint", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setBreakpoint", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setBreakpoint", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetBreakpoint", Err: err}
@@ -265,9 +273,9 @@ func (d *domainClient) SetBreakpoint(ctx context.Context, args *SetBreakpointArg
 func (d *domainClient) SetInstrumentationBreakpoint(ctx context.Context, args *SetInstrumentationBreakpointArgs) (reply *SetInstrumentationBreakpointReply, err error) {
 	reply = new(SetInstrumentationBreakpointReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setInstrumentationBreakpoint", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setInstrumentationBreakpoint", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setInstrumentationBreakpoint", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setInstrumentationBreakpoint", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetInstrumentationBreakpoint", Err: err}
@@ -284,9 +292,9 @@ func (d *domainClient) SetInstrumentationBreakpoint(ctx context.Context, args *S
 func (d *domainClient) SetBreakpointByURL(ctx context.Context, args *SetBreakpointByURLArgs) (reply *SetBreakpointByURLReply, err error) {
 	reply = new(SetBreakpointByURLReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setBreakpointByUrl", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setBreakpointByUrl", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setBreakpointByUrl", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setBreakpointByUrl", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetBreakpointByURL", Err: err}
@@ -301,9 +309,9 @@ func (d *domainClient) SetBreakpointByURL(ctx context.Context, args *SetBreakpoi
 func (d *domainClient) SetBreakpointOnFunctionCall(ctx context.Context, args *SetBreakpointOnFunctionCallArgs) (reply *SetBreakpointOnFunctionCallReply, err error) {
 	reply = new(SetBreakpointOnFunctionCallReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setBreakpointOnFunctionCall", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setBreakpointOnFunctionCall", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setBreakpointOnFunctionCall", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setBreakpointOnFunctionCall", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetBreakpointOnFunctionCall", Err: err}
@@ -315,9 +323,9 @@ func (d *domainClient) SetBreakpointOnFunctionCall(ctx context.Context, args *Se
 // all breakpoints on the page.
 func (d *domainClient) SetBreakpointsActive(ctx context.Context, args *SetBreakpointsActiveArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setBreakpointsActive", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setBreakpointsActive", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setBreakpointsActive", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setBreakpointsActive", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetBreakpointsActive", Err: err}
@@ -330,9 +338,9 @@ func (d *domainClient) SetBreakpointsActive(ctx context.Context, args *SetBreakp
 // or no exceptions. Initial pause on exceptions state is `none`.
 func (d *domainClient) SetPauseOnExceptions(ctx context.Context, args *SetPauseOnExceptionsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setPauseOnExceptions", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setPauseOnExceptions", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setPauseOnExceptions", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setPauseOnExceptions", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetPauseOnExceptions", Err: err}
@@ -344,9 +352,9 @@ func (d *domainClient) SetPauseOnExceptions(ctx context.Context, args *SetPauseO
 // frame. Available only at return break position.
 func (d *domainClient) SetReturnValue(ctx context.Context, args *SetReturnValueArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setReturnValue", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setReturnValue", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setReturnValue", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setReturnValue", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetReturnValue", Err: err}
@@ -358,9 +366,9 @@ func (d *domainClient) SetReturnValue(ctx context.Context, args *SetReturnValueA
 func (d *domainClient) SetScriptSource(ctx context.Context, args *SetScriptSourceArgs) (reply *SetScriptSourceReply, err error) {
 	reply = new(SetScriptSourceReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setScriptSource", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setScriptSource", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setScriptSource", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setScriptSource", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetScriptSource", Err: err}
@@ -372,9 +380,9 @@ func (d *domainClient) SetScriptSource(ctx context.Context, args *SetScriptSourc
 // any pauses (breakpoint, exception, dom exception etc).
 func (d *domainClient) SetSkipAllPauses(ctx context.Context, args *SetSkipAllPausesArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setSkipAllPauses", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setSkipAllPauses", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setSkipAllPauses", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setSkipAllPauses", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetSkipAllPauses", Err: err}
@@ -387,9 +395,9 @@ func (d *domainClient) SetSkipAllPauses(ctx context.Context, args *SetSkipAllPau
 // manually.
 func (d *domainClient) SetVariableValue(ctx context.Context, args *SetVariableValueArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.setVariableValue", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setVariableValue", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.setVariableValue", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.setVariableValue", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "SetVariableValue", Err: err}
@@ -400,9 +408,9 @@ func (d *domainClient) SetVariableValue(ctx context.Context, args *SetVariableVa
 // StepInto invokes the Debugger method. Steps into the function call.
 func (d *domainClient) StepInto(ctx context.Context, args *StepIntoArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Debugger.stepInto", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.stepInto", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Debugger.stepInto", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Debugger.stepInto", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "StepInto", Err: err}
@@ -412,7 +420,7 @@ func (d *domainClient) StepInto(ctx context.Context, args *StepIntoArgs) (err er
 
 // StepOut invokes the Debugger method. Steps out of the function call.
 func (d *domainClient) StepOut(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Debugger.stepOut", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Debugger.stepOut", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "StepOut", Err: err}
 	}
@@ -421,7 +429,7 @@ func (d *domainClient) StepOut(ctx context.Context) (err error) {
 
 // StepOver invokes the Debugger method. Steps over the statement.
 func (d *domainClient) StepOver(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Debugger.stepOver", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Debugger.stepOver", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "StepOver", Err: err}
 	}
@@ -429,7 +437,7 @@ func (d *domainClient) StepOver(ctx context.Context) (err error) {
 }
 
 func (d *domainClient) BreakpointResolved(ctx context.Context) (BreakpointResolvedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Debugger.breakpointResolved", d.conn)
+	s, err := rpcc.NewStream(ctx, "Debugger.breakpointResolved", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -450,7 +458,7 @@ func (c *breakpointResolvedClient) Recv() (*BreakpointResolvedReply, error) {
 }
 
 func (d *domainClient) Paused(ctx context.Context) (PausedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Debugger.paused", d.conn)
+	s, err := rpcc.NewStream(ctx, "Debugger.paused", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -471,7 +479,7 @@ func (c *pausedClient) Recv() (*PausedReply, error) {
 }
 
 func (d *domainClient) Resumed(ctx context.Context) (ResumedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Debugger.resumed", d.conn)
+	s, err := rpcc.NewStream(ctx, "Debugger.resumed", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -492,7 +500,7 @@ func (c *resumedClient) Recv() (*ResumedReply, error) {
 }
 
 func (d *domainClient) ScriptFailedToParse(ctx context.Context) (ScriptFailedToParseClient, error) {
-	s, err := rpcc.NewStream(ctx, "Debugger.scriptFailedToParse", d.conn)
+	s, err := rpcc.NewStream(ctx, "Debugger.scriptFailedToParse", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -513,7 +521,7 @@ func (c *scriptFailedToParseClient) Recv() (*ScriptFailedToParseReply, error) {
 }
 
 func (d *domainClient) ScriptParsed(ctx context.Context) (ScriptParsedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Debugger.scriptParsed", d.conn)
+	s, err := rpcc.NewStream(ctx, "Debugger.scriptParsed", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

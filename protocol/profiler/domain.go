@@ -11,16 +11,24 @@ import (
 )
 
 // domainClient is a client for the Profiler domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Profiler domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Profiler domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Disable invokes the Profiler method.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Profiler.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Profiler.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "Disable", Err: err}
 	}
@@ -29,7 +37,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 
 // Enable invokes the Profiler method.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Profiler.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Profiler.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "Enable", Err: err}
 	}
@@ -41,7 +49,7 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 // collection.
 func (d *domainClient) GetBestEffortCoverage(ctx context.Context) (reply *GetBestEffortCoverageReply, err error) {
 	reply = new(GetBestEffortCoverageReply)
-	err = rpcc.Invoke(ctx, "Profiler.getBestEffortCoverage", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Profiler.getBestEffortCoverage", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "GetBestEffortCoverage", Err: err}
 	}
@@ -52,9 +60,9 @@ func (d *domainClient) GetBestEffortCoverage(ctx context.Context) (reply *GetBes
 // sampling interval. Must be called before CPU profiles recording started.
 func (d *domainClient) SetSamplingInterval(ctx context.Context, args *SetSamplingIntervalArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Profiler.setSamplingInterval", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Profiler.setSamplingInterval", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Profiler.setSamplingInterval", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Profiler.setSamplingInterval", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "SetSamplingInterval", Err: err}
@@ -64,7 +72,7 @@ func (d *domainClient) SetSamplingInterval(ctx context.Context, args *SetSamplin
 
 // Start invokes the Profiler method.
 func (d *domainClient) Start(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Profiler.start", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Profiler.start", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "Start", Err: err}
 	}
@@ -77,9 +85,9 @@ func (d *domainClient) Start(ctx context.Context) (err error) {
 // resets execution counters.
 func (d *domainClient) StartPreciseCoverage(ctx context.Context, args *StartPreciseCoverageArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Profiler.startPreciseCoverage", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Profiler.startPreciseCoverage", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Profiler.startPreciseCoverage", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Profiler.startPreciseCoverage", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "StartPreciseCoverage", Err: err}
@@ -89,7 +97,7 @@ func (d *domainClient) StartPreciseCoverage(ctx context.Context, args *StartPrec
 
 // StartTypeProfile invokes the Profiler method. Enable type profile.
 func (d *domainClient) StartTypeProfile(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Profiler.startTypeProfile", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Profiler.startTypeProfile", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "StartTypeProfile", Err: err}
 	}
@@ -99,7 +107,7 @@ func (d *domainClient) StartTypeProfile(ctx context.Context) (err error) {
 // Stop invokes the Profiler method.
 func (d *domainClient) Stop(ctx context.Context) (reply *StopReply, err error) {
 	reply = new(StopReply)
-	err = rpcc.Invoke(ctx, "Profiler.stop", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Profiler.stop", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "Stop", Err: err}
 	}
@@ -110,7 +118,7 @@ func (d *domainClient) Stop(ctx context.Context) (reply *StopReply, err error) {
 // coverage. Disabling releases unnecessary execution count records and allows
 // executing optimized code.
 func (d *domainClient) StopPreciseCoverage(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Profiler.stopPreciseCoverage", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Profiler.stopPreciseCoverage", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "StopPreciseCoverage", Err: err}
 	}
@@ -120,7 +128,7 @@ func (d *domainClient) StopPreciseCoverage(ctx context.Context) (err error) {
 // StopTypeProfile invokes the Profiler method. Disable type profile.
 // Disabling releases type profile data collected so far.
 func (d *domainClient) StopTypeProfile(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Profiler.stopTypeProfile", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Profiler.stopTypeProfile", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "StopTypeProfile", Err: err}
 	}
@@ -132,7 +140,7 @@ func (d *domainClient) StopTypeProfile(ctx context.Context) (err error) {
 // needs to have started.
 func (d *domainClient) TakePreciseCoverage(ctx context.Context) (reply *TakePreciseCoverageReply, err error) {
 	reply = new(TakePreciseCoverageReply)
-	err = rpcc.Invoke(ctx, "Profiler.takePreciseCoverage", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Profiler.takePreciseCoverage", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "TakePreciseCoverage", Err: err}
 	}
@@ -142,7 +150,7 @@ func (d *domainClient) TakePreciseCoverage(ctx context.Context) (reply *TakePrec
 // TakeTypeProfile invokes the Profiler method. Collect type profile.
 func (d *domainClient) TakeTypeProfile(ctx context.Context) (reply *TakeTypeProfileReply, err error) {
 	reply = new(TakeTypeProfileReply)
-	err = rpcc.Invoke(ctx, "Profiler.takeTypeProfile", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Profiler.takeTypeProfile", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "TakeTypeProfile", Err: err}
 	}
@@ -150,7 +158,7 @@ func (d *domainClient) TakeTypeProfile(ctx context.Context) (reply *TakeTypeProf
 }
 
 func (d *domainClient) ConsoleProfileFinished(ctx context.Context) (ConsoleProfileFinishedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Profiler.consoleProfileFinished", d.conn)
+	s, err := rpcc.NewStream(ctx, "Profiler.consoleProfileFinished", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +179,7 @@ func (c *consoleProfileFinishedClient) Recv() (*ConsoleProfileFinishedReply, err
 }
 
 func (d *domainClient) ConsoleProfileStarted(ctx context.Context) (ConsoleProfileStartedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Profiler.consoleProfileStarted", d.conn)
+	s, err := rpcc.NewStream(ctx, "Profiler.consoleProfileStarted", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

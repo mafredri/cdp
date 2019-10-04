@@ -11,17 +11,25 @@ import (
 )
 
 // domainClient is a client for the Memory domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Memory domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Memory domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // GetDOMCounters invokes the Memory method.
 func (d *domainClient) GetDOMCounters(ctx context.Context) (reply *GetDOMCountersReply, err error) {
 	reply = new(GetDOMCountersReply)
-	err = rpcc.Invoke(ctx, "Memory.getDOMCounters", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Memory.getDOMCounters", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Memory", Op: "GetDOMCounters", Err: err}
 	}
@@ -30,7 +38,7 @@ func (d *domainClient) GetDOMCounters(ctx context.Context) (reply *GetDOMCounter
 
 // PrepareForLeakDetection invokes the Memory method.
 func (d *domainClient) PrepareForLeakDetection(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Memory.prepareForLeakDetection", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Memory.prepareForLeakDetection", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Memory", Op: "PrepareForLeakDetection", Err: err}
 	}
@@ -40,7 +48,7 @@ func (d *domainClient) PrepareForLeakDetection(ctx context.Context) (err error) 
 // ForciblyPurgeJavaScriptMemory invokes the Memory method. Simulate
 // OomIntervention by purging V8 memory.
 func (d *domainClient) ForciblyPurgeJavaScriptMemory(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Memory.forciblyPurgeJavaScriptMemory", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Memory.forciblyPurgeJavaScriptMemory", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Memory", Op: "ForciblyPurgeJavaScriptMemory", Err: err}
 	}
@@ -51,9 +59,9 @@ func (d *domainClient) ForciblyPurgeJavaScriptMemory(ctx context.Context) (err e
 // Enable/disable suppressing memory pressure notifications in all processes.
 func (d *domainClient) SetPressureNotificationsSuppressed(ctx context.Context, args *SetPressureNotificationsSuppressedArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Memory.setPressureNotificationsSuppressed", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Memory.setPressureNotificationsSuppressed", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Memory.setPressureNotificationsSuppressed", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Memory.setPressureNotificationsSuppressed", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Memory", Op: "SetPressureNotificationsSuppressed", Err: err}
@@ -65,9 +73,9 @@ func (d *domainClient) SetPressureNotificationsSuppressed(ctx context.Context, a
 // pressure notification in all processes.
 func (d *domainClient) SimulatePressureNotification(ctx context.Context, args *SimulatePressureNotificationArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Memory.simulatePressureNotification", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Memory.simulatePressureNotification", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Memory.simulatePressureNotification", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Memory.simulatePressureNotification", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Memory", Op: "SimulatePressureNotification", Err: err}
@@ -79,9 +87,9 @@ func (d *domainClient) SimulatePressureNotification(ctx context.Context, args *S
 // profile.
 func (d *domainClient) StartSampling(ctx context.Context, args *StartSamplingArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Memory.startSampling", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Memory.startSampling", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Memory.startSampling", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Memory.startSampling", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Memory", Op: "StartSampling", Err: err}
@@ -92,7 +100,7 @@ func (d *domainClient) StartSampling(ctx context.Context, args *StartSamplingArg
 // StopSampling invokes the Memory method. Stop collecting native memory
 // profile.
 func (d *domainClient) StopSampling(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Memory.stopSampling", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Memory.stopSampling", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Memory", Op: "StopSampling", Err: err}
 	}
@@ -103,7 +111,7 @@ func (d *domainClient) StopSampling(ctx context.Context) (err error) {
 // allocations profile collected since renderer process startup.
 func (d *domainClient) GetAllTimeSamplingProfile(ctx context.Context) (reply *GetAllTimeSamplingProfileReply, err error) {
 	reply = new(GetAllTimeSamplingProfileReply)
-	err = rpcc.Invoke(ctx, "Memory.getAllTimeSamplingProfile", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Memory.getAllTimeSamplingProfile", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Memory", Op: "GetAllTimeSamplingProfile", Err: err}
 	}
@@ -114,7 +122,7 @@ func (d *domainClient) GetAllTimeSamplingProfile(ctx context.Context) (reply *Ge
 // allocations profile collected since browser process startup.
 func (d *domainClient) GetBrowserSamplingProfile(ctx context.Context) (reply *GetBrowserSamplingProfileReply, err error) {
 	reply = new(GetBrowserSamplingProfileReply)
-	err = rpcc.Invoke(ctx, "Memory.getBrowserSamplingProfile", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Memory.getBrowserSamplingProfile", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Memory", Op: "GetBrowserSamplingProfile", Err: err}
 	}
@@ -125,7 +133,7 @@ func (d *domainClient) GetBrowserSamplingProfile(ctx context.Context) (reply *Ge
 // allocations profile collected since last `startSampling` call.
 func (d *domainClient) GetSamplingProfile(ctx context.Context) (reply *GetSamplingProfileReply, err error) {
 	reply = new(GetSamplingProfileReply)
-	err = rpcc.Invoke(ctx, "Memory.getSamplingProfile", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Memory.getSamplingProfile", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Memory", Op: "GetSamplingProfile", Err: err}
 	}

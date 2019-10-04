@@ -13,11 +13,19 @@ import (
 
 // domainClient is a client for the Cast domain. A domain for interacting with
 // Cast, Presentation API, and Remote Playback API functionalities.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Cast domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
+}
+
+// NewClient returns a client for the Cast domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
 }
 
 // Enable invokes the Cast method. Starts observing for sinks that can be used
@@ -27,9 +35,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 // |issueUpdated| event is fired.
 func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Cast.enable", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Cast.enable", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Cast.enable", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Cast.enable", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Cast", Op: "Enable", Err: err}
@@ -39,7 +47,7 @@ func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error)
 
 // Disable invokes the Cast method. Stops observing for sinks and issues.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Cast.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Cast.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Cast", Op: "Disable", Err: err}
 	}
@@ -51,9 +59,9 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // Playback API, or Cast SDK.
 func (d *domainClient) SetSinkToUse(ctx context.Context, args *SetSinkToUseArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Cast.setSinkToUse", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Cast.setSinkToUse", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Cast.setSinkToUse", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Cast.setSinkToUse", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Cast", Op: "SetSinkToUse", Err: err}
@@ -65,9 +73,9 @@ func (d *domainClient) SetSinkToUse(ctx context.Context, args *SetSinkToUseArgs)
 // sink.
 func (d *domainClient) StartTabMirroring(ctx context.Context, args *StartTabMirroringArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Cast.startTabMirroring", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Cast.startTabMirroring", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Cast.startTabMirroring", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Cast.startTabMirroring", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Cast", Op: "StartTabMirroring", Err: err}
@@ -79,9 +87,9 @@ func (d *domainClient) StartTabMirroring(ctx context.Context, args *StartTabMirr
 // sink.
 func (d *domainClient) StopCasting(ctx context.Context, args *StopCastingArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Cast.stopCasting", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Cast.stopCasting", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Cast.stopCasting", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Cast.stopCasting", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Cast", Op: "StopCasting", Err: err}
@@ -90,7 +98,7 @@ func (d *domainClient) StopCasting(ctx context.Context, args *StopCastingArgs) (
 }
 
 func (d *domainClient) SinksUpdated(ctx context.Context) (SinksUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Cast.sinksUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "Cast.sinksUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +119,7 @@ func (c *sinksUpdatedClient) Recv() (*SinksUpdatedReply, error) {
 }
 
 func (d *domainClient) IssueUpdated(ctx context.Context) (IssueUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Cast.issueUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "Cast.issueUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

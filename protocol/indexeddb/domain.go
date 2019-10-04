@@ -11,20 +11,28 @@ import (
 )
 
 // domainClient is a client for the IndexedDB domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the IndexedDB domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the IndexedDB domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // ClearObjectStore invokes the IndexedDB method. Clears all entries from an
 // object store.
 func (d *domainClient) ClearObjectStore(ctx context.Context, args *ClearObjectStoreArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "IndexedDB.clearObjectStore", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.clearObjectStore", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "IndexedDB.clearObjectStore", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.clearObjectStore", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "IndexedDB", Op: "ClearObjectStore", Err: err}
@@ -35,9 +43,9 @@ func (d *domainClient) ClearObjectStore(ctx context.Context, args *ClearObjectSt
 // DeleteDatabase invokes the IndexedDB method. Deletes a database.
 func (d *domainClient) DeleteDatabase(ctx context.Context, args *DeleteDatabaseArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "IndexedDB.deleteDatabase", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.deleteDatabase", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "IndexedDB.deleteDatabase", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.deleteDatabase", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "IndexedDB", Op: "DeleteDatabase", Err: err}
@@ -49,9 +57,9 @@ func (d *domainClient) DeleteDatabase(ctx context.Context, args *DeleteDatabaseA
 // entries from an object store
 func (d *domainClient) DeleteObjectStoreEntries(ctx context.Context, args *DeleteObjectStoreEntriesArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "IndexedDB.deleteObjectStoreEntries", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.deleteObjectStoreEntries", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "IndexedDB.deleteObjectStoreEntries", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.deleteObjectStoreEntries", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "IndexedDB", Op: "DeleteObjectStoreEntries", Err: err}
@@ -61,7 +69,7 @@ func (d *domainClient) DeleteObjectStoreEntries(ctx context.Context, args *Delet
 
 // Disable invokes the IndexedDB method. Disables events from backend.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "IndexedDB.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "IndexedDB.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "IndexedDB", Op: "Disable", Err: err}
 	}
@@ -70,7 +78,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 
 // Enable invokes the IndexedDB method. Enables events from backend.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "IndexedDB.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "IndexedDB.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "IndexedDB", Op: "Enable", Err: err}
 	}
@@ -82,9 +90,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 func (d *domainClient) RequestData(ctx context.Context, args *RequestDataArgs) (reply *RequestDataReply, err error) {
 	reply = new(RequestDataReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "IndexedDB.requestData", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.requestData", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "IndexedDB.requestData", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.requestData", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "IndexedDB", Op: "RequestData", Err: err}
@@ -96,9 +104,9 @@ func (d *domainClient) RequestData(ctx context.Context, args *RequestDataArgs) (
 func (d *domainClient) GetMetadata(ctx context.Context, args *GetMetadataArgs) (reply *GetMetadataReply, err error) {
 	reply = new(GetMetadataReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "IndexedDB.getMetadata", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.getMetadata", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "IndexedDB.getMetadata", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.getMetadata", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "IndexedDB", Op: "GetMetadata", Err: err}
@@ -111,9 +119,9 @@ func (d *domainClient) GetMetadata(ctx context.Context, args *GetMetadataArgs) (
 func (d *domainClient) RequestDatabase(ctx context.Context, args *RequestDatabaseArgs) (reply *RequestDatabaseReply, err error) {
 	reply = new(RequestDatabaseReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "IndexedDB.requestDatabase", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.requestDatabase", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "IndexedDB.requestDatabase", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.requestDatabase", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "IndexedDB", Op: "RequestDatabase", Err: err}
@@ -126,9 +134,9 @@ func (d *domainClient) RequestDatabase(ctx context.Context, args *RequestDatabas
 func (d *domainClient) RequestDatabaseNames(ctx context.Context, args *RequestDatabaseNamesArgs) (reply *RequestDatabaseNamesReply, err error) {
 	reply = new(RequestDatabaseNamesReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "IndexedDB.requestDatabaseNames", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.requestDatabaseNames", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "IndexedDB.requestDatabaseNames", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "IndexedDB.requestDatabaseNames", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "IndexedDB", Op: "RequestDatabaseNames", Err: err}

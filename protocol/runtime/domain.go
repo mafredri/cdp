@@ -23,11 +23,19 @@ import (
 // object reference. Original objects are maintained in memory unless they are
 // either explicitly released or are released along with the other objects in
 // their object group.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Runtime domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
+}
+
+// NewClient returns a client for the Runtime domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
 }
 
 // AwaitPromise invokes the Runtime method. Add handler to promise with given
@@ -35,9 +43,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 func (d *domainClient) AwaitPromise(ctx context.Context, args *AwaitPromiseArgs) (reply *AwaitPromiseReply, err error) {
 	reply = new(AwaitPromiseReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.awaitPromise", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.awaitPromise", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.awaitPromise", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.awaitPromise", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "AwaitPromise", Err: err}
@@ -51,9 +59,9 @@ func (d *domainClient) AwaitPromise(ctx context.Context, args *AwaitPromiseArgs)
 func (d *domainClient) CallFunctionOn(ctx context.Context, args *CallFunctionOnArgs) (reply *CallFunctionOnReply, err error) {
 	reply = new(CallFunctionOnReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.callFunctionOn", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.callFunctionOn", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.callFunctionOn", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.callFunctionOn", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "CallFunctionOn", Err: err}
@@ -65,9 +73,9 @@ func (d *domainClient) CallFunctionOn(ctx context.Context, args *CallFunctionOnA
 func (d *domainClient) CompileScript(ctx context.Context, args *CompileScriptArgs) (reply *CompileScriptReply, err error) {
 	reply = new(CompileScriptReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.compileScript", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.compileScript", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.compileScript", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.compileScript", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "CompileScript", Err: err}
@@ -78,7 +86,7 @@ func (d *domainClient) CompileScript(ctx context.Context, args *CompileScriptArg
 // Disable invokes the Runtime method. Disables reporting of execution
 // contexts creation.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Runtime.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Runtime.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "Disable", Err: err}
 	}
@@ -88,7 +96,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // DiscardConsoleEntries invokes the Runtime method. Discards collected
 // exceptions and console API calls.
 func (d *domainClient) DiscardConsoleEntries(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Runtime.discardConsoleEntries", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Runtime.discardConsoleEntries", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "DiscardConsoleEntries", Err: err}
 	}
@@ -100,7 +108,7 @@ func (d *domainClient) DiscardConsoleEntries(ctx context.Context) (err error) {
 // gets enabled the event will be sent immediately for each existing execution
 // context.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Runtime.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Runtime.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "Enable", Err: err}
 	}
@@ -111,9 +119,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 func (d *domainClient) Evaluate(ctx context.Context, args *EvaluateArgs) (reply *EvaluateReply, err error) {
 	reply = new(EvaluateReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.evaluate", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.evaluate", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.evaluate", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.evaluate", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "Evaluate", Err: err}
@@ -124,7 +132,7 @@ func (d *domainClient) Evaluate(ctx context.Context, args *EvaluateArgs) (reply 
 // GetIsolateID invokes the Runtime method. Returns the isolate id.
 func (d *domainClient) GetIsolateID(ctx context.Context) (reply *GetIsolateIDReply, err error) {
 	reply = new(GetIsolateIDReply)
-	err = rpcc.Invoke(ctx, "Runtime.getIsolateId", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Runtime.getIsolateId", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "GetIsolateID", Err: err}
 	}
@@ -136,7 +144,7 @@ func (d *domainClient) GetIsolateID(ctx context.Context) (reply *GetIsolateIDRep
 // particular Runtime.
 func (d *domainClient) GetHeapUsage(ctx context.Context) (reply *GetHeapUsageReply, err error) {
 	reply = new(GetHeapUsageReply)
-	err = rpcc.Invoke(ctx, "Runtime.getHeapUsage", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Runtime.getHeapUsage", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "GetHeapUsage", Err: err}
 	}
@@ -148,9 +156,9 @@ func (d *domainClient) GetHeapUsage(ctx context.Context) (reply *GetHeapUsageRep
 func (d *domainClient) GetProperties(ctx context.Context, args *GetPropertiesArgs) (reply *GetPropertiesReply, err error) {
 	reply = new(GetPropertiesReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.getProperties", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.getProperties", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.getProperties", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.getProperties", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "GetProperties", Err: err}
@@ -163,9 +171,9 @@ func (d *domainClient) GetProperties(ctx context.Context, args *GetPropertiesArg
 func (d *domainClient) GlobalLexicalScopeNames(ctx context.Context, args *GlobalLexicalScopeNamesArgs) (reply *GlobalLexicalScopeNamesReply, err error) {
 	reply = new(GlobalLexicalScopeNamesReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.globalLexicalScopeNames", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.globalLexicalScopeNames", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.globalLexicalScopeNames", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.globalLexicalScopeNames", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "GlobalLexicalScopeNames", Err: err}
@@ -177,9 +185,9 @@ func (d *domainClient) GlobalLexicalScopeNames(ctx context.Context, args *Global
 func (d *domainClient) QueryObjects(ctx context.Context, args *QueryObjectsArgs) (reply *QueryObjectsReply, err error) {
 	reply = new(QueryObjectsReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.queryObjects", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.queryObjects", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.queryObjects", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.queryObjects", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "QueryObjects", Err: err}
@@ -191,9 +199,9 @@ func (d *domainClient) QueryObjects(ctx context.Context, args *QueryObjectsArgs)
 // id.
 func (d *domainClient) ReleaseObject(ctx context.Context, args *ReleaseObjectArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.releaseObject", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.releaseObject", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.releaseObject", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.releaseObject", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "ReleaseObject", Err: err}
@@ -205,9 +213,9 @@ func (d *domainClient) ReleaseObject(ctx context.Context, args *ReleaseObjectArg
 // that belong to a given group.
 func (d *domainClient) ReleaseObjectGroup(ctx context.Context, args *ReleaseObjectGroupArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.releaseObjectGroup", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.releaseObjectGroup", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.releaseObjectGroup", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.releaseObjectGroup", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "ReleaseObjectGroup", Err: err}
@@ -218,7 +226,7 @@ func (d *domainClient) ReleaseObjectGroup(ctx context.Context, args *ReleaseObje
 // RunIfWaitingForDebugger invokes the Runtime method. Tells inspected
 // instance to run if it was waiting for debugger to attach.
 func (d *domainClient) RunIfWaitingForDebugger(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Runtime.runIfWaitingForDebugger", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Runtime.runIfWaitingForDebugger", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "RunIfWaitingForDebugger", Err: err}
 	}
@@ -230,9 +238,9 @@ func (d *domainClient) RunIfWaitingForDebugger(ctx context.Context) (err error) 
 func (d *domainClient) RunScript(ctx context.Context, args *RunScriptArgs) (reply *RunScriptReply, err error) {
 	reply = new(RunScriptReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.runScript", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.runScript", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.runScript", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.runScript", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "RunScript", Err: err}
@@ -243,9 +251,9 @@ func (d *domainClient) RunScript(ctx context.Context, args *RunScriptArgs) (repl
 // SetCustomObjectFormatterEnabled invokes the Runtime method.
 func (d *domainClient) SetCustomObjectFormatterEnabled(ctx context.Context, args *SetCustomObjectFormatterEnabledArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.setCustomObjectFormatterEnabled", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.setCustomObjectFormatterEnabled", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.setCustomObjectFormatterEnabled", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.setCustomObjectFormatterEnabled", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "SetCustomObjectFormatterEnabled", Err: err}
@@ -256,9 +264,9 @@ func (d *domainClient) SetCustomObjectFormatterEnabled(ctx context.Context, args
 // SetMaxCallStackSizeToCapture invokes the Runtime method.
 func (d *domainClient) SetMaxCallStackSizeToCapture(ctx context.Context, args *SetMaxCallStackSizeToCaptureArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.setMaxCallStackSizeToCapture", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.setMaxCallStackSizeToCapture", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.setMaxCallStackSizeToCapture", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.setMaxCallStackSizeToCapture", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "SetMaxCallStackSizeToCapture", Err: err}
@@ -270,7 +278,7 @@ func (d *domainClient) SetMaxCallStackSizeToCapture(ctx context.Context, args *S
 // JavaScript execution. Will cancel the termination when the outer-most script
 // execution ends.
 func (d *domainClient) TerminateExecution(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Runtime.terminateExecution", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Runtime.terminateExecution", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "TerminateExecution", Err: err}
 	}
@@ -287,9 +295,9 @@ func (d *domainClient) TerminateExecution(ctx context.Context) (err error) {
 // notification.
 func (d *domainClient) AddBinding(ctx context.Context, args *AddBindingArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.addBinding", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.addBinding", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.addBinding", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.addBinding", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "AddBinding", Err: err}
@@ -302,9 +310,9 @@ func (d *domainClient) AddBinding(ctx context.Context, args *AddBindingArgs) (er
 // from Runtime.bindingCalled notifications.
 func (d *domainClient) RemoveBinding(ctx context.Context, args *RemoveBindingArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Runtime.removeBinding", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.removeBinding", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Runtime.removeBinding", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Runtime.removeBinding", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Runtime", Op: "RemoveBinding", Err: err}
@@ -313,7 +321,7 @@ func (d *domainClient) RemoveBinding(ctx context.Context, args *RemoveBindingArg
 }
 
 func (d *domainClient) BindingCalled(ctx context.Context) (BindingCalledClient, error) {
-	s, err := rpcc.NewStream(ctx, "Runtime.bindingCalled", d.conn)
+	s, err := rpcc.NewStream(ctx, "Runtime.bindingCalled", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -334,7 +342,7 @@ func (c *bindingCalledClient) Recv() (*BindingCalledReply, error) {
 }
 
 func (d *domainClient) ConsoleAPICalled(ctx context.Context) (ConsoleAPICalledClient, error) {
-	s, err := rpcc.NewStream(ctx, "Runtime.consoleAPICalled", d.conn)
+	s, err := rpcc.NewStream(ctx, "Runtime.consoleAPICalled", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -355,7 +363,7 @@ func (c *consoleAPICalledClient) Recv() (*ConsoleAPICalledReply, error) {
 }
 
 func (d *domainClient) ExceptionRevoked(ctx context.Context) (ExceptionRevokedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Runtime.exceptionRevoked", d.conn)
+	s, err := rpcc.NewStream(ctx, "Runtime.exceptionRevoked", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -376,7 +384,7 @@ func (c *exceptionRevokedClient) Recv() (*ExceptionRevokedReply, error) {
 }
 
 func (d *domainClient) ExceptionThrown(ctx context.Context) (ExceptionThrownClient, error) {
-	s, err := rpcc.NewStream(ctx, "Runtime.exceptionThrown", d.conn)
+	s, err := rpcc.NewStream(ctx, "Runtime.exceptionThrown", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -397,7 +405,7 @@ func (c *exceptionThrownClient) Recv() (*ExceptionThrownReply, error) {
 }
 
 func (d *domainClient) ExecutionContextCreated(ctx context.Context) (ExecutionContextCreatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Runtime.executionContextCreated", d.conn)
+	s, err := rpcc.NewStream(ctx, "Runtime.executionContextCreated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -418,7 +426,7 @@ func (c *executionContextCreatedClient) Recv() (*ExecutionContextCreatedReply, e
 }
 
 func (d *domainClient) ExecutionContextDestroyed(ctx context.Context) (ExecutionContextDestroyedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Runtime.executionContextDestroyed", d.conn)
+	s, err := rpcc.NewStream(ctx, "Runtime.executionContextDestroyed", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -439,7 +447,7 @@ func (c *executionContextDestroyedClient) Recv() (*ExecutionContextDestroyedRepl
 }
 
 func (d *domainClient) ExecutionContextsCleared(ctx context.Context) (ExecutionContextsClearedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Runtime.executionContextsCleared", d.conn)
+	s, err := rpcc.NewStream(ctx, "Runtime.executionContextsCleared", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -460,7 +468,7 @@ func (c *executionContextsClearedClient) Recv() (*ExecutionContextsClearedReply,
 }
 
 func (d *domainClient) InspectRequested(ctx context.Context) (InspectRequestedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Runtime.inspectRequested", d.conn)
+	s, err := rpcc.NewStream(ctx, "Runtime.inspectRequested", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

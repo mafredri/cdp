@@ -11,17 +11,25 @@ import (
 )
 
 // domainClient is a client for the Security domain. Security
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Security domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Security domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Disable invokes the Security method. Disables tracking security state
 // changes.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Security.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Security.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Security", Op: "Disable", Err: err}
 	}
@@ -31,7 +39,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // Enable invokes the Security method. Enables tracking security state
 // changes.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Security.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Security.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Security", Op: "Enable", Err: err}
 	}
@@ -42,9 +50,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 // whether all certificate errors should be ignored.
 func (d *domainClient) SetIgnoreCertificateErrors(ctx context.Context, args *SetIgnoreCertificateErrorsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Security.setIgnoreCertificateErrors", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Security.setIgnoreCertificateErrors", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Security.setIgnoreCertificateErrors", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Security.setIgnoreCertificateErrors", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Security", Op: "SetIgnoreCertificateErrors", Err: err}
@@ -56,9 +64,9 @@ func (d *domainClient) SetIgnoreCertificateErrors(ctx context.Context, args *Set
 // error that fired a certificateError event.
 func (d *domainClient) HandleCertificateError(ctx context.Context, args *HandleCertificateErrorArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Security.handleCertificateError", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Security.handleCertificateError", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Security.handleCertificateError", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Security.handleCertificateError", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Security", Op: "HandleCertificateError", Err: err}
@@ -72,9 +80,9 @@ func (d *domainClient) HandleCertificateError(ctx context.Context, args *HandleC
 // `handleCertificateError` commands.
 func (d *domainClient) SetOverrideCertificateErrors(ctx context.Context, args *SetOverrideCertificateErrorsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Security.setOverrideCertificateErrors", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Security.setOverrideCertificateErrors", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Security.setOverrideCertificateErrors", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Security.setOverrideCertificateErrors", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Security", Op: "SetOverrideCertificateErrors", Err: err}
@@ -83,7 +91,7 @@ func (d *domainClient) SetOverrideCertificateErrors(ctx context.Context, args *S
 }
 
 func (d *domainClient) CertificateError(ctx context.Context) (CertificateErrorClient, error) {
-	s, err := rpcc.NewStream(ctx, "Security.certificateError", d.conn)
+	s, err := rpcc.NewStream(ctx, "Security.certificateError", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -104,7 +112,7 @@ func (c *certificateErrorClient) Recv() (*CertificateErrorReply, error) {
 }
 
 func (d *domainClient) SecurityStateChanged(ctx context.Context) (StateChangedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Security.securityStateChanged", d.conn)
+	s, err := rpcc.NewStream(ctx, "Security.securityStateChanged", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

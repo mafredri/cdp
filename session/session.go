@@ -20,8 +20,9 @@ type session struct {
 	recvC    chan []byte
 	send     func([]byte) error
 
-	init chan struct{} // Protect conn from early read.
-	conn *rpcc.Conn
+	init        chan struct{}     // Protect conn from early read.
+	conn        *rpcc.Conn        // Used for non-flattened protocol mode.
+	sessionConn *rpcc.SessionConn // Used for flattened protocol mode.
 }
 
 // Ensure that session implements rpcc.Codec.
@@ -64,6 +65,9 @@ func (s *session) Write(data []byte) error {
 
 // Close closes the underlying *rpcc.Conn.
 func (s *session) Close() error {
+	if s.sessionConn != nil {
+		return s.sessionConn.Close()
+	}
 	return s.conn.Close()
 }
 
@@ -83,6 +87,27 @@ var (
 		})
 	}
 )
+
+func attach(ctx context.Context, id target.ID, tc *cdp.Client, detachTimeout time.Duration) (s *session, err error) {
+	args := target.NewAttachToTargetArgs(id)
+	args.SetFlatten(true)
+	reply, err := tc.Target.AttachToTarget(ctx, args)
+	if err != nil {
+		return nil, err
+	}
+	sc := tc.Conn.NewSessionConn(string(reply.SessionID))
+
+	s = &session{
+		TargetID:    id,
+		ID:          reply.SessionID,
+		recvC:       make(chan []byte, 1),
+		init:        make(chan struct{}),
+		sessionConn: sc,
+	}
+	// FIXME(powdercloud): Detach when s.sessionConn is closed.
+	close(s.init)
+	return s, nil
+}
 
 // dial attaches to the target via the provided *cdp.Client and creates
 // a lightweight RPC connection to the target. Communication is done via

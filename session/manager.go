@@ -36,6 +36,9 @@ const (
 	defaultDetachTimeout = 5 * time.Second
 )
 
+// Deprecated: This uses the non-flattened protocol; use Attach instead
+// for the flattened protocol.
+//
 // Dial establishes a target session and creates a lightweight rpcc.Conn
 // that uses SendMessageToTarget and ReceivedMessageFromTarget from the
 // Target domain instead of a new websocket connection.
@@ -54,6 +57,26 @@ func (m *Manager) Dial(ctx context.Context, id target.ID) (*rpcc.Conn, error) {
 		return nil, errors.New("session.Manager: Dial failed: Manager is closed")
 	}
 	return s.Conn(), nil
+}
+
+// Attach establishes a target session and returns a connection for communicating
+// with the target; this can be passed to cdp.Client.NewSession.
+//
+// Calling Attach will invoke Target.AttachToTarget; closing the connection will
+// invoke Target.DetachFromTarget.
+func (m *Manager) Attach(ctx context.Context, id target.ID) (*rpcc.SessionConn, error) {
+
+	s, err := attach(ctx, id, m.c, defaultDetachTimeout)
+	if err != nil {
+		return nil, err
+	}
+	select {
+	case m.sC <- s:
+	case <-m.ctx.Done():
+		s.Close()
+		return nil, errors.New("session.Manager: Attach failed: Manager is closed")
+	}
+	return s.sessionConn, nil
 }
 
 // Close closes the Manager and all active sessions. All rpcc.Conn

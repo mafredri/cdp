@@ -11,11 +11,19 @@ import (
 )
 
 // domainClient is a client for the LayerTree domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the LayerTree domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
+}
+
+// NewClient returns a client for the LayerTree domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
 }
 
 // CompositingReasons invokes the LayerTree method. Provides the reasons why
@@ -23,9 +31,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 func (d *domainClient) CompositingReasons(ctx context.Context, args *CompositingReasonsArgs) (reply *CompositingReasonsReply, err error) {
 	reply = new(CompositingReasonsReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "LayerTree.compositingReasons", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.compositingReasons", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "LayerTree.compositingReasons", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.compositingReasons", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "LayerTree", Op: "CompositingReasons", Err: err}
@@ -35,7 +43,7 @@ func (d *domainClient) CompositingReasons(ctx context.Context, args *Compositing
 
 // Disable invokes the LayerTree method. Disables compositing tree inspection.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "LayerTree.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "LayerTree.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "LayerTree", Op: "Disable", Err: err}
 	}
@@ -44,7 +52,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 
 // Enable invokes the LayerTree method. Enables compositing tree inspection.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "LayerTree.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "LayerTree.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "LayerTree", Op: "Enable", Err: err}
 	}
@@ -55,9 +63,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 func (d *domainClient) LoadSnapshot(ctx context.Context, args *LoadSnapshotArgs) (reply *LoadSnapshotReply, err error) {
 	reply = new(LoadSnapshotReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "LayerTree.loadSnapshot", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.loadSnapshot", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "LayerTree.loadSnapshot", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.loadSnapshot", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "LayerTree", Op: "LoadSnapshot", Err: err}
@@ -70,9 +78,9 @@ func (d *domainClient) LoadSnapshot(ctx context.Context, args *LoadSnapshotArgs)
 func (d *domainClient) MakeSnapshot(ctx context.Context, args *MakeSnapshotArgs) (reply *MakeSnapshotReply, err error) {
 	reply = new(MakeSnapshotReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "LayerTree.makeSnapshot", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.makeSnapshot", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "LayerTree.makeSnapshot", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.makeSnapshot", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "LayerTree", Op: "MakeSnapshot", Err: err}
@@ -84,9 +92,9 @@ func (d *domainClient) MakeSnapshot(ctx context.Context, args *MakeSnapshotArgs)
 func (d *domainClient) ProfileSnapshot(ctx context.Context, args *ProfileSnapshotArgs) (reply *ProfileSnapshotReply, err error) {
 	reply = new(ProfileSnapshotReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "LayerTree.profileSnapshot", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.profileSnapshot", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "LayerTree.profileSnapshot", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.profileSnapshot", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "LayerTree", Op: "ProfileSnapshot", Err: err}
@@ -98,9 +106,9 @@ func (d *domainClient) ProfileSnapshot(ctx context.Context, args *ProfileSnapsho
 // captured by the back-end.
 func (d *domainClient) ReleaseSnapshot(ctx context.Context, args *ReleaseSnapshotArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "LayerTree.releaseSnapshot", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.releaseSnapshot", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "LayerTree.releaseSnapshot", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.releaseSnapshot", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "LayerTree", Op: "ReleaseSnapshot", Err: err}
@@ -113,9 +121,9 @@ func (d *domainClient) ReleaseSnapshot(ctx context.Context, args *ReleaseSnapsho
 func (d *domainClient) ReplaySnapshot(ctx context.Context, args *ReplaySnapshotArgs) (reply *ReplaySnapshotReply, err error) {
 	reply = new(ReplaySnapshotReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "LayerTree.replaySnapshot", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.replaySnapshot", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "LayerTree.replaySnapshot", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.replaySnapshot", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "LayerTree", Op: "ReplaySnapshot", Err: err}
@@ -128,9 +136,9 @@ func (d *domainClient) ReplaySnapshot(ctx context.Context, args *ReplaySnapshotA
 func (d *domainClient) SnapshotCommandLog(ctx context.Context, args *SnapshotCommandLogArgs) (reply *SnapshotCommandLogReply, err error) {
 	reply = new(SnapshotCommandLogReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "LayerTree.snapshotCommandLog", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.snapshotCommandLog", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "LayerTree.snapshotCommandLog", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "LayerTree.snapshotCommandLog", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "LayerTree", Op: "SnapshotCommandLog", Err: err}
@@ -139,7 +147,7 @@ func (d *domainClient) SnapshotCommandLog(ctx context.Context, args *SnapshotCom
 }
 
 func (d *domainClient) LayerPainted(ctx context.Context) (LayerPaintedClient, error) {
-	s, err := rpcc.NewStream(ctx, "LayerTree.layerPainted", d.conn)
+	s, err := rpcc.NewStream(ctx, "LayerTree.layerPainted", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +168,7 @@ func (c *layerPaintedClient) Recv() (*LayerPaintedReply, error) {
 }
 
 func (d *domainClient) LayerTreeDidChange(ctx context.Context) (DidChangeClient, error) {
-	s, err := rpcc.NewStream(ctx, "LayerTree.layerTreeDidChange", d.conn)
+	s, err := rpcc.NewStream(ctx, "LayerTree.layerTreeDidChange", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

@@ -15,17 +15,25 @@ import (
 // domainClient is a client for the DOMSnapshot domain. This domain
 // facilitates obtaining document snapshots with DOM, layout, and style
 // information.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the DOMSnapshot domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the DOMSnapshot domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Disable invokes the DOMSnapshot method. Disables DOM snapshot agent for the
 // given page.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOMSnapshot.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "DOMSnapshot.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMSnapshot", Op: "Disable", Err: err}
 	}
@@ -35,7 +43,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // Enable invokes the DOMSnapshot method. Enables DOM snapshot agent for the
 // given page.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOMSnapshot.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "DOMSnapshot.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMSnapshot", Op: "Enable", Err: err}
 	}
@@ -50,9 +58,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 func (d *domainClient) GetSnapshot(ctx context.Context, args *GetSnapshotArgs) (reply *GetSnapshotReply, err error) {
 	reply = new(GetSnapshotReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMSnapshot.getSnapshot", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMSnapshot.getSnapshot", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMSnapshot.getSnapshot", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMSnapshot.getSnapshot", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMSnapshot", Op: "GetSnapshot", Err: err}
@@ -68,9 +76,9 @@ func (d *domainClient) GetSnapshot(ctx context.Context, args *GetSnapshotArgs) (
 func (d *domainClient) CaptureSnapshot(ctx context.Context, args *CaptureSnapshotArgs) (reply *CaptureSnapshotReply, err error) {
 	reply = new(CaptureSnapshotReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMSnapshot.captureSnapshot", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMSnapshot.captureSnapshot", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMSnapshot.captureSnapshot", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMSnapshot.captureSnapshot", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMSnapshot", Op: "CaptureSnapshot", Err: err}

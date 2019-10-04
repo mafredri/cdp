@@ -11,19 +11,27 @@ import (
 )
 
 // domainClient is a client for the ServiceWorker domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the ServiceWorker domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the ServiceWorker domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // DeliverPushMessage invokes the ServiceWorker method.
 func (d *domainClient) DeliverPushMessage(ctx context.Context, args *DeliverPushMessageArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "ServiceWorker.deliverPushMessage", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.deliverPushMessage", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "ServiceWorker.deliverPushMessage", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.deliverPushMessage", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "ServiceWorker", Op: "DeliverPushMessage", Err: err}
@@ -33,7 +41,7 @@ func (d *domainClient) DeliverPushMessage(ctx context.Context, args *DeliverPush
 
 // Disable invokes the ServiceWorker method.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "ServiceWorker.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "ServiceWorker.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "ServiceWorker", Op: "Disable", Err: err}
 	}
@@ -43,9 +51,9 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // DispatchSyncEvent invokes the ServiceWorker method.
 func (d *domainClient) DispatchSyncEvent(ctx context.Context, args *DispatchSyncEventArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "ServiceWorker.dispatchSyncEvent", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.dispatchSyncEvent", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "ServiceWorker.dispatchSyncEvent", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.dispatchSyncEvent", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "ServiceWorker", Op: "DispatchSyncEvent", Err: err}
@@ -55,7 +63,7 @@ func (d *domainClient) DispatchSyncEvent(ctx context.Context, args *DispatchSync
 
 // Enable invokes the ServiceWorker method.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "ServiceWorker.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "ServiceWorker.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "ServiceWorker", Op: "Enable", Err: err}
 	}
@@ -65,9 +73,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 // InspectWorker invokes the ServiceWorker method.
 func (d *domainClient) InspectWorker(ctx context.Context, args *InspectWorkerArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "ServiceWorker.inspectWorker", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.inspectWorker", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "ServiceWorker.inspectWorker", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.inspectWorker", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "ServiceWorker", Op: "InspectWorker", Err: err}
@@ -78,9 +86,9 @@ func (d *domainClient) InspectWorker(ctx context.Context, args *InspectWorkerArg
 // SetForceUpdateOnPageLoad invokes the ServiceWorker method.
 func (d *domainClient) SetForceUpdateOnPageLoad(ctx context.Context, args *SetForceUpdateOnPageLoadArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "ServiceWorker.setForceUpdateOnPageLoad", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.setForceUpdateOnPageLoad", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "ServiceWorker.setForceUpdateOnPageLoad", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.setForceUpdateOnPageLoad", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "ServiceWorker", Op: "SetForceUpdateOnPageLoad", Err: err}
@@ -91,9 +99,9 @@ func (d *domainClient) SetForceUpdateOnPageLoad(ctx context.Context, args *SetFo
 // SkipWaiting invokes the ServiceWorker method.
 func (d *domainClient) SkipWaiting(ctx context.Context, args *SkipWaitingArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "ServiceWorker.skipWaiting", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.skipWaiting", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "ServiceWorker.skipWaiting", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.skipWaiting", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "ServiceWorker", Op: "SkipWaiting", Err: err}
@@ -104,9 +112,9 @@ func (d *domainClient) SkipWaiting(ctx context.Context, args *SkipWaitingArgs) (
 // StartWorker invokes the ServiceWorker method.
 func (d *domainClient) StartWorker(ctx context.Context, args *StartWorkerArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "ServiceWorker.startWorker", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.startWorker", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "ServiceWorker.startWorker", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.startWorker", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "ServiceWorker", Op: "StartWorker", Err: err}
@@ -116,7 +124,7 @@ func (d *domainClient) StartWorker(ctx context.Context, args *StartWorkerArgs) (
 
 // StopAllWorkers invokes the ServiceWorker method.
 func (d *domainClient) StopAllWorkers(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "ServiceWorker.stopAllWorkers", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "ServiceWorker.stopAllWorkers", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "ServiceWorker", Op: "StopAllWorkers", Err: err}
 	}
@@ -126,9 +134,9 @@ func (d *domainClient) StopAllWorkers(ctx context.Context) (err error) {
 // StopWorker invokes the ServiceWorker method.
 func (d *domainClient) StopWorker(ctx context.Context, args *StopWorkerArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "ServiceWorker.stopWorker", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.stopWorker", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "ServiceWorker.stopWorker", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.stopWorker", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "ServiceWorker", Op: "StopWorker", Err: err}
@@ -139,9 +147,9 @@ func (d *domainClient) StopWorker(ctx context.Context, args *StopWorkerArgs) (er
 // Unregister invokes the ServiceWorker method.
 func (d *domainClient) Unregister(ctx context.Context, args *UnregisterArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "ServiceWorker.unregister", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.unregister", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "ServiceWorker.unregister", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.unregister", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "ServiceWorker", Op: "Unregister", Err: err}
@@ -152,9 +160,9 @@ func (d *domainClient) Unregister(ctx context.Context, args *UnregisterArgs) (er
 // UpdateRegistration invokes the ServiceWorker method.
 func (d *domainClient) UpdateRegistration(ctx context.Context, args *UpdateRegistrationArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "ServiceWorker.updateRegistration", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.updateRegistration", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "ServiceWorker.updateRegistration", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "ServiceWorker.updateRegistration", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "ServiceWorker", Op: "UpdateRegistration", Err: err}
@@ -163,7 +171,7 @@ func (d *domainClient) UpdateRegistration(ctx context.Context, args *UpdateRegis
 }
 
 func (d *domainClient) WorkerErrorReported(ctx context.Context) (WorkerErrorReportedClient, error) {
-	s, err := rpcc.NewStream(ctx, "ServiceWorker.workerErrorReported", d.conn)
+	s, err := rpcc.NewStream(ctx, "ServiceWorker.workerErrorReported", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +192,7 @@ func (c *workerErrorReportedClient) Recv() (*WorkerErrorReportedReply, error) {
 }
 
 func (d *domainClient) WorkerRegistrationUpdated(ctx context.Context) (WorkerRegistrationUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "ServiceWorker.workerRegistrationUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "ServiceWorker.workerRegistrationUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -205,7 +213,7 @@ func (c *workerRegistrationUpdatedClient) Recv() (*WorkerRegistrationUpdatedRepl
 }
 
 func (d *domainClient) WorkerVersionUpdated(ctx context.Context) (WorkerVersionUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "ServiceWorker.workerVersionUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "ServiceWorker.workerVersionUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

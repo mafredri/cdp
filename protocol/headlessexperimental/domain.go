@@ -13,11 +13,19 @@ import (
 
 // domainClient is a client for the HeadlessExperimental domain. This domain
 // provides experimental commands only supported in headless mode.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the HeadlessExperimental domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
+}
+
+// NewClient returns a client for the HeadlessExperimental domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
 }
 
 // BeginFrame invokes the HeadlessExperimental method. Sends a BeginFrame to
@@ -29,9 +37,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 func (d *domainClient) BeginFrame(ctx context.Context, args *BeginFrameArgs) (reply *BeginFrameReply, err error) {
 	reply = new(BeginFrameReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "HeadlessExperimental.beginFrame", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "HeadlessExperimental.beginFrame", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "HeadlessExperimental.beginFrame", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "HeadlessExperimental.beginFrame", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "HeadlessExperimental", Op: "BeginFrame", Err: err}
@@ -42,7 +50,7 @@ func (d *domainClient) BeginFrame(ctx context.Context, args *BeginFrameArgs) (re
 // Disable invokes the HeadlessExperimental method. Disables headless events
 // for the target.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "HeadlessExperimental.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "HeadlessExperimental.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "HeadlessExperimental", Op: "Disable", Err: err}
 	}
@@ -52,7 +60,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // Enable invokes the HeadlessExperimental method. Enables headless events for
 // the target.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "HeadlessExperimental.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "HeadlessExperimental.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "HeadlessExperimental", Op: "Enable", Err: err}
 	}
@@ -60,7 +68,7 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 }
 
 func (d *domainClient) NeedsBeginFramesChanged(ctx context.Context) (NeedsBeginFramesChangedClient, error) {
-	s, err := rpcc.NewStream(ctx, "HeadlessExperimental.needsBeginFramesChanged", d.conn)
+	s, err := rpcc.NewStream(ctx, "HeadlessExperimental.needsBeginFramesChanged", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

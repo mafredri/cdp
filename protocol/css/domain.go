@@ -27,11 +27,19 @@ import (
 // track of stylesheets via the `styleSheetAdded`/`styleSheetRemoved` events
 // and subsequently load the required stylesheet contents using the
 // `getStyleSheet[Text]()` methods.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the CSS domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
+}
+
+// NewClient returns a client for the CSS domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
 }
 
 // AddRule invokes the CSS method. Inserts a new rule with the given
@@ -40,9 +48,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 func (d *domainClient) AddRule(ctx context.Context, args *AddRuleArgs) (reply *AddRuleReply, err error) {
 	reply = new(AddRuleReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.addRule", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.addRule", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.addRule", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.addRule", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "AddRule", Err: err}
@@ -55,9 +63,9 @@ func (d *domainClient) AddRule(ctx context.Context, args *AddRuleArgs) (reply *A
 func (d *domainClient) CollectClassNames(ctx context.Context, args *CollectClassNamesArgs) (reply *CollectClassNamesReply, err error) {
 	reply = new(CollectClassNamesReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.collectClassNames", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.collectClassNames", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.collectClassNames", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.collectClassNames", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "CollectClassNames", Err: err}
@@ -70,9 +78,9 @@ func (d *domainClient) CollectClassNames(ctx context.Context, args *CollectClass
 func (d *domainClient) CreateStyleSheet(ctx context.Context, args *CreateStyleSheetArgs) (reply *CreateStyleSheetReply, err error) {
 	reply = new(CreateStyleSheetReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.createStyleSheet", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.createStyleSheet", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.createStyleSheet", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.createStyleSheet", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "CreateStyleSheet", Err: err}
@@ -82,7 +90,7 @@ func (d *domainClient) CreateStyleSheet(ctx context.Context, args *CreateStyleSh
 
 // Disable invokes the CSS method. Disables the CSS agent for the given page.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "CSS.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "CSS.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "Disable", Err: err}
 	}
@@ -93,7 +101,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // Clients should not assume that the CSS agent has been enabled until the
 // result of this command is received.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "CSS.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "CSS.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "Enable", Err: err}
 	}
@@ -104,9 +112,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 // have specified pseudo-classes whenever its style is computed by the browser.
 func (d *domainClient) ForcePseudoState(ctx context.Context, args *ForcePseudoStateArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.forcePseudoState", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.forcePseudoState", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.forcePseudoState", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.forcePseudoState", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "ForcePseudoState", Err: err}
@@ -118,9 +126,9 @@ func (d *domainClient) ForcePseudoState(ctx context.Context, args *ForcePseudoSt
 func (d *domainClient) GetBackgroundColors(ctx context.Context, args *GetBackgroundColorsArgs) (reply *GetBackgroundColorsReply, err error) {
 	reply = new(GetBackgroundColorsReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.getBackgroundColors", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.getBackgroundColors", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.getBackgroundColors", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.getBackgroundColors", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "GetBackgroundColors", Err: err}
@@ -133,9 +141,9 @@ func (d *domainClient) GetBackgroundColors(ctx context.Context, args *GetBackgro
 func (d *domainClient) GetComputedStyleForNode(ctx context.Context, args *GetComputedStyleForNodeArgs) (reply *GetComputedStyleForNodeReply, err error) {
 	reply = new(GetComputedStyleForNodeReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.getComputedStyleForNode", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.getComputedStyleForNode", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.getComputedStyleForNode", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.getComputedStyleForNode", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "GetComputedStyleForNode", Err: err}
@@ -149,9 +157,9 @@ func (d *domainClient) GetComputedStyleForNode(ctx context.Context, args *GetCom
 func (d *domainClient) GetInlineStylesForNode(ctx context.Context, args *GetInlineStylesForNodeArgs) (reply *GetInlineStylesForNodeReply, err error) {
 	reply = new(GetInlineStylesForNodeReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.getInlineStylesForNode", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.getInlineStylesForNode", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.getInlineStylesForNode", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.getInlineStylesForNode", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "GetInlineStylesForNode", Err: err}
@@ -164,9 +172,9 @@ func (d *domainClient) GetInlineStylesForNode(ctx context.Context, args *GetInli
 func (d *domainClient) GetMatchedStylesForNode(ctx context.Context, args *GetMatchedStylesForNodeArgs) (reply *GetMatchedStylesForNodeReply, err error) {
 	reply = new(GetMatchedStylesForNodeReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.getMatchedStylesForNode", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.getMatchedStylesForNode", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.getMatchedStylesForNode", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.getMatchedStylesForNode", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "GetMatchedStylesForNode", Err: err}
@@ -178,7 +186,7 @@ func (d *domainClient) GetMatchedStylesForNode(ctx context.Context, args *GetMat
 // the rendering engine.
 func (d *domainClient) GetMediaQueries(ctx context.Context) (reply *GetMediaQueriesReply, err error) {
 	reply = new(GetMediaQueriesReply)
-	err = rpcc.Invoke(ctx, "CSS.getMediaQueries", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "CSS.getMediaQueries", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "GetMediaQueries", Err: err}
 	}
@@ -190,9 +198,9 @@ func (d *domainClient) GetMediaQueries(ctx context.Context) (reply *GetMediaQuer
 func (d *domainClient) GetPlatformFontsForNode(ctx context.Context, args *GetPlatformFontsForNodeArgs) (reply *GetPlatformFontsForNodeReply, err error) {
 	reply = new(GetPlatformFontsForNodeReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.getPlatformFontsForNode", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.getPlatformFontsForNode", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.getPlatformFontsForNode", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.getPlatformFontsForNode", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "GetPlatformFontsForNode", Err: err}
@@ -205,9 +213,9 @@ func (d *domainClient) GetPlatformFontsForNode(ctx context.Context, args *GetPla
 func (d *domainClient) GetStyleSheetText(ctx context.Context, args *GetStyleSheetTextArgs) (reply *GetStyleSheetTextReply, err error) {
 	reply = new(GetStyleSheetTextReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.getStyleSheetText", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.getStyleSheetText", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.getStyleSheetText", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.getStyleSheetText", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "GetStyleSheetText", Err: err}
@@ -220,9 +228,9 @@ func (d *domainClient) GetStyleSheetText(ctx context.Context, args *GetStyleShee
 // property
 func (d *domainClient) SetEffectivePropertyValueForNode(ctx context.Context, args *SetEffectivePropertyValueForNodeArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.setEffectivePropertyValueForNode", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.setEffectivePropertyValueForNode", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.setEffectivePropertyValueForNode", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.setEffectivePropertyValueForNode", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "SetEffectivePropertyValueForNode", Err: err}
@@ -234,9 +242,9 @@ func (d *domainClient) SetEffectivePropertyValueForNode(ctx context.Context, arg
 func (d *domainClient) SetKeyframeKey(ctx context.Context, args *SetKeyframeKeyArgs) (reply *SetKeyframeKeyReply, err error) {
 	reply = new(SetKeyframeKeyReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.setKeyframeKey", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.setKeyframeKey", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.setKeyframeKey", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.setKeyframeKey", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "SetKeyframeKey", Err: err}
@@ -248,9 +256,9 @@ func (d *domainClient) SetKeyframeKey(ctx context.Context, args *SetKeyframeKeyA
 func (d *domainClient) SetMediaText(ctx context.Context, args *SetMediaTextArgs) (reply *SetMediaTextReply, err error) {
 	reply = new(SetMediaTextReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.setMediaText", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.setMediaText", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.setMediaText", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.setMediaText", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "SetMediaText", Err: err}
@@ -262,9 +270,9 @@ func (d *domainClient) SetMediaText(ctx context.Context, args *SetMediaTextArgs)
 func (d *domainClient) SetRuleSelector(ctx context.Context, args *SetRuleSelectorArgs) (reply *SetRuleSelectorReply, err error) {
 	reply = new(SetRuleSelectorReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.setRuleSelector", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.setRuleSelector", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.setRuleSelector", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.setRuleSelector", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "SetRuleSelector", Err: err}
@@ -276,9 +284,9 @@ func (d *domainClient) SetRuleSelector(ctx context.Context, args *SetRuleSelecto
 func (d *domainClient) SetStyleSheetText(ctx context.Context, args *SetStyleSheetTextArgs) (reply *SetStyleSheetTextReply, err error) {
 	reply = new(SetStyleSheetTextReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.setStyleSheetText", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.setStyleSheetText", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.setStyleSheetText", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.setStyleSheetText", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "SetStyleSheetText", Err: err}
@@ -291,9 +299,9 @@ func (d *domainClient) SetStyleSheetText(ctx context.Context, args *SetStyleShee
 func (d *domainClient) SetStyleTexts(ctx context.Context, args *SetStyleTextsArgs) (reply *SetStyleTextsReply, err error) {
 	reply = new(SetStyleTextsReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CSS.setStyleTexts", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.setStyleTexts", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CSS.setStyleTexts", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CSS.setStyleTexts", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "SetStyleTexts", Err: err}
@@ -304,7 +312,7 @@ func (d *domainClient) SetStyleTexts(ctx context.Context, args *SetStyleTextsArg
 // StartRuleUsageTracking invokes the CSS method. Enables the selector
 // recording.
 func (d *domainClient) StartRuleUsageTracking(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "CSS.startRuleUsageTracking", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "CSS.startRuleUsageTracking", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "StartRuleUsageTracking", Err: err}
 	}
@@ -316,7 +324,7 @@ func (d *domainClient) StartRuleUsageTracking(ctx context.Context) (err error) {
 // `takeCoverageDelta` (or since start of coverage instrumentation)
 func (d *domainClient) StopRuleUsageTracking(ctx context.Context) (reply *StopRuleUsageTrackingReply, err error) {
 	reply = new(StopRuleUsageTrackingReply)
-	err = rpcc.Invoke(ctx, "CSS.stopRuleUsageTracking", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "CSS.stopRuleUsageTracking", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "StopRuleUsageTracking", Err: err}
 	}
@@ -328,7 +336,7 @@ func (d *domainClient) StopRuleUsageTracking(ctx context.Context) (reply *StopRu
 // instrumentation)
 func (d *domainClient) TakeCoverageDelta(ctx context.Context) (reply *TakeCoverageDeltaReply, err error) {
 	reply = new(TakeCoverageDeltaReply)
-	err = rpcc.Invoke(ctx, "CSS.takeCoverageDelta", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "CSS.takeCoverageDelta", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "TakeCoverageDelta", Err: err}
 	}
@@ -336,7 +344,7 @@ func (d *domainClient) TakeCoverageDelta(ctx context.Context) (reply *TakeCovera
 }
 
 func (d *domainClient) FontsUpdated(ctx context.Context) (FontsUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "CSS.fontsUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "CSS.fontsUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -357,7 +365,7 @@ func (c *fontsUpdatedClient) Recv() (*FontsUpdatedReply, error) {
 }
 
 func (d *domainClient) MediaQueryResultChanged(ctx context.Context) (MediaQueryResultChangedClient, error) {
-	s, err := rpcc.NewStream(ctx, "CSS.mediaQueryResultChanged", d.conn)
+	s, err := rpcc.NewStream(ctx, "CSS.mediaQueryResultChanged", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -378,7 +386,7 @@ func (c *mediaQueryResultChangedClient) Recv() (*MediaQueryResultChangedReply, e
 }
 
 func (d *domainClient) StyleSheetAdded(ctx context.Context) (StyleSheetAddedClient, error) {
-	s, err := rpcc.NewStream(ctx, "CSS.styleSheetAdded", d.conn)
+	s, err := rpcc.NewStream(ctx, "CSS.styleSheetAdded", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -399,7 +407,7 @@ func (c *styleSheetAddedClient) Recv() (*StyleSheetAddedReply, error) {
 }
 
 func (d *domainClient) StyleSheetChanged(ctx context.Context) (StyleSheetChangedClient, error) {
-	s, err := rpcc.NewStream(ctx, "CSS.styleSheetChanged", d.conn)
+	s, err := rpcc.NewStream(ctx, "CSS.styleSheetChanged", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -420,7 +428,7 @@ func (c *styleSheetChangedClient) Recv() (*StyleSheetChangedReply, error) {
 }
 
 func (d *domainClient) StyleSheetRemoved(ctx context.Context) (StyleSheetRemovedClient, error) {
-	s, err := rpcc.NewStream(ctx, "CSS.styleSheetRemoved", d.conn)
+	s, err := rpcc.NewStream(ctx, "CSS.styleSheetRemoved", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

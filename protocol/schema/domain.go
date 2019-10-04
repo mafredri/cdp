@@ -11,17 +11,25 @@ import (
 )
 
 // domainClient is a client for the Schema domain. This domain is deprecated.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Schema domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Schema domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // GetDomains invokes the Schema method. Returns supported domains.
 func (d *domainClient) GetDomains(ctx context.Context) (reply *GetDomainsReply, err error) {
 	reply = new(GetDomainsReply)
-	err = rpcc.Invoke(ctx, "Schema.getDomains", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Schema.getDomains", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Schema", Op: "GetDomains", Err: err}
 	}
