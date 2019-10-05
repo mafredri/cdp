@@ -88,6 +88,23 @@ var (
 	}
 )
 
+func makeDetachFrom(sessionID target.SessionID, client *cdp.Client, detachTimeout time.Duration) func() error {
+	detach := func() error {
+		ctx, cancel := context.WithTimeout(context.Background(), detachTimeout)
+		defer cancel()
+
+		err := client.Target.DetachFromTarget(ctx,
+			target.NewDetachFromTargetArgs().SetSessionID(sessionID))
+
+		err = cdp.ErrorCause(err)
+		if err == context.DeadlineExceeded {
+			return fmt.Errorf("session: detach timed out for session %s", sessionID)
+		}
+		return errors.Wrapf(err, "session: detach failed for session %s", sessionID)
+	}
+	return detach
+}
+
 func attach(ctx context.Context, id target.ID, tc *cdp.Client, detachTimeout time.Duration) (s *session, err error) {
 	args := target.NewAttachToTargetArgs(id)
 	args.SetFlatten(true)
@@ -104,7 +121,7 @@ func attach(ctx context.Context, id target.ID, tc *cdp.Client, detachTimeout tim
 		init:        make(chan struct{}),
 		sessionConn: sc,
 	}
-	// FIXME(powdercloud): Detach when s.sessionConn is closed.
+	s.sessionConn.OnClose = makeDetachFrom(reply.SessionID, tc, detachTimeout)
 	close(s.init)
 	return s, nil
 }
@@ -137,19 +154,7 @@ func dial(ctx context.Context, id target.ID, tc *cdp.Client, detachTimeout time.
 		},
 	}
 
-	detach := func() error {
-		ctx, cancel := context.WithTimeout(context.Background(), detachTimeout)
-		defer cancel()
-
-		err := tc.Target.DetachFromTarget(ctx,
-			target.NewDetachFromTargetArgs().SetSessionID(s.ID))
-
-		err = cdp.ErrorCause(err)
-		if err == context.DeadlineExceeded {
-			return fmt.Errorf("session: detach timed out for session %s", s.ID)
-		}
-		return errors.Wrapf(err, "session: detach failed for session %s", s.ID)
-	}
+	detach := makeDetachFrom(reply.SessionID, tc, detachTimeout)
 
 	s.conn, err = rpcc.DialContext(ctx, "", sessionDetachConn(detach), sessionCodec(s))
 	if err != nil {

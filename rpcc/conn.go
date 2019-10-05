@@ -445,9 +445,14 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 // to the appropriate stream listeners.
 func (c *Conn) notify(method, sessionID string, data []byte) {
 	c.mu.Lock()
+	defer c.mu.Unlock()
 	var streamClients *map[string]*streamClients
 	if sessionID != "" {
-		streamClients = &c.sessions[sessionID].streams
+		session, ok := c.sessions[sessionID]
+		if !ok {
+			return
+		}
+		streamClients = &session.streams
 	} else {
 		streamClients = &c.streams
 	}
@@ -457,7 +462,6 @@ func (c *Conn) notify(method, sessionID string, data []byte) {
 		// even after it has been removed (unsubscribed).
 		stream.write(method, sessionID, data)
 	}
-	c.mu.Unlock()
 }
 
 // listen registers a new stream listener (chan) for the RPC notification
@@ -567,13 +571,25 @@ type SessionConn struct {
 	streams   map[string]*streamClients
 	ctx       context.Context
 	cancel    context.CancelFunc
+	OnClose   func() error
 }
 
 func (c *SessionConn) Context() context.Context {
 	return c.ctx
 }
 
-func (c *SessionConn) Close() error {
+func (c *SessionConn) Close() (err error) {
+	// TODO: This probably needs to behave more like Conn.close with
+	// respect to the errors (storing an error internally, checking it
+	// when closing, returning it consistenly, etc.).
+	if c.OnClose != nil {
+		err = c.OnClose()
+	}
+	c.Parent.mu.Lock()
+	if c.Parent.sessions != nil {
+		delete(c.Parent.sessions, c.SessionID)
+	}
+	c.Parent.mu.Unlock()
 	c.cancel()
 	return nil
 }
@@ -583,7 +599,9 @@ func (c *Conn) NewSessionConn(sessionID string) *SessionConn {
 		streams: make(map[string]*streamClients),
 	}
 	s.ctx, s.cancel = context.WithCancel(context.Background())
+	c.mu.Lock()
 	c.sessions[sessionID] = s
+	c.mu.Unlock()
 	return s
 }
 
