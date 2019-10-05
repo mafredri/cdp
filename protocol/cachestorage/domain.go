@@ -11,19 +11,27 @@ import (
 )
 
 // domainClient is a client for the CacheStorage domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the CacheStorage domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the CacheStorage domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // DeleteCache invokes the CacheStorage method. Deletes a cache.
 func (d *domainClient) DeleteCache(ctx context.Context, args *DeleteCacheArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CacheStorage.deleteCache", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CacheStorage.deleteCache", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CacheStorage.deleteCache", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CacheStorage.deleteCache", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CacheStorage", Op: "DeleteCache", Err: err}
@@ -34,9 +42,9 @@ func (d *domainClient) DeleteCache(ctx context.Context, args *DeleteCacheArgs) (
 // DeleteEntry invokes the CacheStorage method. Deletes a cache entry.
 func (d *domainClient) DeleteEntry(ctx context.Context, args *DeleteEntryArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CacheStorage.deleteEntry", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CacheStorage.deleteEntry", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CacheStorage.deleteEntry", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CacheStorage.deleteEntry", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CacheStorage", Op: "DeleteEntry", Err: err}
@@ -48,9 +56,9 @@ func (d *domainClient) DeleteEntry(ctx context.Context, args *DeleteEntryArgs) (
 func (d *domainClient) RequestCacheNames(ctx context.Context, args *RequestCacheNamesArgs) (reply *RequestCacheNamesReply, err error) {
 	reply = new(RequestCacheNamesReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CacheStorage.requestCacheNames", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CacheStorage.requestCacheNames", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CacheStorage.requestCacheNames", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CacheStorage.requestCacheNames", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CacheStorage", Op: "RequestCacheNames", Err: err}
@@ -62,9 +70,9 @@ func (d *domainClient) RequestCacheNames(ctx context.Context, args *RequestCache
 func (d *domainClient) RequestCachedResponse(ctx context.Context, args *RequestCachedResponseArgs) (reply *RequestCachedResponseReply, err error) {
 	reply = new(RequestCachedResponseReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CacheStorage.requestCachedResponse", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CacheStorage.requestCachedResponse", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CacheStorage.requestCachedResponse", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CacheStorage.requestCachedResponse", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CacheStorage", Op: "RequestCachedResponse", Err: err}
@@ -76,9 +84,9 @@ func (d *domainClient) RequestCachedResponse(ctx context.Context, args *RequestC
 func (d *domainClient) RequestEntries(ctx context.Context, args *RequestEntriesArgs) (reply *RequestEntriesReply, err error) {
 	reply = new(RequestEntriesReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "CacheStorage.requestEntries", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CacheStorage.requestEntries", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "CacheStorage.requestEntries", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "CacheStorage.requestEntries", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CacheStorage", Op: "RequestEntries", Err: err}

@@ -13,16 +13,24 @@ import (
 
 // domainClient is a client for the Console domain. This domain is deprecated
 // - use Runtime or Log instead.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Console domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Console domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // ClearMessages invokes the Console method. Does nothing.
 func (d *domainClient) ClearMessages(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Console.clearMessages", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Console.clearMessages", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Console", Op: "ClearMessages", Err: err}
 	}
@@ -32,7 +40,7 @@ func (d *domainClient) ClearMessages(ctx context.Context) (err error) {
 // Disable invokes the Console method. Disables console domain, prevents
 // further console messages from being reported to the client.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Console.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Console.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Console", Op: "Disable", Err: err}
 	}
@@ -43,7 +51,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // messages collected so far to the client by means of the `messageAdded`
 // notification.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Console.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Console.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Console", Op: "Enable", Err: err}
 	}
@@ -51,7 +59,7 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 }
 
 func (d *domainClient) MessageAdded(ctx context.Context) (MessageAddedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Console.messageAdded", d.conn)
+	s, err := rpcc.NewStream(ctx, "Console.messageAdded", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

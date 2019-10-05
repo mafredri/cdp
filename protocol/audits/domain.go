@@ -13,11 +13,19 @@ import (
 
 // domainClient is a client for the Audits domain. Audits domain allows
 // investigation of page violations and possible improvements.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Audits domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
+}
+
+// NewClient returns a client for the Audits domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
 }
 
 // GetEncodedResponse invokes the Audits method. Returns the response body and
@@ -26,9 +34,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 func (d *domainClient) GetEncodedResponse(ctx context.Context, args *GetEncodedResponseArgs) (reply *GetEncodedResponseReply, err error) {
 	reply = new(GetEncodedResponseReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Audits.getEncodedResponse", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Audits.getEncodedResponse", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Audits.getEncodedResponse", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Audits.getEncodedResponse", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Audits", Op: "GetEncodedResponse", Err: err}

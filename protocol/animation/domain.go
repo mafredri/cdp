@@ -11,17 +11,25 @@ import (
 )
 
 // domainClient is a client for the Animation domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Animation domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Animation domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Disable invokes the Animation method. Disables animation domain
 // notifications.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Animation.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Animation.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Animation", Op: "Disable", Err: err}
 	}
@@ -31,7 +39,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // Enable invokes the Animation method. Enables animation domain
 // notifications.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Animation.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Animation.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Animation", Op: "Enable", Err: err}
 	}
@@ -43,9 +51,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 func (d *domainClient) GetCurrentTime(ctx context.Context, args *GetCurrentTimeArgs) (reply *GetCurrentTimeReply, err error) {
 	reply = new(GetCurrentTimeReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Animation.getCurrentTime", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.getCurrentTime", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Animation.getCurrentTime", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.getCurrentTime", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Animation", Op: "GetCurrentTime", Err: err}
@@ -57,7 +65,7 @@ func (d *domainClient) GetCurrentTime(ctx context.Context, args *GetCurrentTimeA
 // document timeline.
 func (d *domainClient) GetPlaybackRate(ctx context.Context) (reply *GetPlaybackRateReply, err error) {
 	reply = new(GetPlaybackRateReply)
-	err = rpcc.Invoke(ctx, "Animation.getPlaybackRate", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Animation.getPlaybackRate", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Animation", Op: "GetPlaybackRate", Err: err}
 	}
@@ -68,9 +76,9 @@ func (d *domainClient) GetPlaybackRate(ctx context.Context) (reply *GetPlaybackR
 // animations to no longer be manipulated.
 func (d *domainClient) ReleaseAnimations(ctx context.Context, args *ReleaseAnimationsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Animation.releaseAnimations", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.releaseAnimations", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Animation.releaseAnimations", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.releaseAnimations", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Animation", Op: "ReleaseAnimations", Err: err}
@@ -83,9 +91,9 @@ func (d *domainClient) ReleaseAnimations(ctx context.Context, args *ReleaseAnima
 func (d *domainClient) ResolveAnimation(ctx context.Context, args *ResolveAnimationArgs) (reply *ResolveAnimationReply, err error) {
 	reply = new(ResolveAnimationReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Animation.resolveAnimation", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.resolveAnimation", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Animation.resolveAnimation", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.resolveAnimation", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Animation", Op: "ResolveAnimation", Err: err}
@@ -97,9 +105,9 @@ func (d *domainClient) ResolveAnimation(ctx context.Context, args *ResolveAnimat
 // particular time within each animation.
 func (d *domainClient) SeekAnimations(ctx context.Context, args *SeekAnimationsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Animation.seekAnimations", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.seekAnimations", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Animation.seekAnimations", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.seekAnimations", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Animation", Op: "SeekAnimations", Err: err}
@@ -111,9 +119,9 @@ func (d *domainClient) SeekAnimations(ctx context.Context, args *SeekAnimationsA
 // animations.
 func (d *domainClient) SetPaused(ctx context.Context, args *SetPausedArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Animation.setPaused", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.setPaused", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Animation.setPaused", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.setPaused", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Animation", Op: "SetPaused", Err: err}
@@ -125,9 +133,9 @@ func (d *domainClient) SetPaused(ctx context.Context, args *SetPausedArgs) (err 
 // document timeline.
 func (d *domainClient) SetPlaybackRate(ctx context.Context, args *SetPlaybackRateArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Animation.setPlaybackRate", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.setPlaybackRate", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Animation.setPlaybackRate", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.setPlaybackRate", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Animation", Op: "SetPlaybackRate", Err: err}
@@ -139,9 +147,9 @@ func (d *domainClient) SetPlaybackRate(ctx context.Context, args *SetPlaybackRat
 // node.
 func (d *domainClient) SetTiming(ctx context.Context, args *SetTimingArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Animation.setTiming", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.setTiming", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Animation.setTiming", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Animation.setTiming", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Animation", Op: "SetTiming", Err: err}
@@ -150,7 +158,7 @@ func (d *domainClient) SetTiming(ctx context.Context, args *SetTimingArgs) (err 
 }
 
 func (d *domainClient) AnimationCanceled(ctx context.Context) (CanceledClient, error) {
-	s, err := rpcc.NewStream(ctx, "Animation.animationCanceled", d.conn)
+	s, err := rpcc.NewStream(ctx, "Animation.animationCanceled", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +179,7 @@ func (c *canceledClient) Recv() (*CanceledReply, error) {
 }
 
 func (d *domainClient) AnimationCreated(ctx context.Context) (CreatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Animation.animationCreated", d.conn)
+	s, err := rpcc.NewStream(ctx, "Animation.animationCreated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -192,7 +200,7 @@ func (c *createdClient) Recv() (*CreatedReply, error) {
 }
 
 func (d *domainClient) AnimationStarted(ctx context.Context) (StartedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Animation.animationStarted", d.conn)
+	s, err := rpcc.NewStream(ctx, "Animation.animationStarted", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

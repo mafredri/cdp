@@ -297,16 +297,18 @@ func (g *Generator) format() []byte {
 // CdpClient creates the cdp.Client type.
 func (g *Generator) CdpClient(domains []proto.Domain) {
 	g.hasContent = true
-	var fields, newFields Generator
+	var fields, newFields, newSessionFields Generator
 	for _, d := range domains {
 		fields.Printf("\t%s %s\n", d.Name(), d.Type())
 		newFields.Printf("\t\t%s: %s.NewClient(conn),\n", d.Name(), strings.ToLower(d.Name()))
+		newSessionFields.Printf("\t\t%s: %s.NewSessionClient(c.Conn, sessionID),\n", d.Name(), strings.ToLower(d.Name()))
 	}
 	g.Printf(`
 // Client represents a Chrome DevTools Protocol client that can be used to
 // invoke methods or listen to events in every CDP domain. The Client consumes
 // a rpcc connection, used to invoke the methods.
 type Client struct {
+        Conn *rpcc.Conn
 	%s
 }
 
@@ -314,10 +316,17 @@ type Client struct {
 // for communication with the debugging target.
 func NewClient(conn *rpcc.Conn) *Client {
 	return &Client{
+                Conn: conn,
 		%s
 	}
 }
-`, fields.buf.Bytes(), newFields.buf.Bytes())
+
+func (c *Client) NewSession(sessionID string) *Client {
+        return &Client{
+               %s
+        }
+}
+`, fields.buf.Bytes(), newFields.buf.Bytes(), newSessionFields.buf.Bytes())
 }
 
 // PackageHeader writes the header for a package.
@@ -406,11 +415,16 @@ func (g *Generator) DomainDefinition(d proto.Domain) {
 	comment := fmt.Sprintf("domainClient is a client for the %s domain. ", d.Name())
 	g.Printf(`
 // %[1]s%[3]s
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct{ conn *rpcc.Conn; sessionID string }
 
 // NewClient returns a client for the %[2]s domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
+}
+
+// NewClient returns a client for the %[2]s domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
 }
 `, comment, d.Name(), d.Desc(0, len(comment)))
 
@@ -439,9 +453,9 @@ func (d *domainClient) %[1]s(ctx context.Context%[3]s) %[4]s {`, c.Name(), comme
 		if len(c.Parameters) > 0 {
 			g.Printf(`
 	if args != nil {
-		err = rpcc.Invoke(ctx, %[1]q, args, %[2]s, d.conn)
+		err = rpcc.InvokeRPC(ctx, %[1]q, d.sessionID, args, %[2]s, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, %[1]q, nil, %[2]s, d.conn)
+		err = rpcc.InvokeRPC(ctx, %[1]q, d.sessionID, nil, %[2]s, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: %[3]q, Op: %[4]q, Err: err}
@@ -451,7 +465,7 @@ func (d *domainClient) %[1]s(ctx context.Context%[3]s) %[4]s {`, c.Name(), comme
 `, d.Domain+"."+c.NameName, invokeReply, d.Name(), c.Name())
 		} else {
 			g.Printf(`
-	err = rpcc.Invoke(ctx, %q, nil, %s, d.conn)
+	err = rpcc.InvokeRPC(ctx, %q, d.sessionID, nil, %s, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: %q, Op: %q, Err: err}
 	}
@@ -516,7 +530,7 @@ func Test%[1]s_%[2]s(t *testing.T) {
 		// Implement event on domain.
 		g.Printf(`
 func (d *domainClient) %s(ctx context.Context) (%s, error) {
-	s, err := rpcc.NewStream(ctx, %q, d.conn)
+	s, err := rpcc.NewStream(ctx, %q, d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

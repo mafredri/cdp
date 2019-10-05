@@ -27,7 +27,7 @@ func TestNewStream_AfterClose(t *testing.T) {
 	defer cancel()
 
 	srv.conn.Close()
-	_, err := NewStream(ctx, "test", srv.conn)
+	_, err := NewStream(ctx, "test", "", srv.conn)
 	if err != ErrConnClosing {
 		t.Errorf("NewStream() after closed conn; got %v, want %v", err, ErrConnClosing)
 	}
@@ -40,12 +40,12 @@ func TestStream_UserCancel(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	s, err := NewStream(ctx, "test", conn)
+	s, err := NewStream(ctx, "test", "", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	conn.notify("test", []byte(`"message"`))
+	conn.notify("test", "", []byte(`"message"`))
 
 	connCancel()
 	cancel() // User cancellation has priority.
@@ -64,14 +64,14 @@ func TestStream_Ready(t *testing.T) {
 	defer cancel()
 
 	run := func(t *testing.T, closeEarly bool) {
-		s, err := NewStream(ctx, "test", conn)
+		s, err := NewStream(ctx, "test", "", conn)
 		if err != nil {
 			t.Fatal(err)
 		}
 
 		go func() {
 			for i := 0; i < 10; i++ {
-				conn.notify("test", []byte(strconv.Itoa(i)))
+				conn.notify("test", "", []byte(strconv.Itoa(i)))
 			}
 			if closeEarly {
 				s.Close()
@@ -108,13 +108,13 @@ func TestStream_Ready_Multiple_Streams(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	s1, err := NewStream(ctx, "test1", conn)
+	s1, err := NewStream(ctx, "test1", "", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer s1.Close()
 
-	s2, err := NewStream(ctx, "test2", conn)
+	s2, err := NewStream(ctx, "test2", "", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -122,8 +122,8 @@ func TestStream_Ready_Multiple_Streams(t *testing.T) {
 
 	go func() {
 		for i := 0; i < 10; i++ {
-			conn.notify("test1", []byte(strconv.Itoa(i)))
-			conn.notify("test2", []byte(strconv.Itoa(i)))
+			conn.notify("test1", "", []byte(strconv.Itoa(i)))
+			conn.notify("test2", "", []byte(strconv.Itoa(i)))
 		}
 	}()
 
@@ -159,14 +159,14 @@ func TestStream_Wait_Blocks_After_RecvMsg(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	s, err := NewStream(ctx, "test", conn)
+	s, err := NewStream(ctx, "test", "", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer s.Close()
 
 	// Notify will trigger a send on the ready channel.
-	conn.notify("test", []byte(`"hello"`))
+	conn.notify("test", "", []byte(`"hello"`))
 
 	var got string
 	// RecvMsg should empty the ready channel so Ready can block.
@@ -189,14 +189,14 @@ func TestStream_RecvAfterConnClose(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	s, err := NewStream(ctx, "test", conn)
+	s, err := NewStream(ctx, "test", "", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	conn.notify("test", []byte(`"message1"`))
-	conn.notify("test", []byte(`"message2"`))
-	conn.notify("test", []byte(`"message3"`))
+	conn.notify("test", "", []byte(`"message1"`))
+	conn.notify("test", "", []byte(`"message2"`))
+	conn.notify("test", "", []byte(`"message3"`))
 
 	conn.Close()
 
@@ -251,14 +251,14 @@ func TestStream_RecvMsg(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	s, err := NewStream(ctx, "test", conn)
+	s, err := NewStream(ctx, "test", "", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			conn.notify("test", []byte(tt.fields.payload))
+			conn.notify("test", "", []byte(tt.fields.payload))
 
 			if err := s.RecvMsg(tt.args.m); (err != nil) != tt.wantErr {
 				t.Errorf("Stream.RecvMsg() error = %v, wantErr %v", err, tt.wantErr)

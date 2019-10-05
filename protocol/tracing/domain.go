@@ -11,16 +11,24 @@ import (
 )
 
 // domainClient is a client for the Tracing domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Tracing domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Tracing domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // End invokes the Tracing method. Stop trace events collection.
 func (d *domainClient) End(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Tracing.end", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Tracing.end", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Tracing", Op: "End", Err: err}
 	}
@@ -31,7 +39,7 @@ func (d *domainClient) End(ctx context.Context) (err error) {
 // categories.
 func (d *domainClient) GetCategories(ctx context.Context) (reply *GetCategoriesReply, err error) {
 	reply = new(GetCategoriesReply)
-	err = rpcc.Invoke(ctx, "Tracing.getCategories", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Tracing.getCategories", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Tracing", Op: "GetCategories", Err: err}
 	}
@@ -42,9 +50,9 @@ func (d *domainClient) GetCategories(ctx context.Context) (reply *GetCategoriesR
 // marker in the trace.
 func (d *domainClient) RecordClockSyncMarker(ctx context.Context, args *RecordClockSyncMarkerArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Tracing.recordClockSyncMarker", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Tracing.recordClockSyncMarker", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Tracing.recordClockSyncMarker", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Tracing.recordClockSyncMarker", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Tracing", Op: "RecordClockSyncMarker", Err: err}
@@ -55,7 +63,7 @@ func (d *domainClient) RecordClockSyncMarker(ctx context.Context, args *RecordCl
 // RequestMemoryDump invokes the Tracing method. Request a global memory dump.
 func (d *domainClient) RequestMemoryDump(ctx context.Context) (reply *RequestMemoryDumpReply, err error) {
 	reply = new(RequestMemoryDumpReply)
-	err = rpcc.Invoke(ctx, "Tracing.requestMemoryDump", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Tracing.requestMemoryDump", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Tracing", Op: "RequestMemoryDump", Err: err}
 	}
@@ -65,9 +73,9 @@ func (d *domainClient) RequestMemoryDump(ctx context.Context) (reply *RequestMem
 // Start invokes the Tracing method. Start trace events collection.
 func (d *domainClient) Start(ctx context.Context, args *StartArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Tracing.start", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Tracing.start", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Tracing.start", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Tracing.start", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Tracing", Op: "Start", Err: err}
@@ -76,7 +84,7 @@ func (d *domainClient) Start(ctx context.Context, args *StartArgs) (err error) {
 }
 
 func (d *domainClient) BufferUsage(ctx context.Context) (BufferUsageClient, error) {
-	s, err := rpcc.NewStream(ctx, "Tracing.bufferUsage", d.conn)
+	s, err := rpcc.NewStream(ctx, "Tracing.bufferUsage", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -97,7 +105,7 @@ func (c *bufferUsageClient) Recv() (*BufferUsageReply, error) {
 }
 
 func (d *domainClient) DataCollected(ctx context.Context) (DataCollectedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Tracing.dataCollected", d.conn)
+	s, err := rpcc.NewStream(ctx, "Tracing.dataCollected", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +126,7 @@ func (c *dataCollectedClient) Recv() (*DataCollectedReply, error) {
 }
 
 func (d *domainClient) TracingComplete(ctx context.Context) (CompleteClient, error) {
-	s, err := rpcc.NewStream(ctx, "Tracing.tracingComplete", d.conn)
+	s, err := rpcc.NewStream(ctx, "Tracing.tracingComplete", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

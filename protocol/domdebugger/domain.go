@@ -17,11 +17,19 @@ import (
 // setting breakpoints on particular DOM operations and events. JavaScript
 // execution will stop on these operations as if there was a regular breakpoint
 // set.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the DOMDebugger domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
+}
+
+// NewClient returns a client for the DOMDebugger domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
 }
 
 // GetEventListeners invokes the DOMDebugger method. Returns event listeners
@@ -29,9 +37,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 func (d *domainClient) GetEventListeners(ctx context.Context, args *GetEventListenersArgs) (reply *GetEventListenersReply, err error) {
 	reply = new(GetEventListenersReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMDebugger.getEventListeners", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.getEventListeners", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMDebugger.getEventListeners", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.getEventListeners", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMDebugger", Op: "GetEventListeners", Err: err}
@@ -43,9 +51,9 @@ func (d *domainClient) GetEventListeners(ctx context.Context, args *GetEventList
 // that was set using `setDOMBreakpoint`.
 func (d *domainClient) RemoveDOMBreakpoint(ctx context.Context, args *RemoveDOMBreakpointArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMDebugger.removeDOMBreakpoint", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.removeDOMBreakpoint", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMDebugger.removeDOMBreakpoint", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.removeDOMBreakpoint", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMDebugger", Op: "RemoveDOMBreakpoint", Err: err}
@@ -57,9 +65,9 @@ func (d *domainClient) RemoveDOMBreakpoint(ctx context.Context, args *RemoveDOMB
 // breakpoint on particular DOM event.
 func (d *domainClient) RemoveEventListenerBreakpoint(ctx context.Context, args *RemoveEventListenerBreakpointArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMDebugger.removeEventListenerBreakpoint", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.removeEventListenerBreakpoint", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMDebugger.removeEventListenerBreakpoint", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.removeEventListenerBreakpoint", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMDebugger", Op: "RemoveEventListenerBreakpoint", Err: err}
@@ -71,9 +79,9 @@ func (d *domainClient) RemoveEventListenerBreakpoint(ctx context.Context, args *
 // breakpoint on particular native event.
 func (d *domainClient) RemoveInstrumentationBreakpoint(ctx context.Context, args *RemoveInstrumentationBreakpointArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMDebugger.removeInstrumentationBreakpoint", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.removeInstrumentationBreakpoint", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMDebugger.removeInstrumentationBreakpoint", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.removeInstrumentationBreakpoint", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMDebugger", Op: "RemoveInstrumentationBreakpoint", Err: err}
@@ -85,9 +93,9 @@ func (d *domainClient) RemoveInstrumentationBreakpoint(ctx context.Context, args
 // XMLHttpRequest.
 func (d *domainClient) RemoveXHRBreakpoint(ctx context.Context, args *RemoveXHRBreakpointArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMDebugger.removeXHRBreakpoint", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.removeXHRBreakpoint", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMDebugger.removeXHRBreakpoint", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.removeXHRBreakpoint", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMDebugger", Op: "RemoveXHRBreakpoint", Err: err}
@@ -99,9 +107,9 @@ func (d *domainClient) RemoveXHRBreakpoint(ctx context.Context, args *RemoveXHRB
 // particular operation with DOM.
 func (d *domainClient) SetDOMBreakpoint(ctx context.Context, args *SetDOMBreakpointArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMDebugger.setDOMBreakpoint", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.setDOMBreakpoint", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMDebugger.setDOMBreakpoint", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.setDOMBreakpoint", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMDebugger", Op: "SetDOMBreakpoint", Err: err}
@@ -113,9 +121,9 @@ func (d *domainClient) SetDOMBreakpoint(ctx context.Context, args *SetDOMBreakpo
 // on particular DOM event.
 func (d *domainClient) SetEventListenerBreakpoint(ctx context.Context, args *SetEventListenerBreakpointArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMDebugger.setEventListenerBreakpoint", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.setEventListenerBreakpoint", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMDebugger.setEventListenerBreakpoint", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.setEventListenerBreakpoint", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMDebugger", Op: "SetEventListenerBreakpoint", Err: err}
@@ -127,9 +135,9 @@ func (d *domainClient) SetEventListenerBreakpoint(ctx context.Context, args *Set
 // breakpoint on particular native event.
 func (d *domainClient) SetInstrumentationBreakpoint(ctx context.Context, args *SetInstrumentationBreakpointArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMDebugger.setInstrumentationBreakpoint", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.setInstrumentationBreakpoint", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMDebugger.setInstrumentationBreakpoint", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.setInstrumentationBreakpoint", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMDebugger", Op: "SetInstrumentationBreakpoint", Err: err}
@@ -141,9 +149,9 @@ func (d *domainClient) SetInstrumentationBreakpoint(ctx context.Context, args *S
 // XMLHttpRequest.
 func (d *domainClient) SetXHRBreakpoint(ctx context.Context, args *SetXHRBreakpointArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMDebugger.setXHRBreakpoint", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.setXHRBreakpoint", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMDebugger.setXHRBreakpoint", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMDebugger.setXHRBreakpoint", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMDebugger", Op: "SetXHRBreakpoint", Err: err}

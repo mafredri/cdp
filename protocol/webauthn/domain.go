@@ -13,17 +13,25 @@ import (
 
 // domainClient is a client for the WebAuthn domain. This domain allows
 // configuring virtual authenticators to test the WebAuthn API.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the WebAuthn domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the WebAuthn domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Enable invokes the WebAuthn method. Enable the WebAuthn domain and start
 // intercepting credential storage and retrieval with a virtual authenticator.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "WebAuthn.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "WebAuthn.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAuthn", Op: "Enable", Err: err}
 	}
@@ -32,7 +40,7 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 
 // Disable invokes the WebAuthn method. Disable the WebAuthn domain.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "WebAuthn.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "WebAuthn.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAuthn", Op: "Disable", Err: err}
 	}
@@ -44,9 +52,9 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 func (d *domainClient) AddVirtualAuthenticator(ctx context.Context, args *AddVirtualAuthenticatorArgs) (reply *AddVirtualAuthenticatorReply, err error) {
 	reply = new(AddVirtualAuthenticatorReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "WebAuthn.addVirtualAuthenticator", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAuthn.addVirtualAuthenticator", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "WebAuthn.addVirtualAuthenticator", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAuthn.addVirtualAuthenticator", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAuthn", Op: "AddVirtualAuthenticator", Err: err}
@@ -58,9 +66,9 @@ func (d *domainClient) AddVirtualAuthenticator(ctx context.Context, args *AddVir
 // authenticator.
 func (d *domainClient) RemoveVirtualAuthenticator(ctx context.Context, args *RemoveVirtualAuthenticatorArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "WebAuthn.removeVirtualAuthenticator", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAuthn.removeVirtualAuthenticator", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "WebAuthn.removeVirtualAuthenticator", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAuthn.removeVirtualAuthenticator", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAuthn", Op: "RemoveVirtualAuthenticator", Err: err}
@@ -72,9 +80,9 @@ func (d *domainClient) RemoveVirtualAuthenticator(ctx context.Context, args *Rem
 // specified authenticator.
 func (d *domainClient) AddCredential(ctx context.Context, args *AddCredentialArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "WebAuthn.addCredential", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAuthn.addCredential", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "WebAuthn.addCredential", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAuthn.addCredential", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAuthn", Op: "AddCredential", Err: err}
@@ -87,9 +95,9 @@ func (d *domainClient) AddCredential(ctx context.Context, args *AddCredentialArg
 func (d *domainClient) GetCredentials(ctx context.Context, args *GetCredentialsArgs) (reply *GetCredentialsReply, err error) {
 	reply = new(GetCredentialsReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "WebAuthn.getCredentials", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAuthn.getCredentials", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "WebAuthn.getCredentials", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAuthn.getCredentials", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAuthn", Op: "GetCredentials", Err: err}
@@ -101,9 +109,9 @@ func (d *domainClient) GetCredentials(ctx context.Context, args *GetCredentialsA
 // from the specified device.
 func (d *domainClient) ClearCredentials(ctx context.Context, args *ClearCredentialsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "WebAuthn.clearCredentials", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAuthn.clearCredentials", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "WebAuthn.clearCredentials", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAuthn.clearCredentials", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAuthn", Op: "ClearCredentials", Err: err}
@@ -115,9 +123,9 @@ func (d *domainClient) ClearCredentials(ctx context.Context, args *ClearCredenti
 // succeeds or fails for an authenticator. The default is true.
 func (d *domainClient) SetUserVerified(ctx context.Context, args *SetUserVerifiedArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "WebAuthn.setUserVerified", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAuthn.setUserVerified", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "WebAuthn.setUserVerified", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "WebAuthn.setUserVerified", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAuthn", Op: "SetUserVerified", Err: err}

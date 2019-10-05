@@ -54,6 +54,7 @@ import (
 // invoke methods or listen to events in every CDP domain. The Client consumes
 // a rpcc connection, used to invoke the methods.
 type Client struct {
+	Conn                 *rpcc.Conn
 	Accessibility        Accessibility
 	Animation            Animation
 	ApplicationCache     ApplicationCache
@@ -104,6 +105,7 @@ type Client struct {
 // for communication with the debugging target.
 func NewClient(conn *rpcc.Conn) *Client {
 	return &Client{
+		Conn:                 conn,
 		Accessibility:        accessibility.NewClient(conn),
 		Animation:            animation.NewClient(conn),
 		ApplicationCache:     applicationcache.NewClient(conn),
@@ -148,5 +150,54 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Tracing:              tracing.NewClient(conn),
 		WebAudio:             webaudio.NewClient(conn),
 		WebAuthn:             webauthn.NewClient(conn),
+	}
+}
+
+func (c *Client) NewSession(sessionID string) *Client {
+	return &Client{
+		Accessibility:        accessibility.NewSessionClient(c.Conn, sessionID),
+		Animation:            animation.NewSessionClient(c.Conn, sessionID),
+		ApplicationCache:     applicationcache.NewSessionClient(c.Conn, sessionID),
+		Audits:               audits.NewSessionClient(c.Conn, sessionID),
+		BackgroundService:    backgroundservice.NewSessionClient(c.Conn, sessionID),
+		Browser:              browser.NewSessionClient(c.Conn, sessionID),
+		CSS:                  css.NewSessionClient(c.Conn, sessionID),
+		CacheStorage:         cachestorage.NewSessionClient(c.Conn, sessionID),
+		Cast:                 cast.NewSessionClient(c.Conn, sessionID),
+		Console:              console.NewSessionClient(c.Conn, sessionID),
+		DOM:                  dom.NewSessionClient(c.Conn, sessionID),
+		DOMDebugger:          domdebugger.NewSessionClient(c.Conn, sessionID),
+		DOMSnapshot:          domsnapshot.NewSessionClient(c.Conn, sessionID),
+		DOMStorage:           domstorage.NewSessionClient(c.Conn, sessionID),
+		Database:             database.NewSessionClient(c.Conn, sessionID),
+		Debugger:             debugger.NewSessionClient(c.Conn, sessionID),
+		DeviceOrientation:    deviceorientation.NewSessionClient(c.Conn, sessionID),
+		Emulation:            emulation.NewSessionClient(c.Conn, sessionID),
+		Fetch:                fetch.NewSessionClient(c.Conn, sessionID),
+		HeadlessExperimental: headlessexperimental.NewSessionClient(c.Conn, sessionID),
+		HeapProfiler:         heapprofiler.NewSessionClient(c.Conn, sessionID),
+		IO:                   io.NewSessionClient(c.Conn, sessionID),
+		IndexedDB:            indexeddb.NewSessionClient(c.Conn, sessionID),
+		Input:                input.NewSessionClient(c.Conn, sessionID),
+		Inspector:            inspector.NewSessionClient(c.Conn, sessionID),
+		LayerTree:            layertree.NewSessionClient(c.Conn, sessionID),
+		Log:                  log.NewSessionClient(c.Conn, sessionID),
+		Memory:               memory.NewSessionClient(c.Conn, sessionID),
+		Network:              network.NewSessionClient(c.Conn, sessionID),
+		Overlay:              overlay.NewSessionClient(c.Conn, sessionID),
+		Page:                 page.NewSessionClient(c.Conn, sessionID),
+		Performance:          performance.NewSessionClient(c.Conn, sessionID),
+		Profiler:             profiler.NewSessionClient(c.Conn, sessionID),
+		Runtime:              runtime.NewSessionClient(c.Conn, sessionID),
+		Schema:               schema.NewSessionClient(c.Conn, sessionID),
+		Security:             security.NewSessionClient(c.Conn, sessionID),
+		ServiceWorker:        serviceworker.NewSessionClient(c.Conn, sessionID),
+		Storage:              storage.NewSessionClient(c.Conn, sessionID),
+		SystemInfo:           systeminfo.NewSessionClient(c.Conn, sessionID),
+		Target:               target.NewSessionClient(c.Conn, sessionID),
+		Tethering:            tethering.NewSessionClient(c.Conn, sessionID),
+		Tracing:              tracing.NewSessionClient(c.Conn, sessionID),
+		WebAudio:             webaudio.NewSessionClient(c.Conn, sessionID),
+		WebAuthn:             webauthn.NewSessionClient(c.Conn, sessionID),
 	}
 }

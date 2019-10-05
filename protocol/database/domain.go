@@ -11,17 +11,25 @@ import (
 )
 
 // domainClient is a client for the Database domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Database domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Database domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Disable invokes the Database method. Disables database tracking, prevents
 // database events from being sent to the client.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Database.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Database.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Database", Op: "Disable", Err: err}
 	}
@@ -31,7 +39,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // Enable invokes the Database method. Enables database tracking, database
 // events will now be delivered to the client.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Database.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Database.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Database", Op: "Enable", Err: err}
 	}
@@ -42,9 +50,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 func (d *domainClient) ExecuteSQL(ctx context.Context, args *ExecuteSQLArgs) (reply *ExecuteSQLReply, err error) {
 	reply = new(ExecuteSQLReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Database.executeSQL", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Database.executeSQL", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Database.executeSQL", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Database.executeSQL", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Database", Op: "ExecuteSQL", Err: err}
@@ -56,9 +64,9 @@ func (d *domainClient) ExecuteSQL(ctx context.Context, args *ExecuteSQLArgs) (re
 func (d *domainClient) GetDatabaseTableNames(ctx context.Context, args *GetDatabaseTableNamesArgs) (reply *GetDatabaseTableNamesReply, err error) {
 	reply = new(GetDatabaseTableNamesReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Database.getDatabaseTableNames", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Database.getDatabaseTableNames", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Database.getDatabaseTableNames", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Database.getDatabaseTableNames", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Database", Op: "GetDatabaseTableNames", Err: err}
@@ -67,7 +75,7 @@ func (d *domainClient) GetDatabaseTableNames(ctx context.Context, args *GetDatab
 }
 
 func (d *domainClient) AddDatabase(ctx context.Context) (AddDatabaseClient, error) {
-	s, err := rpcc.NewStream(ctx, "Database.addDatabase", d.conn)
+	s, err := rpcc.NewStream(ctx, "Database.addDatabase", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

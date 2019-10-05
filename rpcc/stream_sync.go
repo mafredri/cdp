@@ -23,7 +23,7 @@ func newSyncMessageStore() *syncMessageStore {
 	}
 }
 
-func (s *syncMessageStore) subscribe(method string, w streamWriter, conn *Conn) (unsubscribe func(), err error) {
+func (s *syncMessageStore) subscribe(method, sessionID string, w streamWriter, conn *Conn) (unsubscribe func(), err error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -31,7 +31,7 @@ func (s *syncMessageStore) subscribe(method string, w streamWriter, conn *Conn) 
 		return nil, fmt.Errorf("%s already subscribed", method)
 	}
 
-	remove, err := conn.listen(method, s)
+	remove, err := conn.listen(method, sessionID, s)
 	if err != nil {
 		return nil, err
 	}
@@ -187,7 +187,7 @@ func Sync(s ...Stream) (err error) {
 		}
 
 		// Allow store to manage messages to streamClient.
-		unsub, err := store.subscribe(sc.method, sc, sc.conn)
+		unsub, err := store.subscribe(sc.method, sc.sessionID, sc, sc.conn)
 		if err != nil {
 			return errors.New("rpcc: Sync: " + err.Error())
 		}

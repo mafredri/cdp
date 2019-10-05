@@ -261,7 +261,7 @@ func TestConn_Notify(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	s, err := NewStream(ctx, "test.Notify", srv.conn)
+	s, err := NewStream(ctx, "test.Notify", "", srv.conn)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -302,7 +302,7 @@ func TestConn_StreamRecv(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	s, err := NewStream(ctx, "test.Stream", srv.conn)
+	s, err := NewStream(ctx, "test.Stream", "", srv.conn)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -346,12 +346,12 @@ func TestConn_PropagateError(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	s1, err := NewStream(ctx, "test.Stream1", srv.conn)
+	s1, err := NewStream(ctx, "test.Stream1", "", srv.conn)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer s1.Close()
-	s2, err := NewStream(ctx, "test.Stream2", srv.conn)
+	s2, err := NewStream(ctx, "test.Stream2", "", srv.conn)
 	if err != nil {
 		t.Fatal(err)
 	}

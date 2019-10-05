@@ -13,19 +13,27 @@ import (
 
 // domainClient is a client for the DOMStorage domain. Query and modify DOM
 // storage.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the DOMStorage domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the DOMStorage domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Clear invokes the DOMStorage method.
 func (d *domainClient) Clear(ctx context.Context, args *ClearArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMStorage.clear", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMStorage.clear", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMStorage.clear", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMStorage.clear", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMStorage", Op: "Clear", Err: err}
@@ -36,7 +44,7 @@ func (d *domainClient) Clear(ctx context.Context, args *ClearArgs) (err error) {
 // Disable invokes the DOMStorage method. Disables storage tracking, prevents
 // storage events from being sent to the client.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOMStorage.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "DOMStorage.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMStorage", Op: "Disable", Err: err}
 	}
@@ -46,7 +54,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // Enable invokes the DOMStorage method. Enables storage tracking, storage
 // events will now be delivered to the client.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOMStorage.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "DOMStorage.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMStorage", Op: "Enable", Err: err}
 	}
@@ -57,9 +65,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 func (d *domainClient) GetDOMStorageItems(ctx context.Context, args *GetDOMStorageItemsArgs) (reply *GetDOMStorageItemsReply, err error) {
 	reply = new(GetDOMStorageItemsReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMStorage.getDOMStorageItems", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMStorage.getDOMStorageItems", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMStorage.getDOMStorageItems", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMStorage.getDOMStorageItems", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMStorage", Op: "GetDOMStorageItems", Err: err}
@@ -70,9 +78,9 @@ func (d *domainClient) GetDOMStorageItems(ctx context.Context, args *GetDOMStora
 // RemoveDOMStorageItem invokes the DOMStorage method.
 func (d *domainClient) RemoveDOMStorageItem(ctx context.Context, args *RemoveDOMStorageItemArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMStorage.removeDOMStorageItem", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMStorage.removeDOMStorageItem", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMStorage.removeDOMStorageItem", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMStorage.removeDOMStorageItem", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMStorage", Op: "RemoveDOMStorageItem", Err: err}
@@ -83,9 +91,9 @@ func (d *domainClient) RemoveDOMStorageItem(ctx context.Context, args *RemoveDOM
 // SetDOMStorageItem invokes the DOMStorage method.
 func (d *domainClient) SetDOMStorageItem(ctx context.Context, args *SetDOMStorageItemArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMStorage.setDOMStorageItem", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMStorage.setDOMStorageItem", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOMStorage.setDOMStorageItem", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOMStorage.setDOMStorageItem", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOMStorage", Op: "SetDOMStorageItem", Err: err}
@@ -94,7 +102,7 @@ func (d *domainClient) SetDOMStorageItem(ctx context.Context, args *SetDOMStorag
 }
 
 func (d *domainClient) DOMStorageItemAdded(ctx context.Context) (ItemAddedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemAdded", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemAdded", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -115,7 +123,7 @@ func (c *itemAddedClient) Recv() (*ItemAddedReply, error) {
 }
 
 func (d *domainClient) DOMStorageItemRemoved(ctx context.Context) (ItemRemovedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemRemoved", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemRemoved", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +144,7 @@ func (c *itemRemovedClient) Recv() (*ItemRemovedReply, error) {
 }
 
 func (d *domainClient) DOMStorageItemUpdated(ctx context.Context) (ItemUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -157,7 +165,7 @@ func (c *itemUpdatedClient) Recv() (*ItemUpdatedReply, error) {
 }
 
 func (d *domainClient) DOMStorageItemsCleared(ctx context.Context) (ItemsClearedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemsCleared", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemsCleared", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

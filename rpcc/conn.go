@@ -9,6 +9,7 @@ import (
 	"io"
 	"log"
 	"net"
+	"strings"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -98,8 +99,9 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	}
 
 	c := &Conn{
-		pending: make(map[uint64]*rpcCall),
-		streams: make(map[string]*streamClients),
+		pending:  make(map[uint64]*rpcCall),
+		streams:  make(map[string]*streamClients),
+		sessions: make(map[string]*SessionConn),
 	}
 	c.ctx, c.cancel = context.WithCancel(context.Background())
 
@@ -239,12 +241,13 @@ type Conn struct {
 
 	compressionLevel func(level int) error
 
-	mu      sync.Mutex // Protects following.
-	reqSeq  uint64
-	pending map[uint64]*rpcCall
-	streams map[string]*streamClients
-	closed  bool
-	err     error // Protected by mu and closed until context is cancelled.
+	mu       sync.Mutex // Protects following.
+	reqSeq   uint64
+	pending  map[uint64]*rpcCall
+	streams  map[string]*streamClients
+	sessions map[string]*SessionConn
+	closed   bool
+	err      error // Protected by mu and closed until context is cancelled.
 
 	reqMu sync.Mutex // Protects following.
 	req   Request
@@ -261,8 +264,9 @@ type Response struct {
 	Error  *ResponseError  `json:"error"`  // Error, if any.
 
 	// RPC notification from remote.
-	Method string          `json:"method"` // Method invokation requested by remote.
-	Args   json.RawMessage `json:"params"` // Method parameters, if any.
+	Method    string          `json:"method"` // Method invokation requested by remote.
+	SessionID string          `json:"sessionId,omitempty"`
+	Args      json.RawMessage `json:"params"` // Method parameters, if any.
 }
 
 func (r *Response) reset() {
@@ -270,17 +274,26 @@ func (r *Response) reset() {
 	r.Result = nil
 	r.Error = nil
 	r.Method = ""
+	r.SessionID = ""
 	r.Args = nil
 }
 
 func (r *Response) String() string {
+	var s []string
 	if r.Method != "" {
-		return fmt.Sprintf("Method = %s, Params = %s", r.Method, r.Args)
+		s = append(s, fmt.Sprintf("Method = %s", r.Method))
+		s = append(s, fmt.Sprintf("Params = %s", r.Args))
+	} else if r.Error != nil {
+		s = append(s, fmt.Sprintf("ID = %d", r.ID))
+		s = append(s, fmt.Sprintf("Error = %s", r.Error.Error()))
+	} else {
+		s = append(s, fmt.Sprintf("ID = %d", r.ID))
+		s = append(s, fmt.Sprintf("Result = %s", r.Result))
 	}
-	if r.Error != nil {
-		return fmt.Sprintf("ID = %d, Error = %s", r.ID, r.Error.Error())
+	if r.SessionID != "" {
+		s = append(s, fmt.Sprintf("SessionID = %s", r.SessionID))
 	}
-	return fmt.Sprintf("ID = %d, Result = %s", r.ID, r.Result)
+	return strings.Join(s, ", ")
 }
 
 // ResponseError represents the RPC response error sent by the server.
@@ -310,7 +323,7 @@ func (c *Conn) Context() context.Context {
 // recv decodes and handles RPC responses. Responses to RPC requests
 // are forwarded to the pending call, if any. RPC Notifications are
 // forwarded by calling notify, synchronously.
-func (c *Conn) recv(notify func(string, []byte), done func(error)) {
+func (c *Conn) recv(notify func(string, string, []byte), done func(error)) {
 	var resp Response
 	var err error
 	for {
@@ -325,7 +338,7 @@ func (c *Conn) recv(notify func(string, []byte), done func(error)) {
 			// Method represents the event that was triggered over the
 			// Chrome DevTools Protocol. We do not expect to receive
 			// RPC requests, if this was one, the ID field would be set.
-			notify(resp.Method, resp.Args)
+			notify(resp.Method, resp.SessionID, resp.Args)
 			continue
 		}
 
@@ -357,9 +370,10 @@ func (c *Conn) recv(notify func(string, []byte), done func(error)) {
 
 // Request represents an RPC request to be sent to the server.
 type Request struct {
-	ID     uint64      `json:"id"`               // ID chosen by client.
-	Method string      `json:"method"`           // Method invoked on remote.
-	Args   interface{} `json:"params,omitempty"` // Method parameters, if any.
+	ID        uint64      `json:"id"`     // ID chosen by client.
+	Method    string      `json:"method"` // Method invoked on remote.
+	SessionID string      `json:"sessionId,omitempty"`
+	Args      interface{} `json:"params,omitempty"` // Method parameters, if any.
 }
 
 // send returns after the call has successfully been dispatched over
@@ -389,6 +403,7 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 		c.reqMu.Lock()
 		c.req.ID = reqID
 		c.req.Method = call.Method
+		c.req.SessionID = call.SessionID
 		c.req.Args = call.Args
 
 		err := c.codec.WriteRequest(&c.req)
@@ -428,21 +443,31 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 
 // notify handles RPC notifications and sends them
 // to the appropriate stream listeners.
-func (c *Conn) notify(method string, data []byte) {
+func (c *Conn) notify(method, sessionID string, data []byte) {
 	c.mu.Lock()
-	stream := c.streams[method]
+	defer c.mu.Unlock()
+	var streamClients *map[string]*streamClients
+	if sessionID != "" {
+		session, ok := c.sessions[sessionID]
+		if !ok {
+			return
+		}
+		streamClients = &session.streams
+	} else {
+		streamClients = &c.streams
+	}
+	stream := (*streamClients)[method]
 	if stream != nil {
 		// Stream writer must be able to handle incoming writes
 		// even after it has been removed (unsubscribed).
-		stream.write(method, data)
+		stream.write(method, sessionID, data)
 	}
-	c.mu.Unlock()
 }
 
 // listen registers a new stream listener (chan) for the RPC notification
 // method. Returns a function for removing the listener. Error if the
 // connection is closed.
-func (c *Conn) listen(method string, w streamWriter) (func(), error) {
+func (c *Conn) listen(method, sessionID string, w streamWriter) (func(), error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -450,10 +475,16 @@ func (c *Conn) listen(method string, w streamWriter) (func(), error) {
 		return nil, c.err
 	}
 
-	stream, ok := c.streams[method]
+	var streams *map[string]*streamClients
+	if sessionID != "" {
+		streams = &c.sessions[sessionID].streams
+	} else {
+		streams = &c.streams
+	}
+	stream, ok := (*streams)[method]
 	if !ok {
 		stream = newStreamClients()
-		c.streams[method] = stream
+		(*streams)[method] = stream
 	}
 	seq := stream.add(w)
 
@@ -530,6 +561,48 @@ func (c *Conn) SetCompressionLevel(level int) error {
 // Close closes the connection.
 func (c *Conn) Close() error {
 	return c.close(nil)
+}
+
+// SessionConn is a lightweight RPC connection for sending protocol messages
+// belonging to a specific session.
+type SessionConn struct {
+	Parent    *Conn
+	SessionID string
+	streams   map[string]*streamClients
+	ctx       context.Context
+	cancel    context.CancelFunc
+	OnClose   func() error
+}
+
+func (c *SessionConn) Context() context.Context {
+	return c.ctx
+}
+
+func (c *SessionConn) Close() (err error) {
+	// TODO: This probably needs to behave more like Conn.close with
+	// respect to the errors (storing an error internally, checking it
+	// when closing, returning it consistenly, etc.).
+	if c.OnClose != nil {
+		err = c.OnClose()
+	}
+	c.Parent.mu.Lock()
+	if c.Parent.sessions != nil {
+		delete(c.Parent.sessions, c.SessionID)
+	}
+	c.Parent.mu.Unlock()
+	c.cancel()
+	return nil
+}
+
+func (c *Conn) NewSessionConn(sessionID string) *SessionConn {
+	s := &SessionConn{Parent: c, SessionID: sessionID,
+		streams: make(map[string]*streamClients),
+	}
+	s.ctx, s.cancel = context.WithCancel(context.Background())
+	c.mu.Lock()
+	c.sessions[sessionID] = s
+	c.mu.Unlock()
+	return s
 }
 
 // Debugging, enabled in tests.

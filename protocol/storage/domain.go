@@ -11,19 +11,27 @@ import (
 )
 
 // domainClient is a client for the Storage domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Storage domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Storage domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // ClearDataForOrigin invokes the Storage method. Clears storage for origin.
 func (d *domainClient) ClearDataForOrigin(ctx context.Context, args *ClearDataForOriginArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Storage.clearDataForOrigin", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Storage.clearDataForOrigin", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Storage.clearDataForOrigin", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Storage.clearDataForOrigin", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Storage", Op: "ClearDataForOrigin", Err: err}
@@ -36,9 +44,9 @@ func (d *domainClient) ClearDataForOrigin(ctx context.Context, args *ClearDataFo
 func (d *domainClient) GetUsageAndQuota(ctx context.Context, args *GetUsageAndQuotaArgs) (reply *GetUsageAndQuotaReply, err error) {
 	reply = new(GetUsageAndQuotaReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Storage.getUsageAndQuota", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Storage.getUsageAndQuota", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Storage.getUsageAndQuota", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Storage.getUsageAndQuota", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Storage", Op: "GetUsageAndQuota", Err: err}
@@ -50,9 +58,9 @@ func (d *domainClient) GetUsageAndQuota(ctx context.Context, args *GetUsageAndQu
 // be notified when an update occurs to its cache storage list.
 func (d *domainClient) TrackCacheStorageForOrigin(ctx context.Context, args *TrackCacheStorageForOriginArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Storage.trackCacheStorageForOrigin", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Storage.trackCacheStorageForOrigin", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Storage.trackCacheStorageForOrigin", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Storage.trackCacheStorageForOrigin", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Storage", Op: "TrackCacheStorageForOrigin", Err: err}
@@ -64,9 +72,9 @@ func (d *domainClient) TrackCacheStorageForOrigin(ctx context.Context, args *Tra
 // notified when an update occurs to its IndexedDB.
 func (d *domainClient) TrackIndexedDBForOrigin(ctx context.Context, args *TrackIndexedDBForOriginArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Storage.trackIndexedDBForOrigin", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Storage.trackIndexedDBForOrigin", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Storage.trackIndexedDBForOrigin", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Storage.trackIndexedDBForOrigin", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Storage", Op: "TrackIndexedDBForOrigin", Err: err}
@@ -78,9 +86,9 @@ func (d *domainClient) TrackIndexedDBForOrigin(ctx context.Context, args *TrackI
 // from receiving notifications for cache storage.
 func (d *domainClient) UntrackCacheStorageForOrigin(ctx context.Context, args *UntrackCacheStorageForOriginArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Storage.untrackCacheStorageForOrigin", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Storage.untrackCacheStorageForOrigin", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Storage.untrackCacheStorageForOrigin", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Storage.untrackCacheStorageForOrigin", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Storage", Op: "UntrackCacheStorageForOrigin", Err: err}
@@ -92,9 +100,9 @@ func (d *domainClient) UntrackCacheStorageForOrigin(ctx context.Context, args *U
 // from receiving notifications for IndexedDB.
 func (d *domainClient) UntrackIndexedDBForOrigin(ctx context.Context, args *UntrackIndexedDBForOriginArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Storage.untrackIndexedDBForOrigin", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Storage.untrackIndexedDBForOrigin", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Storage.untrackIndexedDBForOrigin", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Storage.untrackIndexedDBForOrigin", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Storage", Op: "UntrackIndexedDBForOrigin", Err: err}
@@ -103,7 +111,7 @@ func (d *domainClient) UntrackIndexedDBForOrigin(ctx context.Context, args *Untr
 }
 
 func (d *domainClient) CacheStorageContentUpdated(ctx context.Context) (CacheStorageContentUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Storage.cacheStorageContentUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "Storage.cacheStorageContentUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +132,7 @@ func (c *cacheStorageContentUpdatedClient) Recv() (*CacheStorageContentUpdatedRe
 }
 
 func (d *domainClient) CacheStorageListUpdated(ctx context.Context) (CacheStorageListUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Storage.cacheStorageListUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "Storage.cacheStorageListUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +153,7 @@ func (c *cacheStorageListUpdatedClient) Recv() (*CacheStorageListUpdatedReply, e
 }
 
 func (d *domainClient) IndexedDBContentUpdated(ctx context.Context) (IndexedDBContentUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Storage.indexedDBContentUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "Storage.indexedDBContentUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -166,7 +174,7 @@ func (c *indexedDBContentUpdatedClient) Recv() (*IndexedDBContentUpdatedReply, e
 }
 
 func (d *domainClient) IndexedDBListUpdated(ctx context.Context) (IndexedDBListUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Storage.indexedDBListUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "Storage.indexedDBListUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

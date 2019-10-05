@@ -17,21 +17,21 @@ func TestSync(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	s1, err := NewStream(ctx, "test1", conn)
+	s1, err := NewStream(ctx, "test1", "", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer s1.Close()
 
-	s2, err := NewStream(ctx, "test2", conn)
+	s2, err := NewStream(ctx, "test2", "", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer s2.Close()
 
 	// These notifications should disappear after Sync.
-	conn.notify("test1", []byte(strconv.Itoa(1)))
-	conn.notify("test1", []byte(strconv.Itoa(2)))
+	conn.notify("test1", "", []byte(strconv.Itoa(1)))
+	conn.notify("test1", "", []byte(strconv.Itoa(2)))
 
 	err = Sync(s1, s2)
 	if err != nil {
@@ -40,14 +40,14 @@ func TestSync(t *testing.T) {
 
 	go func() {
 		for i := 0; i < 3; i++ {
-			conn.notify("test1", []byte(strconv.Itoa(100+i)))
+			conn.notify("test1", "", []byte(strconv.Itoa(100+i)))
 		}
 		for i := 0; i < 3; i++ {
-			conn.notify("test2", []byte(strconv.Itoa(200+i)))
+			conn.notify("test2", "", []byte(strconv.Itoa(200+i)))
 		}
 		for i := 0; i < 4; i++ {
-			conn.notify("test1", []byte(strconv.Itoa(100+i)))
-			conn.notify("test2", []byte(strconv.Itoa(200+i)))
+			conn.notify("test1", "", []byte(strconv.Itoa(100+i)))
+			conn.notify("test2", "", []byte(strconv.Itoa(200+i)))
 		}
 	}()
 
@@ -95,25 +95,25 @@ func TestSyncError(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	s1, err := NewStream(ctx, "test", conn1)
+	s1, err := NewStream(ctx, "test", "", conn1)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer s1.Close()
 
-	s2, err := NewStream(ctx, "duplicate", conn1)
+	s2, err := NewStream(ctx, "duplicate", "", conn1)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer s2.Close()
 
-	s3, err := NewStream(ctx, "duplicate", conn1)
+	s3, err := NewStream(ctx, "duplicate", "", conn1)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer s3.Close()
 
-	s4, err := NewStream(ctx, "other-conn", conn2)
+	s4, err := NewStream(ctx, "other-conn", "", conn2)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -159,17 +159,17 @@ func TestStreamSyncNotifyDeadlock(t *testing.T) {
 
 	ctx := context.Background()
 
-	s1, err := NewStream(ctx, "test1", conn)
+	s1, err := NewStream(ctx, "test1", "", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
-	s2, err := NewStream(ctx, "test2", conn)
+	s2, err := NewStream(ctx, "test2", "", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	go conn.notify("test1", []byte(`{"hello": "world"}`))
-	go conn.notify("test2", []byte(`{"hello": "world"}`))
+	go conn.notify("test1", "", []byte(`{"hello": "world"}`))
+	go conn.notify("test2", "", []byte(`{"hello": "world"}`))
 
 	// This could cause a deadlock due to competition for same mutexes:
 	// https://github.com/mafredri/cdp/issues/90
@@ -186,11 +186,11 @@ func TestStreamSyncSameStreamDeadlock(t *testing.T) {
 
 	ctx := context.Background()
 
-	s1, err := NewStream(ctx, "test1", conn)
+	s1, err := NewStream(ctx, "test1", "", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
-	s2, err := NewStream(ctx, "test2", conn)
+	s2, err := NewStream(ctx, "test2", "", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -222,7 +222,7 @@ func TestStreamSyncClosingStreams(t *testing.T) {
 
 	var streams []Stream
 	for _, s := range testStreams {
-		ss, err := NewStream(ctx, s.name, conn)
+		ss, err := NewStream(ctx, s.name, "", conn)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -238,15 +238,15 @@ func TestStreamSyncClosingStreams(t *testing.T) {
 
 		<-readySteadyGo
 		go streams[2].Close()
-		conn.notify("test0", []byte("test0.0"))
-		conn.notify("test1", []byte("test1.0"))
-		conn.notify("test2", []byte("test2.0"))
-		conn.notify("test2", []byte("test2.1"))
-		conn.notify("test2", []byte("test2.2"))
-		conn.notify("test3", []byte("test3.0"))
-		conn.notify("test3", []byte("test3.1"))
+		conn.notify("test0", "", []byte("test0.0"))
+		conn.notify("test1", "", []byte("test1.0"))
+		conn.notify("test2", "", []byte("test2.0"))
+		conn.notify("test2", "", []byte("test2.1"))
+		conn.notify("test2", "", []byte("test2.2"))
+		conn.notify("test3", "", []byte("test3.0"))
+		conn.notify("test3", "", []byte("test3.1"))
 		streams[3].Close()
-		conn.notify("test4", []byte("test4.0"))
+		conn.notify("test4", "", []byte("test4.0"))
 	}()
 
 	for i, s := range streams {

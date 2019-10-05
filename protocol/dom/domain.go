@@ -31,11 +31,19 @@ import (
 //
 // Note that `iframe` owner elements will return corresponding document
 // elements as their child nodes.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the DOM domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
+}
+
+// NewClient returns a client for the DOM domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
 }
 
 // CollectClassNamesFromSubtree invokes the DOM method. Collects class names
@@ -43,9 +51,9 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 func (d *domainClient) CollectClassNamesFromSubtree(ctx context.Context, args *CollectClassNamesFromSubtreeArgs) (reply *CollectClassNamesFromSubtreeReply, err error) {
 	reply = new(CollectClassNamesFromSubtreeReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.collectClassNamesFromSubtree", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.collectClassNamesFromSubtree", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.collectClassNamesFromSubtree", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.collectClassNamesFromSubtree", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "CollectClassNamesFromSubtree", Err: err}
@@ -58,9 +66,9 @@ func (d *domainClient) CollectClassNamesFromSubtree(ctx context.Context, args *C
 func (d *domainClient) CopyTo(ctx context.Context, args *CopyToArgs) (reply *CopyToReply, err error) {
 	reply = new(CopyToReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.copyTo", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.copyTo", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.copyTo", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.copyTo", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "CopyTo", Err: err}
@@ -74,9 +82,9 @@ func (d *domainClient) CopyTo(ctx context.Context, args *CopyToArgs) (reply *Cop
 func (d *domainClient) DescribeNode(ctx context.Context, args *DescribeNodeArgs) (reply *DescribeNodeReply, err error) {
 	reply = new(DescribeNodeReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.describeNode", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.describeNode", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.describeNode", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.describeNode", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "DescribeNode", Err: err}
@@ -86,7 +94,7 @@ func (d *domainClient) DescribeNode(ctx context.Context, args *DescribeNodeArgs)
 
 // Disable invokes the DOM method. Disables DOM agent for the given page.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOM.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "DOM.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "Disable", Err: err}
 	}
@@ -98,9 +106,9 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // for that search.
 func (d *domainClient) DiscardSearchResults(ctx context.Context, args *DiscardSearchResultsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.discardSearchResults", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.discardSearchResults", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.discardSearchResults", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.discardSearchResults", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "DiscardSearchResults", Err: err}
@@ -110,7 +118,7 @@ func (d *domainClient) DiscardSearchResults(ctx context.Context, args *DiscardSe
 
 // Enable invokes the DOM method. Enables DOM agent for the given page.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOM.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "DOM.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "Enable", Err: err}
 	}
@@ -120,9 +128,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 // Focus invokes the DOM method. Focuses the given element.
 func (d *domainClient) Focus(ctx context.Context, args *FocusArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.focus", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.focus", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.focus", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.focus", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "Focus", Err: err}
@@ -135,9 +143,9 @@ func (d *domainClient) Focus(ctx context.Context, args *FocusArgs) (err error) {
 func (d *domainClient) GetAttributes(ctx context.Context, args *GetAttributesArgs) (reply *GetAttributesReply, err error) {
 	reply = new(GetAttributesReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.getAttributes", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getAttributes", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.getAttributes", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getAttributes", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetAttributes", Err: err}
@@ -149,9 +157,9 @@ func (d *domainClient) GetAttributes(ctx context.Context, args *GetAttributesArg
 func (d *domainClient) GetBoxModel(ctx context.Context, args *GetBoxModelArgs) (reply *GetBoxModelReply, err error) {
 	reply = new(GetBoxModelReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.getBoxModel", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getBoxModel", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.getBoxModel", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getBoxModel", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetBoxModel", Err: err}
@@ -165,9 +173,9 @@ func (d *domainClient) GetBoxModel(ctx context.Context, args *GetBoxModelArgs) (
 func (d *domainClient) GetContentQuads(ctx context.Context, args *GetContentQuadsArgs) (reply *GetContentQuadsReply, err error) {
 	reply = new(GetContentQuadsReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.getContentQuads", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getContentQuads", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.getContentQuads", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getContentQuads", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetContentQuads", Err: err}
@@ -180,9 +188,9 @@ func (d *domainClient) GetContentQuads(ctx context.Context, args *GetContentQuad
 func (d *domainClient) GetDocument(ctx context.Context, args *GetDocumentArgs) (reply *GetDocumentReply, err error) {
 	reply = new(GetDocumentReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.getDocument", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getDocument", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.getDocument", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getDocument", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetDocument", Err: err}
@@ -195,9 +203,9 @@ func (d *domainClient) GetDocument(ctx context.Context, args *GetDocumentArgs) (
 func (d *domainClient) GetFlattenedDocument(ctx context.Context, args *GetFlattenedDocumentArgs) (reply *GetFlattenedDocumentReply, err error) {
 	reply = new(GetFlattenedDocumentReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.getFlattenedDocument", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getFlattenedDocument", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.getFlattenedDocument", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getFlattenedDocument", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetFlattenedDocument", Err: err}
@@ -211,9 +219,9 @@ func (d *domainClient) GetFlattenedDocument(ctx context.Context, args *GetFlatte
 func (d *domainClient) GetNodeForLocation(ctx context.Context, args *GetNodeForLocationArgs) (reply *GetNodeForLocationReply, err error) {
 	reply = new(GetNodeForLocationReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.getNodeForLocation", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getNodeForLocation", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.getNodeForLocation", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getNodeForLocation", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetNodeForLocation", Err: err}
@@ -225,9 +233,9 @@ func (d *domainClient) GetNodeForLocation(ctx context.Context, args *GetNodeForL
 func (d *domainClient) GetOuterHTML(ctx context.Context, args *GetOuterHTMLArgs) (reply *GetOuterHTMLReply, err error) {
 	reply = new(GetOuterHTMLReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.getOuterHTML", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getOuterHTML", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.getOuterHTML", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getOuterHTML", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetOuterHTML", Err: err}
@@ -240,9 +248,9 @@ func (d *domainClient) GetOuterHTML(ctx context.Context, args *GetOuterHTMLArgs)
 func (d *domainClient) GetRelayoutBoundary(ctx context.Context, args *GetRelayoutBoundaryArgs) (reply *GetRelayoutBoundaryReply, err error) {
 	reply = new(GetRelayoutBoundaryReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.getRelayoutBoundary", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getRelayoutBoundary", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.getRelayoutBoundary", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getRelayoutBoundary", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetRelayoutBoundary", Err: err}
@@ -255,9 +263,9 @@ func (d *domainClient) GetRelayoutBoundary(ctx context.Context, args *GetRelayou
 func (d *domainClient) GetSearchResults(ctx context.Context, args *GetSearchResultsArgs) (reply *GetSearchResultsReply, err error) {
 	reply = new(GetSearchResultsReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.getSearchResults", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getSearchResults", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.getSearchResults", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getSearchResults", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetSearchResults", Err: err}
@@ -267,7 +275,7 @@ func (d *domainClient) GetSearchResults(ctx context.Context, args *GetSearchResu
 
 // MarkUndoableState invokes the DOM method. Marks last undoable state.
 func (d *domainClient) MarkUndoableState(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOM.markUndoableState", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "DOM.markUndoableState", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "MarkUndoableState", Err: err}
 	}
@@ -279,9 +287,9 @@ func (d *domainClient) MarkUndoableState(ctx context.Context) (err error) {
 func (d *domainClient) MoveTo(ctx context.Context, args *MoveToArgs) (reply *MoveToReply, err error) {
 	reply = new(MoveToReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.moveTo", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.moveTo", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.moveTo", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.moveTo", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "MoveTo", Err: err}
@@ -295,9 +303,9 @@ func (d *domainClient) MoveTo(ctx context.Context, args *MoveToArgs) (reply *Mov
 func (d *domainClient) PerformSearch(ctx context.Context, args *PerformSearchArgs) (reply *PerformSearchReply, err error) {
 	reply = new(PerformSearchReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.performSearch", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.performSearch", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.performSearch", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.performSearch", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "PerformSearch", Err: err}
@@ -310,9 +318,9 @@ func (d *domainClient) PerformSearch(ctx context.Context, args *PerformSearchArg
 func (d *domainClient) PushNodeByPathToFrontend(ctx context.Context, args *PushNodeByPathToFrontendArgs) (reply *PushNodeByPathToFrontendReply, err error) {
 	reply = new(PushNodeByPathToFrontendReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.pushNodeByPathToFrontend", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.pushNodeByPathToFrontend", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.pushNodeByPathToFrontend", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.pushNodeByPathToFrontend", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "PushNodeByPathToFrontend", Err: err}
@@ -325,9 +333,9 @@ func (d *domainClient) PushNodeByPathToFrontend(ctx context.Context, args *PushN
 func (d *domainClient) PushNodesByBackendIDsToFrontend(ctx context.Context, args *PushNodesByBackendIDsToFrontendArgs) (reply *PushNodesByBackendIDsToFrontendReply, err error) {
 	reply = new(PushNodesByBackendIDsToFrontendReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.pushNodesByBackendIdsToFrontend", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.pushNodesByBackendIdsToFrontend", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.pushNodesByBackendIdsToFrontend", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.pushNodesByBackendIdsToFrontend", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "PushNodesByBackendIDsToFrontend", Err: err}
@@ -340,9 +348,9 @@ func (d *domainClient) PushNodesByBackendIDsToFrontend(ctx context.Context, args
 func (d *domainClient) QuerySelector(ctx context.Context, args *QuerySelectorArgs) (reply *QuerySelectorReply, err error) {
 	reply = new(QuerySelectorReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.querySelector", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.querySelector", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.querySelector", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.querySelector", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "QuerySelector", Err: err}
@@ -355,9 +363,9 @@ func (d *domainClient) QuerySelector(ctx context.Context, args *QuerySelectorArg
 func (d *domainClient) QuerySelectorAll(ctx context.Context, args *QuerySelectorAllArgs) (reply *QuerySelectorAllReply, err error) {
 	reply = new(QuerySelectorAllReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.querySelectorAll", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.querySelectorAll", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.querySelectorAll", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.querySelectorAll", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "QuerySelectorAll", Err: err}
@@ -367,7 +375,7 @@ func (d *domainClient) QuerySelectorAll(ctx context.Context, args *QuerySelector
 
 // Redo invokes the DOM method. Re-does the last undone action.
 func (d *domainClient) Redo(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOM.redo", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "DOM.redo", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "Redo", Err: err}
 	}
@@ -378,9 +386,9 @@ func (d *domainClient) Redo(ctx context.Context) (err error) {
 // from an element with given id.
 func (d *domainClient) RemoveAttribute(ctx context.Context, args *RemoveAttributeArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.removeAttribute", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.removeAttribute", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.removeAttribute", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.removeAttribute", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "RemoveAttribute", Err: err}
@@ -391,9 +399,9 @@ func (d *domainClient) RemoveAttribute(ctx context.Context, args *RemoveAttribut
 // RemoveNode invokes the DOM method. Removes node with given id.
 func (d *domainClient) RemoveNode(ctx context.Context, args *RemoveNodeArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.removeNode", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.removeNode", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.removeNode", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.removeNode", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "RemoveNode", Err: err}
@@ -407,9 +415,9 @@ func (d *domainClient) RemoveNode(ctx context.Context, args *RemoveNodeArgs) (er
 // down to the specified depth.
 func (d *domainClient) RequestChildNodes(ctx context.Context, args *RequestChildNodesArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.requestChildNodes", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.requestChildNodes", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.requestChildNodes", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.requestChildNodes", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "RequestChildNodes", Err: err}
@@ -424,9 +432,9 @@ func (d *domainClient) RequestChildNodes(ctx context.Context, args *RequestChild
 func (d *domainClient) RequestNode(ctx context.Context, args *RequestNodeArgs) (reply *RequestNodeReply, err error) {
 	reply = new(RequestNodeReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.requestNode", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.requestNode", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.requestNode", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.requestNode", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "RequestNode", Err: err}
@@ -439,9 +447,9 @@ func (d *domainClient) RequestNode(ctx context.Context, args *RequestNodeArgs) (
 func (d *domainClient) ResolveNode(ctx context.Context, args *ResolveNodeArgs) (reply *ResolveNodeReply, err error) {
 	reply = new(ResolveNodeReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.resolveNode", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.resolveNode", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.resolveNode", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.resolveNode", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "ResolveNode", Err: err}
@@ -453,9 +461,9 @@ func (d *domainClient) ResolveNode(ctx context.Context, args *ResolveNodeArgs) (
 // with given id.
 func (d *domainClient) SetAttributeValue(ctx context.Context, args *SetAttributeValueArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.setAttributeValue", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setAttributeValue", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.setAttributeValue", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setAttributeValue", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "SetAttributeValue", Err: err}
@@ -468,9 +476,9 @@ func (d *domainClient) SetAttributeValue(ctx context.Context, args *SetAttribute
 // value and types in several attribute name/value pairs.
 func (d *domainClient) SetAttributesAsText(ctx context.Context, args *SetAttributesAsTextArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.setAttributesAsText", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setAttributesAsText", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.setAttributesAsText", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setAttributesAsText", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "SetAttributesAsText", Err: err}
@@ -482,9 +490,9 @@ func (d *domainClient) SetAttributesAsText(ctx context.Context, args *SetAttribu
 // input element.
 func (d *domainClient) SetFileInputFiles(ctx context.Context, args *SetFileInputFilesArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.setFileInputFiles", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setFileInputFiles", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.setFileInputFiles", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setFileInputFiles", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "SetFileInputFiles", Err: err}
@@ -497,9 +505,9 @@ func (d *domainClient) SetFileInputFiles(ctx context.Context, args *SetFileInput
 func (d *domainClient) GetFileInfo(ctx context.Context, args *GetFileInfoArgs) (reply *GetFileInfoReply, err error) {
 	reply = new(GetFileInfoReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.getFileInfo", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getFileInfo", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.getFileInfo", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getFileInfo", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetFileInfo", Err: err}
@@ -512,9 +520,9 @@ func (d *domainClient) GetFileInfo(ctx context.Context, args *GetFileInfoArgs) (
 // functions).
 func (d *domainClient) SetInspectedNode(ctx context.Context, args *SetInspectedNodeArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.setInspectedNode", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setInspectedNode", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.setInspectedNode", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setInspectedNode", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "SetInspectedNode", Err: err}
@@ -527,9 +535,9 @@ func (d *domainClient) SetInspectedNode(ctx context.Context, args *SetInspectedN
 func (d *domainClient) SetNodeName(ctx context.Context, args *SetNodeNameArgs) (reply *SetNodeNameReply, err error) {
 	reply = new(SetNodeNameReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.setNodeName", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setNodeName", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.setNodeName", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setNodeName", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "SetNodeName", Err: err}
@@ -541,9 +549,9 @@ func (d *domainClient) SetNodeName(ctx context.Context, args *SetNodeNameArgs) (
 // id.
 func (d *domainClient) SetNodeValue(ctx context.Context, args *SetNodeValueArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.setNodeValue", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setNodeValue", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.setNodeValue", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setNodeValue", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "SetNodeValue", Err: err}
@@ -555,9 +563,9 @@ func (d *domainClient) SetNodeValue(ctx context.Context, args *SetNodeValueArgs)
 // node id.
 func (d *domainClient) SetOuterHTML(ctx context.Context, args *SetOuterHTMLArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.setOuterHTML", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setOuterHTML", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.setOuterHTML", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.setOuterHTML", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "SetOuterHTML", Err: err}
@@ -567,7 +575,7 @@ func (d *domainClient) SetOuterHTML(ctx context.Context, args *SetOuterHTMLArgs)
 
 // Undo invokes the DOM method. Undoes the last performed action.
 func (d *domainClient) Undo(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOM.undo", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "DOM.undo", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "Undo", Err: err}
 	}
@@ -579,9 +587,9 @@ func (d *domainClient) Undo(ctx context.Context) (err error) {
 func (d *domainClient) GetFrameOwner(ctx context.Context, args *GetFrameOwnerArgs) (reply *GetFrameOwnerReply, err error) {
 	reply = new(GetFrameOwnerReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "DOM.getFrameOwner", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getFrameOwner", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "DOM.getFrameOwner", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "DOM.getFrameOwner", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetFrameOwner", Err: err}
@@ -590,7 +598,7 @@ func (d *domainClient) GetFrameOwner(ctx context.Context, args *GetFrameOwnerArg
 }
 
 func (d *domainClient) AttributeModified(ctx context.Context) (AttributeModifiedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.attributeModified", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.attributeModified", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -611,7 +619,7 @@ func (c *attributeModifiedClient) Recv() (*AttributeModifiedReply, error) {
 }
 
 func (d *domainClient) AttributeRemoved(ctx context.Context) (AttributeRemovedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.attributeRemoved", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.attributeRemoved", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -632,7 +640,7 @@ func (c *attributeRemovedClient) Recv() (*AttributeRemovedReply, error) {
 }
 
 func (d *domainClient) CharacterDataModified(ctx context.Context) (CharacterDataModifiedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.characterDataModified", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.characterDataModified", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -653,7 +661,7 @@ func (c *characterDataModifiedClient) Recv() (*CharacterDataModifiedReply, error
 }
 
 func (d *domainClient) ChildNodeCountUpdated(ctx context.Context) (ChildNodeCountUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.childNodeCountUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.childNodeCountUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -674,7 +682,7 @@ func (c *childNodeCountUpdatedClient) Recv() (*ChildNodeCountUpdatedReply, error
 }
 
 func (d *domainClient) ChildNodeInserted(ctx context.Context) (ChildNodeInsertedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.childNodeInserted", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.childNodeInserted", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -695,7 +703,7 @@ func (c *childNodeInsertedClient) Recv() (*ChildNodeInsertedReply, error) {
 }
 
 func (d *domainClient) ChildNodeRemoved(ctx context.Context) (ChildNodeRemovedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.childNodeRemoved", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.childNodeRemoved", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -716,7 +724,7 @@ func (c *childNodeRemovedClient) Recv() (*ChildNodeRemovedReply, error) {
 }
 
 func (d *domainClient) DistributedNodesUpdated(ctx context.Context) (DistributedNodesUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.distributedNodesUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.distributedNodesUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -737,7 +745,7 @@ func (c *distributedNodesUpdatedClient) Recv() (*DistributedNodesUpdatedReply, e
 }
 
 func (d *domainClient) DocumentUpdated(ctx context.Context) (DocumentUpdatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.documentUpdated", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.documentUpdated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -758,7 +766,7 @@ func (c *documentUpdatedClient) Recv() (*DocumentUpdatedReply, error) {
 }
 
 func (d *domainClient) InlineStyleInvalidated(ctx context.Context) (InlineStyleInvalidatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.inlineStyleInvalidated", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.inlineStyleInvalidated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -779,7 +787,7 @@ func (c *inlineStyleInvalidatedClient) Recv() (*InlineStyleInvalidatedReply, err
 }
 
 func (d *domainClient) PseudoElementAdded(ctx context.Context) (PseudoElementAddedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.pseudoElementAdded", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.pseudoElementAdded", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -800,7 +808,7 @@ func (c *pseudoElementAddedClient) Recv() (*PseudoElementAddedReply, error) {
 }
 
 func (d *domainClient) PseudoElementRemoved(ctx context.Context) (PseudoElementRemovedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.pseudoElementRemoved", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.pseudoElementRemoved", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -821,7 +829,7 @@ func (c *pseudoElementRemovedClient) Recv() (*PseudoElementRemovedReply, error) 
 }
 
 func (d *domainClient) SetChildNodes(ctx context.Context) (SetChildNodesClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.setChildNodes", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.setChildNodes", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -842,7 +850,7 @@ func (c *setChildNodesClient) Recv() (*SetChildNodesReply, error) {
 }
 
 func (d *domainClient) ShadowRootPopped(ctx context.Context) (ShadowRootPoppedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.shadowRootPopped", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.shadowRootPopped", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -863,7 +871,7 @@ func (c *shadowRootPoppedClient) Recv() (*ShadowRootPoppedReply, error) {
 }
 
 func (d *domainClient) ShadowRootPushed(ctx context.Context) (ShadowRootPushedClient, error) {
-	s, err := rpcc.NewStream(ctx, "DOM.shadowRootPushed", d.conn)
+	s, err := rpcc.NewStream(ctx, "DOM.shadowRootPushed", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

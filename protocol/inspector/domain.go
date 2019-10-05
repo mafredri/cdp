@@ -11,17 +11,25 @@ import (
 )
 
 // domainClient is a client for the Inspector domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Inspector domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Inspector domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Disable invokes the Inspector method. Disables inspector domain
 // notifications.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Inspector.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Inspector.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Inspector", Op: "Disable", Err: err}
 	}
@@ -31,7 +39,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // Enable invokes the Inspector method. Enables inspector domain
 // notifications.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Inspector.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Inspector.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Inspector", Op: "Enable", Err: err}
 	}
@@ -39,7 +47,7 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 }
 
 func (d *domainClient) Detached(ctx context.Context) (DetachedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Inspector.detached", d.conn)
+	s, err := rpcc.NewStream(ctx, "Inspector.detached", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +68,7 @@ func (c *detachedClient) Recv() (*DetachedReply, error) {
 }
 
 func (d *domainClient) TargetCrashed(ctx context.Context) (TargetCrashedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Inspector.targetCrashed", d.conn)
+	s, err := rpcc.NewStream(ctx, "Inspector.targetCrashed", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -81,7 +89,7 @@ func (c *targetCrashedClient) Recv() (*TargetCrashedReply, error) {
 }
 
 func (d *domainClient) TargetReloadedAfterCrash(ctx context.Context) (TargetReloadedAfterCrashClient, error) {
-	s, err := rpcc.NewStream(ctx, "Inspector.targetReloadedAfterCrash", d.conn)
+	s, err := rpcc.NewStream(ctx, "Inspector.targetReloadedAfterCrash", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

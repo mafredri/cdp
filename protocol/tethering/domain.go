@@ -13,19 +13,27 @@ import (
 
 // domainClient is a client for the Tethering domain. The Tethering domain
 // defines methods and events for browser port binding.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Tethering domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Tethering domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Bind invokes the Tethering method. Request browser port binding.
 func (d *domainClient) Bind(ctx context.Context, args *BindArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Tethering.bind", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Tethering.bind", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Tethering.bind", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Tethering.bind", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Tethering", Op: "Bind", Err: err}
@@ -36,9 +44,9 @@ func (d *domainClient) Bind(ctx context.Context, args *BindArgs) (err error) {
 // Unbind invokes the Tethering method. Request browser port unbinding.
 func (d *domainClient) Unbind(ctx context.Context, args *UnbindArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Tethering.unbind", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Tethering.unbind", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Tethering.unbind", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Tethering.unbind", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Tethering", Op: "Unbind", Err: err}
@@ -47,7 +55,7 @@ func (d *domainClient) Unbind(ctx context.Context, args *UnbindArgs) (err error)
 }
 
 func (d *domainClient) Accepted(ctx context.Context) (AcceptedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Tethering.accepted", d.conn)
+	s, err := rpcc.NewStream(ctx, "Tethering.accepted", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

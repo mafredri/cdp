@@ -17,18 +17,26 @@ import (
 // tracking network activities of the page. It exposes information about http,
 // file, data and other requests and responses, their headers, bodies, timing,
 // etc.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Network domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Network domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // CanClearBrowserCache invokes the Network method. Tells whether clearing
 // browser cache is supported.
 func (d *domainClient) CanClearBrowserCache(ctx context.Context) (reply *CanClearBrowserCacheReply, err error) {
 	reply = new(CanClearBrowserCacheReply)
-	err = rpcc.Invoke(ctx, "Network.canClearBrowserCache", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Network.canClearBrowserCache", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "CanClearBrowserCache", Err: err}
 	}
@@ -39,7 +47,7 @@ func (d *domainClient) CanClearBrowserCache(ctx context.Context) (reply *CanClea
 // browser cookies is supported.
 func (d *domainClient) CanClearBrowserCookies(ctx context.Context) (reply *CanClearBrowserCookiesReply, err error) {
 	reply = new(CanClearBrowserCookiesReply)
-	err = rpcc.Invoke(ctx, "Network.canClearBrowserCookies", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Network.canClearBrowserCookies", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "CanClearBrowserCookies", Err: err}
 	}
@@ -50,7 +58,7 @@ func (d *domainClient) CanClearBrowserCookies(ctx context.Context) (reply *CanCl
 // emulation of network conditions is supported.
 func (d *domainClient) CanEmulateNetworkConditions(ctx context.Context) (reply *CanEmulateNetworkConditionsReply, err error) {
 	reply = new(CanEmulateNetworkConditionsReply)
-	err = rpcc.Invoke(ctx, "Network.canEmulateNetworkConditions", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Network.canEmulateNetworkConditions", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "CanEmulateNetworkConditions", Err: err}
 	}
@@ -59,7 +67,7 @@ func (d *domainClient) CanEmulateNetworkConditions(ctx context.Context) (reply *
 
 // ClearBrowserCache invokes the Network method. Clears browser cache.
 func (d *domainClient) ClearBrowserCache(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Network.clearBrowserCache", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Network.clearBrowserCache", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "ClearBrowserCache", Err: err}
 	}
@@ -68,7 +76,7 @@ func (d *domainClient) ClearBrowserCache(ctx context.Context) (err error) {
 
 // ClearBrowserCookies invokes the Network method. Clears browser cookies.
 func (d *domainClient) ClearBrowserCookies(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Network.clearBrowserCookies", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Network.clearBrowserCookies", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "ClearBrowserCookies", Err: err}
 	}
@@ -84,9 +92,9 @@ func (d *domainClient) ClearBrowserCookies(ctx context.Context) (err error) {
 // Fetch.fulfillRequest and Fetch.failRequest instead.
 func (d *domainClient) ContinueInterceptedRequest(ctx context.Context, args *ContinueInterceptedRequestArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.continueInterceptedRequest", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.continueInterceptedRequest", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.continueInterceptedRequest", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.continueInterceptedRequest", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "ContinueInterceptedRequest", Err: err}
@@ -98,9 +106,9 @@ func (d *domainClient) ContinueInterceptedRequest(ctx context.Context, args *Con
 // matching name and url or domain/path pair.
 func (d *domainClient) DeleteCookies(ctx context.Context, args *DeleteCookiesArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.deleteCookies", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.deleteCookies", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.deleteCookies", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.deleteCookies", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "DeleteCookies", Err: err}
@@ -111,7 +119,7 @@ func (d *domainClient) DeleteCookies(ctx context.Context, args *DeleteCookiesArg
 // Disable invokes the Network method. Disables network tracking, prevents
 // network events from being sent to the client.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Network.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Network.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "Disable", Err: err}
 	}
@@ -122,9 +130,9 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // network conditions.
 func (d *domainClient) EmulateNetworkConditions(ctx context.Context, args *EmulateNetworkConditionsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.emulateNetworkConditions", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.emulateNetworkConditions", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.emulateNetworkConditions", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.emulateNetworkConditions", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "EmulateNetworkConditions", Err: err}
@@ -136,9 +144,9 @@ func (d *domainClient) EmulateNetworkConditions(ctx context.Context, args *Emula
 // will now be delivered to the client.
 func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.enable", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.enable", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.enable", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.enable", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "Enable", Err: err}
@@ -151,7 +159,7 @@ func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error)
 // the `cookies` field.
 func (d *domainClient) GetAllCookies(ctx context.Context) (reply *GetAllCookiesReply, err error) {
 	reply = new(GetAllCookiesReply)
-	err = rpcc.Invoke(ctx, "Network.getAllCookies", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Network.getAllCookies", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "GetAllCookies", Err: err}
 	}
@@ -163,9 +171,9 @@ func (d *domainClient) GetAllCookies(ctx context.Context) (reply *GetAllCookiesR
 func (d *domainClient) GetCertificate(ctx context.Context, args *GetCertificateArgs) (reply *GetCertificateReply, err error) {
 	reply = new(GetCertificateReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.getCertificate", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.getCertificate", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.getCertificate", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.getCertificate", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "GetCertificate", Err: err}
@@ -179,9 +187,9 @@ func (d *domainClient) GetCertificate(ctx context.Context, args *GetCertificateA
 func (d *domainClient) GetCookies(ctx context.Context, args *GetCookiesArgs) (reply *GetCookiesReply, err error) {
 	reply = new(GetCookiesReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.getCookies", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.getCookies", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.getCookies", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.getCookies", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "GetCookies", Err: err}
@@ -194,9 +202,9 @@ func (d *domainClient) GetCookies(ctx context.Context, args *GetCookiesArgs) (re
 func (d *domainClient) GetResponseBody(ctx context.Context, args *GetResponseBodyArgs) (reply *GetResponseBodyReply, err error) {
 	reply = new(GetResponseBodyReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.getResponseBody", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.getResponseBody", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.getResponseBody", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.getResponseBody", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "GetResponseBody", Err: err}
@@ -209,9 +217,9 @@ func (d *domainClient) GetResponseBody(ctx context.Context, args *GetResponseBod
 func (d *domainClient) GetRequestPostData(ctx context.Context, args *GetRequestPostDataArgs) (reply *GetRequestPostDataReply, err error) {
 	reply = new(GetRequestPostDataReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.getRequestPostData", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.getRequestPostData", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.getRequestPostData", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.getRequestPostData", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "GetRequestPostData", Err: err}
@@ -224,9 +232,9 @@ func (d *domainClient) GetRequestPostData(ctx context.Context, args *GetRequestP
 func (d *domainClient) GetResponseBodyForInterception(ctx context.Context, args *GetResponseBodyForInterceptionArgs) (reply *GetResponseBodyForInterceptionReply, err error) {
 	reply = new(GetResponseBodyForInterceptionReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.getResponseBodyForInterception", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.getResponseBodyForInterception", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.getResponseBodyForInterception", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.getResponseBodyForInterception", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "GetResponseBodyForInterception", Err: err}
@@ -242,9 +250,9 @@ func (d *domainClient) GetResponseBodyForInterception(ctx context.Context, args 
 func (d *domainClient) TakeResponseBodyForInterceptionAsStream(ctx context.Context, args *TakeResponseBodyForInterceptionAsStreamArgs) (reply *TakeResponseBodyForInterceptionAsStreamReply, err error) {
 	reply = new(TakeResponseBodyForInterceptionAsStreamReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.takeResponseBodyForInterceptionAsStream", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.takeResponseBodyForInterceptionAsStream", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.takeResponseBodyForInterceptionAsStream", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.takeResponseBodyForInterceptionAsStream", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "TakeResponseBodyForInterceptionAsStream", Err: err}
@@ -258,9 +266,9 @@ func (d *domainClient) TakeResponseBodyForInterceptionAsStream(ctx context.Conte
 // headers, withCredentials attribute, user, password.
 func (d *domainClient) ReplayXHR(ctx context.Context, args *ReplayXHRArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.replayXHR", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.replayXHR", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.replayXHR", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.replayXHR", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "ReplayXHR", Err: err}
@@ -273,9 +281,9 @@ func (d *domainClient) ReplayXHR(ctx context.Context, args *ReplayXHRArgs) (err 
 func (d *domainClient) SearchInResponseBody(ctx context.Context, args *SearchInResponseBodyArgs) (reply *SearchInResponseBodyReply, err error) {
 	reply = new(SearchInResponseBodyReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.searchInResponseBody", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.searchInResponseBody", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.searchInResponseBody", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.searchInResponseBody", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "SearchInResponseBody", Err: err}
@@ -286,9 +294,9 @@ func (d *domainClient) SearchInResponseBody(ctx context.Context, args *SearchInR
 // SetBlockedURLs invokes the Network method. Blocks URLs from loading.
 func (d *domainClient) SetBlockedURLs(ctx context.Context, args *SetBlockedURLsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setBlockedURLs", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setBlockedURLs", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.setBlockedURLs", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setBlockedURLs", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "SetBlockedURLs", Err: err}
@@ -300,9 +308,9 @@ func (d *domainClient) SetBlockedURLs(ctx context.Context, args *SetBlockedURLsA
 // service worker for each request.
 func (d *domainClient) SetBypassServiceWorker(ctx context.Context, args *SetBypassServiceWorkerArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setBypassServiceWorker", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setBypassServiceWorker", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.setBypassServiceWorker", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setBypassServiceWorker", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "SetBypassServiceWorker", Err: err}
@@ -314,9 +322,9 @@ func (d *domainClient) SetBypassServiceWorker(ctx context.Context, args *SetBypa
 // each request. If `true`, cache will not be used.
 func (d *domainClient) SetCacheDisabled(ctx context.Context, args *SetCacheDisabledArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setCacheDisabled", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setCacheDisabled", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.setCacheDisabled", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setCacheDisabled", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "SetCacheDisabled", Err: err}
@@ -329,9 +337,9 @@ func (d *domainClient) SetCacheDisabled(ctx context.Context, args *SetCacheDisab
 func (d *domainClient) SetCookie(ctx context.Context, args *SetCookieArgs) (reply *SetCookieReply, err error) {
 	reply = new(SetCookieReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setCookie", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setCookie", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.setCookie", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setCookie", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "SetCookie", Err: err}
@@ -342,9 +350,9 @@ func (d *domainClient) SetCookie(ctx context.Context, args *SetCookieArgs) (repl
 // SetCookies invokes the Network method. Sets given cookies.
 func (d *domainClient) SetCookies(ctx context.Context, args *SetCookiesArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setCookies", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setCookies", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.setCookies", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setCookies", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "SetCookies", Err: err}
@@ -355,9 +363,9 @@ func (d *domainClient) SetCookies(ctx context.Context, args *SetCookiesArgs) (er
 // SetDataSizeLimitsForTest invokes the Network method. For testing.
 func (d *domainClient) SetDataSizeLimitsForTest(ctx context.Context, args *SetDataSizeLimitsForTestArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setDataSizeLimitsForTest", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setDataSizeLimitsForTest", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.setDataSizeLimitsForTest", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setDataSizeLimitsForTest", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "SetDataSizeLimitsForTest", Err: err}
@@ -369,9 +377,9 @@ func (d *domainClient) SetDataSizeLimitsForTest(ctx context.Context, args *SetDa
 // send extra HTTP headers with the requests from this page.
 func (d *domainClient) SetExtraHTTPHeaders(ctx context.Context, args *SetExtraHTTPHeadersArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setExtraHTTPHeaders", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setExtraHTTPHeaders", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.setExtraHTTPHeaders", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setExtraHTTPHeaders", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "SetExtraHTTPHeaders", Err: err}
@@ -384,9 +392,9 @@ func (d *domainClient) SetExtraHTTPHeaders(ctx context.Context, args *SetExtraHT
 // Deprecated, please use Fetch.enable instead.
 func (d *domainClient) SetRequestInterception(ctx context.Context, args *SetRequestInterceptionArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setRequestInterception", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setRequestInterception", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Network.setRequestInterception", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Network.setRequestInterception", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "SetRequestInterception", Err: err}
@@ -395,7 +403,7 @@ func (d *domainClient) SetRequestInterception(ctx context.Context, args *SetRequ
 }
 
 func (d *domainClient) DataReceived(ctx context.Context) (DataReceivedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.dataReceived", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.dataReceived", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -416,7 +424,7 @@ func (c *dataReceivedClient) Recv() (*DataReceivedReply, error) {
 }
 
 func (d *domainClient) EventSourceMessageReceived(ctx context.Context) (EventSourceMessageReceivedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.eventSourceMessageReceived", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.eventSourceMessageReceived", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -437,7 +445,7 @@ func (c *eventSourceMessageReceivedClient) Recv() (*EventSourceMessageReceivedRe
 }
 
 func (d *domainClient) LoadingFailed(ctx context.Context) (LoadingFailedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.loadingFailed", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.loadingFailed", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -458,7 +466,7 @@ func (c *loadingFailedClient) Recv() (*LoadingFailedReply, error) {
 }
 
 func (d *domainClient) LoadingFinished(ctx context.Context) (LoadingFinishedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.loadingFinished", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.loadingFinished", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -479,7 +487,7 @@ func (c *loadingFinishedClient) Recv() (*LoadingFinishedReply, error) {
 }
 
 func (d *domainClient) RequestIntercepted(ctx context.Context) (RequestInterceptedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.requestIntercepted", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.requestIntercepted", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -500,7 +508,7 @@ func (c *requestInterceptedClient) Recv() (*RequestInterceptedReply, error) {
 }
 
 func (d *domainClient) RequestServedFromCache(ctx context.Context) (RequestServedFromCacheClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.requestServedFromCache", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.requestServedFromCache", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -521,7 +529,7 @@ func (c *requestServedFromCacheClient) Recv() (*RequestServedFromCacheReply, err
 }
 
 func (d *domainClient) RequestWillBeSent(ctx context.Context) (RequestWillBeSentClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.requestWillBeSent", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.requestWillBeSent", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -542,7 +550,7 @@ func (c *requestWillBeSentClient) Recv() (*RequestWillBeSentReply, error) {
 }
 
 func (d *domainClient) ResourceChangedPriority(ctx context.Context) (ResourceChangedPriorityClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.resourceChangedPriority", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.resourceChangedPriority", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -563,7 +571,7 @@ func (c *resourceChangedPriorityClient) Recv() (*ResourceChangedPriorityReply, e
 }
 
 func (d *domainClient) SignedExchangeReceived(ctx context.Context) (SignedExchangeReceivedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.signedExchangeReceived", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.signedExchangeReceived", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -584,7 +592,7 @@ func (c *signedExchangeReceivedClient) Recv() (*SignedExchangeReceivedReply, err
 }
 
 func (d *domainClient) ResponseReceived(ctx context.Context) (ResponseReceivedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.responseReceived", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.responseReceived", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -605,7 +613,7 @@ func (c *responseReceivedClient) Recv() (*ResponseReceivedReply, error) {
 }
 
 func (d *domainClient) WebSocketClosed(ctx context.Context) (WebSocketClosedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketClosed", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.webSocketClosed", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -626,7 +634,7 @@ func (c *webSocketClosedClient) Recv() (*WebSocketClosedReply, error) {
 }
 
 func (d *domainClient) WebSocketCreated(ctx context.Context) (WebSocketCreatedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketCreated", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.webSocketCreated", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -647,7 +655,7 @@ func (c *webSocketCreatedClient) Recv() (*WebSocketCreatedReply, error) {
 }
 
 func (d *domainClient) WebSocketFrameError(ctx context.Context) (WebSocketFrameErrorClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketFrameError", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.webSocketFrameError", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -668,7 +676,7 @@ func (c *webSocketFrameErrorClient) Recv() (*WebSocketFrameErrorReply, error) {
 }
 
 func (d *domainClient) WebSocketFrameReceived(ctx context.Context) (WebSocketFrameReceivedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketFrameReceived", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.webSocketFrameReceived", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -689,7 +697,7 @@ func (c *webSocketFrameReceivedClient) Recv() (*WebSocketFrameReceivedReply, err
 }
 
 func (d *domainClient) WebSocketFrameSent(ctx context.Context) (WebSocketFrameSentClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketFrameSent", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.webSocketFrameSent", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -710,7 +718,7 @@ func (c *webSocketFrameSentClient) Recv() (*WebSocketFrameSentReply, error) {
 }
 
 func (d *domainClient) WebSocketHandshakeResponseReceived(ctx context.Context) (WebSocketHandshakeResponseReceivedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketHandshakeResponseReceived", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.webSocketHandshakeResponseReceived", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -731,7 +739,7 @@ func (c *webSocketHandshakeResponseReceivedClient) Recv() (*WebSocketHandshakeRe
 }
 
 func (d *domainClient) WebSocketWillSendHandshakeRequest(ctx context.Context) (WebSocketWillSendHandshakeRequestClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.webSocketWillSendHandshakeRequest", d.conn)
+	s, err := rpcc.NewStream(ctx, "Network.webSocketWillSendHandshakeRequest", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

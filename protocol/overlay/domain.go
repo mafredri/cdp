@@ -13,16 +13,24 @@ import (
 
 // domainClient is a client for the Overlay domain. This domain provides
 // various functionality related to drawing atop the inspected page.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Overlay domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Overlay domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Disable invokes the Overlay method. Disables domain notifications.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Overlay.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Overlay.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "Disable", Err: err}
 	}
@@ -31,7 +39,7 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 
 // Enable invokes the Overlay method. Enables domain notifications.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Overlay.enable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Overlay.enable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "Enable", Err: err}
 	}
@@ -42,9 +50,9 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 func (d *domainClient) GetHighlightObjectForTest(ctx context.Context, args *GetHighlightObjectForTestArgs) (reply *GetHighlightObjectForTestReply, err error) {
 	reply = new(GetHighlightObjectForTestReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.getHighlightObjectForTest", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.getHighlightObjectForTest", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.getHighlightObjectForTest", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.getHighlightObjectForTest", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "GetHighlightObjectForTest", Err: err}
@@ -54,7 +62,7 @@ func (d *domainClient) GetHighlightObjectForTest(ctx context.Context, args *GetH
 
 // HideHighlight invokes the Overlay method. Hides any highlight.
 func (d *domainClient) HideHighlight(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Overlay.hideHighlight", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Overlay.hideHighlight", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "HideHighlight", Err: err}
 	}
@@ -65,9 +73,9 @@ func (d *domainClient) HideHighlight(ctx context.Context) (err error) {
 // frame with given id.
 func (d *domainClient) HighlightFrame(ctx context.Context, args *HighlightFrameArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.highlightFrame", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.highlightFrame", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.highlightFrame", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.highlightFrame", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "HighlightFrame", Err: err}
@@ -80,9 +88,9 @@ func (d *domainClient) HighlightFrame(ctx context.Context, args *HighlightFrameA
 // be specified.
 func (d *domainClient) HighlightNode(ctx context.Context, args *HighlightNodeArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.highlightNode", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.highlightNode", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.highlightNode", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.highlightNode", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "HighlightNode", Err: err}
@@ -94,9 +102,9 @@ func (d *domainClient) HighlightNode(ctx context.Context, args *HighlightNodeArg
 // Coordinates are absolute with respect to the main frame viewport.
 func (d *domainClient) HighlightQuad(ctx context.Context, args *HighlightQuadArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.highlightQuad", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.highlightQuad", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.highlightQuad", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.highlightQuad", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "HighlightQuad", Err: err}
@@ -108,9 +116,9 @@ func (d *domainClient) HighlightQuad(ctx context.Context, args *HighlightQuadArg
 // Coordinates are absolute with respect to the main frame viewport.
 func (d *domainClient) HighlightRect(ctx context.Context, args *HighlightRectArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.highlightRect", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.highlightRect", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.highlightRect", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.highlightRect", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "HighlightRect", Err: err}
@@ -123,9 +131,9 @@ func (d *domainClient) HighlightRect(ctx context.Context, args *HighlightRectArg
 // generates 'inspectNodeRequested' event upon element selection.
 func (d *domainClient) SetInspectMode(ctx context.Context, args *SetInspectModeArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.setInspectMode", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setInspectMode", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.setInspectMode", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setInspectMode", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetInspectMode", Err: err}
@@ -137,9 +145,9 @@ func (d *domainClient) SetInspectMode(ctx context.Context, args *SetInspectModeA
 // all frames detected to be ads.
 func (d *domainClient) SetShowAdHighlights(ctx context.Context, args *SetShowAdHighlightsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.setShowAdHighlights", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowAdHighlights", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.setShowAdHighlights", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowAdHighlights", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetShowAdHighlights", Err: err}
@@ -150,9 +158,9 @@ func (d *domainClient) SetShowAdHighlights(ctx context.Context, args *SetShowAdH
 // SetPausedInDebuggerMessage invokes the Overlay method.
 func (d *domainClient) SetPausedInDebuggerMessage(ctx context.Context, args *SetPausedInDebuggerMessageArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.setPausedInDebuggerMessage", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setPausedInDebuggerMessage", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.setPausedInDebuggerMessage", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setPausedInDebuggerMessage", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetPausedInDebuggerMessage", Err: err}
@@ -164,9 +172,9 @@ func (d *domainClient) SetPausedInDebuggerMessage(ctx context.Context, args *Set
 // debug borders on layers
 func (d *domainClient) SetShowDebugBorders(ctx context.Context, args *SetShowDebugBordersArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.setShowDebugBorders", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowDebugBorders", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.setShowDebugBorders", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowDebugBorders", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetShowDebugBorders", Err: err}
@@ -178,9 +186,9 @@ func (d *domainClient) SetShowDebugBorders(ctx context.Context, args *SetShowDeb
 // the FPS counter
 func (d *domainClient) SetShowFPSCounter(ctx context.Context, args *SetShowFPSCounterArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.setShowFPSCounter", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowFPSCounter", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.setShowFPSCounter", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowFPSCounter", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetShowFPSCounter", Err: err}
@@ -192,9 +200,9 @@ func (d *domainClient) SetShowFPSCounter(ctx context.Context, args *SetShowFPSCo
 // paint rectangles
 func (d *domainClient) SetShowPaintRects(ctx context.Context, args *SetShowPaintRectsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.setShowPaintRects", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowPaintRects", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.setShowPaintRects", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowPaintRects", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetShowPaintRects", Err: err}
@@ -206,9 +214,9 @@ func (d *domainClient) SetShowPaintRects(ctx context.Context, args *SetShowPaint
 // shows layout shift regions
 func (d *domainClient) SetShowLayoutShiftRegions(ctx context.Context, args *SetShowLayoutShiftRegionsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.setShowLayoutShiftRegions", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowLayoutShiftRegions", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.setShowLayoutShiftRegions", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowLayoutShiftRegions", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetShowLayoutShiftRegions", Err: err}
@@ -220,9 +228,9 @@ func (d *domainClient) SetShowLayoutShiftRegions(ctx context.Context, args *SetS
 // backend shows scroll bottleneck rects
 func (d *domainClient) SetShowScrollBottleneckRects(ctx context.Context, args *SetShowScrollBottleneckRectsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.setShowScrollBottleneckRects", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowScrollBottleneckRects", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.setShowScrollBottleneckRects", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowScrollBottleneckRects", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetShowScrollBottleneckRects", Err: err}
@@ -234,9 +242,9 @@ func (d *domainClient) SetShowScrollBottleneckRects(ctx context.Context, args *S
 // shows hit-test borders on layers
 func (d *domainClient) SetShowHitTestBorders(ctx context.Context, args *SetShowHitTestBordersArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.setShowHitTestBorders", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowHitTestBorders", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.setShowHitTestBorders", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowHitTestBorders", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetShowHitTestBorders", Err: err}
@@ -248,9 +256,9 @@ func (d *domainClient) SetShowHitTestBorders(ctx context.Context, args *SetShowH
 // size upon main frame resize.
 func (d *domainClient) SetShowViewportSizeOnResize(ctx context.Context, args *SetShowViewportSizeOnResizeArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.setShowViewportSizeOnResize", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowViewportSizeOnResize", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.setShowViewportSizeOnResize", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Overlay.setShowViewportSizeOnResize", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetShowViewportSizeOnResize", Err: err}
@@ -259,7 +267,7 @@ func (d *domainClient) SetShowViewportSizeOnResize(ctx context.Context, args *Se
 }
 
 func (d *domainClient) InspectNodeRequested(ctx context.Context) (InspectNodeRequestedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Overlay.inspectNodeRequested", d.conn)
+	s, err := rpcc.NewStream(ctx, "Overlay.inspectNodeRequested", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -280,7 +288,7 @@ func (c *inspectNodeRequestedClient) Recv() (*InspectNodeRequestedReply, error) 
 }
 
 func (d *domainClient) NodeHighlightRequested(ctx context.Context) (NodeHighlightRequestedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Overlay.nodeHighlightRequested", d.conn)
+	s, err := rpcc.NewStream(ctx, "Overlay.nodeHighlightRequested", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -301,7 +309,7 @@ func (c *nodeHighlightRequestedClient) Recv() (*NodeHighlightRequestedReply, err
 }
 
 func (d *domainClient) ScreenshotRequested(ctx context.Context) (ScreenshotRequestedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Overlay.screenshotRequested", d.conn)
+	s, err := rpcc.NewStream(ctx, "Overlay.screenshotRequested", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -322,7 +330,7 @@ func (c *screenshotRequestedClient) Recv() (*ScreenshotRequestedReply, error) {
 }
 
 func (d *domainClient) InspectModeCanceled(ctx context.Context) (InspectModeCanceledClient, error) {
-	s, err := rpcc.NewStream(ctx, "Overlay.inspectModeCanceled", d.conn)
+	s, err := rpcc.NewStream(ctx, "Overlay.inspectModeCanceled", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

@@ -13,20 +13,28 @@ import (
 
 // domainClient is a client for the Browser domain. The Browser domain defines
 // methods and events for browser managing.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Browser domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Browser domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // GrantPermissions invokes the Browser method. Grant specific permissions to
 // the given origin and reject all others.
 func (d *domainClient) GrantPermissions(ctx context.Context, args *GrantPermissionsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Browser.grantPermissions", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.grantPermissions", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Browser.grantPermissions", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.grantPermissions", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "GrantPermissions", Err: err}
@@ -38,9 +46,9 @@ func (d *domainClient) GrantPermissions(ctx context.Context, args *GrantPermissi
 // management for all origins.
 func (d *domainClient) ResetPermissions(ctx context.Context, args *ResetPermissionsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Browser.resetPermissions", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.resetPermissions", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Browser.resetPermissions", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.resetPermissions", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "ResetPermissions", Err: err}
@@ -50,7 +58,7 @@ func (d *domainClient) ResetPermissions(ctx context.Context, args *ResetPermissi
 
 // Close invokes the Browser method. Close browser gracefully.
 func (d *domainClient) Close(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Browser.close", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Browser.close", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "Close", Err: err}
 	}
@@ -59,7 +67,7 @@ func (d *domainClient) Close(ctx context.Context) (err error) {
 
 // Crash invokes the Browser method. Crashes browser on the main thread.
 func (d *domainClient) Crash(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Browser.crash", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Browser.crash", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "Crash", Err: err}
 	}
@@ -68,7 +76,7 @@ func (d *domainClient) Crash(ctx context.Context) (err error) {
 
 // CrashGPUProcess invokes the Browser method. Crashes GPU process.
 func (d *domainClient) CrashGPUProcess(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Browser.crashGpuProcess", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Browser.crashGpuProcess", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "CrashGPUProcess", Err: err}
 	}
@@ -78,7 +86,7 @@ func (d *domainClient) CrashGPUProcess(ctx context.Context) (err error) {
 // GetVersion invokes the Browser method. Returns version information.
 func (d *domainClient) GetVersion(ctx context.Context) (reply *GetVersionReply, err error) {
 	reply = new(GetVersionReply)
-	err = rpcc.Invoke(ctx, "Browser.getVersion", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Browser.getVersion", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "GetVersion", Err: err}
 	}
@@ -90,7 +98,7 @@ func (d *domainClient) GetVersion(ctx context.Context) (reply *GetVersionReply, 
 // the commandline.
 func (d *domainClient) GetBrowserCommandLine(ctx context.Context) (reply *GetBrowserCommandLineReply, err error) {
 	reply = new(GetBrowserCommandLineReply)
-	err = rpcc.Invoke(ctx, "Browser.getBrowserCommandLine", nil, reply, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Browser.getBrowserCommandLine", d.sessionID, nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "GetBrowserCommandLine", Err: err}
 	}
@@ -101,9 +109,9 @@ func (d *domainClient) GetBrowserCommandLine(ctx context.Context) (reply *GetBro
 func (d *domainClient) GetHistograms(ctx context.Context, args *GetHistogramsArgs) (reply *GetHistogramsReply, err error) {
 	reply = new(GetHistogramsReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Browser.getHistograms", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.getHistograms", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Browser.getHistograms", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.getHistograms", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "GetHistograms", Err: err}
@@ -115,9 +123,9 @@ func (d *domainClient) GetHistograms(ctx context.Context, args *GetHistogramsArg
 func (d *domainClient) GetHistogram(ctx context.Context, args *GetHistogramArgs) (reply *GetHistogramReply, err error) {
 	reply = new(GetHistogramReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Browser.getHistogram", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.getHistogram", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Browser.getHistogram", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.getHistogram", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "GetHistogram", Err: err}
@@ -130,9 +138,9 @@ func (d *domainClient) GetHistogram(ctx context.Context, args *GetHistogramArgs)
 func (d *domainClient) GetWindowBounds(ctx context.Context, args *GetWindowBoundsArgs) (reply *GetWindowBoundsReply, err error) {
 	reply = new(GetWindowBoundsReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Browser.getWindowBounds", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.getWindowBounds", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Browser.getWindowBounds", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.getWindowBounds", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "GetWindowBounds", Err: err}
@@ -145,9 +153,9 @@ func (d *domainClient) GetWindowBounds(ctx context.Context, args *GetWindowBound
 func (d *domainClient) GetWindowForTarget(ctx context.Context, args *GetWindowForTargetArgs) (reply *GetWindowForTargetReply, err error) {
 	reply = new(GetWindowForTargetReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Browser.getWindowForTarget", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.getWindowForTarget", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Browser.getWindowForTarget", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.getWindowForTarget", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "GetWindowForTarget", Err: err}
@@ -159,9 +167,9 @@ func (d *domainClient) GetWindowForTarget(ctx context.Context, args *GetWindowFo
 // browser window.
 func (d *domainClient) SetWindowBounds(ctx context.Context, args *SetWindowBoundsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Browser.setWindowBounds", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.setWindowBounds", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Browser.setWindowBounds", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.setWindowBounds", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "SetWindowBounds", Err: err}
@@ -173,9 +181,9 @@ func (d *domainClient) SetWindowBounds(ctx context.Context, args *SetWindowBound
 // platform-specific.
 func (d *domainClient) SetDockTile(ctx context.Context, args *SetDockTileArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Browser.setDockTile", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.setDockTile", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Browser.setDockTile", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Browser.setDockTile", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "SetDockTile", Err: err}

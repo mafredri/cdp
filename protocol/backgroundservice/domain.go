@@ -13,20 +13,28 @@ import (
 
 // domainClient is a client for the BackgroundService domain. Defines events
 // for background web platform features.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the BackgroundService domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the BackgroundService domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // StartObserving invokes the BackgroundService method. Enables event updates
 // for the service.
 func (d *domainClient) StartObserving(ctx context.Context, args *StartObservingArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "BackgroundService.startObserving", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "BackgroundService.startObserving", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "BackgroundService.startObserving", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "BackgroundService.startObserving", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "BackgroundService", Op: "StartObserving", Err: err}
@@ -38,9 +46,9 @@ func (d *domainClient) StartObserving(ctx context.Context, args *StartObservingA
 // for the service.
 func (d *domainClient) StopObserving(ctx context.Context, args *StopObservingArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "BackgroundService.stopObserving", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "BackgroundService.stopObserving", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "BackgroundService.stopObserving", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "BackgroundService.stopObserving", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "BackgroundService", Op: "StopObserving", Err: err}
@@ -52,9 +60,9 @@ func (d *domainClient) StopObserving(ctx context.Context, args *StopObservingArg
 // for the service.
 func (d *domainClient) SetRecording(ctx context.Context, args *SetRecordingArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "BackgroundService.setRecording", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "BackgroundService.setRecording", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "BackgroundService.setRecording", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "BackgroundService.setRecording", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "BackgroundService", Op: "SetRecording", Err: err}
@@ -66,9 +74,9 @@ func (d *domainClient) SetRecording(ctx context.Context, args *SetRecordingArgs)
 // for the service.
 func (d *domainClient) ClearEvents(ctx context.Context, args *ClearEventsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "BackgroundService.clearEvents", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "BackgroundService.clearEvents", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "BackgroundService.clearEvents", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "BackgroundService.clearEvents", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "BackgroundService", Op: "ClearEvents", Err: err}
@@ -77,7 +85,7 @@ func (d *domainClient) ClearEvents(ctx context.Context, args *ClearEventsArgs) (
 }
 
 func (d *domainClient) RecordingStateChanged(ctx context.Context) (RecordingStateChangedClient, error) {
-	s, err := rpcc.NewStream(ctx, "BackgroundService.recordingStateChanged", d.conn)
+	s, err := rpcc.NewStream(ctx, "BackgroundService.recordingStateChanged", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +106,7 @@ func (c *recordingStateChangedClient) Recv() (*RecordingStateChangedReply, error
 }
 
 func (d *domainClient) BackgroundServiceEventReceived(ctx context.Context) (EventReceivedClient, error) {
-	s, err := rpcc.NewStream(ctx, "BackgroundService.backgroundServiceEventReceived", d.conn)
+	s, err := rpcc.NewStream(ctx, "BackgroundService.backgroundServiceEventReceived", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

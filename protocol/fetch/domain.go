@@ -13,16 +13,24 @@ import (
 
 // domainClient is a client for the Fetch domain. A domain for letting clients
 // substitute browser's network layer with client code.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Fetch domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Fetch domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // Disable invokes the Fetch method. Disables the fetch domain.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Fetch.disable", nil, nil, d.conn)
+	err = rpcc.InvokeRPC(ctx, "Fetch.disable", d.sessionID, nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Fetch", Op: "Disable", Err: err}
 	}
@@ -34,9 +42,9 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 // or continueRequest/continueWithAuth.
 func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Fetch.enable", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.enable", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Fetch.enable", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.enable", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Fetch", Op: "Enable", Err: err}
@@ -48,9 +56,9 @@ func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error)
 // specified reason.
 func (d *domainClient) FailRequest(ctx context.Context, args *FailRequestArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Fetch.failRequest", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.failRequest", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Fetch.failRequest", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.failRequest", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Fetch", Op: "FailRequest", Err: err}
@@ -61,9 +69,9 @@ func (d *domainClient) FailRequest(ctx context.Context, args *FailRequestArgs) (
 // FulfillRequest invokes the Fetch method. Provides response to the request.
 func (d *domainClient) FulfillRequest(ctx context.Context, args *FulfillRequestArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Fetch.fulfillRequest", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.fulfillRequest", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Fetch.fulfillRequest", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.fulfillRequest", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Fetch", Op: "FulfillRequest", Err: err}
@@ -75,9 +83,9 @@ func (d *domainClient) FulfillRequest(ctx context.Context, args *FulfillRequestA
 // modifying some of its parameters.
 func (d *domainClient) ContinueRequest(ctx context.Context, args *ContinueRequestArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Fetch.continueRequest", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.continueRequest", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Fetch.continueRequest", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.continueRequest", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Fetch", Op: "ContinueRequest", Err: err}
@@ -89,9 +97,9 @@ func (d *domainClient) ContinueRequest(ctx context.Context, args *ContinueReques
 // authChallengeResponse following authRequired event.
 func (d *domainClient) ContinueWithAuth(ctx context.Context, args *ContinueWithAuthArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Fetch.continueWithAuth", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.continueWithAuth", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Fetch.continueWithAuth", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.continueWithAuth", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Fetch", Op: "ContinueWithAuth", Err: err}
@@ -108,9 +116,9 @@ func (d *domainClient) ContinueWithAuth(ctx context.Context, args *ContinueWithA
 func (d *domainClient) GetResponseBody(ctx context.Context, args *GetResponseBodyArgs) (reply *GetResponseBodyReply, err error) {
 	reply = new(GetResponseBodyReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Fetch.getResponseBody", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.getResponseBody", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Fetch.getResponseBody", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.getResponseBody", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Fetch", Op: "GetResponseBody", Err: err}
@@ -129,9 +137,9 @@ func (d *domainClient) GetResponseBody(ctx context.Context, args *GetResponseBod
 func (d *domainClient) TakeResponseBodyAsStream(ctx context.Context, args *TakeResponseBodyAsStreamArgs) (reply *TakeResponseBodyAsStreamReply, err error) {
 	reply = new(TakeResponseBodyAsStreamReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Fetch.takeResponseBodyAsStream", args, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.takeResponseBodyAsStream", d.sessionID, args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Fetch.takeResponseBodyAsStream", nil, reply, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Fetch.takeResponseBodyAsStream", d.sessionID, nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Fetch", Op: "TakeResponseBodyAsStream", Err: err}
@@ -140,7 +148,7 @@ func (d *domainClient) TakeResponseBodyAsStream(ctx context.Context, args *TakeR
 }
 
 func (d *domainClient) RequestPaused(ctx context.Context) (RequestPausedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Fetch.requestPaused", d.conn)
+	s, err := rpcc.NewStream(ctx, "Fetch.requestPaused", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +169,7 @@ func (c *requestPausedClient) Recv() (*RequestPausedReply, error) {
 }
 
 func (d *domainClient) AuthRequired(ctx context.Context) (AuthRequiredClient, error) {
-	s, err := rpcc.NewStream(ctx, "Fetch.authRequired", d.conn)
+	s, err := rpcc.NewStream(ctx, "Fetch.authRequired", d.sessionID, d.conn)
 	if err != nil {
 		return nil, err
 	}

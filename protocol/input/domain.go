@@ -11,20 +11,28 @@ import (
 )
 
 // domainClient is a client for the Input domain.
-type domainClient struct{ conn *rpcc.Conn }
+type domainClient struct {
+	conn      *rpcc.Conn
+	sessionID string
+}
 
 // NewClient returns a client for the Input domain with the connection set to conn.
 func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// NewClient returns a client for the Input domain with the connection set to conn.
+func NewSessionClient(conn *rpcc.Conn, sessionID string) *domainClient {
+	return &domainClient{conn: conn, sessionID: sessionID}
+}
+
 // DispatchKeyEvent invokes the Input method. Dispatches a key event to the
 // page.
 func (d *domainClient) DispatchKeyEvent(ctx context.Context, args *DispatchKeyEventArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Input.dispatchKeyEvent", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.dispatchKeyEvent", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Input.dispatchKeyEvent", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.dispatchKeyEvent", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Input", Op: "DispatchKeyEvent", Err: err}
@@ -36,9 +44,9 @@ func (d *domainClient) DispatchKeyEvent(ctx context.Context, args *DispatchKeyEv
 // that doesn't come from a key press, for example an emoji keyboard or an IME.
 func (d *domainClient) InsertText(ctx context.Context, args *InsertTextArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Input.insertText", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.insertText", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Input.insertText", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.insertText", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Input", Op: "InsertText", Err: err}
@@ -50,9 +58,9 @@ func (d *domainClient) InsertText(ctx context.Context, args *InsertTextArgs) (er
 // the page.
 func (d *domainClient) DispatchMouseEvent(ctx context.Context, args *DispatchMouseEventArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Input.dispatchMouseEvent", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.dispatchMouseEvent", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Input.dispatchMouseEvent", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.dispatchMouseEvent", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Input", Op: "DispatchMouseEvent", Err: err}
@@ -64,9 +72,9 @@ func (d *domainClient) DispatchMouseEvent(ctx context.Context, args *DispatchMou
 // the page.
 func (d *domainClient) DispatchTouchEvent(ctx context.Context, args *DispatchTouchEventArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Input.dispatchTouchEvent", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.dispatchTouchEvent", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Input.dispatchTouchEvent", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.dispatchTouchEvent", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Input", Op: "DispatchTouchEvent", Err: err}
@@ -78,9 +86,9 @@ func (d *domainClient) DispatchTouchEvent(ctx context.Context, args *DispatchTou
 // from the mouse event parameters.
 func (d *domainClient) EmulateTouchFromMouseEvent(ctx context.Context, args *EmulateTouchFromMouseEventArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Input.emulateTouchFromMouseEvent", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.emulateTouchFromMouseEvent", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Input.emulateTouchFromMouseEvent", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.emulateTouchFromMouseEvent", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Input", Op: "EmulateTouchFromMouseEvent", Err: err}
@@ -92,9 +100,9 @@ func (d *domainClient) EmulateTouchFromMouseEvent(ctx context.Context, args *Emu
 // while auditing page).
 func (d *domainClient) SetIgnoreInputEvents(ctx context.Context, args *SetIgnoreInputEventsArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Input.setIgnoreInputEvents", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.setIgnoreInputEvents", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Input.setIgnoreInputEvents", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.setIgnoreInputEvents", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Input", Op: "SetIgnoreInputEvents", Err: err}
@@ -106,9 +114,9 @@ func (d *domainClient) SetIgnoreInputEvents(ctx context.Context, args *SetIgnore
 // gesture over a time period by issuing appropriate touch events.
 func (d *domainClient) SynthesizePinchGesture(ctx context.Context, args *SynthesizePinchGestureArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Input.synthesizePinchGesture", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.synthesizePinchGesture", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Input.synthesizePinchGesture", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.synthesizePinchGesture", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Input", Op: "SynthesizePinchGesture", Err: err}
@@ -120,9 +128,9 @@ func (d *domainClient) SynthesizePinchGesture(ctx context.Context, args *Synthes
 // gesture over a time period by issuing appropriate touch events.
 func (d *domainClient) SynthesizeScrollGesture(ctx context.Context, args *SynthesizeScrollGestureArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Input.synthesizeScrollGesture", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.synthesizeScrollGesture", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Input.synthesizeScrollGesture", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.synthesizeScrollGesture", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Input", Op: "SynthesizeScrollGesture", Err: err}
@@ -134,9 +142,9 @@ func (d *domainClient) SynthesizeScrollGesture(ctx context.Context, args *Synthe
 // over a time period by issuing appropriate touch events.
 func (d *domainClient) SynthesizeTapGesture(ctx context.Context, args *SynthesizeTapGestureArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Input.synthesizeTapGesture", args, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.synthesizeTapGesture", d.sessionID, args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Input.synthesizeTapGesture", nil, nil, d.conn)
+		err = rpcc.InvokeRPC(ctx, "Input.synthesizeTapGesture", d.sessionID, nil, nil, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Input", Op: "SynthesizeTapGesture", Err: err}
