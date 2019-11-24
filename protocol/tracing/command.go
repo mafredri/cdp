@@ -19,6 +19,25 @@ func NewRecordClockSyncMarkerArgs(syncID string) *RecordClockSyncMarkerArgs {
 	return args
 }
 
+// RequestMemoryDumpArgs represents the arguments for RequestMemoryDump in the Tracing domain.
+type RequestMemoryDumpArgs struct {
+	Deterministic *bool `json:"deterministic,omitempty"` // Enables more deterministic results by forcing garbage collection
+}
+
+// NewRequestMemoryDumpArgs initializes RequestMemoryDumpArgs with the required arguments.
+func NewRequestMemoryDumpArgs() *RequestMemoryDumpArgs {
+	args := new(RequestMemoryDumpArgs)
+
+	return args
+}
+
+// SetDeterministic sets the Deterministic optional argument. Enables
+// more deterministic results by forcing garbage collection
+func (a *RequestMemoryDumpArgs) SetDeterministic(deterministic bool) *RequestMemoryDumpArgs {
+	a.Deterministic = &deterministic
+	return a
+}
+
 // RequestMemoryDumpReply represents the return values for RequestMemoryDump in the Tracing domain.
 type RequestMemoryDumpReply struct {
 	DumpGUID string `json:"dumpGuid"` // GUID of the resulting global memory dump.

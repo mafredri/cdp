@@ -26,6 +26,20 @@ type CertificateErrorReply struct {
 	RequestURL string `json:"requestURL"` // The url that was requested.
 }
 
+// VisibleSecurityStateChangedClient is a client for VisibleSecurityStateChanged events.
+// The security state of the page changed.
+type VisibleSecurityStateChangedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*VisibleSecurityStateChangedReply, error)
+	rpcc.Stream
+}
+
+// VisibleSecurityStateChangedReply is the reply for VisibleSecurityStateChanged events.
+type VisibleSecurityStateChangedReply struct {
+	VisibleSecurityState VisibleSecurityState `json:"visibleSecurityState"` // Security state information about the page.
+}
+
 // StateChangedClient is a client for SecurityStateChanged events. The
 // security state of the page changed.
 type StateChangedClient interface {

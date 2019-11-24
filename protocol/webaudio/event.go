@@ -20,18 +20,18 @@ type ContextCreatedReply struct {
 	Context BaseAudioContext `json:"context"` // No description.
 }
 
-// ContextDestroyedClient is a client for ContextDestroyed events. Notifies
-// that existing BaseAudioContext has been destroyed.
-type ContextDestroyedClient interface {
+// ContextWillBeDestroyedClient is a client for ContextWillBeDestroyed events.
+// Notifies that an existing BaseAudioContext will be destroyed.
+type ContextWillBeDestroyedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
-	Recv() (*ContextDestroyedReply, error)
+	Recv() (*ContextWillBeDestroyedReply, error)
 	rpcc.Stream
 }
 
-// ContextDestroyedReply is the reply for ContextDestroyed events.
-type ContextDestroyedReply struct {
-	ContextID ContextID `json:"contextId"` // No description.
+// ContextWillBeDestroyedReply is the reply for ContextWillBeDestroyed events.
+type ContextWillBeDestroyedReply struct {
+	ContextID GraphObjectID `json:"contextId"` // No description.
 }
 
 // ContextChangedClient is a client for ContextChanged events. Notifies that
@@ -46,4 +46,163 @@ type ContextChangedClient interface {
 // ContextChangedReply is the reply for ContextChanged events.
 type ContextChangedReply struct {
 	Context BaseAudioContext `json:"context"` // No description.
+}
+
+// AudioListenerCreatedClient is a client for AudioListenerCreated events.
+// Notifies that the construction of an AudioListener has finished.
+type AudioListenerCreatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*AudioListenerCreatedReply, error)
+	rpcc.Stream
+}
+
+// AudioListenerCreatedReply is the reply for AudioListenerCreated events.
+type AudioListenerCreatedReply struct {
+	Listener AudioListener `json:"listener"` // No description.
+}
+
+// AudioListenerWillBeDestroyedClient is a client for AudioListenerWillBeDestroyed events.
+// Notifies that a new AudioListener has been created.
+type AudioListenerWillBeDestroyedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*AudioListenerWillBeDestroyedReply, error)
+	rpcc.Stream
+}
+
+// AudioListenerWillBeDestroyedReply is the reply for AudioListenerWillBeDestroyed events.
+type AudioListenerWillBeDestroyedReply struct {
+	ContextID  GraphObjectID `json:"contextId"`  // No description.
+	ListenerID GraphObjectID `json:"listenerId"` // No description.
+}
+
+// AudioNodeCreatedClient is a client for AudioNodeCreated events. Notifies
+// that a new AudioNode has been created.
+type AudioNodeCreatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*AudioNodeCreatedReply, error)
+	rpcc.Stream
+}
+
+// AudioNodeCreatedReply is the reply for AudioNodeCreated events.
+type AudioNodeCreatedReply struct {
+	Node AudioNode `json:"node"` // No description.
+}
+
+// AudioNodeWillBeDestroyedClient is a client for AudioNodeWillBeDestroyed events.
+// Notifies that an existing AudioNode has been destroyed.
+type AudioNodeWillBeDestroyedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*AudioNodeWillBeDestroyedReply, error)
+	rpcc.Stream
+}
+
+// AudioNodeWillBeDestroyedReply is the reply for AudioNodeWillBeDestroyed events.
+type AudioNodeWillBeDestroyedReply struct {
+	ContextID GraphObjectID `json:"contextId"` // No description.
+	NodeID    GraphObjectID `json:"nodeId"`    // No description.
+}
+
+// AudioParamCreatedClient is a client for AudioParamCreated events. Notifies
+// that a new AudioParam has been created.
+type AudioParamCreatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*AudioParamCreatedReply, error)
+	rpcc.Stream
+}
+
+// AudioParamCreatedReply is the reply for AudioParamCreated events.
+type AudioParamCreatedReply struct {
+	Param AudioParam `json:"param"` // No description.
+}
+
+// AudioParamWillBeDestroyedClient is a client for AudioParamWillBeDestroyed events.
+// Notifies that an existing AudioParam has been destroyed.
+type AudioParamWillBeDestroyedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*AudioParamWillBeDestroyedReply, error)
+	rpcc.Stream
+}
+
+// AudioParamWillBeDestroyedReply is the reply for AudioParamWillBeDestroyed events.
+type AudioParamWillBeDestroyedReply struct {
+	ContextID GraphObjectID `json:"contextId"` // No description.
+	NodeID    GraphObjectID `json:"nodeId"`    // No description.
+	ParamID   GraphObjectID `json:"paramId"`   // No description.
+}
+
+// NodesConnectedClient is a client for NodesConnected events. Notifies that
+// two AudioNodes are connected.
+type NodesConnectedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*NodesConnectedReply, error)
+	rpcc.Stream
+}
+
+// NodesConnectedReply is the reply for NodesConnected events.
+type NodesConnectedReply struct {
+	ContextID             GraphObjectID `json:"contextId"`                       // No description.
+	SourceID              GraphObjectID `json:"sourceId"`                        // No description.
+	DestinationID         GraphObjectID `json:"destinationId"`                   // No description.
+	SourceOutputIndex     *float64      `json:"sourceOutputIndex,omitempty"`     // No description.
+	DestinationInputIndex *float64      `json:"destinationInputIndex,omitempty"` // No description.
+}
+
+// NodesDisconnectedClient is a client for NodesDisconnected events. Notifies
+// that AudioNodes are disconnected. The destination can be null, and it means
+// all the outgoing connections from the source are disconnected.
+type NodesDisconnectedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*NodesDisconnectedReply, error)
+	rpcc.Stream
+}
+
+// NodesDisconnectedReply is the reply for NodesDisconnected events.
+type NodesDisconnectedReply struct {
+	ContextID             GraphObjectID `json:"contextId"`                       // No description.
+	SourceID              GraphObjectID `json:"sourceId"`                        // No description.
+	DestinationID         GraphObjectID `json:"destinationId"`                   // No description.
+	SourceOutputIndex     *float64      `json:"sourceOutputIndex,omitempty"`     // No description.
+	DestinationInputIndex *float64      `json:"destinationInputIndex,omitempty"` // No description.
+}
+
+// NodeParamConnectedClient is a client for NodeParamConnected events.
+// Notifies that an AudioNode is connected to an AudioParam.
+type NodeParamConnectedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*NodeParamConnectedReply, error)
+	rpcc.Stream
+}
+
+// NodeParamConnectedReply is the reply for NodeParamConnected events.
+type NodeParamConnectedReply struct {
+	ContextID         GraphObjectID `json:"contextId"`                   // No description.
+	SourceID          GraphObjectID `json:"sourceId"`                    // No description.
+	DestinationID     GraphObjectID `json:"destinationId"`               // No description.
+	SourceOutputIndex *float64      `json:"sourceOutputIndex,omitempty"` // No description.
+}
+
+// NodeParamDisconnectedClient is a client for NodeParamDisconnected events.
+// Notifies that an AudioNode is disconnected to an AudioParam.
+type NodeParamDisconnectedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*NodeParamDisconnectedReply, error)
+	rpcc.Stream
+}
+
+// NodeParamDisconnectedReply is the reply for NodeParamDisconnected events.
+type NodeParamDisconnectedReply struct {
+	ContextID         GraphObjectID `json:"contextId"`                   // No description.
+	SourceID          GraphObjectID `json:"sourceId"`                    // No description.
+	DestinationID     GraphObjectID `json:"destinationId"`               // No description.
+	SourceOutputIndex *float64      `json:"sourceOutputIndex,omitempty"` // No description.
 }

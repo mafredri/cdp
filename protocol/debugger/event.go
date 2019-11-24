@@ -47,10 +47,9 @@ type PausedReply struct {
 	//
 	// Note: This property is experimental.
 	AsyncStackTraceID *runtime.StackTraceID `json:"asyncStackTraceId,omitempty"`
-	// AsyncCallStackTraceID Just scheduled async call will have this
-	// stack trace as parent stack during async execution. This field is
-	// available only after `Debugger.stepInto` call with `breakOnAsynCall`
-	// flag.
+	// AsyncCallStackTraceID is deprecated.
+	//
+	// Deprecated: Never present, will be removed.
 	//
 	// Note: This property is experimental.
 	AsyncCallStackTraceID *runtime.StackTraceID `json:"asyncCallStackTraceId,omitempty"`

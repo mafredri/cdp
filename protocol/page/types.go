@@ -8,12 +8,7 @@ import (
 )
 
 // FrameID Unique frame identifier.
-//
-// Provided as an alias to prevent circular dependencies.
 type FrameID = internal.PageFrameID
-
-// FrameID Unique frame identifier.
-//type FrameID string
 
 // Frame Information about the Frame on the page.
 type Frame struct {

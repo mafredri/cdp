@@ -7,7 +7,9 @@ import (
 )
 
 // NeedsBeginFramesChangedClient is a client for NeedsBeginFramesChanged events.
-// Issued when the target starts or stops needing BeginFrames.
+// Issued when the target starts or stops needing BeginFrames. Deprecated.
+// Issue beginFrame unconditionally instead and use result from beginFrame to
+// detect whether the frames were suppressed.
 type NeedsBeginFramesChangedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

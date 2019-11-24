@@ -84,6 +84,8 @@ type StyleSheetHeader struct {
 	StartLine    float64            `json:"startLine"`              // Line offset of the stylesheet within the resource (zero based).
 	StartColumn  float64            `json:"startColumn"`            // Column offset of the stylesheet within the resource (zero based).
 	Length       float64            `json:"length"`                 // Size of the content (in characters).
+	EndLine      float64            `json:"endLine"`                // Line offset of the end of the stylesheet within the resource (zero based).
+	EndColumn    float64            `json:"endColumn"`              // Column offset of the end of the stylesheet within the resource (zero based).
 }
 
 // Rule CSS rule representation.

@@ -100,6 +100,7 @@ type Rectangle []float64
 // DocumentSnapshot Document snapshot.
 type DocumentSnapshot struct {
 	DocumentURL     StringIndex        `json:"documentURL"`             // Document URL that `Document` or `FrameOwner` node points to.
+	Title           StringIndex        `json:"title"`                   // Document title.
 	BaseURL         StringIndex        `json:"baseURL"`                 // Base URL that `Document` or `FrameOwner` node uses for URL completion.
 	ContentLanguage StringIndex        `json:"contentLanguage"`         // Contains the document's content language.
 	EncodingName    StringIndex        `json:"encodingName"`            // Contains the document's character set encoding.
@@ -111,6 +112,8 @@ type DocumentSnapshot struct {
 	TextBoxes       TextBoxSnapshot    `json:"textBoxes"`               // The post-layout inline text nodes.
 	ScrollOffsetX   *float64           `json:"scrollOffsetX,omitempty"` // Horizontal scroll offset.
 	ScrollOffsetY   *float64           `json:"scrollOffsetY,omitempty"` // Vertical scroll offset.
+	ContentWidth    *float64           `json:"contentWidth,omitempty"`  // Document content width.
+	ContentHeight   *float64           `json:"contentHeight,omitempty"` // Document content height.
 }
 
 // NodeTreeSnapshot Table containing nodes.
@@ -140,6 +143,7 @@ type LayoutTreeSnapshot struct {
 	Bounds           []Rectangle      `json:"bounds"`                // The absolute position bounding box.
 	Text             []StringIndex    `json:"text"`                  // Contents of the LayoutText, if any.
 	StackingContexts RareBooleanData  `json:"stackingContexts"`      // Stacking context information.
+	PaintOrders      []int            `json:"paintOrders,omitempty"` // Global paint order index, which is determined by the stacking order of the nodes. Nodes that are painted together will have the same index. Only provided if includePaintOrder in captureSnapshot was true.
 	OffsetRects      []Rectangle      `json:"offsetRects,omitempty"` // The offset rect of nodes. Only available when includeDOMRects is set to true
 	ScrollRects      []Rectangle      `json:"scrollRects,omitempty"` // The scroll rect of nodes. Only available when includeDOMRects is set to true
 	ClientRects      []Rectangle      `json:"clientRects,omitempty"` // The client rect of nodes. Only available when includeDOMRects is set to true

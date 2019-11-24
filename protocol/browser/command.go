@@ -6,11 +6,35 @@ import (
 	"github.com/mafredri/cdp/protocol/target"
 )
 
+// SetPermissionArgs represents the arguments for SetPermission in the Browser domain.
+type SetPermissionArgs struct {
+	Origin           string               `json:"origin"`                     // Origin the permission applies to.
+	Permission       PermissionDescriptor `json:"permission"`                 // Descriptor of permission to override.
+	Setting          PermissionSetting    `json:"setting"`                    // Setting of the permission.
+	BrowserContextID *ContextID           `json:"browserContextId,omitempty"` // Context to override. When omitted, default browser context is used.
+}
+
+// NewSetPermissionArgs initializes SetPermissionArgs with the required arguments.
+func NewSetPermissionArgs(origin string, permission PermissionDescriptor, setting PermissionSetting) *SetPermissionArgs {
+	args := new(SetPermissionArgs)
+	args.Origin = origin
+	args.Permission = permission
+	args.Setting = setting
+	return args
+}
+
+// SetBrowserContextID sets the BrowserContextID optional argument.
+// Context to override. When omitted, default browser context is used.
+func (a *SetPermissionArgs) SetBrowserContextID(browserContextID ContextID) *SetPermissionArgs {
+	a.BrowserContextID = &browserContextID
+	return a
+}
+
 // GrantPermissionsArgs represents the arguments for GrantPermissions in the Browser domain.
 type GrantPermissionsArgs struct {
-	Origin           string                   `json:"origin"`                     // No description.
-	Permissions      []PermissionType         `json:"permissions"`                // No description.
-	BrowserContextID *target.BrowserContextID `json:"browserContextId,omitempty"` // BrowserContext to override permissions. When omitted, default browser context is used.
+	Origin           string           `json:"origin"`                     // No description.
+	Permissions      []PermissionType `json:"permissions"`                // No description.
+	BrowserContextID *ContextID       `json:"browserContextId,omitempty"` // BrowserContext to override permissions. When omitted, default browser context is used.
 }
 
 // NewGrantPermissionsArgs initializes GrantPermissionsArgs with the required arguments.
@@ -24,14 +48,14 @@ func NewGrantPermissionsArgs(origin string, permissions []PermissionType) *Grant
 // SetBrowserContextID sets the BrowserContextID optional argument.
 // BrowserContext to override permissions. When omitted, default
 // browser context is used.
-func (a *GrantPermissionsArgs) SetBrowserContextID(browserContextID target.BrowserContextID) *GrantPermissionsArgs {
+func (a *GrantPermissionsArgs) SetBrowserContextID(browserContextID ContextID) *GrantPermissionsArgs {
 	a.BrowserContextID = &browserContextID
 	return a
 }
 
 // ResetPermissionsArgs represents the arguments for ResetPermissions in the Browser domain.
 type ResetPermissionsArgs struct {
-	BrowserContextID *target.BrowserContextID `json:"browserContextId,omitempty"` // BrowserContext to reset permissions. When omitted, default browser context is used.
+	BrowserContextID *ContextID `json:"browserContextId,omitempty"` // BrowserContext to reset permissions. When omitted, default browser context is used.
 }
 
 // NewResetPermissionsArgs initializes ResetPermissionsArgs with the required arguments.
@@ -44,7 +68,7 @@ func NewResetPermissionsArgs() *ResetPermissionsArgs {
 // SetBrowserContextID sets the BrowserContextID optional argument.
 // BrowserContext to reset permissions. When omitted, default browser
 // context is used.
-func (a *ResetPermissionsArgs) SetBrowserContextID(browserContextID target.BrowserContextID) *ResetPermissionsArgs {
+func (a *ResetPermissionsArgs) SetBrowserContextID(browserContextID ContextID) *ResetPermissionsArgs {
 	a.BrowserContextID = &browserContextID
 	return a
 }

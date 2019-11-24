@@ -207,7 +207,25 @@ func NewGetScriptSourceArgs(scriptID runtime.ScriptID) *GetScriptSourceArgs {
 
 // GetScriptSourceReply represents the return values for GetScriptSource in the Debugger domain.
 type GetScriptSourceReply struct {
-	ScriptSource string `json:"scriptSource"` // Script source.
+	ScriptSource string  `json:"scriptSource"`       // Script source (empty in case of Wasm bytecode).
+	Bytecode     *string `json:"bytecode,omitempty"` // Wasm bytecode.
+}
+
+// GetWasmBytecodeArgs represents the arguments for GetWasmBytecode in the Debugger domain.
+type GetWasmBytecodeArgs struct {
+	ScriptID runtime.ScriptID `json:"scriptId"` // Id of the Wasm script to get source for.
+}
+
+// NewGetWasmBytecodeArgs initializes GetWasmBytecodeArgs with the required arguments.
+func NewGetWasmBytecodeArgs(scriptID runtime.ScriptID) *GetWasmBytecodeArgs {
+	args := new(GetWasmBytecodeArgs)
+	args.ScriptID = scriptID
+	return args
+}
+
+// GetWasmBytecodeReply represents the return values for GetWasmBytecode in the Debugger domain.
+type GetWasmBytecodeReply struct {
+	Bytecode string `json:"bytecode"` // Script source.
 }
 
 // GetStackTraceArgs represents the arguments for GetStackTrace in the Debugger domain.
@@ -585,8 +603,8 @@ func NewSetVariableValueArgs(scopeNumber int, variableName string, newValue runt
 
 // StepIntoArgs represents the arguments for StepInto in the Debugger domain.
 type StepIntoArgs struct {
-	// BreakOnAsyncCall Debugger will issue additional Debugger.paused
-	// notification if any async task is scheduled before next pause.
+	// BreakOnAsyncCall Debugger will pause on the execution of the first
+	// async task which was scheduled before next pause.
 	//
 	// Note: This property is experimental.
 	BreakOnAsyncCall *bool `json:"breakOnAsyncCall,omitempty"`
@@ -600,8 +618,8 @@ func NewStepIntoArgs() *StepIntoArgs {
 }
 
 // SetBreakOnAsyncCall sets the BreakOnAsyncCall optional argument.
-// Debugger will issue additional Debugger.paused notification if any
-// async task is scheduled before next pause.
+// Debugger will pause on the execution of the first async task which
+// was scheduled before next pause.
 //
 // Note: This property is experimental.
 func (a *StepIntoArgs) SetBreakOnAsyncCall(breakOnAsyncCall bool) *StepIntoArgs {

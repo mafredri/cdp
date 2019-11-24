@@ -7,6 +7,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/mafredri/cdp/protocol/internal"
 	"github.com/mafredri/cdp/protocol/runtime"
 	"github.com/mafredri/cdp/protocol/security"
 )
@@ -93,46 +94,7 @@ func (e ErrorReason) String() string {
 }
 
 // TimeSinceEpoch UTC time in seconds, counted from January 1, 1970.
-type TimeSinceEpoch float64
-
-// String calls (time.Time).String().
-func (t TimeSinceEpoch) String() string {
-	return t.Time().String()
-}
-
-// Time parses the Unix time.
-func (t TimeSinceEpoch) Time() time.Time {
-	ts := float64(t) / 1
-	secs := int64(ts)
-	nsecs := int64((ts - float64(secs)) * 1000000000)
-	return time.Unix(secs, nsecs)
-}
-
-// MarshalJSON implements json.Marshaler. Encodes to null if t is zero.
-func (t TimeSinceEpoch) MarshalJSON() ([]byte, error) {
-	if t == 0 {
-		return []byte("null"), nil
-	}
-	f := float64(t)
-	return json.Marshal(&f)
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (t *TimeSinceEpoch) UnmarshalJSON(data []byte) error {
-	*t = 0
-	if len(data) == 0 {
-		return nil
-	}
-	var f float64
-	if err := json.Unmarshal(data, &f); err != nil {
-		return errors.New("network.TimeSinceEpoch: " + err.Error())
-	}
-	*t = TimeSinceEpoch(f)
-	return nil
-}
-
-var _ json.Marshaler = (*TimeSinceEpoch)(nil)
-var _ json.Unmarshaler = (*TimeSinceEpoch)(nil)
+type TimeSinceEpoch = internal.NetworkTimeSinceEpoch
 
 // MonotonicTime Monotonically increasing time in seconds since an arbitrary
 // point in the past.
@@ -237,16 +199,15 @@ type CookieSameSite string
 
 // CookieSameSite as enums.
 const (
-	CookieSameSiteNotSet   CookieSameSite = ""
-	CookieSameSiteStrict   CookieSameSite = "Strict"
-	CookieSameSiteLax      CookieSameSite = "Lax"
-	CookieSameSiteExtended CookieSameSite = "Extended"
-	CookieSameSiteNone     CookieSameSite = "None"
+	CookieSameSiteNotSet CookieSameSite = ""
+	CookieSameSiteStrict CookieSameSite = "Strict"
+	CookieSameSiteLax    CookieSameSite = "Lax"
+	CookieSameSiteNone   CookieSameSite = "None"
 )
 
 func (e CookieSameSite) Valid() bool {
 	switch e {
-	case "Strict", "Lax", "Extended", "None":
+	case "Strict", "Lax", "None":
 		return true
 	default:
 		return false
@@ -494,6 +455,94 @@ type Cookie struct {
 	Secure   bool           `json:"secure"`             // True if cookie is secure.
 	Session  bool           `json:"session"`            // True in case of session cookie.
 	SameSite CookieSameSite `json:"sameSite,omitempty"` // Cookie SameSite type.
+}
+
+// SetCookieBlockedReason Types of reasons why a cookie may not be stored from
+// a response.
+//
+// Note: This type is experimental.
+type SetCookieBlockedReason string
+
+// SetCookieBlockedReason as enums.
+const (
+	SetCookieBlockedReasonNotSet                          SetCookieBlockedReason = ""
+	SetCookieBlockedReasonSecureOnly                      SetCookieBlockedReason = "SecureOnly"
+	SetCookieBlockedReasonSameSiteStrict                  SetCookieBlockedReason = "SameSiteStrict"
+	SetCookieBlockedReasonSameSiteLax                     SetCookieBlockedReason = "SameSiteLax"
+	SetCookieBlockedReasonSameSiteUnspecifiedTreatedAsLax SetCookieBlockedReason = "SameSiteUnspecifiedTreatedAsLax"
+	SetCookieBlockedReasonSameSiteNoneInsecure            SetCookieBlockedReason = "SameSiteNoneInsecure"
+	SetCookieBlockedReasonUserPreferences                 SetCookieBlockedReason = "UserPreferences"
+	SetCookieBlockedReasonSyntaxError                     SetCookieBlockedReason = "SyntaxError"
+	SetCookieBlockedReasonSchemeNotSupported              SetCookieBlockedReason = "SchemeNotSupported"
+	SetCookieBlockedReasonOverwriteSecure                 SetCookieBlockedReason = "OverwriteSecure"
+	SetCookieBlockedReasonInvalidDomain                   SetCookieBlockedReason = "InvalidDomain"
+	SetCookieBlockedReasonInvalidPrefix                   SetCookieBlockedReason = "InvalidPrefix"
+	SetCookieBlockedReasonUnknownError                    SetCookieBlockedReason = "UnknownError"
+)
+
+func (e SetCookieBlockedReason) Valid() bool {
+	switch e {
+	case "SecureOnly", "SameSiteStrict", "SameSiteLax", "SameSiteUnspecifiedTreatedAsLax", "SameSiteNoneInsecure", "UserPreferences", "SyntaxError", "SchemeNotSupported", "OverwriteSecure", "InvalidDomain", "InvalidPrefix", "UnknownError":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e SetCookieBlockedReason) String() string {
+	return string(e)
+}
+
+// CookieBlockedReason Types of reasons why a cookie may not be sent with a
+// request.
+//
+// Note: This type is experimental.
+type CookieBlockedReason string
+
+// CookieBlockedReason as enums.
+const (
+	CookieBlockedReasonNotSet                          CookieBlockedReason = ""
+	CookieBlockedReasonSecureOnly                      CookieBlockedReason = "SecureOnly"
+	CookieBlockedReasonNotOnPath                       CookieBlockedReason = "NotOnPath"
+	CookieBlockedReasonDomainMismatch                  CookieBlockedReason = "DomainMismatch"
+	CookieBlockedReasonSameSiteStrict                  CookieBlockedReason = "SameSiteStrict"
+	CookieBlockedReasonSameSiteLax                     CookieBlockedReason = "SameSiteLax"
+	CookieBlockedReasonSameSiteUnspecifiedTreatedAsLax CookieBlockedReason = "SameSiteUnspecifiedTreatedAsLax"
+	CookieBlockedReasonSameSiteNoneInsecure            CookieBlockedReason = "SameSiteNoneInsecure"
+	CookieBlockedReasonUserPreferences                 CookieBlockedReason = "UserPreferences"
+	CookieBlockedReasonUnknownError                    CookieBlockedReason = "UnknownError"
+)
+
+func (e CookieBlockedReason) Valid() bool {
+	switch e {
+	case "SecureOnly", "NotOnPath", "DomainMismatch", "SameSiteStrict", "SameSiteLax", "SameSiteUnspecifiedTreatedAsLax", "SameSiteNoneInsecure", "UserPreferences", "UnknownError":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e CookieBlockedReason) String() string {
+	return string(e)
+}
+
+// BlockedSetCookieWithReason A cookie which was not stored from a response
+// with the corresponding reason.
+//
+// Note: This type is experimental.
+type BlockedSetCookieWithReason struct {
+	BlockedReasons []SetCookieBlockedReason `json:"blockedReasons"`   // The reason(s) this cookie was blocked.
+	CookieLine     string                   `json:"cookieLine"`       // The string representing this individual cookie as it would appear in the header. This is not the entire "cookie" or "set-cookie" header which could have multiple cookies.
+	Cookie         *Cookie                  `json:"cookie,omitempty"` // The cookie object which represents the cookie which was not stored. It is optional because sometimes complete cookie information is not available, such as in the case of parsing errors.
+}
+
+// BlockedCookieWithReason A cookie with was not sent with a request with the
+// corresponding reason.
+//
+// Note: This type is experimental.
+type BlockedCookieWithReason struct {
+	BlockedReasons []CookieBlockedReason `json:"blockedReasons"` // The reason(s) the cookie was blocked.
+	Cookie         Cookie                `json:"cookie"`         // The cookie object representing the cookie which was not sent.
 }
 
 // CookieParam Cookie parameter object

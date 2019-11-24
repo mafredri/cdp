@@ -149,6 +149,37 @@ func (d *domainClient) TakeTypeProfile(ctx context.Context) (reply *TakeTypeProf
 	return
 }
 
+// EnableRuntimeCallStats invokes the Profiler method. Enable run time call
+// stats collection.
+func (d *domainClient) EnableRuntimeCallStats(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Profiler.enableRuntimeCallStats", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "EnableRuntimeCallStats", Err: err}
+	}
+	return
+}
+
+// DisableRuntimeCallStats invokes the Profiler method. Disable run time call
+// stats collection.
+func (d *domainClient) DisableRuntimeCallStats(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Profiler.disableRuntimeCallStats", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "DisableRuntimeCallStats", Err: err}
+	}
+	return
+}
+
+// GetRuntimeCallStats invokes the Profiler method. Retrieve run time call
+// stats.
+func (d *domainClient) GetRuntimeCallStats(ctx context.Context) (reply *GetRuntimeCallStatsReply, err error) {
+	reply = new(GetRuntimeCallStatsReply)
+	err = rpcc.Invoke(ctx, "Profiler.getRuntimeCallStats", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "GetRuntimeCallStats", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) ConsoleProfileFinished(ctx context.Context) (ConsoleProfileFinishedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Profiler.consoleProfileFinished", d.conn)
 	if err != nil {

@@ -32,6 +32,7 @@ import (
 	"github.com/mafredri/cdp/protocol/io"
 	"github.com/mafredri/cdp/protocol/layertree"
 	"github.com/mafredri/cdp/protocol/log"
+	"github.com/mafredri/cdp/protocol/media"
 	"github.com/mafredri/cdp/protocol/memory"
 	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/overlay"
@@ -239,6 +240,13 @@ type BackgroundService interface {
 // The Browser domain. The Browser domain defines methods and events for
 // browser managing.
 type Browser interface {
+	// Command SetPermission
+	//
+	// Set permission settings for given origin.
+	//
+	// Note: This command is experimental.
+	SetPermission(context.Context, *browser.SetPermissionArgs) error
+
 	// Command GrantPermissions
 	//
 	// Grant specific permissions to the given origin and reject all
@@ -687,8 +695,6 @@ type DOM interface {
 	//
 	// Returns node id at given location. Depending on whether DOM domain
 	// is enabled, nodeId is either returned or not.
-	//
-	// Note: This command is experimental.
 	GetNodeForLocation(context.Context, *dom.GetNodeForLocationArgs) (*dom.GetNodeForLocationReply, error)
 
 	// Command GetOuterHTML
@@ -814,6 +820,22 @@ type DOM interface {
 	//
 	// Sets files for the given file input element.
 	SetFileInputFiles(context.Context, *dom.SetFileInputFilesArgs) error
+
+	// Command SetNodeStackTracesEnabled
+	//
+	// Sets if stack traces should be captured for Nodes. See
+	// `Node.getNodeStackTraces`. Default is disabled.
+	//
+	// Note: This command is experimental.
+	SetNodeStackTracesEnabled(context.Context, *dom.SetNodeStackTracesEnabledArgs) error
+
+	// Command GetNodeStackTraces
+	//
+	// Gets stack traces associated with a Node. As of now, only provides
+	// stack trace for Node creation.
+	//
+	// Note: This command is experimental.
+	GetNodeStackTraces(context.Context, *dom.GetNodeStackTracesArgs) (*dom.GetNodeStackTracesReply, error)
 
 	// Command GetFileInfo
 	//
@@ -1137,6 +1159,12 @@ type Debugger interface {
 	// Returns source for the script with given id.
 	GetScriptSource(context.Context, *debugger.GetScriptSourceArgs) (*debugger.GetScriptSourceReply, error)
 
+	// Command GetWasmBytecode
+	//
+	// Deprecated: This command is deprecated. Use getScriptSource
+	// instead.
+	GetWasmBytecode(context.Context, *debugger.GetWasmBytecodeArgs) (*debugger.GetWasmBytecodeReply, error)
+
 	// Command GetStackTrace
 	//
 	// Returns stack trace with given `stackTraceId`.
@@ -1150,6 +1178,8 @@ type Debugger interface {
 	Pause(context.Context) error
 
 	// Command PauseOnAsyncCall
+	//
+	// Deprecated: This command is deprecated.
 	//
 	// Note: This command is experimental.
 	PauseOnAsyncCall(context.Context, *debugger.PauseOnAsyncCallArgs) error
@@ -1394,7 +1424,8 @@ type Emulation interface {
 
 	// Command SetEmulatedMedia
 	//
-	// Emulates the given media for CSS media queries.
+	// Emulates the given media type or media feature for CSS media
+	// queries.
 	SetEmulatedMedia(context.Context, *emulation.SetEmulatedMediaArgs) error
 
 	// Command SetGeolocationOverride
@@ -1574,7 +1605,10 @@ type HeadlessExperimental interface {
 
 	// Event NeedsBeginFramesChanged
 	//
-	// Issued when the target starts or stops needing BeginFrames.
+	// Deprecated: Issued when the target starts or stops needing
+	// BeginFrames. Deprecated. Issue beginFrame unconditionally instead
+	// and use result from beginFrame to detect whether the frames were
+	// suppressed.
 	NeedsBeginFramesChanged(context.Context) (headlessexperimental.NeedsBeginFramesChangedClient, error)
 }
 
@@ -1894,6 +1928,42 @@ type Log interface {
 	//
 	// Issued when new message was logged.
 	EntryAdded(context.Context) (log.EntryAddedClient, error)
+}
+
+// The Media domain. This domain allows detailed inspection of media elements
+//
+// Note: This domain is experimental.
+type Media interface {
+	// Command Enable
+	//
+	// Enables the Media domain
+	Enable(context.Context) error
+
+	// Command Disable
+	//
+	// Disables the Media domain.
+	Disable(context.Context) error
+
+	// Event PlayerPropertiesChanged
+	//
+	// This can be called multiple times, and can be used to set /
+	// override / remove player properties. A null propValue indicates
+	// removal.
+	PlayerPropertiesChanged(context.Context) (media.PlayerPropertiesChangedClient, error)
+
+	// Event PlayerEventsAdded
+	//
+	// Send events as a list, allowing them to be batched on the browser
+	// for less congestion. If batched, events must ALWAYS be in
+	// chronological order.
+	PlayerEventsAdded(context.Context) (media.PlayerEventsAddedClient, error)
+
+	// Event PlayersCreated
+	//
+	// Called whenever a player is created, or when a new agent joins and
+	// receives a list of active players. If an agent is restored, it will
+	// receive the full list of player ids and all events again.
+	PlayersCreated(context.Context) (media.PlayersCreatedClient, error)
 }
 
 // The Memory domain.
@@ -2228,6 +2298,28 @@ type Network interface {
 	//
 	// Fired when WebSocket is about to initiate handshake.
 	WebSocketWillSendHandshakeRequest(context.Context) (network.WebSocketWillSendHandshakeRequestClient, error)
+
+	// Event RequestWillBeSentExtraInfo
+	//
+	// Fired when additional information about a requestWillBeSent event
+	// is available from the network stack. Not every requestWillBeSent
+	// event will have an additional requestWillBeSentExtraInfo fired for
+	// it, and there is no guarantee whether requestWillBeSent or
+	// requestWillBeSentExtraInfo will be fired first for the same request.
+	//
+	// Note: This event is experimental.
+	RequestWillBeSentExtraInfo(context.Context) (network.RequestWillBeSentExtraInfoClient, error)
+
+	// Event ResponseReceivedExtraInfo
+	//
+	// Fired when additional information about a responseReceived event is
+	// available from the network stack. Not every responseReceived event
+	// will have an additional responseReceivedExtraInfo for it, and
+	// responseReceivedExtraInfo may be fired before or after
+	// responseReceived.
+	//
+	// Note: This event is experimental.
+	ResponseReceivedExtraInfo(context.Context) (network.ResponseReceivedExtraInfoClient, error)
 }
 
 // The Overlay domain. This domain provides various functionality related to
@@ -2882,6 +2974,27 @@ type Profiler interface {
 	// Note: This command is experimental.
 	TakeTypeProfile(context.Context) (*profiler.TakeTypeProfileReply, error)
 
+	// Command EnableRuntimeCallStats
+	//
+	// Enable run time call stats collection.
+	//
+	// Note: This command is experimental.
+	EnableRuntimeCallStats(context.Context) error
+
+	// Command DisableRuntimeCallStats
+	//
+	// Disable run time call stats collection.
+	//
+	// Note: This command is experimental.
+	DisableRuntimeCallStats(context.Context) error
+
+	// Command GetRuntimeCallStats
+	//
+	// Retrieve run time call stats.
+	//
+	// Note: This command is experimental.
+	GetRuntimeCallStats(context.Context) (*profiler.GetRuntimeCallStatsReply, error)
+
 	// Event ConsoleProfileFinished
 	ConsoleProfileFinished(context.Context) (profiler.ConsoleProfileFinishedClient, error)
 
@@ -3124,6 +3237,13 @@ type Security interface {
 	// per target should override certificate errors at the same time.
 	CertificateError(context.Context) (security.CertificateErrorClient, error)
 
+	// Event VisibleSecurityStateChanged
+	//
+	// The security state of the page changed.
+	//
+	// Note: This event is experimental.
+	VisibleSecurityStateChanged(context.Context) (security.VisibleSecurityStateChangedClient, error)
+
 	// Event SecurityStateChanged
 	//
 	// The security state of the page changed.
@@ -3142,6 +3262,9 @@ type ServiceWorker interface {
 
 	// Command DispatchSyncEvent
 	DispatchSyncEvent(context.Context, *serviceworker.DispatchSyncEventArgs) error
+
+	// Command DispatchPeriodicSyncEvent
+	DispatchPeriodicSyncEvent(context.Context, *serviceworker.DispatchPeriodicSyncEventArgs) error
 
 	// Command Enable
 	Enable(context.Context) error
@@ -3188,6 +3311,21 @@ type Storage interface {
 	//
 	// Clears storage for origin.
 	ClearDataForOrigin(context.Context, *storage.ClearDataForOriginArgs) error
+
+	// Command GetCookies
+	//
+	// Returns all browser cookies.
+	GetCookies(context.Context, *storage.GetCookiesArgs) (*storage.GetCookiesReply, error)
+
+	// Command SetCookies
+	//
+	// Sets given cookies.
+	SetCookies(context.Context, *storage.SetCookiesArgs) error
+
+	// Command ClearCookies
+	//
+	// Clears cookies.
+	ClearCookies(context.Context, *storage.ClearCookiesArgs) error
 
 	// Command GetUsageAndQuota
 	//
@@ -3341,7 +3479,9 @@ type Target interface {
 
 	// Command SendMessageToTarget
 	//
-	// Sends protocol message over session with given id.
+	// Deprecated: Sends protocol message over session with given id.
+	// Consider using flat mode instead; see commands attachToTarget,
+	// setAutoAttach, and crbug.com/991325.
 	SendMessageToTarget(context.Context, *target.SendMessageToTargetArgs) error
 
 	// Command SetAutoAttach
@@ -3457,7 +3597,7 @@ type Tracing interface {
 	// Command RequestMemoryDump
 	//
 	// Request a global memory dump.
-	RequestMemoryDump(context.Context) (*tracing.RequestMemoryDumpReply, error)
+	RequestMemoryDump(context.Context, *tracing.RequestMemoryDumpArgs) (*tracing.RequestMemoryDumpReply, error)
 
 	// Command Start
 	//
@@ -3507,16 +3647,68 @@ type WebAudio interface {
 	// Notifies that a new BaseAudioContext has been created.
 	ContextCreated(context.Context) (webaudio.ContextCreatedClient, error)
 
-	// Event ContextDestroyed
+	// Event ContextWillBeDestroyed
 	//
-	// Notifies that existing BaseAudioContext has been destroyed.
-	ContextDestroyed(context.Context) (webaudio.ContextDestroyedClient, error)
+	// Notifies that an existing BaseAudioContext will be destroyed.
+	ContextWillBeDestroyed(context.Context) (webaudio.ContextWillBeDestroyedClient, error)
 
 	// Event ContextChanged
 	//
 	// Notifies that existing BaseAudioContext has changed some properties
 	// (id stays the same)..
 	ContextChanged(context.Context) (webaudio.ContextChangedClient, error)
+
+	// Event AudioListenerCreated
+	//
+	// Notifies that the construction of an AudioListener has finished.
+	AudioListenerCreated(context.Context) (webaudio.AudioListenerCreatedClient, error)
+
+	// Event AudioListenerWillBeDestroyed
+	//
+	// Notifies that a new AudioListener has been created.
+	AudioListenerWillBeDestroyed(context.Context) (webaudio.AudioListenerWillBeDestroyedClient, error)
+
+	// Event AudioNodeCreated
+	//
+	// Notifies that a new AudioNode has been created.
+	AudioNodeCreated(context.Context) (webaudio.AudioNodeCreatedClient, error)
+
+	// Event AudioNodeWillBeDestroyed
+	//
+	// Notifies that an existing AudioNode has been destroyed.
+	AudioNodeWillBeDestroyed(context.Context) (webaudio.AudioNodeWillBeDestroyedClient, error)
+
+	// Event AudioParamCreated
+	//
+	// Notifies that a new AudioParam has been created.
+	AudioParamCreated(context.Context) (webaudio.AudioParamCreatedClient, error)
+
+	// Event AudioParamWillBeDestroyed
+	//
+	// Notifies that an existing AudioParam has been destroyed.
+	AudioParamWillBeDestroyed(context.Context) (webaudio.AudioParamWillBeDestroyedClient, error)
+
+	// Event NodesConnected
+	//
+	// Notifies that two AudioNodes are connected.
+	NodesConnected(context.Context) (webaudio.NodesConnectedClient, error)
+
+	// Event NodesDisconnected
+	//
+	// Notifies that AudioNodes are disconnected. The destination can be
+	// null, and it means all the outgoing connections from the source are
+	// disconnected.
+	NodesDisconnected(context.Context) (webaudio.NodesDisconnectedClient, error)
+
+	// Event NodeParamConnected
+	//
+	// Notifies that an AudioNode is connected to an AudioParam.
+	NodeParamConnected(context.Context) (webaudio.NodeParamConnectedClient, error)
+
+	// Event NodeParamDisconnected
+	//
+	// Notifies that an AudioNode is disconnected to an AudioParam.
+	NodeParamDisconnected(context.Context) (webaudio.NodeParamDisconnectedClient, error)
 }
 
 // The WebAuthn domain. This domain allows configuring virtual authenticators
@@ -3550,11 +3742,22 @@ type WebAuthn interface {
 	// Adds the credential to the specified authenticator.
 	AddCredential(context.Context, *webauthn.AddCredentialArgs) error
 
+	// Command GetCredential
+	//
+	// Returns a single credential stored in the given virtual
+	// authenticator that matches the credential ID.
+	GetCredential(context.Context, *webauthn.GetCredentialArgs) (*webauthn.GetCredentialReply, error)
+
 	// Command GetCredentials
 	//
 	// Returns all the credentials stored in the given virtual
 	// authenticator.
 	GetCredentials(context.Context, *webauthn.GetCredentialsArgs) (*webauthn.GetCredentialsReply, error)
+
+	// Command RemoveCredential
+	//
+	// Removes a credential from the authenticator.
+	RemoveCredential(context.Context, *webauthn.RemoveCredentialArgs) error
 
 	// Command ClearCredentials
 	//

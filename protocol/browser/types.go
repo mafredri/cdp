@@ -2,6 +2,15 @@
 
 package browser
 
+import (
+	"github.com/mafredri/cdp/protocol/internal"
+)
+
+// ContextID
+//
+// Note: This type is experimental.
+type ContextID = internal.BrowserContextID
+
 // WindowID
 //
 // Note: This type is experimental.
@@ -64,6 +73,7 @@ const (
 	PermissionTypeGeolocation              PermissionType = "geolocation"
 	PermissionTypeMidi                     PermissionType = "midi"
 	PermissionTypeMidiSysex                PermissionType = "midiSysex"
+	PermissionTypeNFC                      PermissionType = "nfc"
 	PermissionTypeNotifications            PermissionType = "notifications"
 	PermissionTypePaymentHandler           PermissionType = "paymentHandler"
 	PermissionTypePeriodicBackgroundSync   PermissionType = "periodicBackgroundSync"
@@ -77,7 +87,7 @@ const (
 
 func (e PermissionType) Valid() bool {
 	switch e {
-	case "accessibilityEvents", "audioCapture", "backgroundSync", "backgroundFetch", "clipboardRead", "clipboardWrite", "durableStorage", "flash", "geolocation", "midi", "midiSysex", "notifications", "paymentHandler", "periodicBackgroundSync", "protectedMediaIdentifier", "sensors", "videoCapture", "idleDetection", "wakeLockScreen", "wakeLockSystem":
+	case "accessibilityEvents", "audioCapture", "backgroundSync", "backgroundFetch", "clipboardRead", "clipboardWrite", "durableStorage", "flash", "geolocation", "midi", "midiSysex", "nfc", "notifications", "paymentHandler", "periodicBackgroundSync", "protectedMediaIdentifier", "sensors", "videoCapture", "idleDetection", "wakeLockScreen", "wakeLockSystem":
 		return true
 	default:
 		return false
@@ -86,6 +96,44 @@ func (e PermissionType) Valid() bool {
 
 func (e PermissionType) String() string {
 	return string(e)
+}
+
+// PermissionSetting
+//
+// Note: This type is experimental.
+type PermissionSetting string
+
+// PermissionSetting as enums.
+const (
+	PermissionSettingNotSet  PermissionSetting = ""
+	PermissionSettingGranted PermissionSetting = "granted"
+	PermissionSettingDenied  PermissionSetting = "denied"
+	PermissionSettingPrompt  PermissionSetting = "prompt"
+)
+
+func (e PermissionSetting) Valid() bool {
+	switch e {
+	case "granted", "denied", "prompt":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e PermissionSetting) String() string {
+	return string(e)
+}
+
+// PermissionDescriptor Definition of PermissionDescriptor defined in the
+// Permissions API:
+// https://w3c.github.io/permissions/#dictdef-permissiondescriptor.
+//
+// Note: This type is experimental.
+type PermissionDescriptor struct {
+	Name            string  `json:"name"`                      // Name of permission. See https://cs.chromium.org/chromium/src/third_party/blink/renderer/modules/permissions/permission_descriptor.idl for valid permission names.
+	Sysex           *bool   `json:"sysex,omitempty"`           // For "midi" permission, may also specify sysex control.
+	UserVisibleOnly *bool   `json:"userVisibleOnly,omitempty"` // For "push" permission, may specify userVisibleOnly. Note that userVisibleOnly = true is the only currently supported type.
+	Type            *string `json:"type,omitempty"`            // For "wake-lock" permission, must specify type as either "screen" or "system".
 }
 
 // Bucket Chrome histogram bucket.

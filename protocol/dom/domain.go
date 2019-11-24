@@ -492,6 +492,36 @@ func (d *domainClient) SetFileInputFiles(ctx context.Context, args *SetFileInput
 	return
 }
 
+// SetNodeStackTracesEnabled invokes the DOM method. Sets if stack traces
+// should be captured for Nodes. See `Node.getNodeStackTraces`. Default is
+// disabled.
+func (d *domainClient) SetNodeStackTracesEnabled(ctx context.Context, args *SetNodeStackTracesEnabledArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.setNodeStackTracesEnabled", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.setNodeStackTracesEnabled", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "SetNodeStackTracesEnabled", Err: err}
+	}
+	return
+}
+
+// GetNodeStackTraces invokes the DOM method. Gets stack traces associated
+// with a Node. As of now, only provides stack trace for Node creation.
+func (d *domainClient) GetNodeStackTraces(ctx context.Context, args *GetNodeStackTracesArgs) (reply *GetNodeStackTracesReply, err error) {
+	reply = new(GetNodeStackTracesReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.getNodeStackTraces", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.getNodeStackTraces", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "GetNodeStackTraces", Err: err}
+	}
+	return
+}
+
 // GetFileInfo invokes the DOM method. Returns file information for the given
 // File wrapper.
 func (d *domainClient) GetFileInfo(ctx context.Context, args *GetFileInfoArgs) (reply *GetFileInfoReply, err error) {

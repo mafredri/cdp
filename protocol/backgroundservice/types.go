@@ -14,17 +14,18 @@ type ServiceName string
 
 // ServiceName as enums.
 const (
-	ServiceNameNotSet          ServiceName = ""
-	ServiceNameBackgroundFetch ServiceName = "backgroundFetch"
-	ServiceNameBackgroundSync  ServiceName = "backgroundSync"
-	ServiceNamePushMessaging   ServiceName = "pushMessaging"
-	ServiceNameNotifications   ServiceName = "notifications"
-	ServiceNamePaymentHandler  ServiceName = "paymentHandler"
+	ServiceNameNotSet                 ServiceName = ""
+	ServiceNameBackgroundFetch        ServiceName = "backgroundFetch"
+	ServiceNameBackgroundSync         ServiceName = "backgroundSync"
+	ServiceNamePushMessaging          ServiceName = "pushMessaging"
+	ServiceNameNotifications          ServiceName = "notifications"
+	ServiceNamePaymentHandler         ServiceName = "paymentHandler"
+	ServiceNamePeriodicBackgroundSync ServiceName = "periodicBackgroundSync"
 )
 
 func (e ServiceName) Valid() bool {
 	switch e {
-	case "backgroundFetch", "backgroundSync", "pushMessaging", "notifications", "paymentHandler":
+	case "backgroundFetch", "backgroundSync", "pushMessaging", "notifications", "paymentHandler", "periodicBackgroundSync":
 		return true
 	default:
 		return false

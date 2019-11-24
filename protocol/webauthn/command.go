@@ -45,6 +45,25 @@ func NewAddCredentialArgs(authenticatorID AuthenticatorID, credential Credential
 	return args
 }
 
+// GetCredentialArgs represents the arguments for GetCredential in the WebAuthn domain.
+type GetCredentialArgs struct {
+	AuthenticatorID AuthenticatorID `json:"authenticatorId"` // No description.
+	CredentialID    string          `json:"credentialId"`    // No description.
+}
+
+// NewGetCredentialArgs initializes GetCredentialArgs with the required arguments.
+func NewGetCredentialArgs(authenticatorID AuthenticatorID, credentialID string) *GetCredentialArgs {
+	args := new(GetCredentialArgs)
+	args.AuthenticatorID = authenticatorID
+	args.CredentialID = credentialID
+	return args
+}
+
+// GetCredentialReply represents the return values for GetCredential in the WebAuthn domain.
+type GetCredentialReply struct {
+	Credential Credential `json:"credential"` // No description.
+}
+
 // GetCredentialsArgs represents the arguments for GetCredentials in the WebAuthn domain.
 type GetCredentialsArgs struct {
 	AuthenticatorID AuthenticatorID `json:"authenticatorId"` // No description.
@@ -60,6 +79,20 @@ func NewGetCredentialsArgs(authenticatorID AuthenticatorID) *GetCredentialsArgs 
 // GetCredentialsReply represents the return values for GetCredentials in the WebAuthn domain.
 type GetCredentialsReply struct {
 	Credentials []Credential `json:"credentials"` // No description.
+}
+
+// RemoveCredentialArgs represents the arguments for RemoveCredential in the WebAuthn domain.
+type RemoveCredentialArgs struct {
+	AuthenticatorID AuthenticatorID `json:"authenticatorId"` // No description.
+	CredentialID    string          `json:"credentialId"`    // No description.
+}
+
+// NewRemoveCredentialArgs initializes RemoveCredentialArgs with the required arguments.
+func NewRemoveCredentialArgs(authenticatorID AuthenticatorID, credentialID string) *RemoveCredentialArgs {
+	args := new(RemoveCredentialArgs)
+	args.AuthenticatorID = authenticatorID
+	args.CredentialID = credentialID
+	return args
 }
 
 // ClearCredentialsArgs represents the arguments for ClearCredentials in the WebAuthn domain.

@@ -75,23 +75,23 @@ func (c *contextCreatedClient) Recv() (*ContextCreatedReply, error) {
 	return event, nil
 }
 
-func (d *domainClient) ContextDestroyed(ctx context.Context) (ContextDestroyedClient, error) {
-	s, err := rpcc.NewStream(ctx, "WebAudio.contextDestroyed", d.conn)
+func (d *domainClient) ContextWillBeDestroyed(ctx context.Context) (ContextWillBeDestroyedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAudio.contextWillBeDestroyed", d.conn)
 	if err != nil {
 		return nil, err
 	}
-	return &contextDestroyedClient{Stream: s}, nil
+	return &contextWillBeDestroyedClient{Stream: s}, nil
 }
 
-type contextDestroyedClient struct{ rpcc.Stream }
+type contextWillBeDestroyedClient struct{ rpcc.Stream }
 
 // GetStream returns the original Stream for use with cdp.Sync.
-func (c *contextDestroyedClient) GetStream() rpcc.Stream { return c.Stream }
+func (c *contextWillBeDestroyedClient) GetStream() rpcc.Stream { return c.Stream }
 
-func (c *contextDestroyedClient) Recv() (*ContextDestroyedReply, error) {
-	event := new(ContextDestroyedReply)
+func (c *contextWillBeDestroyedClient) Recv() (*ContextWillBeDestroyedReply, error) {
+	event := new(ContextWillBeDestroyedReply)
 	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "WebAudio", Op: "ContextDestroyed Recv", Err: err}
+		return nil, &internal.OpError{Domain: "WebAudio", Op: "ContextWillBeDestroyed Recv", Err: err}
 	}
 	return event, nil
 }
@@ -113,6 +113,216 @@ func (c *contextChangedClient) Recv() (*ContextChangedReply, error) {
 	event := new(ContextChangedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "WebAudio", Op: "ContextChanged Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) AudioListenerCreated(ctx context.Context) (AudioListenerCreatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAudio.audioListenerCreated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &audioListenerCreatedClient{Stream: s}, nil
+}
+
+type audioListenerCreatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *audioListenerCreatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *audioListenerCreatedClient) Recv() (*AudioListenerCreatedReply, error) {
+	event := new(AudioListenerCreatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAudio", Op: "AudioListenerCreated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) AudioListenerWillBeDestroyed(ctx context.Context) (AudioListenerWillBeDestroyedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAudio.audioListenerWillBeDestroyed", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &audioListenerWillBeDestroyedClient{Stream: s}, nil
+}
+
+type audioListenerWillBeDestroyedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *audioListenerWillBeDestroyedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *audioListenerWillBeDestroyedClient) Recv() (*AudioListenerWillBeDestroyedReply, error) {
+	event := new(AudioListenerWillBeDestroyedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAudio", Op: "AudioListenerWillBeDestroyed Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) AudioNodeCreated(ctx context.Context) (AudioNodeCreatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAudio.audioNodeCreated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &audioNodeCreatedClient{Stream: s}, nil
+}
+
+type audioNodeCreatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *audioNodeCreatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *audioNodeCreatedClient) Recv() (*AudioNodeCreatedReply, error) {
+	event := new(AudioNodeCreatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAudio", Op: "AudioNodeCreated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) AudioNodeWillBeDestroyed(ctx context.Context) (AudioNodeWillBeDestroyedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAudio.audioNodeWillBeDestroyed", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &audioNodeWillBeDestroyedClient{Stream: s}, nil
+}
+
+type audioNodeWillBeDestroyedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *audioNodeWillBeDestroyedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *audioNodeWillBeDestroyedClient) Recv() (*AudioNodeWillBeDestroyedReply, error) {
+	event := new(AudioNodeWillBeDestroyedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAudio", Op: "AudioNodeWillBeDestroyed Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) AudioParamCreated(ctx context.Context) (AudioParamCreatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAudio.audioParamCreated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &audioParamCreatedClient{Stream: s}, nil
+}
+
+type audioParamCreatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *audioParamCreatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *audioParamCreatedClient) Recv() (*AudioParamCreatedReply, error) {
+	event := new(AudioParamCreatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAudio", Op: "AudioParamCreated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) AudioParamWillBeDestroyed(ctx context.Context) (AudioParamWillBeDestroyedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAudio.audioParamWillBeDestroyed", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &audioParamWillBeDestroyedClient{Stream: s}, nil
+}
+
+type audioParamWillBeDestroyedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *audioParamWillBeDestroyedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *audioParamWillBeDestroyedClient) Recv() (*AudioParamWillBeDestroyedReply, error) {
+	event := new(AudioParamWillBeDestroyedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAudio", Op: "AudioParamWillBeDestroyed Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) NodesConnected(ctx context.Context) (NodesConnectedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAudio.nodesConnected", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &nodesConnectedClient{Stream: s}, nil
+}
+
+type nodesConnectedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *nodesConnectedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *nodesConnectedClient) Recv() (*NodesConnectedReply, error) {
+	event := new(NodesConnectedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAudio", Op: "NodesConnected Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) NodesDisconnected(ctx context.Context) (NodesDisconnectedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAudio.nodesDisconnected", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &nodesDisconnectedClient{Stream: s}, nil
+}
+
+type nodesDisconnectedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *nodesDisconnectedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *nodesDisconnectedClient) Recv() (*NodesDisconnectedReply, error) {
+	event := new(NodesDisconnectedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAudio", Op: "NodesDisconnected Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) NodeParamConnected(ctx context.Context) (NodeParamConnectedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAudio.nodeParamConnected", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &nodeParamConnectedClient{Stream: s}, nil
+}
+
+type nodeParamConnectedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *nodeParamConnectedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *nodeParamConnectedClient) Recv() (*NodeParamConnectedReply, error) {
+	event := new(NodeParamConnectedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAudio", Op: "NodeParamConnected Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) NodeParamDisconnected(ctx context.Context) (NodeParamDisconnectedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAudio.nodeParamDisconnected", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &nodeParamDisconnectedClient{Stream: s}, nil
+}
+
+type nodeParamDisconnectedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *nodeParamDisconnectedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *nodeParamDisconnectedClient) Recv() (*NodeParamDisconnectedReply, error) {
+	event := new(NodeParamDisconnectedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAudio", Op: "NodeParamDisconnected Recv", Err: err}
 	}
 	return event, nil
 }

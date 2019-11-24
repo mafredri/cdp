@@ -2,6 +2,10 @@
 
 package security
 
+import (
+	"github.com/mafredri/cdp/protocol/internal"
+)
+
 // CertificateID An internal certificate ID value.
 type CertificateID int
 
@@ -35,17 +39,18 @@ type State string
 
 // State as enums.
 const (
-	StateNotSet   State = ""
-	StateUnknown  State = "unknown"
-	StateNeutral  State = "neutral"
-	StateInsecure State = "insecure"
-	StateSecure   State = "secure"
-	StateInfo     State = "info"
+	StateNotSet         State = ""
+	StateUnknown        State = "unknown"
+	StateNeutral        State = "neutral"
+	StateInsecure       State = "insecure"
+	StateSecure         State = "secure"
+	StateInfo           State = "info"
+	StateInsecureBroken State = "insecure-broken"
 )
 
 func (e State) Valid() bool {
 	switch e {
-	case "unknown", "neutral", "insecure", "secure", "info":
+	case "unknown", "neutral", "insecure", "secure", "info", "insecure-broken":
 		return true
 	default:
 		return false
@@ -54,6 +59,74 @@ func (e State) Valid() bool {
 
 func (e State) String() string {
 	return string(e)
+}
+
+// CertificateSecurityState Details about the security state of the page
+// certificate.
+//
+// Note: This type is experimental.
+type CertificateSecurityState struct {
+	Protocol                    string                         `json:"protocol"`                          // Protocol name (e.g. "TLS 1.2" or "QUIC").
+	KeyExchange                 string                         `json:"keyExchange"`                       // Key Exchange used by the connection, or the empty string if not applicable.
+	KeyExchangeGroup            *string                        `json:"keyExchangeGroup,omitempty"`        // (EC)DH group used by the connection, if applicable.
+	Cipher                      string                         `json:"cipher"`                            // Cipher name.
+	MAC                         *string                        `json:"mac,omitempty"`                     // TLS MAC. Note that AEAD ciphers do not have separate MACs.
+	Certificate                 []string                       `json:"certificate"`                       // Page certificate.
+	SubjectName                 string                         `json:"subjectName"`                       // Certificate subject name.
+	Issuer                      string                         `json:"issuer"`                            // Name of the issuing CA.
+	ValidFrom                   internal.NetworkTimeSinceEpoch `json:"validFrom"`                         // Certificate valid from date.
+	ValidTo                     internal.NetworkTimeSinceEpoch `json:"validTo"`                           // Certificate valid to (expiration) date
+	CertificateNetworkError     *string                        `json:"certificateNetworkError,omitempty"` // The highest priority network error code, if the certificate has an error.
+	CertificateHasWeakSignature bool                           `json:"certificateHasWeakSignature"`       // True if the certificate uses a weak signature aglorithm.
+	CertificateHasSha1Signature bool                           `json:"certificateHasSha1Signature"`       // True if the certificate has a SHA1 signature in the chain.
+	ModernSSL                   bool                           `json:"modernSSL"`                         // True if modern SSL
+	ObsoleteSSLProtocol         bool                           `json:"obsoleteSslProtocol"`               // True if the connection is using an obsolete SSL protocol.
+	ObsoleteSSLKeyExchange      bool                           `json:"obsoleteSslKeyExchange"`            // True if the connection is using an obsolete SSL key exchange.
+	ObsoleteSSLCipher           bool                           `json:"obsoleteSslCipher"`                 // True if the connection is using an obsolete SSL cipher.
+	ObsoleteSSLSignature        bool                           `json:"obsoleteSslSignature"`              // True if the connection is using an obsolete SSL signature.
+}
+
+// SafetyTipStatus
+//
+// Note: This type is experimental.
+type SafetyTipStatus string
+
+// SafetyTipStatus as enums.
+const (
+	SafetyTipStatusNotSet        SafetyTipStatus = ""
+	SafetyTipStatusBadReputation SafetyTipStatus = "badReputation"
+	SafetyTipStatusLookalike     SafetyTipStatus = "lookalike"
+)
+
+func (e SafetyTipStatus) Valid() bool {
+	switch e {
+	case "badReputation", "lookalike":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e SafetyTipStatus) String() string {
+	return string(e)
+}
+
+// SafetyTipInfo
+//
+// Note: This type is experimental.
+type SafetyTipInfo struct {
+	SafetyTipStatus SafetyTipStatus `json:"safetyTipStatus"`   // Describes whether the page triggers any safety tips or reputation warnings. Default is unknown.
+	SafeURL         *string         `json:"safeUrl,omitempty"` // The URL the safety tip suggested ("Did you mean?"). Only filled in for lookalike matches.
+}
+
+// VisibleSecurityState Security state information about the page.
+//
+// Note: This type is experimental.
+type VisibleSecurityState struct {
+	SecurityState            State                     `json:"securityState"`                      // The security level of the page.
+	CertificateSecurityState *CertificateSecurityState `json:"certificateSecurityState,omitempty"` // Security state details about the page certificate.
+	SafetyTipInfo            *SafetyTipInfo            `json:"safetyTipInfo,omitempty"`            // The type of Safety Tip triggered on the page. Note that this field will be set even if the Safety Tip UI was not actually shown.
+	SecurityStateIssueIDs    []string                  `json:"securityStateIssueIds"`              // Array of security state issues ids.
 }
 
 // StateExplanation An explanation of an factor contributing to the security

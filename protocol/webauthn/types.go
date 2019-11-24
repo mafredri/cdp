@@ -58,15 +58,18 @@ func (e AuthenticatorTransport) String() string {
 type VirtualAuthenticatorOptions struct {
 	Protocol                    AuthenticatorProtocol  `json:"protocol"`                              // No description.
 	Transport                   AuthenticatorTransport `json:"transport"`                             // No description.
-	HasResidentKey              bool                   `json:"hasResidentKey"`                        // No description.
-	HasUserVerification         bool                   `json:"hasUserVerification"`                   // No description.
+	HasResidentKey              *bool                  `json:"hasResidentKey,omitempty"`              // Defaults to false.
+	HasUserVerification         *bool                  `json:"hasUserVerification,omitempty"`         // Defaults to false.
 	AutomaticPresenceSimulation *bool                  `json:"automaticPresenceSimulation,omitempty"` // If set to true, tests of user presence will succeed immediately. Otherwise, they will not be resolved. Defaults to true.
+	IsUserVerified              *bool                  `json:"isUserVerified,omitempty"`              // Sets whether User Verification succeeds or fails for an authenticator. Defaults to false.
 }
 
 // Credential
 type Credential struct {
-	CredentialID string `json:"credentialId"` // No description.
-	RPIDHash     string `json:"rpIdHash"`     // SHA-256 hash of the Relying Party ID the credential is scoped to. Must be 32 bytes long. See https://w3c.github.io/webauthn/#rpidhash
-	PrivateKey   string `json:"privateKey"`   // The private key in PKCS#8 format.
-	SignCount    int    `json:"signCount"`    // Signature counter. This is incremented by one for each successful assertion. See https://w3c.github.io/webauthn/#signature-counter
+	CredentialID         string  `json:"credentialId"`         // No description.
+	IsResidentCredential bool    `json:"isResidentCredential"` // No description.
+	RPID                 *string `json:"rpId,omitempty"`       // Relying Party ID the credential is scoped to. Must be set when adding a credential.
+	PrivateKey           string  `json:"privateKey"`           // The ECDSA P-256 private key in PKCS#8 format.
+	UserHandle           *string `json:"userHandle,omitempty"` // An opaque byte sequence with a maximum size of 64 bytes mapping the credential to a specific user.
+	SignCount            int     `json:"signCount"`            // Signature counter. This is incremented by one for each successful assertion. See https://w3c.github.io/webauthn/#signature-counter
 }

@@ -159,8 +159,8 @@ func (d *domainClient) SetEmitTouchEventsForMouse(ctx context.Context, args *Set
 	return
 }
 
-// SetEmulatedMedia invokes the Emulation method. Emulates the given media for
-// CSS media queries.
+// SetEmulatedMedia invokes the Emulation method. Emulates the given media
+// type or media feature for CSS media queries.
 func (d *domainClient) SetEmulatedMedia(ctx context.Context, args *SetEmulatedMediaArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Emulation.setEmulatedMedia", args, nil, d.conn)

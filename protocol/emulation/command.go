@@ -236,14 +236,29 @@ func (a *SetEmitTouchEventsForMouseArgs) SetConfiguration(configuration string) 
 
 // SetEmulatedMediaArgs represents the arguments for SetEmulatedMedia in the Emulation domain.
 type SetEmulatedMediaArgs struct {
-	Media string `json:"media"` // Media type to emulate. Empty string disables the override.
+	Media    *string        `json:"media,omitempty"`    // Media type to emulate. Empty string disables the override.
+	Features []MediaFeature `json:"features,omitempty"` // Media features to emulate.
 }
 
 // NewSetEmulatedMediaArgs initializes SetEmulatedMediaArgs with the required arguments.
-func NewSetEmulatedMediaArgs(media string) *SetEmulatedMediaArgs {
+func NewSetEmulatedMediaArgs() *SetEmulatedMediaArgs {
 	args := new(SetEmulatedMediaArgs)
-	args.Media = media
+
 	return args
+}
+
+// SetMedia sets the Media optional argument. Media type to emulate.
+// Empty string disables the override.
+func (a *SetEmulatedMediaArgs) SetMedia(media string) *SetEmulatedMediaArgs {
+	a.Media = &media
+	return a
+}
+
+// SetFeatures sets the Features optional argument. Media features to
+// emulate.
+func (a *SetEmulatedMediaArgs) SetFeatures(features []MediaFeature) *SetEmulatedMediaArgs {
+	a.Features = features
+	return a
 }
 
 // SetGeolocationOverrideArgs represents the arguments for SetGeolocationOverride in the Emulation domain.

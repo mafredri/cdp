@@ -30,6 +30,7 @@ import (
 	"github.com/mafredri/cdp/protocol/io"
 	"github.com/mafredri/cdp/protocol/layertree"
 	"github.com/mafredri/cdp/protocol/log"
+	"github.com/mafredri/cdp/protocol/media"
 	"github.com/mafredri/cdp/protocol/memory"
 	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/overlay"
@@ -81,6 +82,7 @@ type Client struct {
 	Inspector            Inspector
 	LayerTree            LayerTree
 	Log                  Log
+	Media                Media
 	Memory               Memory
 	Network              Network
 	Overlay              Overlay
@@ -131,6 +133,7 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Inspector:            inspector.NewClient(conn),
 		LayerTree:            layertree.NewClient(conn),
 		Log:                  log.NewClient(conn),
+		Media:                media.NewClient(conn),
 		Memory:               memory.NewClient(conn),
 		Network:              network.NewClient(conn),
 		Overlay:              overlay.NewClient(conn),

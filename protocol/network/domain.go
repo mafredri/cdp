@@ -750,3 +750,45 @@ func (c *webSocketWillSendHandshakeRequestClient) Recv() (*WebSocketWillSendHand
 	}
 	return event, nil
 }
+
+func (d *domainClient) RequestWillBeSentExtraInfo(ctx context.Context) (RequestWillBeSentExtraInfoClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.requestWillBeSentExtraInfo", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &requestWillBeSentExtraInfoClient{Stream: s}, nil
+}
+
+type requestWillBeSentExtraInfoClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *requestWillBeSentExtraInfoClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *requestWillBeSentExtraInfoClient) Recv() (*RequestWillBeSentExtraInfoReply, error) {
+	event := new(RequestWillBeSentExtraInfoReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "RequestWillBeSentExtraInfo Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) ResponseReceivedExtraInfo(ctx context.Context) (ResponseReceivedExtraInfoClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.responseReceivedExtraInfo", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &responseReceivedExtraInfoClient{Stream: s}, nil
+}
+
+type responseReceivedExtraInfoClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *responseReceivedExtraInfoClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *responseReceivedExtraInfoClient) Recv() (*ResponseReceivedExtraInfoReply, error) {
+	event := new(ResponseReceivedExtraInfoReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "ResponseReceivedExtraInfo Recv", Err: err}
+	}
+	return event, nil
+}

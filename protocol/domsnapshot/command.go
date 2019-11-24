@@ -48,8 +48,9 @@ type GetSnapshotReply struct {
 
 // CaptureSnapshotArgs represents the arguments for CaptureSnapshot in the DOMSnapshot domain.
 type CaptureSnapshotArgs struct {
-	ComputedStyles  []string `json:"computedStyles"`            // Whitelist of computed styles to return.
-	IncludeDOMRects *bool    `json:"includeDOMRects,omitempty"` // Whether to include DOM rectangles (offsetRects, clientRects, scrollRects) into the snapshot
+	ComputedStyles    []string `json:"computedStyles"`              // Whitelist of computed styles to return.
+	IncludePaintOrder *bool    `json:"includePaintOrder,omitempty"` // Whether to include layout object paint orders into the snapshot.
+	IncludeDOMRects   *bool    `json:"includeDOMRects,omitempty"`   // Whether to include DOM rectangles (offsetRects, clientRects, scrollRects) into the snapshot
 }
 
 // NewCaptureSnapshotArgs initializes CaptureSnapshotArgs with the required arguments.
@@ -57,6 +58,13 @@ func NewCaptureSnapshotArgs(computedStyles []string) *CaptureSnapshotArgs {
 	args := new(CaptureSnapshotArgs)
 	args.ComputedStyles = computedStyles
 	return args
+}
+
+// SetIncludePaintOrder sets the IncludePaintOrder optional argument.
+// Whether to include layout object paint orders into the snapshot.
+func (a *CaptureSnapshotArgs) SetIncludePaintOrder(includePaintOrder bool) *CaptureSnapshotArgs {
+	a.IncludePaintOrder = &includePaintOrder
+	return a
 }
 
 // SetIncludeDOMRects sets the IncludeDOMRects optional argument.

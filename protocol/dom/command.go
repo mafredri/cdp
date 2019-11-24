@@ -327,6 +327,7 @@ type GetNodeForLocationArgs struct {
 	X                         int   `json:"x"`                                   // X coordinate.
 	Y                         int   `json:"y"`                                   // Y coordinate.
 	IncludeUserAgentShadowDOM *bool `json:"includeUserAgentShadowDOM,omitempty"` // False to skip to the nearest non-UA shadow root ancestor (default: false).
+	IgnorePointerEventsNone   *bool `json:"ignorePointerEventsNone,omitempty"`   // Whether to ignore pointer-events: none on elements and hit test them.
 }
 
 // NewGetNodeForLocationArgs initializes GetNodeForLocationArgs with the required arguments.
@@ -345,10 +346,19 @@ func (a *GetNodeForLocationArgs) SetIncludeUserAgentShadowDOM(includeUserAgentSh
 	return a
 }
 
+// SetIgnorePointerEventsNone sets the IgnorePointerEventsNone optional argument.
+// Whether to ignore pointer-events: none on elements and hit test
+// them.
+func (a *GetNodeForLocationArgs) SetIgnorePointerEventsNone(ignorePointerEventsNone bool) *GetNodeForLocationArgs {
+	a.IgnorePointerEventsNone = &ignorePointerEventsNone
+	return a
+}
+
 // GetNodeForLocationReply represents the return values for GetNodeForLocation in the DOM domain.
 type GetNodeForLocationReply struct {
-	BackendNodeID BackendNodeID `json:"backendNodeId"`    // Resulting node.
-	NodeID        *NodeID       `json:"nodeId,omitempty"` // Id of the node at given coordinates, only when enabled and requested document.
+	BackendNodeID BackendNodeID        `json:"backendNodeId"`    // Resulting node.
+	FrameID       internal.PageFrameID `json:"frameId"`          // Frame this node belongs to.
+	NodeID        *NodeID              `json:"nodeId,omitempty"` // Id of the node at given coordinates, only when enabled and requested document.
 }
 
 // GetOuterHTMLArgs represents the arguments for GetOuterHTML in the DOM domain.
@@ -749,6 +759,35 @@ func (a *SetFileInputFilesArgs) SetBackendNodeID(backendNodeID BackendNodeID) *S
 func (a *SetFileInputFilesArgs) SetObjectID(objectID runtime.RemoteObjectID) *SetFileInputFilesArgs {
 	a.ObjectID = &objectID
 	return a
+}
+
+// SetNodeStackTracesEnabledArgs represents the arguments for SetNodeStackTracesEnabled in the DOM domain.
+type SetNodeStackTracesEnabledArgs struct {
+	Enable bool `json:"enable"` // Enable or disable.
+}
+
+// NewSetNodeStackTracesEnabledArgs initializes SetNodeStackTracesEnabledArgs with the required arguments.
+func NewSetNodeStackTracesEnabledArgs(enable bool) *SetNodeStackTracesEnabledArgs {
+	args := new(SetNodeStackTracesEnabledArgs)
+	args.Enable = enable
+	return args
+}
+
+// GetNodeStackTracesArgs represents the arguments for GetNodeStackTraces in the DOM domain.
+type GetNodeStackTracesArgs struct {
+	NodeID NodeID `json:"nodeId"` // Id of the node to get stack traces for.
+}
+
+// NewGetNodeStackTracesArgs initializes GetNodeStackTracesArgs with the required arguments.
+func NewGetNodeStackTracesArgs(nodeID NodeID) *GetNodeStackTracesArgs {
+	args := new(GetNodeStackTracesArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// GetNodeStackTracesReply represents the return values for GetNodeStackTraces in the DOM domain.
+type GetNodeStackTracesReply struct {
+	Creation *runtime.StackTrace `json:"creation,omitempty"` // Creation stack trace, if available.
 }
 
 // GetFileInfoArgs represents the arguments for GetFileInfo in the DOM domain.

@@ -103,6 +103,27 @@ func (c *certificateErrorClient) Recv() (*CertificateErrorReply, error) {
 	return event, nil
 }
 
+func (d *domainClient) VisibleSecurityStateChanged(ctx context.Context) (VisibleSecurityStateChangedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Security.visibleSecurityStateChanged", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &visibleSecurityStateChangedClient{Stream: s}, nil
+}
+
+type visibleSecurityStateChangedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *visibleSecurityStateChangedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *visibleSecurityStateChangedClient) Recv() (*VisibleSecurityStateChangedReply, error) {
+	event := new(VisibleSecurityStateChangedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Security", Op: "VisibleSecurityStateChanged Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) SecurityStateChanged(ctx context.Context) (StateChangedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Security.securityStateChanged", d.conn)
 	if err != nil {

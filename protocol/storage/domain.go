@@ -31,6 +31,46 @@ func (d *domainClient) ClearDataForOrigin(ctx context.Context, args *ClearDataFo
 	return
 }
 
+// GetCookies invokes the Storage method. Returns all browser cookies.
+func (d *domainClient) GetCookies(ctx context.Context, args *GetCookiesArgs) (reply *GetCookiesReply, err error) {
+	reply = new(GetCookiesReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.getCookies", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.getCookies", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "GetCookies", Err: err}
+	}
+	return
+}
+
+// SetCookies invokes the Storage method. Sets given cookies.
+func (d *domainClient) SetCookies(ctx context.Context, args *SetCookiesArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.setCookies", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.setCookies", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "SetCookies", Err: err}
+	}
+	return
+}
+
+// ClearCookies invokes the Storage method. Clears cookies.
+func (d *domainClient) ClearCookies(ctx context.Context, args *ClearCookiesArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.clearCookies", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.clearCookies", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "ClearCookies", Err: err}
+	}
+	return
+}
+
 // GetUsageAndQuota invokes the Storage method. Returns usage and quota in
 // bytes.
 func (d *domainClient) GetUsageAndQuota(ctx context.Context, args *GetUsageAndQuotaArgs) (reply *GetUsageAndQuotaReply, err error) {

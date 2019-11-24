@@ -107,6 +107,21 @@ func (d *domainClient) GetScriptSource(ctx context.Context, args *GetScriptSourc
 	return
 }
 
+// GetWasmBytecode invokes the Debugger method. This command is deprecated.
+// Use getScriptSource instead.
+func (d *domainClient) GetWasmBytecode(ctx context.Context, args *GetWasmBytecodeArgs) (reply *GetWasmBytecodeReply, err error) {
+	reply = new(GetWasmBytecodeReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.getWasmBytecode", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.getWasmBytecode", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Debugger", Op: "GetWasmBytecode", Err: err}
+	}
+	return
+}
+
 // GetStackTrace invokes the Debugger method. Returns stack trace with given
 // `stackTraceId`.
 func (d *domainClient) GetStackTrace(ctx context.Context, args *GetStackTraceArgs) (reply *GetStackTraceReply, err error) {

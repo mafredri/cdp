@@ -82,6 +82,21 @@ func (d *domainClient) AddCredential(ctx context.Context, args *AddCredentialArg
 	return
 }
 
+// GetCredential invokes the WebAuthn method. Returns a single credential
+// stored in the given virtual authenticator that matches the credential ID.
+func (d *domainClient) GetCredential(ctx context.Context, args *GetCredentialArgs) (reply *GetCredentialReply, err error) {
+	reply = new(GetCredentialReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "WebAuthn.getCredential", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "WebAuthn.getCredential", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "WebAuthn", Op: "GetCredential", Err: err}
+	}
+	return
+}
+
 // GetCredentials invokes the WebAuthn method. Returns all the credentials
 // stored in the given virtual authenticator.
 func (d *domainClient) GetCredentials(ctx context.Context, args *GetCredentialsArgs) (reply *GetCredentialsReply, err error) {
@@ -93,6 +108,20 @@ func (d *domainClient) GetCredentials(ctx context.Context, args *GetCredentialsA
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAuthn", Op: "GetCredentials", Err: err}
+	}
+	return
+}
+
+// RemoveCredential invokes the WebAuthn method. Removes a credential from the
+// authenticator.
+func (d *domainClient) RemoveCredential(ctx context.Context, args *RemoveCredentialArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "WebAuthn.removeCredential", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "WebAuthn.removeCredential", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "WebAuthn", Op: "RemoveCredential", Err: err}
 	}
 	return
 }

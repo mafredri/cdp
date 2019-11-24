@@ -36,6 +36,22 @@ func NewDispatchSyncEventArgs(origin string, registrationID RegistrationID, tag 
 	return args
 }
 
+// DispatchPeriodicSyncEventArgs represents the arguments for DispatchPeriodicSyncEvent in the ServiceWorker domain.
+type DispatchPeriodicSyncEventArgs struct {
+	Origin         string         `json:"origin"`         // No description.
+	RegistrationID RegistrationID `json:"registrationId"` // No description.
+	Tag            string         `json:"tag"`            // No description.
+}
+
+// NewDispatchPeriodicSyncEventArgs initializes DispatchPeriodicSyncEventArgs with the required arguments.
+func NewDispatchPeriodicSyncEventArgs(origin string, registrationID RegistrationID, tag string) *DispatchPeriodicSyncEventArgs {
+	args := new(DispatchPeriodicSyncEventArgs)
+	args.Origin = origin
+	args.RegistrationID = registrationID
+	args.Tag = tag
+	return args
+}
+
 // InspectWorkerArgs represents the arguments for InspectWorker in the ServiceWorker domain.
 type InspectWorkerArgs struct {
 	VersionID string `json:"versionId"` // No description.

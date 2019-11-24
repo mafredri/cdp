@@ -188,7 +188,8 @@ func (d *domainClient) GetTargets(ctx context.Context) (reply *GetTargetsReply, 
 }
 
 // SendMessageToTarget invokes the Target method. Sends protocol message over
-// session with given id.
+// session with given id. Consider using flat mode instead; see commands
+// attachToTarget, setAutoAttach, and crbug.com/991325.
 func (d *domainClient) SendMessageToTarget(ctx context.Context, args *SendMessageToTargetArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Target.sendMessageToTarget", args, nil, d.conn)

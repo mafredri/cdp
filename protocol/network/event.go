@@ -303,3 +303,43 @@ type WebSocketWillSendHandshakeRequestReply struct {
 	WallTime  TimeSinceEpoch   `json:"wallTime"`  // UTC Timestamp.
 	Request   WebSocketRequest `json:"request"`   // WebSocket request data.
 }
+
+// RequestWillBeSentExtraInfoClient is a client for RequestWillBeSentExtraInfo events.
+// Fired when additional information about a requestWillBeSent event is
+// available from the network stack. Not every requestWillBeSent event will
+// have an additional requestWillBeSentExtraInfo fired for it, and there is no
+// guarantee whether requestWillBeSent or requestWillBeSentExtraInfo will be
+// fired first for the same request.
+type RequestWillBeSentExtraInfoClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*RequestWillBeSentExtraInfoReply, error)
+	rpcc.Stream
+}
+
+// RequestWillBeSentExtraInfoReply is the reply for RequestWillBeSentExtraInfo events.
+type RequestWillBeSentExtraInfoReply struct {
+	RequestID      RequestID                 `json:"requestId"`      // Request identifier. Used to match this information to an existing requestWillBeSent event.
+	BlockedCookies []BlockedCookieWithReason `json:"blockedCookies"` // A list of cookies which will not be sent with this request along with corresponding reasons for blocking.
+	Headers        Headers                   `json:"headers"`        // Raw request headers as they will be sent over the wire.
+}
+
+// ResponseReceivedExtraInfoClient is a client for ResponseReceivedExtraInfo events.
+// Fired when additional information about a responseReceived event is
+// available from the network stack. Not every responseReceived event will have
+// an additional responseReceivedExtraInfo for it, and
+// responseReceivedExtraInfo may be fired before or after responseReceived.
+type ResponseReceivedExtraInfoClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*ResponseReceivedExtraInfoReply, error)
+	rpcc.Stream
+}
+
+// ResponseReceivedExtraInfoReply is the reply for ResponseReceivedExtraInfo events.
+type ResponseReceivedExtraInfoReply struct {
+	RequestID      RequestID                    `json:"requestId"`             // Request identifier. Used to match this information to another responseReceived event.
+	BlockedCookies []BlockedSetCookieWithReason `json:"blockedCookies"`        // A list of cookies which were not stored from the response along with the corresponding reasons for blocking. The cookies here may not be valid due to syntax errors, which are represented by the invalid cookie line string instead of a proper cookie.
+	Headers        Headers                      `json:"headers"`               // Raw response headers as they were received over the wire.
+	HeadersText    *string                      `json:"headersText,omitempty"` // Raw response header text as it was received over the wire. The raw text may not always be available, such as in the case of HTTP/2 or QUIC.
+}

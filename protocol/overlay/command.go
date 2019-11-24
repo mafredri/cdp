@@ -14,6 +14,7 @@ import (
 type GetHighlightObjectForTestArgs struct {
 	NodeID          dom.NodeID `json:"nodeId"`                    // Id of the node to get highlight object for.
 	IncludeDistance *bool      `json:"includeDistance,omitempty"` // Whether to include distance info.
+	IncludeStyle    *bool      `json:"includeStyle,omitempty"`    // Whether to include style info.
 }
 
 // NewGetHighlightObjectForTestArgs initializes GetHighlightObjectForTestArgs with the required arguments.
@@ -27,6 +28,13 @@ func NewGetHighlightObjectForTestArgs(nodeID dom.NodeID) *GetHighlightObjectForT
 // Whether to include distance info.
 func (a *GetHighlightObjectForTestArgs) SetIncludeDistance(includeDistance bool) *GetHighlightObjectForTestArgs {
 	a.IncludeDistance = &includeDistance
+	return a
+}
+
+// SetIncludeStyle sets the IncludeStyle optional argument. Whether to
+// include style info.
+func (a *GetHighlightObjectForTestArgs) SetIncludeStyle(includeStyle bool) *GetHighlightObjectForTestArgs {
+	a.IncludeStyle = &includeStyle
 	return a
 }
 

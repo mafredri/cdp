@@ -60,3 +60,8 @@ type TakePreciseCoverageReply struct {
 type TakeTypeProfileReply struct {
 	Result []ScriptTypeProfile `json:"result"` // Type profile for all scripts since startTypeProfile() was turned on.
 }
+
+// GetRuntimeCallStatsReply represents the return values for GetRuntimeCallStats in the Profiler domain.
+type GetRuntimeCallStatsReply struct {
+	Result []CounterInfo `json:"result"` // Collected counter information.
+}

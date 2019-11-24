@@ -4,11 +4,11 @@ package webaudio
 
 // GetRealtimeDataArgs represents the arguments for GetRealtimeData in the WebAudio domain.
 type GetRealtimeDataArgs struct {
-	ContextID ContextID `json:"contextId"` // No description.
+	ContextID GraphObjectID `json:"contextId"` // No description.
 }
 
 // NewGetRealtimeDataArgs initializes GetRealtimeDataArgs with the required arguments.
-func NewGetRealtimeDataArgs(contextID ContextID) *GetRealtimeDataArgs {
+func NewGetRealtimeDataArgs(contextID GraphObjectID) *GetRealtimeDataArgs {
 	args := new(GetRealtimeDataArgs)
 	args.ContextID = contextID
 	return args

@@ -11,6 +11,12 @@ type ScreenOrientation struct {
 	Angle int    `json:"angle"` // Orientation angle.
 }
 
+// MediaFeature
+type MediaFeature struct {
+	Name  string `json:"name"`  // No description.
+	Value string `json:"value"` // No description.
+}
+
 // VirtualTimePolicy advance: If the scheduler runs out of immediate work, the
 // virtual time base may fast forward to allow the next delayed task (if any)
 // to run; pause: The virtual time base may not advance;
