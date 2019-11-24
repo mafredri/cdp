@@ -111,6 +111,8 @@ func main() {
 	nonPtrMap["protocol.Timestamp"] = true
 	nonPtrMap["TimeSinceEpoch"] = true
 	nonPtrMap["network.TimeSinceEpoch"] = true
+	nonPtrMap["NetworkTimeSinceEpoch"] = true
+	nonPtrMap["internal.NetworkTimeSinceEpoch"] = true
 	nonPtrMap["MonotonicTime"] = true
 	nonPtrMap["network.MonotonicTime"] = true
 
@@ -135,18 +137,31 @@ func main() {
 	g.pkg = "internal"
 	g.dir = path.Join(protoDest, "internal")
 	for _, d := range protocol.Domains {
-		if d.Name() == "Page" {
+		// Write circular types to internal package.
+		for _, it := range []struct {
+			domain string
+			typ    string
+		}{
+			{domain: "page", typ: "FrameID"},
+			{domain: "browser", typ: "ContextID"},
+			{domain: "network", typ: "TimeSinceEpoch"},
+		} {
+			domName := d.Name()
+			if strings.ToLower(domName) != it.domain {
+				continue
+			}
 			d.Domain = "internal"
 			g.PackageHeader("")
 			for _, t := range d.Types {
-				if t.Name(d) == "FrameID" {
-					idName := t.Name(d)
-					t.IDName = "Page" + t.IDName
-					t.Description = fmt.Sprintf("%s\n\nThis type cannot be used directly. Use page.%s instead.", t.Description, idName)
-					g.DomainType(d, t)
+				idName := t.Name(d)
+				if idName != it.typ {
+					continue
 				}
+				t.IDName = domName + t.IDName
+				t.Description = fmt.Sprintf("%s\n\nThis type cannot be used directly. Use %s.%s instead.", t.Description, it.domain, idName)
+				g.DomainType(d, t)
 			}
-			g.writeFile("page.go")
+			g.writeFile(fmt.Sprintf("%s.go", it.domain))
 		}
 	}
 
@@ -371,6 +386,10 @@ type %[3]s interface{`, comment, desc, d.Name())
 		desc := c.Desc(true, 8, 0)
 		if c.Deprecated {
 			desc = strings.Replace(c.Desc(true, 8, 12), "Deprecated, ", "", 1)
+			desc = strings.Replace(desc, "Deprecated. ", "", 1)
+			if len(desc) < 1 {
+				desc = "This command is deprecated."
+			}
 			desc = "Deprecated: " + strings.ToUpper(desc[0:1]) + desc[1:]
 		}
 		if desc != "" {
@@ -584,15 +603,6 @@ func (g *Generator) DomainType(d proto.Domain, t proto.AnyType) {
 	g.hasContent = true
 
 	var comment string
-	if d.Name() == "Page" && (t.Name(d) == "FrameID") {
-		comment = "//"
-		g.Printf(`
-// %[1]s %[2]s
-//
-// Provided as an alias to prevent circular dependencies.
-type %[1]s = internal.Page%[1]s
-`, t.Name(d), t.Desc(0, len(t.Name(d))+1))
-	}
 	desc := t.Desc(0, len(t.Name(d))+1)
 	if t.Deprecated {
 		desc = "\n//\n// Deprecated: " + t.Desc(0, 12)
@@ -624,13 +634,6 @@ func (g *Generator) printStructProperties(d proto.Domain, name string, props []p
 	for _, prop := range props {
 		jsontag := prop.NameName
 		ptype := prop.GoType(g.pkg, d)
-
-		if ptype == "page.FrameID" {
-			if g.pkg == "network" || g.pkg == "dom" {
-				// Domain-local type (alias).
-				ptype = strings.Replace(ptype, "page.", "internal.Page", 1)
-			}
-		}
 
 		// Make all optional properties into pointers, unless they are slices.
 		if prop.Optional {
@@ -1006,16 +1009,13 @@ func New%[1]s(%[2]s) *%[1]s {
 	return args
 }
 `
-	sig := c.ArgsSignature(d)
-	if d.Name() == "DOM" {
-		sig = strings.Replace(sig, "page.FrameID", "internal.PageFrameID", 1)
-	}
+	sig := c.ArgsSignature(g.pkg, d)
 	g.Printf(newfmt, c.ArgsName(d), sig, c.ArgsAssign("args", d), c.ArgsName(d))
 
 	// Test the new arguments.
 	testInit := ""
-	if c.ArgsSignature(d) != "" {
-		testInit = fmt.Sprintf("func() (%s) { return }()", c.ArgsSignature(d))
+	if c.ArgsSignature(g.pkg, d) != "" {
+		testInit = fmt.Sprintf("func() (%s) { return }()", c.ArgsSignature(g.pkg, d))
 	}
 	g.TestPrintf(`
 func TestNew%[1]s(t *testing.T) {
@@ -1066,7 +1066,7 @@ func (a *%[2]s) Set%[1]s(%[3]s %%[1]s) *%[2]s {
 }
 `, arg.ExportedName(d), c.ArgsName(d), name, OptionalPropPrefix, desc, ptr, comment)
 
-		argType := arg.GoType("cdp", d)
+		argType := arg.GoType(g.pkg, d)
 		g.Printf(setMethodFmt, argType)
 	}
 }

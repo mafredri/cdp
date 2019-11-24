@@ -24,6 +24,8 @@ func init() {
 	lint.SetInitialism("NFC", true)
 	lint.SetInitialism("BLE", true)
 	lint.SetInitialism("RP", true) // RPID => Relaying Party (ID).
+	lint.SetInitialism("JPEG", true)
+	lint.SetInitialism("WEBP", true)
 }
 
 // Name returns a different name if it should be different.
