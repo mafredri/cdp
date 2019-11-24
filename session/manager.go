@@ -70,6 +70,16 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 	defer ev.Close()
 
 	isClosing := func(err error) bool {
+		for _, e := range []error{err, cdp.ErrorCause(err)} {
+			// Test if this is an rpcc.closeError.
+			if v, ok := e.(interface{ Closed() bool }); ok && v.Closed() {
+				// Cleanup, the underlying connection was closed
+				// before the Manager and its context does not
+				// inherit from rpcc.Conn.
+				m.cancel()
+				return true
+			}
+		}
 		switch cdp.ErrorCause(err) {
 		case rpcc.ErrConnClosing, context.Canceled:
 			// Cleanup, the underlying connection was closed
