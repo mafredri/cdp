@@ -80,12 +80,8 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 				return true
 			}
 		}
-		switch cdp.ErrorCause(err) {
-		case rpcc.ErrConnClosing, context.Canceled:
-			// Cleanup, the underlying connection was closed
-			// before the Manager and its context does not
-			// inherit from rpcc.Conn.
-			m.cancel()
+		if cdp.ErrorCause(err) == context.Canceled {
+			// Manager was closed.
 			return true
 		}
 		return false

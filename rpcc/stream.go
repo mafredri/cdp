@@ -10,7 +10,7 @@ import (
 var (
 	// ErrStreamClosing indicates that the operation is illegal because
 	// the stream is closing and there are no pending messages.
-	ErrStreamClosing = errors.New("rpcc: the stream is closing")
+	ErrStreamClosing = &closeError{msg: "rpcc: the stream is closing"}
 )
 
 // message contains the invoked method name, data and next func.
