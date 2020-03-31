@@ -198,6 +198,21 @@ type Audits interface {
 	// Returns the response body and size if it were re-encoded with the
 	// specified settings. Only applies to images.
 	GetEncodedResponse(context.Context, *audits.GetEncodedResponseArgs) (*audits.GetEncodedResponseReply, error)
+
+	// Command Disable
+	//
+	// Disables issues domain, prevents further issues from being reported
+	// to the client.
+	Disable(context.Context) error
+
+	// Command Enable
+	//
+	// Enables issues domain, sends the issues collected so far to the
+	// client by means of the `issueAdded` event.
+	Enable(context.Context) error
+
+	// Event IssueAdded
+	IssueAdded(context.Context) (audits.IssueAddedClient, error)
 }
 
 // The BackgroundService domain. Defines events for background web platform
@@ -261,6 +276,13 @@ type Browser interface {
 	//
 	// Note: This command is experimental.
 	ResetPermissions(context.Context, *browser.ResetPermissionsArgs) error
+
+	// Command SetDownloadBehavior
+	//
+	// Set the behavior when downloading a file.
+	//
+	// Note: This command is experimental.
+	SetDownloadBehavior(context.Context, *browser.SetDownloadBehaviorArgs) error
 
 	// Command Close
 	//
@@ -637,6 +659,15 @@ type DOM interface {
 	// Describes node given its id, does not require domain to be enabled.
 	// Does not start tracking any objects, can be used for automation.
 	DescribeNode(context.Context, *dom.DescribeNodeArgs) (*dom.DescribeNodeReply, error)
+
+	// Command ScrollIntoViewIfNeeded
+	//
+	// Scrolls the specified rect of the given node into view if not
+	// already visible. Note: exactly one between nodeId, backendNodeId and
+	// objectId should be passed to identify the node.
+	//
+	// Note: This command is experimental.
+	ScrollIntoViewIfNeeded(context.Context, *dom.ScrollIntoViewIfNeededArgs) error
 
 	// Command Disable
 	//
@@ -1197,7 +1228,7 @@ type Debugger interface {
 	// Command Resume
 	//
 	// Resumes JavaScript execution.
-	Resume(context.Context) error
+	Resume(context.Context, *debugger.ResumeArgs) error
 
 	// Command SearchInContent
 	//
@@ -1428,6 +1459,13 @@ type Emulation interface {
 	// queries.
 	SetEmulatedMedia(context.Context, *emulation.SetEmulatedMediaArgs) error
 
+	// Command SetEmulatedVisionDeficiency
+	//
+	// Emulates the given vision deficiency.
+	//
+	// Note: This command is experimental.
+	SetEmulatedVisionDeficiency(context.Context, *emulation.SetEmulatedVisionDeficiencyArgs) error
+
 	// Command SetGeolocationOverride
 	//
 	// Overrides the Geolocation Position or Error. Omitting any of the
@@ -1467,6 +1505,13 @@ type Emulation interface {
 	//
 	// Note: This command is experimental.
 	SetVirtualTimePolicy(context.Context, *emulation.SetVirtualTimePolicyArgs) (*emulation.SetVirtualTimePolicyReply, error)
+
+	// Command SetLocaleOverride
+	//
+	// Overrides default host system locale with the specified one.
+	//
+	// Note: This command is experimental.
+	SetLocaleOverride(context.Context, *emulation.SetLocaleOverrideArgs) error
 
 	// Command SetTimezoneOverride
 	//
@@ -2503,6 +2548,11 @@ type Page interface {
 	// Note: This command is experimental.
 	GetInstallabilityErrors(context.Context) (*page.GetInstallabilityErrorsReply, error)
 
+	// Command GetManifestIcons
+	//
+	// Note: This command is experimental.
+	GetManifestIcons(context.Context) (*page.GetManifestIconsReply, error)
+
 	// Command GetFrameTree
 	//
 	// Returns present frame tree structure.
@@ -2627,7 +2677,7 @@ type Page interface {
 
 	// Command SetDownloadBehavior
 	//
-	// Set the behavior when downloading a file.
+	// Deprecated: Set the behavior when downloading a file.
 	//
 	// Note: This command is experimental.
 	SetDownloadBehavior(context.Context, *page.SetDownloadBehaviorArgs) error
@@ -2724,18 +2774,10 @@ type Page interface {
 	// Intercept file chooser requests and transfer control to protocol
 	// clients. When file chooser interception is enabled, native file
 	// chooser dialog is not shown. Instead, a protocol event
-	// `Page.fileChooserOpened` is emitted. File chooser can be handled
-	// with `page.handleFileChooser` command.
+	// `Page.fileChooserOpened` is emitted.
 	//
 	// Note: This command is experimental.
 	SetInterceptFileChooserDialog(context.Context, *page.SetInterceptFileChooserDialogArgs) error
-
-	// Command HandleFileChooser
-	//
-	// Accepts or cancels an intercepted file chooser dialog.
-	//
-	// Note: This command is experimental.
-	HandleFileChooser(context.Context, *page.HandleFileChooserArgs) error
 
 	// Event DOMContentEventFired
 	DOMContentEventFired(context.Context) (page.DOMContentEventFiredClient, error)
@@ -2804,6 +2846,13 @@ type Page interface {
 	//
 	// Note: This event is experimental.
 	DownloadWillBegin(context.Context) (page.DownloadWillBeginClient, error)
+
+	// Event DownloadProgress
+	//
+	// Fired when download makes progress. Last call has |done| == true.
+	//
+	// Note: This event is experimental.
+	DownloadProgress(context.Context) (page.DownloadProgressClient, error)
 
 	// Event InterstitialHidden
 	//
@@ -2884,14 +2933,14 @@ type Performance interface {
 	// Command Enable
 	//
 	// Enable collecting and reporting metrics.
-	Enable(context.Context) error
+	Enable(context.Context, *performance.EnableArgs) error
 
 	// Command SetTimeDomain
 	//
-	// Sets time domain to use for collecting and reporting duration
-	// metrics. Note that this must be called before enabling metrics
-	// collection. Calling this method while metrics collection is enabled
-	// returns an error.
+	// Deprecated: Sets time domain to use for collecting and reporting
+	// duration metrics. Note that this must be called before enabling
+	// metrics collection. Calling this method while metrics collection is
+	// enabled returns an error.
 	//
 	// Note: This command is experimental.
 	SetTimeDomain(context.Context, *performance.SetTimeDomainArgs) error
@@ -2935,7 +2984,7 @@ type Profiler interface {
 	// Enable precise code coverage. Coverage data for JavaScript executed
 	// before enabling precise code coverage may be incomplete. Enabling
 	// prevents running optimized code and resets execution counters.
-	StartPreciseCoverage(context.Context, *profiler.StartPreciseCoverageArgs) error
+	StartPreciseCoverage(context.Context, *profiler.StartPreciseCoverageArgs) (*profiler.StartPreciseCoverageReply, error)
 
 	// Command StartTypeProfile
 	//
@@ -3003,6 +3052,17 @@ type Profiler interface {
 	// Sent when new profile recording is started using console.profile()
 	// call.
 	ConsoleProfileStarted(context.Context) (profiler.ConsoleProfileStartedClient, error)
+
+	// Event PreciseCoverageDeltaUpdate
+	//
+	// Reports coverage delta since the last poll (either from an event
+	// like this, or from `takePreciseCoverage` for the current isolate.
+	// May only be sent if precise code coverage has been started. This
+	// event can be trigged by the embedder to, for example, trigger
+	// collection of coverage data immediately at a certain point in time.
+	//
+	// Note: This event is experimental.
+	PreciseCoverageDeltaUpdate(context.Context) (profiler.PreciseCoverageDeltaUpdateClient, error)
 }
 
 // The Runtime domain. Runtime domain exposes JavaScript runtime by means of
@@ -3437,7 +3497,7 @@ type Target interface {
 	// but you can have more than one.
 	//
 	// Note: This command is experimental.
-	CreateBrowserContext(context.Context) (*target.CreateBrowserContextReply, error)
+	CreateBrowserContext(context.Context, *target.CreateBrowserContextArgs) (*target.CreateBrowserContextReply, error)
 
 	// Command GetBrowserContexts
 	//

@@ -38,3 +38,23 @@ type ConsoleProfileStartedReply struct {
 	Location debugger.Location `json:"location"`        // Location of console.profile().
 	Title    *string           `json:"title,omitempty"` // Profile title passed as an argument to console.profile().
 }
+
+// PreciseCoverageDeltaUpdateClient is a client for PreciseCoverageDeltaUpdate events.
+// Reports coverage delta since the last poll (either from an event like this,
+// or from `takePreciseCoverage` for the current isolate. May only be sent if
+// precise code coverage has been started. This event can be trigged by the
+// embedder to, for example, trigger collection of coverage data immediately at
+// a certain point in time.
+type PreciseCoverageDeltaUpdateClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*PreciseCoverageDeltaUpdateReply, error)
+	rpcc.Stream
+}
+
+// PreciseCoverageDeltaUpdateReply is the reply for PreciseCoverageDeltaUpdate events.
+type PreciseCoverageDeltaUpdateReply struct {
+	Timestamp float64          `json:"timestamp"` // Monotonically increasing time (in seconds) when the coverage update was taken in the backend.
+	Occassion string           `json:"occassion"` // Identifier for distinguishing coverage events.
+	Result    []ScriptCoverage `json:"result"`    // Coverage data for the current isolate.
+}

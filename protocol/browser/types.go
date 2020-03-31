@@ -66,8 +66,8 @@ const (
 	PermissionTypeAudioCapture             PermissionType = "audioCapture"
 	PermissionTypeBackgroundSync           PermissionType = "backgroundSync"
 	PermissionTypeBackgroundFetch          PermissionType = "backgroundFetch"
-	PermissionTypeClipboardRead            PermissionType = "clipboardRead"
-	PermissionTypeClipboardWrite           PermissionType = "clipboardWrite"
+	PermissionTypeClipboardReadWrite       PermissionType = "clipboardReadWrite"
+	PermissionTypeClipboardSanitizedWrite  PermissionType = "clipboardSanitizedWrite"
 	PermissionTypeDurableStorage           PermissionType = "durableStorage"
 	PermissionTypeFlash                    PermissionType = "flash"
 	PermissionTypeGeolocation              PermissionType = "geolocation"
@@ -87,7 +87,7 @@ const (
 
 func (e PermissionType) Valid() bool {
 	switch e {
-	case "accessibilityEvents", "audioCapture", "backgroundSync", "backgroundFetch", "clipboardRead", "clipboardWrite", "durableStorage", "flash", "geolocation", "midi", "midiSysex", "nfc", "notifications", "paymentHandler", "periodicBackgroundSync", "protectedMediaIdentifier", "sensors", "videoCapture", "idleDetection", "wakeLockScreen", "wakeLockSystem":
+	case "accessibilityEvents", "audioCapture", "backgroundSync", "backgroundFetch", "clipboardReadWrite", "clipboardSanitizedWrite", "durableStorage", "flash", "geolocation", "midi", "midiSysex", "nfc", "notifications", "paymentHandler", "periodicBackgroundSync", "protectedMediaIdentifier", "sensors", "videoCapture", "idleDetection", "wakeLockScreen", "wakeLockSystem":
 		return true
 	default:
 		return false
@@ -130,10 +130,11 @@ func (e PermissionSetting) String() string {
 //
 // Note: This type is experimental.
 type PermissionDescriptor struct {
-	Name            string  `json:"name"`                      // Name of permission. See https://cs.chromium.org/chromium/src/third_party/blink/renderer/modules/permissions/permission_descriptor.idl for valid permission names.
-	Sysex           *bool   `json:"sysex,omitempty"`           // For "midi" permission, may also specify sysex control.
-	UserVisibleOnly *bool   `json:"userVisibleOnly,omitempty"` // For "push" permission, may specify userVisibleOnly. Note that userVisibleOnly = true is the only currently supported type.
-	Type            *string `json:"type,omitempty"`            // For "wake-lock" permission, must specify type as either "screen" or "system".
+	Name                     string  `json:"name"`                               // Name of permission. See https://cs.chromium.org/chromium/src/third_party/blink/renderer/modules/permissions/permission_descriptor.idl for valid permission names.
+	Sysex                    *bool   `json:"sysex,omitempty"`                    // For "midi" permission, may also specify sysex control.
+	UserVisibleOnly          *bool   `json:"userVisibleOnly,omitempty"`          // For "push" permission, may specify userVisibleOnly. Note that userVisibleOnly = true is the only currently supported type.
+	Type                     *string `json:"type,omitempty"`                     // For "wake-lock" permission, must specify type as either "screen" or "system".
+	AllowWithoutSanitization *bool   `json:"allowWithoutSanitization,omitempty"` // For "clipboard" permission, may specify allowWithoutSanitization.
 }
 
 // Bucket Chrome histogram bucket.

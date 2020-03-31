@@ -84,6 +84,22 @@ func (d *domainClient) DescribeNode(ctx context.Context, args *DescribeNodeArgs)
 	return
 }
 
+// ScrollIntoViewIfNeeded invokes the DOM method. Scrolls the specified rect
+// of the given node into view if not already visible. Note: exactly one
+// between nodeId, backendNodeId and objectId should be passed to identify the
+// node.
+func (d *domainClient) ScrollIntoViewIfNeeded(ctx context.Context, args *ScrollIntoViewIfNeededArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.scrollIntoViewIfNeeded", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.scrollIntoViewIfNeeded", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "ScrollIntoViewIfNeeded", Err: err}
+	}
+	return
+}
+
 // Disable invokes the DOM method. Disables DOM agent for the given page.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "DOM.disable", nil, nil, d.conn)

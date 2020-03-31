@@ -45,6 +45,33 @@ func (e GestureSourceType) String() string {
 	return string(e)
 }
 
+// MouseButton
+type MouseButton string
+
+// MouseButton as enums.
+const (
+	MouseButtonNotSet  MouseButton = ""
+	MouseButtonNone    MouseButton = "none"
+	MouseButtonLeft    MouseButton = "left"
+	MouseButtonMiddle  MouseButton = "middle"
+	MouseButtonRight   MouseButton = "right"
+	MouseButtonBack    MouseButton = "back"
+	MouseButtonForward MouseButton = "forward"
+)
+
+func (e MouseButton) Valid() bool {
+	switch e {
+	case "none", "left", "middle", "right", "back", "forward":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e MouseButton) String() string {
+	return string(e)
+}
+
 // TimeSinceEpoch UTC time in seconds, counted from January 1, 1970.
 type TimeSinceEpoch float64
 

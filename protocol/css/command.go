@@ -313,5 +313,6 @@ type StopRuleUsageTrackingReply struct {
 
 // TakeCoverageDeltaReply represents the return values for TakeCoverageDelta in the CSS domain.
 type TakeCoverageDeltaReply struct {
-	Coverage []RuleUsage `json:"coverage"` // No description.
+	Coverage  []RuleUsage `json:"coverage"`  // No description.
+	Timestamp float64     `json:"timestamp"` // Monotonically increasing time, in seconds.
 }

@@ -43,7 +43,7 @@ type CallFrame struct {
 type Scope struct {
 	// Type Scope type.
 	//
-	// Values: "global", "local", "with", "closure", "catch", "block", "script", "eval", "module".
+	// Values: "global", "local", "with", "closure", "catch", "block", "script", "eval", "module", "wasm-expression-stack".
 	Type          string               `json:"type"`
 	Object        runtime.RemoteObject `json:"object"`                  // Object representing the scope. For `global` and `with` scopes it represents the actual object; for the rest of the scopes, it is artificial transient object enumerating scope variables as its properties.
 	Name          *string              `json:"name,omitempty"`          // No description.
@@ -66,4 +66,27 @@ type BreakLocation struct {
 	//
 	// Values: "debuggerStatement", "call", "return".
 	Type *string `json:"type,omitempty"`
+}
+
+// ScriptLanguage Enum of possible script languages.
+type ScriptLanguage string
+
+// ScriptLanguage as enums.
+const (
+	ScriptLanguageNotSet      ScriptLanguage = ""
+	ScriptLanguageJavaScript  ScriptLanguage = "JavaScript"
+	ScriptLanguageWebAssembly ScriptLanguage = "WebAssembly"
+)
+
+func (e ScriptLanguage) Valid() bool {
+	switch e {
+	case "JavaScript", "WebAssembly":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ScriptLanguage) String() string {
+	return string(e)
 }

@@ -75,11 +75,12 @@ func (d *domainClient) Start(ctx context.Context) (err error) {
 // coverage. Coverage data for JavaScript executed before enabling precise code
 // coverage may be incomplete. Enabling prevents running optimized code and
 // resets execution counters.
-func (d *domainClient) StartPreciseCoverage(ctx context.Context, args *StartPreciseCoverageArgs) (err error) {
+func (d *domainClient) StartPreciseCoverage(ctx context.Context, args *StartPreciseCoverageArgs) (reply *StartPreciseCoverageReply, err error) {
+	reply = new(StartPreciseCoverageReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Profiler.startPreciseCoverage", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Profiler.startPreciseCoverage", args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Profiler.startPreciseCoverage", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Profiler.startPreciseCoverage", nil, reply, d.conn)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "StartPreciseCoverage", Err: err}
@@ -218,6 +219,27 @@ func (c *consoleProfileStartedClient) Recv() (*ConsoleProfileStartedReply, error
 	event := new(ConsoleProfileStartedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Profiler", Op: "ConsoleProfileStarted Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) PreciseCoverageDeltaUpdate(ctx context.Context) (PreciseCoverageDeltaUpdateClient, error) {
+	s, err := rpcc.NewStream(ctx, "Profiler.preciseCoverageDeltaUpdate", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &preciseCoverageDeltaUpdateClient{Stream: s}, nil
+}
+
+type preciseCoverageDeltaUpdateClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *preciseCoverageDeltaUpdateClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *preciseCoverageDeltaUpdateClient) Recv() (*PreciseCoverageDeltaUpdateReply, error) {
+	event := new(PreciseCoverageDeltaUpdateReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Profiler", Op: "PreciseCoverageDeltaUpdate Recv", Err: err}
 	}
 	return event, nil
 }

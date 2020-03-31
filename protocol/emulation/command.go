@@ -261,6 +261,21 @@ func (a *SetEmulatedMediaArgs) SetFeatures(features []MediaFeature) *SetEmulated
 	return a
 }
 
+// SetEmulatedVisionDeficiencyArgs represents the arguments for SetEmulatedVisionDeficiency in the Emulation domain.
+type SetEmulatedVisionDeficiencyArgs struct {
+	// Type Vision deficiency to emulate.
+	//
+	// Values: "none", "achromatopsia", "blurredVision", "deuteranopia", "protanopia", "tritanopia".
+	Type string `json:"type"`
+}
+
+// NewSetEmulatedVisionDeficiencyArgs initializes SetEmulatedVisionDeficiencyArgs with the required arguments.
+func NewSetEmulatedVisionDeficiencyArgs(typ string) *SetEmulatedVisionDeficiencyArgs {
+	args := new(SetEmulatedVisionDeficiencyArgs)
+	args.Type = typ
+	return args
+}
+
 // SetGeolocationOverrideArgs represents the arguments for SetGeolocationOverride in the Emulation domain.
 type SetGeolocationOverrideArgs struct {
 	Latitude  *float64 `json:"latitude,omitempty"`  // Mock latitude
@@ -401,6 +416,26 @@ func (a *SetVirtualTimePolicyArgs) SetInitialVirtualTime(initialVirtualTime netw
 // SetVirtualTimePolicyReply represents the return values for SetVirtualTimePolicy in the Emulation domain.
 type SetVirtualTimePolicyReply struct {
 	VirtualTimeTicksBase float64 `json:"virtualTimeTicksBase"` // Absolute timestamp at which virtual time was first enabled (up time in milliseconds).
+}
+
+// SetLocaleOverrideArgs represents the arguments for SetLocaleOverride in the Emulation domain.
+type SetLocaleOverrideArgs struct {
+	Locale *string `json:"locale,omitempty"` // ICU style C locale (e.g. "en_US"). If not specified or empty, disables the override and restores default host system locale.
+}
+
+// NewSetLocaleOverrideArgs initializes SetLocaleOverrideArgs with the required arguments.
+func NewSetLocaleOverrideArgs() *SetLocaleOverrideArgs {
+	args := new(SetLocaleOverrideArgs)
+
+	return args
+}
+
+// SetLocale sets the Locale optional argument. ICU style C locale
+// (e.g. "en_US"). If not specified or empty, disables the override and
+// restores default host system locale.
+func (a *SetLocaleOverrideArgs) SetLocale(locale string) *SetLocaleOverrideArgs {
+	a.Locale = &locale
+	return a
 }
 
 // SetTimezoneOverrideArgs represents the arguments for SetTimezoneOverride in the Emulation domain.

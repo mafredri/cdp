@@ -218,6 +218,33 @@ func (e CookieSameSite) String() string {
 	return string(e)
 }
 
+// CookiePriority Represents the cookie's 'Priority' status:
+// https://tools.ietf.org/html/draft-west-cookie-priority-00
+//
+// Note: This type is experimental.
+type CookiePriority string
+
+// CookiePriority as enums.
+const (
+	CookiePriorityNotSet CookiePriority = ""
+	CookiePriorityLow    CookiePriority = "Low"
+	CookiePriorityMedium CookiePriority = "Medium"
+	CookiePriorityHigh   CookiePriority = "High"
+)
+
+func (e CookiePriority) Valid() bool {
+	switch e {
+	case "Low", "Medium", "High":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e CookiePriority) String() string {
+	return string(e)
+}
+
 // ResourceTiming Timing information for the request.
 type ResourceTiming struct {
 	RequestTime  float64 `json:"requestTime"`  // Timing's requestTime is a baseline in seconds, while the other numbers are ticks in milliseconds relatively to this requestTime.
@@ -353,20 +380,25 @@ type BlockedReason string
 
 // BlockedReason as enums.
 const (
-	BlockedReasonNotSet            BlockedReason = ""
-	BlockedReasonOther             BlockedReason = "other"
-	BlockedReasonCsp               BlockedReason = "csp"
-	BlockedReasonMixedContent      BlockedReason = "mixed-content"
-	BlockedReasonOrigin            BlockedReason = "origin"
-	BlockedReasonInspector         BlockedReason = "inspector"
-	BlockedReasonSubresourceFilter BlockedReason = "subresource-filter"
-	BlockedReasonContentType       BlockedReason = "content-type"
-	BlockedReasonCollapsedByClient BlockedReason = "collapsed-by-client"
+	BlockedReasonNotSet                                            BlockedReason = ""
+	BlockedReasonOther                                             BlockedReason = "other"
+	BlockedReasonCsp                                               BlockedReason = "csp"
+	BlockedReasonMixedContent                                      BlockedReason = "mixed-content"
+	BlockedReasonOrigin                                            BlockedReason = "origin"
+	BlockedReasonInspector                                         BlockedReason = "inspector"
+	BlockedReasonSubresourceFilter                                 BlockedReason = "subresource-filter"
+	BlockedReasonContentType                                       BlockedReason = "content-type"
+	BlockedReasonCollapsedByClient                                 BlockedReason = "collapsed-by-client"
+	BlockedReasonCoepFrameResourceNeedsCoepHeader                  BlockedReason = "coep-frame-resource-needs-coep-header"
+	BlockedReasonCoopSandboxedIframeCannotNavigateToCoopPage       BlockedReason = "coop-sandboxed-iframe-cannot-navigate-to-coop-page"
+	BlockedReasonCorpNotSameOrigin                                 BlockedReason = "corp-not-same-origin"
+	BlockedReasonCorpNotSameOriginAfterDefaultedToSameOriginByCoep BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-coep"
+	BlockedReasonCorpNotSameSite                                   BlockedReason = "corp-not-same-site"
 )
 
 func (e BlockedReason) Valid() bool {
 	switch e {
-	case "other", "csp", "mixed-content", "origin", "inspector", "subresource-filter", "content-type", "collapsed-by-client":
+	case "other", "csp", "mixed-content", "origin", "inspector", "subresource-filter", "content-type", "collapsed-by-client", "coep-frame-resource-needs-coep-header", "coop-sandboxed-iframe-cannot-navigate-to-coop-page", "corp-not-same-origin", "corp-not-same-origin-after-defaulted-to-same-origin-by-coep", "corp-not-same-site":
 		return true
 	default:
 		return false
@@ -455,6 +487,10 @@ type Cookie struct {
 	Secure   bool           `json:"secure"`             // True if cookie is secure.
 	Session  bool           `json:"session"`            // True in case of session cookie.
 	SameSite CookieSameSite `json:"sameSite,omitempty"` // Cookie SameSite type.
+	// Priority Cookie Priority
+	//
+	// Note: This property is experimental.
+	Priority CookiePriority `json:"priority"`
 }
 
 // SetCookieBlockedReason Types of reasons why a cookie may not be stored from
@@ -556,6 +592,10 @@ type CookieParam struct {
 	HTTPOnly *bool          `json:"httpOnly,omitempty"` // True if cookie is http-only.
 	SameSite CookieSameSite `json:"sameSite,omitempty"` // Cookie SameSite type.
 	Expires  TimeSinceEpoch `json:"expires,omitempty"`  // Cookie expiration date, session cookie if not set
+	// Priority Cookie Priority.
+	//
+	// Note: This property is experimental.
+	Priority CookiePriority `json:"priority,omitempty"`
 }
 
 // AuthChallenge Authorization challenge for HTTP status code 401 or 407.

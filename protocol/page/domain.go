@@ -142,6 +142,16 @@ func (d *domainClient) GetInstallabilityErrors(ctx context.Context) (reply *GetI
 	return
 }
 
+// GetManifestIcons invokes the Page method.
+func (d *domainClient) GetManifestIcons(ctx context.Context) (reply *GetManifestIconsReply, err error) {
+	reply = new(GetManifestIconsReply)
+	err = rpcc.Invoke(ctx, "Page.getManifestIcons", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetManifestIcons", Err: err}
+	}
+	return
+}
+
 // GetFrameTree invokes the Page method. Returns present frame tree structure.
 func (d *domainClient) GetFrameTree(ctx context.Context) (reply *GetFrameTreeReply, err error) {
 	reply = new(GetFrameTreeReply)
@@ -566,8 +576,7 @@ func (d *domainClient) WaitForDebugger(ctx context.Context) (err error) {
 // SetInterceptFileChooserDialog invokes the Page method. Intercept file
 // chooser requests and transfer control to protocol clients. When file chooser
 // interception is enabled, native file chooser dialog is not shown. Instead, a
-// protocol event `Page.fileChooserOpened` is emitted. File chooser can be
-// handled with `page.handleFileChooser` command.
+// protocol event `Page.fileChooserOpened` is emitted.
 func (d *domainClient) SetInterceptFileChooserDialog(ctx context.Context, args *SetInterceptFileChooserDialogArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Page.setInterceptFileChooserDialog", args, nil, d.conn)
@@ -576,20 +585,6 @@ func (d *domainClient) SetInterceptFileChooserDialog(ctx context.Context, args *
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "SetInterceptFileChooserDialog", Err: err}
-	}
-	return
-}
-
-// HandleFileChooser invokes the Page method. Accepts or cancels an
-// intercepted file chooser dialog.
-func (d *domainClient) HandleFileChooser(ctx context.Context, args *HandleFileChooserArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.handleFileChooser", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.handleFileChooser", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "HandleFileChooser", Err: err}
 	}
 	return
 }
@@ -842,6 +837,27 @@ func (c *downloadWillBeginClient) Recv() (*DownloadWillBeginReply, error) {
 	event := new(DownloadWillBeginReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "DownloadWillBegin Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DownloadProgress(ctx context.Context) (DownloadProgressClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.downloadProgress", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &downloadProgressClient{Stream: s}, nil
+}
+
+type downloadProgressClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *downloadProgressClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *downloadProgressClient) Recv() (*DownloadProgressReply, error) {
+	event := new(DownloadProgressReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "DownloadProgress Recv", Err: err}
 	}
 	return event, nil
 }

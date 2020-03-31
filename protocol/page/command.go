@@ -190,11 +190,20 @@ type GetAppManifestReply struct {
 	URL    string             `json:"url"`            // Manifest location.
 	Errors []AppManifestError `json:"errors"`         // No description.
 	Data   *string            `json:"data,omitempty"` // Manifest content.
+	// Parsed Parsed manifest properties
+	//
+	// Note: This property is experimental.
+	Parsed *AppManifestParsedProperties `json:"parsed,omitempty"`
 }
 
 // GetInstallabilityErrorsReply represents the return values for GetInstallabilityErrors in the Page domain.
 type GetInstallabilityErrorsReply struct {
-	Errors []string `json:"errors"` // No description.
+	InstallabilityErrors []InstallabilityError `json:"installabilityErrors"` // No description.
+}
+
+// GetManifestIconsReply represents the return values for GetManifestIcons in the Page domain.
+type GetManifestIconsReply struct {
+	PrimaryIcon *string `json:"primaryIcon,omitempty"` // No description.
 }
 
 // GetFrameTreeReply represents the return values for GetFrameTree in the Page domain.
@@ -267,6 +276,10 @@ type NavigateArgs struct {
 	Referrer       *string        `json:"referrer,omitempty"`       // Referrer URL.
 	TransitionType TransitionType `json:"transitionType,omitempty"` // Intended transition type.
 	FrameID        *FrameID       `json:"frameId,omitempty"`        // Frame id to navigate, if not specified navigates the top frame.
+	// ReferrerPolicy Referrer-policy used for the navigation.
+	//
+	// Note: This property is experimental.
+	ReferrerPolicy ReferrerPolicy `json:"referrerPolicy,omitempty"`
 }
 
 // NewNavigateArgs initializes NavigateArgs with the required arguments.
@@ -293,6 +306,15 @@ func (a *NavigateArgs) SetTransitionType(transitionType TransitionType) *Navigat
 // navigate, if not specified navigates the top frame.
 func (a *NavigateArgs) SetFrameID(frameID FrameID) *NavigateArgs {
 	a.FrameID = &frameID
+	return a
+}
+
+// SetReferrerPolicy sets the ReferrerPolicy optional argument.
+// Referrer-policy used for the navigation.
+//
+// Note: This property is experimental.
+func (a *NavigateArgs) SetReferrerPolicy(referrerPolicy ReferrerPolicy) *NavigateArgs {
+	a.ReferrerPolicy = referrerPolicy
 	return a
 }
 
@@ -812,27 +834,4 @@ func NewSetInterceptFileChooserDialogArgs(enabled bool) *SetInterceptFileChooser
 	args := new(SetInterceptFileChooserDialogArgs)
 	args.Enabled = enabled
 	return args
-}
-
-// HandleFileChooserArgs represents the arguments for HandleFileChooser in the Page domain.
-type HandleFileChooserArgs struct {
-	// Action
-	//
-	// Values: "accept", "cancel", "fallback".
-	Action string   `json:"action"`
-	Files  []string `json:"files,omitempty"` // Array of absolute file paths to set, only respected with `accept` action.
-}
-
-// NewHandleFileChooserArgs initializes HandleFileChooserArgs with the required arguments.
-func NewHandleFileChooserArgs(action string) *HandleFileChooserArgs {
-	args := new(HandleFileChooserArgs)
-	args.Action = action
-	return args
-}
-
-// SetFiles sets the Files optional argument. Array of absolute file
-// paths to set, only respected with `accept` action.
-func (a *HandleFileChooserArgs) SetFiles(files []string) *HandleFileChooserArgs {
-	a.Files = files
-	return a
 }

@@ -87,6 +87,25 @@ func (a *ExposeDevToolsProtocolArgs) SetBindingName(bindingName string) *ExposeD
 	return a
 }
 
+// CreateBrowserContextArgs represents the arguments for CreateBrowserContext in the Target domain.
+type CreateBrowserContextArgs struct {
+	DisposeOnDetach *bool `json:"disposeOnDetach,omitempty"` // If specified, disposes this context when debugging session disconnects.
+}
+
+// NewCreateBrowserContextArgs initializes CreateBrowserContextArgs with the required arguments.
+func NewCreateBrowserContextArgs() *CreateBrowserContextArgs {
+	args := new(CreateBrowserContextArgs)
+
+	return args
+}
+
+// SetDisposeOnDetach sets the DisposeOnDetach optional argument. If
+// specified, disposes this context when debugging session disconnects.
+func (a *CreateBrowserContextArgs) SetDisposeOnDetach(disposeOnDetach bool) *CreateBrowserContextArgs {
+	a.DisposeOnDetach = &disposeOnDetach
+	return a
+}
+
 // CreateBrowserContextReply represents the return values for CreateBrowserContext in the Target domain.
 type CreateBrowserContextReply struct {
 	BrowserContextID internal.BrowserContextID `json:"browserContextId"` // The id of the context created.
@@ -280,11 +299,6 @@ type SetAutoAttachArgs struct {
 	AutoAttach             bool  `json:"autoAttach"`             // Whether to auto-attach to related targets.
 	WaitForDebuggerOnStart bool  `json:"waitForDebuggerOnStart"` // Whether to pause new targets when attaching to them. Use `Runtime.runIfWaitingForDebugger` to run paused targets.
 	Flatten                *bool `json:"flatten,omitempty"`      // Enables "flat" access to the session via specifying sessionId attribute in the commands. We plan to make this the default, deprecate non-flattened mode, and eventually retire it. See crbug.com/991325.
-	// WindowOpen Auto-attach to the targets created via window.open from
-	// current target.
-	//
-	// Note: This property is experimental.
-	WindowOpen *bool `json:"windowOpen,omitempty"`
 }
 
 // NewSetAutoAttachArgs initializes SetAutoAttachArgs with the required arguments.
@@ -301,15 +315,6 @@ func NewSetAutoAttachArgs(autoAttach bool, waitForDebuggerOnStart bool) *SetAuto
 // mode, and eventually retire it. See crbug.com/991325.
 func (a *SetAutoAttachArgs) SetFlatten(flatten bool) *SetAutoAttachArgs {
 	a.Flatten = &flatten
-	return a
-}
-
-// SetWindowOpen sets the WindowOpen optional argument. Auto-attach to
-// the targets created via window.open from current target.
-//
-// Note: This property is experimental.
-func (a *SetAutoAttachArgs) SetWindowOpen(windowOpen bool) *SetAutoAttachArgs {
-	a.WindowOpen = &windowOpen
 	return a
 }
 

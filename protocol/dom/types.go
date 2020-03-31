@@ -32,6 +32,7 @@ const (
 	PseudoTypeFirstLetter         PseudoType = "first-letter"
 	PseudoTypeBefore              PseudoType = "before"
 	PseudoTypeAfter               PseudoType = "after"
+	PseudoTypeMarker              PseudoType = "marker"
 	PseudoTypeBackdrop            PseudoType = "backdrop"
 	PseudoTypeSelection           PseudoType = "selection"
 	PseudoTypeFirstLineInherited  PseudoType = "first-line-inherited"
@@ -47,7 +48,7 @@ const (
 
 func (e PseudoType) Valid() bool {
 	switch e {
-	case "first-line", "first-letter", "before", "after", "backdrop", "selection", "first-line-inherited", "scrollbar", "scrollbar-thumb", "scrollbar-button", "scrollbar-track", "scrollbar-track-piece", "scrollbar-corner", "resizer", "input-list-button":
+	case "first-line", "first-letter", "before", "after", "marker", "backdrop", "selection", "first-line-inherited", "scrollbar", "scrollbar-thumb", "scrollbar-button", "scrollbar-track", "scrollbar-track-piece", "scrollbar-corner", "resizer", "input-list-button":
 		return true
 	default:
 		return false

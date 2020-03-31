@@ -202,8 +202,9 @@ type EvaluateArgs struct {
 	//
 	// Note: This property is experimental.
 	DisableBreaks *bool `json:"disableBreaks,omitempty"`
-	// ReplMode Reserved flag for future REPL mode support. Setting this
-	// flag has currently no effect.
+	// ReplMode Setting this flag to true enables `let` re-declaration and
+	// top-level `await`. Note that `let` variables can only be re-declared
+	// if they originate from `replMode` themselves.
 	//
 	// Note: This property is experimental.
 	ReplMode *bool `json:"replMode,omitempty"`
@@ -308,8 +309,10 @@ func (a *EvaluateArgs) SetDisableBreaks(disableBreaks bool) *EvaluateArgs {
 	return a
 }
 
-// SetReplMode sets the ReplMode optional argument. Reserved flag for
-// future REPL mode support. Setting this flag has currently no effect.
+// SetReplMode sets the ReplMode optional argument. Setting this flag
+// to true enables `let` re-declaration and top-level `await`. Note
+// that `let` variables can only be re-declared if they originate from
+// `replMode` themselves.
 //
 // Note: This property is experimental.
 func (a *EvaluateArgs) SetReplMode(replMode bool) *EvaluateArgs {

@@ -99,9 +99,13 @@ func (d *domainClient) ExposeDevToolsProtocol(ctx context.Context, args *ExposeD
 // CreateBrowserContext invokes the Target method. Creates a new empty
 // BrowserContext. Similar to an incognito profile but you can have more than
 // one.
-func (d *domainClient) CreateBrowserContext(ctx context.Context) (reply *CreateBrowserContextReply, err error) {
+func (d *domainClient) CreateBrowserContext(ctx context.Context, args *CreateBrowserContextArgs) (reply *CreateBrowserContextReply, err error) {
 	reply = new(CreateBrowserContextReply)
-	err = rpcc.Invoke(ctx, "Target.createBrowserContext", nil, reply, d.conn)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Target.createBrowserContext", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Target.createBrowserContext", nil, reply, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "CreateBrowserContext", Err: err}
 	}

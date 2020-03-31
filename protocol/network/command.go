@@ -421,6 +421,10 @@ type SetCookieArgs struct {
 	HTTPOnly *bool          `json:"httpOnly,omitempty"` // True if cookie is http-only.
 	SameSite CookieSameSite `json:"sameSite,omitempty"` // Cookie SameSite type.
 	Expires  TimeSinceEpoch `json:"expires,omitempty"`  // Cookie expiration date, session cookie if not set
+	// Priority Cookie Priority type.
+	//
+	// Note: This property is experimental.
+	Priority CookiePriority `json:"priority,omitempty"`
 }
 
 // NewSetCookieArgs initializes SetCookieArgs with the required arguments.
@@ -476,6 +480,15 @@ func (a *SetCookieArgs) SetSameSite(sameSite CookieSameSite) *SetCookieArgs {
 // date, session cookie if not set
 func (a *SetCookieArgs) SetExpires(expires TimeSinceEpoch) *SetCookieArgs {
 	a.Expires = expires
+	return a
+}
+
+// SetPriority sets the Priority optional argument. Cookie Priority
+// type.
+//
+// Note: This property is experimental.
+func (a *SetCookieArgs) SetPriority(priority CookiePriority) *SetCookieArgs {
+	a.Priority = priority
 	return a
 }
 

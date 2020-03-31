@@ -62,6 +62,20 @@ func (d *domainClient) ResetPermissions(ctx context.Context, args *ResetPermissi
 	return
 }
 
+// SetDownloadBehavior invokes the Browser method. Set the behavior when
+// downloading a file.
+func (d *domainClient) SetDownloadBehavior(ctx context.Context, args *SetDownloadBehaviorArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.setDownloadBehavior", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.setDownloadBehavior", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "SetDownloadBehavior", Err: err}
+	}
+	return
+}
+
 // Close invokes the Browser method. Close browser gracefully.
 func (d *domainClient) Close(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Browser.close", nil, nil, d.conn)

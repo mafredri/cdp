@@ -144,19 +144,16 @@ type DispatchMouseEventArgs struct {
 	// Type Type of the mouse event.
 	//
 	// Values: "mousePressed", "mouseReleased", "mouseMoved", "mouseWheel".
-	Type      string         `json:"type"`
-	X         float64        `json:"x"`                   // X coordinate of the event relative to the main frame's viewport in CSS pixels.
-	Y         float64        `json:"y"`                   // Y coordinate of the event relative to the main frame's viewport in CSS pixels. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport.
-	Modifiers *int           `json:"modifiers,omitempty"` // Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
-	Timestamp TimeSinceEpoch `json:"timestamp,omitempty"` // Time at which the event occurred.
-	// Button Mouse button (default: "none").
-	//
-	// Values: "none", "left", "middle", "right", "back", "forward".
-	Button     *string  `json:"button,omitempty"`
-	Buttons    *int     `json:"buttons,omitempty"`    // A number indicating which buttons are pressed on the mouse when a mouse event is triggered. Left=1, Right=2, Middle=4, Back=8, Forward=16, None=0.
-	ClickCount *int     `json:"clickCount,omitempty"` // Number of times the mouse button was clicked (default: 0).
-	DeltaX     *float64 `json:"deltaX,omitempty"`     // X delta in CSS pixels for mouse wheel event (default: 0).
-	DeltaY     *float64 `json:"deltaY,omitempty"`     // Y delta in CSS pixels for mouse wheel event (default: 0).
+	Type       string         `json:"type"`
+	X          float64        `json:"x"`                    // X coordinate of the event relative to the main frame's viewport in CSS pixels.
+	Y          float64        `json:"y"`                    // Y coordinate of the event relative to the main frame's viewport in CSS pixels. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport.
+	Modifiers  *int           `json:"modifiers,omitempty"`  // Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
+	Timestamp  TimeSinceEpoch `json:"timestamp,omitempty"`  // Time at which the event occurred.
+	Button     MouseButton    `json:"button,omitempty"`     // Mouse button (default: "none").
+	Buttons    *int           `json:"buttons,omitempty"`    // A number indicating which buttons are pressed on the mouse when a mouse event is triggered. Left=1, Right=2, Middle=4, Back=8, Forward=16, None=0.
+	ClickCount *int           `json:"clickCount,omitempty"` // Number of times the mouse button was clicked (default: 0).
+	DeltaX     *float64       `json:"deltaX,omitempty"`     // X delta in CSS pixels for mouse wheel event (default: 0).
+	DeltaY     *float64       `json:"deltaY,omitempty"`     // Y delta in CSS pixels for mouse wheel event (default: 0).
 	// PointerType Pointer type (default: "mouse").
 	//
 	// Values: "mouse", "pen".
@@ -189,10 +186,8 @@ func (a *DispatchMouseEventArgs) SetTimestamp(timestamp TimeSinceEpoch) *Dispatc
 
 // SetButton sets the Button optional argument. Mouse button (default:
 // "none").
-//
-// Values: "none", "left", "middle", "right", "back", "forward".
-func (a *DispatchMouseEventArgs) SetButton(button string) *DispatchMouseEventArgs {
-	a.Button = &button
+func (a *DispatchMouseEventArgs) SetButton(button MouseButton) *DispatchMouseEventArgs {
+	a.Button = button
 	return a
 }
 
@@ -275,13 +270,10 @@ type EmulateTouchFromMouseEventArgs struct {
 	// Type Type of the mouse event.
 	//
 	// Values: "mousePressed", "mouseReleased", "mouseMoved", "mouseWheel".
-	Type string `json:"type"`
-	X    int    `json:"x"` // X coordinate of the mouse pointer in DIP.
-	Y    int    `json:"y"` // Y coordinate of the mouse pointer in DIP.
-	// Button Mouse button.
-	//
-	// Values: "none", "left", "middle", "right".
-	Button     string         `json:"button"`
+	Type       string         `json:"type"`
+	X          int            `json:"x"`                    // X coordinate of the mouse pointer in DIP.
+	Y          int            `json:"y"`                    // Y coordinate of the mouse pointer in DIP.
+	Button     MouseButton    `json:"button"`               // Mouse button. Only "none", "left", "right" are supported.
 	Timestamp  TimeSinceEpoch `json:"timestamp,omitempty"`  // Time at which the event occurred (default: current time).
 	DeltaX     *float64       `json:"deltaX,omitempty"`     // X delta in DIP for mouse wheel event (default: 0).
 	DeltaY     *float64       `json:"deltaY,omitempty"`     // Y delta in DIP for mouse wheel event (default: 0).
@@ -290,7 +282,7 @@ type EmulateTouchFromMouseEventArgs struct {
 }
 
 // NewEmulateTouchFromMouseEventArgs initializes EmulateTouchFromMouseEventArgs with the required arguments.
-func NewEmulateTouchFromMouseEventArgs(typ string, x int, y int, button string) *EmulateTouchFromMouseEventArgs {
+func NewEmulateTouchFromMouseEventArgs(typ string, x int, y int, button MouseButton) *EmulateTouchFromMouseEventArgs {
 	args := new(EmulateTouchFromMouseEventArgs)
 	args.Type = typ
 	args.X = x

@@ -64,15 +64,15 @@ type PlayerEventType string
 
 // PlayerEventType as enums.
 const (
-	PlayerEventTypeNotSet        PlayerEventType = ""
-	PlayerEventTypePlaybackEvent PlayerEventType = "playbackEvent"
-	PlayerEventTypeSystemEvent   PlayerEventType = "systemEvent"
-	PlayerEventTypeMessageEvent  PlayerEventType = "messageEvent"
+	PlayerEventTypeNotSet         PlayerEventType = ""
+	PlayerEventTypeErrorEvent     PlayerEventType = "errorEvent"
+	PlayerEventTypeTriggeredEvent PlayerEventType = "triggeredEvent"
+	PlayerEventTypeMessageEvent   PlayerEventType = "messageEvent"
 )
 
 func (e PlayerEventType) Valid() bool {
 	switch e {
-	case "playbackEvent", "systemEvent", "messageEvent":
+	case "errorEvent", "triggeredEvent", "messageEvent":
 		return true
 	default:
 		return false

@@ -291,6 +291,30 @@ type RestartFrameReply struct {
 	AsyncStackTraceID *runtime.StackTraceID `json:"asyncStackTraceId,omitempty"`
 }
 
+// ResumeArgs represents the arguments for Resume in the Debugger domain.
+type ResumeArgs struct {
+	TerminateOnResume *bool `json:"terminateOnResume,omitempty"` // Set to true to terminate execution upon resuming execution. In contrast to Runtime.terminateExecution, this will allows to execute further JavaScript (i.e. via evaluation) until execution of the paused code is actually resumed, at which point termination is triggered. If execution is currently not paused, this parameter has no effect.
+}
+
+// NewResumeArgs initializes ResumeArgs with the required arguments.
+func NewResumeArgs() *ResumeArgs {
+	args := new(ResumeArgs)
+
+	return args
+}
+
+// SetTerminateOnResume sets the TerminateOnResume optional argument.
+// Set to true to terminate execution upon resuming execution. In
+// contrast to Runtime.terminateExecution, this will allows to execute
+// further JavaScript (i.e. via evaluation) until execution of the
+// paused code is actually resumed, at which point termination is
+// triggered. If execution is currently not paused, this parameter has
+// no effect.
+func (a *ResumeArgs) SetTerminateOnResume(terminateOnResume bool) *ResumeArgs {
+	a.TerminateOnResume = &terminateOnResume
+	return a
+}
+
 // SearchInContentArgs represents the arguments for SearchInContent in the Debugger domain.
 type SearchInContentArgs struct {
 	ScriptID      runtime.ScriptID `json:"scriptId"`                // Id of the script to search in.

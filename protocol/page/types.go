@@ -152,6 +152,13 @@ type AppManifestError struct {
 	Column   int    `json:"column"`   // Error column.
 }
 
+// AppManifestParsedProperties Parsed app manifest properties.
+//
+// Note: This type is experimental.
+type AppManifestParsedProperties struct {
+	Scope string `json:"scope"` // Computed scope value
+}
+
 // LayoutViewport Layout viewport position and dimensions.
 type LayoutViewport struct {
 	PageX        int `json:"pageX"`        // Horizontal offset relative to the document (CSS pixels).
@@ -217,11 +224,12 @@ const (
 	ClientNavigationReasonMetaTagRefresh        ClientNavigationReason = "metaTagRefresh"
 	ClientNavigationReasonPageBlockInterstitial ClientNavigationReason = "pageBlockInterstitial"
 	ClientNavigationReasonReload                ClientNavigationReason = "reload"
+	ClientNavigationReasonAnchorClick           ClientNavigationReason = "anchorClick"
 )
 
 func (e ClientNavigationReason) Valid() bool {
 	switch e {
-	case "formSubmissionGet", "formSubmissionPost", "httpHeaderRefresh", "scriptInitiated", "metaTagRefresh", "pageBlockInterstitial", "reload":
+	case "formSubmissionGet", "formSubmissionPost", "httpHeaderRefresh", "scriptInitiated", "metaTagRefresh", "pageBlockInterstitial", "reload", "anchorClick":
 		return true
 	default:
 		return false
@@ -229,5 +237,52 @@ func (e ClientNavigationReason) Valid() bool {
 }
 
 func (e ClientNavigationReason) String() string {
+	return string(e)
+}
+
+// InstallabilityErrorArgument
+//
+// Note: This type is experimental.
+type InstallabilityErrorArgument struct {
+	Name  string `json:"name"`  // Argument name (e.g. name:'minimum-icon-size-in-pixels').
+	Value string `json:"value"` // Argument value (e.g. value:'64').
+}
+
+// InstallabilityError The installability error
+//
+// Note: This type is experimental.
+type InstallabilityError struct {
+	ErrorID        string                        `json:"errorId"`        // The error id (e.g. 'manifest-missing-suitable-icon').
+	ErrorArguments []InstallabilityErrorArgument `json:"errorArguments"` // The list of error arguments (e.g. {name:'minimum-icon-size-in-pixels', value:'64'}).
+}
+
+// ReferrerPolicy The referring-policy used for the navigation.
+//
+// Note: This type is experimental.
+type ReferrerPolicy string
+
+// ReferrerPolicy as enums.
+const (
+	ReferrerPolicyNotSet                      ReferrerPolicy = ""
+	ReferrerPolicyNoReferrer                  ReferrerPolicy = "noReferrer"
+	ReferrerPolicyNoReferrerWhenDowngrade     ReferrerPolicy = "noReferrerWhenDowngrade"
+	ReferrerPolicyOrigin                      ReferrerPolicy = "origin"
+	ReferrerPolicyOriginWhenCrossOrigin       ReferrerPolicy = "originWhenCrossOrigin"
+	ReferrerPolicySameOrigin                  ReferrerPolicy = "sameOrigin"
+	ReferrerPolicyStrictOrigin                ReferrerPolicy = "strictOrigin"
+	ReferrerPolicyStrictOriginWhenCrossOrigin ReferrerPolicy = "strictOriginWhenCrossOrigin"
+	ReferrerPolicyUnsafeURL                   ReferrerPolicy = "unsafeUrl"
+)
+
+func (e ReferrerPolicy) Valid() bool {
+	switch e {
+	case "noReferrer", "noReferrerWhenDowngrade", "origin", "originWhenCrossOrigin", "sameOrigin", "strictOrigin", "strictOriginWhenCrossOrigin", "unsafeUrl":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ReferrerPolicy) String() string {
 	return string(e)
 }

@@ -227,7 +227,8 @@
                                 "block",
                                 "script",
                                 "eval",
-                                "module"
+                                "module",
+                                "wasm-expression-stack"
                             ]
                         },
                         {
@@ -301,6 +302,15 @@
                                 "return"
                             ]
                         }
+                    ]
+                },
+                {
+                    "id": "ScriptLanguage",
+                    "description": "Enum of possible script languages.",
+                    "type": "string",
+                    "enum": [
+                        "JavaScript",
+                        "WebAssembly"
                     ]
                 }
             ],
@@ -578,7 +588,15 @@
                 },
                 {
                     "name": "resume",
-                    "description": "Resumes JavaScript execution."
+                    "description": "Resumes JavaScript execution.",
+                    "parameters": [
+                        {
+                            "name": "terminateOnResume",
+                            "description": "Set to true to terminate execution upon resuming execution. In contrast\nto Runtime.terminateExecution, this will allows to execute further\nJavaScript (i.e. via evaluation) until execution of the paused code\nis actually resumed, at which point termination is triggered.\nIf execution is currently not paused, this parameter has no effect.",
+                            "optional": true,
+                            "type": "boolean"
+                        }
+                    ]
                 },
                 {
                     "name": "searchInContent",
@@ -1120,6 +1138,20 @@
                             "experimental": true,
                             "optional": true,
                             "$ref": "Runtime.StackTrace"
+                        },
+                        {
+                            "name": "codeOffset",
+                            "description": "If the scriptLanguage is WebAssembly, the code section offset in the module.",
+                            "experimental": true,
+                            "optional": true,
+                            "type": "integer"
+                        },
+                        {
+                            "name": "scriptLanguage",
+                            "description": "The language of the script.",
+                            "experimental": true,
+                            "optional": true,
+                            "$ref": "Debugger.ScriptLanguage"
                         }
                     ]
                 },
@@ -1210,6 +1242,20 @@
                             "experimental": true,
                             "optional": true,
                             "$ref": "Runtime.StackTrace"
+                        },
+                        {
+                            "name": "codeOffset",
+                            "description": "If the scriptLanguage is WebAssembly, the code section offset in the module.",
+                            "experimental": true,
+                            "optional": true,
+                            "type": "integer"
+                        },
+                        {
+                            "name": "scriptLanguage",
+                            "description": "The language of the script.",
+                            "experimental": true,
+                            "optional": true,
+                            "$ref": "Debugger.ScriptLanguage"
                         }
                     ]
                 }
@@ -1407,6 +1453,11 @@
                             "description": "If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken\nwhen the tracking is stopped.",
                             "optional": true,
                             "type": "boolean"
+                        },
+                        {
+                            "name": "treatGlobalObjectsAsRoots",
+                            "optional": true,
+                            "type": "boolean"
                         }
                     ]
                 },
@@ -1416,6 +1467,12 @@
                         {
                             "name": "reportProgress",
                             "description": "If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.",
+                            "optional": true,
+                            "type": "boolean"
+                        },
+                        {
+                            "name": "treatGlobalObjectsAsRoots",
+                            "description": "If true, a raw snapshot without artifical roots will be generated",
                             "optional": true,
                             "type": "boolean"
                         }
@@ -1798,6 +1855,19 @@
                             "description": "Collect block-based coverage.",
                             "optional": true,
                             "type": "boolean"
+                        },
+                        {
+                            "name": "allowTriggeredUpdates",
+                            "description": "Allow the backend to send updates on its own initiative",
+                            "optional": true,
+                            "type": "boolean"
+                        }
+                    ],
+                    "returns": [
+                        {
+                            "name": "timestamp",
+                            "description": "Monotonically increasing time (in seconds) when the coverage update was taken in the backend.",
+                            "type": "number"
                         }
                     ]
                 },
@@ -1836,6 +1906,11 @@
                             "items": {
                                 "$ref": "ScriptCoverage"
                             }
+                        },
+                        {
+                            "name": "timestamp",
+                            "description": "Monotonically increasing time (in seconds) when the coverage update was taken in the backend.",
+                            "type": "number"
                         }
                     ]
                 },
@@ -1925,6 +2000,31 @@
                             "type": "string"
                         }
                     ]
+                },
+                {
+                    "name": "preciseCoverageDeltaUpdate",
+                    "description": "Reports coverage delta since the last poll (either from an event like this, or from\n`takePreciseCoverage` for the current isolate. May only be sent if precise code\ncoverage has been started. This event can be trigged by the embedder to, for example,\ntrigger collection of coverage data immediatelly at a certain point in time.",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "timestamp",
+                            "description": "Monotonically increasing time (in seconds) when the coverage update was taken in the backend.",
+                            "type": "number"
+                        },
+                        {
+                            "name": "occassion",
+                            "description": "Identifier for distinguishing coverage events.",
+                            "type": "string"
+                        },
+                        {
+                            "name": "result",
+                            "description": "Coverage data for the current isolate.",
+                            "type": "array",
+                            "items": {
+                                "$ref": "ScriptCoverage"
+                            }
+                        }
+                    ]
                 }
             ]
         },
@@ -1964,12 +2064,13 @@
                                 "number",
                                 "boolean",
                                 "symbol",
-                                "bigint"
+                                "bigint",
+                                "wasm"
                             ]
                         },
                         {
                             "name": "subtype",
-                            "description": "Object subtype hint. Specified for `object` type values only.",
+                            "description": "Object subtype hint. Specified for `object` or `wasm` type values only.",
                             "optional": true,
                             "type": "string",
                             "enum": [
@@ -1989,7 +2090,12 @@
                                 "promise",
                                 "typedarray",
                                 "arraybuffer",
-                                "dataview"
+                                "dataview",
+                                "i32",
+                                "i64",
+                                "f32",
+                                "f64",
+                                "v128"
                             ]
                         },
                         {
@@ -2300,6 +2406,19 @@
                         {
                             "name": "value",
                             "description": "The value associated with the private property.",
+                            "optional": true,
+                            "$ref": "RemoteObject"
+                        },
+                        {
+                            "name": "get",
+                            "description": "A function which serves as a getter for the private property,\nor `undefined` if there is no getter (accessor descriptors only).",
+                            "optional": true,
+                            "$ref": "RemoteObject"
+                        },
+                        {
+                            "name": "set",
+                            "description": "A function which serves as a setter for the private property,\nor `undefined` if there is no setter (accessor descriptors only).",
+                            "optional": true,
                             "$ref": "RemoteObject"
                         }
                     ]
@@ -2772,7 +2891,7 @@
                         },
                         {
                             "name": "replMode",
-                            "description": "Reserved flag for future REPL mode support. Setting this flag has currently no effect.",
+                            "description": "Setting this flag to true enables `let` re-declaration and top-level `await`.\nNote that `let` variables can only be re-declared if they originate from\n`replMode` themselves.",
                             "experimental": true,
                             "optional": true,
                             "type": "boolean"

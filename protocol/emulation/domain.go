@@ -173,6 +173,20 @@ func (d *domainClient) SetEmulatedMedia(ctx context.Context, args *SetEmulatedMe
 	return
 }
 
+// SetEmulatedVisionDeficiency invokes the Emulation method. Emulates the
+// given vision deficiency.
+func (d *domainClient) SetEmulatedVisionDeficiency(ctx context.Context, args *SetEmulatedVisionDeficiencyArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setEmulatedVisionDeficiency", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setEmulatedVisionDeficiency", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetEmulatedVisionDeficiency", Err: err}
+	}
+	return
+}
+
 // SetGeolocationOverride invokes the Emulation method. Overrides the
 // Geolocation Position or Error. Omitting any of the parameters emulates
 // position unavailable.
@@ -257,6 +271,20 @@ func (d *domainClient) SetVirtualTimePolicy(ctx context.Context, args *SetVirtua
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetVirtualTimePolicy", Err: err}
+	}
+	return
+}
+
+// SetLocaleOverride invokes the Emulation method. Overrides default host
+// system locale with the specified one.
+func (d *domainClient) SetLocaleOverride(ctx context.Context, args *SetLocaleOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setLocaleOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setLocaleOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetLocaleOverride", Err: err}
 	}
 	return
 }

@@ -189,8 +189,12 @@ func (d *domainClient) RestartFrame(ctx context.Context, args *RestartFrameArgs)
 }
 
 // Resume invokes the Debugger method. Resumes JavaScript execution.
-func (d *domainClient) Resume(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Debugger.resume", nil, nil, d.conn)
+func (d *domainClient) Resume(ctx context.Context, args *ResumeArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.resume", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.resume", nil, nil, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Debugger", Op: "Resume", Err: err}
 	}

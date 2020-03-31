@@ -3,6 +3,7 @@
 package page
 
 import (
+	"github.com/mafredri/cdp/protocol/dom"
 	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/runtime"
 	"github.com/mafredri/cdp/rpcc"
@@ -32,7 +33,15 @@ type FileChooserOpenedClient interface {
 
 // FileChooserOpenedReply is the reply for FileChooserOpened events.
 type FileChooserOpenedReply struct {
-	// Mode
+	// FrameID Id of the frame containing input node.
+	//
+	// Note: This property is experimental.
+	FrameID FrameID `json:"frameId"`
+	// BackendNodeID Input node id.
+	//
+	// Note: This property is experimental.
+	BackendNodeID dom.BackendNodeID `json:"backendNodeId"`
+	// Mode Input mode.
 	//
 	// Values: "selectSingle", "selectMultiple".
 	Mode string `json:"mode"`
@@ -137,13 +146,10 @@ type FrameScheduledNavigationClient interface {
 
 // FrameScheduledNavigationReply is the reply for FrameScheduledNavigation events.
 type FrameScheduledNavigationReply struct {
-	FrameID FrameID `json:"frameId"` // Id of the frame that has scheduled a navigation.
-	Delay   float64 `json:"delay"`   // Delay (in seconds) until the navigation is scheduled to begin. The navigation is not guaranteed to start.
-	// Reason The reason for the navigation.
-	//
-	// Values: "formSubmissionGet", "formSubmissionPost", "httpHeaderRefresh", "scriptInitiated", "metaTagRefresh", "pageBlockInterstitial", "reload".
-	Reason string `json:"reason"`
-	URL    string `json:"url"` // The destination URL for the scheduled navigation.
+	FrameID FrameID                `json:"frameId"` // Id of the frame that has scheduled a navigation.
+	Delay   float64                `json:"delay"`   // Delay (in seconds) until the navigation is scheduled to begin. The navigation is not guaranteed to start.
+	Reason  ClientNavigationReason `json:"reason"`  // The reason for the navigation.
+	URL     string                 `json:"url"`     // The destination URL for the scheduled navigation.
 }
 
 // FrameStartedLoadingClient is a client for FrameStartedLoading events. Fired
@@ -186,7 +192,28 @@ type DownloadWillBeginClient interface {
 // DownloadWillBeginReply is the reply for DownloadWillBegin events.
 type DownloadWillBeginReply struct {
 	FrameID FrameID `json:"frameId"` // Id of the frame that caused download to begin.
+	GUID    string  `json:"guid"`    // Global unique identifier of the download.
 	URL     string  `json:"url"`     // URL of the resource being downloaded.
+}
+
+// DownloadProgressClient is a client for DownloadProgress events. Fired when
+// download makes progress. Last call has |done| == true.
+type DownloadProgressClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DownloadProgressReply, error)
+	rpcc.Stream
+}
+
+// DownloadProgressReply is the reply for DownloadProgress events.
+type DownloadProgressReply struct {
+	GUID          string  `json:"guid"`          // Global unique identifier of the download.
+	TotalBytes    float64 `json:"totalBytes"`    // Total expected bytes to download.
+	ReceivedBytes float64 `json:"receivedBytes"` // Total bytes received.
+	// State Download status.
+	//
+	// Values: "inProgress", "completed", "canceled".
+	State string `json:"state"`
 }
 
 // InterstitialHiddenClient is a client for InterstitialHidden events. Fired

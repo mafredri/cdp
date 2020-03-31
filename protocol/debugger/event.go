@@ -97,6 +97,15 @@ type ScriptFailedToParseReply struct {
 	//
 	// Note: This property is experimental.
 	StackTrace *runtime.StackTrace `json:"stackTrace,omitempty"`
+	// CodeOffset If the scriptLanguage is WebAssembly, the code section
+	// offset in the module.
+	//
+	// Note: This property is experimental.
+	CodeOffset *int `json:"codeOffset,omitempty"`
+	// ScriptLanguage The language of the script.
+	//
+	// Note: This property is experimental.
+	ScriptLanguage ScriptLanguage `json:"scriptLanguage,omitempty"`
 }
 
 // ScriptParsedClient is a client for ScriptParsed events. Fired when virtual
@@ -134,4 +143,13 @@ type ScriptParsedReply struct {
 	//
 	// Note: This property is experimental.
 	StackTrace *runtime.StackTrace `json:"stackTrace,omitempty"`
+	// CodeOffset If the scriptLanguage is WebAssembly, the code section
+	// offset in the module.
+	//
+	// Note: This property is experimental.
+	CodeOffset *int `json:"codeOffset,omitempty"`
+	// ScriptLanguage The language of the script.
+	//
+	// Note: This property is experimental.
+	ScriptLanguage ScriptLanguage `json:"scriptLanguage,omitempty"`
 }

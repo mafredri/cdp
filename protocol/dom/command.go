@@ -110,6 +110,51 @@ type DescribeNodeReply struct {
 	Node Node `json:"node"` // Node description.
 }
 
+// ScrollIntoViewIfNeededArgs represents the arguments for ScrollIntoViewIfNeeded in the DOM domain.
+type ScrollIntoViewIfNeededArgs struct {
+	NodeID        *NodeID                 `json:"nodeId,omitempty"`        // Identifier of the node.
+	BackendNodeID *BackendNodeID          `json:"backendNodeId,omitempty"` // Identifier of the backend node.
+	ObjectID      *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node wrapper.
+	Rect          *Rect                   `json:"rect,omitempty"`          // The rect to be scrolled into view, relative to the node's border box, in CSS pixels. When omitted, center of the node will be used, similar to Element.scrollIntoView.
+}
+
+// NewScrollIntoViewIfNeededArgs initializes ScrollIntoViewIfNeededArgs with the required arguments.
+func NewScrollIntoViewIfNeededArgs() *ScrollIntoViewIfNeededArgs {
+	args := new(ScrollIntoViewIfNeededArgs)
+
+	return args
+}
+
+// SetNodeID sets the NodeID optional argument. Identifier of the
+// node.
+func (a *ScrollIntoViewIfNeededArgs) SetNodeID(nodeID NodeID) *ScrollIntoViewIfNeededArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument.
+// Identifier of the backend node.
+func (a *ScrollIntoViewIfNeededArgs) SetBackendNodeID(backendNodeID BackendNodeID) *ScrollIntoViewIfNeededArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
+}
+
+// SetObjectID sets the ObjectID optional argument. JavaScript object
+// id of the node wrapper.
+func (a *ScrollIntoViewIfNeededArgs) SetObjectID(objectID runtime.RemoteObjectID) *ScrollIntoViewIfNeededArgs {
+	a.ObjectID = &objectID
+	return a
+}
+
+// SetRect sets the Rect optional argument. The rect to be scrolled
+// into view, relative to the node's border box, in CSS pixels. When
+// omitted, center of the node will be used, similar to
+// Element.scrollIntoView.
+func (a *ScrollIntoViewIfNeededArgs) SetRect(rect Rect) *ScrollIntoViewIfNeededArgs {
+	a.Rect = &rect
+	return a
+}
+
 // DiscardSearchResultsArgs represents the arguments for DiscardSearchResults in the DOM domain.
 type DiscardSearchResultsArgs struct {
 	SearchID string `json:"searchId"` // Unique search session identifier.
