@@ -43,7 +43,7 @@ func Example_incognito() {
 
 		// Create the new browser context, similar to a new incognito
 		// window.
-		createCtx, err := bc.Target.CreateBrowserContext(ctx)
+		createCtx, err := bc.Target.CreateBrowserContext(ctx, target.NewCreateBrowserContextArgs())
 		if err != nil {
 			return err
 		}
