@@ -10,6 +10,7 @@ import (
 	"log"
 	"net"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -77,7 +78,15 @@ func WithTLSClientConfig(c *tls.Config) DialOption {
 	}
 }
 
+// WithTimeout specifies the timeout for every read and write operation of net.Conn.
+func WithTimeout(timeout time.Duration) DialOption {
+	return func(o *dialOptions) {
+		o.timeout = timeout
+	}
+}
+
 type dialOptions struct {
+	timeout  time.Duration
 	codec    func(io.ReadWriter) Codec
 	dialer   func(context.Context, string) (io.ReadWriteCloser, error)
 	wsDialer websocket.Dialer
@@ -138,8 +147,9 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 				// a result we might block some valid writes
 				// that are a few bytes too large.
 				return &writeLimiter{
-					limit: ws.WriteBufferSize,
-					Conn:  conn,
+					timeout: c.dialOpts.timeout,
+					limit:   ws.WriteBufferSize,
+					Conn:    conn,
 				}, err
 			}
 
@@ -190,7 +200,8 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 // websocket connection. Gives the user an actionable error message when
 // writes exceed limit.
 type writeLimiter struct {
-	limit int
+	timeout time.Duration
+	limit   int
 	net.Conn
 }
 
@@ -204,7 +215,31 @@ func (c *writeLimiter) Write(b []byte) (n int, err error) {
 	if len(b) > c.limit {
 		return 0, errors.New("rpcc: message too large (increase write buffer size or enable compression)")
 	}
+	if err = c.setWriteDeadline(); err != nil {
+		return 0, err
+	}
 	return c.Conn.Write(b)
+}
+
+func (c *writeLimiter) Read(b []byte) (n int, err error) {
+	if err = c.setReadDeadline(); err != nil {
+		return 0, err
+	}
+	return c.Conn.Read(b)
+}
+
+func (c *writeLimiter) setWriteDeadline() error {
+	if c.timeout < 1 {
+		return nil
+	}
+	return c.Conn.SetWriteDeadline(time.Now().Add(c.timeout)) // add by biter
+}
+
+func (c *writeLimiter) setReadDeadline() error {
+	if c.timeout < 1 {
+		return nil
+	}
+	return c.Conn.SetReadDeadline(time.Now().Add(c.timeout)) // add by biter
 }
 
 // Codec is used by recv and dispatcher to
