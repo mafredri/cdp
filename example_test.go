@@ -119,7 +119,7 @@ func run(timeout time.Duration) error {
 		return err
 	}
 
-	sr := cdp.NewIOStreamReader(ctx, c, *pdfData.Stream)
+	sr := c.NewIOStreamReader(ctx, *pdfData.Stream)
 	r := bufio.NewReader(sr)
 
 	// Write to file in ~r.Size() chunks.

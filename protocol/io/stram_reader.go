@@ -1,4 +1,4 @@
-package cdp
+package io
 
 import (
 	"bytes"
@@ -6,13 +6,12 @@ import (
 	"encoding/base64"
 	"io"
 	"strings"
-
-	cdpio "github.com/mafredri/cdp/protocol/io"
+	"time"
 )
 
-// IOStreamReader represents a stream reader.
-type IOStreamReader struct {
-	next  func(pos, size int) (*cdpio.ReadReply, error)
+// StreamReader represents a stream reader.
+type StreamReader struct {
+	next  func(pos, size int) (*ReadReply, error)
 	close func() error
 	r     io.Reader
 	pos   int
@@ -20,25 +19,31 @@ type IOStreamReader struct {
 }
 
 var (
-	_ io.ReadCloser = (*IOStreamReader)(nil)
+	_ io.ReadCloser = (*StreamReader)(nil)
 )
 
-// NewIOStreamReader returns a new reader for io.Streams.
-func NewIOStreamReader(ctx context.Context, c *Client, handle cdpio.StreamHandle) *IOStreamReader {
-	args := cdpio.NewReadArgs(handle)
-	return &IOStreamReader{
-		next: func(pos, size int) (*cdpio.ReadReply, error) {
+// NewStreamReader returns a reader for io.Streams that implements io.Reader
+// from the standard library.
+func NewStreamReader(ctx context.Context, ioClient interface {
+	Read(context.Context, *ReadArgs) (*ReadReply, error)
+	Close(context.Context, *CloseArgs) error
+}, handle StreamHandle) *StreamReader {
+	args := NewReadArgs(handle)
+	return &StreamReader{
+		next: func(pos, size int) (*ReadReply, error) {
 			args.SetOffset(pos).SetSize(size)
-			return c.IO.Read(ctx, args)
+			return ioClient.Read(ctx, args)
 		},
 		close: func() error {
-			// TODO(mafredri): We should probably not use this context here as it could be cancelled.
-			return c.IO.Close(ctx, cdpio.NewCloseArgs(handle))
+			// TODO(mafredri): We should ideally allow the user to define a timeout here.
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			return ioClient.Close(ctx, NewCloseArgs(handle))
 		},
 	}
 }
 
-func (r *IOStreamReader) read(p []byte) (n int, err error) {
+func (r *StreamReader) read(p []byte) (n int, err error) {
 	n, err = r.r.Read(p)
 	r.pos += n
 	if !r.eof && err == io.EOF {
@@ -49,7 +54,7 @@ func (r *IOStreamReader) read(p []byte) (n int, err error) {
 }
 
 // Read a chunk of the stream.
-func (r *IOStreamReader) Read(p []byte) (n int, err error) {
+func (r *StreamReader) Read(p []byte) (n int, err error) {
 	if r.r != nil {
 		// Continue reading from buffer.
 		return r.read(p)
@@ -98,6 +103,6 @@ func (r *IOStreamReader) Read(p []byte) (n int, err error) {
 }
 
 // Close the stream, discard any temporary backing storage.
-func (r *IOStreamReader) Close() error {
+func (r *StreamReader) Close() error {
 	return r.close()
 }

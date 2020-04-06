@@ -1,4 +1,4 @@
-package cdp
+package io
 
 import (
 	"context"
@@ -6,22 +6,20 @@ import (
 	"io"
 	"io/ioutil"
 	"testing"
-
-	cdpio "github.com/mafredri/cdp/protocol/io"
 )
 
-func newReply(data string, base64, eof bool) *cdpio.ReadReply {
-	return &cdpio.ReadReply{
+func newReply(data string, base64, eof bool) *ReadReply {
+	return &ReadReply{
 		Data:          data,
 		Base64Encoded: &base64,
 		EOF:           eof,
 	}
 }
 
-func TestIOStreamReader_base64Decode(t *testing.T) {
+func TestStreamReader_base64Decode(t *testing.T) {
 	want := "Hello world"
-	r := &IOStreamReader{
-		next: func(pos, size int) (*cdpio.ReadReply, error) {
+	r := &StreamReader{
+		next: func(pos, size int) (*ReadReply, error) {
 			return newReply(base64.StdEncoding.EncodeToString([]byte(want)), true, true), nil
 		},
 	}
@@ -37,10 +35,10 @@ func TestIOStreamReader_base64Decode(t *testing.T) {
 	}
 }
 
-func TestIOStreamReader_string(t *testing.T) {
+func TestStreamReader_string(t *testing.T) {
 	want := "Hello world"
-	r := &IOStreamReader{
-		next: func(pos, size int) (*cdpio.ReadReply, error) {
+	r := &StreamReader{
+		next: func(pos, size int) (*ReadReply, error) {
 			return newReply(want, false, true), nil
 		},
 	}
@@ -56,14 +54,14 @@ func TestIOStreamReader_string(t *testing.T) {
 	}
 }
 
-func TestIOStreamReader_replyTooBig(t *testing.T) {
+func TestStreamReader_replyTooBig(t *testing.T) {
 	want := "helloworld"
 	data := [][]byte{
 		[]byte("hello"),
 		[]byte("world"),
 	}
-	r := &IOStreamReader{
-		next: func(pos, size int) (*cdpio.ReadReply, error) {
+	r := &StreamReader{
+		next: func(pos, size int) (*ReadReply, error) {
 			if len(data) == 0 {
 				return newReply("", false, true), nil
 			}
@@ -95,8 +93,8 @@ func TestIOStreamReader_replyTooBig(t *testing.T) {
 	}
 }
 
-func TestNewIOStreamReader(t *testing.T) {
-	r := NewIOStreamReader(context.Background(), nil, "")
+func TestNewStreamReader(t *testing.T) {
+	r := NewStreamReader(context.Background(), nil, "")
 	if r == nil {
 		t.Error("want reader, got nil")
 	}
