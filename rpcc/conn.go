@@ -14,10 +14,24 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+type closeError struct {
+	msg string
+	err error
+}
+
+func (e *closeError) Error() string {
+	if e.err != nil {
+		return fmt.Sprintf("%s: %v", e.msg, e.err)
+	}
+	return e.msg
+}
+func (e *closeError) Closed() bool { return true }
+func (e *closeError) Cause() error { return e.err }
+
 var (
 	// ErrConnClosing indicates that the operation is illegal because
 	// the connection is closing.
-	ErrConnClosing = errors.New("rpcc: the connection is closing")
+	ErrConnClosing = &closeError{msg: "rpcc: the connection is closing"}
 )
 
 const (
@@ -461,19 +475,6 @@ func (c *Conn) listen(method string, w streamWriter) (func(), error) {
 	return unsub, nil
 }
 
-type closeError struct {
-	msg string
-	err error
-}
-
-func (e *closeError) Cause() error {
-	return e.err
-}
-
-func (e *closeError) Error() string {
-	return fmt.Sprintf("%s: %v", e.msg, e.err)
-}
-
 // Close closes the connection. Subsequent calls to Close will return the error
 // that closed the connection.
 func (c *Conn) close(err error) error {
@@ -487,7 +488,7 @@ func (c *Conn) close(err error) error {
 	if err == nil {
 		err = ErrConnClosing
 	} else {
-		err = &closeError{msg: ErrConnClosing.Error(), err: err}
+		err = &closeError{msg: ErrConnClosing.msg, err: err}
 	}
 	c.err = err
 	for id, call := range c.pending {
@@ -503,7 +504,7 @@ func (c *Conn) close(err error) error {
 		wserr := c.conn.Close()
 		if wserr != nil && err == ErrConnClosing {
 			err = wserr
-			c.err = &closeError{msg: ErrConnClosing.Error(), err: err}
+			c.err = &closeError{msg: ErrConnClosing.msg, err: err}
 		}
 	}
 
