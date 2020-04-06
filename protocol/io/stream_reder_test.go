@@ -18,44 +18,6 @@ func newReply(data string, base64, eof bool) *ReadReply {
 	}
 }
 
-func TestStreamReader_base64Decode(t *testing.T) {
-	want := "Hello world"
-	r := &StreamReader{
-		next: func(pos, size int) (*ReadReply, error) {
-			return newReply(base64.StdEncoding.EncodeToString([]byte(want)), true, true), nil
-		},
-	}
-
-	b, err := ioutil.ReadAll(r)
-	if err != nil {
-		t.Error(err)
-	}
-
-	got := string(b)
-	if got != want {
-		t.Errorf("want %q, got %q", want, got)
-	}
-}
-
-func TestStreamReader_string(t *testing.T) {
-	want := "Hello world"
-	r := &StreamReader{
-		next: func(pos, size int) (*ReadReply, error) {
-			return newReply(want, false, true), nil
-		},
-	}
-
-	b, err := ioutil.ReadAll(r)
-	if err != nil {
-		t.Error(err)
-	}
-
-	got := string(b)
-	if got != want {
-		t.Errorf("want %q, got %q", want, got)
-	}
-}
-
 func TestStreamReader_replyTooBig(t *testing.T) {
 	want := "helloworld"
 	data := [][]byte{
@@ -112,32 +74,83 @@ func (c *streamReaderTestClient) Close(context.Context, *CloseArgs) error {
 	return c.close
 }
 
-func TestNewStreamReader(t *testing.T) {
-	c := &streamReaderTestClient{
-		reply: []ReadReply{
-			ReadReply{Data: "hello ", EOF: false},
-			ReadReply{Data: "world!", EOF: true},
+func TestNewStreamReader_Read(t *testing.T) {
+	trueBool := true
+
+	type args struct {
+		ctx    context.Context
+		reply  []ReadReply
+		handle StreamHandle
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "Hello world",
+			args: args{
+				ctx: context.Background(),
+				reply: []ReadReply{
+					ReadReply{Data: "Hello ", EOF: false},
+					ReadReply{Data: "world!", EOF: true},
+				},
+				handle: "",
+			},
+			want: "Hello world!",
 		},
-		close: nil,
-	}
-	r := NewStreamReader(context.Background(), c, "")
-	if r == nil {
-		t.Error("want reader, got nil")
+		{
+			name: "Hello world empty EOF",
+			args: args{
+				ctx: context.Background(),
+				reply: []ReadReply{
+					ReadReply{Data: "Hello ", EOF: false},
+					ReadReply{Data: "world!", EOF: false},
+					ReadReply{Data: "", EOF: true},
+				},
+			},
+			want: "Hello world!",
+		},
+		{
+			name: "Hello world base64 encoded",
+			args: args{
+				ctx: context.Background(),
+				reply: []ReadReply{
+					ReadReply{
+						Data:          base64.StdEncoding.EncodeToString([]byte("Hello world!")),
+						Base64Encoded: &trueBool,
+						EOF:           false,
+					},
+					ReadReply{Data: "", EOF: true},
+				},
+			},
+			want: "Hello world!",
+		},
 	}
 
-	b, err := ioutil.ReadAll(r)
-	if err != nil {
-		t.Error(err)
-	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &streamReaderTestClient{
+				reply: tt.args.reply,
+				close: nil,
+			}
 
-	want := "hello world!"
-	got := string(b)
-	if diff := cmp.Diff(want, got); diff != "" {
-		t.Errorf("StreamReader.Read() failed (-want +got)\n%s", diff)
-	}
+			r := NewStreamReader(tt.args.ctx, c, tt.args.handle)
 
-	err = r.Close()
-	if err != nil {
-		t.Error(err)
+			b, err := ioutil.ReadAll(r)
+			if err != nil {
+				t.Error(err)
+			}
+
+			got := string(b)
+			if diff := cmp.Diff(tt.want, got); diff != "" {
+				t.Errorf("StreamReader.Read() failed (-want +got)\n%s", diff)
+			}
+
+			err = r.Close()
+			if err != nil {
+				t.Error(err)
+			}
+		})
 	}
 }
