@@ -6,6 +6,8 @@ import (
 	"io"
 	"io/ioutil"
 	"testing"
+
+	"github.com/google/go-cmp/cmp"
 )
 
 func newReply(data string, base64, eof bool) *ReadReply {
@@ -93,9 +95,49 @@ func TestStreamReader_replyTooBig(t *testing.T) {
 	}
 }
 
+type streamReaderTestClient struct {
+	reply []ReadReply
+	close error
+}
+
+func (c *streamReaderTestClient) Read(context.Context, *ReadArgs) (*ReadReply, error) {
+	if len(c.reply) == 0 {
+		return nil, io.EOF
+	}
+	reply := c.reply[0]
+	c.reply = c.reply[1:]
+	return &reply, nil
+}
+func (c *streamReaderTestClient) Close(context.Context, *CloseArgs) error {
+	return c.close
+}
+
 func TestNewStreamReader(t *testing.T) {
-	r := NewStreamReader(context.Background(), nil, "")
+	c := &streamReaderTestClient{
+		reply: []ReadReply{
+			ReadReply{Data: "hello ", EOF: false},
+			ReadReply{Data: "world!", EOF: true},
+		},
+		close: nil,
+	}
+	r := NewStreamReader(context.Background(), c, "")
 	if r == nil {
 		t.Error("want reader, got nil")
+	}
+
+	b, err := ioutil.ReadAll(r)
+	if err != nil {
+		t.Error(err)
+	}
+
+	want := "hello world!"
+	got := string(b)
+	if diff := cmp.Diff(want, got); diff != "" {
+		t.Errorf("StreamReader.Read() failed (-want +got)\n%s", diff)
+	}
+
+	err = r.Close()
+	if err != nil {
+		t.Error(err)
 	}
 }

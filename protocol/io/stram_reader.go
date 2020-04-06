@@ -38,6 +38,7 @@ func NewStreamReader(ctx context.Context, ioClient interface {
 			// TODO(mafredri): We should ideally allow the user to define a timeout here.
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
+
 			return ioClient.Close(ctx, NewCloseArgs(handle))
 		},
 	}
