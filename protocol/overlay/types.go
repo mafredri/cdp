@@ -44,8 +44,8 @@ type ColorFormat string
 // ColorFormat as enums.
 const (
 	ColorFormatNotSet ColorFormat = ""
-	ColorFormatRgb    ColorFormat = "rgb"
-	ColorFormatHsl    ColorFormat = "hsl"
+	ColorFormatRGB    ColorFormat = "rgb"
+	ColorFormatHSL    ColorFormat = "hsl"
 	ColorFormatHex    ColorFormat = "hex"
 )
 
