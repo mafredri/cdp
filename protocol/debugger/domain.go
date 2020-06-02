@@ -76,6 +76,21 @@ func (d *domainClient) EvaluateOnCallFrame(ctx context.Context, args *EvaluateOn
 	return
 }
 
+// ExecuteWasmEvaluator invokes the Debugger method. Execute a Wasm Evaluator
+// module on a given call frame.
+func (d *domainClient) ExecuteWasmEvaluator(ctx context.Context, args *ExecuteWasmEvaluatorArgs) (reply *ExecuteWasmEvaluatorReply, err error) {
+	reply = new(ExecuteWasmEvaluatorReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.executeWasmEvaluator", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.executeWasmEvaluator", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Debugger", Op: "ExecuteWasmEvaluator", Err: err}
+	}
+	return
+}
+
 // GetPossibleBreakpoints invokes the Debugger method. Returns possible
 // locations for breakpoint. scriptId in start and end range locations should
 // be the same.

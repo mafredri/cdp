@@ -12,9 +12,10 @@ import (
 
 // GetHighlightObjectForTestArgs represents the arguments for GetHighlightObjectForTest in the Overlay domain.
 type GetHighlightObjectForTestArgs struct {
-	NodeID          dom.NodeID `json:"nodeId"`                    // Id of the node to get highlight object for.
-	IncludeDistance *bool      `json:"includeDistance,omitempty"` // Whether to include distance info.
-	IncludeStyle    *bool      `json:"includeStyle,omitempty"`    // Whether to include style info.
+	NodeID          dom.NodeID  `json:"nodeId"`                    // Id of the node to get highlight object for.
+	IncludeDistance *bool       `json:"includeDistance,omitempty"` // Whether to include distance info.
+	IncludeStyle    *bool       `json:"includeStyle,omitempty"`    // Whether to include style info.
+	ColorFormat     ColorFormat `json:"colorFormat,omitempty"`     // The color format to get config with (default: hex)
 }
 
 // NewGetHighlightObjectForTestArgs initializes GetHighlightObjectForTestArgs with the required arguments.
@@ -35,6 +36,13 @@ func (a *GetHighlightObjectForTestArgs) SetIncludeDistance(includeDistance bool)
 // include style info.
 func (a *GetHighlightObjectForTestArgs) SetIncludeStyle(includeStyle bool) *GetHighlightObjectForTestArgs {
 	a.IncludeStyle = &includeStyle
+	return a
+}
+
+// SetColorFormat sets the ColorFormat optional argument. The color
+// format to get config with (default: hex)
+func (a *GetHighlightObjectForTestArgs) SetColorFormat(colorFormat ColorFormat) *GetHighlightObjectForTestArgs {
+	a.ColorFormat = colorFormat
 	return a
 }
 
@@ -311,4 +319,23 @@ func NewSetShowViewportSizeOnResizeArgs(show bool) *SetShowViewportSizeOnResizeA
 	args := new(SetShowViewportSizeOnResizeArgs)
 	args.Show = show
 	return args
+}
+
+// SetShowHingeArgs represents the arguments for SetShowHinge in the Overlay domain.
+type SetShowHingeArgs struct {
+	HingeConfig *HingeConfig `json:"hingeConfig,omitempty"` // hinge data, null means hideHinge
+}
+
+// NewSetShowHingeArgs initializes SetShowHingeArgs with the required arguments.
+func NewSetShowHingeArgs() *SetShowHingeArgs {
+	args := new(SetShowHingeArgs)
+
+	return args
+}
+
+// SetHingeConfig sets the HingeConfig optional argument. hinge data,
+// null means hideHinge
+func (a *SetShowHingeArgs) SetHingeConfig(hingeConfig HingeConfig) *SetShowHingeArgs {
+	a.HingeConfig = &hingeConfig
+	return a
 }

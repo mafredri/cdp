@@ -8,9 +8,9 @@ import (
 
 // SetPermissionArgs represents the arguments for SetPermission in the Browser domain.
 type SetPermissionArgs struct {
-	Origin           *string              `json:"origin,omitempty"`           // Origin the permission applies to, all origins if not specified.
 	Permission       PermissionDescriptor `json:"permission"`                 // Descriptor of permission to override.
 	Setting          PermissionSetting    `json:"setting"`                    // Setting of the permission.
+	Origin           *string              `json:"origin,omitempty"`           // Origin the permission applies to, all origins if not specified.
 	BrowserContextID *ContextID           `json:"browserContextId,omitempty"` // Context to override. When omitted, default browser context is used.
 }
 
@@ -38,8 +38,8 @@ func (a *SetPermissionArgs) SetBrowserContextID(browserContextID ContextID) *Set
 
 // GrantPermissionsArgs represents the arguments for GrantPermissions in the Browser domain.
 type GrantPermissionsArgs struct {
-	Origin           *string          `json:"origin,omitempty"`           // Origin the permission applies to, all origins if not specified.
 	Permissions      []PermissionType `json:"permissions"`                // No description.
+	Origin           *string          `json:"origin,omitempty"`           // Origin the permission applies to, all origins if not specified.
 	BrowserContextID *ContextID       `json:"browserContextId,omitempty"` // BrowserContext to override permissions. When omitted, default browser context is used.
 }
 

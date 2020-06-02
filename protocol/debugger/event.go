@@ -152,4 +152,9 @@ type ScriptParsedReply struct {
 	//
 	// Note: This property is experimental.
 	ScriptLanguage ScriptLanguage `json:"scriptLanguage,omitempty"`
+	// DebugSymbols If the scriptLanguage is WebASsembly, the source of
+	// debug symbols for the module.
+	//
+	// Note: This property is experimental.
+	DebugSymbols *DebugSymbols `json:"debugSymbols,omitempty"`
 }

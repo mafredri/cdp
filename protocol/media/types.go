@@ -53,40 +53,41 @@ func (t *Timestamp) UnmarshalJSON(data []byte) error {
 var _ json.Marshaler = (*Timestamp)(nil)
 var _ json.Unmarshaler = (*Timestamp)(nil)
 
-// PlayerProperty Player Property type
+// PlayerMessage Have one type per entry in MediaLogRecord::Type Corresponds
+// to kMessage
+type PlayerMessage struct {
+	// Level Keep in sync with MediaLogMessageLevel We are currently
+	// keeping the message level 'error' separate from the PlayerError type
+	// because right now they represent different things, this one being a
+	// DVLOG(ERROR) style log message that gets printed based on what log
+	// level is selected in the UI, and the other is a representation of a
+	// media::PipelineStatus object. Soon however we're going to be moving
+	// away from using PipelineStatus for errors and introducing a new
+	// error type which should hopefully let us integrate the error log
+	// level into the PlayerError type.
+	//
+	// Values: "error", "warning", "info", "debug".
+	Level   string `json:"level"`
+	Message string `json:"message"` // No description.
+}
+
+// PlayerProperty Corresponds to kMediaPropertyChange
 type PlayerProperty struct {
-	Name  string  `json:"name"`            // No description.
-	Value *string `json:"value,omitempty"` // No description.
+	Name  string `json:"name"`  // No description.
+	Value string `json:"value"` // No description.
 }
 
-// PlayerEventType Break out events into different types
-type PlayerEventType string
-
-// PlayerEventType as enums.
-const (
-	PlayerEventTypeNotSet         PlayerEventType = ""
-	PlayerEventTypeErrorEvent     PlayerEventType = "errorEvent"
-	PlayerEventTypeTriggeredEvent PlayerEventType = "triggeredEvent"
-	PlayerEventTypeMessageEvent   PlayerEventType = "messageEvent"
-)
-
-func (e PlayerEventType) Valid() bool {
-	switch e {
-	case "errorEvent", "triggeredEvent", "messageEvent":
-		return true
-	default:
-		return false
-	}
-}
-
-func (e PlayerEventType) String() string {
-	return string(e)
-}
-
-// PlayerEvent
+// PlayerEvent Corresponds to kMediaEventTriggered
 type PlayerEvent struct {
-	Type      PlayerEventType `json:"type"`      // No description.
-	Timestamp Timestamp       `json:"timestamp"` // Events are timestamped relative to the start of the player creation not relative to the start of playback.
-	Name      string          `json:"name"`      // No description.
-	Value     string          `json:"value"`     // No description.
+	Timestamp Timestamp `json:"timestamp"` // No description.
+	Value     string    `json:"value"`     // No description.
+}
+
+// PlayerError Corresponds to kMediaError
+type PlayerError struct {
+	// Type
+	//
+	// Values: "pipeline_error", "media_error".
+	Type      string `json:"type"`
+	ErrorCode string `json:"errorCode"` // When this switches to using media::Status instead of PipelineStatus we can remove "errorCode" and replace it with the fields from a Status instance. This also seems like a duplicate of the error level enum - there is a todo bug to have that level removed and use this instead. (crbug.com/1068454)
 }

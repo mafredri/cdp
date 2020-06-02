@@ -130,9 +130,10 @@ type FrameRequestedNavigationClient interface {
 
 // FrameRequestedNavigationReply is the reply for FrameRequestedNavigation events.
 type FrameRequestedNavigationReply struct {
-	FrameID FrameID                `json:"frameId"` // Id of the frame that is being navigated.
-	Reason  ClientNavigationReason `json:"reason"`  // The reason for the navigation.
-	URL     string                 `json:"url"`     // The destination URL for the requested navigation.
+	FrameID     FrameID                     `json:"frameId"`     // Id of the frame that is being navigated.
+	Reason      ClientNavigationReason      `json:"reason"`      // The reason for the navigation.
+	URL         string                      `json:"url"`         // The destination URL for the requested navigation.
+	Disposition ClientNavigationDisposition `json:"disposition"` // The disposition for the navigation.
 }
 
 // FrameScheduledNavigationClient is a client for FrameScheduledNavigation events.
@@ -191,9 +192,10 @@ type DownloadWillBeginClient interface {
 
 // DownloadWillBeginReply is the reply for DownloadWillBegin events.
 type DownloadWillBeginReply struct {
-	FrameID FrameID `json:"frameId"` // Id of the frame that caused download to begin.
-	GUID    string  `json:"guid"`    // Global unique identifier of the download.
-	URL     string  `json:"url"`     // URL of the resource being downloaded.
+	FrameID           FrameID `json:"frameId"`           // Id of the frame that caused download to begin.
+	GUID              string  `json:"guid"`              // Global unique identifier of the download.
+	URL               string  `json:"url"`               // URL of the resource being downloaded.
+	SuggestedFilename string  `json:"suggestedFilename"` // Suggested file name of the resource (the actual name of the file saved on disk may differ).
 }
 
 // DownloadProgressClient is a client for DownloadProgress events. Fired when

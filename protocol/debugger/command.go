@@ -158,6 +158,40 @@ type EvaluateOnCallFrameReply struct {
 	ExceptionDetails *runtime.ExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details.
 }
 
+// ExecuteWasmEvaluatorArgs represents the arguments for ExecuteWasmEvaluator in the Debugger domain.
+type ExecuteWasmEvaluatorArgs struct {
+	CallFrameID CallFrameID `json:"callFrameId"` // WebAssembly call frame identifier to evaluate on.
+	Evaluator   string      `json:"evaluator"`   // Code of the evaluator module.
+	// Timeout Terminate execution after timing out (number of
+	// milliseconds).
+	//
+	// Note: This property is experimental.
+	Timeout *runtime.TimeDelta `json:"timeout,omitempty"`
+}
+
+// NewExecuteWasmEvaluatorArgs initializes ExecuteWasmEvaluatorArgs with the required arguments.
+func NewExecuteWasmEvaluatorArgs(callFrameID CallFrameID, evaluator string) *ExecuteWasmEvaluatorArgs {
+	args := new(ExecuteWasmEvaluatorArgs)
+	args.CallFrameID = callFrameID
+	args.Evaluator = evaluator
+	return args
+}
+
+// SetTimeout sets the Timeout optional argument. Terminate execution
+// after timing out (number of milliseconds).
+//
+// Note: This property is experimental.
+func (a *ExecuteWasmEvaluatorArgs) SetTimeout(timeout runtime.TimeDelta) *ExecuteWasmEvaluatorArgs {
+	a.Timeout = &timeout
+	return a
+}
+
+// ExecuteWasmEvaluatorReply represents the return values for ExecuteWasmEvaluator in the Debugger domain.
+type ExecuteWasmEvaluatorReply struct {
+	Result           runtime.RemoteObject      `json:"result"`                     // Object wrapper for the evaluation result.
+	ExceptionDetails *runtime.ExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details.
+}
+
 // GetPossibleBreakpointsArgs represents the arguments for GetPossibleBreakpoints in the Debugger domain.
 type GetPossibleBreakpointsArgs struct {
 	Start              Location  `json:"start"`                        // Start of range to search possible breakpoint locations in.

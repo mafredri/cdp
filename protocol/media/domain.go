@@ -80,6 +80,48 @@ func (c *playerEventsAddedClient) Recv() (*PlayerEventsAddedReply, error) {
 	return event, nil
 }
 
+func (d *domainClient) PlayerMessagesLogged(ctx context.Context) (PlayerMessagesLoggedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Media.playerMessagesLogged", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &playerMessagesLoggedClient{Stream: s}, nil
+}
+
+type playerMessagesLoggedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *playerMessagesLoggedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *playerMessagesLoggedClient) Recv() (*PlayerMessagesLoggedReply, error) {
+	event := new(PlayerMessagesLoggedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Media", Op: "PlayerMessagesLogged Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) PlayerErrorsRaised(ctx context.Context) (PlayerErrorsRaisedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Media.playerErrorsRaised", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &playerErrorsRaisedClient{Stream: s}, nil
+}
+
+type playerErrorsRaisedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *playerErrorsRaisedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *playerErrorsRaisedClient) Recv() (*PlayerErrorsRaisedReply, error) {
+	event := new(PlayerErrorsRaisedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Media", Op: "PlayerErrorsRaised Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) PlayersCreated(ctx context.Context) (PlayersCreatedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Media.playersCreated", d.conn)
 	if err != nil {

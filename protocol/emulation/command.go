@@ -469,6 +469,11 @@ type SetUserAgentOverrideArgs struct {
 	UserAgent      string  `json:"userAgent"`                // User agent to use.
 	AcceptLanguage *string `json:"acceptLanguage,omitempty"` // Browser langugage to emulate.
 	Platform       *string `json:"platform,omitempty"`       // The platform navigator.platform should return.
+	// UserAgentMetadata To be sent in Sec-CH-UA-* headers and returned in
+	// navigator.userAgentData
+	//
+	// Note: This property is experimental.
+	UserAgentMetadata *UserAgentMetadata `json:"userAgentMetadata,omitempty"`
 }
 
 // NewSetUserAgentOverrideArgs initializes SetUserAgentOverrideArgs with the required arguments.
@@ -489,5 +494,15 @@ func (a *SetUserAgentOverrideArgs) SetAcceptLanguage(acceptLanguage string) *Set
 // navigator.platform should return.
 func (a *SetUserAgentOverrideArgs) SetPlatform(platform string) *SetUserAgentOverrideArgs {
 	a.Platform = &platform
+	return a
+}
+
+// SetUserAgentMetadata sets the UserAgentMetadata optional argument.
+// To be sent in Sec-CH-UA-* headers and returned in
+// navigator.userAgentData
+//
+// Note: This property is experimental.
+func (a *SetUserAgentOverrideArgs) SetUserAgentMetadata(userAgentMetadata UserAgentMetadata) *SetUserAgentOverrideArgs {
+	a.UserAgentMetadata = &userAgentMetadata
 	return a
 }

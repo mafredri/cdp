@@ -1179,6 +1179,13 @@ type Debugger interface {
 	// Evaluates expression on a given call frame.
 	EvaluateOnCallFrame(context.Context, *debugger.EvaluateOnCallFrameArgs) (*debugger.EvaluateOnCallFrameReply, error)
 
+	// Command ExecuteWasmEvaluator
+	//
+	// Execute a Wasm Evaluator module on a given call frame.
+	//
+	// Note: This command is experimental.
+	ExecuteWasmEvaluator(context.Context, *debugger.ExecuteWasmEvaluatorArgs) (*debugger.ExecuteWasmEvaluatorReply, error)
+
 	// Command GetPossibleBreakpoints
 	//
 	// Returns possible locations for breakpoint. scriptId in start and
@@ -2003,6 +2010,16 @@ type Media interface {
 	// chronological order.
 	PlayerEventsAdded(context.Context) (media.PlayerEventsAddedClient, error)
 
+	// Event PlayerMessagesLogged
+	//
+	// Send a list of any messages that need to be delivered.
+	PlayerMessagesLogged(context.Context) (media.PlayerMessagesLoggedClient, error)
+
+	// Event PlayerErrorsRaised
+	//
+	// Send a list of any errors that need to be delivered.
+	PlayerErrorsRaised(context.Context) (media.PlayerErrorsRaisedClient, error)
+
 	// Event PlayersCreated
 	//
 	// Called whenever a player is created, or when a new agent joins and
@@ -2464,6 +2481,11 @@ type Overlay interface {
 	//
 	// Paints viewport size upon main frame resize.
 	SetShowViewportSizeOnResize(context.Context, *overlay.SetShowViewportSizeOnResizeArgs) error
+
+	// Command SetShowHinge
+	//
+	// Add a dual screen device hinge
+	SetShowHinge(context.Context, *overlay.SetShowHingeArgs) error
 
 	// Event InspectNodeRequested
 	//

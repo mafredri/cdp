@@ -90,3 +90,12 @@ func (e ScriptLanguage) Valid() bool {
 func (e ScriptLanguage) String() string {
 	return string(e)
 }
+
+// DebugSymbols Debug symbols available for a wasm script.
+type DebugSymbols struct {
+	// Type Type of the debug symbols.
+	//
+	// Values: "None", "SourceMap", "EmbeddedDWARF", "ExternalDWARF".
+	Type        string  `json:"type"`
+	ExternalURL *string `json:"externalURL,omitempty"` // URL of the external symbol source.
+}

@@ -264,8 +264,16 @@ type ResourceTiming struct {
 	//
 	// Note: This property is experimental.
 	WorkerReady float64 `json:"workerReady"`
-	SendStart   float64 `json:"sendStart"` // Started sending request.
-	SendEnd     float64 `json:"sendEnd"`   // Finished sending request.
+	// WorkerFetchStart Started fetch event.
+	//
+	// Note: This property is experimental.
+	WorkerFetchStart float64 `json:"workerFetchStart"`
+	// WorkerRespondWithSettled Settled fetch event respondWith promise.
+	//
+	// Note: This property is experimental.
+	WorkerRespondWithSettled float64 `json:"workerRespondWithSettled"`
+	SendStart                float64 `json:"sendStart"` // Started sending request.
+	SendEnd                  float64 `json:"sendEnd"`   // Finished sending request.
 	// PushStart Time the server started pushing request.
 	//
 	// Note: This property is experimental.
@@ -409,28 +417,56 @@ func (e BlockedReason) String() string {
 	return string(e)
 }
 
+// ServiceWorkerResponseSource Source of serviceworker response.
+type ServiceWorkerResponseSource string
+
+// ServiceWorkerResponseSource as enums.
+const (
+	ServiceWorkerResponseSourceNotSet       ServiceWorkerResponseSource = ""
+	ServiceWorkerResponseSourceCacheStorage ServiceWorkerResponseSource = "cache-storage"
+	ServiceWorkerResponseSourceHTTPCache    ServiceWorkerResponseSource = "http-cache"
+	ServiceWorkerResponseSourceFallbackCode ServiceWorkerResponseSource = "fallback-code"
+	ServiceWorkerResponseSourceNetwork      ServiceWorkerResponseSource = "network"
+)
+
+func (e ServiceWorkerResponseSource) Valid() bool {
+	switch e {
+	case "cache-storage", "http-cache", "fallback-code", "network":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ServiceWorkerResponseSource) String() string {
+	return string(e)
+}
+
 // Response HTTP response data.
 type Response struct {
-	URL                string           `json:"url"`                          // Response URL. This URL can be different from CachedResource.url in case of redirect.
-	Status             int              `json:"status"`                       // HTTP response status code.
-	StatusText         string           `json:"statusText"`                   // HTTP response status text.
-	Headers            Headers          `json:"headers"`                      // HTTP response headers.
-	HeadersText        *string          `json:"headersText,omitempty"`        // HTTP response headers text.
-	MimeType           string           `json:"mimeType"`                     // Resource mimeType as determined by the browser.
-	RequestHeaders     Headers          `json:"requestHeaders,omitempty"`     // Refined HTTP request headers that were actually transmitted over the network.
-	RequestHeadersText *string          `json:"requestHeadersText,omitempty"` // HTTP request headers text.
-	ConnectionReused   bool             `json:"connectionReused"`             // Specifies whether physical connection was actually reused for this request.
-	ConnectionID       float64          `json:"connectionId"`                 // Physical connection id that was actually used for this request.
-	RemoteIPAddress    *string          `json:"remoteIPAddress,omitempty"`    // Remote IP address.
-	RemotePort         *int             `json:"remotePort,omitempty"`         // Remote port.
-	FromDiskCache      *bool            `json:"fromDiskCache,omitempty"`      // Specifies that the request was served from the disk cache.
-	FromServiceWorker  *bool            `json:"fromServiceWorker,omitempty"`  // Specifies that the request was served from the ServiceWorker.
-	FromPrefetchCache  *bool            `json:"fromPrefetchCache,omitempty"`  // Specifies that the request was served from the prefetch cache.
-	EncodedDataLength  float64          `json:"encodedDataLength"`            // Total number of bytes received for this request so far.
-	Timing             *ResourceTiming  `json:"timing,omitempty"`             // Timing information for the given request.
-	Protocol           *string          `json:"protocol,omitempty"`           // Protocol used to fetch this request.
-	SecurityState      security.State   `json:"securityState"`                // Security state of the request resource.
-	SecurityDetails    *SecurityDetails `json:"securityDetails,omitempty"`    // Security details for the request.
+	URL                         string                      `json:"url"`                                   // Response URL. This URL can be different from CachedResource.url in case of redirect.
+	Status                      int                         `json:"status"`                                // HTTP response status code.
+	StatusText                  string                      `json:"statusText"`                            // HTTP response status text.
+	Headers                     Headers                     `json:"headers"`                               // HTTP response headers.
+	HeadersText                 *string                     `json:"headersText,omitempty"`                 // HTTP response headers text.
+	MimeType                    string                      `json:"mimeType"`                              // Resource mimeType as determined by the browser.
+	RequestHeaders              Headers                     `json:"requestHeaders,omitempty"`              // Refined HTTP request headers that were actually transmitted over the network.
+	RequestHeadersText          *string                     `json:"requestHeadersText,omitempty"`          // HTTP request headers text.
+	ConnectionReused            bool                        `json:"connectionReused"`                      // Specifies whether physical connection was actually reused for this request.
+	ConnectionID                float64                     `json:"connectionId"`                          // Physical connection id that was actually used for this request.
+	RemoteIPAddress             *string                     `json:"remoteIPAddress,omitempty"`             // Remote IP address.
+	RemotePort                  *int                        `json:"remotePort,omitempty"`                  // Remote port.
+	FromDiskCache               *bool                       `json:"fromDiskCache,omitempty"`               // Specifies that the request was served from the disk cache.
+	FromServiceWorker           *bool                       `json:"fromServiceWorker,omitempty"`           // Specifies that the request was served from the ServiceWorker.
+	FromPrefetchCache           *bool                       `json:"fromPrefetchCache,omitempty"`           // Specifies that the request was served from the prefetch cache.
+	EncodedDataLength           float64                     `json:"encodedDataLength"`                     // Total number of bytes received for this request so far.
+	Timing                      *ResourceTiming             `json:"timing,omitempty"`                      // Timing information for the given request.
+	ServiceWorkerResponseSource ServiceWorkerResponseSource `json:"serviceWorkerResponseSource,omitempty"` // Response source of response from ServiceWorker.
+	ResponseTime                TimeSinceEpoch              `json:"responseTime,omitempty"`                // The time at which the returned response was generated.
+	CacheStorageCacheName       *string                     `json:"cacheStorageCacheName,omitempty"`       // Cache Storage Cache Name.
+	Protocol                    *string                     `json:"protocol,omitempty"`                    // Protocol used to fetch this request.
+	SecurityState               security.State              `json:"securityState"`                         // Security state of the request resource.
+	SecurityDetails             *SecurityDetails            `json:"securityDetails,omitempty"`             // Security details for the request.
 }
 
 // WebSocketRequest WebSocket request data.

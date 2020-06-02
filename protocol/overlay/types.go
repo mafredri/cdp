@@ -6,20 +6,67 @@ import (
 	"github.com/mafredri/cdp/protocol/dom"
 )
 
+// GridHighlightConfig Configuration data for the highlighting of Grid
+// elements.
+type GridHighlightConfig struct {
+	ShowGridExtensionLines *bool     `json:"showGridExtensionLines,omitempty"` // Whether the extension lines from grid cells to the rulers should be shown (default: false).
+	GridBorderColor        *dom.RGBA `json:"gridBorderColor,omitempty"`        // The grid container border highlight color (default: transparent).
+	CellBorderColor        *dom.RGBA `json:"cellBorderColor,omitempty"`        // The cell border color (default: transparent).
+	GridBorderDash         *bool     `json:"gridBorderDash,omitempty"`         // Whether the grid border is dashed (default: false).
+	CellBorderDash         *bool     `json:"cellBorderDash,omitempty"`         // Whether the cell border is dashed (default: false).
+	RowGapColor            *dom.RGBA `json:"rowGapColor,omitempty"`            // The row gap highlight fill color (default: transparent).
+	RowHatchColor          *dom.RGBA `json:"rowHatchColor,omitempty"`          // The row gap hatching fill color (default: transparent).
+	ColumnGapColor         *dom.RGBA `json:"columnGapColor,omitempty"`         // The column gap highlight fill color (default: transparent).
+	ColumnHatchColor       *dom.RGBA `json:"columnHatchColor,omitempty"`       // The column gap hatching fill color (default: transparent).
+}
+
 // HighlightConfig Configuration data for the highlighting of page elements.
 type HighlightConfig struct {
-	ShowInfo           *bool     `json:"showInfo,omitempty"`           // Whether the node info tooltip should be shown (default: false).
-	ShowStyles         *bool     `json:"showStyles,omitempty"`         // Whether the node styles in the tooltip (default: false).
-	ShowRulers         *bool     `json:"showRulers,omitempty"`         // Whether the rulers should be shown (default: false).
-	ShowExtensionLines *bool     `json:"showExtensionLines,omitempty"` // Whether the extension lines from node to the rulers should be shown (default: false).
-	ContentColor       *dom.RGBA `json:"contentColor,omitempty"`       // The content box highlight fill color (default: transparent).
-	PaddingColor       *dom.RGBA `json:"paddingColor,omitempty"`       // The padding highlight fill color (default: transparent).
-	BorderColor        *dom.RGBA `json:"borderColor,omitempty"`        // The border highlight fill color (default: transparent).
-	MarginColor        *dom.RGBA `json:"marginColor,omitempty"`        // The margin highlight fill color (default: transparent).
-	EventTargetColor   *dom.RGBA `json:"eventTargetColor,omitempty"`   // The event target element highlight fill color (default: transparent).
-	ShapeColor         *dom.RGBA `json:"shapeColor,omitempty"`         // The shape outside fill color (default: transparent).
-	ShapeMarginColor   *dom.RGBA `json:"shapeMarginColor,omitempty"`   // The shape margin fill color (default: transparent).
-	CSSGridColor       *dom.RGBA `json:"cssGridColor,omitempty"`       // The grid layout color (default: transparent).
+	ShowInfo            *bool                `json:"showInfo,omitempty"`            // Whether the node info tooltip should be shown (default: false).
+	ShowStyles          *bool                `json:"showStyles,omitempty"`          // Whether the node styles in the tooltip (default: false).
+	ShowRulers          *bool                `json:"showRulers,omitempty"`          // Whether the rulers should be shown (default: false).
+	ShowExtensionLines  *bool                `json:"showExtensionLines,omitempty"`  // Whether the extension lines from node to the rulers should be shown (default: false).
+	ContentColor        *dom.RGBA            `json:"contentColor,omitempty"`        // The content box highlight fill color (default: transparent).
+	PaddingColor        *dom.RGBA            `json:"paddingColor,omitempty"`        // The padding highlight fill color (default: transparent).
+	BorderColor         *dom.RGBA            `json:"borderColor,omitempty"`         // The border highlight fill color (default: transparent).
+	MarginColor         *dom.RGBA            `json:"marginColor,omitempty"`         // The margin highlight fill color (default: transparent).
+	EventTargetColor    *dom.RGBA            `json:"eventTargetColor,omitempty"`    // The event target element highlight fill color (default: transparent).
+	ShapeColor          *dom.RGBA            `json:"shapeColor,omitempty"`          // The shape outside fill color (default: transparent).
+	ShapeMarginColor    *dom.RGBA            `json:"shapeMarginColor,omitempty"`    // The shape margin fill color (default: transparent).
+	CSSGridColor        *dom.RGBA            `json:"cssGridColor,omitempty"`        // The grid layout color (default: transparent).
+	ColorFormat         ColorFormat          `json:"colorFormat,omitempty"`         // The color format used to format color styles (default: hex).
+	GridHighlightConfig *GridHighlightConfig `json:"gridHighlightConfig,omitempty"` // The grid layout highlight configuration (default: all transparent).
+}
+
+// ColorFormat
+type ColorFormat string
+
+// ColorFormat as enums.
+const (
+	ColorFormatNotSet ColorFormat = ""
+	ColorFormatRgb    ColorFormat = "rgb"
+	ColorFormatHsl    ColorFormat = "hsl"
+	ColorFormatHex    ColorFormat = "hex"
+)
+
+func (e ColorFormat) Valid() bool {
+	switch e {
+	case "rgb", "hsl", "hex":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ColorFormat) String() string {
+	return string(e)
+}
+
+// HingeConfig Configuration for dual screen hinge
+type HingeConfig struct {
+	Rect         dom.Rect  `json:"rect"`                   // A rectangle represent hinge
+	ContentColor *dom.RGBA `json:"contentColor,omitempty"` // The content box highlight fill color (default: a dark color).
+	OutlineColor *dom.RGBA `json:"outlineColor,omitempty"` // The content box highlight outline color (default: transparent).
 }
 
 // InspectMode

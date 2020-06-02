@@ -319,9 +319,9 @@ type RequestWillBeSentExtraInfoClient interface {
 
 // RequestWillBeSentExtraInfoReply is the reply for RequestWillBeSentExtraInfo events.
 type RequestWillBeSentExtraInfoReply struct {
-	RequestID      RequestID                 `json:"requestId"`      // Request identifier. Used to match this information to an existing requestWillBeSent event.
-	BlockedCookies []BlockedCookieWithReason `json:"blockedCookies"` // A list of cookies which will not be sent with this request along with corresponding reasons for blocking.
-	Headers        Headers                   `json:"headers"`        // Raw request headers as they will be sent over the wire.
+	RequestID         RequestID                 `json:"requestId"`         // Request identifier. Used to match this information to an existing requestWillBeSent event.
+	AssociatedCookies []BlockedCookieWithReason `json:"associatedCookies"` // A list of cookies potentially associated to the requested URL. This includes both cookies sent with the request and the ones not sent; the latter are distinguished by having blockedReason field set.
+	Headers           Headers                   `json:"headers"`           // Raw request headers as they will be sent over the wire.
 }
 
 // ResponseReceivedExtraInfoClient is a client for ResponseReceivedExtraInfo events.

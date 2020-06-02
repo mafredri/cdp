@@ -258,6 +258,19 @@ func (d *domainClient) SetShowViewportSizeOnResize(ctx context.Context, args *Se
 	return
 }
 
+// SetShowHinge invokes the Overlay method. Add a dual screen device hinge
+func (d *domainClient) SetShowHinge(ctx context.Context, args *SetShowHingeArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowHinge", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowHinge", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowHinge", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) InspectNodeRequested(ctx context.Context) (InspectNodeRequestedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Overlay.inspectNodeRequested", d.conn)
 	if err != nil {

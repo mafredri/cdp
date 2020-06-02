@@ -46,3 +46,26 @@ func (e VirtualTimePolicy) Valid() bool {
 func (e VirtualTimePolicy) String() string {
 	return string(e)
 }
+
+// UserAgentBrandVersion Used to specify User Agent Cient Hints to emulate.
+// See https://wicg.github.io/ua-client-hints
+//
+// Note: This type is experimental.
+type UserAgentBrandVersion struct {
+	Brand   string `json:"brand"`   // No description.
+	Version string `json:"version"` // No description.
+}
+
+// UserAgentMetadata Used to specify User Agent Cient Hints to emulate. See
+// https://wicg.github.io/ua-client-hints
+//
+// Note: This type is experimental.
+type UserAgentMetadata struct {
+	Brands          []UserAgentBrandVersion `json:"brands"`          // No description.
+	FullVersion     string                  `json:"fullVersion"`     // No description.
+	Platform        string                  `json:"platform"`        // No description.
+	PlatformVersion string                  `json:"platformVersion"` // No description.
+	Architecture    string                  `json:"architecture"`    // No description.
+	Model           string                  `json:"model"`           // No description.
+	Mobile          bool                    `json:"mobile"`          // No description.
+}

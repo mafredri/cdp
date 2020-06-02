@@ -240,6 +240,33 @@ func (e ClientNavigationReason) String() string {
 	return string(e)
 }
 
+// ClientNavigationDisposition
+//
+// Note: This type is experimental.
+type ClientNavigationDisposition string
+
+// ClientNavigationDisposition as enums.
+const (
+	ClientNavigationDispositionNotSet     ClientNavigationDisposition = ""
+	ClientNavigationDispositionCurrentTab ClientNavigationDisposition = "currentTab"
+	ClientNavigationDispositionNewTab     ClientNavigationDisposition = "newTab"
+	ClientNavigationDispositionNewWindow  ClientNavigationDisposition = "newWindow"
+	ClientNavigationDispositionDownload   ClientNavigationDisposition = "download"
+)
+
+func (e ClientNavigationDisposition) Valid() bool {
+	switch e {
+	case "currentTab", "newTab", "newWindow", "download":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ClientNavigationDisposition) String() string {
+	return string(e)
+}
+
 // InstallabilityErrorArgument
 //
 // Note: This type is experimental.
