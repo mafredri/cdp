@@ -44,10 +44,12 @@ Here is an example of using `cdp`:
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"time"
 
 	"github.com/mafredri/cdp"
@@ -146,6 +148,35 @@ func run(timeout time.Duration) error {
 	}
 
 	fmt.Printf("Saved screenshot: %s\n", screenshotName)
+
+	pdfName := "page.pdf"
+	f, err := os.Create(pdfName)
+	if err != nil {
+		return err
+	}
+
+	pdfArgs := page.NewPrintToPDFArgs().
+		SetTransferMode("ReturnAsStream") // Request stream.
+	pdfData, err := c.Page.PrintToPDF(ctx, pdfArgs)
+	if err != nil {
+		return err
+	}
+
+	sr := c.NewIOStreamReader(ctx, *pdfData.Stream)
+	r := bufio.NewReader(sr)
+
+	// Write to file in ~r.Size() chunks.
+	_, err = r.WriteTo(f)
+	if err != nil {
+		return err
+	}
+
+	err = f.Close()
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Saved PDF: %s\n", pdfName)
 
 	return nil
 }
