@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/gorilla/websocket"
 	"github.com/mafredri/cdp"
 	"github.com/mafredri/cdp/internal/errors"
 	"github.com/mafredri/cdp/protocol/target"
@@ -76,6 +77,10 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 				// Cleanup, the underlying connection was closed
 				// before the Manager and its context does not
 				// inherit from rpcc.Conn.
+				m.cancel()
+				return true
+			}
+			if _, ok := e.(*websocket.CloseError); ok {
 				m.cancel()
 				return true
 			}
