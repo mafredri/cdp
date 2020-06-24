@@ -71,7 +71,7 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 	defer ev.Close()
 
 	isClosing := func(err error) bool {
-		for _, e := range []error{err, cdp.ErrorCause(err)} {
+		for e := err;; {
 			// Test if this is an rpcc.closeError.
 			if v, ok := e.(interface{ Closed() bool }); ok && v.Closed() {
 				// Cleanup, the underlying connection was closed
@@ -80,9 +80,10 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 				m.cancel()
 				return true
 			}
-			if _, ok := e.(*websocket.CloseError); ok {
-				m.cancel()
-				return true
+			if v, ok := e.(errors.Causer); ok {
+				e = v.Cause()
+			} else {
+				break
 			}
 		}
 		if cdp.ErrorCause(err) == context.Canceled {
