@@ -4,7 +4,6 @@ import (
 	"context"
 	"time"
 
-	"github.com/gorilla/websocket"
 	"github.com/mafredri/cdp"
 	"github.com/mafredri/cdp/internal/errors"
 	"github.com/mafredri/cdp/protocol/target"
