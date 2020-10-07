@@ -99,9 +99,13 @@ func (d *domainClient) ExposeDevToolsProtocol(ctx context.Context, args *ExposeD
 // CreateBrowserContext invokes the Target method. Creates a new empty
 // BrowserContext. Similar to an incognito profile but you can have more than
 // one.
-func (d *domainClient) CreateBrowserContext(ctx context.Context) (reply *CreateBrowserContextReply, err error) {
+func (d *domainClient) CreateBrowserContext(ctx context.Context, args *CreateBrowserContextArgs) (reply *CreateBrowserContextReply, err error) {
 	reply = new(CreateBrowserContextReply)
-	err = rpcc.Invoke(ctx, "Target.createBrowserContext", nil, reply, d.conn)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Target.createBrowserContext", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Target.createBrowserContext", nil, reply, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "CreateBrowserContext", Err: err}
 	}
@@ -188,7 +192,8 @@ func (d *domainClient) GetTargets(ctx context.Context) (reply *GetTargetsReply, 
 }
 
 // SendMessageToTarget invokes the Target method. Sends protocol message over
-// session with given id.
+// session with given id. Consider using flat mode instead; see commands
+// attachToTarget, setAutoAttach, and crbug.com/991325.
 func (d *domainClient) SendMessageToTarget(ctx context.Context, args *SendMessageToTargetArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Target.sendMessageToTarget", args, nil, d.conn)

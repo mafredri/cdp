@@ -133,6 +133,20 @@ func (d *domainClient) SetInspectMode(ctx context.Context, args *SetInspectModeA
 	return
 }
 
+// SetShowAdHighlights invokes the Overlay method. Highlights owner element of
+// all frames detected to be ads.
+func (d *domainClient) SetShowAdHighlights(ctx context.Context, args *SetShowAdHighlightsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowAdHighlights", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowAdHighlights", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowAdHighlights", Err: err}
+	}
+	return
+}
+
 // SetPausedInDebuggerMessage invokes the Overlay method.
 func (d *domainClient) SetPausedInDebuggerMessage(ctx context.Context, args *SetPausedInDebuggerMessageArgs) (err error) {
 	if args != nil {
@@ -188,6 +202,20 @@ func (d *domainClient) SetShowPaintRects(ctx context.Context, args *SetShowPaint
 	return
 }
 
+// SetShowLayoutShiftRegions invokes the Overlay method. Requests that backend
+// shows layout shift regions
+func (d *domainClient) SetShowLayoutShiftRegions(ctx context.Context, args *SetShowLayoutShiftRegionsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowLayoutShiftRegions", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowLayoutShiftRegions", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowLayoutShiftRegions", Err: err}
+	}
+	return
+}
+
 // SetShowScrollBottleneckRects invokes the Overlay method. Requests that
 // backend shows scroll bottleneck rects
 func (d *domainClient) SetShowScrollBottleneckRects(ctx context.Context, args *SetShowScrollBottleneckRectsArgs) (err error) {
@@ -230,15 +258,15 @@ func (d *domainClient) SetShowViewportSizeOnResize(ctx context.Context, args *Se
 	return
 }
 
-// SetSuspended invokes the Overlay method.
-func (d *domainClient) SetSuspended(ctx context.Context, args *SetSuspendedArgs) (err error) {
+// SetShowHinge invokes the Overlay method. Add a dual screen device hinge
+func (d *domainClient) SetShowHinge(ctx context.Context, args *SetShowHingeArgs) (err error) {
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Overlay.setSuspended", args, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Overlay.setShowHinge", args, nil, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Overlay.setSuspended", nil, nil, d.conn)
+		err = rpcc.Invoke(ctx, "Overlay.setShowHinge", nil, nil, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Overlay", Op: "SetSuspended", Err: err}
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowHinge", Err: err}
 	}
 	return
 }
@@ -302,6 +330,27 @@ func (c *screenshotRequestedClient) Recv() (*ScreenshotRequestedReply, error) {
 	event := new(ScreenshotRequestedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Overlay", Op: "ScreenshotRequested Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) InspectModeCanceled(ctx context.Context) (InspectModeCanceledClient, error) {
+	s, err := rpcc.NewStream(ctx, "Overlay.inspectModeCanceled", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &inspectModeCanceledClient{Stream: s}, nil
+}
+
+type inspectModeCanceledClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *inspectModeCanceledClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *inspectModeCanceledClient) Recv() (*InspectModeCanceledReply, error) {
+	event := new(InspectModeCanceledReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Overlay", Op: "InspectModeCanceled Recv", Err: err}
 	}
 	return event, nil
 }

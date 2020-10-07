@@ -26,6 +26,20 @@ type CertificateErrorReply struct {
 	RequestURL string `json:"requestURL"` // The url that was requested.
 }
 
+// VisibleSecurityStateChangedClient is a client for VisibleSecurityStateChanged events.
+// The security state of the page changed.
+type VisibleSecurityStateChangedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*VisibleSecurityStateChangedReply, error)
+	rpcc.Stream
+}
+
+// VisibleSecurityStateChangedReply is the reply for VisibleSecurityStateChanged events.
+type VisibleSecurityStateChangedReply struct {
+	VisibleSecurityState VisibleSecurityState `json:"visibleSecurityState"` // Security state information about the page.
+}
+
 // StateChangedClient is a client for SecurityStateChanged events. The
 // security state of the page changed.
 type StateChangedClient interface {
@@ -37,9 +51,16 @@ type StateChangedClient interface {
 
 // StateChangedReply is the reply for SecurityStateChanged events.
 type StateChangedReply struct {
-	SecurityState         State                 `json:"securityState"`         // Security state.
-	SchemeIsCryptographic bool                  `json:"schemeIsCryptographic"` // True if the page was loaded over cryptographic transport such as HTTPS.
-	Explanations          []StateExplanation    `json:"explanations"`          // List of explanations for the security state. If the overall security state is `insecure` or `warning`, at least one corresponding explanation should be included.
-	InsecureContentStatus InsecureContentStatus `json:"insecureContentStatus"` // Information about insecure content on the page.
-	Summary               *string               `json:"summary,omitempty"`     // Overrides user-visible description of the state.
+	SecurityState State `json:"securityState"` // Security state.
+	// SchemeIsCryptographic is deprecated.
+	//
+	// Deprecated: True if the page was loaded over cryptographic
+	// transport such as HTTPS.
+	SchemeIsCryptographic bool               `json:"schemeIsCryptographic"`
+	Explanations          []StateExplanation `json:"explanations"` // List of explanations for the security state. If the overall security state is `insecure` or `warning`, at least one corresponding explanation should be included.
+	// InsecureContentStatus is deprecated.
+	//
+	// Deprecated: Information about insecure content on the page.
+	InsecureContentStatus InsecureContentStatus `json:"insecureContentStatus"`
+	Summary               *string               `json:"summary,omitempty"` // Overrides user-visible description of the state.
 }

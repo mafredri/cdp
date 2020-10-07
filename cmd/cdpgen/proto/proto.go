@@ -102,7 +102,7 @@ func (c Command) ReplyName(d Domain) string {
 }
 
 // ArgsSignature returns the signature (for use as function parameters).
-func (c Command) ArgsSignature(d Domain) string {
+func (c Command) ArgsSignature(pkg string, d Domain) string {
 	var args []string
 	for _, arg := range filter(optional(false), c.Parameters...) {
 		name := arg.Name(d)
@@ -110,7 +110,7 @@ func (c Command) ArgsSignature(d Domain) string {
 			name = name[0 : len(name)-1]
 		}
 		name += " "
-		args = append(args, name+arg.GoType("cdp", d))
+		args = append(args, name+arg.GoType(pkg, d))
 	}
 	return strings.Join(args, ", ")
 }
@@ -270,11 +270,11 @@ func nameInDomain(d Domain, name, _ string) string {
 	return name
 }
 
-func (at AnyType) getType() string {
+func (at AnyType) getType(pkg string) string {
 	if at.Ref != "" {
 		return "reference"
 	}
-	if (at.IDName == "Timestamp" || at.IDName == "TimeSinceEpoch" || at.IDName == "MonotonicTime") && at.Type == "number" {
+	if (at.IDName == "Timestamp" || at.IDName == "NetworkTimeSinceEpoch" || (pkg != "network" && at.IDName == "TimeSinceEpoch") || at.IDName == "MonotonicTime") && at.Type == "number" {
 		return "time"
 	}
 	if at.IsEnum() {
@@ -294,7 +294,18 @@ func (at AnyType) getType() string {
 
 // GoType returns the Go representation for a protocol type.
 func (at AnyType) GoType(pkg string, d Domain) string {
-	switch at.getType() {
+	// Special case for circular types.
+	if pkg == "page" && at.Name(d) == "FrameID" {
+		return "= internal.PageFrameID"
+	}
+	if pkg == "network" && at.Name(d) == "TimeSinceEpoch" {
+		return "= internal.NetworkTimeSinceEpoch"
+	}
+	if pkg == "browser" && at.Name(d) == "ContextID" {
+		return "= internal.BrowserContextID"
+	}
+
+	switch at.getType(pkg) {
 	case "any":
 		return "json.RawMessage"
 	case "boolean":
@@ -310,7 +321,7 @@ func (at AnyType) GoType(pkg string, d Domain) string {
 	case "array":
 		return "[]" + at.Items.GoType(pkg, d)
 	case "reference":
-		return at.refType(d)
+		return at.refType(pkg, d)
 	case "time":
 		return "time.Time"
 	case "enum":
@@ -330,7 +341,7 @@ func (at AnyType) GoType(pkg string, d Domain) string {
 	panic("unreachable")
 }
 
-func (at AnyType) refType(d Domain) string {
+func (at AnyType) refType(pkg string, d Domain) string {
 	var prefix string
 	if strings.ContainsRune(at.Ref, '.') {
 		s := strings.Split(at.Ref, ".")
@@ -348,7 +359,18 @@ func (at AnyType) refType(d Domain) string {
 			prefix = ""
 			at.Ref = s[1]
 		}
-		return prefix + strings.Title(lint.Name(s[1]))
+		name := prefix + strings.Title(lint.Name(s[1]))
+
+		// Special cases for circular types.
+		switch {
+		case (pkg == "network" || pkg == "dom") && name == "page.FrameID":
+			return "internal.PageFrameID"
+		case pkg == "target" && name == "browser.ContextID":
+			return "internal.BrowserContextID"
+		case pkg == "security" && name == "network.TimeSinceEpoch":
+			return "internal.NetworkTimeSinceEpoch"
+		}
+		return name
 	}
 	return prefix + nameInDomain(d, at.Ref, "")
 }

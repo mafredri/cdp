@@ -236,13 +236,43 @@ func (a *SetEmitTouchEventsForMouseArgs) SetConfiguration(configuration string) 
 
 // SetEmulatedMediaArgs represents the arguments for SetEmulatedMedia in the Emulation domain.
 type SetEmulatedMediaArgs struct {
-	Media string `json:"media"` // Media type to emulate. Empty string disables the override.
+	Media    *string        `json:"media,omitempty"`    // Media type to emulate. Empty string disables the override.
+	Features []MediaFeature `json:"features,omitempty"` // Media features to emulate.
 }
 
 // NewSetEmulatedMediaArgs initializes SetEmulatedMediaArgs with the required arguments.
-func NewSetEmulatedMediaArgs(media string) *SetEmulatedMediaArgs {
+func NewSetEmulatedMediaArgs() *SetEmulatedMediaArgs {
 	args := new(SetEmulatedMediaArgs)
-	args.Media = media
+
+	return args
+}
+
+// SetMedia sets the Media optional argument. Media type to emulate.
+// Empty string disables the override.
+func (a *SetEmulatedMediaArgs) SetMedia(media string) *SetEmulatedMediaArgs {
+	a.Media = &media
+	return a
+}
+
+// SetFeatures sets the Features optional argument. Media features to
+// emulate.
+func (a *SetEmulatedMediaArgs) SetFeatures(features []MediaFeature) *SetEmulatedMediaArgs {
+	a.Features = features
+	return a
+}
+
+// SetEmulatedVisionDeficiencyArgs represents the arguments for SetEmulatedVisionDeficiency in the Emulation domain.
+type SetEmulatedVisionDeficiencyArgs struct {
+	// Type Vision deficiency to emulate.
+	//
+	// Values: "none", "achromatopsia", "blurredVision", "deuteranopia", "protanopia", "tritanopia".
+	Type string `json:"type"`
+}
+
+// NewSetEmulatedVisionDeficiencyArgs initializes SetEmulatedVisionDeficiencyArgs with the required arguments.
+func NewSetEmulatedVisionDeficiencyArgs(typ string) *SetEmulatedVisionDeficiencyArgs {
+	args := new(SetEmulatedVisionDeficiencyArgs)
+	args.Type = typ
 	return args
 }
 
@@ -388,6 +418,38 @@ type SetVirtualTimePolicyReply struct {
 	VirtualTimeTicksBase float64 `json:"virtualTimeTicksBase"` // Absolute timestamp at which virtual time was first enabled (up time in milliseconds).
 }
 
+// SetLocaleOverrideArgs represents the arguments for SetLocaleOverride in the Emulation domain.
+type SetLocaleOverrideArgs struct {
+	Locale *string `json:"locale,omitempty"` // ICU style C locale (e.g. "en_US"). If not specified or empty, disables the override and restores default host system locale.
+}
+
+// NewSetLocaleOverrideArgs initializes SetLocaleOverrideArgs with the required arguments.
+func NewSetLocaleOverrideArgs() *SetLocaleOverrideArgs {
+	args := new(SetLocaleOverrideArgs)
+
+	return args
+}
+
+// SetLocale sets the Locale optional argument. ICU style C locale
+// (e.g. "en_US"). If not specified or empty, disables the override and
+// restores default host system locale.
+func (a *SetLocaleOverrideArgs) SetLocale(locale string) *SetLocaleOverrideArgs {
+	a.Locale = &locale
+	return a
+}
+
+// SetTimezoneOverrideArgs represents the arguments for SetTimezoneOverride in the Emulation domain.
+type SetTimezoneOverrideArgs struct {
+	TimezoneID string `json:"timezoneId"` // The timezone identifier. If empty, disables the override and restores default host system timezone.
+}
+
+// NewSetTimezoneOverrideArgs initializes SetTimezoneOverrideArgs with the required arguments.
+func NewSetTimezoneOverrideArgs(timezoneID string) *SetTimezoneOverrideArgs {
+	args := new(SetTimezoneOverrideArgs)
+	args.TimezoneID = timezoneID
+	return args
+}
+
 // SetVisibleSizeArgs represents the arguments for SetVisibleSize in the Emulation domain.
 type SetVisibleSizeArgs struct {
 	Width  int `json:"width"`  // Frame width (DIP).
@@ -407,6 +469,11 @@ type SetUserAgentOverrideArgs struct {
 	UserAgent      string  `json:"userAgent"`                // User agent to use.
 	AcceptLanguage *string `json:"acceptLanguage,omitempty"` // Browser langugage to emulate.
 	Platform       *string `json:"platform,omitempty"`       // The platform navigator.platform should return.
+	// UserAgentMetadata To be sent in Sec-CH-UA-* headers and returned in
+	// navigator.userAgentData
+	//
+	// Note: This property is experimental.
+	UserAgentMetadata *UserAgentMetadata `json:"userAgentMetadata,omitempty"`
 }
 
 // NewSetUserAgentOverrideArgs initializes SetUserAgentOverrideArgs with the required arguments.
@@ -427,5 +494,15 @@ func (a *SetUserAgentOverrideArgs) SetAcceptLanguage(acceptLanguage string) *Set
 // navigator.platform should return.
 func (a *SetUserAgentOverrideArgs) SetPlatform(platform string) *SetUserAgentOverrideArgs {
 	a.Platform = &platform
+	return a
+}
+
+// SetUserAgentMetadata sets the UserAgentMetadata optional argument.
+// To be sent in Sec-CH-UA-* headers and returned in
+// navigator.userAgentData
+//
+// Note: This property is experimental.
+func (a *SetUserAgentOverrideArgs) SetUserAgentMetadata(userAgentMetadata UserAgentMetadata) *SetUserAgentOverrideArgs {
+	a.UserAgentMetadata = &userAgentMetadata
 	return a
 }

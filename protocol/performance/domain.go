@@ -30,8 +30,12 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 
 // Enable invokes the Performance method. Enable collecting and reporting
 // metrics.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Performance.enable", nil, nil, d.conn)
+func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Performance.enable", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Performance.enable", nil, nil, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Performance", Op: "Enable", Err: err}
 	}

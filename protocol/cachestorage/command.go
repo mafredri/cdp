@@ -47,15 +47,17 @@ type RequestCacheNamesReply struct {
 
 // RequestCachedResponseArgs represents the arguments for RequestCachedResponse in the CacheStorage domain.
 type RequestCachedResponseArgs struct {
-	CacheID    CacheID `json:"cacheId"`    // Id of cache that contains the entry.
-	RequestURL string  `json:"requestURL"` // URL spec of the request.
+	CacheID        CacheID  `json:"cacheId"`        // Id of cache that contains the entry.
+	RequestURL     string   `json:"requestURL"`     // URL spec of the request.
+	RequestHeaders []Header `json:"requestHeaders"` // headers of the request.
 }
 
 // NewRequestCachedResponseArgs initializes RequestCachedResponseArgs with the required arguments.
-func NewRequestCachedResponseArgs(cacheID CacheID, requestURL string) *RequestCachedResponseArgs {
+func NewRequestCachedResponseArgs(cacheID CacheID, requestURL string, requestHeaders []Header) *RequestCachedResponseArgs {
 	args := new(RequestCachedResponseArgs)
 	args.CacheID = cacheID
 	args.RequestURL = requestURL
+	args.RequestHeaders = requestHeaders
 	return args
 }
 
@@ -67,18 +69,30 @@ type RequestCachedResponseReply struct {
 // RequestEntriesArgs represents the arguments for RequestEntries in the CacheStorage domain.
 type RequestEntriesArgs struct {
 	CacheID    CacheID `json:"cacheId"`              // ID of cache to get entries from.
-	SkipCount  int     `json:"skipCount"`            // Number of records to skip.
-	PageSize   int     `json:"pageSize"`             // Number of records to fetch.
+	SkipCount  *int    `json:"skipCount,omitempty"`  // Number of records to skip.
+	PageSize   *int    `json:"pageSize,omitempty"`   // Number of records to fetch.
 	PathFilter *string `json:"pathFilter,omitempty"` // If present, only return the entries containing this substring in the path
 }
 
 // NewRequestEntriesArgs initializes RequestEntriesArgs with the required arguments.
-func NewRequestEntriesArgs(cacheID CacheID, skipCount int, pageSize int) *RequestEntriesArgs {
+func NewRequestEntriesArgs(cacheID CacheID) *RequestEntriesArgs {
 	args := new(RequestEntriesArgs)
 	args.CacheID = cacheID
-	args.SkipCount = skipCount
-	args.PageSize = pageSize
 	return args
+}
+
+// SetSkipCount sets the SkipCount optional argument. Number of
+// records to skip.
+func (a *RequestEntriesArgs) SetSkipCount(skipCount int) *RequestEntriesArgs {
+	a.SkipCount = &skipCount
+	return a
+}
+
+// SetPageSize sets the PageSize optional argument. Number of records
+// to fetch.
+func (a *RequestEntriesArgs) SetPageSize(pageSize int) *RequestEntriesArgs {
+	a.PageSize = &pageSize
+	return a
 }
 
 // SetPathFilter sets the PathFilter optional argument. If present,
@@ -91,5 +105,5 @@ func (a *RequestEntriesArgs) SetPathFilter(pathFilter string) *RequestEntriesArg
 // RequestEntriesReply represents the return values for RequestEntries in the CacheStorage domain.
 type RequestEntriesReply struct {
 	CacheDataEntries []DataEntry `json:"cacheDataEntries"` // Array of object store data entries.
-	HasMore          bool        `json:"hasMore"`          // If true, there are more entries to fetch in the given range.
+	ReturnCount      float64     `json:"returnCount"`      // Count of returned entries from this storage. If pathFilter is empty, it is the count of all entries from this storage.
 }

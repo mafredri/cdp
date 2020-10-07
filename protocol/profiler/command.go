@@ -21,8 +21,9 @@ func NewSetSamplingIntervalArgs(interval int) *SetSamplingIntervalArgs {
 
 // StartPreciseCoverageArgs represents the arguments for StartPreciseCoverage in the Profiler domain.
 type StartPreciseCoverageArgs struct {
-	CallCount *bool `json:"callCount,omitempty"` // Collect accurate call counts beyond simple 'covered' or 'not covered'.
-	Detailed  *bool `json:"detailed,omitempty"`  // Collect block-based coverage.
+	CallCount             *bool `json:"callCount,omitempty"`             // Collect accurate call counts beyond simple 'covered' or 'not covered'.
+	Detailed              *bool `json:"detailed,omitempty"`              // Collect block-based coverage.
+	AllowTriggeredUpdates *bool `json:"allowTriggeredUpdates,omitempty"` // Allow the backend to send updates on its own initiative
 }
 
 // NewStartPreciseCoverageArgs initializes StartPreciseCoverageArgs with the required arguments.
@@ -46,6 +47,18 @@ func (a *StartPreciseCoverageArgs) SetDetailed(detailed bool) *StartPreciseCover
 	return a
 }
 
+// SetAllowTriggeredUpdates sets the AllowTriggeredUpdates optional argument.
+// Allow the backend to send updates on its own initiative
+func (a *StartPreciseCoverageArgs) SetAllowTriggeredUpdates(allowTriggeredUpdates bool) *StartPreciseCoverageArgs {
+	a.AllowTriggeredUpdates = &allowTriggeredUpdates
+	return a
+}
+
+// StartPreciseCoverageReply represents the return values for StartPreciseCoverage in the Profiler domain.
+type StartPreciseCoverageReply struct {
+	Timestamp float64 `json:"timestamp"` // Monotonically increasing time (in seconds) when the coverage update was taken in the backend.
+}
+
 // StopReply represents the return values for Stop in the Profiler domain.
 type StopReply struct {
 	Profile Profile `json:"profile"` // Recorded profile.
@@ -53,10 +66,16 @@ type StopReply struct {
 
 // TakePreciseCoverageReply represents the return values for TakePreciseCoverage in the Profiler domain.
 type TakePreciseCoverageReply struct {
-	Result []ScriptCoverage `json:"result"` // Coverage data for the current isolate.
+	Result    []ScriptCoverage `json:"result"`    // Coverage data for the current isolate.
+	Timestamp float64          `json:"timestamp"` // Monotonically increasing time (in seconds) when the coverage update was taken in the backend.
 }
 
 // TakeTypeProfileReply represents the return values for TakeTypeProfile in the Profiler domain.
 type TakeTypeProfileReply struct {
 	Result []ScriptTypeProfile `json:"result"` // Type profile for all scripts since startTypeProfile() was turned on.
+}
+
+// GetRuntimeCallStatsReply represents the return values for GetRuntimeCallStats in the Profiler domain.
+type GetRuntimeCallStatsReply struct {
+	Result []CounterInfo `json:"result"` // Collected counter information.
 }

@@ -19,6 +19,25 @@ func NewRecordClockSyncMarkerArgs(syncID string) *RecordClockSyncMarkerArgs {
 	return args
 }
 
+// RequestMemoryDumpArgs represents the arguments for RequestMemoryDump in the Tracing domain.
+type RequestMemoryDumpArgs struct {
+	Deterministic *bool `json:"deterministic,omitempty"` // Enables more deterministic results by forcing garbage collection
+}
+
+// NewRequestMemoryDumpArgs initializes RequestMemoryDumpArgs with the required arguments.
+func NewRequestMemoryDumpArgs() *RequestMemoryDumpArgs {
+	args := new(RequestMemoryDumpArgs)
+
+	return args
+}
+
+// SetDeterministic sets the Deterministic optional argument. Enables
+// more deterministic results by forcing garbage collection
+func (a *RequestMemoryDumpArgs) SetDeterministic(deterministic bool) *RequestMemoryDumpArgs {
+	a.Deterministic = &deterministic
+	return a
+}
+
 // RequestMemoryDumpReply represents the return values for RequestMemoryDump in the Tracing domain.
 type RequestMemoryDumpReply struct {
 	DumpGUID string `json:"dumpGuid"` // GUID of the resulting global memory dump.
@@ -42,6 +61,7 @@ type StartArgs struct {
 	//
 	// Values: "ReportEvents", "ReturnAsStream".
 	TransferMode      *string           `json:"transferMode,omitempty"`
+	StreamFormat      StreamFormat      `json:"streamFormat,omitempty"`      // Trace data format to use. This only applies when using `ReturnAsStream` transfer mode (defaults to `json`).
 	StreamCompression StreamCompression `json:"streamCompression,omitempty"` // Compression format to use. This only applies when using `ReturnAsStream` transfer mode (defaults to `none`)
 	TraceConfig       *TraceConfig      `json:"traceConfig,omitempty"`       // No description.
 }
@@ -85,6 +105,14 @@ func (a *StartArgs) SetBufferUsageReportingInterval(bufferUsageReportingInterval
 // Values: "ReportEvents", "ReturnAsStream".
 func (a *StartArgs) SetTransferMode(transferMode string) *StartArgs {
 	a.TransferMode = &transferMode
+	return a
+}
+
+// SetStreamFormat sets the StreamFormat optional argument. Trace data
+// format to use. This only applies when using `ReturnAsStream`
+// transfer mode (defaults to `json`).
+func (a *StartArgs) SetStreamFormat(streamFormat StreamFormat) *StartArgs {
+	a.StreamFormat = streamFormat
 	return a
 }
 

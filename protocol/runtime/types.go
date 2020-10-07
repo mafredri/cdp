@@ -22,12 +22,12 @@ type UnserializableValue string
 type RemoteObject struct {
 	// Type Object type.
 	//
-	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol", "bigint".
+	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol", "bigint", "wasm".
 	Type string `json:"type"`
-	// Subtype Object subtype hint. Specified for `object` type values
-	// only.
+	// Subtype Object subtype hint. Specified for `object` or `wasm` type
+	// values only.
 	//
-	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview".
+	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview", "i32", "i64", "f32", "f64", "v128", "anyref".
 	Subtype             *string              `json:"subtype,omitempty"`
 	ClassName           *string              `json:"className,omitempty"`           // Object class (constructor) name. Specified for `object` type values only.
 	Value               json.RawMessage      `json:"value,omitempty"`               // Remote object value in case of primitive values or JSON values (if it was requested).
@@ -118,6 +118,16 @@ type PropertyDescriptor struct {
 type InternalPropertyDescriptor struct {
 	Name  string        `json:"name"`            // Conventional property name.
 	Value *RemoteObject `json:"value,omitempty"` // The value associated with the property.
+}
+
+// PrivatePropertyDescriptor Object private field descriptor.
+//
+// Note: This type is experimental.
+type PrivatePropertyDescriptor struct {
+	Name  string        `json:"name"`            // Private property name.
+	Value *RemoteObject `json:"value,omitempty"` // The value associated with the private property.
+	Get   *RemoteObject `json:"get,omitempty"`   // A function which serves as a getter for the private property, or `undefined` if there is no getter (accessor descriptors only).
+	Set   *RemoteObject `json:"set,omitempty"`   // A function which serves as a setter for the private property, or `undefined` if there is no setter (accessor descriptors only).
 }
 
 // CallArgument Represents function call argument. Either remote object id

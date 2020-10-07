@@ -2,16 +2,15 @@
 
 package target
 
+import (
+	"github.com/mafredri/cdp/protocol/internal"
+)
+
 // ID
 type ID string
 
 // SessionID Unique identifier of attached debugging session.
 type SessionID string
-
-// BrowserContextID
-//
-// Note: This type is experimental.
-type BrowserContextID string
 
 // Info
 type Info struct {
@@ -24,7 +23,7 @@ type Info struct {
 	// BrowserContextID
 	//
 	// Note: This property is experimental.
-	BrowserContextID *BrowserContextID `json:"browserContextId,omitempty"`
+	BrowserContextID *internal.BrowserContextID `json:"browserContextId,omitempty"`
 }
 
 // RemoteLocation

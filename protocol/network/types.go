@@ -7,6 +7,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/mafredri/cdp/protocol/internal"
 	"github.com/mafredri/cdp/protocol/runtime"
 	"github.com/mafredri/cdp/protocol/security"
 )
@@ -93,46 +94,7 @@ func (e ErrorReason) String() string {
 }
 
 // TimeSinceEpoch UTC time in seconds, counted from January 1, 1970.
-type TimeSinceEpoch float64
-
-// String calls (time.Time).String().
-func (t TimeSinceEpoch) String() string {
-	return t.Time().String()
-}
-
-// Time parses the Unix time.
-func (t TimeSinceEpoch) Time() time.Time {
-	ts := float64(t) / 1
-	secs := int64(ts)
-	nsecs := int64((ts - float64(secs)) * 1000000000)
-	return time.Unix(secs, nsecs)
-}
-
-// MarshalJSON implements json.Marshaler. Encodes to null if t is zero.
-func (t TimeSinceEpoch) MarshalJSON() ([]byte, error) {
-	if t == 0 {
-		return []byte("null"), nil
-	}
-	f := float64(t)
-	return json.Marshal(&f)
-}
-
-// UnmarshalJSON implements json.Unmarshaler.
-func (t *TimeSinceEpoch) UnmarshalJSON(data []byte) error {
-	*t = 0
-	if len(data) == 0 {
-		return nil
-	}
-	var f float64
-	if err := json.Unmarshal(data, &f); err != nil {
-		return errors.New("network.TimeSinceEpoch: " + err.Error())
-	}
-	*t = TimeSinceEpoch(f)
-	return nil
-}
-
-var _ json.Marshaler = (*TimeSinceEpoch)(nil)
-var _ json.Unmarshaler = (*TimeSinceEpoch)(nil)
+type TimeSinceEpoch = internal.NetworkTimeSinceEpoch
 
 // MonotonicTime Monotonically increasing time in seconds since an arbitrary
 // point in the past.
@@ -240,11 +202,12 @@ const (
 	CookieSameSiteNotSet CookieSameSite = ""
 	CookieSameSiteStrict CookieSameSite = "Strict"
 	CookieSameSiteLax    CookieSameSite = "Lax"
+	CookieSameSiteNone   CookieSameSite = "None"
 )
 
 func (e CookieSameSite) Valid() bool {
 	switch e {
-	case "Strict", "Lax":
+	case "Strict", "Lax", "None":
 		return true
 	default:
 		return false
@@ -252,6 +215,33 @@ func (e CookieSameSite) Valid() bool {
 }
 
 func (e CookieSameSite) String() string {
+	return string(e)
+}
+
+// CookiePriority Represents the cookie's 'Priority' status:
+// https://tools.ietf.org/html/draft-west-cookie-priority-00
+//
+// Note: This type is experimental.
+type CookiePriority string
+
+// CookiePriority as enums.
+const (
+	CookiePriorityNotSet CookiePriority = ""
+	CookiePriorityLow    CookiePriority = "Low"
+	CookiePriorityMedium CookiePriority = "Medium"
+	CookiePriorityHigh   CookiePriority = "High"
+)
+
+func (e CookiePriority) Valid() bool {
+	switch e {
+	case "Low", "Medium", "High":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e CookiePriority) String() string {
 	return string(e)
 }
 
@@ -274,8 +264,16 @@ type ResourceTiming struct {
 	//
 	// Note: This property is experimental.
 	WorkerReady float64 `json:"workerReady"`
-	SendStart   float64 `json:"sendStart"` // Started sending request.
-	SendEnd     float64 `json:"sendEnd"`   // Finished sending request.
+	// WorkerFetchStart Started fetch event.
+	//
+	// Note: This property is experimental.
+	WorkerFetchStart float64 `json:"workerFetchStart"`
+	// WorkerRespondWithSettled Settled fetch event respondWith promise.
+	//
+	// Note: This property is experimental.
+	WorkerRespondWithSettled float64 `json:"workerRespondWithSettled"`
+	SendStart                float64 `json:"sendStart"` // Started sending request.
+	SendEnd                  float64 `json:"sendEnd"`   // Finished sending request.
 	// PushStart Time the server started pushing request.
 	//
 	// Note: This property is experimental.
@@ -390,20 +388,25 @@ type BlockedReason string
 
 // BlockedReason as enums.
 const (
-	BlockedReasonNotSet            BlockedReason = ""
-	BlockedReasonOther             BlockedReason = "other"
-	BlockedReasonCsp               BlockedReason = "csp"
-	BlockedReasonMixedContent      BlockedReason = "mixed-content"
-	BlockedReasonOrigin            BlockedReason = "origin"
-	BlockedReasonInspector         BlockedReason = "inspector"
-	BlockedReasonSubresourceFilter BlockedReason = "subresource-filter"
-	BlockedReasonContentType       BlockedReason = "content-type"
-	BlockedReasonCollapsedByClient BlockedReason = "collapsed-by-client"
+	BlockedReasonNotSet                                            BlockedReason = ""
+	BlockedReasonOther                                             BlockedReason = "other"
+	BlockedReasonCsp                                               BlockedReason = "csp"
+	BlockedReasonMixedContent                                      BlockedReason = "mixed-content"
+	BlockedReasonOrigin                                            BlockedReason = "origin"
+	BlockedReasonInspector                                         BlockedReason = "inspector"
+	BlockedReasonSubresourceFilter                                 BlockedReason = "subresource-filter"
+	BlockedReasonContentType                                       BlockedReason = "content-type"
+	BlockedReasonCollapsedByClient                                 BlockedReason = "collapsed-by-client"
+	BlockedReasonCoepFrameResourceNeedsCoepHeader                  BlockedReason = "coep-frame-resource-needs-coep-header"
+	BlockedReasonCoopSandboxedIframeCannotNavigateToCoopPage       BlockedReason = "coop-sandboxed-iframe-cannot-navigate-to-coop-page"
+	BlockedReasonCorpNotSameOrigin                                 BlockedReason = "corp-not-same-origin"
+	BlockedReasonCorpNotSameOriginAfterDefaultedToSameOriginByCoep BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-coep"
+	BlockedReasonCorpNotSameSite                                   BlockedReason = "corp-not-same-site"
 )
 
 func (e BlockedReason) Valid() bool {
 	switch e {
-	case "other", "csp", "mixed-content", "origin", "inspector", "subresource-filter", "content-type", "collapsed-by-client":
+	case "other", "csp", "mixed-content", "origin", "inspector", "subresource-filter", "content-type", "collapsed-by-client", "coep-frame-resource-needs-coep-header", "coop-sandboxed-iframe-cannot-navigate-to-coop-page", "corp-not-same-origin", "corp-not-same-origin-after-defaulted-to-same-origin-by-coep", "corp-not-same-site":
 		return true
 	default:
 		return false
@@ -414,27 +417,56 @@ func (e BlockedReason) String() string {
 	return string(e)
 }
 
+// ServiceWorkerResponseSource Source of serviceworker response.
+type ServiceWorkerResponseSource string
+
+// ServiceWorkerResponseSource as enums.
+const (
+	ServiceWorkerResponseSourceNotSet       ServiceWorkerResponseSource = ""
+	ServiceWorkerResponseSourceCacheStorage ServiceWorkerResponseSource = "cache-storage"
+	ServiceWorkerResponseSourceHTTPCache    ServiceWorkerResponseSource = "http-cache"
+	ServiceWorkerResponseSourceFallbackCode ServiceWorkerResponseSource = "fallback-code"
+	ServiceWorkerResponseSourceNetwork      ServiceWorkerResponseSource = "network"
+)
+
+func (e ServiceWorkerResponseSource) Valid() bool {
+	switch e {
+	case "cache-storage", "http-cache", "fallback-code", "network":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ServiceWorkerResponseSource) String() string {
+	return string(e)
+}
+
 // Response HTTP response data.
 type Response struct {
-	URL                string           `json:"url"`                          // Response URL. This URL can be different from CachedResource.url in case of redirect.
-	Status             int              `json:"status"`                       // HTTP response status code.
-	StatusText         string           `json:"statusText"`                   // HTTP response status text.
-	Headers            Headers          `json:"headers"`                      // HTTP response headers.
-	HeadersText        *string          `json:"headersText,omitempty"`        // HTTP response headers text.
-	MimeType           string           `json:"mimeType"`                     // Resource mimeType as determined by the browser.
-	RequestHeaders     Headers          `json:"requestHeaders,omitempty"`     // Refined HTTP request headers that were actually transmitted over the network.
-	RequestHeadersText *string          `json:"requestHeadersText,omitempty"` // HTTP request headers text.
-	ConnectionReused   bool             `json:"connectionReused"`             // Specifies whether physical connection was actually reused for this request.
-	ConnectionID       float64          `json:"connectionId"`                 // Physical connection id that was actually used for this request.
-	RemoteIPAddress    *string          `json:"remoteIPAddress,omitempty"`    // Remote IP address.
-	RemotePort         *int             `json:"remotePort,omitempty"`         // Remote port.
-	FromDiskCache      *bool            `json:"fromDiskCache,omitempty"`      // Specifies that the request was served from the disk cache.
-	FromServiceWorker  *bool            `json:"fromServiceWorker,omitempty"`  // Specifies that the request was served from the ServiceWorker.
-	EncodedDataLength  float64          `json:"encodedDataLength"`            // Total number of bytes received for this request so far.
-	Timing             *ResourceTiming  `json:"timing,omitempty"`             // Timing information for the given request.
-	Protocol           *string          `json:"protocol,omitempty"`           // Protocol used to fetch this request.
-	SecurityState      security.State   `json:"securityState"`                // Security state of the request resource.
-	SecurityDetails    *SecurityDetails `json:"securityDetails,omitempty"`    // Security details for the request.
+	URL                         string                      `json:"url"`                                   // Response URL. This URL can be different from CachedResource.url in case of redirect.
+	Status                      int                         `json:"status"`                                // HTTP response status code.
+	StatusText                  string                      `json:"statusText"`                            // HTTP response status text.
+	Headers                     Headers                     `json:"headers"`                               // HTTP response headers.
+	HeadersText                 *string                     `json:"headersText,omitempty"`                 // HTTP response headers text.
+	MimeType                    string                      `json:"mimeType"`                              // Resource mimeType as determined by the browser.
+	RequestHeaders              Headers                     `json:"requestHeaders,omitempty"`              // Refined HTTP request headers that were actually transmitted over the network.
+	RequestHeadersText          *string                     `json:"requestHeadersText,omitempty"`          // HTTP request headers text.
+	ConnectionReused            bool                        `json:"connectionReused"`                      // Specifies whether physical connection was actually reused for this request.
+	ConnectionID                float64                     `json:"connectionId"`                          // Physical connection id that was actually used for this request.
+	RemoteIPAddress             *string                     `json:"remoteIPAddress,omitempty"`             // Remote IP address.
+	RemotePort                  *int                        `json:"remotePort,omitempty"`                  // Remote port.
+	FromDiskCache               *bool                       `json:"fromDiskCache,omitempty"`               // Specifies that the request was served from the disk cache.
+	FromServiceWorker           *bool                       `json:"fromServiceWorker,omitempty"`           // Specifies that the request was served from the ServiceWorker.
+	FromPrefetchCache           *bool                       `json:"fromPrefetchCache,omitempty"`           // Specifies that the request was served from the prefetch cache.
+	EncodedDataLength           float64                     `json:"encodedDataLength"`                     // Total number of bytes received for this request so far.
+	Timing                      *ResourceTiming             `json:"timing,omitempty"`                      // Timing information for the given request.
+	ServiceWorkerResponseSource ServiceWorkerResponseSource `json:"serviceWorkerResponseSource,omitempty"` // Response source of response from ServiceWorker.
+	ResponseTime                TimeSinceEpoch              `json:"responseTime,omitempty"`                // The time at which the returned response was generated.
+	CacheStorageCacheName       *string                     `json:"cacheStorageCacheName,omitempty"`       // Cache Storage Cache Name.
+	Protocol                    *string                     `json:"protocol,omitempty"`                    // Protocol used to fetch this request.
+	SecurityState               security.State              `json:"securityState"`                         // Security state of the request resource.
+	SecurityDetails             *SecurityDetails            `json:"securityDetails,omitempty"`             // Security details for the request.
 }
 
 // WebSocketRequest WebSocket request data.
@@ -491,6 +523,98 @@ type Cookie struct {
 	Secure   bool           `json:"secure"`             // True if cookie is secure.
 	Session  bool           `json:"session"`            // True in case of session cookie.
 	SameSite CookieSameSite `json:"sameSite,omitempty"` // Cookie SameSite type.
+	// Priority Cookie Priority
+	//
+	// Note: This property is experimental.
+	Priority CookiePriority `json:"priority"`
+}
+
+// SetCookieBlockedReason Types of reasons why a cookie may not be stored from
+// a response.
+//
+// Note: This type is experimental.
+type SetCookieBlockedReason string
+
+// SetCookieBlockedReason as enums.
+const (
+	SetCookieBlockedReasonNotSet                          SetCookieBlockedReason = ""
+	SetCookieBlockedReasonSecureOnly                      SetCookieBlockedReason = "SecureOnly"
+	SetCookieBlockedReasonSameSiteStrict                  SetCookieBlockedReason = "SameSiteStrict"
+	SetCookieBlockedReasonSameSiteLax                     SetCookieBlockedReason = "SameSiteLax"
+	SetCookieBlockedReasonSameSiteUnspecifiedTreatedAsLax SetCookieBlockedReason = "SameSiteUnspecifiedTreatedAsLax"
+	SetCookieBlockedReasonSameSiteNoneInsecure            SetCookieBlockedReason = "SameSiteNoneInsecure"
+	SetCookieBlockedReasonUserPreferences                 SetCookieBlockedReason = "UserPreferences"
+	SetCookieBlockedReasonSyntaxError                     SetCookieBlockedReason = "SyntaxError"
+	SetCookieBlockedReasonSchemeNotSupported              SetCookieBlockedReason = "SchemeNotSupported"
+	SetCookieBlockedReasonOverwriteSecure                 SetCookieBlockedReason = "OverwriteSecure"
+	SetCookieBlockedReasonInvalidDomain                   SetCookieBlockedReason = "InvalidDomain"
+	SetCookieBlockedReasonInvalidPrefix                   SetCookieBlockedReason = "InvalidPrefix"
+	SetCookieBlockedReasonUnknownError                    SetCookieBlockedReason = "UnknownError"
+)
+
+func (e SetCookieBlockedReason) Valid() bool {
+	switch e {
+	case "SecureOnly", "SameSiteStrict", "SameSiteLax", "SameSiteUnspecifiedTreatedAsLax", "SameSiteNoneInsecure", "UserPreferences", "SyntaxError", "SchemeNotSupported", "OverwriteSecure", "InvalidDomain", "InvalidPrefix", "UnknownError":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e SetCookieBlockedReason) String() string {
+	return string(e)
+}
+
+// CookieBlockedReason Types of reasons why a cookie may not be sent with a
+// request.
+//
+// Note: This type is experimental.
+type CookieBlockedReason string
+
+// CookieBlockedReason as enums.
+const (
+	CookieBlockedReasonNotSet                          CookieBlockedReason = ""
+	CookieBlockedReasonSecureOnly                      CookieBlockedReason = "SecureOnly"
+	CookieBlockedReasonNotOnPath                       CookieBlockedReason = "NotOnPath"
+	CookieBlockedReasonDomainMismatch                  CookieBlockedReason = "DomainMismatch"
+	CookieBlockedReasonSameSiteStrict                  CookieBlockedReason = "SameSiteStrict"
+	CookieBlockedReasonSameSiteLax                     CookieBlockedReason = "SameSiteLax"
+	CookieBlockedReasonSameSiteUnspecifiedTreatedAsLax CookieBlockedReason = "SameSiteUnspecifiedTreatedAsLax"
+	CookieBlockedReasonSameSiteNoneInsecure            CookieBlockedReason = "SameSiteNoneInsecure"
+	CookieBlockedReasonUserPreferences                 CookieBlockedReason = "UserPreferences"
+	CookieBlockedReasonUnknownError                    CookieBlockedReason = "UnknownError"
+)
+
+func (e CookieBlockedReason) Valid() bool {
+	switch e {
+	case "SecureOnly", "NotOnPath", "DomainMismatch", "SameSiteStrict", "SameSiteLax", "SameSiteUnspecifiedTreatedAsLax", "SameSiteNoneInsecure", "UserPreferences", "UnknownError":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e CookieBlockedReason) String() string {
+	return string(e)
+}
+
+// BlockedSetCookieWithReason A cookie which was not stored from a response
+// with the corresponding reason.
+//
+// Note: This type is experimental.
+type BlockedSetCookieWithReason struct {
+	BlockedReasons []SetCookieBlockedReason `json:"blockedReasons"`   // The reason(s) this cookie was blocked.
+	CookieLine     string                   `json:"cookieLine"`       // The string representing this individual cookie as it would appear in the header. This is not the entire "cookie" or "set-cookie" header which could have multiple cookies.
+	Cookie         *Cookie                  `json:"cookie,omitempty"` // The cookie object which represents the cookie which was not stored. It is optional because sometimes complete cookie information is not available, such as in the case of parsing errors.
+}
+
+// BlockedCookieWithReason A cookie with was not sent with a request with the
+// corresponding reason.
+//
+// Note: This type is experimental.
+type BlockedCookieWithReason struct {
+	BlockedReasons []CookieBlockedReason `json:"blockedReasons"` // The reason(s) the cookie was blocked.
+	Cookie         Cookie                `json:"cookie"`         // The cookie object representing the cookie which was not sent.
 }
 
 // CookieParam Cookie parameter object
@@ -504,6 +628,10 @@ type CookieParam struct {
 	HTTPOnly *bool          `json:"httpOnly,omitempty"` // True if cookie is http-only.
 	SameSite CookieSameSite `json:"sameSite,omitempty"` // Cookie SameSite type.
 	Expires  TimeSinceEpoch `json:"expires,omitempty"`  // Cookie expiration date, session cookie if not set
+	// Priority Cookie Priority.
+	//
+	// Note: This property is experimental.
+	Priority CookiePriority `json:"priority,omitempty"`
 }
 
 // AuthChallenge Authorization challenge for HTTP status code 401 or 407.
@@ -592,10 +720,10 @@ type SignedExchangeSignature struct {
 // Note: This type is experimental.
 type SignedExchangeHeader struct {
 	RequestURL      string                    `json:"requestUrl"`      // Signed exchange request URL.
-	RequestMethod   string                    `json:"requestMethod"`   // Signed exchange request method.
 	ResponseCode    int                       `json:"responseCode"`    // Signed exchange response code.
 	ResponseHeaders Headers                   `json:"responseHeaders"` // Signed exchange response headers.
 	Signatures      []SignedExchangeSignature `json:"signatures"`      // Signed exchange response signature.
+	HeaderIntegrity string                    `json:"headerIntegrity"` // Signed exchange header integrity hash in the form of "sha256-<base64-hash-value>".
 }
 
 // SignedExchangeErrorField Field type for a signed exchange related error.

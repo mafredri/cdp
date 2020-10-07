@@ -10,7 +10,7 @@ import (
 var (
 	// ErrStreamClosing indicates that the operation is illegal because
 	// the stream is closing and there are no pending messages.
-	ErrStreamClosing = errors.New("rpcc: the stream is closing")
+	ErrStreamClosing = &closeError{msg: "rpcc: the stream is closing"}
 )
 
 // message contains the invoked method name, data and next func.
@@ -172,7 +172,7 @@ func (s *streamClient) watch() {
 	case <-s.ctx.Done():
 		s.close(s.ctx.Err())
 	case <-s.conn.ctx.Done():
-		s.close(ErrConnClosing)
+		s.close(s.conn.err)
 	case <-s.done:
 	}
 }
@@ -280,7 +280,7 @@ func (s *streamClient) close(err error) error {
 		err = ErrStreamClosing
 	}
 
-	remove()    // Unsubscribe first to prevent incoming messages.
+	remove()    // Unsubscribe to prevent new messages.
 	s.err = err // Set err before cancel as reads are protected by context.
 	close(s.done)
 

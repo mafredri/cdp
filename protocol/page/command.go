@@ -5,6 +5,7 @@ package page
 import (
 	"github.com/mafredri/cdp/protocol/debugger"
 	"github.com/mafredri/cdp/protocol/dom"
+	"github.com/mafredri/cdp/protocol/io"
 	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/runtime"
 )
@@ -189,6 +190,20 @@ type GetAppManifestReply struct {
 	URL    string             `json:"url"`            // Manifest location.
 	Errors []AppManifestError `json:"errors"`         // No description.
 	Data   *string            `json:"data,omitempty"` // Manifest content.
+	// Parsed Parsed manifest properties
+	//
+	// Note: This property is experimental.
+	Parsed *AppManifestParsedProperties `json:"parsed,omitempty"`
+}
+
+// GetInstallabilityErrorsReply represents the return values for GetInstallabilityErrors in the Page domain.
+type GetInstallabilityErrorsReply struct {
+	InstallabilityErrors []InstallabilityError `json:"installabilityErrors"` // No description.
+}
+
+// GetManifestIconsReply represents the return values for GetManifestIcons in the Page domain.
+type GetManifestIconsReply struct {
+	PrimaryIcon *string `json:"primaryIcon,omitempty"` // No description.
 }
 
 // GetFrameTreeReply represents the return values for GetFrameTree in the Page domain.
@@ -261,6 +276,10 @@ type NavigateArgs struct {
 	Referrer       *string        `json:"referrer,omitempty"`       // Referrer URL.
 	TransitionType TransitionType `json:"transitionType,omitempty"` // Intended transition type.
 	FrameID        *FrameID       `json:"frameId,omitempty"`        // Frame id to navigate, if not specified navigates the top frame.
+	// ReferrerPolicy Referrer-policy used for the navigation.
+	//
+	// Note: This property is experimental.
+	ReferrerPolicy ReferrerPolicy `json:"referrerPolicy,omitempty"`
 }
 
 // NewNavigateArgs initializes NavigateArgs with the required arguments.
@@ -287,6 +306,15 @@ func (a *NavigateArgs) SetTransitionType(transitionType TransitionType) *Navigat
 // navigate, if not specified navigates the top frame.
 func (a *NavigateArgs) SetFrameID(frameID FrameID) *NavigateArgs {
 	a.FrameID = &frameID
+	return a
+}
+
+// SetReferrerPolicy sets the ReferrerPolicy optional argument.
+// Referrer-policy used for the navigation.
+//
+// Note: This property is experimental.
+func (a *NavigateArgs) SetReferrerPolicy(referrerPolicy ReferrerPolicy) *NavigateArgs {
+	a.ReferrerPolicy = referrerPolicy
 	return a
 }
 
@@ -326,6 +354,12 @@ type PrintToPDFArgs struct {
 	HeaderTemplate          *string  `json:"headerTemplate,omitempty"`          // HTML template for the print header. Should be valid HTML markup with following classes used to inject printing values into them: - `date`: formatted print date - `title`: document title - `url`: document location - `pageNumber`: current page number - `totalPages`: total pages in the document For example, `<span class=title></span>` would generate span containing the title.
 	FooterTemplate          *string  `json:"footerTemplate,omitempty"`          // HTML template for the print footer. Should use the same format as the `headerTemplate`.
 	PreferCSSPageSize       *bool    `json:"preferCSSPageSize,omitempty"`       // Whether or not to prefer page size as defined by css. Defaults to false, in which case the content will be scaled to fit the paper size.
+	// TransferMode return as stream
+	//
+	// Values: "ReturnAsBase64", "ReturnAsStream".
+	//
+	// Note: This property is experimental.
+	TransferMode *string `json:"transferMode,omitempty"`
 }
 
 // NewPrintToPDFArgs initializes PrintToPDFArgs with the required arguments.
@@ -452,9 +486,24 @@ func (a *PrintToPDFArgs) SetPreferCSSPageSize(preferCSSPageSize bool) *PrintToPD
 	return a
 }
 
+// SetTransferMode sets the TransferMode optional argument. return as
+// stream
+//
+// Values: "ReturnAsBase64", "ReturnAsStream".
+//
+// Note: This property is experimental.
+func (a *PrintToPDFArgs) SetTransferMode(transferMode string) *PrintToPDFArgs {
+	a.TransferMode = &transferMode
+	return a
+}
+
 // PrintToPDFReply represents the return values for PrintToPDF in the Page domain.
 type PrintToPDFReply struct {
-	Data []byte `json:"data"` // Base64-encoded pdf data.
+	Data []byte `json:"data"` // Base64-encoded pdf data. Empty if |returnAsStream| is specified.
+	// Stream A handle of the stream that holds resulting PDF data.
+	//
+	// Note: This property is experimental.
+	Stream *io.StreamHandle `json:"stream,omitempty"`
 }
 
 // ReloadArgs represents the arguments for Reload in the Page domain.
@@ -773,4 +822,16 @@ func NewGenerateTestReportArgs(message string) *GenerateTestReportArgs {
 func (a *GenerateTestReportArgs) SetGroup(group string) *GenerateTestReportArgs {
 	a.Group = &group
 	return a
+}
+
+// SetInterceptFileChooserDialogArgs represents the arguments for SetInterceptFileChooserDialog in the Page domain.
+type SetInterceptFileChooserDialogArgs struct {
+	Enabled bool `json:"enabled"` // No description.
+}
+
+// NewSetInterceptFileChooserDialogArgs initializes SetInterceptFileChooserDialogArgs with the required arguments.
+func NewSetInterceptFileChooserDialogArgs(enabled bool) *SetInterceptFileChooserDialogArgs {
+	args := new(SetInterceptFileChooserDialogArgs)
+	args.Enabled = enabled
+	return args
 }

@@ -53,9 +53,13 @@ func (d *domainClient) RecordClockSyncMarker(ctx context.Context, args *RecordCl
 }
 
 // RequestMemoryDump invokes the Tracing method. Request a global memory dump.
-func (d *domainClient) RequestMemoryDump(ctx context.Context) (reply *RequestMemoryDumpReply, err error) {
+func (d *domainClient) RequestMemoryDump(ctx context.Context, args *RequestMemoryDumpArgs) (reply *RequestMemoryDumpReply, err error) {
 	reply = new(RequestMemoryDumpReply)
-	err = rpcc.Invoke(ctx, "Tracing.requestMemoryDump", nil, reply, d.conn)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Tracing.requestMemoryDump", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Tracing.requestMemoryDump", nil, reply, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Tracing", Op: "RequestMemoryDump", Err: err}
 	}

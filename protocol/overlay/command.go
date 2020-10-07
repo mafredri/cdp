@@ -12,7 +12,10 @@ import (
 
 // GetHighlightObjectForTestArgs represents the arguments for GetHighlightObjectForTest in the Overlay domain.
 type GetHighlightObjectForTestArgs struct {
-	NodeID dom.NodeID `json:"nodeId"` // Id of the node to get highlight object for.
+	NodeID          dom.NodeID  `json:"nodeId"`                    // Id of the node to get highlight object for.
+	IncludeDistance *bool       `json:"includeDistance,omitempty"` // Whether to include distance info.
+	IncludeStyle    *bool       `json:"includeStyle,omitempty"`    // Whether to include style info.
+	ColorFormat     ColorFormat `json:"colorFormat,omitempty"`     // The color format to get config with (default: hex)
 }
 
 // NewGetHighlightObjectForTestArgs initializes GetHighlightObjectForTestArgs with the required arguments.
@@ -20,6 +23,27 @@ func NewGetHighlightObjectForTestArgs(nodeID dom.NodeID) *GetHighlightObjectForT
 	args := new(GetHighlightObjectForTestArgs)
 	args.NodeID = nodeID
 	return args
+}
+
+// SetIncludeDistance sets the IncludeDistance optional argument.
+// Whether to include distance info.
+func (a *GetHighlightObjectForTestArgs) SetIncludeDistance(includeDistance bool) *GetHighlightObjectForTestArgs {
+	a.IncludeDistance = &includeDistance
+	return a
+}
+
+// SetIncludeStyle sets the IncludeStyle optional argument. Whether to
+// include style info.
+func (a *GetHighlightObjectForTestArgs) SetIncludeStyle(includeStyle bool) *GetHighlightObjectForTestArgs {
+	a.IncludeStyle = &includeStyle
+	return a
+}
+
+// SetColorFormat sets the ColorFormat optional argument. The color
+// format to get config with (default: hex)
+func (a *GetHighlightObjectForTestArgs) SetColorFormat(colorFormat ColorFormat) *GetHighlightObjectForTestArgs {
+	a.ColorFormat = colorFormat
+	return a
 }
 
 // GetHighlightObjectForTestReply represents the return values for GetHighlightObjectForTest in the Overlay domain.
@@ -61,6 +85,7 @@ type HighlightNodeArgs struct {
 	NodeID          *dom.NodeID             `json:"nodeId,omitempty"`        // Identifier of the node to highlight.
 	BackendNodeID   *dom.BackendNodeID      `json:"backendNodeId,omitempty"` // Identifier of the backend node to highlight.
 	ObjectID        *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node to be highlighted.
+	Selector        *string                 `json:"selector,omitempty"`      // Selectors to highlight relevant nodes.
 }
 
 // NewHighlightNodeArgs initializes HighlightNodeArgs with the required arguments.
@@ -88,6 +113,13 @@ func (a *HighlightNodeArgs) SetBackendNodeID(backendNodeID dom.BackendNodeID) *H
 // id of the node to be highlighted.
 func (a *HighlightNodeArgs) SetObjectID(objectID runtime.RemoteObjectID) *HighlightNodeArgs {
 	a.ObjectID = &objectID
+	return a
+}
+
+// SetSelector sets the Selector optional argument. Selectors to
+// highlight relevant nodes.
+func (a *HighlightNodeArgs) SetSelector(selector string) *HighlightNodeArgs {
+	a.Selector = &selector
 	return a
 }
 
@@ -174,6 +206,18 @@ func (a *SetInspectModeArgs) SetHighlightConfig(highlightConfig HighlightConfig)
 	return a
 }
 
+// SetShowAdHighlightsArgs represents the arguments for SetShowAdHighlights in the Overlay domain.
+type SetShowAdHighlightsArgs struct {
+	Show bool `json:"show"` // True for showing ad highlights
+}
+
+// NewSetShowAdHighlightsArgs initializes SetShowAdHighlightsArgs with the required arguments.
+func NewSetShowAdHighlightsArgs(show bool) *SetShowAdHighlightsArgs {
+	args := new(SetShowAdHighlightsArgs)
+	args.Show = show
+	return args
+}
+
 // SetPausedInDebuggerMessageArgs represents the arguments for SetPausedInDebuggerMessage in the Overlay domain.
 type SetPausedInDebuggerMessageArgs struct {
 	Message *string `json:"message,omitempty"` // The message to display, also triggers resume and step over controls.
@@ -229,6 +273,18 @@ func NewSetShowPaintRectsArgs(result bool) *SetShowPaintRectsArgs {
 	return args
 }
 
+// SetShowLayoutShiftRegionsArgs represents the arguments for SetShowLayoutShiftRegions in the Overlay domain.
+type SetShowLayoutShiftRegionsArgs struct {
+	Result bool `json:"result"` // True for showing layout shift regions
+}
+
+// NewSetShowLayoutShiftRegionsArgs initializes SetShowLayoutShiftRegionsArgs with the required arguments.
+func NewSetShowLayoutShiftRegionsArgs(result bool) *SetShowLayoutShiftRegionsArgs {
+	args := new(SetShowLayoutShiftRegionsArgs)
+	args.Result = result
+	return args
+}
+
 // SetShowScrollBottleneckRectsArgs represents the arguments for SetShowScrollBottleneckRects in the Overlay domain.
 type SetShowScrollBottleneckRectsArgs struct {
 	Show bool `json:"show"` // True for showing scroll bottleneck rects
@@ -265,14 +321,21 @@ func NewSetShowViewportSizeOnResizeArgs(show bool) *SetShowViewportSizeOnResizeA
 	return args
 }
 
-// SetSuspendedArgs represents the arguments for SetSuspended in the Overlay domain.
-type SetSuspendedArgs struct {
-	Suspended bool `json:"suspended"` // Whether overlay should be suspended and not consume any resources until resumed.
+// SetShowHingeArgs represents the arguments for SetShowHinge in the Overlay domain.
+type SetShowHingeArgs struct {
+	HingeConfig *HingeConfig `json:"hingeConfig,omitempty"` // hinge data, null means hideHinge
 }
 
-// NewSetSuspendedArgs initializes SetSuspendedArgs with the required arguments.
-func NewSetSuspendedArgs(suspended bool) *SetSuspendedArgs {
-	args := new(SetSuspendedArgs)
-	args.Suspended = suspended
+// NewSetShowHingeArgs initializes SetShowHingeArgs with the required arguments.
+func NewSetShowHingeArgs() *SetShowHingeArgs {
+	args := new(SetShowHingeArgs)
+
 	return args
+}
+
+// SetHingeConfig sets the HingeConfig optional argument. hinge data,
+// null means hideHinge
+func (a *SetShowHingeArgs) SetHingeConfig(hingeConfig HingeConfig) *SetShowHingeArgs {
+	a.HingeConfig = &hingeConfig
+	return a
 }

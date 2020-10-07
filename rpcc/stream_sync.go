@@ -38,19 +38,23 @@ func (s *syncMessageStore) subscribe(method string, w streamWriter, conn *Conn) 
 
 	s.writers[method] = w
 
+	var once sync.Once
 	unsub := func() {
-		remove()
+		once.Do(func() {
+			remove() // Prevent new messages for writer.
 
-		s.mu.Lock()
-		delete(s.writers, method)
-		if len(s.writers) == 0 {
-			// Either close has been called
-			// or all streams have closed.
-			s.writers = nil
-			s.backlog = nil
-			s.closers = nil
-		}
-		s.mu.Unlock()
+			s.mu.Lock()
+			defer s.mu.Unlock()
+
+			delete(s.writers, method)
+			if len(s.writers) == 0 {
+				// Either close has been called
+				// or all streams have closed.
+				s.writers = nil
+				s.backlog = nil
+				s.closers = nil
+			}
+		})
 	}
 	s.closers = append(s.closers, unsub)
 
@@ -75,6 +79,13 @@ func (s *syncMessageStore) write(m message) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
+	w, ok := s.writers[m.method]
+	if !ok {
+		// Exit early if writer has already
+		// unsubscribed or store is closed.
+		return
+	}
+
 	m.next = s.load
 	if s.pending {
 		s.backlog = append(s.backlog, &m)
@@ -82,7 +93,6 @@ func (s *syncMessageStore) write(m message) {
 	}
 
 	s.pending = true
-	w := s.writers[m.method]
 	w.write(m)
 }
 
@@ -92,16 +102,28 @@ func (s *syncMessageStore) load() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	if len(s.backlog) == 0 {
-		s.pending = false
-		return
-	}
+	// Keep going until we can write the next message
+	// or the backlog is empty.
+	for {
+		if len(s.backlog) == 0 {
+			s.pending = false
+			return
+		}
 
-	m := s.backlog[0]
-	w := s.writers[m.method]
-	w.write(*m)
-	s.backlog[0] = nil // Remove reference from underlying array.
-	s.backlog = s.backlog[1:]
+		m := s.backlog[0]
+		s.backlog[0] = nil // Remove reference from underlying array.
+		s.backlog = s.backlog[1:]
+
+		// Check if the writer has already unsubscribed.
+		if w, ok := s.writers[m.method]; ok {
+			// A write here means that this message must be
+			// processed (calling m.next) by the recipient.
+			// Failure to do so will prevent future messages
+			// from being delivered.
+			w.write(*m)
+			return
+		}
+	}
 }
 
 // Sync takes two or more streams and sets them into synchronous operation,
@@ -123,6 +145,14 @@ func (s *syncMessageStore) load() {
 func Sync(s ...Stream) (err error) {
 	if len(s) < 2 {
 		return errors.New("rpcc: Sync: two or more streams must be provided")
+	}
+
+	set := make(map[Stream]struct{})
+	for _, ss := range s {
+		if _, ok := set[ss]; ok {
+			return errors.New("rpcc: Sync: same instance of stream passed multiple times")
+		}
+		set[ss] = struct{}{}
 	}
 
 	store := newSyncMessageStore()
@@ -165,8 +195,11 @@ func Sync(s ...Stream) (err error) {
 		// Delay listener swap until all Streams have been
 		// processed so that we can abort on error.
 		swap = append(swap, func() {
-			sc.remove()       // Prevent direct events from Conn.
-			sc.remove = unsub // Remove from store on Close.
+			sc.remove() // Prevent direct events from Conn.
+			sc.remove = func() {
+				unsub()         // Remove from store on Close.
+				sc.mbuf.clear() // Ensure pending message is processed.
+			}
 
 			// Clear stream messages to prevent sync issues.
 			sc.mbuf.clear()

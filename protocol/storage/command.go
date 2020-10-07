@@ -2,6 +2,11 @@
 
 package storage
 
+import (
+	"github.com/mafredri/cdp/protocol/browser"
+	"github.com/mafredri/cdp/protocol/network"
+)
+
 // ClearDataForOriginArgs represents the arguments for ClearDataForOrigin in the Storage domain.
 type ClearDataForOriginArgs struct {
 	Origin       string `json:"origin"`       // Security origin.
@@ -14,6 +19,69 @@ func NewClearDataForOriginArgs(origin string, storageTypes string) *ClearDataFor
 	args.Origin = origin
 	args.StorageTypes = storageTypes
 	return args
+}
+
+// GetCookiesArgs represents the arguments for GetCookies in the Storage domain.
+type GetCookiesArgs struct {
+	BrowserContextID *browser.ContextID `json:"browserContextId,omitempty"` // Browser context to use when called on the browser endpoint.
+}
+
+// NewGetCookiesArgs initializes GetCookiesArgs with the required arguments.
+func NewGetCookiesArgs() *GetCookiesArgs {
+	args := new(GetCookiesArgs)
+
+	return args
+}
+
+// SetBrowserContextID sets the BrowserContextID optional argument.
+// Browser context to use when called on the browser endpoint.
+func (a *GetCookiesArgs) SetBrowserContextID(browserContextID browser.ContextID) *GetCookiesArgs {
+	a.BrowserContextID = &browserContextID
+	return a
+}
+
+// GetCookiesReply represents the return values for GetCookies in the Storage domain.
+type GetCookiesReply struct {
+	Cookies []network.Cookie `json:"cookies"` // Array of cookie objects.
+}
+
+// SetCookiesArgs represents the arguments for SetCookies in the Storage domain.
+type SetCookiesArgs struct {
+	Cookies          []network.CookieParam `json:"cookies"`                    // Cookies to be set.
+	BrowserContextID *browser.ContextID    `json:"browserContextId,omitempty"` // Browser context to use when called on the browser endpoint.
+}
+
+// NewSetCookiesArgs initializes SetCookiesArgs with the required arguments.
+func NewSetCookiesArgs(cookies []network.CookieParam) *SetCookiesArgs {
+	args := new(SetCookiesArgs)
+	args.Cookies = cookies
+	return args
+}
+
+// SetBrowserContextID sets the BrowserContextID optional argument.
+// Browser context to use when called on the browser endpoint.
+func (a *SetCookiesArgs) SetBrowserContextID(browserContextID browser.ContextID) *SetCookiesArgs {
+	a.BrowserContextID = &browserContextID
+	return a
+}
+
+// ClearCookiesArgs represents the arguments for ClearCookies in the Storage domain.
+type ClearCookiesArgs struct {
+	BrowserContextID *browser.ContextID `json:"browserContextId,omitempty"` // Browser context to use when called on the browser endpoint.
+}
+
+// NewClearCookiesArgs initializes ClearCookiesArgs with the required arguments.
+func NewClearCookiesArgs() *ClearCookiesArgs {
+	args := new(ClearCookiesArgs)
+
+	return args
+}
+
+// SetBrowserContextID sets the BrowserContextID optional argument.
+// Browser context to use when called on the browser endpoint.
+func (a *ClearCookiesArgs) SetBrowserContextID(browserContextID browser.ContextID) *ClearCookiesArgs {
+	a.BrowserContextID = &browserContextID
+	return a
 }
 
 // GetUsageAndQuotaArgs represents the arguments for GetUsageAndQuota in the Storage domain.

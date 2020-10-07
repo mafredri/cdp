@@ -35,3 +35,44 @@ func (d *domainClient) GetEncodedResponse(ctx context.Context, args *GetEncodedR
 	}
 	return
 }
+
+// Disable invokes the Audits method. Disables issues domain, prevents further
+// issues from being reported to the client.
+func (d *domainClient) Disable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Audits.disable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Audits", Op: "Disable", Err: err}
+	}
+	return
+}
+
+// Enable invokes the Audits method. Enables issues domain, sends the issues
+// collected so far to the client by means of the `issueAdded` event.
+func (d *domainClient) Enable(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Audits.enable", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Audits", Op: "Enable", Err: err}
+	}
+	return
+}
+
+func (d *domainClient) IssueAdded(ctx context.Context) (IssueAddedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Audits.issueAdded", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &issueAddedClient{Stream: s}, nil
+}
+
+type issueAddedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *issueAddedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *issueAddedClient) Recv() (*IssueAddedReply, error) {
+	event := new(IssueAddedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Audits", Op: "IssueAdded Recv", Err: err}
+	}
+	return event, nil
+}

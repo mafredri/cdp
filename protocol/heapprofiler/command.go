@@ -110,7 +110,8 @@ type StopSamplingReply struct {
 
 // StopTrackingHeapObjectsArgs represents the arguments for StopTrackingHeapObjects in the HeapProfiler domain.
 type StopTrackingHeapObjectsArgs struct {
-	ReportProgress *bool `json:"reportProgress,omitempty"` // If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken when the tracking is stopped.
+	ReportProgress            *bool `json:"reportProgress,omitempty"`            // If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken when the tracking is stopped.
+	TreatGlobalObjectsAsRoots *bool `json:"treatGlobalObjectsAsRoots,omitempty"` // No description.
 }
 
 // NewStopTrackingHeapObjectsArgs initializes StopTrackingHeapObjectsArgs with the required arguments.
@@ -128,9 +129,16 @@ func (a *StopTrackingHeapObjectsArgs) SetReportProgress(reportProgress bool) *St
 	return a
 }
 
+// SetTreatGlobalObjectsAsRoots sets the TreatGlobalObjectsAsRoots optional argument.
+func (a *StopTrackingHeapObjectsArgs) SetTreatGlobalObjectsAsRoots(treatGlobalObjectsAsRoots bool) *StopTrackingHeapObjectsArgs {
+	a.TreatGlobalObjectsAsRoots = &treatGlobalObjectsAsRoots
+	return a
+}
+
 // TakeHeapSnapshotArgs represents the arguments for TakeHeapSnapshot in the HeapProfiler domain.
 type TakeHeapSnapshotArgs struct {
-	ReportProgress *bool `json:"reportProgress,omitempty"` // If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
+	ReportProgress            *bool `json:"reportProgress,omitempty"`            // If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
+	TreatGlobalObjectsAsRoots *bool `json:"treatGlobalObjectsAsRoots,omitempty"` // If true, a raw snapshot without artificial roots will be generated
 }
 
 // NewTakeHeapSnapshotArgs initializes TakeHeapSnapshotArgs with the required arguments.
@@ -145,5 +153,12 @@ func NewTakeHeapSnapshotArgs() *TakeHeapSnapshotArgs {
 // snapshot is being taken.
 func (a *TakeHeapSnapshotArgs) SetReportProgress(reportProgress bool) *TakeHeapSnapshotArgs {
 	a.ReportProgress = &reportProgress
+	return a
+}
+
+// SetTreatGlobalObjectsAsRoots sets the TreatGlobalObjectsAsRoots optional argument.
+// If true, a raw snapshot without artificial roots will be generated
+func (a *TakeHeapSnapshotArgs) SetTreatGlobalObjectsAsRoots(treatGlobalObjectsAsRoots bool) *TakeHeapSnapshotArgs {
+	a.TreatGlobalObjectsAsRoots = &treatGlobalObjectsAsRoots
 	return a
 }

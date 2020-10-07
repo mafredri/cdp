@@ -38,7 +38,7 @@ type PausedReply struct {
 	CallFrames []CallFrame `json:"callFrames"` // Call stack the virtual machine stopped on.
 	// Reason Pause reason.
 	//
-	// Values: "XHR", "DOM", "EventListener", "exception", "assert", "debugCommand", "promiseRejection", "OOM", "other", "ambiguous".
+	// Values: "ambiguous", "assert", "debugCommand", "DOM", "EventListener", "exception", "instrumentation", "OOM", "other", "promiseRejection", "XHR".
 	Reason          string              `json:"reason"`
 	Data            json.RawMessage     `json:"data,omitempty"`            // Object containing break-specific auxiliary properties.
 	HitBreakpoints  []string            `json:"hitBreakpoints,omitempty"`  // Hit breakpoints IDs
@@ -47,10 +47,9 @@ type PausedReply struct {
 	//
 	// Note: This property is experimental.
 	AsyncStackTraceID *runtime.StackTraceID `json:"asyncStackTraceId,omitempty"`
-	// AsyncCallStackTraceID Just scheduled async call will have this
-	// stack trace as parent stack during async execution. This field is
-	// available only after `Debugger.stepInto` call with `breakOnAsynCall`
-	// flag.
+	// AsyncCallStackTraceID is deprecated.
+	//
+	// Deprecated: Never present, will be removed.
 	//
 	// Note: This property is experimental.
 	AsyncCallStackTraceID *runtime.StackTraceID `json:"asyncCallStackTraceId,omitempty"`
@@ -98,6 +97,15 @@ type ScriptFailedToParseReply struct {
 	//
 	// Note: This property is experimental.
 	StackTrace *runtime.StackTrace `json:"stackTrace,omitempty"`
+	// CodeOffset If the scriptLanguage is WebAssembly, the code section
+	// offset in the module.
+	//
+	// Note: This property is experimental.
+	CodeOffset *int `json:"codeOffset,omitempty"`
+	// ScriptLanguage The language of the script.
+	//
+	// Note: This property is experimental.
+	ScriptLanguage ScriptLanguage `json:"scriptLanguage,omitempty"`
 }
 
 // ScriptParsedClient is a client for ScriptParsed events. Fired when virtual
@@ -135,4 +143,18 @@ type ScriptParsedReply struct {
 	//
 	// Note: This property is experimental.
 	StackTrace *runtime.StackTrace `json:"stackTrace,omitempty"`
+	// CodeOffset If the scriptLanguage is WebAssembly, the code section
+	// offset in the module.
+	//
+	// Note: This property is experimental.
+	CodeOffset *int `json:"codeOffset,omitempty"`
+	// ScriptLanguage The language of the script.
+	//
+	// Note: This property is experimental.
+	ScriptLanguage ScriptLanguage `json:"scriptLanguage,omitempty"`
+	// DebugSymbols If the scriptLanguage is WebASsembly, the source of
+	// debug symbols for the module.
+	//
+	// Note: This property is experimental.
+	DebugSymbols *DebugSymbols `json:"debugSymbols,omitempty"`
 }

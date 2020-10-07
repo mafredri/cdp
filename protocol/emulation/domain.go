@@ -159,8 +159,8 @@ func (d *domainClient) SetEmitTouchEventsForMouse(ctx context.Context, args *Set
 	return
 }
 
-// SetEmulatedMedia invokes the Emulation method. Emulates the given media for
-// CSS media queries.
+// SetEmulatedMedia invokes the Emulation method. Emulates the given media
+// type or media feature for CSS media queries.
 func (d *domainClient) SetEmulatedMedia(ctx context.Context, args *SetEmulatedMediaArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Emulation.setEmulatedMedia", args, nil, d.conn)
@@ -169,6 +169,20 @@ func (d *domainClient) SetEmulatedMedia(ctx context.Context, args *SetEmulatedMe
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetEmulatedMedia", Err: err}
+	}
+	return
+}
+
+// SetEmulatedVisionDeficiency invokes the Emulation method. Emulates the
+// given vision deficiency.
+func (d *domainClient) SetEmulatedVisionDeficiency(ctx context.Context, args *SetEmulatedVisionDeficiencyArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setEmulatedVisionDeficiency", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setEmulatedVisionDeficiency", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetEmulatedVisionDeficiency", Err: err}
 	}
 	return
 }
@@ -261,6 +275,34 @@ func (d *domainClient) SetVirtualTimePolicy(ctx context.Context, args *SetVirtua
 	return
 }
 
+// SetLocaleOverride invokes the Emulation method. Overrides default host
+// system locale with the specified one.
+func (d *domainClient) SetLocaleOverride(ctx context.Context, args *SetLocaleOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setLocaleOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setLocaleOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetLocaleOverride", Err: err}
+	}
+	return
+}
+
+// SetTimezoneOverride invokes the Emulation method. Overrides default host
+// system timezone with the specified one.
+func (d *domainClient) SetTimezoneOverride(ctx context.Context, args *SetTimezoneOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setTimezoneOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setTimezoneOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetTimezoneOverride", Err: err}
+	}
+	return
+}
+
 // SetVisibleSize invokes the Emulation method. Resizes the frame/viewport of
 // the page. Note that this does not affect the frame's container (e.g. browser
 // window). Can be used to produce screenshots of the specified size. Not
@@ -291,27 +333,6 @@ func (d *domainClient) SetUserAgentOverride(ctx context.Context, args *SetUserAg
 	return
 }
 
-func (d *domainClient) VirtualTimeAdvanced(ctx context.Context) (VirtualTimeAdvancedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Emulation.virtualTimeAdvanced", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &virtualTimeAdvancedClient{Stream: s}, nil
-}
-
-type virtualTimeAdvancedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *virtualTimeAdvancedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *virtualTimeAdvancedClient) Recv() (*VirtualTimeAdvancedReply, error) {
-	event := new(VirtualTimeAdvancedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Emulation", Op: "VirtualTimeAdvanced Recv", Err: err}
-	}
-	return event, nil
-}
-
 func (d *domainClient) VirtualTimeBudgetExpired(ctx context.Context) (VirtualTimeBudgetExpiredClient, error) {
 	s, err := rpcc.NewStream(ctx, "Emulation.virtualTimeBudgetExpired", d.conn)
 	if err != nil {
@@ -329,27 +350,6 @@ func (c *virtualTimeBudgetExpiredClient) Recv() (*VirtualTimeBudgetExpiredReply,
 	event := new(VirtualTimeBudgetExpiredReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Emulation", Op: "VirtualTimeBudgetExpired Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) VirtualTimePaused(ctx context.Context) (VirtualTimePausedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Emulation.virtualTimePaused", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &virtualTimePausedClient{Stream: s}, nil
-}
-
-type virtualTimePausedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *virtualTimePausedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *virtualTimePausedClient) Recv() (*VirtualTimePausedReply, error) {
-	event := new(VirtualTimePausedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Emulation", Op: "VirtualTimePaused Recv", Err: err}
 	}
 	return event, nil
 }

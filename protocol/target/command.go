@@ -2,6 +2,10 @@
 
 package target
 
+import (
+	"github.com/mafredri/cdp/protocol/internal"
+)
+
 // ActivateTargetArgs represents the arguments for ActivateTarget in the Target domain.
 type ActivateTargetArgs struct {
 	TargetID ID `json:"targetId"` // No description.
@@ -16,12 +20,8 @@ func NewActivateTargetArgs(targetID ID) *ActivateTargetArgs {
 
 // AttachToTargetArgs represents the arguments for AttachToTarget in the Target domain.
 type AttachToTargetArgs struct {
-	TargetID ID `json:"targetId"` // No description.
-	// Flatten Enables "flat" access to the session via specifying
-	// sessionId attribute in the commands.
-	//
-	// Note: This property is experimental.
-	Flatten *bool `json:"flatten,omitempty"`
+	TargetID ID    `json:"targetId"`          // No description.
+	Flatten  *bool `json:"flatten,omitempty"` // Enables "flat" access to the session via specifying sessionId attribute in the commands. We plan to make this the default, deprecate non-flattened mode, and eventually retire it. See crbug.com/991325.
 }
 
 // NewAttachToTargetArgs initializes AttachToTargetArgs with the required arguments.
@@ -33,9 +33,8 @@ func NewAttachToTargetArgs(targetID ID) *AttachToTargetArgs {
 
 // SetFlatten sets the Flatten optional argument. Enables "flat"
 // access to the session via specifying sessionId attribute in the
-// commands.
-//
-// Note: This property is experimental.
+// commands. We plan to make this the default, deprecate non-flattened
+// mode, and eventually retire it. See crbug.com/991325.
 func (a *AttachToTargetArgs) SetFlatten(flatten bool) *AttachToTargetArgs {
 	a.Flatten = &flatten
 	return a
@@ -88,28 +87,49 @@ func (a *ExposeDevToolsProtocolArgs) SetBindingName(bindingName string) *ExposeD
 	return a
 }
 
+// CreateBrowserContextArgs represents the arguments for CreateBrowserContext in the Target domain.
+type CreateBrowserContextArgs struct {
+	DisposeOnDetach *bool `json:"disposeOnDetach,omitempty"` // If specified, disposes this context when debugging session disconnects.
+}
+
+// NewCreateBrowserContextArgs initializes CreateBrowserContextArgs with the required arguments.
+func NewCreateBrowserContextArgs() *CreateBrowserContextArgs {
+	args := new(CreateBrowserContextArgs)
+
+	return args
+}
+
+// SetDisposeOnDetach sets the DisposeOnDetach optional argument. If
+// specified, disposes this context when debugging session disconnects.
+func (a *CreateBrowserContextArgs) SetDisposeOnDetach(disposeOnDetach bool) *CreateBrowserContextArgs {
+	a.DisposeOnDetach = &disposeOnDetach
+	return a
+}
+
 // CreateBrowserContextReply represents the return values for CreateBrowserContext in the Target domain.
 type CreateBrowserContextReply struct {
-	BrowserContextID BrowserContextID `json:"browserContextId"` // The id of the context created.
+	BrowserContextID internal.BrowserContextID `json:"browserContextId"` // The id of the context created.
 }
 
 // GetBrowserContextsReply represents the return values for GetBrowserContexts in the Target domain.
 type GetBrowserContextsReply struct {
-	BrowserContextIDs []BrowserContextID `json:"browserContextIds"` // An array of browser context ids.
+	BrowserContextIDs []internal.BrowserContextID `json:"browserContextIds"` // An array of browser context ids.
 }
 
 // CreateTargetArgs represents the arguments for CreateTarget in the Target domain.
 type CreateTargetArgs struct {
-	URL              string            `json:"url"`                        // The initial URL the page will be navigated to.
-	Width            *int              `json:"width,omitempty"`            // Frame width in DIP (headless chrome only).
-	Height           *int              `json:"height,omitempty"`           // Frame height in DIP (headless chrome only).
-	BrowserContextID *BrowserContextID `json:"browserContextId,omitempty"` // The browser context to create the page in.
+	URL              string                     `json:"url"`                        // The initial URL the page will be navigated to.
+	Width            *int                       `json:"width,omitempty"`            // Frame width in DIP (headless chrome only).
+	Height           *int                       `json:"height,omitempty"`           // Frame height in DIP (headless chrome only).
+	BrowserContextID *internal.BrowserContextID `json:"browserContextId,omitempty"` // The browser context to create the page in.
 	// EnableBeginFrameControl Whether BeginFrames for this target will be
 	// controlled via DevTools (headless chrome only, not supported on
 	// MacOS yet, false by default).
 	//
 	// Note: This property is experimental.
 	EnableBeginFrameControl *bool `json:"enableBeginFrameControl,omitempty"`
+	NewWindow               *bool `json:"newWindow,omitempty"`  // Whether to create a new Window or Tab (chrome-only, false by default).
+	Background              *bool `json:"background,omitempty"` // Whether to create the target in background or foreground (chrome-only, false by default).
 }
 
 // NewCreateTargetArgs initializes CreateTargetArgs with the required arguments.
@@ -135,7 +155,7 @@ func (a *CreateTargetArgs) SetHeight(height int) *CreateTargetArgs {
 
 // SetBrowserContextID sets the BrowserContextID optional argument.
 // The browser context to create the page in.
-func (a *CreateTargetArgs) SetBrowserContextID(browserContextID BrowserContextID) *CreateTargetArgs {
+func (a *CreateTargetArgs) SetBrowserContextID(browserContextID internal.BrowserContextID) *CreateTargetArgs {
 	a.BrowserContextID = &browserContextID
 	return a
 }
@@ -148,6 +168,21 @@ func (a *CreateTargetArgs) SetBrowserContextID(browserContextID BrowserContextID
 // Note: This property is experimental.
 func (a *CreateTargetArgs) SetEnableBeginFrameControl(enableBeginFrameControl bool) *CreateTargetArgs {
 	a.EnableBeginFrameControl = &enableBeginFrameControl
+	return a
+}
+
+// SetNewWindow sets the NewWindow optional argument. Whether to
+// create a new Window or Tab (chrome-only, false by default).
+func (a *CreateTargetArgs) SetNewWindow(newWindow bool) *CreateTargetArgs {
+	a.NewWindow = &newWindow
+	return a
+}
+
+// SetBackground sets the Background optional argument. Whether to
+// create the target in background or foreground (chrome-only, false by
+// default).
+func (a *CreateTargetArgs) SetBackground(background bool) *CreateTargetArgs {
+	a.Background = &background
 	return a
 }
 
@@ -189,11 +224,11 @@ func (a *DetachFromTargetArgs) SetTargetID(targetID ID) *DetachFromTargetArgs {
 
 // DisposeBrowserContextArgs represents the arguments for DisposeBrowserContext in the Target domain.
 type DisposeBrowserContextArgs struct {
-	BrowserContextID BrowserContextID `json:"browserContextId"` // No description.
+	BrowserContextID internal.BrowserContextID `json:"browserContextId"` // No description.
 }
 
 // NewDisposeBrowserContextArgs initializes DisposeBrowserContextArgs with the required arguments.
-func NewDisposeBrowserContextArgs(browserContextID BrowserContextID) *DisposeBrowserContextArgs {
+func NewDisposeBrowserContextArgs(browserContextID internal.BrowserContextID) *DisposeBrowserContextArgs {
 	args := new(DisposeBrowserContextArgs)
 	args.BrowserContextID = browserContextID
 	return args
@@ -261,13 +296,9 @@ func (a *SendMessageToTargetArgs) SetTargetID(targetID ID) *SendMessageToTargetA
 
 // SetAutoAttachArgs represents the arguments for SetAutoAttach in the Target domain.
 type SetAutoAttachArgs struct {
-	AutoAttach             bool `json:"autoAttach"`             // Whether to auto-attach to related targets.
-	WaitForDebuggerOnStart bool `json:"waitForDebuggerOnStart"` // Whether to pause new targets when attaching to them. Use `Runtime.runIfWaitingForDebugger` to run paused targets.
-	// Flatten Enables "flat" access to the session via specifying
-	// sessionId attribute in the commands.
-	//
-	// Note: This property is experimental.
-	Flatten *bool `json:"flatten,omitempty"`
+	AutoAttach             bool  `json:"autoAttach"`             // Whether to auto-attach to related targets.
+	WaitForDebuggerOnStart bool  `json:"waitForDebuggerOnStart"` // Whether to pause new targets when attaching to them. Use `Runtime.runIfWaitingForDebugger` to run paused targets.
+	Flatten                *bool `json:"flatten,omitempty"`      // Enables "flat" access to the session via specifying sessionId attribute in the commands. We plan to make this the default, deprecate non-flattened mode, and eventually retire it. See crbug.com/991325.
 }
 
 // NewSetAutoAttachArgs initializes SetAutoAttachArgs with the required arguments.
@@ -280,9 +311,8 @@ func NewSetAutoAttachArgs(autoAttach bool, waitForDebuggerOnStart bool) *SetAuto
 
 // SetFlatten sets the Flatten optional argument. Enables "flat"
 // access to the session via specifying sessionId attribute in the
-// commands.
-//
-// Note: This property is experimental.
+// commands. We plan to make this the default, deprecate non-flattened
+// mode, and eventually retire it. See crbug.com/991325.
 func (a *SetAutoAttachArgs) SetFlatten(flatten bool) *SetAutoAttachArgs {
 	a.Flatten = &flatten
 	return a

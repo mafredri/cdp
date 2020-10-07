@@ -85,6 +85,28 @@ type RequestDataReply struct {
 	HasMore                bool        `json:"hasMore"`                // If true, there are more entries to fetch in the given range.
 }
 
+// GetMetadataArgs represents the arguments for GetMetadata in the IndexedDB domain.
+type GetMetadataArgs struct {
+	SecurityOrigin  string `json:"securityOrigin"`  // Security origin.
+	DatabaseName    string `json:"databaseName"`    // Database name.
+	ObjectStoreName string `json:"objectStoreName"` // Object store name.
+}
+
+// NewGetMetadataArgs initializes GetMetadataArgs with the required arguments.
+func NewGetMetadataArgs(securityOrigin string, databaseName string, objectStoreName string) *GetMetadataArgs {
+	args := new(GetMetadataArgs)
+	args.SecurityOrigin = securityOrigin
+	args.DatabaseName = databaseName
+	args.ObjectStoreName = objectStoreName
+	return args
+}
+
+// GetMetadataReply represents the return values for GetMetadata in the IndexedDB domain.
+type GetMetadataReply struct {
+	EntriesCount      float64 `json:"entriesCount"`      // the entries count
+	KeyGeneratorValue float64 `json:"keyGeneratorValue"` // the current value of key generator, to become the next inserted key into the object store. Valid if objectStore.autoIncrement is true.
+}
+
 // RequestDatabaseArgs represents the arguments for RequestDatabase in the IndexedDB domain.
 type RequestDatabaseArgs struct {
 	SecurityOrigin string `json:"securityOrigin"` // Security origin.

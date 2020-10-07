@@ -8,15 +8,16 @@ import (
 	"golang.org/x/xerrors"
 )
 
-type causer interface {
+// Causer is an interface to access to its direct cause of the error.
+type Causer interface {
 	Cause() error
 }
 
 // Cause returns the underlying cause for this error, if possible.
-// If err does not implement causer.Cause(), then err is returned.
+// If err does not implement Causer.Cause(), then err is returned.
 func Cause(err error) error {
 	for err != nil {
-		if c, ok := err.(causer); ok {
+		if c, ok := err.(Causer); ok {
 			err = c.Cause()
 		} else {
 			return err
@@ -52,7 +53,7 @@ type wrapped struct {
 }
 
 var _ error = (*wrapped)(nil)
-var _ causer = (*wrapped)(nil)
+var _ Causer = (*wrapped)(nil)
 var _ xerrors.Wrapper = (*wrapped)(nil)
 
 func (e *wrapped) Error() string {

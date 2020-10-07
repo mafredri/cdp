@@ -53,20 +53,37 @@ func NewFailRequestArgs(requestID RequestID, errorReason network.ErrorReason) *F
 
 // FulfillRequestArgs represents the arguments for FulfillRequest in the Fetch domain.
 type FulfillRequestArgs struct {
-	RequestID       RequestID     `json:"requestId"`                // An id the client received in requestPaused event.
-	ResponseCode    int           `json:"responseCode"`             // An HTTP response code.
-	ResponseHeaders []HeaderEntry `json:"responseHeaders"`          // Response headers.
-	Body            *string       `json:"body,omitempty"`           // A response body.
-	ResponsePhrase  *string       `json:"responsePhrase,omitempty"` // A textual representation of responseCode. If absent, a standard phrase mathcing responseCode is used.
+	RequestID             RequestID     `json:"requestId"`                       // An id the client received in requestPaused event.
+	ResponseCode          int           `json:"responseCode"`                    // An HTTP response code.
+	ResponseHeaders       []HeaderEntry `json:"responseHeaders,omitempty"`       // Response headers.
+	BinaryResponseHeaders *string       `json:"binaryResponseHeaders,omitempty"` // Alternative way of specifying response headers as a \0-separated series of name: value pairs. Prefer the above method unless you need to represent some non-UTF8 values that can't be transmitted over the protocol as text.
+	Body                  *string       `json:"body,omitempty"`                  // A response body.
+	ResponsePhrase        *string       `json:"responsePhrase,omitempty"`        // A textual representation of responseCode. If absent, a standard phrase matching responseCode is used.
 }
 
 // NewFulfillRequestArgs initializes FulfillRequestArgs with the required arguments.
-func NewFulfillRequestArgs(requestID RequestID, responseCode int, responseHeaders []HeaderEntry) *FulfillRequestArgs {
+func NewFulfillRequestArgs(requestID RequestID, responseCode int) *FulfillRequestArgs {
 	args := new(FulfillRequestArgs)
 	args.RequestID = requestID
 	args.ResponseCode = responseCode
-	args.ResponseHeaders = responseHeaders
 	return args
+}
+
+// SetResponseHeaders sets the ResponseHeaders optional argument.
+// Response headers.
+func (a *FulfillRequestArgs) SetResponseHeaders(responseHeaders []HeaderEntry) *FulfillRequestArgs {
+	a.ResponseHeaders = responseHeaders
+	return a
+}
+
+// SetBinaryResponseHeaders sets the BinaryResponseHeaders optional argument.
+// Alternative way of specifying response headers as a \0-separated
+// series of name: value pairs. Prefer the above method unless you need
+// to represent some non-UTF8 values that can't be transmitted over the
+// protocol as text.
+func (a *FulfillRequestArgs) SetBinaryResponseHeaders(binaryResponseHeaders string) *FulfillRequestArgs {
+	a.BinaryResponseHeaders = &binaryResponseHeaders
+	return a
 }
 
 // SetBody sets the Body optional argument. A response body.
@@ -77,7 +94,7 @@ func (a *FulfillRequestArgs) SetBody(body string) *FulfillRequestArgs {
 
 // SetResponsePhrase sets the ResponsePhrase optional argument. A
 // textual representation of responseCode. If absent, a standard phrase
-// mathcing responseCode is used.
+// matching responseCode is used.
 func (a *FulfillRequestArgs) SetResponsePhrase(responsePhrase string) *FulfillRequestArgs {
 	a.ResponsePhrase = &responsePhrase
 	return a
@@ -89,7 +106,7 @@ type ContinueRequestArgs struct {
 	URL       *string       `json:"url,omitempty"`      // If set, the request url will be modified in a way that's not observable by page.
 	Method    *string       `json:"method,omitempty"`   // If set, the request method is overridden.
 	PostData  *string       `json:"postData,omitempty"` // If set, overrides the post data in the request.
-	Headers   []HeaderEntry `json:"headers,omitempty"`  // If set, overrides the request headrts.
+	Headers   []HeaderEntry `json:"headers,omitempty"`  // If set, overrides the request headers.
 }
 
 // NewContinueRequestArgs initializes ContinueRequestArgs with the required arguments.
@@ -121,7 +138,7 @@ func (a *ContinueRequestArgs) SetPostData(postData string) *ContinueRequestArgs 
 }
 
 // SetHeaders sets the Headers optional argument. If set, overrides
-// the request headrts.
+// the request headers.
 func (a *ContinueRequestArgs) SetHeaders(headers []HeaderEntry) *ContinueRequestArgs {
 	a.Headers = headers
 	return a

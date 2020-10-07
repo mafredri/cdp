@@ -53,6 +53,19 @@ func (d *domainClient) DispatchSyncEvent(ctx context.Context, args *DispatchSync
 	return
 }
 
+// DispatchPeriodicSyncEvent invokes the ServiceWorker method.
+func (d *domainClient) DispatchPeriodicSyncEvent(ctx context.Context, args *DispatchPeriodicSyncEventArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "ServiceWorker.dispatchPeriodicSyncEvent", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "ServiceWorker.dispatchPeriodicSyncEvent", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "ServiceWorker", Op: "DispatchPeriodicSyncEvent", Err: err}
+	}
+	return
+}
+
 // Enable invokes the ServiceWorker method.
 func (d *domainClient) Enable(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "ServiceWorker.enable", nil, nil, d.conn)

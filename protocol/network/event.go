@@ -80,7 +80,7 @@ type LoadingFinishedReply struct {
 
 // RequestInterceptedClient is a client for RequestIntercepted events. Details
 // of an intercepted HTTP request, which must be either allowed, blocked,
-// modified or mocked.
+// modified or mocked. Deprecated, use Fetch.requestPaused instead.
 type RequestInterceptedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -101,6 +101,7 @@ type RequestInterceptedReply struct {
 	ResponseErrorReason ErrorReason          `json:"responseErrorReason,omitempty"` // Response error if intercepted at response stage or if redirect occurred while intercepting request.
 	ResponseStatusCode  *int                 `json:"responseStatusCode,omitempty"`  // Response code if intercepted at response stage or if redirect occurred while intercepting request or auth retry occurred.
 	ResponseHeaders     Headers              `json:"responseHeaders,omitempty"`     // Response headers if intercepted at the response stage or if redirect occurred while intercepting request or auth retry occurred.
+	RequestID           *RequestID           `json:"requestId,omitempty"`           // If the intercepted request had a corresponding requestWillBeSent event fired for it, then this requestId will be the same as the requestId present in the requestWillBeSent event.
 }
 
 // RequestServedFromCacheClient is a client for RequestServedFromCache events.
@@ -301,4 +302,44 @@ type WebSocketWillSendHandshakeRequestReply struct {
 	Timestamp MonotonicTime    `json:"timestamp"` // Timestamp.
 	WallTime  TimeSinceEpoch   `json:"wallTime"`  // UTC Timestamp.
 	Request   WebSocketRequest `json:"request"`   // WebSocket request data.
+}
+
+// RequestWillBeSentExtraInfoClient is a client for RequestWillBeSentExtraInfo events.
+// Fired when additional information about a requestWillBeSent event is
+// available from the network stack. Not every requestWillBeSent event will
+// have an additional requestWillBeSentExtraInfo fired for it, and there is no
+// guarantee whether requestWillBeSent or requestWillBeSentExtraInfo will be
+// fired first for the same request.
+type RequestWillBeSentExtraInfoClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*RequestWillBeSentExtraInfoReply, error)
+	rpcc.Stream
+}
+
+// RequestWillBeSentExtraInfoReply is the reply for RequestWillBeSentExtraInfo events.
+type RequestWillBeSentExtraInfoReply struct {
+	RequestID         RequestID                 `json:"requestId"`         // Request identifier. Used to match this information to an existing requestWillBeSent event.
+	AssociatedCookies []BlockedCookieWithReason `json:"associatedCookies"` // A list of cookies potentially associated to the requested URL. This includes both cookies sent with the request and the ones not sent; the latter are distinguished by having blockedReason field set.
+	Headers           Headers                   `json:"headers"`           // Raw request headers as they will be sent over the wire.
+}
+
+// ResponseReceivedExtraInfoClient is a client for ResponseReceivedExtraInfo events.
+// Fired when additional information about a responseReceived event is
+// available from the network stack. Not every responseReceived event will have
+// an additional responseReceivedExtraInfo for it, and
+// responseReceivedExtraInfo may be fired before or after responseReceived.
+type ResponseReceivedExtraInfoClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*ResponseReceivedExtraInfoReply, error)
+	rpcc.Stream
+}
+
+// ResponseReceivedExtraInfoReply is the reply for ResponseReceivedExtraInfo events.
+type ResponseReceivedExtraInfoReply struct {
+	RequestID      RequestID                    `json:"requestId"`             // Request identifier. Used to match this information to another responseReceived event.
+	BlockedCookies []BlockedSetCookieWithReason `json:"blockedCookies"`        // A list of cookies which were not stored from the response along with the corresponding reasons for blocking. The cookies here may not be valid due to syntax errors, which are represented by the invalid cookie line string instead of a proper cookie.
+	Headers        Headers                      `json:"headers"`               // Raw response headers as they were received over the wire.
+	HeadersText    *string                      `json:"headersText,omitempty"` // Raw response header text as it was received over the wire. The raw text may not always be available, such as in the case of HTTP/2 or QUIC.
 }

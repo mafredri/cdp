@@ -110,6 +110,51 @@ type DescribeNodeReply struct {
 	Node Node `json:"node"` // Node description.
 }
 
+// ScrollIntoViewIfNeededArgs represents the arguments for ScrollIntoViewIfNeeded in the DOM domain.
+type ScrollIntoViewIfNeededArgs struct {
+	NodeID        *NodeID                 `json:"nodeId,omitempty"`        // Identifier of the node.
+	BackendNodeID *BackendNodeID          `json:"backendNodeId,omitempty"` // Identifier of the backend node.
+	ObjectID      *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node wrapper.
+	Rect          *Rect                   `json:"rect,omitempty"`          // The rect to be scrolled into view, relative to the node's border box, in CSS pixels. When omitted, center of the node will be used, similar to Element.scrollIntoView.
+}
+
+// NewScrollIntoViewIfNeededArgs initializes ScrollIntoViewIfNeededArgs with the required arguments.
+func NewScrollIntoViewIfNeededArgs() *ScrollIntoViewIfNeededArgs {
+	args := new(ScrollIntoViewIfNeededArgs)
+
+	return args
+}
+
+// SetNodeID sets the NodeID optional argument. Identifier of the
+// node.
+func (a *ScrollIntoViewIfNeededArgs) SetNodeID(nodeID NodeID) *ScrollIntoViewIfNeededArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument.
+// Identifier of the backend node.
+func (a *ScrollIntoViewIfNeededArgs) SetBackendNodeID(backendNodeID BackendNodeID) *ScrollIntoViewIfNeededArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
+}
+
+// SetObjectID sets the ObjectID optional argument. JavaScript object
+// id of the node wrapper.
+func (a *ScrollIntoViewIfNeededArgs) SetObjectID(objectID runtime.RemoteObjectID) *ScrollIntoViewIfNeededArgs {
+	a.ObjectID = &objectID
+	return a
+}
+
+// SetRect sets the Rect optional argument. The rect to be scrolled
+// into view, relative to the node's border box, in CSS pixels. When
+// omitted, center of the node will be used, similar to
+// Element.scrollIntoView.
+func (a *ScrollIntoViewIfNeededArgs) SetRect(rect Rect) *ScrollIntoViewIfNeededArgs {
+	a.Rect = &rect
+	return a
+}
+
 // DiscardSearchResultsArgs represents the arguments for DiscardSearchResults in the DOM domain.
 type DiscardSearchResultsArgs struct {
 	SearchID string `json:"searchId"` // Unique search session identifier.
@@ -327,6 +372,7 @@ type GetNodeForLocationArgs struct {
 	X                         int   `json:"x"`                                   // X coordinate.
 	Y                         int   `json:"y"`                                   // Y coordinate.
 	IncludeUserAgentShadowDOM *bool `json:"includeUserAgentShadowDOM,omitempty"` // False to skip to the nearest non-UA shadow root ancestor (default: false).
+	IgnorePointerEventsNone   *bool `json:"ignorePointerEventsNone,omitempty"`   // Whether to ignore pointer-events: none on elements and hit test them.
 }
 
 // NewGetNodeForLocationArgs initializes GetNodeForLocationArgs with the required arguments.
@@ -345,10 +391,19 @@ func (a *GetNodeForLocationArgs) SetIncludeUserAgentShadowDOM(includeUserAgentSh
 	return a
 }
 
+// SetIgnorePointerEventsNone sets the IgnorePointerEventsNone optional argument.
+// Whether to ignore pointer-events: none on elements and hit test
+// them.
+func (a *GetNodeForLocationArgs) SetIgnorePointerEventsNone(ignorePointerEventsNone bool) *GetNodeForLocationArgs {
+	a.IgnorePointerEventsNone = &ignorePointerEventsNone
+	return a
+}
+
 // GetNodeForLocationReply represents the return values for GetNodeForLocation in the DOM domain.
 type GetNodeForLocationReply struct {
-	BackendNodeID BackendNodeID `json:"backendNodeId"`    // Resulting node.
-	NodeID        *NodeID       `json:"nodeId,omitempty"` // Id of the node at given coordinates, only when enabled.
+	BackendNodeID BackendNodeID        `json:"backendNodeId"`    // Resulting node.
+	FrameID       internal.PageFrameID `json:"frameId"`          // Frame this node belongs to.
+	NodeID        *NodeID              `json:"nodeId,omitempty"` // Id of the node at given coordinates, only when enabled and requested document.
 }
 
 // GetOuterHTMLArgs represents the arguments for GetOuterHTML in the DOM domain.
@@ -630,9 +685,10 @@ type RequestNodeReply struct {
 
 // ResolveNodeArgs represents the arguments for ResolveNode in the DOM domain.
 type ResolveNodeArgs struct {
-	NodeID        *NodeID        `json:"nodeId,omitempty"`        // Id of the node to resolve.
-	BackendNodeID *BackendNodeID `json:"backendNodeId,omitempty"` // Backend identifier of the node to resolve.
-	ObjectGroup   *string        `json:"objectGroup,omitempty"`   // Symbolic group name that can be used to release multiple objects.
+	NodeID             *NodeID                     `json:"nodeId,omitempty"`             // Id of the node to resolve.
+	BackendNodeID      *BackendNodeID              `json:"backendNodeId,omitempty"`      // Backend identifier of the node to resolve.
+	ObjectGroup        *string                     `json:"objectGroup,omitempty"`        // Symbolic group name that can be used to release multiple objects.
+	ExecutionContextID *runtime.ExecutionContextID `json:"executionContextId,omitempty"` // Execution context in which to resolve the node.
 }
 
 // NewResolveNodeArgs initializes ResolveNodeArgs with the required arguments.
@@ -660,6 +716,13 @@ func (a *ResolveNodeArgs) SetBackendNodeID(backendNodeID BackendNodeID) *Resolve
 // group name that can be used to release multiple objects.
 func (a *ResolveNodeArgs) SetObjectGroup(objectGroup string) *ResolveNodeArgs {
 	a.ObjectGroup = &objectGroup
+	return a
+}
+
+// SetExecutionContextID sets the ExecutionContextID optional argument.
+// Execution context in which to resolve the node.
+func (a *ResolveNodeArgs) SetExecutionContextID(executionContextID runtime.ExecutionContextID) *ResolveNodeArgs {
+	a.ExecutionContextID = &executionContextID
 	return a
 }
 
@@ -741,6 +804,35 @@ func (a *SetFileInputFilesArgs) SetBackendNodeID(backendNodeID BackendNodeID) *S
 func (a *SetFileInputFilesArgs) SetObjectID(objectID runtime.RemoteObjectID) *SetFileInputFilesArgs {
 	a.ObjectID = &objectID
 	return a
+}
+
+// SetNodeStackTracesEnabledArgs represents the arguments for SetNodeStackTracesEnabled in the DOM domain.
+type SetNodeStackTracesEnabledArgs struct {
+	Enable bool `json:"enable"` // Enable or disable.
+}
+
+// NewSetNodeStackTracesEnabledArgs initializes SetNodeStackTracesEnabledArgs with the required arguments.
+func NewSetNodeStackTracesEnabledArgs(enable bool) *SetNodeStackTracesEnabledArgs {
+	args := new(SetNodeStackTracesEnabledArgs)
+	args.Enable = enable
+	return args
+}
+
+// GetNodeStackTracesArgs represents the arguments for GetNodeStackTraces in the DOM domain.
+type GetNodeStackTracesArgs struct {
+	NodeID NodeID `json:"nodeId"` // Id of the node to get stack traces for.
+}
+
+// NewGetNodeStackTracesArgs initializes GetNodeStackTracesArgs with the required arguments.
+func NewGetNodeStackTracesArgs(nodeID NodeID) *GetNodeStackTracesArgs {
+	args := new(GetNodeStackTracesArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// GetNodeStackTracesReply represents the return values for GetNodeStackTraces in the DOM domain.
+type GetNodeStackTracesReply struct {
+	Creation *runtime.StackTrace `json:"creation,omitempty"` // Creation stack trace, if available.
 }
 
 // GetFileInfoArgs represents the arguments for GetFileInfo in the DOM domain.
@@ -834,5 +926,5 @@ func NewGetFrameOwnerArgs(frameID internal.PageFrameID) *GetFrameOwnerArgs {
 // GetFrameOwnerReply represents the return values for GetFrameOwner in the DOM domain.
 type GetFrameOwnerReply struct {
 	BackendNodeID BackendNodeID `json:"backendNodeId"`    // Resulting node.
-	NodeID        *NodeID       `json:"nodeId,omitempty"` // Id of the node at given coordinates, only when enabled.
+	NodeID        *NodeID       `json:"nodeId,omitempty"` // Id of the node at given coordinates, only when enabled and requested document.
 }

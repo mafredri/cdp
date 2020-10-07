@@ -46,6 +46,31 @@ type TraceConfig struct {
 	MemoryDumpConfig     MemoryDumpConfig `json:"memoryDumpConfig,omitempty"`     // Configuration for memory dump triggers. Used only when "memory-infra" category is enabled.
 }
 
+// StreamFormat Data format of a trace. Can be either the legacy JSON format
+// or the protocol buffer format. Note that the JSON format will be deprecated
+// soon.
+type StreamFormat string
+
+// StreamFormat as enums.
+const (
+	StreamFormatNotSet StreamFormat = ""
+	StreamFormatJSON   StreamFormat = "json"
+	StreamFormatProto  StreamFormat = "proto"
+)
+
+func (e StreamFormat) Valid() bool {
+	switch e {
+	case "json", "proto":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e StreamFormat) String() string {
+	return string(e)
+}
+
 // StreamCompression Compression type to use for traces returned via streams.
 type StreamCompression string
 

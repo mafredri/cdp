@@ -9,6 +9,7 @@ import (
 	"github.com/mafredri/cdp/protocol/animation"
 	"github.com/mafredri/cdp/protocol/applicationcache"
 	"github.com/mafredri/cdp/protocol/audits"
+	"github.com/mafredri/cdp/protocol/backgroundservice"
 	"github.com/mafredri/cdp/protocol/browser"
 	"github.com/mafredri/cdp/protocol/cachestorage"
 	"github.com/mafredri/cdp/protocol/cast"
@@ -31,6 +32,7 @@ import (
 	"github.com/mafredri/cdp/protocol/io"
 	"github.com/mafredri/cdp/protocol/layertree"
 	"github.com/mafredri/cdp/protocol/log"
+	"github.com/mafredri/cdp/protocol/media"
 	"github.com/mafredri/cdp/protocol/memory"
 	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/overlay"
@@ -44,9 +46,10 @@ import (
 	"github.com/mafredri/cdp/protocol/storage"
 	"github.com/mafredri/cdp/protocol/systeminfo"
 	"github.com/mafredri/cdp/protocol/target"
-	"github.com/mafredri/cdp/protocol/testing"
 	"github.com/mafredri/cdp/protocol/tethering"
 	"github.com/mafredri/cdp/protocol/tracing"
+	"github.com/mafredri/cdp/protocol/webaudio"
+	"github.com/mafredri/cdp/protocol/webauthn"
 )
 
 // The Accessibility domain.
@@ -195,11 +198,70 @@ type Audits interface {
 	// Returns the response body and size if it were re-encoded with the
 	// specified settings. Only applies to images.
 	GetEncodedResponse(context.Context, *audits.GetEncodedResponseArgs) (*audits.GetEncodedResponseReply, error)
+
+	// Command Disable
+	//
+	// Disables issues domain, prevents further issues from being reported
+	// to the client.
+	Disable(context.Context) error
+
+	// Command Enable
+	//
+	// Enables issues domain, sends the issues collected so far to the
+	// client by means of the `issueAdded` event.
+	Enable(context.Context) error
+
+	// Event IssueAdded
+	IssueAdded(context.Context) (audits.IssueAddedClient, error)
+}
+
+// The BackgroundService domain. Defines events for background web platform
+// features.
+//
+// Note: This domain is experimental.
+type BackgroundService interface {
+	// Command StartObserving
+	//
+	// Enables event updates for the service.
+	StartObserving(context.Context, *backgroundservice.StartObservingArgs) error
+
+	// Command StopObserving
+	//
+	// Disables event updates for the service.
+	StopObserving(context.Context, *backgroundservice.StopObservingArgs) error
+
+	// Command SetRecording
+	//
+	// Set the recording state for the service.
+	SetRecording(context.Context, *backgroundservice.SetRecordingArgs) error
+
+	// Command ClearEvents
+	//
+	// Clears all stored data for the service.
+	ClearEvents(context.Context, *backgroundservice.ClearEventsArgs) error
+
+	// Event RecordingStateChanged
+	//
+	// Called when the recording state for the service has been updated.
+	RecordingStateChanged(context.Context) (backgroundservice.RecordingStateChangedClient, error)
+
+	// Event BackgroundServiceEventReceived
+	//
+	// Called with all existing backgroundServiceEvents when enabled, and
+	// all new events afterwards if enabled and recording.
+	BackgroundServiceEventReceived(context.Context) (backgroundservice.EventReceivedClient, error)
 }
 
 // The Browser domain. The Browser domain defines methods and events for
 // browser managing.
 type Browser interface {
+	// Command SetPermission
+	//
+	// Set permission settings for given origin.
+	//
+	// Note: This command is experimental.
+	SetPermission(context.Context, *browser.SetPermissionArgs) error
+
 	// Command GrantPermissions
 	//
 	// Grant specific permissions to the given origin and reject all
@@ -215,6 +277,13 @@ type Browser interface {
 	// Note: This command is experimental.
 	ResetPermissions(context.Context, *browser.ResetPermissionsArgs) error
 
+	// Command SetDownloadBehavior
+	//
+	// Set the behavior when downloading a file.
+	//
+	// Note: This command is experimental.
+	SetDownloadBehavior(context.Context, *browser.SetDownloadBehaviorArgs) error
+
 	// Command Close
 	//
 	// Close browser gracefully.
@@ -226,6 +295,13 @@ type Browser interface {
 	//
 	// Note: This command is experimental.
 	Crash(context.Context) error
+
+	// Command CrashGPUProcess
+	//
+	// Crashes GPU process.
+	//
+	// Note: This command is experimental.
+	CrashGPUProcess(context.Context) error
 
 	// Command GetVersion
 	//
@@ -584,6 +660,15 @@ type DOM interface {
 	// Does not start tracking any objects, can be used for automation.
 	DescribeNode(context.Context, *dom.DescribeNodeArgs) (*dom.DescribeNodeReply, error)
 
+	// Command ScrollIntoViewIfNeeded
+	//
+	// Scrolls the specified rect of the given node into view if not
+	// already visible. Note: exactly one between nodeId, backendNodeId and
+	// objectId should be passed to identify the node.
+	//
+	// Note: This command is experimental.
+	ScrollIntoViewIfNeeded(context.Context, *dom.ScrollIntoViewIfNeededArgs) error
+
 	// Command Disable
 	//
 	// Disables DOM agent for the given page.
@@ -641,8 +726,6 @@ type DOM interface {
 	//
 	// Returns node id at given location. Depending on whether DOM domain
 	// is enabled, nodeId is either returned or not.
-	//
-	// Note: This command is experimental.
 	GetNodeForLocation(context.Context, *dom.GetNodeForLocationArgs) (*dom.GetNodeForLocationReply, error)
 
 	// Command GetOuterHTML
@@ -768,6 +851,22 @@ type DOM interface {
 	//
 	// Sets files for the given file input element.
 	SetFileInputFiles(context.Context, *dom.SetFileInputFilesArgs) error
+
+	// Command SetNodeStackTracesEnabled
+	//
+	// Sets if stack traces should be captured for Nodes. See
+	// `Node.getNodeStackTraces`. Default is disabled.
+	//
+	// Note: This command is experimental.
+	SetNodeStackTracesEnabled(context.Context, *dom.SetNodeStackTracesEnabledArgs) error
+
+	// Command GetNodeStackTraces
+	//
+	// Gets stack traces associated with a Node. As of now, only provides
+	// stack trace for Node creation.
+	//
+	// Note: This command is experimental.
+	GetNodeStackTraces(context.Context, *dom.GetNodeStackTracesArgs) (*dom.GetNodeStackTracesReply, error)
 
 	// Command GetFileInfo
 	//
@@ -1073,12 +1172,19 @@ type Debugger interface {
 	// Enables debugger for the given page. Clients should not assume that
 	// the debugging has been enabled until the result for this command is
 	// received.
-	Enable(context.Context) (*debugger.EnableReply, error)
+	Enable(context.Context, *debugger.EnableArgs) (*debugger.EnableReply, error)
 
 	// Command EvaluateOnCallFrame
 	//
 	// Evaluates expression on a given call frame.
 	EvaluateOnCallFrame(context.Context, *debugger.EvaluateOnCallFrameArgs) (*debugger.EvaluateOnCallFrameReply, error)
+
+	// Command ExecuteWasmEvaluator
+	//
+	// Execute a Wasm Evaluator module on a given call frame.
+	//
+	// Note: This command is experimental.
+	ExecuteWasmEvaluator(context.Context, *debugger.ExecuteWasmEvaluatorArgs) (*debugger.ExecuteWasmEvaluatorReply, error)
 
 	// Command GetPossibleBreakpoints
 	//
@@ -1090,6 +1196,12 @@ type Debugger interface {
 	//
 	// Returns source for the script with given id.
 	GetScriptSource(context.Context, *debugger.GetScriptSourceArgs) (*debugger.GetScriptSourceReply, error)
+
+	// Command GetWasmBytecode
+	//
+	// Deprecated: This command is deprecated. Use getScriptSource
+	// instead.
+	GetWasmBytecode(context.Context, *debugger.GetWasmBytecodeArgs) (*debugger.GetWasmBytecodeReply, error)
 
 	// Command GetStackTrace
 	//
@@ -1104,6 +1216,8 @@ type Debugger interface {
 	Pause(context.Context) error
 
 	// Command PauseOnAsyncCall
+	//
+	// Deprecated: This command is deprecated.
 	//
 	// Note: This command is experimental.
 	PauseOnAsyncCall(context.Context, *debugger.PauseOnAsyncCallArgs) error
@@ -1121,7 +1235,7 @@ type Debugger interface {
 	// Command Resume
 	//
 	// Resumes JavaScript execution.
-	Resume(context.Context) error
+	Resume(context.Context, *debugger.ResumeArgs) error
 
 	// Command SearchInContent
 	//
@@ -1158,6 +1272,11 @@ type Debugger interface {
 	//
 	// Sets JavaScript breakpoint at a given location.
 	SetBreakpoint(context.Context, *debugger.SetBreakpointArgs) (*debugger.SetBreakpointReply, error)
+
+	// Command SetInstrumentationBreakpoint
+	//
+	// Sets instrumentation breakpoint.
+	SetInstrumentationBreakpoint(context.Context, *debugger.SetInstrumentationBreakpointArgs) (*debugger.SetInstrumentationBreakpointReply, error)
 
 	// Command SetBreakpointByURL
 	//
@@ -1343,8 +1462,16 @@ type Emulation interface {
 
 	// Command SetEmulatedMedia
 	//
-	// Emulates the given media for CSS media queries.
+	// Emulates the given media type or media feature for CSS media
+	// queries.
 	SetEmulatedMedia(context.Context, *emulation.SetEmulatedMediaArgs) error
+
+	// Command SetEmulatedVisionDeficiency
+	//
+	// Emulates the given vision deficiency.
+	//
+	// Note: This command is experimental.
+	SetEmulatedVisionDeficiency(context.Context, *emulation.SetEmulatedVisionDeficiencyArgs) error
 
 	// Command SetGeolocationOverride
 	//
@@ -1386,6 +1513,20 @@ type Emulation interface {
 	// Note: This command is experimental.
 	SetVirtualTimePolicy(context.Context, *emulation.SetVirtualTimePolicyArgs) (*emulation.SetVirtualTimePolicyReply, error)
 
+	// Command SetLocaleOverride
+	//
+	// Overrides default host system locale with the specified one.
+	//
+	// Note: This command is experimental.
+	SetLocaleOverride(context.Context, *emulation.SetLocaleOverrideArgs) error
+
+	// Command SetTimezoneOverride
+	//
+	// Overrides default host system timezone with the specified one.
+	//
+	// Note: This command is experimental.
+	SetTimezoneOverride(context.Context, *emulation.SetTimezoneOverrideArgs) error
+
 	// Command SetVisibleSize
 	//
 	// Deprecated: Resizes the frame/viewport of the page. Note that this
@@ -1401,13 +1542,6 @@ type Emulation interface {
 	// Allows overriding user agent with the given string.
 	SetUserAgentOverride(context.Context, *emulation.SetUserAgentOverrideArgs) error
 
-	// Event VirtualTimeAdvanced
-	//
-	// Notification sent after the virtual time has advanced.
-	//
-	// Note: This event is experimental.
-	VirtualTimeAdvanced(context.Context) (emulation.VirtualTimeAdvancedClient, error)
-
 	// Event VirtualTimeBudgetExpired
 	//
 	// Notification sent after the virtual time budget for the current
@@ -1415,13 +1549,6 @@ type Emulation interface {
 	//
 	// Note: This event is experimental.
 	VirtualTimeBudgetExpired(context.Context) (emulation.VirtualTimeBudgetExpiredClient, error)
-
-	// Event VirtualTimePaused
-	//
-	// Notification sent after the virtual time has paused.
-	//
-	// Note: This event is experimental.
-	VirtualTimePaused(context.Context) (emulation.VirtualTimePausedClient, error)
 }
 
 // The Fetch domain. A domain for letting clients substitute browser's network
@@ -1530,7 +1657,10 @@ type HeadlessExperimental interface {
 
 	// Event NeedsBeginFramesChanged
 	//
-	// Issued when the target starts or stops needing BeginFrames.
+	// Deprecated: Issued when the target starts or stops needing
+	// BeginFrames. Deprecated. Issue beginFrame unconditionally instead
+	// and use result from beginFrame to detect whether the frames were
+	// suppressed.
 	NeedsBeginFramesChanged(context.Context) (headlessexperimental.NeedsBeginFramesChangedClient, error)
 }
 
@@ -1653,6 +1783,11 @@ type IndexedDB interface {
 	//
 	// Requests data from object store or index.
 	RequestData(context.Context, *indexeddb.RequestDataArgs) (*indexeddb.RequestDataReply, error)
+
+	// Command GetMetadata
+	//
+	// Gets metadata of an object store
+	GetMetadata(context.Context, *indexeddb.GetMetadataArgs) (*indexeddb.GetMetadataReply, error)
 
 	// Command RequestDatabase
 	//
@@ -1847,6 +1982,52 @@ type Log interface {
 	EntryAdded(context.Context) (log.EntryAddedClient, error)
 }
 
+// The Media domain. This domain allows detailed inspection of media elements
+//
+// Note: This domain is experimental.
+type Media interface {
+	// Command Enable
+	//
+	// Enables the Media domain
+	Enable(context.Context) error
+
+	// Command Disable
+	//
+	// Disables the Media domain.
+	Disable(context.Context) error
+
+	// Event PlayerPropertiesChanged
+	//
+	// This can be called multiple times, and can be used to set /
+	// override / remove player properties. A null propValue indicates
+	// removal.
+	PlayerPropertiesChanged(context.Context) (media.PlayerPropertiesChangedClient, error)
+
+	// Event PlayerEventsAdded
+	//
+	// Send events as a list, allowing them to be batched on the browser
+	// for less congestion. If batched, events must ALWAYS be in
+	// chronological order.
+	PlayerEventsAdded(context.Context) (media.PlayerEventsAddedClient, error)
+
+	// Event PlayerMessagesLogged
+	//
+	// Send a list of any messages that need to be delivered.
+	PlayerMessagesLogged(context.Context) (media.PlayerMessagesLoggedClient, error)
+
+	// Event PlayerErrorsRaised
+	//
+	// Send a list of any errors that need to be delivered.
+	PlayerErrorsRaised(context.Context) (media.PlayerErrorsRaisedClient, error)
+
+	// Event PlayersCreated
+	//
+	// Called whenever a player is created, or when a new agent joins and
+	// receives a list of active players. If an agent is restored, it will
+	// receive the full list of player ids and all events again.
+	PlayersCreated(context.Context) (media.PlayersCreatedClient, error)
+}
+
 // The Memory domain.
 //
 // Note: This domain is experimental.
@@ -1856,6 +2037,11 @@ type Memory interface {
 
 	// Command PrepareForLeakDetection
 	PrepareForLeakDetection(context.Context) error
+
+	// Command ForciblyPurgeJavaScriptMemory
+	//
+	// Simulate OomIntervention by purging V8 memory.
+	ForciblyPurgeJavaScriptMemory(context.Context) error
 
 	// Command SetPressureNotificationsSuppressed
 	//
@@ -1929,12 +2115,13 @@ type Network interface {
 
 	// Command ContinueInterceptedRequest
 	//
-	// Response to Network.requestIntercepted which either modifies the
-	// request to continue with any modifications, or blocks it, or
-	// completes it with the provided response bytes. If a network fetch
-	// occurs as a result which encounters a redirect an additional
+	// Deprecated: Response to Network.requestIntercepted which either
+	// modifies the request to continue with any modifications, or blocks
+	// it, or completes it with the provided response bytes. If a network
+	// fetch occurs as a result which encounters a redirect an additional
 	// Network.requestIntercepted event will be sent with the same
-	// InterceptionId.
+	// InterceptionId. use Fetch.continueRequest,
+	// Fetch.fulfillRequest and Fetch.failRequest instead.
 	//
 	// Note: This command is experimental.
 	ContinueInterceptedRequest(context.Context, *network.ContinueInterceptedRequestArgs) error
@@ -2074,8 +2261,9 @@ type Network interface {
 
 	// Command SetRequestInterception
 	//
-	// Sets the requests to intercept that match a the provided patterns
-	// and optionally resource types.
+	// Deprecated: Sets the requests to intercept that match the provided
+	// patterns and optionally resource types. please use
+	// Fetch.enable instead.
 	//
 	// Note: This command is experimental.
 	SetRequestInterception(context.Context, *network.SetRequestInterceptionArgs) error
@@ -2102,8 +2290,9 @@ type Network interface {
 
 	// Event RequestIntercepted
 	//
-	// Details of an intercepted HTTP request, which must be either
-	// allowed, blocked, modified or mocked.
+	// Deprecated: Details of an intercepted HTTP request, which must be
+	// either allowed, blocked, modified or mocked. use
+	// Fetch.requestPaused instead.
 	//
 	// Note: This event is experimental.
 	RequestIntercepted(context.Context) (network.RequestInterceptedClient, error)
@@ -2171,6 +2360,28 @@ type Network interface {
 	//
 	// Fired when WebSocket is about to initiate handshake.
 	WebSocketWillSendHandshakeRequest(context.Context) (network.WebSocketWillSendHandshakeRequestClient, error)
+
+	// Event RequestWillBeSentExtraInfo
+	//
+	// Fired when additional information about a requestWillBeSent event
+	// is available from the network stack. Not every requestWillBeSent
+	// event will have an additional requestWillBeSentExtraInfo fired for
+	// it, and there is no guarantee whether requestWillBeSent or
+	// requestWillBeSentExtraInfo will be fired first for the same request.
+	//
+	// Note: This event is experimental.
+	RequestWillBeSentExtraInfo(context.Context) (network.RequestWillBeSentExtraInfoClient, error)
+
+	// Event ResponseReceivedExtraInfo
+	//
+	// Fired when additional information about a responseReceived event is
+	// available from the network stack. Not every responseReceived event
+	// will have an additional responseReceivedExtraInfo for it, and
+	// responseReceivedExtraInfo may be fired before or after
+	// responseReceived.
+	//
+	// Note: This event is experimental.
+	ResponseReceivedExtraInfo(context.Context) (network.ResponseReceivedExtraInfoClient, error)
 }
 
 // The Overlay domain. This domain provides various functionality related to
@@ -2228,6 +2439,11 @@ type Overlay interface {
 	// 'inspectNodeRequested' event upon element selection.
 	SetInspectMode(context.Context, *overlay.SetInspectModeArgs) error
 
+	// Command SetShowAdHighlights
+	//
+	// Highlights owner element of all frames detected to be ads.
+	SetShowAdHighlights(context.Context, *overlay.SetShowAdHighlightsArgs) error
+
 	// Command SetPausedInDebuggerMessage
 	SetPausedInDebuggerMessage(context.Context, *overlay.SetPausedInDebuggerMessageArgs) error
 
@@ -2246,6 +2462,11 @@ type Overlay interface {
 	// Requests that backend shows paint rectangles
 	SetShowPaintRects(context.Context, *overlay.SetShowPaintRectsArgs) error
 
+	// Command SetShowLayoutShiftRegions
+	//
+	// Requests that backend shows layout shift regions
+	SetShowLayoutShiftRegions(context.Context, *overlay.SetShowLayoutShiftRegionsArgs) error
+
 	// Command SetShowScrollBottleneckRects
 	//
 	// Requests that backend shows scroll bottleneck rects
@@ -2261,8 +2482,10 @@ type Overlay interface {
 	// Paints viewport size upon main frame resize.
 	SetShowViewportSizeOnResize(context.Context, *overlay.SetShowViewportSizeOnResizeArgs) error
 
-	// Command SetSuspended
-	SetSuspended(context.Context, *overlay.SetSuspendedArgs) error
+	// Command SetShowHinge
+	//
+	// Add a dual screen device hinge
+	SetShowHinge(context.Context, *overlay.SetShowHingeArgs) error
 
 	// Event InspectNodeRequested
 	//
@@ -2281,6 +2504,11 @@ type Overlay interface {
 	// Fired when user asks to capture screenshot of some area on the
 	// page.
 	ScreenshotRequested(context.Context) (overlay.ScreenshotRequestedClient, error)
+
+	// Event InspectModeCanceled
+	//
+	// Fired when user cancels the inspect mode.
+	InspectModeCanceled(context.Context) (overlay.InspectModeCanceledClient, error)
 }
 
 // The Page domain. Actions and events related to the inspected page belong to
@@ -2336,6 +2564,16 @@ type Page interface {
 
 	// Command GetAppManifest
 	GetAppManifest(context.Context) (*page.GetAppManifestReply, error)
+
+	// Command GetInstallabilityErrors
+	//
+	// Note: This command is experimental.
+	GetInstallabilityErrors(context.Context) (*page.GetInstallabilityErrorsReply, error)
+
+	// Command GetManifestIcons
+	//
+	// Note: This command is experimental.
+	GetManifestIcons(context.Context) (*page.GetManifestIconsReply, error)
 
 	// Command GetFrameTree
 	//
@@ -2461,7 +2699,7 @@ type Page interface {
 
 	// Command SetDownloadBehavior
 	//
-	// Set the behavior when downloading a file.
+	// Deprecated: Set the behavior when downloading a file.
 	//
 	// Note: This command is experimental.
 	SetDownloadBehavior(context.Context, *page.SetDownloadBehaviorArgs) error
@@ -2553,8 +2791,23 @@ type Page interface {
 	// Note: This command is experimental.
 	WaitForDebugger(context.Context) error
 
+	// Command SetInterceptFileChooserDialog
+	//
+	// Intercept file chooser requests and transfer control to protocol
+	// clients. When file chooser interception is enabled, native file
+	// chooser dialog is not shown. Instead, a protocol event
+	// `Page.fileChooserOpened` is emitted.
+	//
+	// Note: This command is experimental.
+	SetInterceptFileChooserDialog(context.Context, *page.SetInterceptFileChooserDialogArgs) error
+
 	// Event DOMContentEventFired
 	DOMContentEventFired(context.Context) (page.DOMContentEventFiredClient, error)
+
+	// Event FileChooserOpened
+	//
+	// Emitted only when `page.interceptFileChooser` is enabled.
+	FileChooserOpened(context.Context) (page.FileChooserOpenedClient, error)
 
 	// Event FrameAttached
 	//
@@ -2563,9 +2816,7 @@ type Page interface {
 
 	// Event FrameClearedScheduledNavigation
 	//
-	// Fired when frame no longer has a scheduled navigation.
-	//
-	// Note: This event is experimental.
+	// Deprecated: Fired when frame no longer has a scheduled navigation.
 	FrameClearedScheduledNavigation(context.Context) (page.FrameClearedScheduledNavigationClient, error)
 
 	// Event FrameDetached
@@ -2584,11 +2835,17 @@ type Page interface {
 	// Note: This event is experimental.
 	FrameResized(context.Context) (page.FrameResizedClient, error)
 
-	// Event FrameScheduledNavigation
+	// Event FrameRequestedNavigation
 	//
-	// Fired when frame schedules a potential navigation.
+	// Fired when a renderer-initiated navigation is requested. Navigation
+	// may still be canceled after the event is issued.
 	//
 	// Note: This event is experimental.
+	FrameRequestedNavigation(context.Context) (page.FrameRequestedNavigationClient, error)
+
+	// Event FrameScheduledNavigation
+	//
+	// Deprecated: Fired when frame schedules a potential navigation.
 	FrameScheduledNavigation(context.Context) (page.FrameScheduledNavigationClient, error)
 
 	// Event FrameStartedLoading
@@ -2604,6 +2861,20 @@ type Page interface {
 	//
 	// Note: This event is experimental.
 	FrameStoppedLoading(context.Context) (page.FrameStoppedLoadingClient, error)
+
+	// Event DownloadWillBegin
+	//
+	// Fired when page is about to start a download.
+	//
+	// Note: This event is experimental.
+	DownloadWillBegin(context.Context) (page.DownloadWillBeginClient, error)
+
+	// Event DownloadProgress
+	//
+	// Fired when download makes progress. Last call has |done| == true.
+	//
+	// Note: This event is experimental.
+	DownloadProgress(context.Context) (page.DownloadProgressClient, error)
 
 	// Event InterstitialHidden
 	//
@@ -2684,14 +2955,14 @@ type Performance interface {
 	// Command Enable
 	//
 	// Enable collecting and reporting metrics.
-	Enable(context.Context) error
+	Enable(context.Context, *performance.EnableArgs) error
 
 	// Command SetTimeDomain
 	//
-	// Sets time domain to use for collecting and reporting duration
-	// metrics. Note that this must be called before enabling metrics
-	// collection. Calling this method while metrics collection is enabled
-	// returns an error.
+	// Deprecated: Sets time domain to use for collecting and reporting
+	// duration metrics. Note that this must be called before enabling
+	// metrics collection. Calling this method while metrics collection is
+	// enabled returns an error.
 	//
 	// Note: This command is experimental.
 	SetTimeDomain(context.Context, *performance.SetTimeDomainArgs) error
@@ -2735,7 +3006,7 @@ type Profiler interface {
 	// Enable precise code coverage. Coverage data for JavaScript executed
 	// before enabling precise code coverage may be incomplete. Enabling
 	// prevents running optimized code and resets execution counters.
-	StartPreciseCoverage(context.Context, *profiler.StartPreciseCoverageArgs) error
+	StartPreciseCoverage(context.Context, *profiler.StartPreciseCoverageArgs) (*profiler.StartPreciseCoverageReply, error)
 
 	// Command StartTypeProfile
 	//
@@ -2774,6 +3045,27 @@ type Profiler interface {
 	// Note: This command is experimental.
 	TakeTypeProfile(context.Context) (*profiler.TakeTypeProfileReply, error)
 
+	// Command EnableRuntimeCallStats
+	//
+	// Enable run time call stats collection.
+	//
+	// Note: This command is experimental.
+	EnableRuntimeCallStats(context.Context) error
+
+	// Command DisableRuntimeCallStats
+	//
+	// Disable run time call stats collection.
+	//
+	// Note: This command is experimental.
+	DisableRuntimeCallStats(context.Context) error
+
+	// Command GetRuntimeCallStats
+	//
+	// Retrieve run time call stats.
+	//
+	// Note: This command is experimental.
+	GetRuntimeCallStats(context.Context) (*profiler.GetRuntimeCallStatsReply, error)
+
 	// Event ConsoleProfileFinished
 	ConsoleProfileFinished(context.Context) (profiler.ConsoleProfileFinishedClient, error)
 
@@ -2782,6 +3074,17 @@ type Profiler interface {
 	// Sent when new profile recording is started using console.profile()
 	// call.
 	ConsoleProfileStarted(context.Context) (profiler.ConsoleProfileStartedClient, error)
+
+	// Event PreciseCoverageDeltaUpdate
+	//
+	// Reports coverage delta since the last poll (either from an event
+	// like this, or from `takePreciseCoverage` for the current isolate.
+	// May only be sent if precise code coverage has been started. This
+	// event can be trigged by the embedder to, for example, trigger
+	// collection of coverage data immediately at a certain point in time.
+	//
+	// Note: This event is experimental.
+	PreciseCoverageDeltaUpdate(context.Context) (profiler.PreciseCoverageDeltaUpdateClient, error)
 }
 
 // The Runtime domain. Runtime domain exposes JavaScript runtime by means of
@@ -3016,6 +3319,13 @@ type Security interface {
 	// per target should override certificate errors at the same time.
 	CertificateError(context.Context) (security.CertificateErrorClient, error)
 
+	// Event VisibleSecurityStateChanged
+	//
+	// The security state of the page changed.
+	//
+	// Note: This event is experimental.
+	VisibleSecurityStateChanged(context.Context) (security.VisibleSecurityStateChangedClient, error)
+
 	// Event SecurityStateChanged
 	//
 	// The security state of the page changed.
@@ -3034,6 +3344,9 @@ type ServiceWorker interface {
 
 	// Command DispatchSyncEvent
 	DispatchSyncEvent(context.Context, *serviceworker.DispatchSyncEventArgs) error
+
+	// Command DispatchPeriodicSyncEvent
+	DispatchPeriodicSyncEvent(context.Context, *serviceworker.DispatchPeriodicSyncEventArgs) error
 
 	// Command Enable
 	Enable(context.Context) error
@@ -3080,6 +3393,21 @@ type Storage interface {
 	//
 	// Clears storage for origin.
 	ClearDataForOrigin(context.Context, *storage.ClearDataForOriginArgs) error
+
+	// Command GetCookies
+	//
+	// Returns all browser cookies.
+	GetCookies(context.Context, *storage.GetCookiesArgs) (*storage.GetCookiesReply, error)
+
+	// Command SetCookies
+	//
+	// Sets given cookies.
+	SetCookies(context.Context, *storage.SetCookiesArgs) error
+
+	// Command ClearCookies
+	//
+	// Clears cookies.
+	ClearCookies(context.Context, *storage.ClearCookiesArgs) error
 
 	// Command GetUsageAndQuota
 	//
@@ -3191,7 +3519,7 @@ type Target interface {
 	// but you can have more than one.
 	//
 	// Note: This command is experimental.
-	CreateBrowserContext(context.Context) (*target.CreateBrowserContextReply, error)
+	CreateBrowserContext(context.Context, *target.CreateBrowserContextArgs) (*target.CreateBrowserContextReply, error)
 
 	// Command GetBrowserContexts
 	//
@@ -3233,7 +3561,9 @@ type Target interface {
 
 	// Command SendMessageToTarget
 	//
-	// Sends protocol message over session with given id.
+	// Deprecated: Sends protocol message over session with given id.
+	// Consider using flat mode instead; see commands attachToTarget,
+	// setAutoAttach, and crbug.com/991325.
 	SendMessageToTarget(context.Context, *target.SendMessageToTargetArgs) error
 
 	// Command SetAutoAttach
@@ -3305,17 +3635,6 @@ type Target interface {
 	TargetInfoChanged(context.Context) (target.InfoChangedClient, error)
 }
 
-// The Testing domain. Testing domain is a dumping ground for the capabilities
-// requires for browser or app testing that do not fit other domains.
-//
-// Note: This domain is experimental.
-type Testing interface {
-	// Command GenerateTestReport
-	//
-	// Generates a report for testing.
-	GenerateTestReport(context.Context, *testing.GenerateTestReportArgs) error
-}
-
 // The Tethering domain. The Tethering domain defines methods and events for
 // browser port binding.
 //
@@ -3360,7 +3679,7 @@ type Tracing interface {
 	// Command RequestMemoryDump
 	//
 	// Request a global memory dump.
-	RequestMemoryDump(context.Context) (*tracing.RequestMemoryDumpReply, error)
+	RequestMemoryDump(context.Context, *tracing.RequestMemoryDumpArgs) (*tracing.RequestMemoryDumpReply, error)
 
 	// Command Start
 	//
@@ -3382,4 +3701,154 @@ type Tracing interface {
 	// Signals that tracing is stopped and there is no trace buffers
 	// pending flush, all data were delivered via dataCollected events.
 	TracingComplete(context.Context) (tracing.CompleteClient, error)
+}
+
+// The WebAudio domain. This domain allows inspection of Web Audio API.
+// https://webaudio.github.io/web-audio-api/
+//
+// Note: This domain is experimental.
+type WebAudio interface {
+	// Command Enable
+	//
+	// Enables the WebAudio domain and starts sending context lifetime
+	// events.
+	Enable(context.Context) error
+
+	// Command Disable
+	//
+	// Disables the WebAudio domain.
+	Disable(context.Context) error
+
+	// Command GetRealtimeData
+	//
+	// Fetch the realtime data from the registered contexts.
+	GetRealtimeData(context.Context, *webaudio.GetRealtimeDataArgs) (*webaudio.GetRealtimeDataReply, error)
+
+	// Event ContextCreated
+	//
+	// Notifies that a new BaseAudioContext has been created.
+	ContextCreated(context.Context) (webaudio.ContextCreatedClient, error)
+
+	// Event ContextWillBeDestroyed
+	//
+	// Notifies that an existing BaseAudioContext will be destroyed.
+	ContextWillBeDestroyed(context.Context) (webaudio.ContextWillBeDestroyedClient, error)
+
+	// Event ContextChanged
+	//
+	// Notifies that existing BaseAudioContext has changed some properties
+	// (id stays the same)..
+	ContextChanged(context.Context) (webaudio.ContextChangedClient, error)
+
+	// Event AudioListenerCreated
+	//
+	// Notifies that the construction of an AudioListener has finished.
+	AudioListenerCreated(context.Context) (webaudio.AudioListenerCreatedClient, error)
+
+	// Event AudioListenerWillBeDestroyed
+	//
+	// Notifies that a new AudioListener has been created.
+	AudioListenerWillBeDestroyed(context.Context) (webaudio.AudioListenerWillBeDestroyedClient, error)
+
+	// Event AudioNodeCreated
+	//
+	// Notifies that a new AudioNode has been created.
+	AudioNodeCreated(context.Context) (webaudio.AudioNodeCreatedClient, error)
+
+	// Event AudioNodeWillBeDestroyed
+	//
+	// Notifies that an existing AudioNode has been destroyed.
+	AudioNodeWillBeDestroyed(context.Context) (webaudio.AudioNodeWillBeDestroyedClient, error)
+
+	// Event AudioParamCreated
+	//
+	// Notifies that a new AudioParam has been created.
+	AudioParamCreated(context.Context) (webaudio.AudioParamCreatedClient, error)
+
+	// Event AudioParamWillBeDestroyed
+	//
+	// Notifies that an existing AudioParam has been destroyed.
+	AudioParamWillBeDestroyed(context.Context) (webaudio.AudioParamWillBeDestroyedClient, error)
+
+	// Event NodesConnected
+	//
+	// Notifies that two AudioNodes are connected.
+	NodesConnected(context.Context) (webaudio.NodesConnectedClient, error)
+
+	// Event NodesDisconnected
+	//
+	// Notifies that AudioNodes are disconnected. The destination can be
+	// null, and it means all the outgoing connections from the source are
+	// disconnected.
+	NodesDisconnected(context.Context) (webaudio.NodesDisconnectedClient, error)
+
+	// Event NodeParamConnected
+	//
+	// Notifies that an AudioNode is connected to an AudioParam.
+	NodeParamConnected(context.Context) (webaudio.NodeParamConnectedClient, error)
+
+	// Event NodeParamDisconnected
+	//
+	// Notifies that an AudioNode is disconnected to an AudioParam.
+	NodeParamDisconnected(context.Context) (webaudio.NodeParamDisconnectedClient, error)
+}
+
+// The WebAuthn domain. This domain allows configuring virtual authenticators
+// to test the WebAuthn API.
+//
+// Note: This domain is experimental.
+type WebAuthn interface {
+	// Command Enable
+	//
+	// Enable the WebAuthn domain and start intercepting credential
+	// storage and retrieval with a virtual authenticator.
+	Enable(context.Context) error
+
+	// Command Disable
+	//
+	// Disable the WebAuthn domain.
+	Disable(context.Context) error
+
+	// Command AddVirtualAuthenticator
+	//
+	// Creates and adds a virtual authenticator.
+	AddVirtualAuthenticator(context.Context, *webauthn.AddVirtualAuthenticatorArgs) (*webauthn.AddVirtualAuthenticatorReply, error)
+
+	// Command RemoveVirtualAuthenticator
+	//
+	// Removes the given authenticator.
+	RemoveVirtualAuthenticator(context.Context, *webauthn.RemoveVirtualAuthenticatorArgs) error
+
+	// Command AddCredential
+	//
+	// Adds the credential to the specified authenticator.
+	AddCredential(context.Context, *webauthn.AddCredentialArgs) error
+
+	// Command GetCredential
+	//
+	// Returns a single credential stored in the given virtual
+	// authenticator that matches the credential ID.
+	GetCredential(context.Context, *webauthn.GetCredentialArgs) (*webauthn.GetCredentialReply, error)
+
+	// Command GetCredentials
+	//
+	// Returns all the credentials stored in the given virtual
+	// authenticator.
+	GetCredentials(context.Context, *webauthn.GetCredentialsArgs) (*webauthn.GetCredentialsReply, error)
+
+	// Command RemoveCredential
+	//
+	// Removes a credential from the authenticator.
+	RemoveCredential(context.Context, *webauthn.RemoveCredentialArgs) error
+
+	// Command ClearCredentials
+	//
+	// Clears all the credentials from the specified device.
+	ClearCredentials(context.Context, *webauthn.ClearCredentialsArgs) error
+
+	// Command SetUserVerified
+	//
+	// Sets whether User Verification succeeds or fails for an
+	// authenticator. The default is true.
+	SetUserVerified(context.Context, *webauthn.SetUserVerifiedArgs) error
 }

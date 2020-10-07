@@ -4,13 +4,13 @@ package serviceworker
 
 // DeliverPushMessageArgs represents the arguments for DeliverPushMessage in the ServiceWorker domain.
 type DeliverPushMessageArgs struct {
-	Origin         string `json:"origin"`         // No description.
-	RegistrationID string `json:"registrationId"` // No description.
-	Data           string `json:"data"`           // No description.
+	Origin         string         `json:"origin"`         // No description.
+	RegistrationID RegistrationID `json:"registrationId"` // No description.
+	Data           string         `json:"data"`           // No description.
 }
 
 // NewDeliverPushMessageArgs initializes DeliverPushMessageArgs with the required arguments.
-func NewDeliverPushMessageArgs(origin string, registrationID string, data string) *DeliverPushMessageArgs {
+func NewDeliverPushMessageArgs(origin string, registrationID RegistrationID, data string) *DeliverPushMessageArgs {
 	args := new(DeliverPushMessageArgs)
 	args.Origin = origin
 	args.RegistrationID = registrationID
@@ -20,19 +20,35 @@ func NewDeliverPushMessageArgs(origin string, registrationID string, data string
 
 // DispatchSyncEventArgs represents the arguments for DispatchSyncEvent in the ServiceWorker domain.
 type DispatchSyncEventArgs struct {
-	Origin         string `json:"origin"`         // No description.
-	RegistrationID string `json:"registrationId"` // No description.
-	Tag            string `json:"tag"`            // No description.
-	LastChance     bool   `json:"lastChance"`     // No description.
+	Origin         string         `json:"origin"`         // No description.
+	RegistrationID RegistrationID `json:"registrationId"` // No description.
+	Tag            string         `json:"tag"`            // No description.
+	LastChance     bool           `json:"lastChance"`     // No description.
 }
 
 // NewDispatchSyncEventArgs initializes DispatchSyncEventArgs with the required arguments.
-func NewDispatchSyncEventArgs(origin string, registrationID string, tag string, lastChance bool) *DispatchSyncEventArgs {
+func NewDispatchSyncEventArgs(origin string, registrationID RegistrationID, tag string, lastChance bool) *DispatchSyncEventArgs {
 	args := new(DispatchSyncEventArgs)
 	args.Origin = origin
 	args.RegistrationID = registrationID
 	args.Tag = tag
 	args.LastChance = lastChance
+	return args
+}
+
+// DispatchPeriodicSyncEventArgs represents the arguments for DispatchPeriodicSyncEvent in the ServiceWorker domain.
+type DispatchPeriodicSyncEventArgs struct {
+	Origin         string         `json:"origin"`         // No description.
+	RegistrationID RegistrationID `json:"registrationId"` // No description.
+	Tag            string         `json:"tag"`            // No description.
+}
+
+// NewDispatchPeriodicSyncEventArgs initializes DispatchPeriodicSyncEventArgs with the required arguments.
+func NewDispatchPeriodicSyncEventArgs(origin string, registrationID RegistrationID, tag string) *DispatchPeriodicSyncEventArgs {
+	args := new(DispatchPeriodicSyncEventArgs)
+	args.Origin = origin
+	args.RegistrationID = registrationID
+	args.Tag = tag
 	return args
 }
 

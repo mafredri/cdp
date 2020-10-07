@@ -37,6 +37,16 @@ func (d *domainClient) PrepareForLeakDetection(ctx context.Context) (err error) 
 	return
 }
 
+// ForciblyPurgeJavaScriptMemory invokes the Memory method. Simulate
+// OomIntervention by purging V8 memory.
+func (d *domainClient) ForciblyPurgeJavaScriptMemory(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Memory.forciblyPurgeJavaScriptMemory", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Memory", Op: "ForciblyPurgeJavaScriptMemory", Err: err}
+	}
+	return
+}
+
 // SetPressureNotificationsSuppressed invokes the Memory method.
 // Enable/disable suppressing memory pressure notifications in all processes.
 func (d *domainClient) SetPressureNotificationsSuppressed(ctx context.Context, args *SetPressureNotificationsSuppressedArgs) (err error) {

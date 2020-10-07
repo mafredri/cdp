@@ -89,6 +89,10 @@ var (
 // the underlying *rpcc.Conn for the provided *cdp.Client.
 func dial(ctx context.Context, id target.ID, tc *cdp.Client, detachTimeout time.Duration) (s *session, err error) {
 	args := target.NewAttachToTargetArgs(id)
+	// The default of this flag will change to true, so until CDP
+	// uses flat session mode, we set this to false explicitly.
+	// See https://bugs.chromium.org/p/chromium/issues/detail?id=991325.
+	args.SetFlatten(false)
 	reply, err := tc.Target.AttachToTarget(ctx, args)
 	if err != nil {
 		return nil, err
@@ -114,9 +118,7 @@ func dial(ctx context.Context, id target.ID, tc *cdp.Client, detachTimeout time.
 
 		err := tc.Target.DetachFromTarget(ctx,
 			target.NewDetachFromTargetArgs().SetSessionID(s.ID))
-
-		err = cdp.ErrorCause(err)
-		if err == context.DeadlineExceeded {
+		if err := cdp.ErrorCause(err); err == context.DeadlineExceeded {
 			return fmt.Errorf("session: detach timed out for session %s", s.ID)
 		}
 		return errors.Wrapf(err, "session: detach failed for session %s", s.ID)

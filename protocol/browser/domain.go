@@ -20,6 +20,20 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// SetPermission invokes the Browser method. Set permission settings for given
+// origin.
+func (d *domainClient) SetPermission(ctx context.Context, args *SetPermissionArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.setPermission", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.setPermission", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "SetPermission", Err: err}
+	}
+	return
+}
+
 // GrantPermissions invokes the Browser method. Grant specific permissions to
 // the given origin and reject all others.
 func (d *domainClient) GrantPermissions(ctx context.Context, args *GrantPermissionsArgs) (err error) {
@@ -48,6 +62,20 @@ func (d *domainClient) ResetPermissions(ctx context.Context, args *ResetPermissi
 	return
 }
 
+// SetDownloadBehavior invokes the Browser method. Set the behavior when
+// downloading a file.
+func (d *domainClient) SetDownloadBehavior(ctx context.Context, args *SetDownloadBehaviorArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.setDownloadBehavior", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.setDownloadBehavior", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "SetDownloadBehavior", Err: err}
+	}
+	return
+}
+
 // Close invokes the Browser method. Close browser gracefully.
 func (d *domainClient) Close(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Browser.close", nil, nil, d.conn)
@@ -62,6 +90,15 @@ func (d *domainClient) Crash(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Browser.crash", nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "Crash", Err: err}
+	}
+	return
+}
+
+// CrashGPUProcess invokes the Browser method. Crashes GPU process.
+func (d *domainClient) CrashGPUProcess(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Browser.crashGpuProcess", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "CrashGPUProcess", Err: err}
 	}
 	return
 }

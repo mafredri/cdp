@@ -80,7 +80,8 @@ func (d *domainClient) ClearBrowserCookies(ctx context.Context) (err error) {
 // with any modifications, or blocks it, or completes it with the provided
 // response bytes. If a network fetch occurs as a result which encounters a
 // redirect an additional Network.requestIntercepted event will be sent with
-// the same InterceptionId.
+// the same InterceptionId. Deprecated, use Fetch.continueRequest,
+// Fetch.fulfillRequest and Fetch.failRequest instead.
 func (d *domainClient) ContinueInterceptedRequest(ctx context.Context, args *ContinueInterceptedRequestArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Network.continueInterceptedRequest", args, nil, d.conn)
@@ -379,7 +380,8 @@ func (d *domainClient) SetExtraHTTPHeaders(ctx context.Context, args *SetExtraHT
 }
 
 // SetRequestInterception invokes the Network method. Sets the requests to
-// intercept that match a the provided patterns and optionally resource types.
+// intercept that match the provided patterns and optionally resource types.
+// Deprecated, please use Fetch.enable instead.
 func (d *domainClient) SetRequestInterception(ctx context.Context, args *SetRequestInterceptionArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Network.setRequestInterception", args, nil, d.conn)
@@ -745,6 +747,48 @@ func (c *webSocketWillSendHandshakeRequestClient) Recv() (*WebSocketWillSendHand
 	event := new(WebSocketWillSendHandshakeRequestReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Network", Op: "WebSocketWillSendHandshakeRequest Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) RequestWillBeSentExtraInfo(ctx context.Context) (RequestWillBeSentExtraInfoClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.requestWillBeSentExtraInfo", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &requestWillBeSentExtraInfoClient{Stream: s}, nil
+}
+
+type requestWillBeSentExtraInfoClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *requestWillBeSentExtraInfoClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *requestWillBeSentExtraInfoClient) Recv() (*RequestWillBeSentExtraInfoReply, error) {
+	event := new(RequestWillBeSentExtraInfoReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "RequestWillBeSentExtraInfo Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) ResponseReceivedExtraInfo(ctx context.Context) (ResponseReceivedExtraInfoClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.responseReceivedExtraInfo", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &responseReceivedExtraInfoClient{Stream: s}, nil
+}
+
+type responseReceivedExtraInfoClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *responseReceivedExtraInfoClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *responseReceivedExtraInfoClient) Recv() (*ResponseReceivedExtraInfoReply, error) {
+	event := new(ResponseReceivedExtraInfoReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "ResponseReceivedExtraInfo Recv", Err: err}
 	}
 	return event, nil
 }

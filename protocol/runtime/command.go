@@ -188,7 +188,8 @@ type EvaluateArgs struct {
 	UserGesture     *bool `json:"userGesture,omitempty"`  // Whether execution should be treated as initiated by user in the UI.
 	AwaitPromise    *bool `json:"awaitPromise,omitempty"` // Whether execution should `await` for resulting value and return once awaited promise is resolved.
 	// ThrowOnSideEffect Whether to throw an exception if side effect
-	// cannot be ruled out during evaluation.
+	// cannot be ruled out during evaluation. This implies `disableBreaks`
+	// below.
 	//
 	// Note: This property is experimental.
 	ThrowOnSideEffect *bool `json:"throwOnSideEffect,omitempty"`
@@ -197,6 +198,16 @@ type EvaluateArgs struct {
 	//
 	// Note: This property is experimental.
 	Timeout *TimeDelta `json:"timeout,omitempty"`
+	// DisableBreaks Disable breakpoints during execution.
+	//
+	// Note: This property is experimental.
+	DisableBreaks *bool `json:"disableBreaks,omitempty"`
+	// ReplMode Setting this flag to true enables `let` re-declaration and
+	// top-level `await`. Note that `let` variables can only be re-declared
+	// if they originate from `replMode` themselves.
+	//
+	// Note: This property is experimental.
+	ReplMode *bool `json:"replMode,omitempty"`
 }
 
 // NewEvaluateArgs initializes EvaluateArgs with the required arguments.
@@ -272,7 +283,7 @@ func (a *EvaluateArgs) SetAwaitPromise(awaitPromise bool) *EvaluateArgs {
 
 // SetThrowOnSideEffect sets the ThrowOnSideEffect optional argument.
 // Whether to throw an exception if side effect cannot be ruled out
-// during evaluation.
+// during evaluation. This implies `disableBreaks` below.
 //
 // Note: This property is experimental.
 func (a *EvaluateArgs) SetThrowOnSideEffect(throwOnSideEffect bool) *EvaluateArgs {
@@ -286,6 +297,26 @@ func (a *EvaluateArgs) SetThrowOnSideEffect(throwOnSideEffect bool) *EvaluateArg
 // Note: This property is experimental.
 func (a *EvaluateArgs) SetTimeout(timeout TimeDelta) *EvaluateArgs {
 	a.Timeout = &timeout
+	return a
+}
+
+// SetDisableBreaks sets the DisableBreaks optional argument. Disable
+// breakpoints during execution.
+//
+// Note: This property is experimental.
+func (a *EvaluateArgs) SetDisableBreaks(disableBreaks bool) *EvaluateArgs {
+	a.DisableBreaks = &disableBreaks
+	return a
+}
+
+// SetReplMode sets the ReplMode optional argument. Setting this flag
+// to true enables `let` re-declaration and top-level `await`. Note
+// that `let` variables can only be re-declared if they originate from
+// `replMode` themselves.
+//
+// Note: This property is experimental.
+func (a *EvaluateArgs) SetReplMode(replMode bool) *EvaluateArgs {
+	a.ReplMode = &replMode
 	return a
 }
 
@@ -360,7 +391,11 @@ func (a *GetPropertiesArgs) SetGeneratePreview(generatePreview bool) *GetPropert
 type GetPropertiesReply struct {
 	Result             []PropertyDescriptor         `json:"result"`                       // Object properties.
 	InternalProperties []InternalPropertyDescriptor `json:"internalProperties,omitempty"` // Internal object properties (only of the element itself).
-	ExceptionDetails   *ExceptionDetails            `json:"exceptionDetails,omitempty"`   // Exception details.
+	// PrivateProperties Object private properties.
+	//
+	// Note: This property is experimental.
+	PrivateProperties []PrivatePropertyDescriptor `json:"privateProperties,omitempty"`
+	ExceptionDetails  *ExceptionDetails           `json:"exceptionDetails,omitempty"` // Exception details.
 }
 
 // GlobalLexicalScopeNamesArgs represents the arguments for GlobalLexicalScopeNames in the Runtime domain.
