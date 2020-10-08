@@ -1,7 +1,6 @@
 package errors
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -96,7 +95,7 @@ func (e *merged) Is(target error) bool {
 		return nil == e.s
 	}
 	for _, err := range e.s {
-		if errors.Is(err, target) {
+		if Is(err, target) {
 			return true
 		}
 	}
@@ -106,7 +105,7 @@ func (e *merged) Is(target error) bool {
 // As runs errors.As on all merged errors.
 func (e *merged) As(target interface{}) bool {
 	for _, err := range e.s {
-		if errors.As(err, target) {
+		if As(err, target) {
 			return true
 		}
 	}
