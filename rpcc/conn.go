@@ -25,8 +25,9 @@ func (e *closeError) Error() string {
 	}
 	return e.msg
 }
-func (e *closeError) Closed() bool { return true }
-func (e *closeError) Cause() error { return e.err }
+func (e *closeError) Closed() bool  { return true }
+func (e *closeError) Cause() error  { return e.err }
+func (e *closeError) Unwrap() error { return e.err }
 
 var (
 	// ErrConnClosing indicates that the operation is illegal because
