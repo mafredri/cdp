@@ -2,8 +2,6 @@ package internal
 
 import (
 	"fmt"
-
-	"golang.org/x/xerrors"
 )
 
 // OpError represents an operational error.
@@ -27,12 +25,11 @@ func (e *OpError) Unwrap() error {
 	return e.Err
 }
 
-type causer interface {
-	Cause() error
-}
+type causer interface{ Cause() error }
+type wrapper interface{ Unwrap() error }
 
 var (
-	_ error           = (*OpError)(nil)
-	_ causer          = (*OpError)(nil)
-	_ xerrors.Wrapper = (*OpError)(nil)
+	_ error   = (*OpError)(nil)
+	_ causer  = (*OpError)(nil)
+	_ wrapper = (*OpError)(nil)
 )

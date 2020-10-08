@@ -4,36 +4,27 @@ import (
 	"errors"
 	"fmt"
 	"strings"
-
-	"golang.org/x/xerrors"
 )
 
-// Causer is an interface to access to its direct cause of the error.
-type Causer interface {
-	Cause() error
-}
+// Interfaces for common error unwrapping.
+type causer interface{ Cause() error }
+type wrapper interface{ Unwrap() error }
 
 // Cause returns the underlying cause for this error, if possible.
-// If err does not implement Causer.Cause(), then err is returned.
+// If err does not implement causer.Cause(), then err is returned.
+//
+// Deprecated: Use errors.Unwrap, errors.Is or errors.As instead.
 func Cause(err error) error {
 	for err != nil {
-		if c, ok := err.(Causer); ok {
+		if c, ok := err.(wrapper); ok {
+			err = c.Unwrap()
+		} else if c, ok := err.(causer); ok {
 			err = c.Cause()
 		} else {
 			return err
 		}
 	}
 	return err
-}
-
-// New returns an error that formats as the given text.
-func New(text string) error {
-	return errors.New(text)
-}
-
-// Errorf wraps New and fmt.Sprintf.
-func Errorf(format string, a ...interface{}) error {
-	return New(fmt.Sprintf(format, a...))
 }
 
 // Wrapf wraps an error with a message. Wrapf returns nil if error is nil.
@@ -53,20 +44,12 @@ type wrapped struct {
 }
 
 var _ error = (*wrapped)(nil)
-var _ Causer = (*wrapped)(nil)
-var _ xerrors.Wrapper = (*wrapped)(nil)
+var _ causer = (*wrapped)(nil)
+var _ wrapper = (*wrapped)(nil)
 
-func (e *wrapped) Error() string {
-	return fmt.Sprintf("%s: %s", e.msg, e.err)
-}
-
-func (e *wrapped) Cause() error {
-	return e.err
-}
-
-func (e *wrapped) Unwrap() error {
-	return e.err
-}
+func (e *wrapped) Error() string { return fmt.Sprintf("%s: %s", e.msg, e.err.Error()) }
+func (e *wrapped) Cause() error  { return e.err }
+func (e *wrapped) Unwrap() error { return e.err }
 
 // Merge merges multiple errors into one.
 // Merge returns nil if all errors are nil.
@@ -88,7 +71,8 @@ type merged struct {
 }
 
 var _ error = (*merged)(nil)
-var _ xerrors.Wrapper = (*merged)(nil)
+var _ causer = (*merged)(nil)
+var _ wrapper = (*merged)(nil)
 
 func (e *merged) Error() string {
 	var m []string
@@ -98,8 +82,33 @@ func (e *merged) Error() string {
 	return strings.Join(m, ": ")
 }
 
-// Unwrap returns the first error since there
-// is no way to create a chain of errors.
-func (e *merged) Unwrap() error {
-	return e.s[0]
+// Unwrap returns only the first error, there is
+// no way to create a queue of errors.
+func (e *merged) Unwrap() error { return e.s[0] }
+
+// Cause returns only the first error, there is
+// no way to create a queue of errors.
+func (e *merged) Cause() error { return e.s[0] }
+
+// Is runs errors.Is on all merged errors.
+func (e *merged) Is(target error) bool {
+	if target == nil {
+		return nil == e.s
+	}
+	for _, err := range e.s {
+		if errors.Is(err, target) {
+			return true
+		}
+	}
+	return false
+}
+
+// As runs errors.As on all merged errors.
+func (e *merged) As(target interface{}) bool {
+	for _, err := range e.s {
+		if errors.As(err, target) {
+			return true
+		}
+	}
+	return false
 }
