@@ -118,7 +118,7 @@ func dial(ctx context.Context, id target.ID, tc *cdp.Client, detachTimeout time.
 
 		err := tc.Target.DetachFromTarget(ctx,
 			target.NewDetachFromTargetArgs().SetSessionID(s.ID))
-		if err := cdp.ErrorCause(err); err == context.DeadlineExceeded {
+		if errors.Is(err, context.DeadlineExceeded) {
 			return fmt.Errorf("session: detach timed out for session %s", s.ID)
 		}
 		return errors.Wrapf(err, "session: detach failed for session %s", s.ID)

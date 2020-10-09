@@ -64,7 +64,7 @@ func TestManager_ErrorsAreSentOnErrChan(t *testing.T) {
 	detached.err = errors.New("detach nope")
 	detached.markReady()
 	err := <-m.Err()
-	if err := errors.Cause(err); err != detached.err {
+	if !errors.Is(err, detached.err) {
 		t.Errorf("got error: %v; want: %v", err, detached.err)
 	}
 	detached.next()
@@ -73,7 +73,7 @@ func TestManager_ErrorsAreSentOnErrChan(t *testing.T) {
 	message.err = errors.New("message nope")
 	message.markReady()
 	err = <-m.Err()
-	if err := errors.Cause(err); err != message.err {
+	if !errors.Is(err, message.err) {
 		t.Errorf("got error: %v; want: %v", err, message.err)
 	}
 	message.next()
