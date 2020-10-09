@@ -92,8 +92,8 @@ func TestNewStreamReader_Read(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				reply: []ReadReply{
-					ReadReply{Data: "Hello ", EOF: false},
-					ReadReply{Data: "world!", EOF: true},
+					{Data: "Hello ", EOF: false},
+					{Data: "world!", EOF: true},
 				},
 				handle: "",
 			},
@@ -104,9 +104,9 @@ func TestNewStreamReader_Read(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				reply: []ReadReply{
-					ReadReply{Data: "Hello ", EOF: false},
-					ReadReply{Data: "world!", EOF: false},
-					ReadReply{Data: "", EOF: true},
+					{Data: "Hello ", EOF: false},
+					{Data: "world!", EOF: false},
+					{Data: "", EOF: true},
 				},
 			},
 			want: "Hello world!",
@@ -116,12 +116,12 @@ func TestNewStreamReader_Read(t *testing.T) {
 			args: args{
 				ctx: context.Background(),
 				reply: []ReadReply{
-					ReadReply{
+					{
 						Data:          base64.StdEncoding.EncodeToString([]byte("Hello world!")),
 						Base64Encoded: &trueBool,
 						EOF:           false,
 					},
-					ReadReply{Data: "", EOF: true},
+					{Data: "", EOF: true},
 				},
 			},
 			want: "Hello world!",
