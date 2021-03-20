@@ -12,10 +12,11 @@ import (
 
 // GetHighlightObjectForTestArgs represents the arguments for GetHighlightObjectForTest in the Overlay domain.
 type GetHighlightObjectForTestArgs struct {
-	NodeID          dom.NodeID  `json:"nodeId"`                    // Id of the node to get highlight object for.
-	IncludeDistance *bool       `json:"includeDistance,omitempty"` // Whether to include distance info.
-	IncludeStyle    *bool       `json:"includeStyle,omitempty"`    // Whether to include style info.
-	ColorFormat     ColorFormat `json:"colorFormat,omitempty"`     // The color format to get config with (default: hex)
+	NodeID                dom.NodeID  `json:"nodeId"`                          // Id of the node to get highlight object for.
+	IncludeDistance       *bool       `json:"includeDistance,omitempty"`       // Whether to include distance info.
+	IncludeStyle          *bool       `json:"includeStyle,omitempty"`          // Whether to include style info.
+	ColorFormat           ColorFormat `json:"colorFormat,omitempty"`           // The color format to get config with (default: hex).
+	ShowAccessibilityInfo *bool       `json:"showAccessibilityInfo,omitempty"` // Whether to show accessibility info (default: true).
 }
 
 // NewGetHighlightObjectForTestArgs initializes GetHighlightObjectForTestArgs with the required arguments.
@@ -40,15 +41,56 @@ func (a *GetHighlightObjectForTestArgs) SetIncludeStyle(includeStyle bool) *GetH
 }
 
 // SetColorFormat sets the ColorFormat optional argument. The color
-// format to get config with (default: hex)
+// format to get config with (default: hex).
 func (a *GetHighlightObjectForTestArgs) SetColorFormat(colorFormat ColorFormat) *GetHighlightObjectForTestArgs {
 	a.ColorFormat = colorFormat
+	return a
+}
+
+// SetShowAccessibilityInfo sets the ShowAccessibilityInfo optional argument.
+// Whether to show accessibility info (default: true).
+func (a *GetHighlightObjectForTestArgs) SetShowAccessibilityInfo(showAccessibilityInfo bool) *GetHighlightObjectForTestArgs {
+	a.ShowAccessibilityInfo = &showAccessibilityInfo
 	return a
 }
 
 // GetHighlightObjectForTestReply represents the return values for GetHighlightObjectForTest in the Overlay domain.
 type GetHighlightObjectForTestReply struct {
 	Highlight json.RawMessage `json:"highlight"` // Highlight data for the node.
+}
+
+// GetGridHighlightObjectsForTestArgs represents the arguments for GetGridHighlightObjectsForTest in the Overlay domain.
+type GetGridHighlightObjectsForTestArgs struct {
+	NodeIDs []dom.NodeID `json:"nodeIds"` // Ids of the node to get highlight object for.
+}
+
+// NewGetGridHighlightObjectsForTestArgs initializes GetGridHighlightObjectsForTestArgs with the required arguments.
+func NewGetGridHighlightObjectsForTestArgs(nodeIDs []dom.NodeID) *GetGridHighlightObjectsForTestArgs {
+	args := new(GetGridHighlightObjectsForTestArgs)
+	args.NodeIDs = nodeIDs
+	return args
+}
+
+// GetGridHighlightObjectsForTestReply represents the return values for GetGridHighlightObjectsForTest in the Overlay domain.
+type GetGridHighlightObjectsForTestReply struct {
+	Highlights json.RawMessage `json:"highlights"` // Grid Highlight data for the node ids provided.
+}
+
+// GetSourceOrderHighlightObjectForTestArgs represents the arguments for GetSourceOrderHighlightObjectForTest in the Overlay domain.
+type GetSourceOrderHighlightObjectForTestArgs struct {
+	NodeID dom.NodeID `json:"nodeId"` // Id of the node to highlight.
+}
+
+// NewGetSourceOrderHighlightObjectForTestArgs initializes GetSourceOrderHighlightObjectForTestArgs with the required arguments.
+func NewGetSourceOrderHighlightObjectForTestArgs(nodeID dom.NodeID) *GetSourceOrderHighlightObjectForTestArgs {
+	args := new(GetSourceOrderHighlightObjectForTestArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// GetSourceOrderHighlightObjectForTestReply represents the return values for GetSourceOrderHighlightObjectForTest in the Overlay domain.
+type GetSourceOrderHighlightObjectForTestReply struct {
+	Highlight json.RawMessage `json:"highlight"` // Source order highlight data for the node id provided.
 }
 
 // HighlightFrameArgs represents the arguments for HighlightFrame in the Overlay domain.
@@ -185,6 +227,42 @@ func (a *HighlightRectArgs) SetOutlineColor(outlineColor dom.RGBA) *HighlightRec
 	return a
 }
 
+// HighlightSourceOrderArgs represents the arguments for HighlightSourceOrder in the Overlay domain.
+type HighlightSourceOrderArgs struct {
+	SourceOrderConfig SourceOrderConfig       `json:"sourceOrderConfig"`       // A descriptor for the appearance of the overlay drawing.
+	NodeID            *dom.NodeID             `json:"nodeId,omitempty"`        // Identifier of the node to highlight.
+	BackendNodeID     *dom.BackendNodeID      `json:"backendNodeId,omitempty"` // Identifier of the backend node to highlight.
+	ObjectID          *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node to be highlighted.
+}
+
+// NewHighlightSourceOrderArgs initializes HighlightSourceOrderArgs with the required arguments.
+func NewHighlightSourceOrderArgs(sourceOrderConfig SourceOrderConfig) *HighlightSourceOrderArgs {
+	args := new(HighlightSourceOrderArgs)
+	args.SourceOrderConfig = sourceOrderConfig
+	return args
+}
+
+// SetNodeID sets the NodeID optional argument. Identifier of the node
+// to highlight.
+func (a *HighlightSourceOrderArgs) SetNodeID(nodeID dom.NodeID) *HighlightSourceOrderArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument.
+// Identifier of the backend node to highlight.
+func (a *HighlightSourceOrderArgs) SetBackendNodeID(backendNodeID dom.BackendNodeID) *HighlightSourceOrderArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
+}
+
+// SetObjectID sets the ObjectID optional argument. JavaScript object
+// id of the node to be highlighted.
+func (a *HighlightSourceOrderArgs) SetObjectID(objectID runtime.RemoteObjectID) *HighlightSourceOrderArgs {
+	a.ObjectID = &objectID
+	return a
+}
+
 // SetInspectModeArgs represents the arguments for SetInspectMode in the Overlay domain.
 type SetInspectModeArgs struct {
 	Mode            InspectMode      `json:"mode"`                      // Set an inspection mode.
@@ -261,6 +339,30 @@ func NewSetShowFPSCounterArgs(show bool) *SetShowFPSCounterArgs {
 	return args
 }
 
+// SetShowGridOverlaysArgs represents the arguments for SetShowGridOverlays in the Overlay domain.
+type SetShowGridOverlaysArgs struct {
+	GridNodeHighlightConfigs []GridNodeHighlightConfig `json:"gridNodeHighlightConfigs"` // An array of node identifiers and descriptors for the highlight appearance.
+}
+
+// NewSetShowGridOverlaysArgs initializes SetShowGridOverlaysArgs with the required arguments.
+func NewSetShowGridOverlaysArgs(gridNodeHighlightConfigs []GridNodeHighlightConfig) *SetShowGridOverlaysArgs {
+	args := new(SetShowGridOverlaysArgs)
+	args.GridNodeHighlightConfigs = gridNodeHighlightConfigs
+	return args
+}
+
+// SetShowFlexOverlaysArgs represents the arguments for SetShowFlexOverlays in the Overlay domain.
+type SetShowFlexOverlaysArgs struct {
+	FlexNodeHighlightConfigs []FlexNodeHighlightConfig `json:"flexNodeHighlightConfigs"` // An array of node identifiers and descriptors for the highlight appearance.
+}
+
+// NewSetShowFlexOverlaysArgs initializes SetShowFlexOverlaysArgs with the required arguments.
+func NewSetShowFlexOverlaysArgs(flexNodeHighlightConfigs []FlexNodeHighlightConfig) *SetShowFlexOverlaysArgs {
+	args := new(SetShowFlexOverlaysArgs)
+	args.FlexNodeHighlightConfigs = flexNodeHighlightConfigs
+	return args
+}
+
 // SetShowPaintRectsArgs represents the arguments for SetShowPaintRects in the Overlay domain.
 type SetShowPaintRectsArgs struct {
 	Result bool `json:"result"` // True for showing paint rectangles
@@ -305,6 +407,18 @@ type SetShowHitTestBordersArgs struct {
 // NewSetShowHitTestBordersArgs initializes SetShowHitTestBordersArgs with the required arguments.
 func NewSetShowHitTestBordersArgs(show bool) *SetShowHitTestBordersArgs {
 	args := new(SetShowHitTestBordersArgs)
+	args.Show = show
+	return args
+}
+
+// SetShowWebVitalsArgs represents the arguments for SetShowWebVitals in the Overlay domain.
+type SetShowWebVitalsArgs struct {
+	Show bool `json:"show"` // No description.
+}
+
+// NewSetShowWebVitalsArgs initializes SetShowWebVitalsArgs with the required arguments.
+func NewSetShowWebVitalsArgs(show bool) *SetShowWebVitalsArgs {
+	args := new(SetShowWebVitalsArgs)
 	args.Show = show
 	return args
 }

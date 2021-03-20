@@ -34,7 +34,7 @@ type StickyPositionConstraint struct {
 type PictureTile struct {
 	X       float64 `json:"x"`       // Offset from owning layer left boundary
 	Y       float64 `json:"y"`       // Offset from owning layer top boundary
-	Picture []byte  `json:"picture"` // Base64-encoded snapshot data.
+	Picture []byte  `json:"picture"` // Base64-encoded snapshot data. (Encoded as a base64 string when passed over JSON)
 }
 
 // Layer Information about a compositing layer.

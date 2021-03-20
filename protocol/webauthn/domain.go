@@ -153,3 +153,18 @@ func (d *domainClient) SetUserVerified(ctx context.Context, args *SetUserVerifie
 	}
 	return
 }
+
+// SetAutomaticPresenceSimulation invokes the WebAuthn method. Sets whether
+// tests of user presence will succeed immediately (if true) or fail to resolve
+// (if false) for an authenticator. The default is true.
+func (d *domainClient) SetAutomaticPresenceSimulation(ctx context.Context, args *SetAutomaticPresenceSimulationArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "WebAuthn.setAutomaticPresenceSimulation", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "WebAuthn.setAutomaticPresenceSimulation", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "WebAuthn", Op: "SetAutomaticPresenceSimulation", Err: err}
+	}
+	return
+}

@@ -375,6 +375,21 @@ func (d *domainClient) SetBypassCSP(ctx context.Context, args *SetBypassCSPArgs)
 	return
 }
 
+// GetPermissionsPolicyState invokes the Page method. Get Permissions Policy
+// state on given frame.
+func (d *domainClient) GetPermissionsPolicyState(ctx context.Context, args *GetPermissionsPolicyStateArgs) (reply *GetPermissionsPolicyStateReply, err error) {
+	reply = new(GetPermissionsPolicyStateReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.getPermissionsPolicyState", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.getPermissionsPolicyState", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetPermissionsPolicyState", Err: err}
+	}
+	return
+}
+
 // SetFontFamilies invokes the Page method. Set generic font families.
 func (d *domainClient) SetFontFamilies(ctx context.Context, args *SetFontFamiliesArgs) (err error) {
 	if args != nil {
@@ -513,7 +528,8 @@ func (d *domainClient) StopScreencast(ctx context.Context) (err error) {
 }
 
 // SetProduceCompilationCache invokes the Page method. Forces compilation
-// cache to be generated for every subresource script.
+// cache to be generated for every subresource script. See also:
+// `Page.produceCompilationCache`.
 func (d *domainClient) SetProduceCompilationCache(ctx context.Context, args *SetProduceCompilationCacheArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Page.setProduceCompilationCache", args, nil, d.conn)
@@ -522,6 +538,28 @@ func (d *domainClient) SetProduceCompilationCache(ctx context.Context, args *Set
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "SetProduceCompilationCache", Err: err}
+	}
+	return
+}
+
+// ProduceCompilationCache invokes the Page method. Requests backend to
+// produce compilation cache for the specified scripts. Unlike
+// setProduceCompilationCache, this allows client to only produce cache for
+// specific scripts. `scripts` are appeneded to the list of scripts for which
+// the cache for would produced. Disabling compilation cache with
+// `setProduceCompilationCache` would reset all pending cache requests. The
+// list may also be reset during page navigation. When script with a matching
+// URL is encountered, the cache is optionally produced upon backend
+// discretion, based on internal heuristics. See also:
+// `Page.compilationCacheProduced`.
+func (d *domainClient) ProduceCompilationCache(ctx context.Context, args *ProduceCompilationCacheArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.produceCompilationCache", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.produceCompilationCache", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "ProduceCompilationCache", Err: err}
 	}
 	return
 }
@@ -711,6 +749,27 @@ func (c *frameNavigatedClient) Recv() (*FrameNavigatedReply, error) {
 	event := new(FrameNavigatedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "FrameNavigated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DocumentOpened(ctx context.Context) (DocumentOpenedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.documentOpened", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &documentOpenedClient{Stream: s}, nil
+}
+
+type documentOpenedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *documentOpenedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *documentOpenedClient) Recv() (*DocumentOpenedReply, error) {
+	event := new(DocumentOpenedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "DocumentOpened Recv", Err: err}
 	}
 	return event, nil
 }

@@ -4,6 +4,7 @@ package target
 
 import (
 	"github.com/mafredri/cdp/protocol/internal"
+	"github.com/mafredri/cdp/protocol/page"
 )
 
 // ID
@@ -20,6 +21,16 @@ type Info struct {
 	URL      string `json:"url"`                // No description.
 	Attached bool   `json:"attached"`           // Whether the target has an attached client.
 	OpenerID *ID    `json:"openerId,omitempty"` // Opener target Id
+	// CanAccessOpener Whether the target has access to the originating
+	// window.
+	//
+	// Note: This property is experimental.
+	CanAccessOpener bool `json:"canAccessOpener"`
+	// OpenerFrameID Frame id of originating window (is only set if target
+	// has an opener).
+	//
+	// Note: This property is experimental.
+	OpenerFrameID *page.FrameID `json:"openerFrameId,omitempty"`
 	// BrowserContextID
 	//
 	// Note: This property is experimental.

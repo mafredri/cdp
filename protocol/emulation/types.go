@@ -11,6 +11,16 @@ type ScreenOrientation struct {
 	Angle int    `json:"angle"` // Orientation angle.
 }
 
+// DisplayFeature
+type DisplayFeature struct {
+	// Orientation Orientation of a display feature in relation to screen
+	//
+	// Values: "vertical", "horizontal".
+	Orientation string `json:"orientation"`
+	Offset      int    `json:"offset"`     // The offset from the screen origin in either the x (for vertical orientation) or y (for horizontal orientation) direction.
+	MaskLength  int    `json:"maskLength"` // A display feature may mask content such that it is not physically displayed - this length along with the offset describes this area. A display feature that only splits content will have a 0 mask_length.
+}
+
 // MediaFeature
 type MediaFeature struct {
 	Name  string `json:"name"`  // No description.
@@ -57,15 +67,41 @@ type UserAgentBrandVersion struct {
 }
 
 // UserAgentMetadata Used to specify User Agent Cient Hints to emulate. See
-// https://wicg.github.io/ua-client-hints
+// https://wicg.github.io/ua-client-hints Missing optional values will be
+// filled in by the target with what it would normally use.
 //
 // Note: This type is experimental.
 type UserAgentMetadata struct {
-	Brands          []UserAgentBrandVersion `json:"brands"`          // No description.
-	FullVersion     string                  `json:"fullVersion"`     // No description.
-	Platform        string                  `json:"platform"`        // No description.
-	PlatformVersion string                  `json:"platformVersion"` // No description.
-	Architecture    string                  `json:"architecture"`    // No description.
-	Model           string                  `json:"model"`           // No description.
-	Mobile          bool                    `json:"mobile"`          // No description.
+	Brands          []UserAgentBrandVersion `json:"brands,omitempty"`      // No description.
+	FullVersion     *string                 `json:"fullVersion,omitempty"` // No description.
+	Platform        string                  `json:"platform"`              // No description.
+	PlatformVersion string                  `json:"platformVersion"`       // No description.
+	Architecture    string                  `json:"architecture"`          // No description.
+	Model           string                  `json:"model"`                 // No description.
+	Mobile          bool                    `json:"mobile"`                // No description.
+}
+
+// DisabledImageType Enum of image types that can be disabled.
+//
+// Note: This type is experimental.
+type DisabledImageType string
+
+// DisabledImageType as enums.
+const (
+	DisabledImageTypeNotSet DisabledImageType = ""
+	DisabledImageTypeAVIF   DisabledImageType = "avif"
+	DisabledImageTypeWEBP   DisabledImageType = "webp"
+)
+
+func (e DisabledImageType) Valid() bool {
+	switch e {
+	case "avif", "webp":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e DisabledImageType) String() string {
+	return string(e)
 }

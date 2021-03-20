@@ -179,7 +179,7 @@ type EvaluateArgs struct {
 	ObjectGroup           *string             `json:"objectGroup,omitempty"`           // Symbolic group name that can be used to release multiple objects.
 	IncludeCommandLineAPI *bool               `json:"includeCommandLineAPI,omitempty"` // Determines whether Command Line API should be available during the evaluation.
 	Silent                *bool               `json:"silent,omitempty"`                // In silent mode exceptions thrown during evaluation are not reported and do not pause execution. Overrides `setPauseOnException` state.
-	ContextID             *ExecutionContextID `json:"contextId,omitempty"`             // Specifies in which execution context to perform evaluation. If the parameter is omitted the evaluation will be performed in the context of the inspected page.
+	ContextID             *ExecutionContextID `json:"contextId,omitempty"`             // Specifies in which execution context to perform evaluation. If the parameter is omitted the evaluation will be performed in the context of the inspected page. This is mutually exclusive with `uniqueContextId`, which offers an alternative way to identify the execution context that is more reliable in a multi-process environment.
 	ReturnByValue         *bool               `json:"returnByValue,omitempty"`         // Whether the result is expected to be a JSON object that should be sent by value.
 	// GeneratePreview Whether preview should be generated for the result.
 	//
@@ -208,6 +208,23 @@ type EvaluateArgs struct {
 	//
 	// Note: This property is experimental.
 	ReplMode *bool `json:"replMode,omitempty"`
+	// AllowUnsafeEvalBlockedByCSP The Content Security Policy (CSP) for
+	// the target might block 'unsafe-eval' which includes eval(),
+	// Function(), setTimeout() and setInterval() when called with
+	// non-callable arguments. This flag bypasses CSP for this evaluation
+	// and allows unsafe-eval. Defaults to true.
+	//
+	// Note: This property is experimental.
+	AllowUnsafeEvalBlockedByCSP *bool `json:"allowUnsafeEvalBlockedByCSP,omitempty"`
+	// UniqueContextID An alternative way to specify the execution context
+	// to evaluate in. Compared to contextId that may be reused across
+	// processes, this is guaranteed to be system-unique, so it can be used
+	// to prevent accidental evaluation of the expression in context
+	// different than intended (e.g. as a result of navigation across
+	// process boundaries). This is mutually exclusive with `contextId`.
+	//
+	// Note: This property is experimental.
+	UniqueContextID *string `json:"uniqueContextId,omitempty"`
 }
 
 // NewEvaluateArgs initializes EvaluateArgs with the required arguments.
@@ -243,7 +260,9 @@ func (a *EvaluateArgs) SetSilent(silent bool) *EvaluateArgs {
 // SetContextID sets the ContextID optional argument. Specifies in
 // which execution context to perform evaluation. If the parameter is
 // omitted the evaluation will be performed in the context of the
-// inspected page.
+// inspected page. This is mutually exclusive with `uniqueContextId`,
+// which offers an alternative way to identify the execution context
+// that is more reliable in a multi-process environment.
 func (a *EvaluateArgs) SetContextID(contextID ExecutionContextID) *EvaluateArgs {
 	a.ContextID = &contextID
 	return a
@@ -317,6 +336,33 @@ func (a *EvaluateArgs) SetDisableBreaks(disableBreaks bool) *EvaluateArgs {
 // Note: This property is experimental.
 func (a *EvaluateArgs) SetReplMode(replMode bool) *EvaluateArgs {
 	a.ReplMode = &replMode
+	return a
+}
+
+// SetAllowUnsafeEvalBlockedByCSP sets the AllowUnsafeEvalBlockedByCSP optional argument.
+// The Content Security Policy (CSP) for the target might block
+// 'unsafe-eval' which includes eval(), Function(), setTimeout() and
+// setInterval() when called with non-callable arguments. This flag
+// bypasses CSP for this evaluation and allows unsafe-eval. Defaults to
+// true.
+//
+// Note: This property is experimental.
+func (a *EvaluateArgs) SetAllowUnsafeEvalBlockedByCSP(allowUnsafeEvalBlockedByCSP bool) *EvaluateArgs {
+	a.AllowUnsafeEvalBlockedByCSP = &allowUnsafeEvalBlockedByCSP
+	return a
+}
+
+// SetUniqueContextID sets the UniqueContextID optional argument. An
+// alternative way to specify the execution context to evaluate in.
+// Compared to contextId that may be reused across processes, this is
+// guaranteed to be system-unique, so it can be used to prevent
+// accidental evaluation of the expression in context different than
+// intended (e.g. as a result of navigation across process boundaries).
+// This is mutually exclusive with `contextId`.
+//
+// Note: This property is experimental.
+func (a *EvaluateArgs) SetUniqueContextID(uniqueContextID string) *EvaluateArgs {
+	a.UniqueContextID = &uniqueContextID
 	return a
 }
 
@@ -579,7 +625,15 @@ func NewSetMaxCallStackSizeToCaptureArgs(size int) *SetMaxCallStackSizeToCapture
 // AddBindingArgs represents the arguments for AddBinding in the Runtime domain.
 type AddBindingArgs struct {
 	Name               string              `json:"name"`                         // No description.
-	ExecutionContextID *ExecutionContextID `json:"executionContextId,omitempty"` // No description.
+	ExecutionContextID *ExecutionContextID `json:"executionContextId,omitempty"` // If specified, the binding would only be exposed to the specified execution context. If omitted and `executionContextName` is not set, the binding is exposed to all execution contexts of the target. This parameter is mutually exclusive with `executionContextName`.
+	// ExecutionContextName If specified, the binding is exposed to the
+	// executionContext with matching name, even for contexts created after
+	// the binding is added. See also `ExecutionContext.name` and
+	// `worldName` parameter to `Page.addScriptToEvaluateOnNewDocument`.
+	// This parameter is mutually exclusive with `executionContextId`.
+	//
+	// Note: This property is experimental.
+	ExecutionContextName *string `json:"executionContextName,omitempty"`
 }
 
 // NewAddBindingArgs initializes AddBindingArgs with the required arguments.
@@ -590,8 +644,25 @@ func NewAddBindingArgs(name string) *AddBindingArgs {
 }
 
 // SetExecutionContextID sets the ExecutionContextID optional argument.
+// If specified, the binding would only be exposed to the specified
+// execution context. If omitted and `executionContextName` is not set,
+// the binding is exposed to all execution contexts of the target. This
+// parameter is mutually exclusive with `executionContextName`.
 func (a *AddBindingArgs) SetExecutionContextID(executionContextID ExecutionContextID) *AddBindingArgs {
 	a.ExecutionContextID = &executionContextID
+	return a
+}
+
+// SetExecutionContextName sets the ExecutionContextName optional argument.
+// If specified, the binding is exposed to the executionContext with
+// matching name, even for contexts created after the binding is added.
+// See also `ExecutionContext.name` and `worldName` parameter to
+// `Page.addScriptToEvaluateOnNewDocument`. This parameter is mutually
+// exclusive with `executionContextId`.
+//
+// Note: This property is experimental.
+func (a *AddBindingArgs) SetExecutionContextName(executionContextName string) *AddBindingArgs {
+	a.ExecutionContextName = &executionContextName
 	return a
 }
 

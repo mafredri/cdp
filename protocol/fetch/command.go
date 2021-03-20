@@ -56,8 +56,8 @@ type FulfillRequestArgs struct {
 	RequestID             RequestID     `json:"requestId"`                       // An id the client received in requestPaused event.
 	ResponseCode          int           `json:"responseCode"`                    // An HTTP response code.
 	ResponseHeaders       []HeaderEntry `json:"responseHeaders,omitempty"`       // Response headers.
-	BinaryResponseHeaders *string       `json:"binaryResponseHeaders,omitempty"` // Alternative way of specifying response headers as a \0-separated series of name: value pairs. Prefer the above method unless you need to represent some non-UTF8 values that can't be transmitted over the protocol as text.
-	Body                  *string       `json:"body,omitempty"`                  // A response body.
+	BinaryResponseHeaders []byte        `json:"binaryResponseHeaders,omitempty"` // Alternative way of specifying response headers as a \0-separated series of name: value pairs. Prefer the above method unless you need to represent some non-UTF8 values that can't be transmitted over the protocol as text. (Encoded as a base64 string when passed over JSON)
+	Body                  []byte        `json:"body,omitempty"`                  // A response body. (Encoded as a base64 string when passed over JSON)
 	ResponsePhrase        *string       `json:"responsePhrase,omitempty"`        // A textual representation of responseCode. If absent, a standard phrase matching responseCode is used.
 }
 
@@ -80,15 +80,16 @@ func (a *FulfillRequestArgs) SetResponseHeaders(responseHeaders []HeaderEntry) *
 // Alternative way of specifying response headers as a \0-separated
 // series of name: value pairs. Prefer the above method unless you need
 // to represent some non-UTF8 values that can't be transmitted over the
-// protocol as text.
-func (a *FulfillRequestArgs) SetBinaryResponseHeaders(binaryResponseHeaders string) *FulfillRequestArgs {
-	a.BinaryResponseHeaders = &binaryResponseHeaders
+// protocol as text. (Encoded as a base64 string when passed over JSON)
+func (a *FulfillRequestArgs) SetBinaryResponseHeaders(binaryResponseHeaders []byte) *FulfillRequestArgs {
+	a.BinaryResponseHeaders = binaryResponseHeaders
 	return a
 }
 
-// SetBody sets the Body optional argument. A response body.
-func (a *FulfillRequestArgs) SetBody(body string) *FulfillRequestArgs {
-	a.Body = &body
+// SetBody sets the Body optional argument. A response body. (Encoded
+// as a base64 string when passed over JSON)
+func (a *FulfillRequestArgs) SetBody(body []byte) *FulfillRequestArgs {
+	a.Body = body
 	return a
 }
 
@@ -105,7 +106,7 @@ type ContinueRequestArgs struct {
 	RequestID RequestID     `json:"requestId"`          // An id the client received in requestPaused event.
 	URL       *string       `json:"url,omitempty"`      // If set, the request url will be modified in a way that's not observable by page.
 	Method    *string       `json:"method,omitempty"`   // If set, the request method is overridden.
-	PostData  *string       `json:"postData,omitempty"` // If set, overrides the post data in the request.
+	PostData  []byte        `json:"postData,omitempty"` // If set, overrides the post data in the request. (Encoded as a base64 string when passed over JSON)
 	Headers   []HeaderEntry `json:"headers,omitempty"`  // If set, overrides the request headers.
 }
 
@@ -131,9 +132,10 @@ func (a *ContinueRequestArgs) SetMethod(method string) *ContinueRequestArgs {
 }
 
 // SetPostData sets the PostData optional argument. If set, overrides
-// the post data in the request.
-func (a *ContinueRequestArgs) SetPostData(postData string) *ContinueRequestArgs {
-	a.PostData = &postData
+// the post data in the request. (Encoded as a base64 string when
+// passed over JSON)
+func (a *ContinueRequestArgs) SetPostData(postData []byte) *ContinueRequestArgs {
+	a.PostData = postData
 	return a
 }
 

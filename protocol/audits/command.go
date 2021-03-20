@@ -41,7 +41,26 @@ func (a *GetEncodedResponseArgs) SetSizeOnly(sizeOnly bool) *GetEncodedResponseA
 
 // GetEncodedResponseReply represents the return values for GetEncodedResponse in the Audits domain.
 type GetEncodedResponseReply struct {
-	Body         *string `json:"body,omitempty"` // The encoded body as a base64 string. Omitted if sizeOnly is true.
-	OriginalSize int     `json:"originalSize"`   // Size before re-encoding.
-	EncodedSize  int     `json:"encodedSize"`    // Size after re-encoding.
+	Body         []byte `json:"body,omitempty"` // The encoded body as a base64 string. Omitted if sizeOnly is true. (Encoded as a base64 string when passed over JSON)
+	OriginalSize int    `json:"originalSize"`   // Size before re-encoding.
+	EncodedSize  int    `json:"encodedSize"`    // Size after re-encoding.
+}
+
+// CheckContrastArgs represents the arguments for CheckContrast in the Audits domain.
+type CheckContrastArgs struct {
+	ReportAAA *bool `json:"reportAAA,omitempty"` // Whether to report WCAG AAA level issues. Default is false.
+}
+
+// NewCheckContrastArgs initializes CheckContrastArgs with the required arguments.
+func NewCheckContrastArgs() *CheckContrastArgs {
+	args := new(CheckContrastArgs)
+
+	return args
+}
+
+// SetReportAAA sets the ReportAAA optional argument. Whether to
+// report WCAG AAA level issues. Default is false.
+func (a *CheckContrastArgs) SetReportAAA(reportAAA bool) *CheckContrastArgs {
+	a.ReportAAA = &reportAAA
+	return a
 }

@@ -31,6 +31,31 @@ func (e DOMBreakpointType) String() string {
 	return string(e)
 }
 
+// CSPViolationType CSP Violation type.
+//
+// Note: This type is experimental.
+type CSPViolationType string
+
+// CSPViolationType as enums.
+const (
+	CSPViolationTypeNotSet                     CSPViolationType = ""
+	CSPViolationTypeTrustedtypeSinkViolation   CSPViolationType = "trustedtype-sink-violation"
+	CSPViolationTypeTrustedtypePolicyViolation CSPViolationType = "trustedtype-policy-violation"
+)
+
+func (e CSPViolationType) Valid() bool {
+	switch e {
+	case "trustedtype-sink-violation", "trustedtype-policy-violation":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e CSPViolationType) String() string {
+	return string(e)
+}
+
 // EventListener Object event listener.
 type EventListener struct {
 	Type            string                `json:"type"`                      // `EventListener`'s type.

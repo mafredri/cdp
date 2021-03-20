@@ -3,8 +3,10 @@
 package audits
 
 import (
+	"github.com/mafredri/cdp/protocol/dom"
 	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/page"
+	"github.com/mafredri/cdp/protocol/runtime"
 )
 
 // AffectedCookie Information about a cookie that is affected by an inspector
@@ -35,11 +37,13 @@ const (
 	SameSiteCookieExclusionReasonNotSet                                 SameSiteCookieExclusionReason = ""
 	SameSiteCookieExclusionReasonExcludeSameSiteUnspecifiedTreatedAsLax SameSiteCookieExclusionReason = "ExcludeSameSiteUnspecifiedTreatedAsLax"
 	SameSiteCookieExclusionReasonExcludeSameSiteNoneInsecure            SameSiteCookieExclusionReason = "ExcludeSameSiteNoneInsecure"
+	SameSiteCookieExclusionReasonExcludeSameSiteLax                     SameSiteCookieExclusionReason = "ExcludeSameSiteLax"
+	SameSiteCookieExclusionReasonExcludeSameSiteStrict                  SameSiteCookieExclusionReason = "ExcludeSameSiteStrict"
 )
 
 func (e SameSiteCookieExclusionReason) Valid() bool {
 	switch e {
-	case "ExcludeSameSiteUnspecifiedTreatedAsLax", "ExcludeSameSiteNoneInsecure":
+	case "ExcludeSameSiteUnspecifiedTreatedAsLax", "ExcludeSameSiteNoneInsecure", "ExcludeSameSiteLax", "ExcludeSameSiteStrict":
 		return true
 	default:
 		return false
@@ -227,9 +231,195 @@ func (e BlockedByResponseReason) String() string {
 // with the BLOCKED_BY_RESPONSE code. Currently only used for COEP/COOP, but
 // may be extended to include some CSP errors in the future.
 type BlockedByResponseIssueDetails struct {
-	Request AffectedRequest         `json:"request"`         // No description.
-	Frame   *AffectedFrame          `json:"frame,omitempty"` // No description.
-	Reason  BlockedByResponseReason `json:"reason"`          // No description.
+	Request      AffectedRequest         `json:"request"`                // No description.
+	ParentFrame  *AffectedFrame          `json:"parentFrame,omitempty"`  // No description.
+	BlockedFrame *AffectedFrame          `json:"blockedFrame,omitempty"` // No description.
+	Reason       BlockedByResponseReason `json:"reason"`                 // No description.
+}
+
+// HeavyAdResolutionStatus
+type HeavyAdResolutionStatus string
+
+// HeavyAdResolutionStatus as enums.
+const (
+	HeavyAdResolutionStatusNotSet         HeavyAdResolutionStatus = ""
+	HeavyAdResolutionStatusHeavyAdBlocked HeavyAdResolutionStatus = "HeavyAdBlocked"
+	HeavyAdResolutionStatusHeavyAdWarning HeavyAdResolutionStatus = "HeavyAdWarning"
+)
+
+func (e HeavyAdResolutionStatus) Valid() bool {
+	switch e {
+	case "HeavyAdBlocked", "HeavyAdWarning":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e HeavyAdResolutionStatus) String() string {
+	return string(e)
+}
+
+// HeavyAdReason
+type HeavyAdReason string
+
+// HeavyAdReason as enums.
+const (
+	HeavyAdReasonNotSet            HeavyAdReason = ""
+	HeavyAdReasonNetworkTotalLimit HeavyAdReason = "NetworkTotalLimit"
+	HeavyAdReasonCPUTotalLimit     HeavyAdReason = "CpuTotalLimit"
+	HeavyAdReasonCPUPeakLimit      HeavyAdReason = "CpuPeakLimit"
+)
+
+func (e HeavyAdReason) Valid() bool {
+	switch e {
+	case "NetworkTotalLimit", "CpuTotalLimit", "CpuPeakLimit":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e HeavyAdReason) String() string {
+	return string(e)
+}
+
+// HeavyAdIssueDetails
+type HeavyAdIssueDetails struct {
+	Resolution HeavyAdResolutionStatus `json:"resolution"` // The resolution status, either blocking the content or warning.
+	Reason     HeavyAdReason           `json:"reason"`     // The reason the ad was blocked, total network or cpu or peak cpu.
+	Frame      AffectedFrame           `json:"frame"`      // The frame that was blocked.
+}
+
+// ContentSecurityPolicyViolationType
+type ContentSecurityPolicyViolationType string
+
+// ContentSecurityPolicyViolationType as enums.
+const (
+	ContentSecurityPolicyViolationTypeNotSet                       ContentSecurityPolicyViolationType = ""
+	ContentSecurityPolicyViolationTypeKInlineViolation             ContentSecurityPolicyViolationType = "kInlineViolation"
+	ContentSecurityPolicyViolationTypeKEvalViolation               ContentSecurityPolicyViolationType = "kEvalViolation"
+	ContentSecurityPolicyViolationTypeKURLViolation                ContentSecurityPolicyViolationType = "kURLViolation"
+	ContentSecurityPolicyViolationTypeKTrustedTypesSinkViolation   ContentSecurityPolicyViolationType = "kTrustedTypesSinkViolation"
+	ContentSecurityPolicyViolationTypeKTrustedTypesPolicyViolation ContentSecurityPolicyViolationType = "kTrustedTypesPolicyViolation"
+)
+
+func (e ContentSecurityPolicyViolationType) Valid() bool {
+	switch e {
+	case "kInlineViolation", "kEvalViolation", "kURLViolation", "kTrustedTypesSinkViolation", "kTrustedTypesPolicyViolation":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ContentSecurityPolicyViolationType) String() string {
+	return string(e)
+}
+
+// SourceCodeLocation
+type SourceCodeLocation struct {
+	ScriptID     *runtime.ScriptID `json:"scriptId,omitempty"` // No description.
+	URL          string            `json:"url"`                // No description.
+	LineNumber   int               `json:"lineNumber"`         // No description.
+	ColumnNumber int               `json:"columnNumber"`       // No description.
+}
+
+// ContentSecurityPolicyIssueDetails
+type ContentSecurityPolicyIssueDetails struct {
+	BlockedURL                         *string                            `json:"blockedURL,omitempty"`               // The url not included in allowed sources.
+	ViolatedDirective                  string                             `json:"violatedDirective"`                  // Specific directive that is violated, causing the CSP issue.
+	IsReportOnly                       bool                               `json:"isReportOnly"`                       // No description.
+	ContentSecurityPolicyViolationType ContentSecurityPolicyViolationType `json:"contentSecurityPolicyViolationType"` // No description.
+	FrameAncestor                      *AffectedFrame                     `json:"frameAncestor,omitempty"`            // No description.
+	SourceCodeLocation                 *SourceCodeLocation                `json:"sourceCodeLocation,omitempty"`       // No description.
+	ViolatingNodeID                    *dom.BackendNodeID                 `json:"violatingNodeId,omitempty"`          // No description.
+}
+
+// SharedArrayBufferIssueType
+type SharedArrayBufferIssueType string
+
+// SharedArrayBufferIssueType as enums.
+const (
+	SharedArrayBufferIssueTypeNotSet        SharedArrayBufferIssueType = ""
+	SharedArrayBufferIssueTypeTransferIssue SharedArrayBufferIssueType = "TransferIssue"
+	SharedArrayBufferIssueTypeCreationIssue SharedArrayBufferIssueType = "CreationIssue"
+)
+
+func (e SharedArrayBufferIssueType) Valid() bool {
+	switch e {
+	case "TransferIssue", "CreationIssue":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e SharedArrayBufferIssueType) String() string {
+	return string(e)
+}
+
+// SharedArrayBufferIssueDetails Details for a issue arising from an SAB being
+// instantiated in, or transferred to a context that is not cross-origin
+// isolated.
+type SharedArrayBufferIssueDetails struct {
+	SourceCodeLocation SourceCodeLocation         `json:"sourceCodeLocation"` // No description.
+	IsWarning          bool                       `json:"isWarning"`          // No description.
+	Type               SharedArrayBufferIssueType `json:"type"`               // No description.
+}
+
+// TwaQualityEnforcementViolationType
+type TwaQualityEnforcementViolationType string
+
+// TwaQualityEnforcementViolationType as enums.
+const (
+	TwaQualityEnforcementViolationTypeNotSet              TwaQualityEnforcementViolationType = ""
+	TwaQualityEnforcementViolationTypeKHttpError          TwaQualityEnforcementViolationType = "kHttpError"
+	TwaQualityEnforcementViolationTypeKUnavailableOffline TwaQualityEnforcementViolationType = "kUnavailableOffline"
+	TwaQualityEnforcementViolationTypeKDigitalAssetLinks  TwaQualityEnforcementViolationType = "kDigitalAssetLinks"
+)
+
+func (e TwaQualityEnforcementViolationType) Valid() bool {
+	switch e {
+	case "kHttpError", "kUnavailableOffline", "kDigitalAssetLinks":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e TwaQualityEnforcementViolationType) String() string {
+	return string(e)
+}
+
+// TrustedWebActivityIssueDetails
+type TrustedWebActivityIssueDetails struct {
+	URL            string                             `json:"url"`                      // The url that triggers the violation.
+	ViolationType  TwaQualityEnforcementViolationType `json:"violationType"`            // No description.
+	HTTPStatusCode *int                               `json:"httpStatusCode,omitempty"` // No description.
+	PackageName    *string                            `json:"packageName,omitempty"`    // The package name of the Trusted Web Activity client app. This field is only used when violation type is kDigitalAssetLinks.
+	Signature      *string                            `json:"signature,omitempty"`      // The signature of the Trusted Web Activity client app. This field is only used when violation type is kDigitalAssetLinks.
+}
+
+// LowTextContrastIssueDetails
+type LowTextContrastIssueDetails struct {
+	ViolatingNodeID       dom.BackendNodeID `json:"violatingNodeId"`       // No description.
+	ViolatingNodeSelector string            `json:"violatingNodeSelector"` // No description.
+	ContrastRatio         float64           `json:"contrastRatio"`         // No description.
+	ThresholdAA           float64           `json:"thresholdAA"`           // No description.
+	ThresholdAAA          float64           `json:"thresholdAAA"`          // No description.
+	FontSize              string            `json:"fontSize"`              // No description.
+	FontWeight            string            `json:"fontWeight"`            // No description.
+}
+
+// CORSIssueDetails Details for a CORS related issue, e.g. a warning or error
+// related to CORS RFC1918 enforcement.
+type CORSIssueDetails struct {
+	CORSErrorStatus        network.CORSErrorStatus      `json:"corsErrorStatus"`                  // No description.
+	IsWarning              bool                         `json:"isWarning"`                        // No description.
+	Request                AffectedRequest              `json:"request"`                          // No description.
+	ResourceIPAddressSpace *network.IPAddressSpace      `json:"resourceIPAddressSpace,omitempty"` // No description.
+	ClientSecurityState    *network.ClientSecurityState `json:"clientSecurityState,omitempty"`    // No description.
 }
 
 // InspectorIssueCode A unique identifier for the type of issue. Each type may
@@ -239,15 +429,21 @@ type InspectorIssueCode string
 
 // InspectorIssueCode as enums.
 const (
-	InspectorIssueCodeNotSet                 InspectorIssueCode = ""
-	InspectorIssueCodeSameSiteCookieIssue    InspectorIssueCode = "SameSiteCookieIssue"
-	InspectorIssueCodeMixedContentIssue      InspectorIssueCode = "MixedContentIssue"
-	InspectorIssueCodeBlockedByResponseIssue InspectorIssueCode = "BlockedByResponseIssue"
+	InspectorIssueCodeNotSet                     InspectorIssueCode = ""
+	InspectorIssueCodeSameSiteCookieIssue        InspectorIssueCode = "SameSiteCookieIssue"
+	InspectorIssueCodeMixedContentIssue          InspectorIssueCode = "MixedContentIssue"
+	InspectorIssueCodeBlockedByResponseIssue     InspectorIssueCode = "BlockedByResponseIssue"
+	InspectorIssueCodeHeavyAdIssue               InspectorIssueCode = "HeavyAdIssue"
+	InspectorIssueCodeContentSecurityPolicyIssue InspectorIssueCode = "ContentSecurityPolicyIssue"
+	InspectorIssueCodeSharedArrayBufferIssue     InspectorIssueCode = "SharedArrayBufferIssue"
+	InspectorIssueCodeTrustedWebActivityIssue    InspectorIssueCode = "TrustedWebActivityIssue"
+	InspectorIssueCodeLowTextContrastIssue       InspectorIssueCode = "LowTextContrastIssue"
+	InspectorIssueCodeCORSIssue                  InspectorIssueCode = "CorsIssue"
 )
 
 func (e InspectorIssueCode) Valid() bool {
 	switch e {
-	case "SameSiteCookieIssue", "MixedContentIssue", "BlockedByResponseIssue":
+	case "SameSiteCookieIssue", "MixedContentIssue", "BlockedByResponseIssue", "HeavyAdIssue", "ContentSecurityPolicyIssue", "SharedArrayBufferIssue", "TrustedWebActivityIssue", "LowTextContrastIssue", "CorsIssue":
 		return true
 	default:
 		return false
@@ -262,9 +458,15 @@ func (e InspectorIssueCode) String() string {
 // additional information specific to the kind of issue. When adding a new
 // issue code, please also add a new optional field to this type.
 type InspectorIssueDetails struct {
-	SameSiteCookieIssueDetails    *SameSiteCookieIssueDetails    `json:"sameSiteCookieIssueDetails,omitempty"`    // No description.
-	MixedContentIssueDetails      *MixedContentIssueDetails      `json:"mixedContentIssueDetails,omitempty"`      // No description.
-	BlockedByResponseIssueDetails *BlockedByResponseIssueDetails `json:"blockedByResponseIssueDetails,omitempty"` // No description.
+	SameSiteCookieIssueDetails        *SameSiteCookieIssueDetails        `json:"sameSiteCookieIssueDetails,omitempty"`        // No description.
+	MixedContentIssueDetails          *MixedContentIssueDetails          `json:"mixedContentIssueDetails,omitempty"`          // No description.
+	BlockedByResponseIssueDetails     *BlockedByResponseIssueDetails     `json:"blockedByResponseIssueDetails,omitempty"`     // No description.
+	HeavyAdIssueDetails               *HeavyAdIssueDetails               `json:"heavyAdIssueDetails,omitempty"`               // No description.
+	ContentSecurityPolicyIssueDetails *ContentSecurityPolicyIssueDetails `json:"contentSecurityPolicyIssueDetails,omitempty"` // No description.
+	SharedArrayBufferIssueDetails     *SharedArrayBufferIssueDetails     `json:"sharedArrayBufferIssueDetails,omitempty"`     // No description.
+	TwaQualityEnforcementDetails      *TrustedWebActivityIssueDetails    `json:"twaQualityEnforcementDetails,omitempty"`      // No description.
+	LowTextContrastIssueDetails       *LowTextContrastIssueDetails       `json:"lowTextContrastIssueDetails,omitempty"`       // No description.
+	CORSIssueDetails                  *CORSIssueDetails                  `json:"corsIssueDetails,omitempty"`                  // No description.
 }
 
 // InspectorIssue An inspector issue reported from the back-end.

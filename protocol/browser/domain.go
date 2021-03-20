@@ -76,6 +76,19 @@ func (d *domainClient) SetDownloadBehavior(ctx context.Context, args *SetDownloa
 	return
 }
 
+// CancelDownload invokes the Browser method. Cancel a download if in progress
+func (d *domainClient) CancelDownload(ctx context.Context, args *CancelDownloadArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.cancelDownload", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.cancelDownload", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "CancelDownload", Err: err}
+	}
+	return
+}
+
 // Close invokes the Browser method. Close browser gracefully.
 func (d *domainClient) Close(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Browser.close", nil, nil, d.conn)
@@ -207,6 +220,20 @@ func (d *domainClient) SetDockTile(ctx context.Context, args *SetDockTileArgs) (
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "SetDockTile", Err: err}
+	}
+	return
+}
+
+// ExecuteBrowserCommand invokes the Browser method. Invoke custom browser
+// commands used by telemetry.
+func (d *domainClient) ExecuteBrowserCommand(ctx context.Context, args *ExecuteBrowserCommandArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.executeBrowserCommand", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.executeBrowserCommand", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "ExecuteBrowserCommand", Err: err}
 	}
 	return
 }

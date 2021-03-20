@@ -158,40 +158,6 @@ type EvaluateOnCallFrameReply struct {
 	ExceptionDetails *runtime.ExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details.
 }
 
-// ExecuteWasmEvaluatorArgs represents the arguments for ExecuteWasmEvaluator in the Debugger domain.
-type ExecuteWasmEvaluatorArgs struct {
-	CallFrameID CallFrameID `json:"callFrameId"` // WebAssembly call frame identifier to evaluate on.
-	Evaluator   string      `json:"evaluator"`   // Code of the evaluator module.
-	// Timeout Terminate execution after timing out (number of
-	// milliseconds).
-	//
-	// Note: This property is experimental.
-	Timeout *runtime.TimeDelta `json:"timeout,omitempty"`
-}
-
-// NewExecuteWasmEvaluatorArgs initializes ExecuteWasmEvaluatorArgs with the required arguments.
-func NewExecuteWasmEvaluatorArgs(callFrameID CallFrameID, evaluator string) *ExecuteWasmEvaluatorArgs {
-	args := new(ExecuteWasmEvaluatorArgs)
-	args.CallFrameID = callFrameID
-	args.Evaluator = evaluator
-	return args
-}
-
-// SetTimeout sets the Timeout optional argument. Terminate execution
-// after timing out (number of milliseconds).
-//
-// Note: This property is experimental.
-func (a *ExecuteWasmEvaluatorArgs) SetTimeout(timeout runtime.TimeDelta) *ExecuteWasmEvaluatorArgs {
-	a.Timeout = &timeout
-	return a
-}
-
-// ExecuteWasmEvaluatorReply represents the return values for ExecuteWasmEvaluator in the Debugger domain.
-type ExecuteWasmEvaluatorReply struct {
-	Result           runtime.RemoteObject      `json:"result"`                     // Object wrapper for the evaluation result.
-	ExceptionDetails *runtime.ExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details.
-}
-
 // GetPossibleBreakpointsArgs represents the arguments for GetPossibleBreakpoints in the Debugger domain.
 type GetPossibleBreakpointsArgs struct {
 	Start              Location  `json:"start"`                        // Start of range to search possible breakpoint locations in.
@@ -241,8 +207,8 @@ func NewGetScriptSourceArgs(scriptID runtime.ScriptID) *GetScriptSourceArgs {
 
 // GetScriptSourceReply represents the return values for GetScriptSource in the Debugger domain.
 type GetScriptSourceReply struct {
-	ScriptSource string  `json:"scriptSource"`       // Script source (empty in case of Wasm bytecode).
-	Bytecode     *string `json:"bytecode,omitempty"` // Wasm bytecode.
+	ScriptSource string `json:"scriptSource"`       // Script source (empty in case of Wasm bytecode).
+	Bytecode     []byte `json:"bytecode,omitempty"` // Wasm bytecode. (Encoded as a base64 string when passed over JSON)
 }
 
 // GetWasmBytecodeArgs represents the arguments for GetWasmBytecode in the Debugger domain.
@@ -259,7 +225,7 @@ func NewGetWasmBytecodeArgs(scriptID runtime.ScriptID) *GetWasmBytecodeArgs {
 
 // GetWasmBytecodeReply represents the return values for GetWasmBytecode in the Debugger domain.
 type GetWasmBytecodeReply struct {
-	Bytecode string `json:"bytecode"` // Script source.
+	Bytecode []byte `json:"bytecode"` // Script source. (Encoded as a base64 string when passed over JSON)
 }
 
 // GetStackTraceArgs represents the arguments for GetStackTrace in the Debugger domain.
@@ -666,6 +632,11 @@ type StepIntoArgs struct {
 	//
 	// Note: This property is experimental.
 	BreakOnAsyncCall *bool `json:"breakOnAsyncCall,omitempty"`
+	// SkipList The skipList specifies location ranges that should be
+	// skipped on step into.
+	//
+	// Note: This property is experimental.
+	SkipList []LocationRange `json:"skipList,omitempty"`
 }
 
 // NewStepIntoArgs initializes StepIntoArgs with the required arguments.
@@ -682,5 +653,39 @@ func NewStepIntoArgs() *StepIntoArgs {
 // Note: This property is experimental.
 func (a *StepIntoArgs) SetBreakOnAsyncCall(breakOnAsyncCall bool) *StepIntoArgs {
 	a.BreakOnAsyncCall = &breakOnAsyncCall
+	return a
+}
+
+// SetSkipList sets the SkipList optional argument. The skipList
+// specifies location ranges that should be skipped on step into.
+//
+// Note: This property is experimental.
+func (a *StepIntoArgs) SetSkipList(skipList []LocationRange) *StepIntoArgs {
+	a.SkipList = skipList
+	return a
+}
+
+// StepOverArgs represents the arguments for StepOver in the Debugger domain.
+type StepOverArgs struct {
+	// SkipList The skipList specifies location ranges that should be
+	// skipped on step over.
+	//
+	// Note: This property is experimental.
+	SkipList []LocationRange `json:"skipList,omitempty"`
+}
+
+// NewStepOverArgs initializes StepOverArgs with the required arguments.
+func NewStepOverArgs() *StepOverArgs {
+	args := new(StepOverArgs)
+
+	return args
+}
+
+// SetSkipList sets the SkipList optional argument. The skipList
+// specifies location ranges that should be skipped on step over.
+//
+// Note: This property is experimental.
+func (a *StepOverArgs) SetSkipList(skipList []LocationRange) *StepOverArgs {
+	a.SkipList = skipList
 	return a
 }

@@ -367,6 +367,34 @@ type GetFlattenedDocumentReply struct {
 	Nodes []Node `json:"nodes"` // Resulting node.
 }
 
+// GetNodesForSubtreeByStyleArgs represents the arguments for GetNodesForSubtreeByStyle in the DOM domain.
+type GetNodesForSubtreeByStyleArgs struct {
+	NodeID         NodeID                     `json:"nodeId"`           // Node ID pointing to the root of a subtree.
+	ComputedStyles []CSSComputedStyleProperty `json:"computedStyles"`   // The style to filter nodes by (includes nodes if any of properties matches).
+	Pierce         *bool                      `json:"pierce,omitempty"` // Whether or not iframes and shadow roots in the same target should be traversed when returning the results (default is false).
+}
+
+// NewGetNodesForSubtreeByStyleArgs initializes GetNodesForSubtreeByStyleArgs with the required arguments.
+func NewGetNodesForSubtreeByStyleArgs(nodeID NodeID, computedStyles []CSSComputedStyleProperty) *GetNodesForSubtreeByStyleArgs {
+	args := new(GetNodesForSubtreeByStyleArgs)
+	args.NodeID = nodeID
+	args.ComputedStyles = computedStyles
+	return args
+}
+
+// SetPierce sets the Pierce optional argument. Whether or not iframes
+// and shadow roots in the same target should be traversed when
+// returning the results (default is false).
+func (a *GetNodesForSubtreeByStyleArgs) SetPierce(pierce bool) *GetNodesForSubtreeByStyleArgs {
+	a.Pierce = &pierce
+	return a
+}
+
+// GetNodesForSubtreeByStyleReply represents the return values for GetNodesForSubtreeByStyle in the DOM domain.
+type GetNodesForSubtreeByStyleReply struct {
+	NodeIDs []NodeID `json:"nodeIds"` // Resulting nodes.
+}
+
 // GetNodeForLocationArgs represents the arguments for GetNodeForLocation in the DOM domain.
 type GetNodeForLocationArgs struct {
 	X                         int   `json:"x"`                                   // X coordinate.

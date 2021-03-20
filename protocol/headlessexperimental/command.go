@@ -57,5 +57,5 @@ func (a *BeginFrameArgs) SetScreenshot(screenshot ScreenshotParams) *BeginFrameA
 // BeginFrameReply represents the return values for BeginFrame in the HeadlessExperimental domain.
 type BeginFrameReply struct {
 	HasDamage      bool   `json:"hasDamage"`                // Whether the BeginFrame resulted in damage and, thus, a new frame was committed to the display. Reported for diagnostic uses, may be removed in the future.
-	ScreenshotData []byte `json:"screenshotData,omitempty"` // Base64-encoded image data of the screenshot, if one was requested and successfully taken.
+	ScreenshotData []byte `json:"screenshotData,omitempty"` // Base64-encoded image data of the screenshot, if one was requested and successfully taken. (Encoded as a base64 string when passed over JSON)
 }

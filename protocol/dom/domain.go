@@ -207,7 +207,9 @@ func (d *domainClient) GetDocument(ctx context.Context, args *GetDocumentArgs) (
 }
 
 // GetFlattenedDocument invokes the DOM method. Returns the root DOM node (and
-// optionally the subtree) to the caller.
+// optionally the subtree) to the caller. Deprecated, as it is not designed to
+// work well with the rest of the DOM agent. Use DOMSnapshot.captureSnapshot
+// instead.
 func (d *domainClient) GetFlattenedDocument(ctx context.Context, args *GetFlattenedDocumentArgs) (reply *GetFlattenedDocumentReply, err error) {
 	reply = new(GetFlattenedDocumentReply)
 	if args != nil {
@@ -217,6 +219,21 @@ func (d *domainClient) GetFlattenedDocument(ctx context.Context, args *GetFlatte
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetFlattenedDocument", Err: err}
+	}
+	return
+}
+
+// GetNodesForSubtreeByStyle invokes the DOM method. Finds nodes with a given
+// computed style in a subtree.
+func (d *domainClient) GetNodesForSubtreeByStyle(ctx context.Context, args *GetNodesForSubtreeByStyleArgs) (reply *GetNodesForSubtreeByStyleReply, err error) {
+	reply = new(GetNodesForSubtreeByStyleReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.getNodesForSubtreeByStyle", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.getNodesForSubtreeByStyle", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "GetNodesForSubtreeByStyle", Err: err}
 	}
 	return
 }

@@ -150,6 +150,34 @@ func (d *domainClient) TakeTypeProfile(ctx context.Context) (reply *TakeTypeProf
 	return
 }
 
+// EnableCounters invokes the Profiler method. Enable counters collection.
+func (d *domainClient) EnableCounters(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Profiler.enableCounters", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "EnableCounters", Err: err}
+	}
+	return
+}
+
+// DisableCounters invokes the Profiler method. Disable counters collection.
+func (d *domainClient) DisableCounters(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Profiler.disableCounters", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "DisableCounters", Err: err}
+	}
+	return
+}
+
+// GetCounters invokes the Profiler method. Retrieve counters.
+func (d *domainClient) GetCounters(ctx context.Context) (reply *GetCountersReply, err error) {
+	reply = new(GetCountersReply)
+	err = rpcc.Invoke(ctx, "Profiler.getCounters", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Profiler", Op: "GetCounters", Err: err}
+	}
+	return
+}
+
 // EnableRuntimeCallStats invokes the Profiler method. Enable run time call
 // stats collection.
 func (d *domainClient) EnableRuntimeCallStats(ctx context.Context) (err error) {

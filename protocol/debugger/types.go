@@ -27,6 +27,15 @@ type ScriptPosition struct {
 	ColumnNumber int `json:"columnNumber"` // No description.
 }
 
+// LocationRange Location range within one script.
+//
+// Note: This type is experimental.
+type LocationRange struct {
+	ScriptID runtime.ScriptID `json:"scriptId"` // No description.
+	Start    ScriptPosition   `json:"start"`    // No description.
+	End      ScriptPosition   `json:"end"`      // No description.
+}
+
 // CallFrame JavaScript call frame. Array of call frames form the call stack.
 type CallFrame struct {
 	CallFrameID      CallFrameID           `json:"callFrameId"`                // Call frame identifier. This identifier is only valid while the virtual machine is paused.

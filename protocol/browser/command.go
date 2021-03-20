@@ -121,6 +121,27 @@ func (a *SetDownloadBehaviorArgs) SetDownloadPath(downloadPath string) *SetDownl
 	return a
 }
 
+// CancelDownloadArgs represents the arguments for CancelDownload in the Browser domain.
+type CancelDownloadArgs struct {
+	GUID             string     `json:"guid"`                       // Global unique identifier of the download.
+	BrowserContextID *ContextID `json:"browserContextId,omitempty"` // BrowserContext to perform the action in. When omitted, default browser context is used.
+}
+
+// NewCancelDownloadArgs initializes CancelDownloadArgs with the required arguments.
+func NewCancelDownloadArgs(guid string) *CancelDownloadArgs {
+	args := new(CancelDownloadArgs)
+	args.GUID = guid
+	return args
+}
+
+// SetBrowserContextID sets the BrowserContextID optional argument.
+// BrowserContext to perform the action in. When omitted, default
+// browser context is used.
+func (a *CancelDownloadArgs) SetBrowserContextID(browserContextID ContextID) *CancelDownloadArgs {
+	a.BrowserContextID = &browserContextID
+	return a
+}
+
 // GetVersionReply represents the return values for GetVersion in the Browser domain.
 type GetVersionReply struct {
 	ProtocolVersion string `json:"protocolVersion"` // Protocol version.
@@ -253,7 +274,7 @@ func NewSetWindowBoundsArgs(windowID WindowID, bounds Bounds) *SetWindowBoundsAr
 // SetDockTileArgs represents the arguments for SetDockTile in the Browser domain.
 type SetDockTileArgs struct {
 	BadgeLabel *string `json:"badgeLabel,omitempty"` // No description.
-	Image      *string `json:"image,omitempty"`      // Png encoded image.
+	Image      []byte  `json:"image,omitempty"`      // Png encoded image. (Encoded as a base64 string when passed over JSON)
 }
 
 // NewSetDockTileArgs initializes SetDockTileArgs with the required arguments.
@@ -270,7 +291,20 @@ func (a *SetDockTileArgs) SetBadgeLabel(badgeLabel string) *SetDockTileArgs {
 }
 
 // SetImage sets the Image optional argument. Png encoded image.
-func (a *SetDockTileArgs) SetImage(image string) *SetDockTileArgs {
-	a.Image = &image
+// (Encoded as a base64 string when passed over JSON)
+func (a *SetDockTileArgs) SetImage(image []byte) *SetDockTileArgs {
+	a.Image = image
 	return a
+}
+
+// ExecuteBrowserCommandArgs represents the arguments for ExecuteBrowserCommand in the Browser domain.
+type ExecuteBrowserCommandArgs struct {
+	CommandID CommandID `json:"commandId"` // No description.
+}
+
+// NewExecuteBrowserCommandArgs initializes ExecuteBrowserCommandArgs with the required arguments.
+func NewExecuteBrowserCommandArgs(commandID CommandID) *ExecuteBrowserCommandArgs {
+	args := new(ExecuteBrowserCommandArgs)
+	args.CommandID = commandID
+	return args
 }

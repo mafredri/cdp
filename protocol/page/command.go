@@ -76,6 +76,11 @@ type CaptureScreenshotArgs struct {
 	//
 	// Note: This property is experimental.
 	FromSurface *bool `json:"fromSurface,omitempty"`
+	// CaptureBeyondViewport Capture the screenshot beyond the viewport.
+	// Defaults to false.
+	//
+	// Note: This property is experimental.
+	CaptureBeyondViewport *bool `json:"captureBeyondViewport,omitempty"`
 }
 
 // NewCaptureScreenshotArgs initializes CaptureScreenshotArgs with the required arguments.
@@ -117,9 +122,18 @@ func (a *CaptureScreenshotArgs) SetFromSurface(fromSurface bool) *CaptureScreens
 	return a
 }
 
+// SetCaptureBeyondViewport sets the CaptureBeyondViewport optional argument.
+// Capture the screenshot beyond the viewport. Defaults to false.
+//
+// Note: This property is experimental.
+func (a *CaptureScreenshotArgs) SetCaptureBeyondViewport(captureBeyondViewport bool) *CaptureScreenshotArgs {
+	a.CaptureBeyondViewport = &captureBeyondViewport
+	return a
+}
+
 // CaptureScreenshotReply represents the return values for CaptureScreenshot in the Page domain.
 type CaptureScreenshotReply struct {
-	Data []byte `json:"data"` // Base64-encoded image data.
+	Data []byte `json:"data"` // Base64-encoded image data. (Encoded as a base64 string when passed over JSON)
 }
 
 // CaptureSnapshotArgs represents the arguments for CaptureSnapshot in the Page domain.
@@ -213,9 +227,27 @@ type GetFrameTreeReply struct {
 
 // GetLayoutMetricsReply represents the return values for GetLayoutMetrics in the Page domain.
 type GetLayoutMetricsReply struct {
-	LayoutViewport LayoutViewport `json:"layoutViewport"` // Metrics relating to the layout viewport.
-	VisualViewport VisualViewport `json:"visualViewport"` // Metrics relating to the visual viewport.
-	ContentSize    dom.Rect       `json:"contentSize"`    // Size of scrollable area.
+	// LayoutViewport is deprecated.
+	//
+	// Deprecated: Deprecated metrics relating to the layout viewport. Can
+	// be in DP or in CSS pixels depending on the `enable-use-zoom-for-dsf`
+	// flag. Use `cssLayoutViewport` instead.
+	LayoutViewport LayoutViewport `json:"layoutViewport"`
+	// VisualViewport is deprecated.
+	//
+	// Deprecated: Deprecated metrics relating to the visual viewport. Can
+	// be in DP or in CSS pixels depending on the `enable-use-zoom-for-dsf`
+	// flag. Use `cssVisualViewport` instead.
+	VisualViewport VisualViewport `json:"visualViewport"`
+	// ContentSize is deprecated.
+	//
+	// Deprecated: Deprecated size of scrollable area. Can be in DP or in
+	// CSS pixels depending on the `enable-use-zoom-for-dsf` flag. Use
+	// `cssContentSize` instead.
+	ContentSize       dom.Rect       `json:"contentSize"`
+	CSSLayoutViewport LayoutViewport `json:"cssLayoutViewport"` // Metrics relating to the layout viewport in CSS pixels.
+	CSSVisualViewport VisualViewport `json:"cssVisualViewport"` // Metrics relating to the visual viewport in CSS pixels.
+	CSSContentSize    dom.Rect       `json:"cssContentSize"`    // Size of scrollable area in CSS pixels.
 }
 
 // GetNavigationHistoryReply represents the return values for GetNavigationHistory in the Page domain.
@@ -499,7 +531,7 @@ func (a *PrintToPDFArgs) SetTransferMode(transferMode string) *PrintToPDFArgs {
 
 // PrintToPDFReply represents the return values for PrintToPDF in the Page domain.
 type PrintToPDFReply struct {
-	Data []byte `json:"data"` // Base64-encoded pdf data. Empty if |returnAsStream| is specified.
+	Data []byte `json:"data"` // Base64-encoded pdf data. Empty if |returnAsStream| is specified. (Encoded as a base64 string when passed over JSON)
 	// Stream A handle of the stream that holds resulting PDF data.
 	//
 	// Note: This property is experimental.
@@ -630,6 +662,23 @@ func NewSetBypassCSPArgs(enabled bool) *SetBypassCSPArgs {
 	args := new(SetBypassCSPArgs)
 	args.Enabled = enabled
 	return args
+}
+
+// GetPermissionsPolicyStateArgs represents the arguments for GetPermissionsPolicyState in the Page domain.
+type GetPermissionsPolicyStateArgs struct {
+	FrameID FrameID `json:"frameId"` // No description.
+}
+
+// NewGetPermissionsPolicyStateArgs initializes GetPermissionsPolicyStateArgs with the required arguments.
+func NewGetPermissionsPolicyStateArgs(frameID FrameID) *GetPermissionsPolicyStateArgs {
+	args := new(GetPermissionsPolicyStateArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// GetPermissionsPolicyStateReply represents the return values for GetPermissionsPolicyState in the Page domain.
+type GetPermissionsPolicyStateReply struct {
+	States []PermissionsPolicyFeatureState `json:"states"` // No description.
 }
 
 // SetFontFamiliesArgs represents the arguments for SetFontFamilies in the Page domain.
@@ -790,10 +839,22 @@ func NewSetProduceCompilationCacheArgs(enabled bool) *SetProduceCompilationCache
 	return args
 }
 
+// ProduceCompilationCacheArgs represents the arguments for ProduceCompilationCache in the Page domain.
+type ProduceCompilationCacheArgs struct {
+	Scripts []CompilationCacheParams `json:"scripts"` // No description.
+}
+
+// NewProduceCompilationCacheArgs initializes ProduceCompilationCacheArgs with the required arguments.
+func NewProduceCompilationCacheArgs(scripts []CompilationCacheParams) *ProduceCompilationCacheArgs {
+	args := new(ProduceCompilationCacheArgs)
+	args.Scripts = scripts
+	return args
+}
+
 // AddCompilationCacheArgs represents the arguments for AddCompilationCache in the Page domain.
 type AddCompilationCacheArgs struct {
 	URL  string `json:"url"`  // No description.
-	Data []byte `json:"data"` // Base64-encoded data
+	Data []byte `json:"data"` // Base64-encoded data (Encoded as a base64 string when passed over JSON)
 }
 
 // NewAddCompilationCacheArgs initializes AddCompilationCacheArgs with the required arguments.

@@ -75,7 +75,12 @@ type TakeTypeProfileReply struct {
 	Result []ScriptTypeProfile `json:"result"` // Type profile for all scripts since startTypeProfile() was turned on.
 }
 
+// GetCountersReply represents the return values for GetCounters in the Profiler domain.
+type GetCountersReply struct {
+	Result []CounterInfo `json:"result"` // Collected counters information.
+}
+
 // GetRuntimeCallStatsReply represents the return values for GetRuntimeCallStats in the Profiler domain.
 type GetRuntimeCallStatsReply struct {
-	Result []CounterInfo `json:"result"` // Collected counter information.
+	Result []RuntimeCallCounterInfo `json:"result"` // Collected runtime call counter information.
 }

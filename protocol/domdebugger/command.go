@@ -106,6 +106,18 @@ func NewRemoveXHRBreakpointArgs(url string) *RemoveXHRBreakpointArgs {
 	return args
 }
 
+// SetBreakOnCSPViolationArgs represents the arguments for SetBreakOnCSPViolation in the DOMDebugger domain.
+type SetBreakOnCSPViolationArgs struct {
+	ViolationTypes []CSPViolationType `json:"violationTypes"` // CSP Violations to stop upon.
+}
+
+// NewSetBreakOnCSPViolationArgs initializes SetBreakOnCSPViolationArgs with the required arguments.
+func NewSetBreakOnCSPViolationArgs(violationTypes []CSPViolationType) *SetBreakOnCSPViolationArgs {
+	args := new(SetBreakOnCSPViolationArgs)
+	args.ViolationTypes = violationTypes
+	return args
+}
+
 // SetDOMBreakpointArgs represents the arguments for SetDOMBreakpoint in the DOMDebugger domain.
 type SetDOMBreakpointArgs struct {
 	NodeID dom.NodeID        `json:"nodeId"` // Identifier of the node to set breakpoint on.

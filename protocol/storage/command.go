@@ -100,7 +100,34 @@ func NewGetUsageAndQuotaArgs(origin string) *GetUsageAndQuotaArgs {
 type GetUsageAndQuotaReply struct {
 	Usage          float64        `json:"usage"`          // Storage usage (bytes).
 	Quota          float64        `json:"quota"`          // Storage quota (bytes).
+	OverrideActive bool           `json:"overrideActive"` // Whether or not the origin has an active storage quota override
 	UsageBreakdown []UsageForType `json:"usageBreakdown"` // Storage usage per type (bytes).
+}
+
+// OverrideQuotaForOriginArgs represents the arguments for OverrideQuotaForOrigin in the Storage domain.
+type OverrideQuotaForOriginArgs struct {
+	Origin    string   `json:"origin"`              // Security origin.
+	QuotaSize *float64 `json:"quotaSize,omitempty"` // The quota size (in bytes) to override the original quota with. If this is called multiple times, the overridden quota will be equal to the quotaSize provided in the final call. If this is called without specifying a quotaSize, the quota will be reset to the default value for the specified origin. If this is called multiple times with different origins, the override will be maintained for each origin until it is disabled (called without a quotaSize).
+}
+
+// NewOverrideQuotaForOriginArgs initializes OverrideQuotaForOriginArgs with the required arguments.
+func NewOverrideQuotaForOriginArgs(origin string) *OverrideQuotaForOriginArgs {
+	args := new(OverrideQuotaForOriginArgs)
+	args.Origin = origin
+	return args
+}
+
+// SetQuotaSize sets the QuotaSize optional argument. The quota size
+// (in bytes) to override the original quota with. If this is called
+// multiple times, the overridden quota will be equal to the quotaSize
+// provided in the final call. If this is called without specifying a
+// quotaSize, the quota will be reset to the default value for the
+// specified origin. If this is called multiple times with different
+// origins, the override will be maintained for each origin until it is
+// disabled (called without a quotaSize).
+func (a *OverrideQuotaForOriginArgs) SetQuotaSize(quotaSize float64) *OverrideQuotaForOriginArgs {
+	a.QuotaSize = &quotaSize
+	return a
 }
 
 // TrackCacheStorageForOriginArgs represents the arguments for TrackCacheStorageForOrigin in the Storage domain.
@@ -149,4 +176,26 @@ func NewUntrackIndexedDBForOriginArgs(origin string) *UntrackIndexedDBForOriginA
 	args := new(UntrackIndexedDBForOriginArgs)
 	args.Origin = origin
 	return args
+}
+
+// GetTrustTokensReply represents the return values for GetTrustTokens in the Storage domain.
+type GetTrustTokensReply struct {
+	Tokens []TrustTokens `json:"tokens"` // No description.
+}
+
+// ClearTrustTokensArgs represents the arguments for ClearTrustTokens in the Storage domain.
+type ClearTrustTokensArgs struct {
+	IssuerOrigin string `json:"issuerOrigin"` // No description.
+}
+
+// NewClearTrustTokensArgs initializes ClearTrustTokensArgs with the required arguments.
+func NewClearTrustTokensArgs(issuerOrigin string) *ClearTrustTokensArgs {
+	args := new(ClearTrustTokensArgs)
+	args.IssuerOrigin = issuerOrigin
+	return args
+}
+
+// ClearTrustTokensReply represents the return values for ClearTrustTokens in the Storage domain.
+type ClearTrustTokensReply struct {
+	DidDeleteTokens bool `json:"didDeleteTokens"` // True if any tokens were deleted, false otherwise.
 }

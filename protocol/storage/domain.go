@@ -86,6 +86,20 @@ func (d *domainClient) GetUsageAndQuota(ctx context.Context, args *GetUsageAndQu
 	return
 }
 
+// OverrideQuotaForOrigin invokes the Storage method. Override quota for the
+// specified origin
+func (d *domainClient) OverrideQuotaForOrigin(ctx context.Context, args *OverrideQuotaForOriginArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.overrideQuotaForOrigin", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.overrideQuotaForOrigin", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "OverrideQuotaForOrigin", Err: err}
+	}
+	return
+}
+
 // TrackCacheStorageForOrigin invokes the Storage method. Registers origin to
 // be notified when an update occurs to its cache storage list.
 func (d *domainClient) TrackCacheStorageForOrigin(ctx context.Context, args *TrackCacheStorageForOriginArgs) (err error) {
@@ -138,6 +152,33 @@ func (d *domainClient) UntrackIndexedDBForOrigin(ctx context.Context, args *Untr
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Storage", Op: "UntrackIndexedDBForOrigin", Err: err}
+	}
+	return
+}
+
+// GetTrustTokens invokes the Storage method. Returns the number of stored
+// Trust Tokens per issuer for the current browsing context.
+func (d *domainClient) GetTrustTokens(ctx context.Context) (reply *GetTrustTokensReply, err error) {
+	reply = new(GetTrustTokensReply)
+	err = rpcc.Invoke(ctx, "Storage.getTrustTokens", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "GetTrustTokens", Err: err}
+	}
+	return
+}
+
+// ClearTrustTokens invokes the Storage method. Removes all Trust Tokens
+// issued by the provided issuerOrigin. Leaves other stored data, including the
+// issuer's Redemption Records, intact.
+func (d *domainClient) ClearTrustTokens(ctx context.Context, args *ClearTrustTokensArgs) (reply *ClearTrustTokensReply, err error) {
+	reply = new(ClearTrustTokensReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.clearTrustTokens", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.clearTrustTokens", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "ClearTrustTokens", Err: err}
 	}
 	return
 }

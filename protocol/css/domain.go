@@ -215,6 +215,37 @@ func (d *domainClient) GetStyleSheetText(ctx context.Context, args *GetStyleShee
 	return
 }
 
+// TrackComputedStyleUpdates invokes the CSS method. Starts tracking the given
+// computed styles for updates. The specified array of properties replaces the
+// one previously specified. Pass empty array to disable tracking. Use
+// takeComputedStyleUpdates to retrieve the list of nodes that had properties
+// modified. The changes to computed style properties are only tracked for
+// nodes pushed to the front-end by the DOM agent. If no changes to the tracked
+// properties occur after the node has been pushed to the front-end, no updates
+// will be issued for the node.
+func (d *domainClient) TrackComputedStyleUpdates(ctx context.Context, args *TrackComputedStyleUpdatesArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.trackComputedStyleUpdates", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.trackComputedStyleUpdates", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "TrackComputedStyleUpdates", Err: err}
+	}
+	return
+}
+
+// TakeComputedStyleUpdates invokes the CSS method. Polls the next batch of
+// computed style updates.
+func (d *domainClient) TakeComputedStyleUpdates(ctx context.Context) (reply *TakeComputedStyleUpdatesReply, err error) {
+	reply = new(TakeComputedStyleUpdatesReply)
+	err = rpcc.Invoke(ctx, "CSS.takeComputedStyleUpdates", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "TakeComputedStyleUpdates", Err: err}
+	}
+	return
+}
+
 // SetEffectivePropertyValueForNode invokes the CSS method. Find a rule with
 // the given active property for the given node and set the new value for this
 // property
@@ -331,6 +362,20 @@ func (d *domainClient) TakeCoverageDelta(ctx context.Context) (reply *TakeCovera
 	err = rpcc.Invoke(ctx, "CSS.takeCoverageDelta", nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "TakeCoverageDelta", Err: err}
+	}
+	return
+}
+
+// SetLocalFontsEnabled invokes the CSS method. Enables/disables rendering of
+// local CSS fonts (enabled by default).
+func (d *domainClient) SetLocalFontsEnabled(ctx context.Context, args *SetLocalFontsEnabledArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.setLocalFontsEnabled", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.setLocalFontsEnabled", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "SetLocalFontsEnabled", Err: err}
 	}
 	return
 }

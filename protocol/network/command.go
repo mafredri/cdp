@@ -4,6 +4,7 @@ package network
 
 import (
 	"github.com/mafredri/cdp/protocol/debugger"
+	"github.com/mafredri/cdp/protocol/internal"
 	"github.com/mafredri/cdp/protocol/io"
 )
 
@@ -26,7 +27,7 @@ type CanEmulateNetworkConditionsReply struct {
 type ContinueInterceptedRequestArgs struct {
 	InterceptionID        InterceptionID         `json:"interceptionId"`                  // No description.
 	ErrorReason           ErrorReason            `json:"errorReason,omitempty"`           // If set this causes the request to fail with the given reason. Passing `Aborted` for requests marked with `isNavigationRequest` also cancels the navigation. Must not be set in response to an authChallenge.
-	RawResponse           *string                `json:"rawResponse,omitempty"`           // If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc... Must not be set in response to an authChallenge.
+	RawResponse           []byte                 `json:"rawResponse,omitempty"`           // If set the requests completes using with the provided base64 encoded raw response, including HTTP status line and headers etc... Must not be set in response to an authChallenge. (Encoded as a base64 string when passed over JSON)
 	URL                   *string                `json:"url,omitempty"`                   // If set the request url will be modified in a way that's not observable by page. Must not be set in response to an authChallenge.
 	Method                *string                `json:"method,omitempty"`                // If set this allows the request method to be overridden. Must not be set in response to an authChallenge.
 	PostData              *string                `json:"postData,omitempty"`              // If set this allows postData to be set. Must not be set in response to an authChallenge.
@@ -53,9 +54,10 @@ func (a *ContinueInterceptedRequestArgs) SetErrorReason(errorReason ErrorReason)
 // SetRawResponse sets the RawResponse optional argument. If set the
 // requests completes using with the provided base64 encoded raw
 // response, including HTTP status line and headers etc... Must not be
-// set in response to an authChallenge.
-func (a *ContinueInterceptedRequestArgs) SetRawResponse(rawResponse string) *ContinueInterceptedRequestArgs {
-	a.RawResponse = &rawResponse
+// set in response to an authChallenge. (Encoded as a base64 string
+// when passed over JSON)
+func (a *ContinueInterceptedRequestArgs) SetRawResponse(rawResponse []byte) *ContinueInterceptedRequestArgs {
+	a.RawResponse = rawResponse
 	return a
 }
 
@@ -235,7 +237,7 @@ type GetCertificateReply struct {
 
 // GetCookiesArgs represents the arguments for GetCookies in the Network domain.
 type GetCookiesArgs struct {
-	URLs []string `json:"urls,omitempty"` // The list of URLs for which applicable cookies will be fetched
+	URLs []string `json:"urls,omitempty"` // The list of URLs for which applicable cookies will be fetched. If not specified, it's assumed to be set to the list containing the URLs of the page and all of its subframes.
 }
 
 // NewGetCookiesArgs initializes GetCookiesArgs with the required arguments.
@@ -246,7 +248,9 @@ func NewGetCookiesArgs() *GetCookiesArgs {
 }
 
 // SetURLs sets the URLs optional argument. The list of URLs for which
-// applicable cookies will be fetched
+// applicable cookies will be fetched. If not specified, it's assumed
+// to be set to the list containing the URLs of the page and all of its
+// subframes.
 func (a *GetCookiesArgs) SetURLs(urls []string) *GetCookiesArgs {
 	a.URLs = urls
 	return a
@@ -414,7 +418,7 @@ func NewSetCacheDisabledArgs(cacheDisabled bool) *SetCacheDisabledArgs {
 type SetCookieArgs struct {
 	Name     string         `json:"name"`               // Cookie name.
 	Value    string         `json:"value"`              // Cookie value.
-	URL      *string        `json:"url,omitempty"`      // The request-URI to associate with the setting of the cookie. This value can affect the default domain and path values of the created cookie.
+	URL      *string        `json:"url,omitempty"`      // The request-URI to associate with the setting of the cookie. This value can affect the default domain, path, source port, and source scheme values of the created cookie.
 	Domain   *string        `json:"domain,omitempty"`   // Cookie domain.
 	Path     *string        `json:"path,omitempty"`     // Cookie path.
 	Secure   *bool          `json:"secure,omitempty"`   // True if cookie is secure.
@@ -425,6 +429,21 @@ type SetCookieArgs struct {
 	//
 	// Note: This property is experimental.
 	Priority CookiePriority `json:"priority,omitempty"`
+	// SameParty True if cookie is SameParty.
+	//
+	// Note: This property is experimental.
+	SameParty *bool `json:"sameParty,omitempty"`
+	// SourceScheme Cookie source scheme type.
+	//
+	// Note: This property is experimental.
+	SourceScheme CookieSourceScheme `json:"sourceScheme,omitempty"`
+	// SourcePort Cookie source port. Valid values are {-1, [1, 65535]},
+	// -1 indicates an unspecified port. An unspecified port value allows
+	// protocol clients to emulate legacy cookie scope for the port. This
+	// is a temporary ability and it will be removed in the future.
+	//
+	// Note: This property is experimental.
+	SourcePort *int `json:"sourcePort,omitempty"`
 }
 
 // NewSetCookieArgs initializes SetCookieArgs with the required arguments.
@@ -437,7 +456,8 @@ func NewSetCookieArgs(name string, value string) *SetCookieArgs {
 
 // SetURL sets the URL optional argument. The request-URI to associate
 // with the setting of the cookie. This value can affect the default
-// domain and path values of the created cookie.
+// domain, path, source port, and source scheme values of the created
+// cookie.
 func (a *SetCookieArgs) SetURL(url string) *SetCookieArgs {
 	a.URL = &url
 	return a
@@ -492,9 +512,43 @@ func (a *SetCookieArgs) SetPriority(priority CookiePriority) *SetCookieArgs {
 	return a
 }
 
+// SetSameParty sets the SameParty optional argument. True if cookie
+// is SameParty.
+//
+// Note: This property is experimental.
+func (a *SetCookieArgs) SetSameParty(sameParty bool) *SetCookieArgs {
+	a.SameParty = &sameParty
+	return a
+}
+
+// SetSourceScheme sets the SourceScheme optional argument. Cookie
+// source scheme type.
+//
+// Note: This property is experimental.
+func (a *SetCookieArgs) SetSourceScheme(sourceScheme CookieSourceScheme) *SetCookieArgs {
+	a.SourceScheme = sourceScheme
+	return a
+}
+
+// SetSourcePort sets the SourcePort optional argument. Cookie source
+// port. Valid values are {-1, [1, 65535]}, -1 indicates an unspecified
+// port. An unspecified port value allows protocol clients to emulate
+// legacy cookie scope for the port. This is a temporary ability and it
+// will be removed in the future.
+//
+// Note: This property is experimental.
+func (a *SetCookieArgs) SetSourcePort(sourcePort int) *SetCookieArgs {
+	a.SourcePort = &sourcePort
+	return a
+}
+
 // SetCookieReply represents the return values for SetCookie in the Network domain.
 type SetCookieReply struct {
-	Success bool `json:"success"` // True if successfully set cookie.
+	// Success is deprecated.
+	//
+	// Deprecated: Always set to true. If an error occurs, the response
+	// indicates protocol error.
+	Success bool `json:"success"`
 }
 
 // SetCookiesArgs represents the arguments for SetCookies in the Network domain.
@@ -535,6 +589,18 @@ func NewSetExtraHTTPHeadersArgs(headers Headers) *SetExtraHTTPHeadersArgs {
 	return args
 }
 
+// SetAttachDebugStackArgs represents the arguments for SetAttachDebugStack in the Network domain.
+type SetAttachDebugStackArgs struct {
+	Enabled bool `json:"enabled"` // Whether to attach a page script stack for debugging purpose.
+}
+
+// NewSetAttachDebugStackArgs initializes SetAttachDebugStackArgs with the required arguments.
+func NewSetAttachDebugStackArgs(enabled bool) *SetAttachDebugStackArgs {
+	args := new(SetAttachDebugStackArgs)
+	args.Enabled = enabled
+	return args
+}
+
 // SetRequestInterceptionArgs represents the arguments for SetRequestInterception in the Network domain.
 type SetRequestInterceptionArgs struct {
 	Patterns []RequestPattern `json:"patterns"` // Requests matching any of these patterns will be forwarded and wait for the corresponding continueInterceptedRequest call.
@@ -545,4 +611,49 @@ func NewSetRequestInterceptionArgs(patterns []RequestPattern) *SetRequestInterce
 	args := new(SetRequestInterceptionArgs)
 	args.Patterns = patterns
 	return args
+}
+
+// GetSecurityIsolationStatusArgs represents the arguments for GetSecurityIsolationStatus in the Network domain.
+type GetSecurityIsolationStatusArgs struct {
+	FrameID *internal.PageFrameID `json:"frameId,omitempty"` // If no frameId is provided, the status of the target is provided.
+}
+
+// NewGetSecurityIsolationStatusArgs initializes GetSecurityIsolationStatusArgs with the required arguments.
+func NewGetSecurityIsolationStatusArgs() *GetSecurityIsolationStatusArgs {
+	args := new(GetSecurityIsolationStatusArgs)
+
+	return args
+}
+
+// SetFrameID sets the FrameID optional argument. If no frameId is
+// provided, the status of the target is provided.
+func (a *GetSecurityIsolationStatusArgs) SetFrameID(frameID internal.PageFrameID) *GetSecurityIsolationStatusArgs {
+	a.FrameID = &frameID
+	return a
+}
+
+// GetSecurityIsolationStatusReply represents the return values for GetSecurityIsolationStatus in the Network domain.
+type GetSecurityIsolationStatusReply struct {
+	Status SecurityIsolationStatus `json:"status"` // No description.
+}
+
+// LoadNetworkResourceArgs represents the arguments for LoadNetworkResource in the Network domain.
+type LoadNetworkResourceArgs struct {
+	FrameID internal.PageFrameID       `json:"frameId"` // Frame id to get the resource for.
+	URL     string                     `json:"url"`     // URL of the resource to get content for.
+	Options LoadNetworkResourceOptions `json:"options"` // Options for the request.
+}
+
+// NewLoadNetworkResourceArgs initializes LoadNetworkResourceArgs with the required arguments.
+func NewLoadNetworkResourceArgs(frameID internal.PageFrameID, url string, options LoadNetworkResourceOptions) *LoadNetworkResourceArgs {
+	args := new(LoadNetworkResourceArgs)
+	args.FrameID = frameID
+	args.URL = url
+	args.Options = options
+	return args
+}
+
+// LoadNetworkResourceReply represents the return values for LoadNetworkResource in the Network domain.
+type LoadNetworkResourceReply struct {
+	Resource LoadNetworkResourcePageResult `json:"resource"` // No description.
 }

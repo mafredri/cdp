@@ -202,6 +202,29 @@ func (d *domainClient) SetGeolocationOverride(ctx context.Context, args *SetGeol
 	return
 }
 
+// SetIdleOverride invokes the Emulation method. Overrides the Idle state.
+func (d *domainClient) SetIdleOverride(ctx context.Context, args *SetIdleOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setIdleOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setIdleOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetIdleOverride", Err: err}
+	}
+	return
+}
+
+// ClearIdleOverride invokes the Emulation method. Clears Idle state
+// overrides.
+func (d *domainClient) ClearIdleOverride(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Emulation.clearIdleOverride", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "ClearIdleOverride", Err: err}
+	}
+	return
+}
+
 // SetNavigatorOverrides invokes the Emulation method. Overrides value
 // returned by the javascript navigator object.
 func (d *domainClient) SetNavigatorOverrides(ctx context.Context, args *SetNavigatorOverridesArgs) (err error) {
@@ -315,6 +338,19 @@ func (d *domainClient) SetVisibleSize(ctx context.Context, args *SetVisibleSizeA
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetVisibleSize", Err: err}
+	}
+	return
+}
+
+// SetDisabledImageTypes invokes the Emulation method.
+func (d *domainClient) SetDisabledImageTypes(ctx context.Context, args *SetDisabledImageTypesArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setDisabledImageTypes", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setDisabledImageTypes", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetDisabledImageTypes", Err: err}
 	}
 	return
 }

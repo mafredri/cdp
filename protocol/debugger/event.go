@@ -38,7 +38,7 @@ type PausedReply struct {
 	CallFrames []CallFrame `json:"callFrames"` // Call stack the virtual machine stopped on.
 	// Reason Pause reason.
 	//
-	// Values: "ambiguous", "assert", "debugCommand", "DOM", "EventListener", "exception", "instrumentation", "OOM", "other", "promiseRejection", "XHR".
+	// Values: "ambiguous", "assert", "CSPViolation", "debugCommand", "DOM", "EventListener", "exception", "instrumentation", "OOM", "other", "promiseRejection", "XHR".
 	Reason          string              `json:"reason"`
 	Data            json.RawMessage     `json:"data,omitempty"`            // Object containing break-specific auxiliary properties.
 	HitBreakpoints  []string            `json:"hitBreakpoints,omitempty"`  // Hit breakpoints IDs
@@ -106,6 +106,10 @@ type ScriptFailedToParseReply struct {
 	//
 	// Note: This property is experimental.
 	ScriptLanguage ScriptLanguage `json:"scriptLanguage,omitempty"`
+	// EmbedderName The name the embedder supplied for this script.
+	//
+	// Note: This property is experimental.
+	EmbedderName *string `json:"embedderName,omitempty"`
 }
 
 // ScriptParsedClient is a client for ScriptParsed events. Fired when virtual
@@ -157,4 +161,8 @@ type ScriptParsedReply struct {
 	//
 	// Note: This property is experimental.
 	DebugSymbols *DebugSymbols `json:"debugSymbols,omitempty"`
+	// EmbedderName The name the embedder supplied for this script.
+	//
+	// Note: This property is experimental.
+	EmbedderName *string `json:"embedderName,omitempty"`
 }

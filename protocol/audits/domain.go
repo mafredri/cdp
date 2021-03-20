@@ -56,6 +56,20 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 	return
 }
 
+// CheckContrast invokes the Audits method. Runs the contrast check for the
+// target page. Found issues are reported using Audits.issueAdded event.
+func (d *domainClient) CheckContrast(ctx context.Context, args *CheckContrastArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Audits.checkContrast", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Audits.checkContrast", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Audits", Op: "CheckContrast", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) IssueAdded(ctx context.Context) (IssueAddedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Audits.issueAdded", d.conn)
 	if err != nil {

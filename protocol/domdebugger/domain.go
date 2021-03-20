@@ -95,6 +95,20 @@ func (d *domainClient) RemoveXHRBreakpoint(ctx context.Context, args *RemoveXHRB
 	return
 }
 
+// SetBreakOnCSPViolation invokes the DOMDebugger method. Sets breakpoint on
+// particular CSP violations.
+func (d *domainClient) SetBreakOnCSPViolation(ctx context.Context, args *SetBreakOnCSPViolationArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOMDebugger.setBreakOnCSPViolation", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOMDebugger.setBreakOnCSPViolation", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOMDebugger", Op: "SetBreakOnCSPViolation", Err: err}
+	}
+	return
+}
+
 // SetDOMBreakpoint invokes the DOMDebugger method. Sets breakpoint on
 // particular operation with DOM.
 func (d *domainClient) SetDOMBreakpoint(ctx context.Context, args *SetDOMBreakpointArgs) (err error) {

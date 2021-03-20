@@ -191,6 +191,23 @@ type GetStyleSheetTextReply struct {
 	Text string `json:"text"` // The stylesheet text.
 }
 
+// TrackComputedStyleUpdatesArgs represents the arguments for TrackComputedStyleUpdates in the CSS domain.
+type TrackComputedStyleUpdatesArgs struct {
+	PropertiesToTrack []ComputedStyleProperty `json:"propertiesToTrack"` // No description.
+}
+
+// NewTrackComputedStyleUpdatesArgs initializes TrackComputedStyleUpdatesArgs with the required arguments.
+func NewTrackComputedStyleUpdatesArgs(propertiesToTrack []ComputedStyleProperty) *TrackComputedStyleUpdatesArgs {
+	args := new(TrackComputedStyleUpdatesArgs)
+	args.PropertiesToTrack = propertiesToTrack
+	return args
+}
+
+// TakeComputedStyleUpdatesReply represents the return values for TakeComputedStyleUpdates in the CSS domain.
+type TakeComputedStyleUpdatesReply struct {
+	NodeIDs []dom.NodeID `json:"nodeIds"` // The list of node Ids that have their tracked computed styles updated
+}
+
 // SetEffectivePropertyValueForNodeArgs represents the arguments for SetEffectivePropertyValueForNode in the CSS domain.
 type SetEffectivePropertyValueForNodeArgs struct {
 	NodeID       dom.NodeID `json:"nodeId"`       // The element id for which to set property.
@@ -315,4 +332,16 @@ type StopRuleUsageTrackingReply struct {
 type TakeCoverageDeltaReply struct {
 	Coverage  []RuleUsage `json:"coverage"`  // No description.
 	Timestamp float64     `json:"timestamp"` // Monotonically increasing time, in seconds.
+}
+
+// SetLocalFontsEnabledArgs represents the arguments for SetLocalFontsEnabled in the CSS domain.
+type SetLocalFontsEnabledArgs struct {
+	Enabled bool `json:"enabled"` // Whether rendering of local fonts is enabled.
+}
+
+// NewSetLocalFontsEnabledArgs initializes SetLocalFontsEnabledArgs with the required arguments.
+func NewSetLocalFontsEnabledArgs(enabled bool) *SetLocalFontsEnabledArgs {
+	args := new(SetLocalFontsEnabledArgs)
+	args.Enabled = enabled
+	return args
 }

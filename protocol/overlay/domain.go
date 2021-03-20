@@ -52,6 +52,36 @@ func (d *domainClient) GetHighlightObjectForTest(ctx context.Context, args *GetH
 	return
 }
 
+// GetGridHighlightObjectsForTest invokes the Overlay method. For Persistent
+// Grid testing.
+func (d *domainClient) GetGridHighlightObjectsForTest(ctx context.Context, args *GetGridHighlightObjectsForTestArgs) (reply *GetGridHighlightObjectsForTestReply, err error) {
+	reply = new(GetGridHighlightObjectsForTestReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.getGridHighlightObjectsForTest", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.getGridHighlightObjectsForTest", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "GetGridHighlightObjectsForTest", Err: err}
+	}
+	return
+}
+
+// GetSourceOrderHighlightObjectForTest invokes the Overlay method. For Source
+// Order Viewer testing.
+func (d *domainClient) GetSourceOrderHighlightObjectForTest(ctx context.Context, args *GetSourceOrderHighlightObjectForTestArgs) (reply *GetSourceOrderHighlightObjectForTestReply, err error) {
+	reply = new(GetSourceOrderHighlightObjectForTestReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.getSourceOrderHighlightObjectForTest", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.getSourceOrderHighlightObjectForTest", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "GetSourceOrderHighlightObjectForTest", Err: err}
+	}
+	return
+}
+
 // HideHighlight invokes the Overlay method. Hides any highlight.
 func (d *domainClient) HideHighlight(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Overlay.hideHighlight", nil, nil, d.conn)
@@ -114,6 +144,21 @@ func (d *domainClient) HighlightRect(ctx context.Context, args *HighlightRectArg
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "HighlightRect", Err: err}
+	}
+	return
+}
+
+// HighlightSourceOrder invokes the Overlay method. Highlights the source
+// order of the children of the DOM node with given id or with the given
+// JavaScript object wrapper. Either nodeId or objectId must be specified.
+func (d *domainClient) HighlightSourceOrder(ctx context.Context, args *HighlightSourceOrderArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.highlightSourceOrder", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.highlightSourceOrder", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "HighlightSourceOrder", Err: err}
 	}
 	return
 }
@@ -188,6 +233,33 @@ func (d *domainClient) SetShowFPSCounter(ctx context.Context, args *SetShowFPSCo
 	return
 }
 
+// SetShowGridOverlays invokes the Overlay method. Highlight multiple elements
+// with the CSS Grid overlay.
+func (d *domainClient) SetShowGridOverlays(ctx context.Context, args *SetShowGridOverlaysArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowGridOverlays", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowGridOverlays", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowGridOverlays", Err: err}
+	}
+	return
+}
+
+// SetShowFlexOverlays invokes the Overlay method.
+func (d *domainClient) SetShowFlexOverlays(ctx context.Context, args *SetShowFlexOverlaysArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowFlexOverlays", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowFlexOverlays", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowFlexOverlays", Err: err}
+	}
+	return
+}
+
 // SetShowPaintRects invokes the Overlay method. Requests that backend shows
 // paint rectangles
 func (d *domainClient) SetShowPaintRects(ctx context.Context, args *SetShowPaintRectsArgs) (err error) {
@@ -240,6 +312,20 @@ func (d *domainClient) SetShowHitTestBorders(ctx context.Context, args *SetShowH
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetShowHitTestBorders", Err: err}
+	}
+	return
+}
+
+// SetShowWebVitals invokes the Overlay method. Request that backend shows an
+// overlay with web vital metrics.
+func (d *domainClient) SetShowWebVitals(ctx context.Context, args *SetShowWebVitalsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowWebVitals", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowWebVitals", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowWebVitals", Err: err}
 	}
 	return
 }

@@ -99,6 +99,11 @@ type SetDeviceMetricsOverrideArgs struct {
 	//
 	// Note: This property is experimental.
 	Viewport *page.Viewport `json:"viewport,omitempty"`
+	// DisplayFeature If set, the display feature of a multi-segment
+	// screen. If not set, multi-segment support is turned-off.
+	//
+	// Note: This property is experimental.
+	DisplayFeature *DisplayFeature `json:"displayFeature,omitempty"`
 }
 
 // NewSetDeviceMetricsOverrideArgs initializes SetDeviceMetricsOverrideArgs with the required arguments.
@@ -181,6 +186,16 @@ func (a *SetDeviceMetricsOverrideArgs) SetScreenOrientation(screenOrientation Sc
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetViewport(viewport page.Viewport) *SetDeviceMetricsOverrideArgs {
 	a.Viewport = &viewport
+	return a
+}
+
+// SetDisplayFeature sets the DisplayFeature optional argument. If
+// set, the display feature of a multi-segment screen. If not set,
+// multi-segment support is turned-off.
+//
+// Note: This property is experimental.
+func (a *SetDeviceMetricsOverrideArgs) SetDisplayFeature(displayFeature DisplayFeature) *SetDeviceMetricsOverrideArgs {
+	a.DisplayFeature = &displayFeature
 	return a
 }
 
@@ -306,6 +321,20 @@ func (a *SetGeolocationOverrideArgs) SetLongitude(longitude float64) *SetGeoloca
 func (a *SetGeolocationOverrideArgs) SetAccuracy(accuracy float64) *SetGeolocationOverrideArgs {
 	a.Accuracy = &accuracy
 	return a
+}
+
+// SetIdleOverrideArgs represents the arguments for SetIdleOverride in the Emulation domain.
+type SetIdleOverrideArgs struct {
+	IsUserActive     bool `json:"isUserActive"`     // Mock isUserActive
+	IsScreenUnlocked bool `json:"isScreenUnlocked"` // Mock isScreenUnlocked
+}
+
+// NewSetIdleOverrideArgs initializes SetIdleOverrideArgs with the required arguments.
+func NewSetIdleOverrideArgs(isUserActive bool, isScreenUnlocked bool) *SetIdleOverrideArgs {
+	args := new(SetIdleOverrideArgs)
+	args.IsUserActive = isUserActive
+	args.IsScreenUnlocked = isScreenUnlocked
+	return args
 }
 
 // SetNavigatorOverridesArgs represents the arguments for SetNavigatorOverrides in the Emulation domain.
@@ -461,6 +490,18 @@ func NewSetVisibleSizeArgs(width int, height int) *SetVisibleSizeArgs {
 	args := new(SetVisibleSizeArgs)
 	args.Width = width
 	args.Height = height
+	return args
+}
+
+// SetDisabledImageTypesArgs represents the arguments for SetDisabledImageTypes in the Emulation domain.
+type SetDisabledImageTypesArgs struct {
+	ImageTypes []DisabledImageType `json:"imageTypes"` // Image types to disable.
+}
+
+// NewSetDisabledImageTypesArgs initializes SetDisabledImageTypesArgs with the required arguments.
+func NewSetDisabledImageTypesArgs(imageTypes []DisabledImageType) *SetDisabledImageTypesArgs {
+	args := new(SetDisabledImageTypesArgs)
+	args.ImageTypes = imageTypes
 	return args
 }
 

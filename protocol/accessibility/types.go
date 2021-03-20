@@ -82,20 +82,21 @@ type AXValueNativeSourceType string
 
 // AXValueNativeSourceType as enums.
 const (
-	AXValueNativeSourceTypeNotSet       AXValueNativeSourceType = ""
-	AXValueNativeSourceTypeFigcaption   AXValueNativeSourceType = "figcaption"
-	AXValueNativeSourceTypeLabel        AXValueNativeSourceType = "label"
-	AXValueNativeSourceTypeLabelfor     AXValueNativeSourceType = "labelfor"
-	AXValueNativeSourceTypeLabelwrapped AXValueNativeSourceType = "labelwrapped"
-	AXValueNativeSourceTypeLegend       AXValueNativeSourceType = "legend"
-	AXValueNativeSourceTypeTablecaption AXValueNativeSourceType = "tablecaption"
-	AXValueNativeSourceTypeTitle        AXValueNativeSourceType = "title"
-	AXValueNativeSourceTypeOther        AXValueNativeSourceType = "other"
+	AXValueNativeSourceTypeNotSet         AXValueNativeSourceType = ""
+	AXValueNativeSourceTypeFigcaption     AXValueNativeSourceType = "figcaption"
+	AXValueNativeSourceTypeLabel          AXValueNativeSourceType = "label"
+	AXValueNativeSourceTypeLabelfor       AXValueNativeSourceType = "labelfor"
+	AXValueNativeSourceTypeLabelwrapped   AXValueNativeSourceType = "labelwrapped"
+	AXValueNativeSourceTypeLegend         AXValueNativeSourceType = "legend"
+	AXValueNativeSourceTypeRubyannotation AXValueNativeSourceType = "rubyannotation"
+	AXValueNativeSourceTypeTablecaption   AXValueNativeSourceType = "tablecaption"
+	AXValueNativeSourceTypeTitle          AXValueNativeSourceType = "title"
+	AXValueNativeSourceTypeOther          AXValueNativeSourceType = "other"
 )
 
 func (e AXValueNativeSourceType) Valid() bool {
 	switch e {
-	case "figcaption", "label", "labelfor", "labelwrapped", "legend", "tablecaption", "title", "other":
+	case "figcaption", "label", "labelfor", "labelwrapped", "legend", "rubyannotation", "tablecaption", "title", "other":
 		return true
 	default:
 		return false

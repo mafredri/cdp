@@ -10,6 +10,235 @@ import (
 // FrameID Unique frame identifier.
 type FrameID = internal.PageFrameID
 
+// AdFrameType Indicates whether a frame has been identified as an ad.
+//
+// Note: This type is experimental.
+type AdFrameType string
+
+// AdFrameType as enums.
+const (
+	AdFrameTypeNotSet AdFrameType = ""
+	AdFrameTypeNone   AdFrameType = "none"
+	AdFrameTypeChild  AdFrameType = "child"
+	AdFrameTypeRoot   AdFrameType = "root"
+)
+
+func (e AdFrameType) Valid() bool {
+	switch e {
+	case "none", "child", "root":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e AdFrameType) String() string {
+	return string(e)
+}
+
+// SecureContextType Indicates whether the frame is a secure context and why
+// it is the case.
+//
+// Note: This type is experimental.
+type SecureContextType string
+
+// SecureContextType as enums.
+const (
+	SecureContextTypeNotSet           SecureContextType = ""
+	SecureContextTypeSecure           SecureContextType = "Secure"
+	SecureContextTypeSecureLocalhost  SecureContextType = "SecureLocalhost"
+	SecureContextTypeInsecureScheme   SecureContextType = "InsecureScheme"
+	SecureContextTypeInsecureAncestor SecureContextType = "InsecureAncestor"
+)
+
+func (e SecureContextType) Valid() bool {
+	switch e {
+	case "Secure", "SecureLocalhost", "InsecureScheme", "InsecureAncestor":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e SecureContextType) String() string {
+	return string(e)
+}
+
+// CrossOriginIsolatedContextType Indicates whether the frame is cross-origin
+// isolated and why it is the case.
+//
+// Note: This type is experimental.
+type CrossOriginIsolatedContextType string
+
+// CrossOriginIsolatedContextType as enums.
+const (
+	CrossOriginIsolatedContextTypeNotSet                     CrossOriginIsolatedContextType = ""
+	CrossOriginIsolatedContextTypeIsolated                   CrossOriginIsolatedContextType = "Isolated"
+	CrossOriginIsolatedContextTypeNotIsolated                CrossOriginIsolatedContextType = "NotIsolated"
+	CrossOriginIsolatedContextTypeNotIsolatedFeatureDisabled CrossOriginIsolatedContextType = "NotIsolatedFeatureDisabled"
+)
+
+func (e CrossOriginIsolatedContextType) Valid() bool {
+	switch e {
+	case "Isolated", "NotIsolated", "NotIsolatedFeatureDisabled":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e CrossOriginIsolatedContextType) String() string {
+	return string(e)
+}
+
+// GatedAPIFeatures
+//
+// Note: This type is experimental.
+type GatedAPIFeatures string
+
+// GatedAPIFeatures as enums.
+const (
+	GatedAPIFeaturesNotSet                            GatedAPIFeatures = ""
+	GatedAPIFeaturesSharedArrayBuffers                GatedAPIFeatures = "SharedArrayBuffers"
+	GatedAPIFeaturesSharedArrayBuffersTransferAllowed GatedAPIFeatures = "SharedArrayBuffersTransferAllowed"
+	GatedAPIFeaturesPerformanceMeasureMemory          GatedAPIFeatures = "PerformanceMeasureMemory"
+	GatedAPIFeaturesPerformanceProfile                GatedAPIFeatures = "PerformanceProfile"
+)
+
+func (e GatedAPIFeatures) Valid() bool {
+	switch e {
+	case "SharedArrayBuffers", "SharedArrayBuffersTransferAllowed", "PerformanceMeasureMemory", "PerformanceProfile":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e GatedAPIFeatures) String() string {
+	return string(e)
+}
+
+// PermissionsPolicyFeature All Permissions Policy features. This enum should
+// match the one defined in
+// renderer/core/feature_policy/feature_policy_features.json5.
+//
+// Note: This type is experimental.
+type PermissionsPolicyFeature string
+
+// PermissionsPolicyFeature as enums.
+const (
+	PermissionsPolicyFeatureNotSet                      PermissionsPolicyFeature = ""
+	PermissionsPolicyFeatureAccelerometer               PermissionsPolicyFeature = "accelerometer"
+	PermissionsPolicyFeatureAmbientLightSensor          PermissionsPolicyFeature = "ambient-light-sensor"
+	PermissionsPolicyFeatureAutoplay                    PermissionsPolicyFeature = "autoplay"
+	PermissionsPolicyFeatureCamera                      PermissionsPolicyFeature = "camera"
+	PermissionsPolicyFeatureChDpr                       PermissionsPolicyFeature = "ch-dpr"
+	PermissionsPolicyFeatureChDeviceMemory              PermissionsPolicyFeature = "ch-device-memory"
+	PermissionsPolicyFeatureChDownlink                  PermissionsPolicyFeature = "ch-downlink"
+	PermissionsPolicyFeatureChEct                       PermissionsPolicyFeature = "ch-ect"
+	PermissionsPolicyFeatureChLang                      PermissionsPolicyFeature = "ch-lang"
+	PermissionsPolicyFeatureChRtt                       PermissionsPolicyFeature = "ch-rtt"
+	PermissionsPolicyFeatureChUa                        PermissionsPolicyFeature = "ch-ua"
+	PermissionsPolicyFeatureChUaArch                    PermissionsPolicyFeature = "ch-ua-arch"
+	PermissionsPolicyFeatureChUaPlatform                PermissionsPolicyFeature = "ch-ua-platform"
+	PermissionsPolicyFeatureChUaModel                   PermissionsPolicyFeature = "ch-ua-model"
+	PermissionsPolicyFeatureChUaMobile                  PermissionsPolicyFeature = "ch-ua-mobile"
+	PermissionsPolicyFeatureChUaFullVersion             PermissionsPolicyFeature = "ch-ua-full-version"
+	PermissionsPolicyFeatureChUaPlatformVersion         PermissionsPolicyFeature = "ch-ua-platform-version"
+	PermissionsPolicyFeatureChViewportWidth             PermissionsPolicyFeature = "ch-viewport-width"
+	PermissionsPolicyFeatureChWidth                     PermissionsPolicyFeature = "ch-width"
+	PermissionsPolicyFeatureClipboardRead               PermissionsPolicyFeature = "clipboard-read"
+	PermissionsPolicyFeatureClipboardWrite              PermissionsPolicyFeature = "clipboard-write"
+	PermissionsPolicyFeatureConversionMeasurement       PermissionsPolicyFeature = "conversion-measurement"
+	PermissionsPolicyFeatureCrossOriginIsolated         PermissionsPolicyFeature = "cross-origin-isolated"
+	PermissionsPolicyFeatureDisplayCapture              PermissionsPolicyFeature = "display-capture"
+	PermissionsPolicyFeatureDocumentDomain              PermissionsPolicyFeature = "document-domain"
+	PermissionsPolicyFeatureEncryptedMedia              PermissionsPolicyFeature = "encrypted-media"
+	PermissionsPolicyFeatureExecutionWhileOutOfViewport PermissionsPolicyFeature = "execution-while-out-of-viewport"
+	PermissionsPolicyFeatureExecutionWhileNotRendered   PermissionsPolicyFeature = "execution-while-not-rendered"
+	PermissionsPolicyFeatureFocusWithoutUserActivation  PermissionsPolicyFeature = "focus-without-user-activation"
+	PermissionsPolicyFeatureFullscreen                  PermissionsPolicyFeature = "fullscreen"
+	PermissionsPolicyFeatureFrobulate                   PermissionsPolicyFeature = "frobulate"
+	PermissionsPolicyFeatureGamepad                     PermissionsPolicyFeature = "gamepad"
+	PermissionsPolicyFeatureGeolocation                 PermissionsPolicyFeature = "geolocation"
+	PermissionsPolicyFeatureGyroscope                   PermissionsPolicyFeature = "gyroscope"
+	PermissionsPolicyFeatureHid                         PermissionsPolicyFeature = "hid"
+	PermissionsPolicyFeatureIdleDetection               PermissionsPolicyFeature = "idle-detection"
+	PermissionsPolicyFeatureInterestCohort              PermissionsPolicyFeature = "interest-cohort"
+	PermissionsPolicyFeatureMagnetometer                PermissionsPolicyFeature = "magnetometer"
+	PermissionsPolicyFeatureMicrophone                  PermissionsPolicyFeature = "microphone"
+	PermissionsPolicyFeatureMidi                        PermissionsPolicyFeature = "midi"
+	PermissionsPolicyFeatureOtpCredentials              PermissionsPolicyFeature = "otp-credentials"
+	PermissionsPolicyFeaturePayment                     PermissionsPolicyFeature = "payment"
+	PermissionsPolicyFeaturePictureInPicture            PermissionsPolicyFeature = "picture-in-picture"
+	PermissionsPolicyFeaturePublickeyCredentialsGet     PermissionsPolicyFeature = "publickey-credentials-get"
+	PermissionsPolicyFeatureScreenWakeLock              PermissionsPolicyFeature = "screen-wake-lock"
+	PermissionsPolicyFeatureSerial                      PermissionsPolicyFeature = "serial"
+	PermissionsPolicyFeatureStorageAccessAPI            PermissionsPolicyFeature = "storage-access-api"
+	PermissionsPolicyFeatureSyncXhr                     PermissionsPolicyFeature = "sync-xhr"
+	PermissionsPolicyFeatureTrustTokenRedemption        PermissionsPolicyFeature = "trust-token-redemption"
+	PermissionsPolicyFeatureUSB                         PermissionsPolicyFeature = "usb"
+	PermissionsPolicyFeatureVerticalScroll              PermissionsPolicyFeature = "vertical-scroll"
+	PermissionsPolicyFeatureWebShare                    PermissionsPolicyFeature = "web-share"
+	PermissionsPolicyFeatureXrSpatialTracking           PermissionsPolicyFeature = "xr-spatial-tracking"
+)
+
+func (e PermissionsPolicyFeature) Valid() bool {
+	switch e {
+	case "accelerometer", "ambient-light-sensor", "autoplay", "camera", "ch-dpr", "ch-device-memory", "ch-downlink", "ch-ect", "ch-lang", "ch-rtt", "ch-ua", "ch-ua-arch", "ch-ua-platform", "ch-ua-model", "ch-ua-mobile", "ch-ua-full-version", "ch-ua-platform-version", "ch-viewport-width", "ch-width", "clipboard-read", "clipboard-write", "conversion-measurement", "cross-origin-isolated", "display-capture", "document-domain", "encrypted-media", "execution-while-out-of-viewport", "execution-while-not-rendered", "focus-without-user-activation", "fullscreen", "frobulate", "gamepad", "geolocation", "gyroscope", "hid", "idle-detection", "interest-cohort", "magnetometer", "microphone", "midi", "otp-credentials", "payment", "picture-in-picture", "publickey-credentials-get", "screen-wake-lock", "serial", "storage-access-api", "sync-xhr", "trust-token-redemption", "usb", "vertical-scroll", "web-share", "xr-spatial-tracking":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e PermissionsPolicyFeature) String() string {
+	return string(e)
+}
+
+// PermissionsPolicyBlockReason Reason for a permissions policy feature to be
+// disabled.
+//
+// Note: This type is experimental.
+type PermissionsPolicyBlockReason string
+
+// PermissionsPolicyBlockReason as enums.
+const (
+	PermissionsPolicyBlockReasonNotSet          PermissionsPolicyBlockReason = ""
+	PermissionsPolicyBlockReasonHeader          PermissionsPolicyBlockReason = "Header"
+	PermissionsPolicyBlockReasonIframeAttribute PermissionsPolicyBlockReason = "IframeAttribute"
+)
+
+func (e PermissionsPolicyBlockReason) Valid() bool {
+	switch e {
+	case "Header", "IframeAttribute":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e PermissionsPolicyBlockReason) String() string {
+	return string(e)
+}
+
+// PermissionsPolicyBlockLocator
+//
+// Note: This type is experimental.
+type PermissionsPolicyBlockLocator struct {
+	FrameID     FrameID                      `json:"frameId"`     // No description.
+	BlockReason PermissionsPolicyBlockReason `json:"blockReason"` // No description.
+}
+
+// PermissionsPolicyFeatureState
+//
+// Note: This type is experimental.
+type PermissionsPolicyFeatureState struct {
+	Feature PermissionsPolicyFeature       `json:"feature"`           // No description.
+	Allowed bool                           `json:"allowed"`           // No description.
+	Locator *PermissionsPolicyBlockLocator `json:"locator,omitempty"` // No description.
+}
+
 // Frame Information about the Frame on the page.
 type Frame struct {
 	ID       FrameID          `json:"id"`                 // Frame unique identifier.
@@ -20,15 +249,41 @@ type Frame struct {
 	// URLFragment Frame document's URL fragment including the '#'.
 	//
 	// Note: This property is experimental.
-	URLFragment    *string `json:"urlFragment,omitempty"`
-	SecurityOrigin string  `json:"securityOrigin"` // Frame document's security origin.
-	MimeType       string  `json:"mimeType"`       // Frame document's mimeType as determined by the browser.
+	URLFragment *string `json:"urlFragment,omitempty"`
+	// DomainAndRegistry Frame document's registered domain, taking the
+	// public suffixes list into account. Extracted from the Frame's url.
+	// Example URLs: http://www.google.com/file.html -> "google.com"
+	// http://a.b.co.uk/file.html -> "b.co.uk"
+	//
+	// Note: This property is experimental.
+	DomainAndRegistry string `json:"domainAndRegistry"`
+	SecurityOrigin    string `json:"securityOrigin"` // Frame document's security origin.
+	MimeType          string `json:"mimeType"`       // Frame document's mimeType as determined by the browser.
 	// UnreachableURL If the frame failed to load, this contains the URL
 	// that could not be loaded. Note that unlike url above, this URL may
 	// contain a fragment.
 	//
 	// Note: This property is experimental.
 	UnreachableURL *string `json:"unreachableUrl,omitempty"`
+	// AdFrameType Indicates whether this frame was tagged as an ad.
+	//
+	// Note: This property is experimental.
+	AdFrameType AdFrameType `json:"adFrameType,omitempty"`
+	// SecureContextType Indicates whether the main document is a secure
+	// context and explains why that is the case.
+	//
+	// Note: This property is experimental.
+	SecureContextType SecureContextType `json:"secureContextType"`
+	// CrossOriginIsolatedContextType Indicates whether this is a cross
+	// origin isolated context.
+	//
+	// Note: This property is experimental.
+	CrossOriginIsolatedContextType CrossOriginIsolatedContextType `json:"crossOriginIsolatedContextType"`
+	// GatedAPIFeatures Indicated which gated APIs / features are
+	// available.
+	//
+	// Note: This property is experimental.
+	GatedAPIFeatures []GatedAPIFeatures `json:"gatedAPIFeatures"`
 }
 
 // FrameResource Information about the Resource on the page.
@@ -312,4 +567,13 @@ func (e ReferrerPolicy) Valid() bool {
 
 func (e ReferrerPolicy) String() string {
 	return string(e)
+}
+
+// CompilationCacheParams Per-script compilation cache parameters for
+// `Page.produceCompilationCache`
+//
+// Note: This type is experimental.
+type CompilationCacheParams struct {
+	URL   string `json:"url"`             // The URL of the script to produce a compilation cache entry for.
+	Eager *bool  `json:"eager,omitempty"` // A hint to the backend whether eager compilation is recommended. (the actual compilation mode used is upon backend discretion).
 }

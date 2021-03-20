@@ -120,3 +120,17 @@ func NewSetUserVerifiedArgs(authenticatorID AuthenticatorID, isUserVerified bool
 	args.IsUserVerified = isUserVerified
 	return args
 }
+
+// SetAutomaticPresenceSimulationArgs represents the arguments for SetAutomaticPresenceSimulation in the WebAuthn domain.
+type SetAutomaticPresenceSimulationArgs struct {
+	AuthenticatorID AuthenticatorID `json:"authenticatorId"` // No description.
+	Enabled         bool            `json:"enabled"`         // No description.
+}
+
+// NewSetAutomaticPresenceSimulationArgs initializes SetAutomaticPresenceSimulationArgs with the required arguments.
+func NewSetAutomaticPresenceSimulationArgs(authenticatorID AuthenticatorID, enabled bool) *SetAutomaticPresenceSimulationArgs {
+	args := new(SetAutomaticPresenceSimulationArgs)
+	args.AuthenticatorID = authenticatorID
+	args.Enabled = enabled
+	return args
+}

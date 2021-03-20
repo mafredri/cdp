@@ -57,12 +57,52 @@ func (d *domainClient) GetPartialAXTree(ctx context.Context, args *GetPartialAXT
 }
 
 // GetFullAXTree invokes the Accessibility method. Fetches the entire
-// accessibility tree
-func (d *domainClient) GetFullAXTree(ctx context.Context) (reply *GetFullAXTreeReply, err error) {
+// accessibility tree for the root Document
+func (d *domainClient) GetFullAXTree(ctx context.Context, args *GetFullAXTreeArgs) (reply *GetFullAXTreeReply, err error) {
 	reply = new(GetFullAXTreeReply)
-	err = rpcc.Invoke(ctx, "Accessibility.getFullAXTree", nil, reply, d.conn)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Accessibility.getFullAXTree", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Accessibility.getFullAXTree", nil, reply, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Accessibility", Op: "GetFullAXTree", Err: err}
+	}
+	return
+}
+
+// GetChildAXNodes invokes the Accessibility method. Fetches a particular
+// accessibility node by AXNodeId. Requires `enable()` to have been called
+// previously.
+func (d *domainClient) GetChildAXNodes(ctx context.Context, args *GetChildAXNodesArgs) (reply *GetChildAXNodesReply, err error) {
+	reply = new(GetChildAXNodesReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Accessibility.getChildAXNodes", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Accessibility.getChildAXNodes", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Accessibility", Op: "GetChildAXNodes", Err: err}
+	}
+	return
+}
+
+// QueryAXTree invokes the Accessibility method. Query a DOM node's
+// accessibility subtree for accessible name and role. This command computes
+// the name and role for all nodes in the subtree, including those that are
+// ignored for accessibility, and returns those that mactch the specified name
+// and role. If no DOM node is specified, or the DOM node does not exist, the
+// command returns an error. If neither `accessibleName` or `role` is
+// specified, it returns all the accessibility nodes in the subtree.
+func (d *domainClient) QueryAXTree(ctx context.Context, args *QueryAXTreeArgs) (reply *QueryAXTreeReply, err error) {
+	reply = new(QueryAXTreeReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Accessibility.queryAXTree", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Accessibility.queryAXTree", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Accessibility", Op: "QueryAXTree", Err: err}
 	}
 	return
 }

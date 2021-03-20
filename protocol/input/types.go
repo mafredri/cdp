@@ -16,7 +16,29 @@ type TouchPoint struct {
 	RadiusY       *float64 `json:"radiusY,omitempty"`       // Y radius of the touch area (default: 1.0).
 	RotationAngle *float64 `json:"rotationAngle,omitempty"` // Rotation angle (default: 0.0).
 	Force         *float64 `json:"force,omitempty"`         // Force (default: 1.0).
-	ID            *float64 `json:"id,omitempty"`            // Identifier used to track touch sources between events, must be unique within an event.
+	// TangentialPressure The normalized tangential pressure, which has a
+	// range of [-1,1] (default: 0).
+	//
+	// Note: This property is experimental.
+	TangentialPressure *float64 `json:"tangentialPressure,omitempty"`
+	// TiltX The plane angle between the Y-Z plane and the plane
+	// containing both the stylus axis and the Y axis, in degrees of the
+	// range [-90,90], a positive tiltX is to the right (default: 0)
+	//
+	// Note: This property is experimental.
+	TiltX *int `json:"tiltX,omitempty"`
+	// TiltY The plane angle between the X-Z plane and the plane
+	// containing both the stylus axis and the X axis, in degrees of the
+	// range [-90,90], a positive tiltY is towards the user (default: 0).
+	//
+	// Note: This property is experimental.
+	TiltY *int `json:"tiltY,omitempty"`
+	// Twist The clockwise rotation of a pen stylus around its own major
+	// axis, in degrees in the range [0,359] (default: 0).
+	//
+	// Note: This property is experimental.
+	Twist *int     `json:"twist,omitempty"`
+	ID    *float64 `json:"id,omitempty"` // Identifier used to track touch sources between events, must be unique within an event.
 }
 
 // GestureSourceType

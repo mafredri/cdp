@@ -149,7 +149,7 @@ type BaseAudioContext struct {
 	SampleRate            float64              `json:"sampleRate"`             // Context sample rate.
 }
 
-// AudioListener Protocol object for AudioListner
+// AudioListener Protocol object for AudioListener
 type AudioListener struct {
 	ListenerID GraphObjectID `json:"listenerId"` // No description.
 	ContextID  GraphObjectID `json:"contextId"`  // No description.

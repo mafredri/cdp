@@ -21,6 +21,15 @@ type DispatchKeyEventArgs struct {
 	IsKeypad              *bool          `json:"isKeypad,omitempty"`              // Whether the event was generated from the keypad (default: false).
 	IsSystemKey           *bool          `json:"isSystemKey,omitempty"`           // Whether the event was a system key event (default: false).
 	Location              *int           `json:"location,omitempty"`              // Whether the event was from the left or right side of the keyboard. 1=Left, 2=Right (default: 0).
+	// Commands Editing commands to send with the key event (e.g.,
+	// 'selectAll') (default: []). These are related to but not equal the
+	// command names used in `document.execCommand` and
+	// NSStandardKeyBindingResponding. See
+	// https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/editing/commands/editor_command_names.h
+	// for valid command names.
+	//
+	// Note: This property is experimental.
+	Commands []string `json:"commands,omitempty"`
 }
 
 // NewDispatchKeyEventArgs initializes DispatchKeyEventArgs with the required arguments.
@@ -127,6 +136,19 @@ func (a *DispatchKeyEventArgs) SetLocation(location int) *DispatchKeyEventArgs {
 	return a
 }
 
+// SetCommands sets the Commands optional argument. Editing commands
+// to send with the key event (e.g., 'selectAll') (default: []). These
+// are related to but not equal the command names used in
+// `document.execCommand` and NSStandardKeyBindingResponding. See
+// https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/editing/commands/editor_command_names.h
+// for valid command names.
+//
+// Note: This property is experimental.
+func (a *DispatchKeyEventArgs) SetCommands(commands []string) *DispatchKeyEventArgs {
+	a.Commands = commands
+	return a
+}
+
 // InsertTextArgs represents the arguments for InsertText in the Input domain.
 type InsertTextArgs struct {
 	Text string `json:"text"` // The text to insert.
@@ -152,8 +174,35 @@ type DispatchMouseEventArgs struct {
 	Button     MouseButton    `json:"button,omitempty"`     // Mouse button (default: "none").
 	Buttons    *int           `json:"buttons,omitempty"`    // A number indicating which buttons are pressed on the mouse when a mouse event is triggered. Left=1, Right=2, Middle=4, Back=8, Forward=16, None=0.
 	ClickCount *int           `json:"clickCount,omitempty"` // Number of times the mouse button was clicked (default: 0).
-	DeltaX     *float64       `json:"deltaX,omitempty"`     // X delta in CSS pixels for mouse wheel event (default: 0).
-	DeltaY     *float64       `json:"deltaY,omitempty"`     // Y delta in CSS pixels for mouse wheel event (default: 0).
+	// Force The normalized pressure, which has a range of [0,1] (default:
+	// 0).
+	//
+	// Note: This property is experimental.
+	Force *float64 `json:"force,omitempty"`
+	// TangentialPressure The normalized tangential pressure, which has a
+	// range of [-1,1] (default: 0).
+	//
+	// Note: This property is experimental.
+	TangentialPressure *float64 `json:"tangentialPressure,omitempty"`
+	// TiltX The plane angle between the Y-Z plane and the plane
+	// containing both the stylus axis and the Y axis, in degrees of the
+	// range [-90,90], a positive tiltX is to the right (default: 0).
+	//
+	// Note: This property is experimental.
+	TiltX *int `json:"tiltX,omitempty"`
+	// TiltY The plane angle between the X-Z plane and the plane
+	// containing both the stylus axis and the X axis, in degrees of the
+	// range [-90,90], a positive tiltY is towards the user (default: 0).
+	//
+	// Note: This property is experimental.
+	TiltY *int `json:"tiltY,omitempty"`
+	// Twist The clockwise rotation of a pen stylus around its own major
+	// axis, in degrees in the range [0,359] (default: 0).
+	//
+	// Note: This property is experimental.
+	Twist  *int     `json:"twist,omitempty"`
+	DeltaX *float64 `json:"deltaX,omitempty"` // X delta in CSS pixels for mouse wheel event (default: 0).
+	DeltaY *float64 `json:"deltaY,omitempty"` // Y delta in CSS pixels for mouse wheel event (default: 0).
 	// PointerType Pointer type (default: "mouse").
 	//
 	// Values: "mouse", "pen".
@@ -203,6 +252,57 @@ func (a *DispatchMouseEventArgs) SetButtons(buttons int) *DispatchMouseEventArgs
 // times the mouse button was clicked (default: 0).
 func (a *DispatchMouseEventArgs) SetClickCount(clickCount int) *DispatchMouseEventArgs {
 	a.ClickCount = &clickCount
+	return a
+}
+
+// SetForce sets the Force optional argument. The normalized pressure,
+// which has a range of [0,1] (default: 0).
+//
+// Note: This property is experimental.
+func (a *DispatchMouseEventArgs) SetForce(force float64) *DispatchMouseEventArgs {
+	a.Force = &force
+	return a
+}
+
+// SetTangentialPressure sets the TangentialPressure optional argument.
+// The normalized tangential pressure, which has a range of [-1,1]
+// (default: 0).
+//
+// Note: This property is experimental.
+func (a *DispatchMouseEventArgs) SetTangentialPressure(tangentialPressure float64) *DispatchMouseEventArgs {
+	a.TangentialPressure = &tangentialPressure
+	return a
+}
+
+// SetTiltX sets the TiltX optional argument. The plane angle between
+// the Y-Z plane and the plane containing both the stylus axis and the
+// Y axis, in degrees of the range [-90,90], a positive tiltX is to the
+// right (default: 0).
+//
+// Note: This property is experimental.
+func (a *DispatchMouseEventArgs) SetTiltX(tiltX int) *DispatchMouseEventArgs {
+	a.TiltX = &tiltX
+	return a
+}
+
+// SetTiltY sets the TiltY optional argument. The plane angle between
+// the X-Z plane and the plane containing both the stylus axis and the
+// X axis, in degrees of the range [-90,90], a positive tiltY is
+// towards the user (default: 0).
+//
+// Note: This property is experimental.
+func (a *DispatchMouseEventArgs) SetTiltY(tiltY int) *DispatchMouseEventArgs {
+	a.TiltY = &tiltY
+	return a
+}
+
+// SetTwist sets the Twist optional argument. The clockwise rotation
+// of a pen stylus around its own major axis, in degrees in the range
+// [0,359] (default: 0).
+//
+// Note: This property is experimental.
+func (a *DispatchMouseEventArgs) SetTwist(twist int) *DispatchMouseEventArgs {
+	a.Twist = &twist
 	return a
 }
 

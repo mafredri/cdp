@@ -22,12 +22,13 @@ type UnserializableValue string
 type RemoteObject struct {
 	// Type Object type.
 	//
-	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol", "bigint", "wasm".
+	// Values: "object", "function", "undefined", "string", "number", "boolean", "symbol", "bigint".
 	Type string `json:"type"`
-	// Subtype Object subtype hint. Specified for `object` or `wasm` type
-	// values only.
+	// Subtype Object subtype hint. Specified for `object` type values
+	// only. NOTE: If you change anything here, make sure to also update
+	// `subtype` in `ObjectPreview` and `PropertyPreview` below.
 	//
-	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview", "i32", "i64", "f32", "f64", "v128", "anyref".
+	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview", "webassemblymemory", "wasmvalue".
 	Subtype             *string              `json:"subtype,omitempty"`
 	ClassName           *string              `json:"className,omitempty"`           // Object class (constructor) name. Specified for `object` type values only.
 	Value               json.RawMessage      `json:"value,omitempty"`               // Remote object value in case of primitive values or JSON values (if it was requested).
@@ -64,7 +65,7 @@ type ObjectPreview struct {
 	// Subtype Object subtype hint. Specified for `object` type values
 	// only.
 	//
-	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error".
+	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview", "webassemblymemory", "wasmvalue".
 	Subtype     *string           `json:"subtype,omitempty"`
 	Description *string           `json:"description,omitempty"` // String representation of the object.
 	Overflow    bool              `json:"overflow"`              // True iff some of the properties or entries of the original object did not fit.
@@ -87,7 +88,7 @@ type PropertyPreview struct {
 	// Subtype Object subtype hint. Specified for `object` type values
 	// only.
 	//
-	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error".
+	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview", "webassemblymemory", "wasmvalue".
 	Subtype *string `json:"subtype,omitempty"`
 }
 
@@ -144,10 +145,17 @@ type ExecutionContextID int
 
 // ExecutionContextDescription Description of an isolated world.
 type ExecutionContextDescription struct {
-	ID      ExecutionContextID `json:"id"`                // Unique id of the execution context. It can be used to specify in which execution context script evaluation should be performed.
-	Origin  string             `json:"origin"`            // Execution context origin.
-	Name    string             `json:"name"`              // Human readable name describing given context.
-	AuxData json.RawMessage    `json:"auxData,omitempty"` // Embedder-specific auxiliary data.
+	ID     ExecutionContextID `json:"id"`     // Unique id of the execution context. It can be used to specify in which execution context script evaluation should be performed.
+	Origin string             `json:"origin"` // Execution context origin.
+	Name   string             `json:"name"`   // Human readable name describing given context.
+	// UniqueID A system-unique execution context identifier. Unlike the
+	// id, this is unique across multiple processes, so can be reliably
+	// used to identify specific context while backend performs a
+	// cross-process navigation.
+	//
+	// Note: This property is experimental.
+	UniqueID string          `json:"uniqueId"`
+	AuxData  json.RawMessage `json:"auxData,omitempty"` // Embedder-specific auxiliary data.
 }
 
 // ExceptionDetails Detailed information about exception (or error) that was

@@ -35,6 +35,9 @@ const (
 	PseudoTypeMarker              PseudoType = "marker"
 	PseudoTypeBackdrop            PseudoType = "backdrop"
 	PseudoTypeSelection           PseudoType = "selection"
+	PseudoTypeTargetText          PseudoType = "target-text"
+	PseudoTypeSpellingError       PseudoType = "spelling-error"
+	PseudoTypeGrammarError        PseudoType = "grammar-error"
 	PseudoTypeFirstLineInherited  PseudoType = "first-line-inherited"
 	PseudoTypeScrollbar           PseudoType = "scrollbar"
 	PseudoTypeScrollbarThumb      PseudoType = "scrollbar-thumb"
@@ -48,7 +51,7 @@ const (
 
 func (e PseudoType) Valid() bool {
 	switch e {
-	case "first-line", "first-letter", "before", "after", "marker", "backdrop", "selection", "first-line-inherited", "scrollbar", "scrollbar-thumb", "scrollbar-button", "scrollbar-track", "scrollbar-track-piece", "scrollbar-corner", "resizer", "input-list-button":
+	case "first-line", "first-letter", "before", "after", "marker", "backdrop", "selection", "target-text", "spelling-error", "grammar-error", "first-line-inherited", "scrollbar", "scrollbar-thumb", "scrollbar-button", "scrollbar-track", "scrollbar-track-piece", "scrollbar-corner", "resizer", "input-list-button":
 		return true
 	default:
 		return false
@@ -152,4 +155,10 @@ type Rect struct {
 	Y      float64 `json:"y"`      // Y coordinate
 	Width  float64 `json:"width"`  // Rectangle width
 	Height float64 `json:"height"` // Rectangle height
+}
+
+// CSSComputedStyleProperty
+type CSSComputedStyleProperty struct {
+	Name  string `json:"name"`  // Computed style property name.
+	Value string `json:"value"` // Computed style property value.
 }

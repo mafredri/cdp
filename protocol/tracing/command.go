@@ -21,7 +21,8 @@ func NewRecordClockSyncMarkerArgs(syncID string) *RecordClockSyncMarkerArgs {
 
 // RequestMemoryDumpArgs represents the arguments for RequestMemoryDump in the Tracing domain.
 type RequestMemoryDumpArgs struct {
-	Deterministic *bool `json:"deterministic,omitempty"` // Enables more deterministic results by forcing garbage collection
+	Deterministic *bool                   `json:"deterministic,omitempty"` // Enables more deterministic results by forcing garbage collection
+	LevelOfDetail MemoryDumpLevelOfDetail `json:"levelOfDetail,omitempty"` // Specifies level of details in memory dump. Defaults to "detailed".
 }
 
 // NewRequestMemoryDumpArgs initializes RequestMemoryDumpArgs with the required arguments.
@@ -35,6 +36,13 @@ func NewRequestMemoryDumpArgs() *RequestMemoryDumpArgs {
 // more deterministic results by forcing garbage collection
 func (a *RequestMemoryDumpArgs) SetDeterministic(deterministic bool) *RequestMemoryDumpArgs {
 	a.Deterministic = &deterministic
+	return a
+}
+
+// SetLevelOfDetail sets the LevelOfDetail optional argument.
+// Specifies level of details in memory dump. Defaults to "detailed".
+func (a *RequestMemoryDumpArgs) SetLevelOfDetail(levelOfDetail MemoryDumpLevelOfDetail) *RequestMemoryDumpArgs {
+	a.LevelOfDetail = levelOfDetail
 	return a
 }
 
@@ -64,6 +72,8 @@ type StartArgs struct {
 	StreamFormat      StreamFormat      `json:"streamFormat,omitempty"`      // Trace data format to use. This only applies when using `ReturnAsStream` transfer mode (defaults to `json`).
 	StreamCompression StreamCompression `json:"streamCompression,omitempty"` // Compression format to use. This only applies when using `ReturnAsStream` transfer mode (defaults to `none`)
 	TraceConfig       *TraceConfig      `json:"traceConfig,omitempty"`       // No description.
+	PerfettoConfig    []byte            `json:"perfettoConfig,omitempty"`    // Base64-encoded serialized perfetto.protos.TraceConfig protobuf message When specified, the parameters `categories`, `options`, `traceConfig` are ignored. (Encoded as a base64 string when passed over JSON)
+	TracingBackend    Backend           `json:"tracingBackend,omitempty"`    // Backend type (defaults to `auto`)
 }
 
 // NewStartArgs initializes StartArgs with the required arguments.
@@ -127,5 +137,22 @@ func (a *StartArgs) SetStreamCompression(streamCompression StreamCompression) *S
 // SetTraceConfig sets the TraceConfig optional argument.
 func (a *StartArgs) SetTraceConfig(traceConfig TraceConfig) *StartArgs {
 	a.TraceConfig = &traceConfig
+	return a
+}
+
+// SetPerfettoConfig sets the PerfettoConfig optional argument.
+// Base64-encoded serialized perfetto.protos.TraceConfig protobuf
+// message When specified, the parameters `categories`, `options`,
+// `traceConfig` are ignored. (Encoded as a base64 string when passed
+// over JSON)
+func (a *StartArgs) SetPerfettoConfig(perfettoConfig []byte) *StartArgs {
+	a.PerfettoConfig = perfettoConfig
+	return a
+}
+
+// SetTracingBackend sets the TracingBackend optional argument.
+// Backend type (defaults to `auto`)
+func (a *StartArgs) SetTracingBackend(tracingBackend Backend) *StartArgs {
+	a.TracingBackend = tracingBackend
 	return a
 }

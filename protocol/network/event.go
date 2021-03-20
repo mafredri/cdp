@@ -53,12 +53,13 @@ type LoadingFailedClient interface {
 
 // LoadingFailedReply is the reply for LoadingFailed events.
 type LoadingFailedReply struct {
-	RequestID     RequestID     `json:"requestId"`               // Request identifier.
-	Timestamp     MonotonicTime `json:"timestamp"`               // Timestamp.
-	Type          ResourceType  `json:"type"`                    // Resource type.
-	ErrorText     string        `json:"errorText"`               // User friendly error message.
-	Canceled      *bool         `json:"canceled,omitempty"`      // True if loading was canceled.
-	BlockedReason BlockedReason `json:"blockedReason,omitempty"` // The reason why loading was blocked, if any.
+	RequestID       RequestID        `json:"requestId"`                 // Request identifier.
+	Timestamp       MonotonicTime    `json:"timestamp"`                 // Timestamp.
+	Type            ResourceType     `json:"type"`                      // Resource type.
+	ErrorText       string           `json:"errorText"`                 // User friendly error message.
+	Canceled        *bool            `json:"canceled,omitempty"`        // True if loading was canceled.
+	BlockedReason   BlockedReason    `json:"blockedReason,omitempty"`   // The reason why loading was blocked, if any.
+	CORSErrorStatus *CORSErrorStatus `json:"corsErrorStatus,omitempty"` // The reason why loading was blocked by CORS, if any.
 }
 
 // LoadingFinishedClient is a client for LoadingFinished events. Fired when
@@ -304,6 +305,53 @@ type WebSocketWillSendHandshakeRequestReply struct {
 	Request   WebSocketRequest `json:"request"`   // WebSocket request data.
 }
 
+// WebTransportCreatedClient is a client for WebTransportCreated events. Fired
+// upon WebTransport creation.
+type WebTransportCreatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*WebTransportCreatedReply, error)
+	rpcc.Stream
+}
+
+// WebTransportCreatedReply is the reply for WebTransportCreated events.
+type WebTransportCreatedReply struct {
+	TransportID RequestID     `json:"transportId"`         // WebTransport identifier.
+	URL         string        `json:"url"`                 // WebTransport request URL.
+	Timestamp   MonotonicTime `json:"timestamp"`           // Timestamp.
+	Initiator   *Initiator    `json:"initiator,omitempty"` // Request initiator.
+}
+
+// WebTransportConnectionEstablishedClient is a client for WebTransportConnectionEstablished events.
+// Fired when WebTransport handshake is finished.
+type WebTransportConnectionEstablishedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*WebTransportConnectionEstablishedReply, error)
+	rpcc.Stream
+}
+
+// WebTransportConnectionEstablishedReply is the reply for WebTransportConnectionEstablished events.
+type WebTransportConnectionEstablishedReply struct {
+	TransportID RequestID     `json:"transportId"` // WebTransport identifier.
+	Timestamp   MonotonicTime `json:"timestamp"`   // Timestamp.
+}
+
+// WebTransportClosedClient is a client for WebTransportClosed events. Fired
+// when WebTransport is disposed.
+type WebTransportClosedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*WebTransportClosedReply, error)
+	rpcc.Stream
+}
+
+// WebTransportClosedReply is the reply for WebTransportClosed events.
+type WebTransportClosedReply struct {
+	TransportID RequestID     `json:"transportId"` // WebTransport identifier.
+	Timestamp   MonotonicTime `json:"timestamp"`   // Timestamp.
+}
+
 // RequestWillBeSentExtraInfoClient is a client for RequestWillBeSentExtraInfo events.
 // Fired when additional information about a requestWillBeSent event is
 // available from the network stack. Not every requestWillBeSent event will
@@ -319,9 +367,10 @@ type RequestWillBeSentExtraInfoClient interface {
 
 // RequestWillBeSentExtraInfoReply is the reply for RequestWillBeSentExtraInfo events.
 type RequestWillBeSentExtraInfoReply struct {
-	RequestID         RequestID                 `json:"requestId"`         // Request identifier. Used to match this information to an existing requestWillBeSent event.
-	AssociatedCookies []BlockedCookieWithReason `json:"associatedCookies"` // A list of cookies potentially associated to the requested URL. This includes both cookies sent with the request and the ones not sent; the latter are distinguished by having blockedReason field set.
-	Headers           Headers                   `json:"headers"`           // Raw request headers as they will be sent over the wire.
+	RequestID           RequestID                 `json:"requestId"`                     // Request identifier. Used to match this information to an existing requestWillBeSent event.
+	AssociatedCookies   []BlockedCookieWithReason `json:"associatedCookies"`             // A list of cookies potentially associated to the requested URL. This includes both cookies sent with the request and the ones not sent; the latter are distinguished by having blockedReason field set.
+	Headers             Headers                   `json:"headers"`                       // Raw request headers as they will be sent over the wire.
+	ClientSecurityState *ClientSecurityState      `json:"clientSecurityState,omitempty"` // The client security state set for the request.
 }
 
 // ResponseReceivedExtraInfoClient is a client for ResponseReceivedExtraInfo events.
@@ -338,8 +387,37 @@ type ResponseReceivedExtraInfoClient interface {
 
 // ResponseReceivedExtraInfoReply is the reply for ResponseReceivedExtraInfo events.
 type ResponseReceivedExtraInfoReply struct {
-	RequestID      RequestID                    `json:"requestId"`             // Request identifier. Used to match this information to another responseReceived event.
-	BlockedCookies []BlockedSetCookieWithReason `json:"blockedCookies"`        // A list of cookies which were not stored from the response along with the corresponding reasons for blocking. The cookies here may not be valid due to syntax errors, which are represented by the invalid cookie line string instead of a proper cookie.
-	Headers        Headers                      `json:"headers"`               // Raw response headers as they were received over the wire.
-	HeadersText    *string                      `json:"headersText,omitempty"` // Raw response header text as it was received over the wire. The raw text may not always be available, such as in the case of HTTP/2 or QUIC.
+	RequestID              RequestID                    `json:"requestId"`              // Request identifier. Used to match this information to another responseReceived event.
+	BlockedCookies         []BlockedSetCookieWithReason `json:"blockedCookies"`         // A list of cookies which were not stored from the response along with the corresponding reasons for blocking. The cookies here may not be valid due to syntax errors, which are represented by the invalid cookie line string instead of a proper cookie.
+	Headers                Headers                      `json:"headers"`                // Raw response headers as they were received over the wire.
+	ResourceIPAddressSpace IPAddressSpace               `json:"resourceIPAddressSpace"` // The IP address space of the resource. The address space can only be determined once the transport established the connection, so we can't send it in `requestWillBeSentExtraInfo`.
+	HeadersText            *string                      `json:"headersText,omitempty"`  // Raw response header text as it was received over the wire. The raw text may not always be available, such as in the case of HTTP/2 or QUIC.
+}
+
+// TrustTokenOperationDoneClient is a client for TrustTokenOperationDone events.
+// Fired exactly once for each Trust Token operation. Depending on the type of
+// the operation and whether the operation succeeded or failed, the event is
+// fired before the corresponding request was sent or after the response was
+// received.
+type TrustTokenOperationDoneClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*TrustTokenOperationDoneReply, error)
+	rpcc.Stream
+}
+
+// TrustTokenOperationDoneReply is the reply for TrustTokenOperationDone events.
+type TrustTokenOperationDoneReply struct {
+	// Status Detailed success or error status of the operation.
+	// 'AlreadyExists' also signifies a successful operation, as the result
+	// of the operation already exists und thus, the operation was abort
+	// preemptively (e.g. a cache hit).
+	//
+	// Values: "Ok", "InvalidArgument", "FailedPrecondition", "ResourceExhausted", "AlreadyExists", "Unavailable", "BadResponse", "InternalError", "UnknownError", "FulfilledLocally".
+	Status           string                  `json:"status"`
+	Type             TrustTokenOperationType `json:"type"`                       // No description.
+	RequestID        RequestID               `json:"requestId"`                  // No description.
+	TopLevelOrigin   *string                 `json:"topLevelOrigin,omitempty"`   // Top level origin. The context in which the operation was attempted.
+	IssuerOrigin     *string                 `json:"issuerOrigin,omitempty"`     // Origin of the issuer in case of a "Issuance" or "Redemption" operation.
+	IssuedTokenCount *int                    `json:"issuedTokenCount,omitempty"` // The number of obtained Trust Tokens on a successful "Issuance" operation.
 }

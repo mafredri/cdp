@@ -379,6 +379,20 @@ func (d *domainClient) SetExtraHTTPHeaders(ctx context.Context, args *SetExtraHT
 	return
 }
 
+// SetAttachDebugStack invokes the Network method. Specifies whether to attach
+// a page script stack id in requests
+func (d *domainClient) SetAttachDebugStack(ctx context.Context, args *SetAttachDebugStackArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.setAttachDebugStack", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.setAttachDebugStack", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "SetAttachDebugStack", Err: err}
+	}
+	return
+}
+
 // SetRequestInterception invokes the Network method. Sets the requests to
 // intercept that match the provided patterns and optionally resource types.
 // Deprecated, please use Fetch.enable instead.
@@ -390,6 +404,36 @@ func (d *domainClient) SetRequestInterception(ctx context.Context, args *SetRequ
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "SetRequestInterception", Err: err}
+	}
+	return
+}
+
+// GetSecurityIsolationStatus invokes the Network method. Returns information
+// about the COEP/COOP isolation status.
+func (d *domainClient) GetSecurityIsolationStatus(ctx context.Context, args *GetSecurityIsolationStatusArgs) (reply *GetSecurityIsolationStatusReply, err error) {
+	reply = new(GetSecurityIsolationStatusReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.getSecurityIsolationStatus", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.getSecurityIsolationStatus", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "GetSecurityIsolationStatus", Err: err}
+	}
+	return
+}
+
+// LoadNetworkResource invokes the Network method. Fetches the resource and
+// returns the content.
+func (d *domainClient) LoadNetworkResource(ctx context.Context, args *LoadNetworkResourceArgs) (reply *LoadNetworkResourceReply, err error) {
+	reply = new(LoadNetworkResourceReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.loadNetworkResource", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.loadNetworkResource", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "LoadNetworkResource", Err: err}
 	}
 	return
 }
@@ -751,6 +795,69 @@ func (c *webSocketWillSendHandshakeRequestClient) Recv() (*WebSocketWillSendHand
 	return event, nil
 }
 
+func (d *domainClient) WebTransportCreated(ctx context.Context) (WebTransportCreatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.webTransportCreated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &webTransportCreatedClient{Stream: s}, nil
+}
+
+type webTransportCreatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webTransportCreatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *webTransportCreatedClient) Recv() (*WebTransportCreatedReply, error) {
+	event := new(WebTransportCreatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "WebTransportCreated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) WebTransportConnectionEstablished(ctx context.Context) (WebTransportConnectionEstablishedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.webTransportConnectionEstablished", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &webTransportConnectionEstablishedClient{Stream: s}, nil
+}
+
+type webTransportConnectionEstablishedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webTransportConnectionEstablishedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *webTransportConnectionEstablishedClient) Recv() (*WebTransportConnectionEstablishedReply, error) {
+	event := new(WebTransportConnectionEstablishedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "WebTransportConnectionEstablished Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) WebTransportClosed(ctx context.Context) (WebTransportClosedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.webTransportClosed", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &webTransportClosedClient{Stream: s}, nil
+}
+
+type webTransportClosedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *webTransportClosedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *webTransportClosedClient) Recv() (*WebTransportClosedReply, error) {
+	event := new(WebTransportClosedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "WebTransportClosed Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) RequestWillBeSentExtraInfo(ctx context.Context) (RequestWillBeSentExtraInfoClient, error) {
 	s, err := rpcc.NewStream(ctx, "Network.requestWillBeSentExtraInfo", d.conn)
 	if err != nil {
@@ -789,6 +896,27 @@ func (c *responseReceivedExtraInfoClient) Recv() (*ResponseReceivedExtraInfoRepl
 	event := new(ResponseReceivedExtraInfoReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Network", Op: "ResponseReceivedExtraInfo Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) TrustTokenOperationDone(ctx context.Context) (TrustTokenOperationDoneClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.trustTokenOperationDone", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &trustTokenOperationDoneClient{Stream: s}, nil
+}
+
+type trustTokenOperationDoneClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *trustTokenOperationDoneClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *trustTokenOperationDoneClient) Recv() (*TrustTokenOperationDoneReply, error) {
+	event := new(TrustTokenOperationDoneReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "TrustTokenOperationDone Recv", Err: err}
 	}
 	return event, nil
 }

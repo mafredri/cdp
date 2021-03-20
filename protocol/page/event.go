@@ -89,6 +89,12 @@ type FrameDetachedClient interface {
 // FrameDetachedReply is the reply for FrameDetached events.
 type FrameDetachedReply struct {
 	FrameID FrameID `json:"frameId"` // Id of the frame that has been detached.
+	// Reason
+	//
+	// Values: "remove", "swap".
+	//
+	// Note: This property is experimental.
+	Reason string `json:"reason"`
 }
 
 // FrameNavigatedClient is a client for FrameNavigated events. Fired once
@@ -103,6 +109,20 @@ type FrameNavigatedClient interface {
 
 // FrameNavigatedReply is the reply for FrameNavigated events.
 type FrameNavigatedReply struct {
+	Frame Frame `json:"frame"` // Frame object.
+}
+
+// DocumentOpenedClient is a client for DocumentOpened events. Fired when
+// opening document to write to.
+type DocumentOpenedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DocumentOpenedReply, error)
+	rpcc.Stream
+}
+
+// DocumentOpenedReply is the reply for DocumentOpened events.
+type DocumentOpenedReply struct {
 	Frame Frame `json:"frame"` // Frame object.
 }
 
@@ -336,7 +356,7 @@ type ScreencastFrameClient interface {
 
 // ScreencastFrameReply is the reply for ScreencastFrame events.
 type ScreencastFrameReply struct {
-	Data      []byte                  `json:"data"`      // Base64-encoded compressed image.
+	Data      []byte                  `json:"data"`      // Base64-encoded compressed image. (Encoded as a base64 string when passed over JSON)
 	Metadata  ScreencastFrameMetadata `json:"metadata"`  // Screencast frame metadata.
 	SessionID int                     `json:"sessionId"` // Frame number.
 }
@@ -385,5 +405,5 @@ type CompilationCacheProducedClient interface {
 // CompilationCacheProducedReply is the reply for CompilationCacheProduced events.
 type CompilationCacheProducedReply struct {
 	URL  string `json:"url"`  // No description.
-	Data []byte `json:"data"` // Base64-encoded data
+	Data []byte `json:"data"` // Base64-encoded data (Encoded as a base64 string when passed over JSON)
 }

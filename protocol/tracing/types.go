@@ -93,3 +93,58 @@ func (e StreamCompression) Valid() bool {
 func (e StreamCompression) String() string {
 	return string(e)
 }
+
+// MemoryDumpLevelOfDetail Details exposed when memory request explicitly
+// declared. Keep consistent with memory_dump_request_args.h and
+// memory_instrumentation.mojom
+type MemoryDumpLevelOfDetail string
+
+// MemoryDumpLevelOfDetail as enums.
+const (
+	MemoryDumpLevelOfDetailNotSet     MemoryDumpLevelOfDetail = ""
+	MemoryDumpLevelOfDetailBackground MemoryDumpLevelOfDetail = "background"
+	MemoryDumpLevelOfDetailLight      MemoryDumpLevelOfDetail = "light"
+	MemoryDumpLevelOfDetailDetailed   MemoryDumpLevelOfDetail = "detailed"
+)
+
+func (e MemoryDumpLevelOfDetail) Valid() bool {
+	switch e {
+	case "background", "light", "detailed":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e MemoryDumpLevelOfDetail) String() string {
+	return string(e)
+}
+
+// Backend Backend type to use for tracing. `chrome` uses the
+// Chrome-integrated tracing service and is supported on all platforms.
+// `system` is only supported on Chrome OS and uses the Perfetto system tracing
+// service. `auto` chooses `system` when the perfettoConfig provided to
+// Tracing.start specifies at least one non-Chrome data source; otherwise uses
+// `chrome`.
+type Backend string
+
+// Backend as enums.
+const (
+	BackendNotSet Backend = ""
+	BackendAuto   Backend = "auto"
+	BackendChrome Backend = "chrome"
+	BackendSystem Backend = "system"
+)
+
+func (e Backend) Valid() bool {
+	switch e {
+	case "auto", "chrome", "system":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e Backend) String() string {
+	return string(e)
+}

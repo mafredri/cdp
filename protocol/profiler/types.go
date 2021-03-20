@@ -86,3 +86,12 @@ type CounterInfo struct {
 	Name  string `json:"name"`  // Counter name.
 	Value int    `json:"value"` // Counter value.
 }
+
+// RuntimeCallCounterInfo Runtime call counter information.
+//
+// Note: This type is experimental.
+type RuntimeCallCounterInfo struct {
+	Name  string  `json:"name"`  // Counter name.
+	Value float64 `json:"value"` // Counter value.
+	Time  float64 `json:"time"`  // Counter time in seconds.
+}

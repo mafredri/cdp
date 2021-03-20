@@ -57,7 +57,100 @@ type GetPartialAXTreeReply struct {
 	Nodes []AXNode `json:"nodes"` // The `Accessibility.AXNode` for this DOM node, if it exists, plus its ancestors, siblings and children, if requested.
 }
 
+// GetFullAXTreeArgs represents the arguments for GetFullAXTree in the Accessibility domain.
+type GetFullAXTreeArgs struct {
+	MaxDepth *int `json:"max_depth,omitempty"` // The maximum depth at which descendants of the root node should be retrieved. If omitted, the full tree is returned.
+}
+
+// NewGetFullAXTreeArgs initializes GetFullAXTreeArgs with the required arguments.
+func NewGetFullAXTreeArgs() *GetFullAXTreeArgs {
+	args := new(GetFullAXTreeArgs)
+
+	return args
+}
+
+// SetMaxDepth sets the MaxDepth optional argument. The maximum depth
+// at which descendants of the root node should be retrieved. If
+// omitted, the full tree is returned.
+func (a *GetFullAXTreeArgs) SetMaxDepth(maxDepth int) *GetFullAXTreeArgs {
+	a.MaxDepth = &maxDepth
+	return a
+}
+
 // GetFullAXTreeReply represents the return values for GetFullAXTree in the Accessibility domain.
 type GetFullAXTreeReply struct {
 	Nodes []AXNode `json:"nodes"` // No description.
+}
+
+// GetChildAXNodesArgs represents the arguments for GetChildAXNodes in the Accessibility domain.
+type GetChildAXNodesArgs struct {
+	ID AXNodeID `json:"id"` // No description.
+}
+
+// NewGetChildAXNodesArgs initializes GetChildAXNodesArgs with the required arguments.
+func NewGetChildAXNodesArgs(id AXNodeID) *GetChildAXNodesArgs {
+	args := new(GetChildAXNodesArgs)
+	args.ID = id
+	return args
+}
+
+// GetChildAXNodesReply represents the return values for GetChildAXNodes in the Accessibility domain.
+type GetChildAXNodesReply struct {
+	Nodes []AXNode `json:"nodes"` // No description.
+}
+
+// QueryAXTreeArgs represents the arguments for QueryAXTree in the Accessibility domain.
+type QueryAXTreeArgs struct {
+	NodeID         *dom.NodeID             `json:"nodeId,omitempty"`         // Identifier of the node for the root to query.
+	BackendNodeID  *dom.BackendNodeID      `json:"backendNodeId,omitempty"`  // Identifier of the backend node for the root to query.
+	ObjectID       *runtime.RemoteObjectID `json:"objectId,omitempty"`       // JavaScript object id of the node wrapper for the root to query.
+	AccessibleName *string                 `json:"accessibleName,omitempty"` // Find nodes with this computed name.
+	Role           *string                 `json:"role,omitempty"`           // Find nodes with this computed role.
+}
+
+// NewQueryAXTreeArgs initializes QueryAXTreeArgs with the required arguments.
+func NewQueryAXTreeArgs() *QueryAXTreeArgs {
+	args := new(QueryAXTreeArgs)
+
+	return args
+}
+
+// SetNodeID sets the NodeID optional argument. Identifier of the node
+// for the root to query.
+func (a *QueryAXTreeArgs) SetNodeID(nodeID dom.NodeID) *QueryAXTreeArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument.
+// Identifier of the backend node for the root to query.
+func (a *QueryAXTreeArgs) SetBackendNodeID(backendNodeID dom.BackendNodeID) *QueryAXTreeArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
+}
+
+// SetObjectID sets the ObjectID optional argument. JavaScript object
+// id of the node wrapper for the root to query.
+func (a *QueryAXTreeArgs) SetObjectID(objectID runtime.RemoteObjectID) *QueryAXTreeArgs {
+	a.ObjectID = &objectID
+	return a
+}
+
+// SetAccessibleName sets the AccessibleName optional argument. Find
+// nodes with this computed name.
+func (a *QueryAXTreeArgs) SetAccessibleName(accessibleName string) *QueryAXTreeArgs {
+	a.AccessibleName = &accessibleName
+	return a
+}
+
+// SetRole sets the Role optional argument. Find nodes with this
+// computed role.
+func (a *QueryAXTreeArgs) SetRole(role string) *QueryAXTreeArgs {
+	a.Role = &role
+	return a
+}
+
+// QueryAXTreeReply represents the return values for QueryAXTree in the Accessibility domain.
+type QueryAXTreeReply struct {
+	Nodes []AXNode `json:"nodes"` // A list of `Accessibility.AXNode` matching the specified attributes, including nodes that are ignored for accessibility.
 }

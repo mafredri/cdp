@@ -12,7 +12,7 @@ type CachedResponseType string
 const (
 	CachedResponseTypeNotSet         CachedResponseType = ""
 	CachedResponseTypeBasic          CachedResponseType = "basic"
-	CachedResponseTypeCors           CachedResponseType = "cors"
+	CachedResponseTypeCORS           CachedResponseType = "cors"
 	CachedResponseTypeDefault        CachedResponseType = "default"
 	CachedResponseTypeError          CachedResponseType = "error"
 	CachedResponseTypeOpaqueResponse CachedResponseType = "opaqueResponse"
@@ -59,5 +59,5 @@ type Header struct {
 
 // CachedResponse Cached response
 type CachedResponse struct {
-	Body string `json:"body"` // Entry content, base64-encoded.
+	Body []byte `json:"body"` // Entry content, base64-encoded. (Encoded as a base64 string when passed over JSON)
 }

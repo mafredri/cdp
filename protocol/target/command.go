@@ -64,7 +64,11 @@ func NewCloseTargetArgs(targetID ID) *CloseTargetArgs {
 
 // CloseTargetReply represents the return values for CloseTarget in the Target domain.
 type CloseTargetReply struct {
-	Success bool `json:"success"` // No description.
+	// Success is deprecated.
+	//
+	// Deprecated: Always set to true. If an error occurs, the response
+	// indicates protocol error.
+	Success bool `json:"success"`
 }
 
 // ExposeDevToolsProtocolArgs represents the arguments for ExposeDevToolsProtocol in the Target domain.
@@ -89,7 +93,9 @@ func (a *ExposeDevToolsProtocolArgs) SetBindingName(bindingName string) *ExposeD
 
 // CreateBrowserContextArgs represents the arguments for CreateBrowserContext in the Target domain.
 type CreateBrowserContextArgs struct {
-	DisposeOnDetach *bool `json:"disposeOnDetach,omitempty"` // If specified, disposes this context when debugging session disconnects.
+	DisposeOnDetach *bool   `json:"disposeOnDetach,omitempty"` // If specified, disposes this context when debugging session disconnects.
+	ProxyServer     *string `json:"proxyServer,omitempty"`     // Proxy server, similar to the one passed to --proxy-server
+	ProxyBypassList *string `json:"proxyBypassList,omitempty"` // Proxy bypass list, similar to the one passed to --proxy-bypass-list
 }
 
 // NewCreateBrowserContextArgs initializes CreateBrowserContextArgs with the required arguments.
@@ -106,6 +112,20 @@ func (a *CreateBrowserContextArgs) SetDisposeOnDetach(disposeOnDetach bool) *Cre
 	return a
 }
 
+// SetProxyServer sets the ProxyServer optional argument. Proxy
+// server, similar to the one passed to --proxy-server
+func (a *CreateBrowserContextArgs) SetProxyServer(proxyServer string) *CreateBrowserContextArgs {
+	a.ProxyServer = &proxyServer
+	return a
+}
+
+// SetProxyBypassList sets the ProxyBypassList optional argument.
+// Proxy bypass list, similar to the one passed to --proxy-bypass-list
+func (a *CreateBrowserContextArgs) SetProxyBypassList(proxyBypassList string) *CreateBrowserContextArgs {
+	a.ProxyBypassList = &proxyBypassList
+	return a
+}
+
 // CreateBrowserContextReply represents the return values for CreateBrowserContext in the Target domain.
 type CreateBrowserContextReply struct {
 	BrowserContextID internal.BrowserContextID `json:"browserContextId"` // The id of the context created.
@@ -118,7 +138,7 @@ type GetBrowserContextsReply struct {
 
 // CreateTargetArgs represents the arguments for CreateTarget in the Target domain.
 type CreateTargetArgs struct {
-	URL              string                     `json:"url"`                        // The initial URL the page will be navigated to.
+	URL              string                     `json:"url"`                        // The initial URL the page will be navigated to. An empty string indicates about:blank.
 	Width            *int                       `json:"width,omitempty"`            // Frame width in DIP (headless chrome only).
 	Height           *int                       `json:"height,omitempty"`           // Frame height in DIP (headless chrome only).
 	BrowserContextID *internal.BrowserContextID `json:"browserContextId,omitempty"` // The browser context to create the page in.

@@ -12,8 +12,6 @@ type RequestID string
 // RequestStage Stages of the request to handle. Request will intercept before
 // the request is sent. Response will intercept after the response is received
 // (but before response body is received.
-//
-// Note: This type is experimental.
 type RequestStage string
 
 // RequestStage as enums.
@@ -37,8 +35,6 @@ func (e RequestStage) String() string {
 }
 
 // RequestPattern
-//
-// Note: This type is experimental.
 type RequestPattern struct {
 	URLPattern   *string               `json:"urlPattern,omitempty"`   // Wildcards ('*' -> zero or more, '?' -> exactly one) are allowed. Escape character is backslash. Omitting is equivalent to "*".
 	ResourceType *network.ResourceType `json:"resourceType,omitempty"` // If set, only requests for matching resource types will be intercepted.
@@ -52,8 +48,6 @@ type HeaderEntry struct {
 }
 
 // AuthChallenge Authorization challenge for HTTP status code 401 or 407.
-//
-// Note: This type is experimental.
 type AuthChallenge struct {
 	// Source Source of the authentication challenge.
 	//
@@ -65,8 +59,6 @@ type AuthChallenge struct {
 }
 
 // AuthChallengeResponse Response to an AuthChallenge.
-//
-// Note: This type is experimental.
 type AuthChallengeResponse struct {
 	// Response The decision on what to do in response to the
 	// authorization challenge. Default means deferring to the default

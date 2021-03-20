@@ -39,3 +39,12 @@ type UsageForType struct {
 	StorageType Type    `json:"storageType"` // Name of storage type.
 	Usage       float64 `json:"usage"`       // Storage usage (bytes).
 }
+
+// TrustTokens Pair of issuer origin and number of available (signed, but not
+// used) Trust Tokens from that issuer.
+//
+// Note: This type is experimental.
+type TrustTokens struct {
+	IssuerOrigin string  `json:"issuerOrigin"` // No description.
+	Count        float64 `json:"count"`        // No description.
+}
