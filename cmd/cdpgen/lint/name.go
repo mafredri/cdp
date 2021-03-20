@@ -26,8 +26,10 @@ func init() {
 	lint.SetInitialism("RP", true) // RPID => Relaying Party (ID).
 	lint.SetInitialism("JPEG", true)
 	lint.SetInitialism("WEBP", true)
+	lint.SetInitialism("AVIF", true)
 	lint.SetInitialism("RGB", true)
 	lint.SetInitialism("HSL", true)
+	lint.SetInitialism("CORS", true)
 }
 
 // Name returns a different name if it should be different.

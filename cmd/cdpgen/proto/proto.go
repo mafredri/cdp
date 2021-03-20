@@ -283,6 +283,9 @@ func (at AnyType) getType(pkg string) string {
 	if at.Type == "string" && strings.HasPrefix(at.Description, "Base64-encoded") {
 		return "base64"
 	}
+	if at.Type == "string" && strings.Contains(at.Description, "Encoded as a base64 string when passed over JSON") {
+		return "base64"
+	}
 	if at.Type == "object" && len(at.Properties) == 0 {
 		if at.IDName != "" {
 			return "raw"
