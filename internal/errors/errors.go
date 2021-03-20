@@ -50,8 +50,8 @@ func (e *wrapped) Error() string { return fmt.Sprintf("%s: %s", e.msg, e.err.Err
 func (e *wrapped) Cause() error  { return e.err }
 func (e *wrapped) Unwrap() error { return e.err }
 
-// Merge merges multiple errors into one.
-// Merge returns nil if all errors are nil.
+// Merge errors into one, nil errors are discarded
+// and returns nil if all errors are nil.
 func Merge(err ...error) error {
 	var errs []error
 	for _, e := range err {
@@ -74,22 +74,25 @@ var _ causer = (*merged)(nil)
 var _ wrapper = (*merged)(nil)
 
 func (e *merged) Error() string {
-	var m []string
-	for _, err := range e.s {
-		m = append(m, err.Error())
+	var s strings.Builder
+	for i, err := range e.s {
+		if i > 0 {
+			s.WriteString(": ")
+		}
+		s.WriteString(err.Error())
 	}
-	return strings.Join(m, ": ")
+	return s.String()
 }
 
 // Unwrap returns only the first error, there is
 // no way to create a queue of errors.
 func (e *merged) Unwrap() error { return e.s[0] }
 
-// Cause returns only the first error, there is
+// Cause returns only the first error as there is
 // no way to create a queue of errors.
 func (e *merged) Cause() error { return e.s[0] }
 
-// Is runs errors.Is on all merged errors.
+// Is does errors.Is on all merged errors.
 func (e *merged) Is(target error) bool {
 	if target == nil {
 		return nil == e.s
@@ -102,7 +105,7 @@ func (e *merged) Is(target error) bool {
 	return false
 }
 
-// As runs errors.As on all merged errors.
+// As does errors.As on all merged errors.
 func (e *merged) As(target interface{}) bool {
 	for _, err := range e.s {
 		if As(err, target) {
