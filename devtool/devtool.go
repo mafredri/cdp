@@ -283,7 +283,12 @@ func (d *DevTools) resolveHost(ctx context.Context) error {
 		}
 
 		resp, err := d.client.Do(req.WithContext(ctx))
-		if err == nil && resp.StatusCode == 200 {
+		if err != nil {
+			continue
+		}
+		defer resp.Body.Close()
+		
+		if resp.StatusCode == 200 {
 			newURL = try
 			break
 		}
