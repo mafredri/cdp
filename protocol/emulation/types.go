@@ -90,12 +90,13 @@ type DisabledImageType string
 const (
 	DisabledImageTypeNotSet DisabledImageType = ""
 	DisabledImageTypeAVIF   DisabledImageType = "avif"
+	DisabledImageTypeJXL    DisabledImageType = "jxl"
 	DisabledImageTypeWEBP   DisabledImageType = "webp"
 )
 
 func (e DisabledImageType) Valid() bool {
 	switch e {
-	case "avif", "webp":
+	case "avif", "jxl", "webp":
 		return true
 	default:
 		return false

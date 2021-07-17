@@ -39,11 +39,12 @@ const (
 	SameSiteCookieExclusionReasonExcludeSameSiteNoneInsecure            SameSiteCookieExclusionReason = "ExcludeSameSiteNoneInsecure"
 	SameSiteCookieExclusionReasonExcludeSameSiteLax                     SameSiteCookieExclusionReason = "ExcludeSameSiteLax"
 	SameSiteCookieExclusionReasonExcludeSameSiteStrict                  SameSiteCookieExclusionReason = "ExcludeSameSiteStrict"
+	SameSiteCookieExclusionReasonExcludeInvalidSameParty                SameSiteCookieExclusionReason = "ExcludeInvalidSameParty"
 )
 
 func (e SameSiteCookieExclusionReason) Valid() bool {
 	switch e {
-	case "ExcludeSameSiteUnspecifiedTreatedAsLax", "ExcludeSameSiteNoneInsecure", "ExcludeSameSiteLax", "ExcludeSameSiteStrict":
+	case "ExcludeSameSiteUnspecifiedTreatedAsLax", "ExcludeSameSiteNoneInsecure", "ExcludeSameSiteLax", "ExcludeSameSiteStrict", "ExcludeInvalidSameParty":
 		return true
 	default:
 		return false
@@ -110,7 +111,8 @@ func (e SameSiteCookieOperation) String() string {
 // front-end has a difficult time finding a specific cookie. With this, we can
 // convey specific error information without the cookie.
 type SameSiteCookieIssueDetails struct {
-	Cookie                 AffectedCookie                  `json:"cookie"`                   // No description.
+	Cookie                 *AffectedCookie                 `json:"cookie,omitempty"`         // If AffectedCookie is not set then rawCookieLine contains the raw Set-Cookie header string. This hints at a problem where the cookie line is syntactically or semantically malformed in a way that no valid cookie could be created.
+	RawCookieLine          *string                         `json:"rawCookieLine,omitempty"`  // No description.
 	CookieWarningReasons   []SameSiteCookieWarningReason   `json:"cookieWarningReasons"`     // No description.
 	CookieExclusionReasons []SameSiteCookieExclusionReason `json:"cookieExclusionReasons"`   // No description.
 	Operation              SameSiteCookieOperation         `json:"operation"`                // Optionally identifies the site-for-cookies and the cookie url, which may be used by the front-end as additional context.
@@ -418,8 +420,71 @@ type CORSIssueDetails struct {
 	CORSErrorStatus        network.CORSErrorStatus      `json:"corsErrorStatus"`                  // No description.
 	IsWarning              bool                         `json:"isWarning"`                        // No description.
 	Request                AffectedRequest              `json:"request"`                          // No description.
+	Location               *SourceCodeLocation          `json:"location,omitempty"`               // No description.
+	InitiatorOrigin        *string                      `json:"initiatorOrigin,omitempty"`        // No description.
 	ResourceIPAddressSpace *network.IPAddressSpace      `json:"resourceIPAddressSpace,omitempty"` // No description.
 	ClientSecurityState    *network.ClientSecurityState `json:"clientSecurityState,omitempty"`    // No description.
+}
+
+// AttributionReportingIssueType
+type AttributionReportingIssueType string
+
+// AttributionReportingIssueType as enums.
+const (
+	AttributionReportingIssueTypeNotSet                               AttributionReportingIssueType = ""
+	AttributionReportingIssueTypePermissionPolicyDisabled             AttributionReportingIssueType = "PermissionPolicyDisabled"
+	AttributionReportingIssueTypeInvalidAttributionSourceEventID      AttributionReportingIssueType = "InvalidAttributionSourceEventId"
+	AttributionReportingIssueTypeInvalidAttributionData               AttributionReportingIssueType = "InvalidAttributionData"
+	AttributionReportingIssueTypeAttributionSourceUntrustworthyOrigin AttributionReportingIssueType = "AttributionSourceUntrustworthyOrigin"
+	AttributionReportingIssueTypeAttributionUntrustworthyOrigin       AttributionReportingIssueType = "AttributionUntrustworthyOrigin"
+)
+
+func (e AttributionReportingIssueType) Valid() bool {
+	switch e {
+	case "PermissionPolicyDisabled", "InvalidAttributionSourceEventId", "InvalidAttributionData", "AttributionSourceUntrustworthyOrigin", "AttributionUntrustworthyOrigin":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e AttributionReportingIssueType) String() string {
+	return string(e)
+}
+
+// AttributionReportingIssueDetails Details for issues around "Attribution
+// Reporting API" usage. Explainer:
+// https://github.com/WICG/conversion-measurement-api
+type AttributionReportingIssueDetails struct {
+	ViolationType    AttributionReportingIssueType `json:"violationType"`              // No description.
+	Frame            *AffectedFrame                `json:"frame,omitempty"`            // No description.
+	Request          *AffectedRequest              `json:"request,omitempty"`          // No description.
+	ViolatingNodeID  *dom.BackendNodeID            `json:"violatingNodeId,omitempty"`  // No description.
+	InvalidParameter *string                       `json:"invalidParameter,omitempty"` // No description.
+}
+
+// QuirksModeIssueDetails Details for issues about documents in Quirks Mode or
+// Limited Quirks Mode that affects page layouting.
+type QuirksModeIssueDetails struct {
+	IsLimitedQuirksMode bool              `json:"isLimitedQuirksMode"` // If false, it means the document's mode is "quirks" instead of "limited-quirks".
+	DocumentNodeID      dom.BackendNodeID `json:"documentNodeId"`      // No description.
+	URL                 string            `json:"url"`                 // No description.
+	FrameID             page.FrameID      `json:"frameId"`             // No description.
+	LoaderID            network.LoaderID  `json:"loaderId"`            // No description.
+}
+
+// NavigatorUserAgentIssueDetails
+type NavigatorUserAgentIssueDetails struct {
+	URL      string              `json:"url"`                // No description.
+	Location *SourceCodeLocation `json:"location,omitempty"` // No description.
+}
+
+// WASMCrossOriginModuleSharingIssueDetails
+type WASMCrossOriginModuleSharingIssueDetails struct {
+	WASMModuleURL string `json:"wasmModuleUrl"` // No description.
+	SourceOrigin  string `json:"sourceOrigin"`  // No description.
+	TargetOrigin  string `json:"targetOrigin"`  // No description.
+	IsWarning     bool   `json:"isWarning"`     // No description.
 }
 
 // InspectorIssueCode A unique identifier for the type of issue. Each type may
@@ -429,21 +494,25 @@ type InspectorIssueCode string
 
 // InspectorIssueCode as enums.
 const (
-	InspectorIssueCodeNotSet                     InspectorIssueCode = ""
-	InspectorIssueCodeSameSiteCookieIssue        InspectorIssueCode = "SameSiteCookieIssue"
-	InspectorIssueCodeMixedContentIssue          InspectorIssueCode = "MixedContentIssue"
-	InspectorIssueCodeBlockedByResponseIssue     InspectorIssueCode = "BlockedByResponseIssue"
-	InspectorIssueCodeHeavyAdIssue               InspectorIssueCode = "HeavyAdIssue"
-	InspectorIssueCodeContentSecurityPolicyIssue InspectorIssueCode = "ContentSecurityPolicyIssue"
-	InspectorIssueCodeSharedArrayBufferIssue     InspectorIssueCode = "SharedArrayBufferIssue"
-	InspectorIssueCodeTrustedWebActivityIssue    InspectorIssueCode = "TrustedWebActivityIssue"
-	InspectorIssueCodeLowTextContrastIssue       InspectorIssueCode = "LowTextContrastIssue"
-	InspectorIssueCodeCORSIssue                  InspectorIssueCode = "CorsIssue"
+	InspectorIssueCodeNotSet                            InspectorIssueCode = ""
+	InspectorIssueCodeSameSiteCookieIssue               InspectorIssueCode = "SameSiteCookieIssue"
+	InspectorIssueCodeMixedContentIssue                 InspectorIssueCode = "MixedContentIssue"
+	InspectorIssueCodeBlockedByResponseIssue            InspectorIssueCode = "BlockedByResponseIssue"
+	InspectorIssueCodeHeavyAdIssue                      InspectorIssueCode = "HeavyAdIssue"
+	InspectorIssueCodeContentSecurityPolicyIssue        InspectorIssueCode = "ContentSecurityPolicyIssue"
+	InspectorIssueCodeSharedArrayBufferIssue            InspectorIssueCode = "SharedArrayBufferIssue"
+	InspectorIssueCodeTrustedWebActivityIssue           InspectorIssueCode = "TrustedWebActivityIssue"
+	InspectorIssueCodeLowTextContrastIssue              InspectorIssueCode = "LowTextContrastIssue"
+	InspectorIssueCodeCORSIssue                         InspectorIssueCode = "CorsIssue"
+	InspectorIssueCodeAttributionReportingIssue         InspectorIssueCode = "AttributionReportingIssue"
+	InspectorIssueCodeQuirksModeIssue                   InspectorIssueCode = "QuirksModeIssue"
+	InspectorIssueCodeNavigatorUserAgentIssue           InspectorIssueCode = "NavigatorUserAgentIssue"
+	InspectorIssueCodeWASMCrossOriginModuleSharingIssue InspectorIssueCode = "WasmCrossOriginModuleSharingIssue"
 )
 
 func (e InspectorIssueCode) Valid() bool {
 	switch e {
-	case "SameSiteCookieIssue", "MixedContentIssue", "BlockedByResponseIssue", "HeavyAdIssue", "ContentSecurityPolicyIssue", "SharedArrayBufferIssue", "TrustedWebActivityIssue", "LowTextContrastIssue", "CorsIssue":
+	case "SameSiteCookieIssue", "MixedContentIssue", "BlockedByResponseIssue", "HeavyAdIssue", "ContentSecurityPolicyIssue", "SharedArrayBufferIssue", "TrustedWebActivityIssue", "LowTextContrastIssue", "CorsIssue", "AttributionReportingIssue", "QuirksModeIssue", "NavigatorUserAgentIssue", "WasmCrossOriginModuleSharingIssue":
 		return true
 	default:
 		return false
@@ -458,19 +527,29 @@ func (e InspectorIssueCode) String() string {
 // additional information specific to the kind of issue. When adding a new
 // issue code, please also add a new optional field to this type.
 type InspectorIssueDetails struct {
-	SameSiteCookieIssueDetails        *SameSiteCookieIssueDetails        `json:"sameSiteCookieIssueDetails,omitempty"`        // No description.
-	MixedContentIssueDetails          *MixedContentIssueDetails          `json:"mixedContentIssueDetails,omitempty"`          // No description.
-	BlockedByResponseIssueDetails     *BlockedByResponseIssueDetails     `json:"blockedByResponseIssueDetails,omitempty"`     // No description.
-	HeavyAdIssueDetails               *HeavyAdIssueDetails               `json:"heavyAdIssueDetails,omitempty"`               // No description.
-	ContentSecurityPolicyIssueDetails *ContentSecurityPolicyIssueDetails `json:"contentSecurityPolicyIssueDetails,omitempty"` // No description.
-	SharedArrayBufferIssueDetails     *SharedArrayBufferIssueDetails     `json:"sharedArrayBufferIssueDetails,omitempty"`     // No description.
-	TwaQualityEnforcementDetails      *TrustedWebActivityIssueDetails    `json:"twaQualityEnforcementDetails,omitempty"`      // No description.
-	LowTextContrastIssueDetails       *LowTextContrastIssueDetails       `json:"lowTextContrastIssueDetails,omitempty"`       // No description.
-	CORSIssueDetails                  *CORSIssueDetails                  `json:"corsIssueDetails,omitempty"`                  // No description.
+	SameSiteCookieIssueDetails        *SameSiteCookieIssueDetails               `json:"sameSiteCookieIssueDetails,omitempty"`        // No description.
+	MixedContentIssueDetails          *MixedContentIssueDetails                 `json:"mixedContentIssueDetails,omitempty"`          // No description.
+	BlockedByResponseIssueDetails     *BlockedByResponseIssueDetails            `json:"blockedByResponseIssueDetails,omitempty"`     // No description.
+	HeavyAdIssueDetails               *HeavyAdIssueDetails                      `json:"heavyAdIssueDetails,omitempty"`               // No description.
+	ContentSecurityPolicyIssueDetails *ContentSecurityPolicyIssueDetails        `json:"contentSecurityPolicyIssueDetails,omitempty"` // No description.
+	SharedArrayBufferIssueDetails     *SharedArrayBufferIssueDetails            `json:"sharedArrayBufferIssueDetails,omitempty"`     // No description.
+	TwaQualityEnforcementDetails      *TrustedWebActivityIssueDetails           `json:"twaQualityEnforcementDetails,omitempty"`      // No description.
+	LowTextContrastIssueDetails       *LowTextContrastIssueDetails              `json:"lowTextContrastIssueDetails,omitempty"`       // No description.
+	CORSIssueDetails                  *CORSIssueDetails                         `json:"corsIssueDetails,omitempty"`                  // No description.
+	AttributionReportingIssueDetails  *AttributionReportingIssueDetails         `json:"attributionReportingIssueDetails,omitempty"`  // No description.
+	QuirksModeIssueDetails            *QuirksModeIssueDetails                   `json:"quirksModeIssueDetails,omitempty"`            // No description.
+	NavigatorUserAgentIssueDetails    *NavigatorUserAgentIssueDetails           `json:"navigatorUserAgentIssueDetails,omitempty"`    // No description.
+	WASMCrossOriginModuleSharingIssue *WASMCrossOriginModuleSharingIssueDetails `json:"wasmCrossOriginModuleSharingIssue,omitempty"` // No description.
 }
+
+// IssueID A unique id for a DevTools inspector issue. Allows other entities
+// (e.g. exceptions, CDP message, console messages, etc.) to reference an
+// issue.
+type IssueID string
 
 // InspectorIssue An inspector issue reported from the back-end.
 type InspectorIssue struct {
-	Code    InspectorIssueCode    `json:"code"`    // No description.
-	Details InspectorIssueDetails `json:"details"` // No description.
+	Code    InspectorIssueCode    `json:"code"`              // No description.
+	Details InspectorIssueDetails `json:"details"`           // No description.
+	IssueID *IssueID              `json:"issueId,omitempty"` // A unique id for this issue. May be omitted if no other entity (e.g. exception, CDP message, etc.) is referencing this issue.
 }

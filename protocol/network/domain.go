@@ -24,6 +24,30 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// SetAcceptedEncodings invokes the Network method. Sets a list of content
+// encodings that will be accepted. Empty list means no encoding is accepted.
+func (d *domainClient) SetAcceptedEncodings(ctx context.Context, args *SetAcceptedEncodingsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.setAcceptedEncodings", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.setAcceptedEncodings", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "SetAcceptedEncodings", Err: err}
+	}
+	return
+}
+
+// ClearAcceptedEncodingsOverride invokes the Network method. Clears accepted
+// encodings set by setAcceptedEncodings
+func (d *domainClient) ClearAcceptedEncodingsOverride(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Network.clearAcceptedEncodingsOverride", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "ClearAcceptedEncodingsOverride", Err: err}
+	}
+	return
+}
+
 // CanClearBrowserCache invokes the Network method. Tells whether clearing
 // browser cache is supported.
 func (d *domainClient) CanClearBrowserCache(ctx context.Context) (reply *CanClearBrowserCacheReply, err error) {
@@ -348,19 +372,6 @@ func (d *domainClient) SetCookies(ctx context.Context, args *SetCookiesArgs) (er
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "SetCookies", Err: err}
-	}
-	return
-}
-
-// SetDataSizeLimitsForTest invokes the Network method. For testing.
-func (d *domainClient) SetDataSizeLimitsForTest(ctx context.Context, args *SetDataSizeLimitsForTestArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Network.setDataSizeLimitsForTest", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Network.setDataSizeLimitsForTest", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Network", Op: "SetDataSizeLimitsForTest", Err: err}
 	}
 	return
 }
@@ -917,6 +928,90 @@ func (c *trustTokenOperationDoneClient) Recv() (*TrustTokenOperationDoneReply, e
 	event := new(TrustTokenOperationDoneReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Network", Op: "TrustTokenOperationDone Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) SubresourceWebBundleMetadataReceived(ctx context.Context) (SubresourceWebBundleMetadataReceivedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.subresourceWebBundleMetadataReceived", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &subresourceWebBundleMetadataReceivedClient{Stream: s}, nil
+}
+
+type subresourceWebBundleMetadataReceivedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *subresourceWebBundleMetadataReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *subresourceWebBundleMetadataReceivedClient) Recv() (*SubresourceWebBundleMetadataReceivedReply, error) {
+	event := new(SubresourceWebBundleMetadataReceivedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "SubresourceWebBundleMetadataReceived Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) SubresourceWebBundleMetadataError(ctx context.Context) (SubresourceWebBundleMetadataErrorClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.subresourceWebBundleMetadataError", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &subresourceWebBundleMetadataErrorClient{Stream: s}, nil
+}
+
+type subresourceWebBundleMetadataErrorClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *subresourceWebBundleMetadataErrorClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *subresourceWebBundleMetadataErrorClient) Recv() (*SubresourceWebBundleMetadataErrorReply, error) {
+	event := new(SubresourceWebBundleMetadataErrorReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "SubresourceWebBundleMetadataError Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) SubresourceWebBundleInnerResponseParsed(ctx context.Context) (SubresourceWebBundleInnerResponseParsedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.subresourceWebBundleInnerResponseParsed", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &subresourceWebBundleInnerResponseParsedClient{Stream: s}, nil
+}
+
+type subresourceWebBundleInnerResponseParsedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *subresourceWebBundleInnerResponseParsedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *subresourceWebBundleInnerResponseParsedClient) Recv() (*SubresourceWebBundleInnerResponseParsedReply, error) {
+	event := new(SubresourceWebBundleInnerResponseParsedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "SubresourceWebBundleInnerResponseParsed Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) SubresourceWebBundleInnerResponseError(ctx context.Context) (SubresourceWebBundleInnerResponseErrorClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.subresourceWebBundleInnerResponseError", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &subresourceWebBundleInnerResponseErrorClient{Stream: s}, nil
+}
+
+type subresourceWebBundleInnerResponseErrorClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *subresourceWebBundleInnerResponseErrorClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *subresourceWebBundleInnerResponseErrorClient) Recv() (*SubresourceWebBundleInnerResponseErrorReply, error) {
+	event := new(SubresourceWebBundleInnerResponseErrorReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "SubresourceWebBundleInnerResponseError Recv", Err: err}
 	}
 	return event, nil
 }

@@ -37,6 +37,11 @@ type AddScriptToEvaluateOnNewDocumentArgs struct {
 	//
 	// Note: This property is experimental.
 	WorldName *string `json:"worldName,omitempty"`
+	// IncludeCommandLineAPI Specifies whether command line API should be
+	// available to the script, defaults to false.
+	//
+	// Note: This property is experimental.
+	IncludeCommandLineAPI *bool `json:"includeCommandLineAPI,omitempty"`
 }
 
 // NewAddScriptToEvaluateOnNewDocumentArgs initializes AddScriptToEvaluateOnNewDocumentArgs with the required arguments.
@@ -58,6 +63,16 @@ func (a *AddScriptToEvaluateOnNewDocumentArgs) SetWorldName(worldName string) *A
 	return a
 }
 
+// SetIncludeCommandLineAPI sets the IncludeCommandLineAPI optional argument.
+// Specifies whether command line API should be available to the
+// script, defaults to false.
+//
+// Note: This property is experimental.
+func (a *AddScriptToEvaluateOnNewDocumentArgs) SetIncludeCommandLineAPI(includeCommandLineAPI bool) *AddScriptToEvaluateOnNewDocumentArgs {
+	a.IncludeCommandLineAPI = &includeCommandLineAPI
+	return a
+}
+
 // AddScriptToEvaluateOnNewDocumentReply represents the return values for AddScriptToEvaluateOnNewDocument in the Page domain.
 type AddScriptToEvaluateOnNewDocumentReply struct {
 	Identifier ScriptIdentifier `json:"identifier"` // Identifier of the added script.
@@ -67,7 +82,7 @@ type AddScriptToEvaluateOnNewDocumentReply struct {
 type CaptureScreenshotArgs struct {
 	// Format Image compression format (defaults to png).
 	//
-	// Values: "jpeg", "png".
+	// Values: "jpeg", "png", "webp".
 	Format  *string   `json:"format,omitempty"`
 	Quality *int      `json:"quality,omitempty"` // Compression quality from range [0..100] (jpeg only).
 	Clip    *Viewport `json:"clip,omitempty"`    // Capture the screenshot of a given region only.
@@ -93,7 +108,7 @@ func NewCaptureScreenshotArgs() *CaptureScreenshotArgs {
 // SetFormat sets the Format optional argument. Image compression
 // format (defaults to png).
 //
-// Values: "jpeg", "png".
+// Values: "jpeg", "png", "webp".
 func (a *CaptureScreenshotArgs) SetFormat(format string) *CaptureScreenshotArgs {
 	a.Format = &format
 	return a

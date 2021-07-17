@@ -107,17 +107,17 @@ func (d *domainClient) GetScriptSource(ctx context.Context, args *GetScriptSourc
 	return
 }
 
-// GetWasmBytecode invokes the Debugger method. This command is deprecated.
+// GetWASMBytecode invokes the Debugger method. This command is deprecated.
 // Use getScriptSource instead.
-func (d *domainClient) GetWasmBytecode(ctx context.Context, args *GetWasmBytecodeArgs) (reply *GetWasmBytecodeReply, err error) {
-	reply = new(GetWasmBytecodeReply)
+func (d *domainClient) GetWASMBytecode(ctx context.Context, args *GetWASMBytecodeArgs) (reply *GetWASMBytecodeReply, err error) {
+	reply = new(GetWASMBytecodeReply)
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Debugger.getWasmBytecode", args, reply, d.conn)
 	} else {
 		err = rpcc.Invoke(ctx, "Debugger.getWasmBytecode", nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Debugger", Op: "GetWasmBytecode", Err: err}
+		err = &internal.OpError{Domain: "Debugger", Op: "GetWASMBytecode", Err: err}
 	}
 	return
 }

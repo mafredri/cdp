@@ -652,6 +652,23 @@ func (d *domainClient) GetFrameOwner(ctx context.Context, args *GetFrameOwnerArg
 	return
 }
 
+// GetContainerForNode invokes the DOM method. Returns the container of the
+// given node based on container query conditions. If containerName is given,
+// it will find the nearest container with a matching name; otherwise it will
+// find the nearest container regardless of its container name.
+func (d *domainClient) GetContainerForNode(ctx context.Context, args *GetContainerForNodeArgs) (reply *GetContainerForNodeReply, err error) {
+	reply = new(GetContainerForNodeReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.getContainerForNode", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.getContainerForNode", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "GetContainerForNode", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) AttributeModified(ctx context.Context) (AttributeModifiedClient, error) {
 	s, err := rpcc.NewStream(ctx, "DOM.attributeModified", d.conn)
 	if err != nil {

@@ -135,3 +135,21 @@ func (t *TimeSinceEpoch) UnmarshalJSON(data []byte) error {
 
 var _ json.Marshaler = (*TimeSinceEpoch)(nil)
 var _ json.Unmarshaler = (*TimeSinceEpoch)(nil)
+
+// DragDataItem
+//
+// Note: This type is experimental.
+type DragDataItem struct {
+	MimeType string  `json:"mimeType"`          // Mime type of the dragged data.
+	Data     string  `json:"data"`              // Depending of the value of `mimeType`, it contains the dragged link, text, HTML markup or any other data.
+	Title    *string `json:"title,omitempty"`   // Title associated with a link. Only valid when `mimeType` == "text/uri-list".
+	BaseURL  *string `json:"baseURL,omitempty"` // Stores the base URL for the contained markup. Only valid when `mimeType` == "text/html".
+}
+
+// DragData
+//
+// Note: This type is experimental.
+type DragData struct {
+	Items              []DragDataItem `json:"items"`              // No description.
+	DragOperationsMask int            `json:"dragOperationsMask"` // Bit field representing allowed drag operations. Copy = 1, Link = 2, Move = 16
+}

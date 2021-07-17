@@ -11,7 +11,7 @@ type RequestID string
 
 // RequestStage Stages of the request to handle. Request will intercept before
 // the request is sent. Response will intercept after the response is received
-// (but before response body is received.
+// (but before response body is received).
 type RequestStage string
 
 // RequestStage as enums.
@@ -36,7 +36,7 @@ func (e RequestStage) String() string {
 
 // RequestPattern
 type RequestPattern struct {
-	URLPattern   *string               `json:"urlPattern,omitempty"`   // Wildcards ('*' -> zero or more, '?' -> exactly one) are allowed. Escape character is backslash. Omitting is equivalent to "*".
+	URLPattern   *string               `json:"urlPattern,omitempty"`   // Wildcards (`'*'` -> zero or more, `'?'` -> exactly one) are allowed. Escape character is backslash. Omitting is equivalent to `"*"`.
 	ResourceType *network.ResourceType `json:"resourceType,omitempty"` // If set, only requests for matching resource types will be intercepted.
 	RequestStage RequestStage          `json:"requestStage,omitempty"` // Stage at which to begin intercepting requests. Default is Request.
 }

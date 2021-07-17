@@ -120,6 +120,7 @@ type DocumentSnapshot struct {
 type NodeTreeSnapshot struct {
 	ParentIndex          []int               `json:"parentIndex,omitempty"`          // Parent node index.
 	NodeType             []int               `json:"nodeType,omitempty"`             // `Node`'s nodeType.
+	ShadowRootType       *RareStringData     `json:"shadowRootType,omitempty"`       // Type of the shadow root the `Node` is in. String values are equal to the `ShadowRootType` enum.
 	NodeName             []StringIndex       `json:"nodeName,omitempty"`             // `Node`'s nodeName.
 	NodeValue            []StringIndex       `json:"nodeValue,omitempty"`            // `Node`'s nodeValue.
 	BackendNodeID        []dom.BackendNodeID `json:"backendNodeId,omitempty"`        // `Node`'s id, corresponds to DOM.Node.backendNodeId.
@@ -147,6 +148,15 @@ type LayoutTreeSnapshot struct {
 	OffsetRects      []Rectangle      `json:"offsetRects,omitempty"` // The offset rect of nodes. Only available when includeDOMRects is set to true
 	ScrollRects      []Rectangle      `json:"scrollRects,omitempty"` // The scroll rect of nodes. Only available when includeDOMRects is set to true
 	ClientRects      []Rectangle      `json:"clientRects,omitempty"` // The client rect of nodes. Only available when includeDOMRects is set to true
+	// BlendedBackgroundColors The list of background colors that are
+	// blended with colors of overlapping elements.
+	//
+	// Note: This property is experimental.
+	BlendedBackgroundColors []StringIndex `json:"blendedBackgroundColors,omitempty"`
+	// TextColorOpacities The list of computed text opacities.
+	//
+	// Note: This property is experimental.
+	TextColorOpacities []float64 `json:"textColorOpacities,omitempty"`
 }
 
 // TextBoxSnapshot Table of details of the post layout rendered text

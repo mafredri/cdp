@@ -956,3 +956,27 @@ type GetFrameOwnerReply struct {
 	BackendNodeID BackendNodeID `json:"backendNodeId"`    // Resulting node.
 	NodeID        *NodeID       `json:"nodeId,omitempty"` // Id of the node at given coordinates, only when enabled and requested document.
 }
+
+// GetContainerForNodeArgs represents the arguments for GetContainerForNode in the DOM domain.
+type GetContainerForNodeArgs struct {
+	NodeID        NodeID  `json:"nodeId"`                  // No description.
+	ContainerName *string `json:"containerName,omitempty"` // No description.
+}
+
+// NewGetContainerForNodeArgs initializes GetContainerForNodeArgs with the required arguments.
+func NewGetContainerForNodeArgs(nodeID NodeID) *GetContainerForNodeArgs {
+	args := new(GetContainerForNodeArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// SetContainerName sets the ContainerName optional argument.
+func (a *GetContainerForNodeArgs) SetContainerName(containerName string) *GetContainerForNodeArgs {
+	a.ContainerName = &containerName
+	return a
+}
+
+// GetContainerForNodeReply represents the return values for GetContainerForNode in the DOM domain.
+type GetContainerForNodeReply struct {
+	NodeID *NodeID `json:"nodeId,omitempty"` // The container node for the given node, or null if not found.
+}

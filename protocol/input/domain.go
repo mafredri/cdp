@@ -18,6 +18,20 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// DispatchDragEvent invokes the Input method. Dispatches a drag event into
+// the page.
+func (d *domainClient) DispatchDragEvent(ctx context.Context, args *DispatchDragEventArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Input.dispatchDragEvent", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Input.dispatchDragEvent", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Input", Op: "DispatchDragEvent", Err: err}
+	}
+	return
+}
+
 // DispatchKeyEvent invokes the Input method. Dispatches a key event to the
 // page.
 func (d *domainClient) DispatchKeyEvent(ctx context.Context, args *DispatchKeyEventArgs) (err error) {
@@ -102,6 +116,21 @@ func (d *domainClient) SetIgnoreInputEvents(ctx context.Context, args *SetIgnore
 	return
 }
 
+// SetInterceptDrags invokes the Input method. Prevents default drag and drop
+// behavior and instead emits `Input.dragIntercepted` events. Drag and drop
+// behavior can be directly controlled via `Input.dispatchDragEvent`.
+func (d *domainClient) SetInterceptDrags(ctx context.Context, args *SetInterceptDragsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Input.setInterceptDrags", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Input.setInterceptDrags", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Input", Op: "SetInterceptDrags", Err: err}
+	}
+	return
+}
+
 // SynthesizePinchGesture invokes the Input method. Synthesizes a pinch
 // gesture over a time period by issuing appropriate touch events.
 func (d *domainClient) SynthesizePinchGesture(ctx context.Context, args *SynthesizePinchGestureArgs) (err error) {
@@ -142,4 +171,25 @@ func (d *domainClient) SynthesizeTapGesture(ctx context.Context, args *Synthesiz
 		err = &internal.OpError{Domain: "Input", Op: "SynthesizeTapGesture", Err: err}
 	}
 	return
+}
+
+func (d *domainClient) DragIntercepted(ctx context.Context) (DragInterceptedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Input.dragIntercepted", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &dragInterceptedClient{Stream: s}, nil
+}
+
+type dragInterceptedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *dragInterceptedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *dragInterceptedClient) Recv() (*DragInterceptedReply, error) {
+	event := new(DragInterceptedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Input", Op: "DragIntercepted Recv", Err: err}
+	}
+	return event, nil
 }

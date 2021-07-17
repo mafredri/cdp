@@ -421,3 +421,68 @@ type TrustTokenOperationDoneReply struct {
 	IssuerOrigin     *string                 `json:"issuerOrigin,omitempty"`     // Origin of the issuer in case of a "Issuance" or "Redemption" operation.
 	IssuedTokenCount *int                    `json:"issuedTokenCount,omitempty"` // The number of obtained Trust Tokens on a successful "Issuance" operation.
 }
+
+// SubresourceWebBundleMetadataReceivedClient is a client for SubresourceWebBundleMetadataReceived events.
+// Fired once when parsing the .wbn file has succeeded. The event contains the
+// information about the web bundle contents.
+type SubresourceWebBundleMetadataReceivedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*SubresourceWebBundleMetadataReceivedReply, error)
+	rpcc.Stream
+}
+
+// SubresourceWebBundleMetadataReceivedReply is the reply for SubresourceWebBundleMetadataReceived events.
+type SubresourceWebBundleMetadataReceivedReply struct {
+	RequestID RequestID `json:"requestId"` // Request identifier. Used to match this information to another event.
+	URLs      []string  `json:"urls"`      // A list of URLs of resources in the subresource Web Bundle.
+}
+
+// SubresourceWebBundleMetadataErrorClient is a client for SubresourceWebBundleMetadataError events.
+// Fired once when parsing the .wbn file has failed.
+type SubresourceWebBundleMetadataErrorClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*SubresourceWebBundleMetadataErrorReply, error)
+	rpcc.Stream
+}
+
+// SubresourceWebBundleMetadataErrorReply is the reply for SubresourceWebBundleMetadataError events.
+type SubresourceWebBundleMetadataErrorReply struct {
+	RequestID    RequestID `json:"requestId"`    // Request identifier. Used to match this information to another event.
+	ErrorMessage string    `json:"errorMessage"` // Error message
+}
+
+// SubresourceWebBundleInnerResponseParsedClient is a client for SubresourceWebBundleInnerResponseParsed events.
+// Fired when handling requests for resources within a .wbn file. Note: this
+// will only be fired for resources that are requested by the webpage.
+type SubresourceWebBundleInnerResponseParsedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*SubresourceWebBundleInnerResponseParsedReply, error)
+	rpcc.Stream
+}
+
+// SubresourceWebBundleInnerResponseParsedReply is the reply for SubresourceWebBundleInnerResponseParsed events.
+type SubresourceWebBundleInnerResponseParsedReply struct {
+	InnerRequestID  RequestID  `json:"innerRequestId"`            // Request identifier of the subresource request
+	InnerRequestURL string     `json:"innerRequestURL"`           // URL of the subresource resource.
+	BundleRequestID *RequestID `json:"bundleRequestId,omitempty"` // Bundle request identifier. Used to match this information to another event. This made be absent in case when the instrumentation was enabled only after webbundle was parsed.
+}
+
+// SubresourceWebBundleInnerResponseErrorClient is a client for SubresourceWebBundleInnerResponseError events.
+// Fired when request for resources within a .wbn file failed.
+type SubresourceWebBundleInnerResponseErrorClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*SubresourceWebBundleInnerResponseErrorReply, error)
+	rpcc.Stream
+}
+
+// SubresourceWebBundleInnerResponseErrorReply is the reply for SubresourceWebBundleInnerResponseError events.
+type SubresourceWebBundleInnerResponseErrorReply struct {
+	InnerRequestID  RequestID  `json:"innerRequestId"`            // Request identifier of the subresource request
+	InnerRequestURL string     `json:"innerRequestURL"`           // URL of the subresource resource.
+	ErrorMessage    string     `json:"errorMessage"`              // Error message
+	BundleRequestID *RequestID `json:"bundleRequestId,omitempty"` // Bundle request identifier. Used to match this information to another event. This made be absent in case when the instrumentation was enabled only after webbundle was parsed.
+}

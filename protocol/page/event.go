@@ -110,6 +110,10 @@ type FrameNavigatedClient interface {
 // FrameNavigatedReply is the reply for FrameNavigated events.
 type FrameNavigatedReply struct {
 	Frame Frame `json:"frame"` // Frame object.
+	// Type
+	//
+	// Note: This property is experimental.
+	Type NavigationType `json:"type"`
 }
 
 // DocumentOpenedClient is a client for DocumentOpened events. Fired when
@@ -202,7 +206,8 @@ type FrameStoppedLoadingReply struct {
 }
 
 // DownloadWillBeginClient is a client for DownloadWillBegin events. Fired
-// when page is about to start a download.
+// when page is about to start a download. Deprecated. Use
+// Browser.downloadWillBegin instead.
 type DownloadWillBeginClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -219,7 +224,8 @@ type DownloadWillBeginReply struct {
 }
 
 // DownloadProgressClient is a client for DownloadProgress events. Fired when
-// download makes progress. Last call has |done| == true.
+// download makes progress. Last call has |done| == true. Deprecated. Use
+// Browser.downloadProgress instead.
 type DownloadProgressClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -314,6 +320,25 @@ type LifecycleEventReply struct {
 	LoaderID  network.LoaderID      `json:"loaderId"`  // Loader identifier. Empty string if the request is fetched from worker.
 	Name      string                `json:"name"`      // No description.
 	Timestamp network.MonotonicTime `json:"timestamp"` // No description.
+}
+
+// BackForwardCacheNotUsedClient is a client for BackForwardCacheNotUsed events.
+// Fired for failed bfcache history navigations if BackForwardCache feature is
+// enabled. Do not assume any ordering with the Page.frameNavigated event. This
+// event is fired only for main-frame history navigation where the document
+// changes (non-same-document navigations), when bfcache navigation fails.
+type BackForwardCacheNotUsedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*BackForwardCacheNotUsedReply, error)
+	rpcc.Stream
+}
+
+// BackForwardCacheNotUsedReply is the reply for BackForwardCacheNotUsed events.
+type BackForwardCacheNotUsedReply struct {
+	LoaderID                network.LoaderID                         `json:"loaderId"`                // The loader id for the associated navgation.
+	FrameID                 FrameID                                  `json:"frameId"`                 // The frame id of the associated frame.
+	NotRestoredExplanations []BackForwardCacheNotRestoredExplanation `json:"notRestoredExplanations"` // Array of reasons why the page could not be cached. This must not be empty.
 }
 
 // LoadEventFiredClient is a client for LoadEventFired events.

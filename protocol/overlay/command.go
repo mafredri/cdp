@@ -363,6 +363,30 @@ func NewSetShowFlexOverlaysArgs(flexNodeHighlightConfigs []FlexNodeHighlightConf
 	return args
 }
 
+// SetShowScrollSnapOverlaysArgs represents the arguments for SetShowScrollSnapOverlays in the Overlay domain.
+type SetShowScrollSnapOverlaysArgs struct {
+	ScrollSnapHighlightConfigs []ScrollSnapHighlightConfig `json:"scrollSnapHighlightConfigs"` // An array of node identifiers and descriptors for the highlight appearance.
+}
+
+// NewSetShowScrollSnapOverlaysArgs initializes SetShowScrollSnapOverlaysArgs with the required arguments.
+func NewSetShowScrollSnapOverlaysArgs(scrollSnapHighlightConfigs []ScrollSnapHighlightConfig) *SetShowScrollSnapOverlaysArgs {
+	args := new(SetShowScrollSnapOverlaysArgs)
+	args.ScrollSnapHighlightConfigs = scrollSnapHighlightConfigs
+	return args
+}
+
+// SetShowContainerQueryOverlaysArgs represents the arguments for SetShowContainerQueryOverlays in the Overlay domain.
+type SetShowContainerQueryOverlaysArgs struct {
+	ContainerQueryHighlightConfigs []ContainerQueryHighlightConfig `json:"containerQueryHighlightConfigs"` // An array of node identifiers and descriptors for the highlight appearance.
+}
+
+// NewSetShowContainerQueryOverlaysArgs initializes SetShowContainerQueryOverlaysArgs with the required arguments.
+func NewSetShowContainerQueryOverlaysArgs(containerQueryHighlightConfigs []ContainerQueryHighlightConfig) *SetShowContainerQueryOverlaysArgs {
+	args := new(SetShowContainerQueryOverlaysArgs)
+	args.ContainerQueryHighlightConfigs = containerQueryHighlightConfigs
+	return args
+}
+
 // SetShowPaintRectsArgs represents the arguments for SetShowPaintRects in the Overlay domain.
 type SetShowPaintRectsArgs struct {
 	Result bool `json:"result"` // True for showing paint rectangles

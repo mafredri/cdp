@@ -289,6 +289,21 @@ func (d *domainClient) SetMediaText(ctx context.Context, args *SetMediaTextArgs)
 	return
 }
 
+// SetContainerQueryText invokes the CSS method. Modifies the expression of a
+// container query.
+func (d *domainClient) SetContainerQueryText(ctx context.Context, args *SetContainerQueryTextArgs) (reply *SetContainerQueryTextReply, err error) {
+	reply = new(SetContainerQueryTextReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.setContainerQueryText", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.setContainerQueryText", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "SetContainerQueryText", Err: err}
+	}
+	return
+}
+
 // SetRuleSelector invokes the CSS method. Modifies the rule selector.
 func (d *domainClient) SetRuleSelector(ctx context.Context, args *SetRuleSelectorArgs) (reply *SetRuleSelectorReply, err error) {
 	reply = new(SetRuleSelectorReply)

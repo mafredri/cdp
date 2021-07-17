@@ -108,24 +108,25 @@ func (e ContrastAlgorithm) String() string {
 
 // HighlightConfig Configuration data for the highlighting of page elements.
 type HighlightConfig struct {
-	ShowInfo                     *bool                         `json:"showInfo,omitempty"`                     // Whether the node info tooltip should be shown (default: false).
-	ShowStyles                   *bool                         `json:"showStyles,omitempty"`                   // Whether the node styles in the tooltip (default: false).
-	ShowRulers                   *bool                         `json:"showRulers,omitempty"`                   // Whether the rulers should be shown (default: false).
-	ShowAccessibilityInfo        *bool                         `json:"showAccessibilityInfo,omitempty"`        // Whether the a11y info should be shown (default: true).
-	ShowExtensionLines           *bool                         `json:"showExtensionLines,omitempty"`           // Whether the extension lines from node to the rulers should be shown (default: false).
-	ContentColor                 *dom.RGBA                     `json:"contentColor,omitempty"`                 // The content box highlight fill color (default: transparent).
-	PaddingColor                 *dom.RGBA                     `json:"paddingColor,omitempty"`                 // The padding highlight fill color (default: transparent).
-	BorderColor                  *dom.RGBA                     `json:"borderColor,omitempty"`                  // The border highlight fill color (default: transparent).
-	MarginColor                  *dom.RGBA                     `json:"marginColor,omitempty"`                  // The margin highlight fill color (default: transparent).
-	EventTargetColor             *dom.RGBA                     `json:"eventTargetColor,omitempty"`             // The event target element highlight fill color (default: transparent).
-	ShapeColor                   *dom.RGBA                     `json:"shapeColor,omitempty"`                   // The shape outside fill color (default: transparent).
-	ShapeMarginColor             *dom.RGBA                     `json:"shapeMarginColor,omitempty"`             // The shape margin fill color (default: transparent).
-	CSSGridColor                 *dom.RGBA                     `json:"cssGridColor,omitempty"`                 // The grid layout color (default: transparent).
-	ColorFormat                  ColorFormat                   `json:"colorFormat,omitempty"`                  // The color format used to format color styles (default: hex).
-	GridHighlightConfig          *GridHighlightConfig          `json:"gridHighlightConfig,omitempty"`          // The grid layout highlight configuration (default: all transparent).
-	FlexContainerHighlightConfig *FlexContainerHighlightConfig `json:"flexContainerHighlightConfig,omitempty"` // The flex container highlight configuration (default: all transparent).
-	FlexItemHighlightConfig      *FlexItemHighlightConfig      `json:"flexItemHighlightConfig,omitempty"`      // The flex item highlight configuration (default: all transparent).
-	ContrastAlgorithm            ContrastAlgorithm             `json:"contrastAlgorithm,omitempty"`            // The contrast algorithm to use for the contrast ratio (default: aa).
+	ShowInfo                               *bool                                   `json:"showInfo,omitempty"`                               // Whether the node info tooltip should be shown (default: false).
+	ShowStyles                             *bool                                   `json:"showStyles,omitempty"`                             // Whether the node styles in the tooltip (default: false).
+	ShowRulers                             *bool                                   `json:"showRulers,omitempty"`                             // Whether the rulers should be shown (default: false).
+	ShowAccessibilityInfo                  *bool                                   `json:"showAccessibilityInfo,omitempty"`                  // Whether the a11y info should be shown (default: true).
+	ShowExtensionLines                     *bool                                   `json:"showExtensionLines,omitempty"`                     // Whether the extension lines from node to the rulers should be shown (default: false).
+	ContentColor                           *dom.RGBA                               `json:"contentColor,omitempty"`                           // The content box highlight fill color (default: transparent).
+	PaddingColor                           *dom.RGBA                               `json:"paddingColor,omitempty"`                           // The padding highlight fill color (default: transparent).
+	BorderColor                            *dom.RGBA                               `json:"borderColor,omitempty"`                            // The border highlight fill color (default: transparent).
+	MarginColor                            *dom.RGBA                               `json:"marginColor,omitempty"`                            // The margin highlight fill color (default: transparent).
+	EventTargetColor                       *dom.RGBA                               `json:"eventTargetColor,omitempty"`                       // The event target element highlight fill color (default: transparent).
+	ShapeColor                             *dom.RGBA                               `json:"shapeColor,omitempty"`                             // The shape outside fill color (default: transparent).
+	ShapeMarginColor                       *dom.RGBA                               `json:"shapeMarginColor,omitempty"`                       // The shape margin fill color (default: transparent).
+	CSSGridColor                           *dom.RGBA                               `json:"cssGridColor,omitempty"`                           // The grid layout color (default: transparent).
+	ColorFormat                            ColorFormat                             `json:"colorFormat,omitempty"`                            // The color format used to format color styles (default: hex).
+	GridHighlightConfig                    *GridHighlightConfig                    `json:"gridHighlightConfig,omitempty"`                    // The grid layout highlight configuration (default: all transparent).
+	FlexContainerHighlightConfig           *FlexContainerHighlightConfig           `json:"flexContainerHighlightConfig,omitempty"`           // The flex container highlight configuration (default: all transparent).
+	FlexItemHighlightConfig                *FlexItemHighlightConfig                `json:"flexItemHighlightConfig,omitempty"`                // The flex item highlight configuration (default: all transparent).
+	ContrastAlgorithm                      ContrastAlgorithm                       `json:"contrastAlgorithm,omitempty"`                      // The contrast algorithm to use for the contrast ratio (default: aa).
+	ContainerQueryContainerHighlightConfig *ContainerQueryContainerHighlightConfig `json:"containerQueryContainerHighlightConfig,omitempty"` // The container query container highlight configuration (default: all transparent).
 }
 
 // ColorFormat
@@ -164,11 +165,36 @@ type FlexNodeHighlightConfig struct {
 	NodeID                       dom.NodeID                   `json:"nodeId"`                       // Identifier of the node to highlight.
 }
 
+// ScrollSnapContainerHighlightConfig
+type ScrollSnapContainerHighlightConfig struct {
+	SnapportBorder     *LineStyle `json:"snapportBorder,omitempty"`     // The style of the snapport border (default: transparent)
+	SnapAreaBorder     *LineStyle `json:"snapAreaBorder,omitempty"`     // The style of the snap area border (default: transparent)
+	ScrollMarginColor  *dom.RGBA  `json:"scrollMarginColor,omitempty"`  // The margin highlight fill color (default: transparent).
+	ScrollPaddingColor *dom.RGBA  `json:"scrollPaddingColor,omitempty"` // The padding highlight fill color (default: transparent).
+}
+
+// ScrollSnapHighlightConfig
+type ScrollSnapHighlightConfig struct {
+	ScrollSnapContainerHighlightConfig ScrollSnapContainerHighlightConfig `json:"scrollSnapContainerHighlightConfig"` // A descriptor for the highlight appearance of scroll snap containers.
+	NodeID                             dom.NodeID                         `json:"nodeId"`                             // Identifier of the node to highlight.
+}
+
 // HingeConfig Configuration for dual screen hinge
 type HingeConfig struct {
 	Rect         dom.Rect  `json:"rect"`                   // A rectangle represent hinge
 	ContentColor *dom.RGBA `json:"contentColor,omitempty"` // The content box highlight fill color (default: a dark color).
 	OutlineColor *dom.RGBA `json:"outlineColor,omitempty"` // The content box highlight outline color (default: transparent).
+}
+
+// ContainerQueryHighlightConfig
+type ContainerQueryHighlightConfig struct {
+	ContainerQueryContainerHighlightConfig ContainerQueryContainerHighlightConfig `json:"containerQueryContainerHighlightConfig"` // A descriptor for the highlight appearance of container query containers.
+	NodeID                                 dom.NodeID                             `json:"nodeId"`                                 // Identifier of the container node to highlight.
+}
+
+// ContainerQueryContainerHighlightConfig
+type ContainerQueryContainerHighlightConfig struct {
+	ContainerBorder *LineStyle `json:"containerBorder,omitempty"` // The style of the container border
 }
 
 // InspectMode

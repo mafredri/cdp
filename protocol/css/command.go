@@ -266,6 +266,27 @@ type SetMediaTextReply struct {
 	Media Media `json:"media"` // The resulting CSS media rule after modification.
 }
 
+// SetContainerQueryTextArgs represents the arguments for SetContainerQueryText in the CSS domain.
+type SetContainerQueryTextArgs struct {
+	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange  `json:"range"`        // No description.
+	Text         string       `json:"text"`         // No description.
+}
+
+// NewSetContainerQueryTextArgs initializes SetContainerQueryTextArgs with the required arguments.
+func NewSetContainerQueryTextArgs(styleSheetID StyleSheetID, rang SourceRange, text string) *SetContainerQueryTextArgs {
+	args := new(SetContainerQueryTextArgs)
+	args.StyleSheetID = styleSheetID
+	args.Range = rang
+	args.Text = text
+	return args
+}
+
+// SetContainerQueryTextReply represents the return values for SetContainerQueryText in the CSS domain.
+type SetContainerQueryTextReply struct {
+	ContainerQuery ContainerQuery `json:"containerQuery"` // The resulting CSS container query rule after modification.
+}
+
 // SetRuleSelectorArgs represents the arguments for SetRuleSelector in the CSS domain.
 type SetRuleSelectorArgs struct {
 	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.

@@ -237,3 +237,45 @@ func (d *domainClient) ExecuteBrowserCommand(ctx context.Context, args *ExecuteB
 	}
 	return
 }
+
+func (d *domainClient) DownloadWillBegin(ctx context.Context) (DownloadWillBeginClient, error) {
+	s, err := rpcc.NewStream(ctx, "Browser.downloadWillBegin", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &downloadWillBeginClient{Stream: s}, nil
+}
+
+type downloadWillBeginClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *downloadWillBeginClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *downloadWillBeginClient) Recv() (*DownloadWillBeginReply, error) {
+	event := new(DownloadWillBeginReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Browser", Op: "DownloadWillBegin Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DownloadProgress(ctx context.Context) (DownloadProgressClient, error) {
+	s, err := rpcc.NewStream(ctx, "Browser.downloadProgress", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &downloadProgressClient{Stream: s}, nil
+}
+
+type downloadProgressClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *downloadProgressClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *downloadProgressClient) Recv() (*DownloadProgressReply, error) {
+	event := new(DownloadProgressReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Browser", Op: "DownloadProgress Recv", Err: err}
+	}
+	return event, nil
+}

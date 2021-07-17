@@ -51,6 +51,21 @@ type CaptureSnapshotArgs struct {
 	ComputedStyles    []string `json:"computedStyles"`              // Whitelist of computed styles to return.
 	IncludePaintOrder *bool    `json:"includePaintOrder,omitempty"` // Whether to include layout object paint orders into the snapshot.
 	IncludeDOMRects   *bool    `json:"includeDOMRects,omitempty"`   // Whether to include DOM rectangles (offsetRects, clientRects, scrollRects) into the snapshot
+	// IncludeBlendedBackgroundColors Whether to include blended
+	// background colors in the snapshot (default: false). Blended
+	// background color is achieved by blending background colors of all
+	// elements that overlap with the current element.
+	//
+	// Note: This property is experimental.
+	IncludeBlendedBackgroundColors *bool `json:"includeBlendedBackgroundColors,omitempty"`
+	// IncludeTextColorOpacities Whether to include text color opacity in
+	// the snapshot (default: false). An element might have the opacity
+	// property set that affects the text color of the element. The final
+	// text color opacity is computed based on the opacity of all
+	// overlapping elements.
+	//
+	// Note: This property is experimental.
+	IncludeTextColorOpacities *bool `json:"includeTextColorOpacities,omitempty"`
 }
 
 // NewCaptureSnapshotArgs initializes CaptureSnapshotArgs with the required arguments.
@@ -72,6 +87,30 @@ func (a *CaptureSnapshotArgs) SetIncludePaintOrder(includePaintOrder bool) *Capt
 // scrollRects) into the snapshot
 func (a *CaptureSnapshotArgs) SetIncludeDOMRects(includeDOMRects bool) *CaptureSnapshotArgs {
 	a.IncludeDOMRects = &includeDOMRects
+	return a
+}
+
+// SetIncludeBlendedBackgroundColors sets the IncludeBlendedBackgroundColors optional argument.
+// Whether to include blended background colors in the snapshot
+// (default: false). Blended background color is achieved by blending
+// background colors of all elements that overlap with the current
+// element.
+//
+// Note: This property is experimental.
+func (a *CaptureSnapshotArgs) SetIncludeBlendedBackgroundColors(includeBlendedBackgroundColors bool) *CaptureSnapshotArgs {
+	a.IncludeBlendedBackgroundColors = &includeBlendedBackgroundColors
+	return a
+}
+
+// SetIncludeTextColorOpacities sets the IncludeTextColorOpacities optional argument.
+// Whether to include text color opacity in the snapshot (default:
+// false). An element might have the opacity property set that affects
+// the text color of the element. The final text color opacity is
+// computed based on the opacity of all overlapping elements.
+//
+// Note: This property is experimental.
+func (a *CaptureSnapshotArgs) SetIncludeTextColorOpacities(includeTextColorOpacities bool) *CaptureSnapshotArgs {
+	a.IncludeTextColorOpacities = &includeTextColorOpacities
 	return a
 }
 

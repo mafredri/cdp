@@ -8,6 +8,18 @@ import (
 	"github.com/mafredri/cdp/protocol/io"
 )
 
+// SetAcceptedEncodingsArgs represents the arguments for SetAcceptedEncodings in the Network domain.
+type SetAcceptedEncodingsArgs struct {
+	Encodings []ContentEncoding `json:"encodings"` // List of accepted content encodings.
+}
+
+// NewSetAcceptedEncodingsArgs initializes SetAcceptedEncodingsArgs with the required arguments.
+func NewSetAcceptedEncodingsArgs(encodings []ContentEncoding) *SetAcceptedEncodingsArgs {
+	args := new(SetAcceptedEncodingsArgs)
+	args.Encodings = encodings
+	return args
+}
+
 // CanClearBrowserCacheReply represents the return values for CanClearBrowserCache in the Network domain.
 type CanClearBrowserCacheReply struct {
 	Result bool `json:"result"` // True if browser cache can be cleared.
@@ -560,20 +572,6 @@ type SetCookiesArgs struct {
 func NewSetCookiesArgs(cookies []CookieParam) *SetCookiesArgs {
 	args := new(SetCookiesArgs)
 	args.Cookies = cookies
-	return args
-}
-
-// SetDataSizeLimitsForTestArgs represents the arguments for SetDataSizeLimitsForTest in the Network domain.
-type SetDataSizeLimitsForTestArgs struct {
-	MaxTotalSize    int `json:"maxTotalSize"`    // Maximum total buffer size.
-	MaxResourceSize int `json:"maxResourceSize"` // Maximum per-resource size.
-}
-
-// NewSetDataSizeLimitsForTestArgs initializes SetDataSizeLimitsForTestArgs with the required arguments.
-func NewSetDataSizeLimitsForTestArgs(maxTotalSize int, maxResourceSize int) *SetDataSizeLimitsForTestArgs {
-	args := new(SetDataSizeLimitsForTestArgs)
-	args.MaxTotalSize = maxTotalSize
-	args.MaxResourceSize = maxResourceSize
 	return args
 }
 

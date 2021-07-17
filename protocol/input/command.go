@@ -2,6 +2,36 @@
 
 package input
 
+// DispatchDragEventArgs represents the arguments for DispatchDragEvent in the Input domain.
+type DispatchDragEventArgs struct {
+	// Type Type of the drag event.
+	//
+	// Values: "dragEnter", "dragOver", "drop", "dragCancel".
+	Type      string   `json:"type"`
+	X         float64  `json:"x"`                   // X coordinate of the event relative to the main frame's viewport in CSS pixels.
+	Y         float64  `json:"y"`                   // Y coordinate of the event relative to the main frame's viewport in CSS pixels. 0 refers to the top of the viewport and Y increases as it proceeds towards the bottom of the viewport.
+	Data      DragData `json:"data"`                // No description.
+	Modifiers *int     `json:"modifiers,omitempty"` // Bit field representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4, Shift=8 (default: 0).
+}
+
+// NewDispatchDragEventArgs initializes DispatchDragEventArgs with the required arguments.
+func NewDispatchDragEventArgs(typ string, x float64, y float64, data DragData) *DispatchDragEventArgs {
+	args := new(DispatchDragEventArgs)
+	args.Type = typ
+	args.X = x
+	args.Y = y
+	args.Data = data
+	return args
+}
+
+// SetModifiers sets the Modifiers optional argument. Bit field
+// representing pressed modifier keys. Alt=1, Ctrl=2, Meta/Command=4,
+// Shift=8 (default: 0).
+func (a *DispatchDragEventArgs) SetModifiers(modifiers int) *DispatchDragEventArgs {
+	a.Modifiers = &modifiers
+	return a
+}
+
 // DispatchKeyEventArgs represents the arguments for DispatchKeyEvent in the Input domain.
 type DispatchKeyEventArgs struct {
 	// Type Type of the key event.
@@ -436,6 +466,18 @@ type SetIgnoreInputEventsArgs struct {
 func NewSetIgnoreInputEventsArgs(ignore bool) *SetIgnoreInputEventsArgs {
 	args := new(SetIgnoreInputEventsArgs)
 	args.Ignore = ignore
+	return args
+}
+
+// SetInterceptDragsArgs represents the arguments for SetInterceptDrags in the Input domain.
+type SetInterceptDragsArgs struct {
+	Enabled bool `json:"enabled"` // No description.
+}
+
+// NewSetInterceptDragsArgs initializes SetInterceptDragsArgs with the required arguments.
+func NewSetInterceptDragsArgs(enabled bool) *SetInterceptDragsArgs {
+	args := new(SetInterceptDragsArgs)
+	args.Enabled = enabled
 	return args
 }
 

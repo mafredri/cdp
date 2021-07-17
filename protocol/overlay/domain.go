@@ -92,7 +92,9 @@ func (d *domainClient) HideHighlight(ctx context.Context) (err error) {
 }
 
 // HighlightFrame invokes the Overlay method. Highlights owner element of the
-// frame with given id.
+// frame with given id. Deprecated: Doesn't work reliablity and cannot be fixed
+// due to process separatation (the owner node might be in a different
+// process). Determine the owner node in the client and use highlightNode.
 func (d *domainClient) HighlightFrame(ctx context.Context, args *HighlightFrameArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Overlay.highlightFrame", args, nil, d.conn)
@@ -256,6 +258,32 @@ func (d *domainClient) SetShowFlexOverlays(ctx context.Context, args *SetShowFle
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetShowFlexOverlays", Err: err}
+	}
+	return
+}
+
+// SetShowScrollSnapOverlays invokes the Overlay method.
+func (d *domainClient) SetShowScrollSnapOverlays(ctx context.Context, args *SetShowScrollSnapOverlaysArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowScrollSnapOverlays", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowScrollSnapOverlays", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowScrollSnapOverlays", Err: err}
+	}
+	return
+}
+
+// SetShowContainerQueryOverlays invokes the Overlay method.
+func (d *domainClient) SetShowContainerQueryOverlays(ctx context.Context, args *SetShowContainerQueryOverlaysArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowContainerQueryOverlays", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowContainerQueryOverlays", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowContainerQueryOverlays", Err: err}
 	}
 	return
 }

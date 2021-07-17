@@ -211,20 +211,20 @@ type GetScriptSourceReply struct {
 	Bytecode     []byte `json:"bytecode,omitempty"` // Wasm bytecode. (Encoded as a base64 string when passed over JSON)
 }
 
-// GetWasmBytecodeArgs represents the arguments for GetWasmBytecode in the Debugger domain.
-type GetWasmBytecodeArgs struct {
+// GetWASMBytecodeArgs represents the arguments for GetWASMBytecode in the Debugger domain.
+type GetWASMBytecodeArgs struct {
 	ScriptID runtime.ScriptID `json:"scriptId"` // Id of the Wasm script to get source for.
 }
 
-// NewGetWasmBytecodeArgs initializes GetWasmBytecodeArgs with the required arguments.
-func NewGetWasmBytecodeArgs(scriptID runtime.ScriptID) *GetWasmBytecodeArgs {
-	args := new(GetWasmBytecodeArgs)
+// NewGetWASMBytecodeArgs initializes GetWASMBytecodeArgs with the required arguments.
+func NewGetWASMBytecodeArgs(scriptID runtime.ScriptID) *GetWASMBytecodeArgs {
+	args := new(GetWASMBytecodeArgs)
 	args.ScriptID = scriptID
 	return args
 }
 
-// GetWasmBytecodeReply represents the return values for GetWasmBytecode in the Debugger domain.
-type GetWasmBytecodeReply struct {
+// GetWASMBytecodeReply represents the return values for GetWASMBytecode in the Debugger domain.
+type GetWASMBytecodeReply struct {
 	Bytecode []byte `json:"bytecode"` // Script source. (Encoded as a base64 string when passed over JSON)
 }
 

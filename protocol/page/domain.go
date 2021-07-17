@@ -1026,6 +1026,27 @@ func (c *lifecycleEventClient) Recv() (*LifecycleEventReply, error) {
 	return event, nil
 }
 
+func (d *domainClient) BackForwardCacheNotUsed(ctx context.Context) (BackForwardCacheNotUsedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.backForwardCacheNotUsed", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &backForwardCacheNotUsedClient{Stream: s}, nil
+}
+
+type backForwardCacheNotUsedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *backForwardCacheNotUsedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *backForwardCacheNotUsedClient) Recv() (*BackForwardCacheNotUsedReply, error) {
+	event := new(BackForwardCacheNotUsedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "BackForwardCacheNotUsed Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) LoadEventFired(ctx context.Context) (LoadEventFiredClient, error) {
 	s, err := rpcc.NewStream(ctx, "Page.loadEventFired", d.conn)
 	if err != nil {

@@ -96,6 +96,7 @@ type SetDownloadBehaviorArgs struct {
 	Behavior         string     `json:"behavior"`
 	BrowserContextID *ContextID `json:"browserContextId,omitempty"` // BrowserContext to set download behavior. When omitted, default browser context is used.
 	DownloadPath     *string    `json:"downloadPath,omitempty"`     // The default path to save downloaded files to. This is required if behavior is set to 'allow' or 'allowAndName'.
+	EventsEnabled    *bool      `json:"eventsEnabled,omitempty"`    // Whether to emit download events (defaults to false).
 }
 
 // NewSetDownloadBehaviorArgs initializes SetDownloadBehaviorArgs with the required arguments.
@@ -118,6 +119,13 @@ func (a *SetDownloadBehaviorArgs) SetBrowserContextID(browserContextID ContextID
 // behavior is set to 'allow' or 'allowAndName'.
 func (a *SetDownloadBehaviorArgs) SetDownloadPath(downloadPath string) *SetDownloadBehaviorArgs {
 	a.DownloadPath = &downloadPath
+	return a
+}
+
+// SetEventsEnabled sets the EventsEnabled optional argument. Whether
+// to emit download events (defaults to false).
+func (a *SetDownloadBehaviorArgs) SetEventsEnabled(eventsEnabled bool) *SetDownloadBehaviorArgs {
+	a.EventsEnabled = &eventsEnabled
 	return a
 }
 

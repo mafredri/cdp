@@ -374,6 +374,11 @@ type Request struct {
 	//
 	// Note: This property is experimental.
 	TrustTokenParams *TrustTokenParams `json:"trustTokenParams,omitempty"`
+	// IsSameSite True if this resource request is considered to be the
+	// 'same site' as the request correspondinfg to the main frame.
+	//
+	// Note: This property is experimental.
+	IsSameSite *bool `json:"isSameSite,omitempty"`
 }
 
 // SignedCertificateTimestamp Details of a signed certificate timestamp (SCT).
@@ -494,11 +499,12 @@ const (
 	CORSErrorHeaderDisallowedByPreflightResponse  CORSError = "HeaderDisallowedByPreflightResponse"
 	CORSErrorRedirectContainsCredentials          CORSError = "RedirectContainsCredentials"
 	CORSErrorInsecurePrivateNetwork               CORSError = "InsecurePrivateNetwork"
+	CORSErrorNoCORSRedirectModeNotFollow          CORSError = "NoCorsRedirectModeNotFollow"
 )
 
 func (e CORSError) Valid() bool {
 	switch e {
-	case "DisallowedByMode", "InvalidResponse", "WildcardOriginNotAllowed", "MissingAllowOriginHeader", "MultipleAllowOriginValues", "InvalidAllowOriginValue", "AllowOriginMismatch", "InvalidAllowCredentials", "CorsDisabledScheme", "PreflightInvalidStatus", "PreflightDisallowedRedirect", "PreflightWildcardOriginNotAllowed", "PreflightMissingAllowOriginHeader", "PreflightMultipleAllowOriginValues", "PreflightInvalidAllowOriginValue", "PreflightAllowOriginMismatch", "PreflightInvalidAllowCredentials", "PreflightMissingAllowExternal", "PreflightInvalidAllowExternal", "InvalidAllowMethodsPreflightResponse", "InvalidAllowHeadersPreflightResponse", "MethodDisallowedByPreflightResponse", "HeaderDisallowedByPreflightResponse", "RedirectContainsCredentials", "InsecurePrivateNetwork":
+	case "DisallowedByMode", "InvalidResponse", "WildcardOriginNotAllowed", "MissingAllowOriginHeader", "MultipleAllowOriginValues", "InvalidAllowOriginValue", "AllowOriginMismatch", "InvalidAllowCredentials", "CorsDisabledScheme", "PreflightInvalidStatus", "PreflightDisallowedRedirect", "PreflightWildcardOriginNotAllowed", "PreflightMissingAllowOriginHeader", "PreflightMultipleAllowOriginValues", "PreflightInvalidAllowOriginValue", "PreflightAllowOriginMismatch", "PreflightInvalidAllowCredentials", "PreflightMissingAllowExternal", "PreflightInvalidAllowExternal", "InvalidAllowMethodsPreflightResponse", "InvalidAllowHeadersPreflightResponse", "MethodDisallowedByPreflightResponse", "HeaderDisallowedByPreflightResponse", "RedirectContainsCredentials", "InsecurePrivateNetwork", "NoCorsRedirectModeNotFollow":
 		return true
 	default:
 		return false
@@ -873,7 +879,7 @@ func (e InterceptionStage) String() string {
 //
 // Note: This type is experimental.
 type RequestPattern struct {
-	URLPattern        *string           `json:"urlPattern,omitempty"`        // Wildcards ('*' -> zero or more, '?' -> exactly one) are allowed. Escape character is backslash. Omitting is equivalent to "*".
+	URLPattern        *string           `json:"urlPattern,omitempty"`        // Wildcards (`'*'` -> zero or more, `'?'` -> exactly one) are allowed. Escape character is backslash. Omitting is equivalent to `"*"`.
 	ResourceType      ResourceType      `json:"resourceType,omitempty"`      // If set, only requests for matching resource types will be intercepted.
 	InterceptionStage InterceptionStage `json:"interceptionStage,omitempty"` // Stage at which to begin intercepting requests. Default is Request.
 }
@@ -952,6 +958,32 @@ type SignedExchangeInfo struct {
 	Header          *SignedExchangeHeader `json:"header,omitempty"`          // Information about the signed exchange header.
 	SecurityDetails *SecurityDetails      `json:"securityDetails,omitempty"` // Security details for the signed exchange header.
 	Errors          []SignedExchangeError `json:"errors,omitempty"`          // Errors occurred while handling the signed exchagne.
+}
+
+// ContentEncoding List of content encodings supported by the backend.
+//
+// Note: This type is experimental.
+type ContentEncoding string
+
+// ContentEncoding as enums.
+const (
+	ContentEncodingNotSet  ContentEncoding = ""
+	ContentEncodingDeflate ContentEncoding = "deflate"
+	ContentEncodingGzip    ContentEncoding = "gzip"
+	ContentEncodingBR      ContentEncoding = "br"
+)
+
+func (e ContentEncoding) Valid() bool {
+	switch e {
+	case "deflate", "gzip", "br":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ContentEncoding) String() string {
+	return string(e)
 }
 
 // PrivateNetworkRequestPolicy
@@ -1060,15 +1092,15 @@ type CrossOriginEmbedderPolicyValue string
 
 // CrossOriginEmbedderPolicyValue as enums.
 const (
-	CrossOriginEmbedderPolicyValueNotSet               CrossOriginEmbedderPolicyValue = ""
-	CrossOriginEmbedderPolicyValueNone                 CrossOriginEmbedderPolicyValue = "None"
-	CrossOriginEmbedderPolicyValueCORSOrCredentialless CrossOriginEmbedderPolicyValue = "CorsOrCredentialless"
-	CrossOriginEmbedderPolicyValueRequireCorp          CrossOriginEmbedderPolicyValue = "RequireCorp"
+	CrossOriginEmbedderPolicyValueNotSet         CrossOriginEmbedderPolicyValue = ""
+	CrossOriginEmbedderPolicyValueNone           CrossOriginEmbedderPolicyValue = "None"
+	CrossOriginEmbedderPolicyValueCredentialless CrossOriginEmbedderPolicyValue = "Credentialless"
+	CrossOriginEmbedderPolicyValueRequireCorp    CrossOriginEmbedderPolicyValue = "RequireCorp"
 )
 
 func (e CrossOriginEmbedderPolicyValue) Valid() bool {
 	switch e {
-	case "None", "CorsOrCredentialless", "RequireCorp":
+	case "None", "Credentialless", "RequireCorp":
 		return true
 	default:
 		return false

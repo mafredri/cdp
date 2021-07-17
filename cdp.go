@@ -399,6 +399,20 @@ type Browser interface {
 	//
 	// Note: This command is experimental.
 	ExecuteBrowserCommand(context.Context, *browser.ExecuteBrowserCommandArgs) error
+
+	// Event DownloadWillBegin
+	//
+	// Fired when page is about to start a download.
+	//
+	// Note: This event is experimental.
+	DownloadWillBegin(context.Context) (browser.DownloadWillBeginClient, error)
+
+	// Event DownloadProgress
+	//
+	// Fired when download makes progress. Last call has |done| == true.
+	//
+	// Note: This event is experimental.
+	DownloadProgress(context.Context) (browser.DownloadProgressClient, error)
 }
 
 // The CSS domain. This domain exposes CSS read/write operations. All CSS
@@ -519,6 +533,13 @@ type CSS interface {
 	//
 	// Modifies the rule selector.
 	SetMediaText(context.Context, *css.SetMediaTextArgs) (*css.SetMediaTextReply, error)
+
+	// Command SetContainerQueryText
+	//
+	// Modifies the expression of a container query.
+	//
+	// Note: This command is experimental.
+	SetContainerQueryText(context.Context, *css.SetContainerQueryTextArgs) (*css.SetContainerQueryTextReply, error)
 
 	// Command SetRuleSelector
 	//
@@ -990,6 +1011,16 @@ type DOM interface {
 	// Note: This command is experimental.
 	GetFrameOwner(context.Context, *dom.GetFrameOwnerArgs) (*dom.GetFrameOwnerReply, error)
 
+	// Command GetContainerForNode
+	//
+	// Returns the container of the given node based on container query
+	// conditions. If containerName is given, it will find the nearest
+	// container with a matching name; otherwise it will find the nearest
+	// container regardless of its container name.
+	//
+	// Note: This command is experimental.
+	GetContainerForNode(context.Context, *dom.GetContainerForNodeArgs) (*dom.GetContainerForNodeReply, error)
+
 	// Event AttributeModified
 	//
 	// Fired when `Element`'s attribute is modified.
@@ -1275,11 +1306,11 @@ type Debugger interface {
 	// Returns source for the script with given id.
 	GetScriptSource(context.Context, *debugger.GetScriptSourceArgs) (*debugger.GetScriptSourceReply, error)
 
-	// Command GetWasmBytecode
+	// Command GetWASMBytecode
 	//
 	// Deprecated: This command is deprecated. Use getScriptSource
 	// instead.
-	GetWasmBytecode(context.Context, *debugger.GetWasmBytecodeArgs) (*debugger.GetWasmBytecodeReply, error)
+	GetWASMBytecode(context.Context, *debugger.GetWASMBytecodeArgs) (*debugger.GetWASMBytecodeReply, error)
 
 	// Command GetStackTrace
 	//
@@ -1897,6 +1928,13 @@ type IndexedDB interface {
 
 // The Input domain.
 type Input interface {
+	// Command DispatchDragEvent
+	//
+	// Dispatches a drag event into the page.
+	//
+	// Note: This command is experimental.
+	DispatchDragEvent(context.Context, *input.DispatchDragEventArgs) error
+
 	// Command DispatchKeyEvent
 	//
 	// Dispatches a key event to the page.
@@ -1932,6 +1970,15 @@ type Input interface {
 	// Ignores input events (useful while auditing page).
 	SetIgnoreInputEvents(context.Context, *input.SetIgnoreInputEventsArgs) error
 
+	// Command SetInterceptDrags
+	//
+	// Prevents default drag and drop behavior and instead emits
+	// `Input.dragIntercepted` events. Drag and drop behavior can be
+	// directly controlled via `Input.dispatchDragEvent`.
+	//
+	// Note: This command is experimental.
+	SetInterceptDrags(context.Context, *input.SetInterceptDragsArgs) error
+
 	// Command SynthesizePinchGesture
 	//
 	// Synthesizes a pinch gesture over a time period by issuing
@@ -1955,6 +2002,15 @@ type Input interface {
 	//
 	// Note: This command is experimental.
 	SynthesizeTapGesture(context.Context, *input.SynthesizeTapGestureArgs) error
+
+	// Event DragIntercepted
+	//
+	// Emitted only when `Input.setInterceptDrags` is enabled. Use this
+	// data with `Input.dispatchDragEvent` to restore normal drag and drop
+	// behavior.
+	//
+	// Note: This event is experimental.
+	DragIntercepted(context.Context) (input.DragInterceptedClient, error)
 }
 
 // The Inspector domain.
@@ -2182,6 +2238,21 @@ type Memory interface {
 // the page. It exposes information about http, file, data and other requests
 // and responses, their headers, bodies, timing, etc.
 type Network interface {
+	// Command SetAcceptedEncodings
+	//
+	// Sets a list of content encodings that will be accepted. Empty list
+	// means no encoding is accepted.
+	//
+	// Note: This command is experimental.
+	SetAcceptedEncodings(context.Context, *network.SetAcceptedEncodingsArgs) error
+
+	// Command ClearAcceptedEncodingsOverride
+	//
+	// Clears accepted encodings set by setAcceptedEncodings
+	//
+	// Note: This command is experimental.
+	ClearAcceptedEncodingsOverride(context.Context) error
+
 	// Command CanClearBrowserCache
 	//
 	// Deprecated: Tells whether clearing browser cache is supported.
@@ -2340,13 +2411,6 @@ type Network interface {
 	//
 	// Sets given cookies.
 	SetCookies(context.Context, *network.SetCookiesArgs) error
-
-	// Command SetDataSizeLimitsForTest
-	//
-	// For testing.
-	//
-	// Note: This command is experimental.
-	SetDataSizeLimitsForTest(context.Context, *network.SetDataSizeLimitsForTestArgs) error
 
 	// Command SetExtraHTTPHeaders
 	//
@@ -2523,6 +2587,37 @@ type Network interface {
 	//
 	// Note: This event is experimental.
 	TrustTokenOperationDone(context.Context) (network.TrustTokenOperationDoneClient, error)
+
+	// Event SubresourceWebBundleMetadataReceived
+	//
+	// Fired once when parsing the .wbn file has succeeded. The event
+	// contains the information about the web bundle contents.
+	//
+	// Note: This event is experimental.
+	SubresourceWebBundleMetadataReceived(context.Context) (network.SubresourceWebBundleMetadataReceivedClient, error)
+
+	// Event SubresourceWebBundleMetadataError
+	//
+	// Fired once when parsing the .wbn file has failed.
+	//
+	// Note: This event is experimental.
+	SubresourceWebBundleMetadataError(context.Context) (network.SubresourceWebBundleMetadataErrorClient, error)
+
+	// Event SubresourceWebBundleInnerResponseParsed
+	//
+	// Fired when handling requests for resources within a .wbn file.
+	// Note: this will only be fired for resources that are requested by
+	// the webpage.
+	//
+	// Note: This event is experimental.
+	SubresourceWebBundleInnerResponseParsed(context.Context) (network.SubresourceWebBundleInnerResponseParsedClient, error)
+
+	// Event SubresourceWebBundleInnerResponseError
+	//
+	// Fired when request for resources within a .wbn file failed.
+	//
+	// Note: This event is experimental.
+	SubresourceWebBundleInnerResponseError(context.Context) (network.SubresourceWebBundleInnerResponseErrorClient, error)
 }
 
 // The Overlay domain. This domain provides various functionality related to
@@ -2562,7 +2657,11 @@ type Overlay interface {
 
 	// Command HighlightFrame
 	//
-	// Highlights owner element of the frame with given id.
+	// Deprecated: Highlights owner element of the frame with given id.
+	// Deprecated: Doesn't work reliablity and cannot be fixed due to
+	// process separatation (the owner node might be in a different
+	// process). Determine the owner node in the client and use
+	// highlightNode.
 	HighlightFrame(context.Context, *overlay.HighlightFrameArgs) error
 
 	// Command HighlightNode
@@ -2622,6 +2721,12 @@ type Overlay interface {
 
 	// Command SetShowFlexOverlays
 	SetShowFlexOverlays(context.Context, *overlay.SetShowFlexOverlaysArgs) error
+
+	// Command SetShowScrollSnapOverlays
+	SetShowScrollSnapOverlays(context.Context, *overlay.SetShowScrollSnapOverlaysArgs) error
+
+	// Command SetShowContainerQueryOverlays
+	SetShowContainerQueryOverlays(context.Context, *overlay.SetShowContainerQueryOverlaysArgs) error
 
 	// Command SetShowPaintRects
 	//
@@ -3064,14 +3169,16 @@ type Page interface {
 
 	// Event DownloadWillBegin
 	//
-	// Fired when page is about to start a download.
+	// Deprecated: Fired when page is about to start a download.
+	// Deprecated. Use Browser.downloadWillBegin instead.
 	//
 	// Note: This event is experimental.
 	DownloadWillBegin(context.Context) (page.DownloadWillBeginClient, error)
 
 	// Event DownloadProgress
 	//
-	// Fired when download makes progress. Last call has |done| == true.
+	// Deprecated: Fired when download makes progress. Last call has
+	// |done| == true. Deprecated. Use Browser.downloadProgress instead.
 	//
 	// Note: This event is experimental.
 	DownloadProgress(context.Context) (page.DownloadProgressClient, error)
@@ -3103,6 +3210,17 @@ type Page interface {
 	// Fired for top level page lifecycle events such as navigation, load,
 	// paint, etc.
 	LifecycleEvent(context.Context) (page.LifecycleEventClient, error)
+
+	// Event BackForwardCacheNotUsed
+	//
+	// Fired for failed bfcache history navigations if BackForwardCache
+	// feature is enabled. Do not assume any ordering with the
+	// Page.frameNavigated event. This event is fired only for main-frame
+	// history navigation where the document changes (non-same-document
+	// navigations), when bfcache navigation fails.
+	//
+	// Note: This event is experimental.
+	BackForwardCacheNotUsed(context.Context) (page.BackForwardCacheNotUsedClient, error)
 
 	// Event LoadEventFired
 	LoadEventFired(context.Context) (page.LoadEventFiredClient, error)
