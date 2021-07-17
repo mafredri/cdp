@@ -12,7 +12,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 	"sort"
 	"strings"
 
@@ -25,9 +25,7 @@ const (
 	realEnum           = false
 )
 
-var (
-	nonPtrMap = make(map[string]bool)
-)
+var nonPtrMap = make(map[string]bool)
 
 func panicErr(err error) {
 	if err != nil {
@@ -45,18 +43,27 @@ func mkdir(name string) error {
 
 func main() {
 	var (
-		destPkg          string
+		dest             string
+		pkg              string
 		browserProtoJSON string
 		jsProtoFileJSON  string
 	)
-	flag.StringVar(&destPkg, "dest-pkg", "", "Destination for generated cdp package (inside $GOPATH)")
+	flag.StringVar(&dest, "dest", "", "Destination for generated cdp package")
+	flag.StringVar(&pkg, "pkg", "github.com/mafredri/cdp", "Name of package")
 	flag.StringVar(&browserProtoJSON, "browser-proto", "./protodef/browser_protocol.json", "Path to browser protocol")
 	flag.StringVar(&jsProtoFileJSON, "js-proto", "./protodef/js_protocol.json", "Path to JS protocol")
 	flag.Parse()
 
-	if destPkg == "" {
-		fmt.Fprintln(os.Stderr, "error: dest-pkg must be set")
+	if dest == "" {
+		fmt.Fprintln(os.Stderr, "error: dest must be set")
 		os.Exit(1)
+	}
+	if !filepath.IsAbs(dest) {
+		wd, err := os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		dest = filepath.Join(wd, dest)
 	}
 
 	var protocol, jsProtocol proto.Protocol
@@ -77,15 +84,16 @@ func main() {
 		return protocol.Domains[i].Domain < protocol.Domains[j].Domain
 	})
 
-	protoDest := path.Join(destPkg, "protocol")
+	protoDest := filepath.Join(dest, "protocol")
+	protoImport := filepath.Join(pkg, "protocol")
 	imports := []string{
-		"github.com/mafredri/cdp/rpcc",
-		"github.com/mafredri/cdp/protocol/internal",
-		"github.com/mafredri/cdp/protocol",
+		pkg + "/rpcc",
+		pkg + "/protocol/internal",
+		pkg + "/protocol",
 	}
 	for i, d := range protocol.Domains {
 		dLower := strings.ToLower(d.Name())
-		imports = append(imports, path.Join(protoDest, dLower))
+		imports = append(imports, filepath.Join(protoImport, dLower))
 
 		for ii, t := range d.Types {
 			nam := t.Name(d)
@@ -122,7 +130,7 @@ func main() {
 
 	// Define the cdp Client.
 	cdp.pkg = "cdp"
-	cdp.dir = destPkg
+	cdp.dir = dest
 	cdp.PackageHeader("")
 	cdp.CdpClient(protocol.Domains)
 	cdp.writeFile("cdp_client.go")
@@ -135,7 +143,7 @@ func main() {
 
 	// Package cdp/protocol/internal.
 	g.pkg = "internal"
-	g.dir = path.Join(protoDest, "internal")
+	g.dir = filepath.Join(protoDest, "internal")
 	for _, d := range protocol.Domains {
 		// Write circular types to internal package.
 		for _, it := range []struct {
@@ -171,7 +179,7 @@ func main() {
 		cdp.DomainInterface(d)
 
 		dLower := strings.ToLower(d.Domain)
-		g.dir = path.Join(protoDest, dLower)
+		g.dir = filepath.Join(protoDest, dLower)
 		g.pkg = dLower
 		err := mkdir(g.path())
 		panicErr(err)
@@ -211,12 +219,12 @@ func main() {
 
 	cdp.writeFile(cdp.pkg + ".go")
 
-	g.dir = destPkg
+	g.dir = dest
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	goimports := exec.CommandContext(ctx, "goimports", "-w", g.path())
+	goimports := exec.CommandContext(ctx, "goimports", "-w", "-v", g.path())
 	out, err := goimports.CombinedOutput()
 	if err != nil {
 		log.Printf("goimports failed: %s", out)
@@ -224,7 +232,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	goinstall := exec.CommandContext(ctx, "go", "install", path.Join(destPkg, "..."))
+	goinstall := exec.CommandContext(ctx, "go", "install", filepath.Join(dest, "..."))
 	out, err = goinstall.CombinedOutput()
 	if err != nil {
 		log.Printf("install failed: %s", out)
@@ -246,7 +254,7 @@ type Generator struct {
 }
 
 func (g *Generator) path() string {
-	return path.Join(os.Getenv("GOPATH"), "src", g.dir)
+	return g.dir
 }
 
 // Printf prints to the Generator buffer.
@@ -261,7 +269,7 @@ func (g *Generator) TestPrintf(format string, args ...interface{}) {
 }
 
 func (g *Generator) writeFile(f string) {
-	fp := path.Join(g.path(), f)
+	fp := filepath.Join(g.path(), f)
 	if !g.hasContent {
 		log.Printf("No content, skipping %s...", fp)
 		g.clear()
