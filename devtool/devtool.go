@@ -287,7 +287,7 @@ func (d *DevTools) resolveHost(ctx context.Context) error {
 			continue
 		}
 		defer resp.Body.Close()
-		
+
 		if resp.StatusCode == 200 {
 			newURL = try
 			break
