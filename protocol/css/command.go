@@ -144,12 +144,13 @@ func NewGetMatchedStylesForNodeArgs(nodeID dom.NodeID) *GetMatchedStylesForNodeA
 
 // GetMatchedStylesForNodeReply represents the return values for GetMatchedStylesForNode in the CSS domain.
 type GetMatchedStylesForNodeReply struct {
-	InlineStyle       *Style                 `json:"inlineStyle,omitempty"`       // Inline style for the specified DOM node.
-	AttributesStyle   *Style                 `json:"attributesStyle,omitempty"`   // Attribute-defined element style (e.g. resulting from "width=20 height=100%").
-	MatchedCSSRules   []RuleMatch            `json:"matchedCSSRules,omitempty"`   // CSS rules matching this node, from all applicable stylesheets.
-	PseudoElements    []PseudoElementMatches `json:"pseudoElements,omitempty"`    // Pseudo style matches for this node.
-	Inherited         []InheritedStyleEntry  `json:"inherited,omitempty"`         // A chain of inherited styles (from the immediate node parent up to the DOM tree root).
-	CSSKeyframesRules []KeyframesRule        `json:"cssKeyframesRules,omitempty"` // A list of CSS keyframed animations matching this node.
+	InlineStyle             *Style                          `json:"inlineStyle,omitempty"`             // Inline style for the specified DOM node.
+	AttributesStyle         *Style                          `json:"attributesStyle,omitempty"`         // Attribute-defined element style (e.g. resulting from "width=20 height=100%").
+	MatchedCSSRules         []RuleMatch                     `json:"matchedCSSRules,omitempty"`         // CSS rules matching this node, from all applicable stylesheets.
+	PseudoElements          []PseudoElementMatches          `json:"pseudoElements,omitempty"`          // Pseudo style matches for this node.
+	Inherited               []InheritedStyleEntry           `json:"inherited,omitempty"`               // A chain of inherited styles (from the immediate node parent up to the DOM tree root).
+	InheritedPseudoElements []InheritedPseudoElementMatches `json:"inheritedPseudoElements,omitempty"` // A chain of inherited pseudo element styles (from the immediate node parent up to the DOM tree root).
+	CSSKeyframesRules       []KeyframesRule                 `json:"cssKeyframesRules,omitempty"`       // A list of CSS keyframed animations matching this node.
 }
 
 // GetMediaQueriesReply represents the return values for GetMediaQueries in the CSS domain.
@@ -189,6 +190,23 @@ func NewGetStyleSheetTextArgs(styleSheetID StyleSheetID) *GetStyleSheetTextArgs 
 // GetStyleSheetTextReply represents the return values for GetStyleSheetText in the CSS domain.
 type GetStyleSheetTextReply struct {
 	Text string `json:"text"` // The stylesheet text.
+}
+
+// GetLayersForNodeArgs represents the arguments for GetLayersForNode in the CSS domain.
+type GetLayersForNodeArgs struct {
+	NodeID dom.NodeID `json:"nodeId"` // No description.
+}
+
+// NewGetLayersForNodeArgs initializes GetLayersForNodeArgs with the required arguments.
+func NewGetLayersForNodeArgs(nodeID dom.NodeID) *GetLayersForNodeArgs {
+	args := new(GetLayersForNodeArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// GetLayersForNodeReply represents the return values for GetLayersForNode in the CSS domain.
+type GetLayersForNodeReply struct {
+	RootLayer LayerData `json:"rootLayer"` // No description.
 }
 
 // TrackComputedStyleUpdatesArgs represents the arguments for TrackComputedStyleUpdates in the CSS domain.
@@ -285,6 +303,27 @@ func NewSetContainerQueryTextArgs(styleSheetID StyleSheetID, rang SourceRange, t
 // SetContainerQueryTextReply represents the return values for SetContainerQueryText in the CSS domain.
 type SetContainerQueryTextReply struct {
 	ContainerQuery ContainerQuery `json:"containerQuery"` // The resulting CSS container query rule after modification.
+}
+
+// SetSupportsTextArgs represents the arguments for SetSupportsText in the CSS domain.
+type SetSupportsTextArgs struct {
+	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange  `json:"range"`        // No description.
+	Text         string       `json:"text"`         // No description.
+}
+
+// NewSetSupportsTextArgs initializes SetSupportsTextArgs with the required arguments.
+func NewSetSupportsTextArgs(styleSheetID StyleSheetID, rang SourceRange, text string) *SetSupportsTextArgs {
+	args := new(SetSupportsTextArgs)
+	args.StyleSheetID = styleSheetID
+	args.Range = rang
+	args.Text = text
+	return args
+}
+
+// SetSupportsTextReply represents the return values for SetSupportsText in the CSS domain.
+type SetSupportsTextReply struct {
+	Supports Supports `json:"supports"` // The resulting CSS Supports rule after modification.
 }
 
 // SetRuleSelectorArgs represents the arguments for SetRuleSelector in the CSS domain.

@@ -61,6 +61,20 @@ func (d *domainClient) SetSinkToUse(ctx context.Context, args *SetSinkToUseArgs)
 	return
 }
 
+// StartDesktopMirroring invokes the Cast method. Starts mirroring the desktop
+// to the sink.
+func (d *domainClient) StartDesktopMirroring(ctx context.Context, args *StartDesktopMirroringArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Cast.startDesktopMirroring", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Cast.startDesktopMirroring", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Cast", Op: "StartDesktopMirroring", Err: err}
+	}
+	return
+}
+
 // StartTabMirroring invokes the Cast method. Starts mirroring the tab to the
 // sink.
 func (d *domainClient) StartTabMirroring(ctx context.Context, args *StartTabMirroringArgs) (err error) {

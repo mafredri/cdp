@@ -24,8 +24,8 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 // the target and returns when the frame was completed. Optionally captures a
 // screenshot from the resulting frame. Requires that the target was created
 // with enabled BeginFrameControl. Designed for use with
-// --run-all-compositor-stages-before-draw, see also https://goo.gl/3zHXhB for
-// more background.
+// --run-all-compositor-stages-before-draw, see also
+// https://goo.gle/chrome-headless-rendering for more background.
 func (d *domainClient) BeginFrame(ctx context.Context, args *BeginFrameArgs) (reply *BeginFrameReply, err error) {
 	reply = new(BeginFrameReply)
 	if args != nil {

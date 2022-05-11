@@ -310,6 +310,23 @@ func (d *domainClient) RemoveBinding(ctx context.Context, args *RemoveBindingArg
 	return
 }
 
+// GetExceptionDetails invokes the Runtime method. This method tries to lookup
+// and populate exception details for a JavaScript Error object. Note that the
+// stackTrace portion of the resulting exceptionDetails will only be populated
+// if the Runtime domain was enabled at the time when the Error was thrown.
+func (d *domainClient) GetExceptionDetails(ctx context.Context, args *GetExceptionDetailsArgs) (reply *GetExceptionDetailsReply, err error) {
+	reply = new(GetExceptionDetailsReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Runtime.getExceptionDetails", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Runtime.getExceptionDetails", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Runtime", Op: "GetExceptionDetails", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) BindingCalled(ctx context.Context) (BindingCalledClient, error) {
 	s, err := rpcc.NewStream(ctx, "Runtime.bindingCalled", d.conn)
 	if err != nil {

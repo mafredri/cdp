@@ -183,6 +183,35 @@ func (d *domainClient) ClearTrustTokens(ctx context.Context, args *ClearTrustTok
 	return
 }
 
+// GetInterestGroupDetails invokes the Storage method. Gets details for a
+// named interest group.
+func (d *domainClient) GetInterestGroupDetails(ctx context.Context, args *GetInterestGroupDetailsArgs) (reply *GetInterestGroupDetailsReply, err error) {
+	reply = new(GetInterestGroupDetailsReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.getInterestGroupDetails", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.getInterestGroupDetails", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "GetInterestGroupDetails", Err: err}
+	}
+	return
+}
+
+// SetInterestGroupTracking invokes the Storage method. Enables/Disables
+// issuing of interestGroupAccessed events.
+func (d *domainClient) SetInterestGroupTracking(ctx context.Context, args *SetInterestGroupTrackingArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.setInterestGroupTracking", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.setInterestGroupTracking", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "SetInterestGroupTracking", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) CacheStorageContentUpdated(ctx context.Context) (CacheStorageContentUpdatedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Storage.cacheStorageContentUpdated", d.conn)
 	if err != nil {
@@ -263,6 +292,27 @@ func (c *indexedDBListUpdatedClient) Recv() (*IndexedDBListUpdatedReply, error) 
 	event := new(IndexedDBListUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Storage", Op: "IndexedDBListUpdated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) InterestGroupAccessed(ctx context.Context) (InterestGroupAccessedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Storage.interestGroupAccessed", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &interestGroupAccessedClient{Stream: s}, nil
+}
+
+type interestGroupAccessedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *interestGroupAccessedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *interestGroupAccessedClient) Recv() (*InterestGroupAccessedReply, error) {
+	event := new(InterestGroupAccessedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Storage", Op: "InterestGroupAccessed Recv", Err: err}
 	}
 	return event, nil
 }

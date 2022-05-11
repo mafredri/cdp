@@ -72,13 +72,19 @@ type UserAgentBrandVersion struct {
 //
 // Note: This type is experimental.
 type UserAgentMetadata struct {
-	Brands          []UserAgentBrandVersion `json:"brands,omitempty"`      // No description.
-	FullVersion     *string                 `json:"fullVersion,omitempty"` // No description.
-	Platform        string                  `json:"platform"`              // No description.
-	PlatformVersion string                  `json:"platformVersion"`       // No description.
-	Architecture    string                  `json:"architecture"`          // No description.
-	Model           string                  `json:"model"`                 // No description.
-	Mobile          bool                    `json:"mobile"`                // No description.
+	Brands          []UserAgentBrandVersion `json:"brands,omitempty"`          // No description.
+	FullVersionList []UserAgentBrandVersion `json:"fullVersionList,omitempty"` // No description.
+	// FullVersion is deprecated.
+	//
+	// Deprecated: This property should not be used.
+	FullVersion     *string `json:"fullVersion,omitempty"`
+	Platform        string  `json:"platform"`          // No description.
+	PlatformVersion string  `json:"platformVersion"`   // No description.
+	Architecture    string  `json:"architecture"`      // No description.
+	Model           string  `json:"model"`             // No description.
+	Mobile          bool    `json:"mobile"`            // No description.
+	Bitness         *string `json:"bitness,omitempty"` // No description.
+	Wow64           *bool   `json:"wow64,omitempty"`   // No description.
 }
 
 // DisabledImageType Enum of image types that can be disabled.

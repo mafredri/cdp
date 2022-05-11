@@ -50,6 +50,12 @@ type InheritedStyleEntry struct {
 	MatchedCSSRules []RuleMatch `json:"matchedCSSRules"`       // Matches of CSS rules matching the ancestor node in the style inheritance chain.
 }
 
+// InheritedPseudoElementMatches Inherited pseudo element matches from pseudos
+// of an ancestor node.
+type InheritedPseudoElementMatches struct {
+	PseudoElements []PseudoElementMatches `json:"pseudoElements"` // Matches of pseudo styles from the pseudos of an ancestor node.
+}
+
 // RuleMatch Match data for a CSS rule.
 type RuleMatch struct {
 	Rule              Rule  `json:"rule"`              // CSS rule in the match.
@@ -103,6 +109,17 @@ type Rule struct {
 	//
 	// Note: This property is experimental.
 	ContainerQueries []ContainerQuery `json:"containerQueries,omitempty"`
+	// Supports @supports CSS at-rule array. The array enumerates
+	// @supports at-rules starting with the innermost one, going outwards.
+	//
+	// Note: This property is experimental.
+	Supports []Supports `json:"supports,omitempty"`
+	// Layers Cascade layer array. Contains the layer hierarchy that this
+	// rule belongs to starting with the innermost layer and going
+	// outwards.
+	//
+	// Note: This property is experimental.
+	Layers []Layer `json:"layers,omitempty"`
 }
 
 // RuleUsage CSS coverage information.
@@ -195,6 +212,34 @@ type ContainerQuery struct {
 	Range        *SourceRange  `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
 	StyleSheetID *StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
 	Name         *string       `json:"name,omitempty"`         // Optional name for the container.
+}
+
+// Supports CSS Supports at-rule descriptor.
+//
+// Note: This type is experimental.
+type Supports struct {
+	Text         string        `json:"text"`                   // Supports rule text.
+	Active       bool          `json:"active"`                 // Whether the supports condition is satisfied.
+	Range        *SourceRange  `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
+	StyleSheetID *StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
+}
+
+// Layer CSS Layer at-rule descriptor.
+//
+// Note: This type is experimental.
+type Layer struct {
+	Text         string        `json:"text"`                   // Layer name.
+	Range        *SourceRange  `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
+	StyleSheetID *StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
+}
+
+// LayerData CSS Layer data.
+//
+// Note: This type is experimental.
+type LayerData struct {
+	Name      string      `json:"name"`                // Layer name.
+	SubLayers []LayerData `json:"subLayers,omitempty"` // Direct sub-layers
+	Order     float64     `json:"order"`               // Layer order. The order determines the order of the layer in the cascade order. A higher number has higher priority in the cascade order.
 }
 
 // PlatformFontUsage Information about amount of glyphs that were rendered

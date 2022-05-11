@@ -130,17 +130,24 @@ type RequestWillBeSentClient interface {
 
 // RequestWillBeSentReply is the reply for RequestWillBeSent events.
 type RequestWillBeSentReply struct {
-	RequestID        RequestID             `json:"requestId"`                  // Request identifier.
-	LoaderID         LoaderID              `json:"loaderId"`                   // Loader identifier. Empty string if the request is fetched from worker.
-	DocumentURL      string                `json:"documentURL"`                // URL of the document this request is loaded for.
-	Request          Request               `json:"request"`                    // Request data.
-	Timestamp        MonotonicTime         `json:"timestamp"`                  // Timestamp.
-	WallTime         TimeSinceEpoch        `json:"wallTime"`                   // Timestamp.
-	Initiator        Initiator             `json:"initiator"`                  // Request initiator.
-	RedirectResponse *Response             `json:"redirectResponse,omitempty"` // Redirect response data.
-	Type             ResourceType          `json:"type,omitempty"`             // Type of this resource.
-	FrameID          *internal.PageFrameID `json:"frameId,omitempty"`          // Frame identifier.
-	HasUserGesture   *bool                 `json:"hasUserGesture,omitempty"`   // Whether the request is initiated by a user gesture. Defaults to false.
+	RequestID   RequestID      `json:"requestId"`   // Request identifier.
+	LoaderID    LoaderID       `json:"loaderId"`    // Loader identifier. Empty string if the request is fetched from worker.
+	DocumentURL string         `json:"documentURL"` // URL of the document this request is loaded for.
+	Request     Request        `json:"request"`     // Request data.
+	Timestamp   MonotonicTime  `json:"timestamp"`   // Timestamp.
+	WallTime    TimeSinceEpoch `json:"wallTime"`    // Timestamp.
+	Initiator   Initiator      `json:"initiator"`   // Request initiator.
+	// RedirectHasExtraInfo In the case that redirectResponse is
+	// populated, this flag indicates whether requestWillBeSentExtraInfo
+	// and responseReceivedExtraInfo events will be or were emitted for the
+	// request which was just redirected.
+	//
+	// Note: This property is experimental.
+	RedirectHasExtraInfo bool                  `json:"redirectHasExtraInfo"`
+	RedirectResponse     *Response             `json:"redirectResponse,omitempty"` // Redirect response data.
+	Type                 ResourceType          `json:"type,omitempty"`             // Type of this resource.
+	FrameID              *internal.PageFrameID `json:"frameId,omitempty"`          // Frame identifier.
+	HasUserGesture       *bool                 `json:"hasUserGesture,omitempty"`   // Whether the request is initiated by a user gesture. Defaults to false.
 }
 
 // ResourceChangedPriorityClient is a client for ResourceChangedPriority events.
@@ -185,12 +192,18 @@ type ResponseReceivedClient interface {
 
 // ResponseReceivedReply is the reply for ResponseReceived events.
 type ResponseReceivedReply struct {
-	RequestID RequestID             `json:"requestId"`         // Request identifier.
-	LoaderID  LoaderID              `json:"loaderId"`          // Loader identifier. Empty string if the request is fetched from worker.
-	Timestamp MonotonicTime         `json:"timestamp"`         // Timestamp.
-	Type      ResourceType          `json:"type"`              // Resource type.
-	Response  Response              `json:"response"`          // Response data.
-	FrameID   *internal.PageFrameID `json:"frameId,omitempty"` // Frame identifier.
+	RequestID RequestID     `json:"requestId"` // Request identifier.
+	LoaderID  LoaderID      `json:"loaderId"`  // Loader identifier. Empty string if the request is fetched from worker.
+	Timestamp MonotonicTime `json:"timestamp"` // Timestamp.
+	Type      ResourceType  `json:"type"`      // Resource type.
+	Response  Response      `json:"response"`  // Response data.
+	// HasExtraInfo Indicates whether requestWillBeSentExtraInfo and
+	// responseReceivedExtraInfo events will be or were emitted for this
+	// request.
+	//
+	// Note: This property is experimental.
+	HasExtraInfo bool                  `json:"hasExtraInfo"`
+	FrameID      *internal.PageFrameID `json:"frameId,omitempty"` // Frame identifier.
 }
 
 // WebSocketClosedClient is a client for WebSocketClosed events. Fired when
@@ -367,10 +380,14 @@ type RequestWillBeSentExtraInfoClient interface {
 
 // RequestWillBeSentExtraInfoReply is the reply for RequestWillBeSentExtraInfo events.
 type RequestWillBeSentExtraInfoReply struct {
-	RequestID           RequestID                 `json:"requestId"`                     // Request identifier. Used to match this information to an existing requestWillBeSent event.
-	AssociatedCookies   []BlockedCookieWithReason `json:"associatedCookies"`             // A list of cookies potentially associated to the requested URL. This includes both cookies sent with the request and the ones not sent; the latter are distinguished by having blockedReason field set.
-	Headers             Headers                   `json:"headers"`                       // Raw request headers as they will be sent over the wire.
-	ClientSecurityState *ClientSecurityState      `json:"clientSecurityState,omitempty"` // The client security state set for the request.
+	RequestID         RequestID                 `json:"requestId"`         // Request identifier. Used to match this information to an existing requestWillBeSent event.
+	AssociatedCookies []BlockedCookieWithReason `json:"associatedCookies"` // A list of cookies potentially associated to the requested URL. This includes both cookies sent with the request and the ones not sent; the latter are distinguished by having blockedReason field set.
+	Headers           Headers                   `json:"headers"`           // Raw request headers as they will be sent over the wire.
+	// ConnectTiming Connection timing information for the request.
+	//
+	// Note: This property is experimental.
+	ConnectTiming       ConnectTiming        `json:"connectTiming"`
+	ClientSecurityState *ClientSecurityState `json:"clientSecurityState,omitempty"` // The client security state set for the request.
 }
 
 // ResponseReceivedExtraInfoClient is a client for ResponseReceivedExtraInfo events.
@@ -391,6 +408,7 @@ type ResponseReceivedExtraInfoReply struct {
 	BlockedCookies         []BlockedSetCookieWithReason `json:"blockedCookies"`         // A list of cookies which were not stored from the response along with the corresponding reasons for blocking. The cookies here may not be valid due to syntax errors, which are represented by the invalid cookie line string instead of a proper cookie.
 	Headers                Headers                      `json:"headers"`                // Raw response headers as they were received over the wire.
 	ResourceIPAddressSpace IPAddressSpace               `json:"resourceIPAddressSpace"` // The IP address space of the resource. The address space can only be determined once the transport established the connection, so we can't send it in `requestWillBeSentExtraInfo`.
+	StatusCode             int                          `json:"statusCode"`             // The status code of the response. This is useful in cases the request failed and no responseReceived event is triggered, which is the case for, e.g., CORS errors. This is also the correct status code for cached requests, where the status in responseReceived is a 200 and this will be 304.
 	HeadersText            *string                      `json:"headersText,omitempty"`  // Raw response header text as it was received over the wire. The raw text may not always be available, such as in the case of HTTP/2 or QUIC.
 }
 
@@ -485,4 +503,46 @@ type SubresourceWebBundleInnerResponseErrorReply struct {
 	InnerRequestURL string     `json:"innerRequestURL"`           // URL of the subresource resource.
 	ErrorMessage    string     `json:"errorMessage"`              // Error message
 	BundleRequestID *RequestID `json:"bundleRequestId,omitempty"` // Bundle request identifier. Used to match this information to another event. This made be absent in case when the instrumentation was enabled only after webbundle was parsed.
+}
+
+// ReportingAPIReportAddedClient is a client for ReportingAPIReportAdded events.
+// Is sent whenever a new report is added. And after 'enableReportingApi' for
+// all existing reports.
+type ReportingAPIReportAddedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*ReportingAPIReportAddedReply, error)
+	rpcc.Stream
+}
+
+// ReportingAPIReportAddedReply is the reply for ReportingAPIReportAdded events.
+type ReportingAPIReportAddedReply struct {
+	Report ReportingAPIReport `json:"report"` // No description.
+}
+
+// ReportingAPIReportUpdatedClient is a client for ReportingAPIReportUpdated events.
+type ReportingAPIReportUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*ReportingAPIReportUpdatedReply, error)
+	rpcc.Stream
+}
+
+// ReportingAPIReportUpdatedReply is the reply for ReportingAPIReportUpdated events.
+type ReportingAPIReportUpdatedReply struct {
+	Report ReportingAPIReport `json:"report"` // No description.
+}
+
+// ReportingAPIEndpointsChangedForOriginClient is a client for ReportingAPIEndpointsChangedForOrigin events.
+type ReportingAPIEndpointsChangedForOriginClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*ReportingAPIEndpointsChangedForOriginReply, error)
+	rpcc.Stream
+}
+
+// ReportingAPIEndpointsChangedForOriginReply is the reply for ReportingAPIEndpointsChangedForOrigin events.
+type ReportingAPIEndpointsChangedForOriginReply struct {
+	Origin    string                 `json:"origin"`    // Origin of the document(s) which configured the endpoints.
+	Endpoints []ReportingAPIEndpoint `json:"endpoints"` // No description.
 }

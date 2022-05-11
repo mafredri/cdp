@@ -330,8 +330,8 @@ func (d *domainClient) SetShowScrollBottleneckRects(ctx context.Context, args *S
 	return
 }
 
-// SetShowHitTestBorders invokes the Overlay method. Requests that backend
-// shows hit-test borders on layers
+// SetShowHitTestBorders invokes the Overlay method. Deprecated, no longer has
+// any effect.
 func (d *domainClient) SetShowHitTestBorders(ctx context.Context, args *SetShowHitTestBordersArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Overlay.setShowHitTestBorders", args, nil, d.conn)
@@ -381,6 +381,20 @@ func (d *domainClient) SetShowHinge(ctx context.Context, args *SetShowHingeArgs)
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetShowHinge", Err: err}
+	}
+	return
+}
+
+// SetShowIsolatedElements invokes the Overlay method. Show elements in
+// isolation mode with overlays.
+func (d *domainClient) SetShowIsolatedElements(ctx context.Context, args *SetShowIsolatedElementsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowIsolatedElements", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowIsolatedElements", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowIsolatedElements", Err: err}
 	}
 	return
 }

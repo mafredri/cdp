@@ -209,7 +209,9 @@ func (d *domainClient) SendMessageToTarget(ctx context.Context, args *SendMessag
 // SetAutoAttach invokes the Target method. Controls whether to automatically
 // attach to new targets which are considered to be related to this one. When
 // turned on, attaches to all existing related targets as well. When turned
-// off, automatically detaches from all currently attached targets.
+// off, automatically detaches from all currently attached targets. This also
+// clears all targets added by `autoAttachRelated` from the list of targets to
+// watch for creation of related targets.
 func (d *domainClient) SetAutoAttach(ctx context.Context, args *SetAutoAttachArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Target.setAutoAttach", args, nil, d.conn)
@@ -218,6 +220,25 @@ func (d *domainClient) SetAutoAttach(ctx context.Context, args *SetAutoAttachArg
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "SetAutoAttach", Err: err}
+	}
+	return
+}
+
+// AutoAttachRelated invokes the Target method. Adds the specified target to
+// the list of targets that will be monitored for any related target creation
+// (such as child frames, child workers and new versions of service worker) and
+// reported through `attachedToTarget`. The specified target is also
+// auto-attached. This cancels the effect of any previous `setAutoAttach` and
+// is also canceled by subsequent `setAutoAttach`. Only available at the
+// Browser target.
+func (d *domainClient) AutoAttachRelated(ctx context.Context, args *AutoAttachRelatedArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Target.autoAttachRelated", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Target.autoAttachRelated", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Target", Op: "AutoAttachRelated", Err: err}
 	}
 	return
 }

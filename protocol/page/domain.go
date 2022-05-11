@@ -152,6 +152,17 @@ func (d *domainClient) GetManifestIcons(ctx context.Context) (reply *GetManifest
 	return
 }
 
+// GetAppID invokes the Page method. Returns the unique (PWA) app id. Only
+// returns values if the feature flag 'WebAppEnableManifestId' is enabled
+func (d *domainClient) GetAppID(ctx context.Context) (reply *GetAppIDReply, err error) {
+	reply = new(GetAppIDReply)
+	err = rpcc.Invoke(ctx, "Page.getAppId", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetAppID", Err: err}
+	}
+	return
+}
+
 // GetFrameTree invokes the Page method. Returns present frame tree structure.
 func (d *domainClient) GetFrameTree(ctx context.Context) (reply *GetFrameTreeReply, err error) {
 	reply = new(GetFrameTreeReply)
@@ -390,6 +401,20 @@ func (d *domainClient) GetPermissionsPolicyState(ctx context.Context, args *GetP
 	return
 }
 
+// GetOriginTrials invokes the Page method. Get Origin Trials on given frame.
+func (d *domainClient) GetOriginTrials(ctx context.Context, args *GetOriginTrialsArgs) (reply *GetOriginTrialsReply, err error) {
+	reply = new(GetOriginTrialsReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.getOriginTrials", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.getOriginTrials", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetOriginTrials", Err: err}
+	}
+	return
+}
+
 // SetFontFamilies invokes the Page method. Set generic font families.
 func (d *domainClient) SetFontFamilies(ctx context.Context, args *SetFontFamiliesArgs) (err error) {
 	if args != nil {
@@ -527,31 +552,12 @@ func (d *domainClient) StopScreencast(ctx context.Context) (err error) {
 	return
 }
 
-// SetProduceCompilationCache invokes the Page method. Forces compilation
-// cache to be generated for every subresource script. See also:
-// `Page.produceCompilationCache`.
-func (d *domainClient) SetProduceCompilationCache(ctx context.Context, args *SetProduceCompilationCacheArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.setProduceCompilationCache", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "Page.setProduceCompilationCache", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "SetProduceCompilationCache", Err: err}
-	}
-	return
-}
-
 // ProduceCompilationCache invokes the Page method. Requests backend to
-// produce compilation cache for the specified scripts. Unlike
-// setProduceCompilationCache, this allows client to only produce cache for
-// specific scripts. `scripts` are appeneded to the list of scripts for which
-// the cache for would produced. Disabling compilation cache with
-// `setProduceCompilationCache` would reset all pending cache requests. The
-// list may also be reset during page navigation. When script with a matching
-// URL is encountered, the cache is optionally produced upon backend
-// discretion, based on internal heuristics. See also:
-// `Page.compilationCacheProduced`.
+// produce compilation cache for the specified scripts. `scripts` are appeneded
+// to the list of scripts for which the cache would be produced. The list may
+// be reset during page navigation. When script with a matching URL is
+// encountered, the cache is optionally produced upon backend discretion, based
+// on internal heuristics. See also: `Page.compilationCacheProduced`.
 func (d *domainClient) ProduceCompilationCache(ctx context.Context, args *ProduceCompilationCacheArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Page.produceCompilationCache", args, nil, d.conn)
@@ -584,6 +590,21 @@ func (d *domainClient) ClearCompilationCache(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Page.clearCompilationCache", nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "ClearCompilationCache", Err: err}
+	}
+	return
+}
+
+// SetSPCTransactionMode invokes the Page method. Sets the Secure Payment
+// Confirmation transaction mode.
+// https://w3c.github.io/secure-payment-confirmation/#sctn-automation-set-spc-transaction-mode
+func (d *domainClient) SetSPCTransactionMode(ctx context.Context, args *SetSPCTransactionModeArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setSPCTransactionMode", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setSPCTransactionMode", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetSPCTransactionMode", Err: err}
 	}
 	return
 }
@@ -1043,6 +1064,27 @@ func (c *backForwardCacheNotUsedClient) Recv() (*BackForwardCacheNotUsedReply, e
 	event := new(BackForwardCacheNotUsedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "BackForwardCacheNotUsed Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) PrerenderAttemptCompleted(ctx context.Context) (PrerenderAttemptCompletedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.prerenderAttemptCompleted", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &prerenderAttemptCompletedClient{Stream: s}, nil
+}
+
+type prerenderAttemptCompletedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *prerenderAttemptCompletedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *prerenderAttemptCompletedClient) Recv() (*PrerenderAttemptCompletedReply, error) {
+	event := new(PrerenderAttemptCompletedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "PrerenderAttemptCompleted Recv", Err: err}
 	}
 	return event, nil
 }

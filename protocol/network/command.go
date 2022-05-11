@@ -456,6 +456,13 @@ type SetCookieArgs struct {
 	//
 	// Note: This property is experimental.
 	SourcePort *int `json:"sourcePort,omitempty"`
+	// PartitionKey Cookie partition key. The site of the top-level URL
+	// the browser was visiting at the start of the request to the endpoint
+	// that set the cookie. If not set, the cookie will be set as not
+	// partitioned.
+	//
+	// Note: This property is experimental.
+	PartitionKey *string `json:"partitionKey,omitempty"`
 }
 
 // NewSetCookieArgs initializes SetCookieArgs with the required arguments.
@@ -554,6 +561,17 @@ func (a *SetCookieArgs) SetSourcePort(sourcePort int) *SetCookieArgs {
 	return a
 }
 
+// SetPartitionKey sets the PartitionKey optional argument. Cookie
+// partition key. The site of the top-level URL the browser was
+// visiting at the start of the request to the endpoint that set the
+// cookie. If not set, the cookie will be set as not partitioned.
+//
+// Note: This property is experimental.
+func (a *SetCookieArgs) SetPartitionKey(partitionKey string) *SetCookieArgs {
+	a.PartitionKey = &partitionKey
+	return a
+}
+
 // SetCookieReply represents the return values for SetCookie in the Network domain.
 type SetCookieReply struct {
 	// Success is deprecated.
@@ -635,20 +653,39 @@ type GetSecurityIsolationStatusReply struct {
 	Status SecurityIsolationStatus `json:"status"` // No description.
 }
 
+// EnableReportingAPIArgs represents the arguments for EnableReportingAPI in the Network domain.
+type EnableReportingAPIArgs struct {
+	Enable bool `json:"enable"` // Whether to enable or disable events for the Reporting API
+}
+
+// NewEnableReportingAPIArgs initializes EnableReportingAPIArgs with the required arguments.
+func NewEnableReportingAPIArgs(enable bool) *EnableReportingAPIArgs {
+	args := new(EnableReportingAPIArgs)
+	args.Enable = enable
+	return args
+}
+
 // LoadNetworkResourceArgs represents the arguments for LoadNetworkResource in the Network domain.
 type LoadNetworkResourceArgs struct {
-	FrameID internal.PageFrameID       `json:"frameId"` // Frame id to get the resource for.
-	URL     string                     `json:"url"`     // URL of the resource to get content for.
-	Options LoadNetworkResourceOptions `json:"options"` // Options for the request.
+	FrameID *internal.PageFrameID      `json:"frameId,omitempty"` // Frame id to get the resource for. Mandatory for frame targets, and should be omitted for worker targets.
+	URL     string                     `json:"url"`               // URL of the resource to get content for.
+	Options LoadNetworkResourceOptions `json:"options"`           // Options for the request.
 }
 
 // NewLoadNetworkResourceArgs initializes LoadNetworkResourceArgs with the required arguments.
-func NewLoadNetworkResourceArgs(frameID internal.PageFrameID, url string, options LoadNetworkResourceOptions) *LoadNetworkResourceArgs {
+func NewLoadNetworkResourceArgs(url string, options LoadNetworkResourceOptions) *LoadNetworkResourceArgs {
 	args := new(LoadNetworkResourceArgs)
-	args.FrameID = frameID
 	args.URL = url
 	args.Options = options
 	return args
+}
+
+// SetFrameID sets the FrameID optional argument. Frame id to get the
+// resource for. Mandatory for frame targets, and should be omitted for
+// worker targets.
+func (a *LoadNetworkResourceArgs) SetFrameID(frameID internal.PageFrameID) *LoadNetworkResourceArgs {
+	a.FrameID = &frameID
+	return a
 }
 
 // LoadNetworkResourceReply represents the return values for LoadNetworkResource in the Network domain.

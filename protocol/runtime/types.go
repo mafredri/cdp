@@ -11,6 +11,17 @@ import (
 // ScriptID Unique script identifier.
 type ScriptID string
 
+// WebDriverValue Represents the value serialiazed by the WebDriver BiDi
+// specification https://w3c.github.io/webdriver-bidi.
+type WebDriverValue struct {
+	// Type
+	//
+	// Values: "undefined", "null", "string", "number", "boolean", "bigint", "regexp", "date", "symbol", "array", "object", "function", "map", "set", "weakmap", "weakset", "error", "proxy", "promise", "typedarray", "arraybuffer", "node", "window".
+	Type     string          `json:"type"`
+	Value    json.RawMessage `json:"value,omitempty"`    // No description.
+	ObjectID *string         `json:"objectId,omitempty"` // No description.
+}
+
 // RemoteObjectID Unique object identifier.
 type RemoteObjectID string
 
@@ -34,7 +45,11 @@ type RemoteObject struct {
 	Value               json.RawMessage      `json:"value,omitempty"`               // Remote object value in case of primitive values or JSON values (if it was requested).
 	UnserializableValue *UnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified does not have `value`, but gets this property.
 	Description         *string              `json:"description,omitempty"`         // String representation of the object.
-	ObjectID            *RemoteObjectID      `json:"objectId,omitempty"`            // Unique object identifier (for non-primitive values).
+	// WebDriverValue WebDriver BiDi representation of the value.
+	//
+	// Note: This property is experimental.
+	WebDriverValue *WebDriverValue `json:"webDriverValue,omitempty"`
+	ObjectID       *RemoteObjectID `json:"objectId,omitempty"` // Unique object identifier (for non-primitive values).
 	// Preview Preview containing abbreviated property values. Specified
 	// for `object` type values only.
 	//
@@ -170,6 +185,12 @@ type ExceptionDetails struct {
 	StackTrace         *StackTrace         `json:"stackTrace,omitempty"`         // JavaScript stack trace if available.
 	Exception          *RemoteObject       `json:"exception,omitempty"`          // Exception object if available.
 	ExecutionContextID *ExecutionContextID `json:"executionContextId,omitempty"` // Identifier of the context where exception happened.
+	// ExceptionMetaData Dictionary with entries of meta data that the
+	// client associated with this exception, such as information about
+	// associated network requests, etc.
+	//
+	// Note: This property is experimental.
+	ExceptionMetaData json.RawMessage `json:"exceptionMetaData,omitempty"`
 }
 
 // Timestamp Number of milliseconds since epoch.

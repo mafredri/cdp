@@ -83,7 +83,7 @@ func Example_advanced() {
 
 	if err = runBatch(
 		// Enable all the domain events that we're interested in.
-		func() error { return c.DOM.Enable(ctx) },
+		func() error { return c.DOM.Enable(ctx, nil) },
 		func() error { return c.Network.Enable(ctx, nil) },
 		func() error { return c.Page.Enable(ctx) },
 		func() error { return c.Runtime.Enable(ctx) },

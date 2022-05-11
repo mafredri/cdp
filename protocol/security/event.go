@@ -41,7 +41,7 @@ type VisibleSecurityStateChangedReply struct {
 }
 
 // StateChangedClient is a client for SecurityStateChanged events. The
-// security state of the page changed.
+// security state of the page changed. No longer being sent.
 type StateChangedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -56,11 +56,19 @@ type StateChangedReply struct {
 	//
 	// Deprecated: True if the page was loaded over cryptographic
 	// transport such as HTTPS.
-	SchemeIsCryptographic bool               `json:"schemeIsCryptographic"`
-	Explanations          []StateExplanation `json:"explanations"` // List of explanations for the security state. If the overall security state is `insecure` or `warning`, at least one corresponding explanation should be included.
+	SchemeIsCryptographic bool `json:"schemeIsCryptographic"`
+	// Explanations is deprecated.
+	//
+	// Deprecated: Previously a list of explanations for the security
+	// state. Now always empty.
+	Explanations []StateExplanation `json:"explanations"`
 	// InsecureContentStatus is deprecated.
 	//
 	// Deprecated: Information about insecure content on the page.
 	InsecureContentStatus InsecureContentStatus `json:"insecureContentStatus"`
-	Summary               *string               `json:"summary,omitempty"` // Overrides user-visible description of the state.
+	// Summary is deprecated.
+	//
+	// Deprecated: Overrides user-visible description of the state. Always
+	// omitted.
+	Summary *string `json:"summary,omitempty"`
 }

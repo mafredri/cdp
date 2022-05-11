@@ -75,6 +75,20 @@ func (d *domainClient) SetFocusEmulationEnabled(ctx context.Context, args *SetFo
 	return
 }
 
+// SetAutoDarkModeOverride invokes the Emulation method. Automatically render
+// all web contents using a dark theme.
+func (d *domainClient) SetAutoDarkModeOverride(ctx context.Context, args *SetAutoDarkModeOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setAutoDarkModeOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setAutoDarkModeOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetAutoDarkModeOverride", Err: err}
+	}
+	return
+}
+
 // SetCPUThrottlingRate invokes the Emulation method. Enables CPU throttling
 // to emulate slow CPUs.
 func (d *domainClient) SetCPUThrottlingRate(ctx context.Context, args *SetCPUThrottlingRateArgs) (err error) {
@@ -365,6 +379,20 @@ func (d *domainClient) SetUserAgentOverride(ctx context.Context, args *SetUserAg
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetUserAgentOverride", Err: err}
+	}
+	return
+}
+
+// SetAutomationOverride invokes the Emulation method. Allows overriding the
+// automation flag.
+func (d *domainClient) SetAutomationOverride(ctx context.Context, args *SetAutomationOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setAutomationOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setAutomationOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetAutomationOverride", Err: err}
 	}
 	return
 }

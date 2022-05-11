@@ -5,7 +5,6 @@ package cdp
 import (
 	"github.com/mafredri/cdp/protocol/accessibility"
 	"github.com/mafredri/cdp/protocol/animation"
-	"github.com/mafredri/cdp/protocol/applicationcache"
 	"github.com/mafredri/cdp/protocol/audits"
 	"github.com/mafredri/cdp/protocol/backgroundservice"
 	"github.com/mafredri/cdp/protocol/browser"
@@ -21,6 +20,7 @@ import (
 	"github.com/mafredri/cdp/protocol/domsnapshot"
 	"github.com/mafredri/cdp/protocol/domstorage"
 	"github.com/mafredri/cdp/protocol/emulation"
+	"github.com/mafredri/cdp/protocol/eventbreakpoints"
 	"github.com/mafredri/cdp/protocol/fetch"
 	"github.com/mafredri/cdp/protocol/headlessexperimental"
 	"github.com/mafredri/cdp/protocol/heapprofiler"
@@ -58,7 +58,6 @@ import (
 type Client struct {
 	Accessibility        Accessibility
 	Animation            Animation
-	ApplicationCache     ApplicationCache
 	Audits               Audits
 	BackgroundService    BackgroundService
 	Browser              Browser
@@ -74,6 +73,7 @@ type Client struct {
 	Debugger             Debugger
 	DeviceOrientation    DeviceOrientation
 	Emulation            Emulation
+	EventBreakpoints     EventBreakpoints
 	Fetch                Fetch
 	HeadlessExperimental HeadlessExperimental
 	HeapProfiler         HeapProfiler
@@ -110,7 +110,6 @@ func NewClient(conn *rpcc.Conn) *Client {
 	return &Client{
 		Accessibility:        accessibility.NewClient(conn),
 		Animation:            animation.NewClient(conn),
-		ApplicationCache:     applicationcache.NewClient(conn),
 		Audits:               audits.NewClient(conn),
 		BackgroundService:    backgroundservice.NewClient(conn),
 		Browser:              browser.NewClient(conn),
@@ -126,6 +125,7 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Debugger:             debugger.NewClient(conn),
 		DeviceOrientation:    deviceorientation.NewClient(conn),
 		Emulation:            emulation.NewClient(conn),
+		EventBreakpoints:     eventbreakpoints.NewClient(conn),
 		Fetch:                fetch.NewClient(conn),
 		HeadlessExperimental: headlessexperimental.NewClient(conn),
 		HeapProfiler:         heapprofiler.NewClient(conn),

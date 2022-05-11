@@ -136,4 +136,9 @@ type InspectRequestedClient interface {
 type InspectRequestedReply struct {
 	Object RemoteObject    `json:"object"` // No description.
 	Hints  json.RawMessage `json:"hints"`  // No description.
+	// ExecutionContextID Identifier of the context where the call was
+	// made.
+	//
+	// Note: This property is experimental.
+	ExecutionContextID *ExecutionContextID `json:"executionContextId,omitempty"`
 }

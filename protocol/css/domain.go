@@ -215,6 +215,24 @@ func (d *domainClient) GetStyleSheetText(ctx context.Context, args *GetStyleShee
 	return
 }
 
+// GetLayersForNode invokes the CSS method. Returns all layers parsed by the
+// rendering engine for the tree scope of a node. Given a DOM element
+// identified by nodeId, getLayersForNode returns the root layer for the
+// nearest ancestor document or shadow root. The layer root contains the full
+// layer tree for the tree scope and their ordering.
+func (d *domainClient) GetLayersForNode(ctx context.Context, args *GetLayersForNodeArgs) (reply *GetLayersForNodeReply, err error) {
+	reply = new(GetLayersForNodeReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.getLayersForNode", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.getLayersForNode", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "GetLayersForNode", Err: err}
+	}
+	return
+}
+
 // TrackComputedStyleUpdates invokes the CSS method. Starts tracking the given
 // computed styles for updates. The specified array of properties replaces the
 // one previously specified. Pass empty array to disable tracking. Use
@@ -300,6 +318,21 @@ func (d *domainClient) SetContainerQueryText(ctx context.Context, args *SetConta
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "SetContainerQueryText", Err: err}
+	}
+	return
+}
+
+// SetSupportsText invokes the CSS method. Modifies the expression of a
+// supports at-rule.
+func (d *domainClient) SetSupportsText(ctx context.Context, args *SetSupportsTextArgs) (reply *SetSupportsTextReply, err error) {
+	reply = new(SetSupportsTextReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.setSupportsText", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.setSupportsText", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "SetSupportsText", Err: err}
 	}
 	return
 }

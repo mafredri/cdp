@@ -32,7 +32,9 @@ func init() {
 	lint.SetInitialism("CORS", true)
 	lint.SetInitialism("WASM", true)
 	lint.SetInitialism("JXL", true)
-	lint.SetInitialism("BR", true) // Brotli compression.
+	lint.SetInitialism("BR", true)  // Brotli compression.
+	lint.SetInitialism("HWB", true) // Color format.
+	lint.SetInitialism("IME", true)
 }
 
 // Name returns a different name if it should be different.

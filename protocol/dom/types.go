@@ -27,32 +27,37 @@ type PseudoType string
 
 // PseudoType as enums.
 const (
-	PseudoTypeNotSet              PseudoType = ""
-	PseudoTypeFirstLine           PseudoType = "first-line"
-	PseudoTypeFirstLetter         PseudoType = "first-letter"
-	PseudoTypeBefore              PseudoType = "before"
-	PseudoTypeAfter               PseudoType = "after"
-	PseudoTypeMarker              PseudoType = "marker"
-	PseudoTypeBackdrop            PseudoType = "backdrop"
-	PseudoTypeSelection           PseudoType = "selection"
-	PseudoTypeTargetText          PseudoType = "target-text"
-	PseudoTypeSpellingError       PseudoType = "spelling-error"
-	PseudoTypeGrammarError        PseudoType = "grammar-error"
-	PseudoTypeHighlight           PseudoType = "highlight"
-	PseudoTypeFirstLineInherited  PseudoType = "first-line-inherited"
-	PseudoTypeScrollbar           PseudoType = "scrollbar"
-	PseudoTypeScrollbarThumb      PseudoType = "scrollbar-thumb"
-	PseudoTypeScrollbarButton     PseudoType = "scrollbar-button"
-	PseudoTypeScrollbarTrack      PseudoType = "scrollbar-track"
-	PseudoTypeScrollbarTrackPiece PseudoType = "scrollbar-track-piece"
-	PseudoTypeScrollbarCorner     PseudoType = "scrollbar-corner"
-	PseudoTypeResizer             PseudoType = "resizer"
-	PseudoTypeInputListButton     PseudoType = "input-list-button"
+	PseudoTypeNotSet                      PseudoType = ""
+	PseudoTypeFirstLine                   PseudoType = "first-line"
+	PseudoTypeFirstLetter                 PseudoType = "first-letter"
+	PseudoTypeBefore                      PseudoType = "before"
+	PseudoTypeAfter                       PseudoType = "after"
+	PseudoTypeMarker                      PseudoType = "marker"
+	PseudoTypeBackdrop                    PseudoType = "backdrop"
+	PseudoTypeSelection                   PseudoType = "selection"
+	PseudoTypeTargetText                  PseudoType = "target-text"
+	PseudoTypeSpellingError               PseudoType = "spelling-error"
+	PseudoTypeGrammarError                PseudoType = "grammar-error"
+	PseudoTypeHighlight                   PseudoType = "highlight"
+	PseudoTypeFirstLineInherited          PseudoType = "first-line-inherited"
+	PseudoTypeScrollbar                   PseudoType = "scrollbar"
+	PseudoTypeScrollbarThumb              PseudoType = "scrollbar-thumb"
+	PseudoTypeScrollbarButton             PseudoType = "scrollbar-button"
+	PseudoTypeScrollbarTrack              PseudoType = "scrollbar-track"
+	PseudoTypeScrollbarTrackPiece         PseudoType = "scrollbar-track-piece"
+	PseudoTypeScrollbarCorner             PseudoType = "scrollbar-corner"
+	PseudoTypeResizer                     PseudoType = "resizer"
+	PseudoTypeInputListButton             PseudoType = "input-list-button"
+	PseudoTypePageTransition              PseudoType = "page-transition"
+	PseudoTypePageTransitionContainer     PseudoType = "page-transition-container"
+	PseudoTypePageTransitionImageWrapper  PseudoType = "page-transition-image-wrapper"
+	PseudoTypePageTransitionOutgoingImage PseudoType = "page-transition-outgoing-image"
+	PseudoTypePageTransitionIncomingImage PseudoType = "page-transition-incoming-image"
 )
 
 func (e PseudoType) Valid() bool {
 	switch e {
-	case "first-line", "first-letter", "before", "after", "marker", "backdrop", "selection", "target-text", "spelling-error", "grammar-error", "highlight", "first-line-inherited", "scrollbar", "scrollbar-thumb", "scrollbar-button", "scrollbar-track", "scrollbar-track-piece", "scrollbar-corner", "resizer", "input-list-button":
+	case "first-line", "first-letter", "before", "after", "marker", "backdrop", "selection", "target-text", "spelling-error", "grammar-error", "highlight", "first-line-inherited", "scrollbar", "scrollbar-thumb", "scrollbar-button", "scrollbar-track", "scrollbar-track-piece", "scrollbar-corner", "resizer", "input-list-button", "page-transition", "page-transition-container", "page-transition-image-wrapper", "page-transition-outgoing-image", "page-transition-incoming-image":
 		return true
 	default:
 		return false

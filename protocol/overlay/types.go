@@ -137,12 +137,13 @@ const (
 	ColorFormatNotSet ColorFormat = ""
 	ColorFormatRGB    ColorFormat = "rgb"
 	ColorFormatHSL    ColorFormat = "hsl"
+	ColorFormatHWB    ColorFormat = "hwb"
 	ColorFormatHex    ColorFormat = "hex"
 )
 
 func (e ColorFormat) Valid() bool {
 	switch e {
-	case "rgb", "hsl", "hex":
+	case "rgb", "hsl", "hwb", "hex":
 		return true
 	default:
 		return false
@@ -194,7 +195,21 @@ type ContainerQueryHighlightConfig struct {
 
 // ContainerQueryContainerHighlightConfig
 type ContainerQueryContainerHighlightConfig struct {
-	ContainerBorder *LineStyle `json:"containerBorder,omitempty"` // The style of the container border
+	ContainerBorder  *LineStyle `json:"containerBorder,omitempty"`  // The style of the container border.
+	DescendantBorder *LineStyle `json:"descendantBorder,omitempty"` // The style of the descendants' borders.
+}
+
+// IsolatedElementHighlightConfig
+type IsolatedElementHighlightConfig struct {
+	IsolationModeHighlightConfig IsolationModeHighlightConfig `json:"isolationModeHighlightConfig"` // A descriptor for the highlight appearance of an element in isolation mode.
+	NodeID                       dom.NodeID                   `json:"nodeId"`                       // Identifier of the isolated element to highlight.
+}
+
+// IsolationModeHighlightConfig
+type IsolationModeHighlightConfig struct {
+	ResizerColor       *dom.RGBA `json:"resizerColor,omitempty"`       // The fill color of the resizers (default: transparent).
+	ResizerHandleColor *dom.RGBA `json:"resizerHandleColor,omitempty"` // The fill color for resizer handles (default: transparent).
+	MaskColor          *dom.RGBA `json:"maskColor,omitempty"`          // The fill color for the mask covering non-isolated elements (default: transparent).
 }
 
 // InspectMode

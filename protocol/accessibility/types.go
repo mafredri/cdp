@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 
 	"github.com/mafredri/cdp/protocol/dom"
+	"github.com/mafredri/cdp/protocol/page"
 )
 
 // AXNodeID Unique accessibility node identifier.
@@ -83,6 +84,7 @@ type AXValueNativeSourceType string
 // AXValueNativeSourceType as enums.
 const (
 	AXValueNativeSourceTypeNotSet         AXValueNativeSourceType = ""
+	AXValueNativeSourceTypeDescription    AXValueNativeSourceType = "description"
 	AXValueNativeSourceTypeFigcaption     AXValueNativeSourceType = "figcaption"
 	AXValueNativeSourceTypeLabel          AXValueNativeSourceType = "label"
 	AXValueNativeSourceTypeLabelfor       AXValueNativeSourceType = "labelfor"
@@ -96,7 +98,7 @@ const (
 
 func (e AXValueNativeSourceType) Valid() bool {
 	switch e {
-	case "figcaption", "label", "labelfor", "labelwrapped", "legend", "rubyannotation", "tablecaption", "title", "other":
+	case "description", "figcaption", "label", "labelfor", "labelwrapped", "legend", "rubyannotation", "tablecaption", "title", "other":
 		return true
 	default:
 		return false
@@ -217,6 +219,8 @@ type AXNode struct {
 	Description      *AXValue           `json:"description,omitempty"`      // The accessible description for this `Node`.
 	Value            *AXValue           `json:"value,omitempty"`            // The value for this `Node`.
 	Properties       []AXProperty       `json:"properties,omitempty"`       // All other properties
+	ParentID         *AXNodeID          `json:"parentId,omitempty"`         // ID for this node's parent.
 	ChildIDs         []AXNodeID         `json:"childIds,omitempty"`         // IDs for each of this node's child nodes.
 	BackendDOMNodeID *dom.BackendNodeID `json:"backendDOMNodeId,omitempty"` // The backend ID for the associated DOM node, if any.
+	FrameID          *page.FrameID      `json:"frameId,omitempty"`          // The frame ID for the frame associated with this nodes document.
 }

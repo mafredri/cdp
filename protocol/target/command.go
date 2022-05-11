@@ -93,9 +93,10 @@ func (a *ExposeDevToolsProtocolArgs) SetBindingName(bindingName string) *ExposeD
 
 // CreateBrowserContextArgs represents the arguments for CreateBrowserContext in the Target domain.
 type CreateBrowserContextArgs struct {
-	DisposeOnDetach *bool   `json:"disposeOnDetach,omitempty"` // If specified, disposes this context when debugging session disconnects.
-	ProxyServer     *string `json:"proxyServer,omitempty"`     // Proxy server, similar to the one passed to --proxy-server
-	ProxyBypassList *string `json:"proxyBypassList,omitempty"` // Proxy bypass list, similar to the one passed to --proxy-bypass-list
+	DisposeOnDetach                   *bool    `json:"disposeOnDetach,omitempty"`                   // If specified, disposes this context when debugging session disconnects.
+	ProxyServer                       *string  `json:"proxyServer,omitempty"`                       // Proxy server, similar to the one passed to --proxy-server
+	ProxyBypassList                   *string  `json:"proxyBypassList,omitempty"`                   // Proxy bypass list, similar to the one passed to --proxy-bypass-list
+	OriginsWithUniversalNetworkAccess []string `json:"originsWithUniversalNetworkAccess,omitempty"` // An optional list of origins to grant unlimited cross-origin access to. Parts of the URL other than those constituting origin are ignored.
 }
 
 // NewCreateBrowserContextArgs initializes CreateBrowserContextArgs with the required arguments.
@@ -126,6 +127,15 @@ func (a *CreateBrowserContextArgs) SetProxyBypassList(proxyBypassList string) *C
 	return a
 }
 
+// SetOriginsWithUniversalNetworkAccess sets the OriginsWithUniversalNetworkAccess optional argument.
+// An optional list of origins to grant unlimited cross-origin access
+// to. Parts of the URL other than those constituting origin are
+// ignored.
+func (a *CreateBrowserContextArgs) SetOriginsWithUniversalNetworkAccess(originsWithUniversalNetworkAccess []string) *CreateBrowserContextArgs {
+	a.OriginsWithUniversalNetworkAccess = originsWithUniversalNetworkAccess
+	return a
+}
+
 // CreateBrowserContextReply represents the return values for CreateBrowserContext in the Target domain.
 type CreateBrowserContextReply struct {
 	BrowserContextID internal.BrowserContextID `json:"browserContextId"` // The id of the context created.
@@ -138,10 +148,13 @@ type GetBrowserContextsReply struct {
 
 // CreateTargetArgs represents the arguments for CreateTarget in the Target domain.
 type CreateTargetArgs struct {
-	URL              string                     `json:"url"`                        // The initial URL the page will be navigated to. An empty string indicates about:blank.
-	Width            *int                       `json:"width,omitempty"`            // Frame width in DIP (headless chrome only).
-	Height           *int                       `json:"height,omitempty"`           // Frame height in DIP (headless chrome only).
-	BrowserContextID *internal.BrowserContextID `json:"browserContextId,omitempty"` // The browser context to create the page in.
+	URL    string `json:"url"`              // The initial URL the page will be navigated to. An empty string indicates about:blank.
+	Width  *int   `json:"width,omitempty"`  // Frame width in DIP (headless chrome only).
+	Height *int   `json:"height,omitempty"` // Frame height in DIP (headless chrome only).
+	// BrowserContextID The browser context to create the page in.
+	//
+	// Note: This property is experimental.
+	BrowserContextID *internal.BrowserContextID `json:"browserContextId,omitempty"`
 	// EnableBeginFrameControl Whether BeginFrames for this target will be
 	// controlled via DevTools (headless chrome only, not supported on
 	// MacOS yet, false by default).
@@ -175,6 +188,8 @@ func (a *CreateTargetArgs) SetHeight(height int) *CreateTargetArgs {
 
 // SetBrowserContextID sets the BrowserContextID optional argument.
 // The browser context to create the page in.
+//
+// Note: This property is experimental.
 func (a *CreateTargetArgs) SetBrowserContextID(browserContextID internal.BrowserContextID) *CreateTargetArgs {
 	a.BrowserContextID = &browserContextID
 	return a
@@ -336,6 +351,20 @@ func NewSetAutoAttachArgs(autoAttach bool, waitForDebuggerOnStart bool) *SetAuto
 func (a *SetAutoAttachArgs) SetFlatten(flatten bool) *SetAutoAttachArgs {
 	a.Flatten = &flatten
 	return a
+}
+
+// AutoAttachRelatedArgs represents the arguments for AutoAttachRelated in the Target domain.
+type AutoAttachRelatedArgs struct {
+	TargetID               ID   `json:"targetId"`               // No description.
+	WaitForDebuggerOnStart bool `json:"waitForDebuggerOnStart"` // Whether to pause new targets when attaching to them. Use `Runtime.runIfWaitingForDebugger` to run paused targets.
+}
+
+// NewAutoAttachRelatedArgs initializes AutoAttachRelatedArgs with the required arguments.
+func NewAutoAttachRelatedArgs(targetID ID, waitForDebuggerOnStart bool) *AutoAttachRelatedArgs {
+	args := new(AutoAttachRelatedArgs)
+	args.TargetID = targetID
+	args.WaitForDebuggerOnStart = waitForDebuggerOnStart
+	return args
 }
 
 // SetDiscoverTargetsArgs represents the arguments for SetDiscoverTargets in the Target domain.

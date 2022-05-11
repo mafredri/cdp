@@ -86,7 +86,7 @@ type ScriptFailedToParseReply struct {
 	EndLine                 int                        `json:"endLine"`                           // Last line of the script.
 	EndColumn               int                        `json:"endColumn"`                         // Length of the last line of the script.
 	ExecutionContextID      runtime.ExecutionContextID `json:"executionContextId"`                // Specifies script creation context.
-	Hash                    string                     `json:"hash"`                              // Content hash of the script.
+	Hash                    string                     `json:"hash"`                              // Content hash of the script, SHA-256.
 	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
 	SourceMapURL            *string                    `json:"sourceMapURL,omitempty"`            // URL of source map associated with script (if any).
 	HasSourceURL            *bool                      `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
@@ -131,7 +131,7 @@ type ScriptParsedReply struct {
 	EndLine                 int                        `json:"endLine"`                           // Last line of the script.
 	EndColumn               int                        `json:"endColumn"`                         // Length of the last line of the script.
 	ExecutionContextID      runtime.ExecutionContextID `json:"executionContextId"`                // Specifies script creation context.
-	Hash                    string                     `json:"hash"`                              // Content hash of the script.
+	Hash                    string                     `json:"hash"`                              // Content hash of the script, SHA-256.
 	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
 	// IsLiveEdit True, if this script is generated as a result of the
 	// live edit operation.

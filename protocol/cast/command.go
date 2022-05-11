@@ -32,6 +32,18 @@ func NewSetSinkToUseArgs(sinkName string) *SetSinkToUseArgs {
 	return args
 }
 
+// StartDesktopMirroringArgs represents the arguments for StartDesktopMirroring in the Cast domain.
+type StartDesktopMirroringArgs struct {
+	SinkName string `json:"sinkName"` // No description.
+}
+
+// NewStartDesktopMirroringArgs initializes StartDesktopMirroringArgs with the required arguments.
+func NewStartDesktopMirroringArgs(sinkName string) *StartDesktopMirroringArgs {
+	args := new(StartDesktopMirroringArgs)
+	args.SinkName = sinkName
+	return args
+}
+
 // StartTabMirroringArgs represents the arguments for StartTabMirroring in the Cast domain.
 type StartTabMirroringArgs struct {
 	SinkName string `json:"sinkName"` // No description.
