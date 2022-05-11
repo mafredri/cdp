@@ -2023,14 +2023,14 @@ type Input interface {
 	// Note: This command is experimental.
 	InsertText(context.Context, *input.InsertTextArgs) error
 
-	// Command ImeSetComposition
+	// Command IMESetComposition
 	//
 	// This method sets the current candidate text for ime. Use
 	// imeCommitComposition to commit the final text. Use imeSetComposition
 	// with empty string as text to cancel composition.
 	//
 	// Note: This command is experimental.
-	ImeSetComposition(context.Context, *input.ImeSetCompositionArgs) error
+	IMESetComposition(context.Context, *input.IMESetCompositionArgs) error
 
 	// Command DispatchMouseEvent
 	//

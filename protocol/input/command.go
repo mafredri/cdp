@@ -191,8 +191,8 @@ func NewInsertTextArgs(text string) *InsertTextArgs {
 	return args
 }
 
-// ImeSetCompositionArgs represents the arguments for ImeSetComposition in the Input domain.
-type ImeSetCompositionArgs struct {
+// IMESetCompositionArgs represents the arguments for IMESetComposition in the Input domain.
+type IMESetCompositionArgs struct {
 	Text             string `json:"text"`                       // The text to insert
 	SelectionStart   int    `json:"selectionStart"`             // selection start
 	SelectionEnd     int    `json:"selectionEnd"`               // selection end
@@ -200,9 +200,9 @@ type ImeSetCompositionArgs struct {
 	ReplacementEnd   *int   `json:"replacementEnd,omitempty"`   // replacement end
 }
 
-// NewImeSetCompositionArgs initializes ImeSetCompositionArgs with the required arguments.
-func NewImeSetCompositionArgs(text string, selectionStart int, selectionEnd int) *ImeSetCompositionArgs {
-	args := new(ImeSetCompositionArgs)
+// NewIMESetCompositionArgs initializes IMESetCompositionArgs with the required arguments.
+func NewIMESetCompositionArgs(text string, selectionStart int, selectionEnd int) *IMESetCompositionArgs {
+	args := new(IMESetCompositionArgs)
 	args.Text = text
 	args.SelectionStart = selectionStart
 	args.SelectionEnd = selectionEnd
@@ -211,14 +211,14 @@ func NewImeSetCompositionArgs(text string, selectionStart int, selectionEnd int)
 
 // SetReplacementStart sets the ReplacementStart optional argument.
 // replacement start
-func (a *ImeSetCompositionArgs) SetReplacementStart(replacementStart int) *ImeSetCompositionArgs {
+func (a *IMESetCompositionArgs) SetReplacementStart(replacementStart int) *IMESetCompositionArgs {
 	a.ReplacementStart = &replacementStart
 	return a
 }
 
 // SetReplacementEnd sets the ReplacementEnd optional argument.
 // replacement end
-func (a *ImeSetCompositionArgs) SetReplacementEnd(replacementEnd int) *ImeSetCompositionArgs {
+func (a *IMESetCompositionArgs) SetReplacementEnd(replacementEnd int) *IMESetCompositionArgs {
 	a.ReplacementEnd = &replacementEnd
 	return a
 }

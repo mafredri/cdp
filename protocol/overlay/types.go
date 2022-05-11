@@ -137,7 +137,7 @@ const (
 	ColorFormatNotSet ColorFormat = ""
 	ColorFormatRGB    ColorFormat = "rgb"
 	ColorFormatHSL    ColorFormat = "hsl"
-	ColorFormatHwb    ColorFormat = "hwb"
+	ColorFormatHWB    ColorFormat = "hwb"
 	ColorFormatHex    ColorFormat = "hex"
 )
 
