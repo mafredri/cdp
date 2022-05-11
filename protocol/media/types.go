@@ -83,11 +83,19 @@ type PlayerEvent struct {
 	Value     string    `json:"value"`     // No description.
 }
 
+// PlayerErrorSourceLocation Represents logged source line numbers reported in
+// an error. NOTE: file and line are from chromium c++ implementation code, not
+// js.
+type PlayerErrorSourceLocation struct {
+	File string `json:"file"` // No description.
+	Line int    `json:"line"` // No description.
+}
+
 // PlayerError Corresponds to kMediaError
 type PlayerError struct {
-	// Type
-	//
-	// Values: "pipeline_error", "media_error".
-	Type      string `json:"type"`
-	ErrorCode string `json:"errorCode"` // When this switches to using media::Status instead of PipelineStatus we can remove "errorCode" and replace it with the fields from a Status instance. This also seems like a duplicate of the error level enum - there is a todo bug to have that level removed and use this instead. (crbug.com/1068454)
+	ErrorType string                      `json:"errorType"` // No description.
+	Code      int                         `json:"code"`      // Code is the numeric enum entry for a specific set of error codes, such as PipelineStatusCodes in media/base/pipeline_status.h
+	Stack     []PlayerErrorSourceLocation `json:"stack"`     // A trace of where this error was caused / where it passed through.
+	Cause     []PlayerError               `json:"cause"`     // Errors potentially have a root cause error, ie, a DecoderError might be caused by an WindowsError
+	Data      json.RawMessage             `json:"data"`      // Extra data attached to an error, such as an HRESULT, Video Codec, etc.
 }

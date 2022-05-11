@@ -125,8 +125,12 @@ func (d *domainClient) DiscardSearchResults(ctx context.Context, args *DiscardSe
 }
 
 // Enable invokes the DOM method. Enables DOM agent for the given page.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "DOM.enable", nil, nil, d.conn)
+func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.enable", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.enable", nil, nil, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "Enable", Err: err}
 	}
@@ -665,6 +669,22 @@ func (d *domainClient) GetContainerForNode(ctx context.Context, args *GetContain
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetContainerForNode", Err: err}
+	}
+	return
+}
+
+// GetQueryingDescendantsForContainer invokes the DOM method. Returns the
+// descendants of a container query container that have container queries
+// against this container.
+func (d *domainClient) GetQueryingDescendantsForContainer(ctx context.Context, args *GetQueryingDescendantsForContainerArgs) (reply *GetQueryingDescendantsForContainerReply, err error) {
+	reply = new(GetQueryingDescendantsForContainerReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.getQueryingDescendantsForContainer", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.getQueryingDescendantsForContainer", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "GetQueryingDescendantsForContainer", Err: err}
 	}
 	return
 }

@@ -99,6 +99,21 @@ func (d *domainClient) ContinueWithAuth(ctx context.Context, args *ContinueWithA
 	return
 }
 
+// ContinueResponse invokes the Fetch method. Continues loading of the paused
+// response, optionally modifying the response headers. If either responseCode
+// or headers are modified, all of them must be present.
+func (d *domainClient) ContinueResponse(ctx context.Context, args *ContinueResponseArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Fetch.continueResponse", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Fetch.continueResponse", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Fetch", Op: "ContinueResponse", Err: err}
+	}
+	return
+}
+
 // GetResponseBody invokes the Fetch method. Causes the body of the response
 // to be received from the server and returned as a single string. May only be
 // issued for a request that is paused in the Response stage and is mutually

@@ -29,72 +29,74 @@ type AffectedFrame struct {
 	FrameID page.FrameID `json:"frameId"` // No description.
 }
 
-// SameSiteCookieExclusionReason
-type SameSiteCookieExclusionReason string
+// CookieExclusionReason
+type CookieExclusionReason string
 
-// SameSiteCookieExclusionReason as enums.
+// CookieExclusionReason as enums.
 const (
-	SameSiteCookieExclusionReasonNotSet                                 SameSiteCookieExclusionReason = ""
-	SameSiteCookieExclusionReasonExcludeSameSiteUnspecifiedTreatedAsLax SameSiteCookieExclusionReason = "ExcludeSameSiteUnspecifiedTreatedAsLax"
-	SameSiteCookieExclusionReasonExcludeSameSiteNoneInsecure            SameSiteCookieExclusionReason = "ExcludeSameSiteNoneInsecure"
-	SameSiteCookieExclusionReasonExcludeSameSiteLax                     SameSiteCookieExclusionReason = "ExcludeSameSiteLax"
-	SameSiteCookieExclusionReasonExcludeSameSiteStrict                  SameSiteCookieExclusionReason = "ExcludeSameSiteStrict"
-	SameSiteCookieExclusionReasonExcludeInvalidSameParty                SameSiteCookieExclusionReason = "ExcludeInvalidSameParty"
+	CookieExclusionReasonNotSet                                 CookieExclusionReason = ""
+	CookieExclusionReasonExcludeSameSiteUnspecifiedTreatedAsLax CookieExclusionReason = "ExcludeSameSiteUnspecifiedTreatedAsLax"
+	CookieExclusionReasonExcludeSameSiteNoneInsecure            CookieExclusionReason = "ExcludeSameSiteNoneInsecure"
+	CookieExclusionReasonExcludeSameSiteLax                     CookieExclusionReason = "ExcludeSameSiteLax"
+	CookieExclusionReasonExcludeSameSiteStrict                  CookieExclusionReason = "ExcludeSameSiteStrict"
+	CookieExclusionReasonExcludeInvalidSameParty                CookieExclusionReason = "ExcludeInvalidSameParty"
+	CookieExclusionReasonExcludeSamePartyCrossPartyContext      CookieExclusionReason = "ExcludeSamePartyCrossPartyContext"
 )
 
-func (e SameSiteCookieExclusionReason) Valid() bool {
+func (e CookieExclusionReason) Valid() bool {
 	switch e {
-	case "ExcludeSameSiteUnspecifiedTreatedAsLax", "ExcludeSameSiteNoneInsecure", "ExcludeSameSiteLax", "ExcludeSameSiteStrict", "ExcludeInvalidSameParty":
+	case "ExcludeSameSiteUnspecifiedTreatedAsLax", "ExcludeSameSiteNoneInsecure", "ExcludeSameSiteLax", "ExcludeSameSiteStrict", "ExcludeInvalidSameParty", "ExcludeSamePartyCrossPartyContext":
 		return true
 	default:
 		return false
 	}
 }
 
-func (e SameSiteCookieExclusionReason) String() string {
+func (e CookieExclusionReason) String() string {
 	return string(e)
 }
 
-// SameSiteCookieWarningReason
-type SameSiteCookieWarningReason string
+// CookieWarningReason
+type CookieWarningReason string
 
-// SameSiteCookieWarningReason as enums.
+// CookieWarningReason as enums.
 const (
-	SameSiteCookieWarningReasonNotSet                                  SameSiteCookieWarningReason = ""
-	SameSiteCookieWarningReasonWarnSameSiteUnspecifiedCrossSiteContext SameSiteCookieWarningReason = "WarnSameSiteUnspecifiedCrossSiteContext"
-	SameSiteCookieWarningReasonWarnSameSiteNoneInsecure                SameSiteCookieWarningReason = "WarnSameSiteNoneInsecure"
-	SameSiteCookieWarningReasonWarnSameSiteUnspecifiedLaxAllowUnsafe   SameSiteCookieWarningReason = "WarnSameSiteUnspecifiedLaxAllowUnsafe"
-	SameSiteCookieWarningReasonWarnSameSiteStrictLaxDowngradeStrict    SameSiteCookieWarningReason = "WarnSameSiteStrictLaxDowngradeStrict"
-	SameSiteCookieWarningReasonWarnSameSiteStrictCrossDowngradeStrict  SameSiteCookieWarningReason = "WarnSameSiteStrictCrossDowngradeStrict"
-	SameSiteCookieWarningReasonWarnSameSiteStrictCrossDowngradeLax     SameSiteCookieWarningReason = "WarnSameSiteStrictCrossDowngradeLax"
-	SameSiteCookieWarningReasonWarnSameSiteLaxCrossDowngradeStrict     SameSiteCookieWarningReason = "WarnSameSiteLaxCrossDowngradeStrict"
-	SameSiteCookieWarningReasonWarnSameSiteLaxCrossDowngradeLax        SameSiteCookieWarningReason = "WarnSameSiteLaxCrossDowngradeLax"
+	CookieWarningReasonNotSet                                  CookieWarningReason = ""
+	CookieWarningReasonWarnSameSiteUnspecifiedCrossSiteContext CookieWarningReason = "WarnSameSiteUnspecifiedCrossSiteContext"
+	CookieWarningReasonWarnSameSiteNoneInsecure                CookieWarningReason = "WarnSameSiteNoneInsecure"
+	CookieWarningReasonWarnSameSiteUnspecifiedLaxAllowUnsafe   CookieWarningReason = "WarnSameSiteUnspecifiedLaxAllowUnsafe"
+	CookieWarningReasonWarnSameSiteStrictLaxDowngradeStrict    CookieWarningReason = "WarnSameSiteStrictLaxDowngradeStrict"
+	CookieWarningReasonWarnSameSiteStrictCrossDowngradeStrict  CookieWarningReason = "WarnSameSiteStrictCrossDowngradeStrict"
+	CookieWarningReasonWarnSameSiteStrictCrossDowngradeLax     CookieWarningReason = "WarnSameSiteStrictCrossDowngradeLax"
+	CookieWarningReasonWarnSameSiteLaxCrossDowngradeStrict     CookieWarningReason = "WarnSameSiteLaxCrossDowngradeStrict"
+	CookieWarningReasonWarnSameSiteLaxCrossDowngradeLax        CookieWarningReason = "WarnSameSiteLaxCrossDowngradeLax"
+	CookieWarningReasonWarnAttributeValueExceedsMaxSize        CookieWarningReason = "WarnAttributeValueExceedsMaxSize"
 )
 
-func (e SameSiteCookieWarningReason) Valid() bool {
+func (e CookieWarningReason) Valid() bool {
 	switch e {
-	case "WarnSameSiteUnspecifiedCrossSiteContext", "WarnSameSiteNoneInsecure", "WarnSameSiteUnspecifiedLaxAllowUnsafe", "WarnSameSiteStrictLaxDowngradeStrict", "WarnSameSiteStrictCrossDowngradeStrict", "WarnSameSiteStrictCrossDowngradeLax", "WarnSameSiteLaxCrossDowngradeStrict", "WarnSameSiteLaxCrossDowngradeLax":
+	case "WarnSameSiteUnspecifiedCrossSiteContext", "WarnSameSiteNoneInsecure", "WarnSameSiteUnspecifiedLaxAllowUnsafe", "WarnSameSiteStrictLaxDowngradeStrict", "WarnSameSiteStrictCrossDowngradeStrict", "WarnSameSiteStrictCrossDowngradeLax", "WarnSameSiteLaxCrossDowngradeStrict", "WarnSameSiteLaxCrossDowngradeLax", "WarnAttributeValueExceedsMaxSize":
 		return true
 	default:
 		return false
 	}
 }
 
-func (e SameSiteCookieWarningReason) String() string {
+func (e CookieWarningReason) String() string {
 	return string(e)
 }
 
-// SameSiteCookieOperation
-type SameSiteCookieOperation string
+// CookieOperation
+type CookieOperation string
 
-// SameSiteCookieOperation as enums.
+// CookieOperation as enums.
 const (
-	SameSiteCookieOperationNotSet     SameSiteCookieOperation = ""
-	SameSiteCookieOperationSetCookie  SameSiteCookieOperation = "SetCookie"
-	SameSiteCookieOperationReadCookie SameSiteCookieOperation = "ReadCookie"
+	CookieOperationNotSet     CookieOperation = ""
+	CookieOperationSetCookie  CookieOperation = "SetCookie"
+	CookieOperationReadCookie CookieOperation = "ReadCookie"
 )
 
-func (e SameSiteCookieOperation) Valid() bool {
+func (e CookieOperation) Valid() bool {
 	switch e {
 	case "SetCookie", "ReadCookie":
 		return true
@@ -103,22 +105,22 @@ func (e SameSiteCookieOperation) Valid() bool {
 	}
 }
 
-func (e SameSiteCookieOperation) String() string {
+func (e CookieOperation) String() string {
 	return string(e)
 }
 
-// SameSiteCookieIssueDetails This information is currently necessary, as the
+// CookieIssueDetails This information is currently necessary, as the
 // front-end has a difficult time finding a specific cookie. With this, we can
 // convey specific error information without the cookie.
-type SameSiteCookieIssueDetails struct {
-	Cookie                 *AffectedCookie                 `json:"cookie,omitempty"`         // If AffectedCookie is not set then rawCookieLine contains the raw Set-Cookie header string. This hints at a problem where the cookie line is syntactically or semantically malformed in a way that no valid cookie could be created.
-	RawCookieLine          *string                         `json:"rawCookieLine,omitempty"`  // No description.
-	CookieWarningReasons   []SameSiteCookieWarningReason   `json:"cookieWarningReasons"`     // No description.
-	CookieExclusionReasons []SameSiteCookieExclusionReason `json:"cookieExclusionReasons"`   // No description.
-	Operation              SameSiteCookieOperation         `json:"operation"`                // Optionally identifies the site-for-cookies and the cookie url, which may be used by the front-end as additional context.
-	SiteForCookies         *string                         `json:"siteForCookies,omitempty"` // No description.
-	CookieURL              *string                         `json:"cookieUrl,omitempty"`      // No description.
-	Request                *AffectedRequest                `json:"request,omitempty"`        // No description.
+type CookieIssueDetails struct {
+	Cookie                 *AffectedCookie         `json:"cookie,omitempty"`         // If AffectedCookie is not set then rawCookieLine contains the raw Set-Cookie header string. This hints at a problem where the cookie line is syntactically or semantically malformed in a way that no valid cookie could be created.
+	RawCookieLine          *string                 `json:"rawCookieLine,omitempty"`  // No description.
+	CookieWarningReasons   []CookieWarningReason   `json:"cookieWarningReasons"`     // No description.
+	CookieExclusionReasons []CookieExclusionReason `json:"cookieExclusionReasons"`   // No description.
+	Operation              CookieOperation         `json:"operation"`                // Optionally identifies the site-for-cookies and the cookie url, which may be used by the front-end as additional context.
+	SiteForCookies         *string                 `json:"siteForCookies,omitempty"` // No description.
+	CookieURL              *string                 `json:"cookieUrl,omitempty"`      // No description.
+	Request                *AffectedRequest        `json:"request,omitempty"`        // No description.
 }
 
 // MixedContentResolutionStatus
@@ -151,6 +153,7 @@ type MixedContentResourceType string
 // MixedContentResourceType as enums.
 const (
 	MixedContentResourceTypeNotSet         MixedContentResourceType = ""
+	MixedContentResourceTypeAttributionSrc MixedContentResourceType = "AttributionSrc"
 	MixedContentResourceTypeAudio          MixedContentResourceType = "Audio"
 	MixedContentResourceTypeBeacon         MixedContentResourceType = "Beacon"
 	MixedContentResourceTypeCSPReport      MixedContentResourceType = "CSPReport"
@@ -181,7 +184,7 @@ const (
 
 func (e MixedContentResourceType) Valid() bool {
 	switch e {
-	case "Audio", "Beacon", "CSPReport", "Download", "EventSource", "Favicon", "Font", "Form", "Frame", "Image", "Import", "Manifest", "Ping", "PluginData", "PluginResource", "Prefetch", "Resource", "Script", "ServiceWorker", "SharedWorker", "Stylesheet", "Track", "Video", "Worker", "XMLHttpRequest", "XSLT":
+	case "AttributionSrc", "Audio", "Beacon", "CSPReport", "Download", "EventSource", "Favicon", "Font", "Form", "Frame", "Image", "Import", "Manifest", "Ping", "PluginData", "PluginResource", "Prefetch", "Resource", "Script", "ServiceWorker", "SharedWorker", "Stylesheet", "Track", "Video", "Worker", "XMLHttpRequest", "XSLT":
 		return true
 	default:
 		return false
@@ -304,11 +307,12 @@ const (
 	ContentSecurityPolicyViolationTypeKURLViolation                ContentSecurityPolicyViolationType = "kURLViolation"
 	ContentSecurityPolicyViolationTypeKTrustedTypesSinkViolation   ContentSecurityPolicyViolationType = "kTrustedTypesSinkViolation"
 	ContentSecurityPolicyViolationTypeKTrustedTypesPolicyViolation ContentSecurityPolicyViolationType = "kTrustedTypesPolicyViolation"
+	ContentSecurityPolicyViolationTypeKWasmEvalViolation           ContentSecurityPolicyViolationType = "kWasmEvalViolation"
 )
 
 func (e ContentSecurityPolicyViolationType) Valid() bool {
 	switch e {
-	case "kInlineViolation", "kEvalViolation", "kURLViolation", "kTrustedTypesSinkViolation", "kTrustedTypesPolicyViolation":
+	case "kInlineViolation", "kEvalViolation", "kURLViolation", "kTrustedTypesSinkViolation", "kTrustedTypesPolicyViolation", "kWasmEvalViolation":
 		return true
 	default:
 		return false
@@ -433,15 +437,14 @@ type AttributionReportingIssueType string
 const (
 	AttributionReportingIssueTypeNotSet                               AttributionReportingIssueType = ""
 	AttributionReportingIssueTypePermissionPolicyDisabled             AttributionReportingIssueType = "PermissionPolicyDisabled"
-	AttributionReportingIssueTypeInvalidAttributionSourceEventID      AttributionReportingIssueType = "InvalidAttributionSourceEventId"
-	AttributionReportingIssueTypeInvalidAttributionData               AttributionReportingIssueType = "InvalidAttributionData"
 	AttributionReportingIssueTypeAttributionSourceUntrustworthyOrigin AttributionReportingIssueType = "AttributionSourceUntrustworthyOrigin"
 	AttributionReportingIssueTypeAttributionUntrustworthyOrigin       AttributionReportingIssueType = "AttributionUntrustworthyOrigin"
+	AttributionReportingIssueTypeInvalidHeader                        AttributionReportingIssueType = "InvalidHeader"
 )
 
 func (e AttributionReportingIssueType) Valid() bool {
 	switch e {
-	case "PermissionPolicyDisabled", "InvalidAttributionSourceEventId", "InvalidAttributionData", "AttributionSourceUntrustworthyOrigin", "AttributionUntrustworthyOrigin":
+	case "PermissionPolicyDisabled", "AttributionSourceUntrustworthyOrigin", "AttributionUntrustworthyOrigin", "InvalidHeader":
 		return true
 	default:
 		return false
@@ -479,12 +482,204 @@ type NavigatorUserAgentIssueDetails struct {
 	Location *SourceCodeLocation `json:"location,omitempty"` // No description.
 }
 
-// WASMCrossOriginModuleSharingIssueDetails
-type WASMCrossOriginModuleSharingIssueDetails struct {
-	WASMModuleURL string `json:"wasmModuleUrl"` // No description.
-	SourceOrigin  string `json:"sourceOrigin"`  // No description.
-	TargetOrigin  string `json:"targetOrigin"`  // No description.
-	IsWarning     bool   `json:"isWarning"`     // No description.
+// GenericIssueErrorType
+type GenericIssueErrorType string
+
+// GenericIssueErrorType as enums.
+const (
+	GenericIssueErrorTypeNotSet                            GenericIssueErrorType = ""
+	GenericIssueErrorTypeCrossOriginPortalPostMessageError GenericIssueErrorType = "CrossOriginPortalPostMessageError"
+)
+
+func (e GenericIssueErrorType) Valid() bool {
+	switch e {
+	case "CrossOriginPortalPostMessageError":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e GenericIssueErrorType) String() string {
+	return string(e)
+}
+
+// GenericIssueDetails Depending on the concrete errorType, different
+// properties are set.
+type GenericIssueDetails struct {
+	ErrorType GenericIssueErrorType `json:"errorType"`         // Issues with the same errorType are aggregated in the frontend.
+	FrameID   *page.FrameID         `json:"frameId,omitempty"` // No description.
+}
+
+// DeprecationIssueType
+type DeprecationIssueType string
+
+// DeprecationIssueType as enums.
+const (
+	DeprecationIssueTypeNotSet                                                    DeprecationIssueType = ""
+	DeprecationIssueTypeAuthorizationCoveredByWildcard                            DeprecationIssueType = "AuthorizationCoveredByWildcard"
+	DeprecationIssueTypeCanRequestURLHTTPContainingNewline                        DeprecationIssueType = "CanRequestURLHTTPContainingNewline"
+	DeprecationIssueTypeChromeLoadTimesConnectionInfo                             DeprecationIssueType = "ChromeLoadTimesConnectionInfo"
+	DeprecationIssueTypeChromeLoadTimesFirstPaintAfterLoadTime                    DeprecationIssueType = "ChromeLoadTimesFirstPaintAfterLoadTime"
+	DeprecationIssueTypeChromeLoadTimesWasAlternateProtocolAvailable              DeprecationIssueType = "ChromeLoadTimesWasAlternateProtocolAvailable"
+	DeprecationIssueTypeCookieWithTruncatingChar                                  DeprecationIssueType = "CookieWithTruncatingChar"
+	DeprecationIssueTypeCrossOriginAccessBasedOnDocumentDomain                    DeprecationIssueType = "CrossOriginAccessBasedOnDocumentDomain"
+	DeprecationIssueTypeCrossOriginWindowAlert                                    DeprecationIssueType = "CrossOriginWindowAlert"
+	DeprecationIssueTypeCrossOriginWindowConfirm                                  DeprecationIssueType = "CrossOriginWindowConfirm"
+	DeprecationIssueTypeCSSSelectorInternalMediaControlsOverlayCastButton         DeprecationIssueType = "CSSSelectorInternalMediaControlsOverlayCastButton"
+	DeprecationIssueTypeCustomCursorIntersectsViewport                            DeprecationIssueType = "CustomCursorIntersectsViewport"
+	DeprecationIssueTypeDeprecationExample                                        DeprecationIssueType = "DeprecationExample"
+	DeprecationIssueTypeDocumentDomainSettingWithoutOriginAgentClusterHeader      DeprecationIssueType = "DocumentDomainSettingWithoutOriginAgentClusterHeader"
+	DeprecationIssueTypeEventPath                                                 DeprecationIssueType = "EventPath"
+	DeprecationIssueTypeGeolocationInsecureOrigin                                 DeprecationIssueType = "GeolocationInsecureOrigin"
+	DeprecationIssueTypeGeolocationInsecureOriginDeprecatedNotRemoved             DeprecationIssueType = "GeolocationInsecureOriginDeprecatedNotRemoved"
+	DeprecationIssueTypeGetUserMediaInsecureOrigin                                DeprecationIssueType = "GetUserMediaInsecureOrigin"
+	DeprecationIssueTypeHostCandidateAttributeGetter                              DeprecationIssueType = "HostCandidateAttributeGetter"
+	DeprecationIssueTypeInsecurePrivateNetworkSubresourceRequest                  DeprecationIssueType = "InsecurePrivateNetworkSubresourceRequest"
+	DeprecationIssueTypeLegacyConstraintGoogIPv6                                  DeprecationIssueType = "LegacyConstraintGoogIPv6"
+	DeprecationIssueTypeLocalCSSFileExtensionRejected                             DeprecationIssueType = "LocalCSSFileExtensionRejected"
+	DeprecationIssueTypeMediaElementAudioSourceNode                               DeprecationIssueType = "MediaElementAudioSourceNode"
+	DeprecationIssueTypeMediaSourceAbortRemove                                    DeprecationIssueType = "MediaSourceAbortRemove"
+	DeprecationIssueTypeMediaSourceDurationTruncatingBuffered                     DeprecationIssueType = "MediaSourceDurationTruncatingBuffered"
+	DeprecationIssueTypeNoSysexWebMIDIWithoutPermission                           DeprecationIssueType = "NoSysexWebMIDIWithoutPermission"
+	DeprecationIssueTypeNotificationInsecureOrigin                                DeprecationIssueType = "NotificationInsecureOrigin"
+	DeprecationIssueTypeNotificationPermissionRequestedIframe                     DeprecationIssueType = "NotificationPermissionRequestedIframe"
+	DeprecationIssueTypeObsoleteWebRtcCipherSuite                                 DeprecationIssueType = "ObsoleteWebRtcCipherSuite"
+	DeprecationIssueTypePaymentRequestBasicCard                                   DeprecationIssueType = "PaymentRequestBasicCard"
+	DeprecationIssueTypePaymentRequestShowWithoutGesture                          DeprecationIssueType = "PaymentRequestShowWithoutGesture"
+	DeprecationIssueTypePictureSourceSrc                                          DeprecationIssueType = "PictureSourceSrc"
+	DeprecationIssueTypePrefixedCancelAnimationFrame                              DeprecationIssueType = "PrefixedCancelAnimationFrame"
+	DeprecationIssueTypePrefixedRequestAnimationFrame                             DeprecationIssueType = "PrefixedRequestAnimationFrame"
+	DeprecationIssueTypePrefixedStorageInfo                                       DeprecationIssueType = "PrefixedStorageInfo"
+	DeprecationIssueTypePrefixedVideoDisplayingFullscreen                         DeprecationIssueType = "PrefixedVideoDisplayingFullscreen"
+	DeprecationIssueTypePrefixedVideoEnterFullscreen                              DeprecationIssueType = "PrefixedVideoEnterFullscreen"
+	DeprecationIssueTypePrefixedVideoEnterFullScreen                              DeprecationIssueType = "PrefixedVideoEnterFullScreen"
+	DeprecationIssueTypePrefixedVideoExitFullscreen                               DeprecationIssueType = "PrefixedVideoExitFullscreen"
+	DeprecationIssueTypePrefixedVideoExitFullScreen                               DeprecationIssueType = "PrefixedVideoExitFullScreen"
+	DeprecationIssueTypePrefixedVideoSupportsFullscreen                           DeprecationIssueType = "PrefixedVideoSupportsFullscreen"
+	DeprecationIssueTypeRangeExpand                                               DeprecationIssueType = "RangeExpand"
+	DeprecationIssueTypeRequestedSubresourceWithEmbeddedCredentials               DeprecationIssueType = "RequestedSubresourceWithEmbeddedCredentials"
+	DeprecationIssueTypeRTCConstraintEnableDtlsSrtpFalse                          DeprecationIssueType = "RTCConstraintEnableDtlsSrtpFalse"
+	DeprecationIssueTypeRTCConstraintEnableDtlsSrtpTrue                           DeprecationIssueType = "RTCConstraintEnableDtlsSrtpTrue"
+	DeprecationIssueTypeRTCPeerConnectionComplexPlanBSdpUsingDefaultSdpSemantics  DeprecationIssueType = "RTCPeerConnectionComplexPlanBSdpUsingDefaultSdpSemantics"
+	DeprecationIssueTypeRTCPeerConnectionSdpSemanticsPlanB                        DeprecationIssueType = "RTCPeerConnectionSdpSemanticsPlanB"
+	DeprecationIssueTypeRtcpMuxPolicyNegotiate                                    DeprecationIssueType = "RtcpMuxPolicyNegotiate"
+	DeprecationIssueTypeRTPDataChannel                                            DeprecationIssueType = "RTPDataChannel"
+	DeprecationIssueTypeSharedArrayBufferConstructedWithoutIsolation              DeprecationIssueType = "SharedArrayBufferConstructedWithoutIsolation"
+	DeprecationIssueTypeTextToSpeechDisallowedByAutoplay                          DeprecationIssueType = "TextToSpeech_DisallowedByAutoplay"
+	DeprecationIssueTypeV8SharedArrayBufferConstructedInExtensionWithoutIsolation DeprecationIssueType = "V8SharedArrayBufferConstructedInExtensionWithoutIsolation"
+	DeprecationIssueTypeXHRJSONEncodingDetection                                  DeprecationIssueType = "XHRJSONEncodingDetection"
+	DeprecationIssueTypeXMLHttpRequestSynchronousInNonWorkerOutsideBeforeUnload   DeprecationIssueType = "XMLHttpRequestSynchronousInNonWorkerOutsideBeforeUnload"
+	DeprecationIssueTypeXRSupportsSession                                         DeprecationIssueType = "XRSupportsSession"
+)
+
+func (e DeprecationIssueType) Valid() bool {
+	switch e {
+	case "AuthorizationCoveredByWildcard", "CanRequestURLHTTPContainingNewline", "ChromeLoadTimesConnectionInfo", "ChromeLoadTimesFirstPaintAfterLoadTime", "ChromeLoadTimesWasAlternateProtocolAvailable", "CookieWithTruncatingChar", "CrossOriginAccessBasedOnDocumentDomain", "CrossOriginWindowAlert", "CrossOriginWindowConfirm", "CSSSelectorInternalMediaControlsOverlayCastButton", "CustomCursorIntersectsViewport", "DeprecationExample", "DocumentDomainSettingWithoutOriginAgentClusterHeader", "EventPath", "GeolocationInsecureOrigin", "GeolocationInsecureOriginDeprecatedNotRemoved", "GetUserMediaInsecureOrigin", "HostCandidateAttributeGetter", "InsecurePrivateNetworkSubresourceRequest", "LegacyConstraintGoogIPv6", "LocalCSSFileExtensionRejected", "MediaElementAudioSourceNode", "MediaSourceAbortRemove", "MediaSourceDurationTruncatingBuffered", "NoSysexWebMIDIWithoutPermission", "NotificationInsecureOrigin", "NotificationPermissionRequestedIframe", "ObsoleteWebRtcCipherSuite", "PaymentRequestBasicCard", "PaymentRequestShowWithoutGesture", "PictureSourceSrc", "PrefixedCancelAnimationFrame", "PrefixedRequestAnimationFrame", "PrefixedStorageInfo", "PrefixedVideoDisplayingFullscreen", "PrefixedVideoEnterFullscreen", "PrefixedVideoEnterFullScreen", "PrefixedVideoExitFullscreen", "PrefixedVideoExitFullScreen", "PrefixedVideoSupportsFullscreen", "RangeExpand", "RequestedSubresourceWithEmbeddedCredentials", "RTCConstraintEnableDtlsSrtpFalse", "RTCConstraintEnableDtlsSrtpTrue", "RTCPeerConnectionComplexPlanBSdpUsingDefaultSdpSemantics", "RTCPeerConnectionSdpSemanticsPlanB", "RtcpMuxPolicyNegotiate", "RTPDataChannel", "SharedArrayBufferConstructedWithoutIsolation", "TextToSpeech_DisallowedByAutoplay", "V8SharedArrayBufferConstructedInExtensionWithoutIsolation", "XHRJSONEncodingDetection", "XMLHttpRequestSynchronousInNonWorkerOutsideBeforeUnload", "XRSupportsSession":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e DeprecationIssueType) String() string {
+	return string(e)
+}
+
+// DeprecationIssueDetails This issue tracks information needed to print a
+// deprecation message.
+// https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/frame/third_party/blink/renderer/core/frame/deprecation/README.md
+type DeprecationIssueDetails struct {
+	AffectedFrame      *AffectedFrame       `json:"affectedFrame,omitempty"` // No description.
+	SourceCodeLocation SourceCodeLocation   `json:"sourceCodeLocation"`      // No description.
+	Type               DeprecationIssueType `json:"type"`                    // No description.
+}
+
+// ClientHintIssueReason
+type ClientHintIssueReason string
+
+// ClientHintIssueReason as enums.
+const (
+	ClientHintIssueReasonNotSet                        ClientHintIssueReason = ""
+	ClientHintIssueReasonMetaTagAllowListInvalidOrigin ClientHintIssueReason = "MetaTagAllowListInvalidOrigin"
+	ClientHintIssueReasonMetaTagModifiedHTML           ClientHintIssueReason = "MetaTagModifiedHTML"
+)
+
+func (e ClientHintIssueReason) Valid() bool {
+	switch e {
+	case "MetaTagAllowListInvalidOrigin", "MetaTagModifiedHTML":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ClientHintIssueReason) String() string {
+	return string(e)
+}
+
+// FederatedAuthRequestIssueDetails
+type FederatedAuthRequestIssueDetails struct {
+	FederatedAuthRequestIssueReason FederatedAuthRequestIssueReason `json:"federatedAuthRequestIssueReason"` // No description.
+}
+
+// FederatedAuthRequestIssueReason Represents the failure reason when a
+// federated authentication reason fails. Should be updated alongside
+// RequestIdTokenStatus in
+// third_party/blink/public/mojom/devtools/inspector_issue.mojom to include all
+// cases except for success.
+type FederatedAuthRequestIssueReason string
+
+// FederatedAuthRequestIssueReason as enums.
+const (
+	FederatedAuthRequestIssueReasonNotSet                                FederatedAuthRequestIssueReason = ""
+	FederatedAuthRequestIssueReasonApprovalDeclined                      FederatedAuthRequestIssueReason = "ApprovalDeclined"
+	FederatedAuthRequestIssueReasonTooManyRequests                       FederatedAuthRequestIssueReason = "TooManyRequests"
+	FederatedAuthRequestIssueReasonManifestListHTTPNotFound              FederatedAuthRequestIssueReason = "ManifestListHttpNotFound"
+	FederatedAuthRequestIssueReasonManifestListNoResponse                FederatedAuthRequestIssueReason = "ManifestListNoResponse"
+	FederatedAuthRequestIssueReasonManifestListInvalidResponse           FederatedAuthRequestIssueReason = "ManifestListInvalidResponse"
+	FederatedAuthRequestIssueReasonManifestNotInManifestList             FederatedAuthRequestIssueReason = "ManifestNotInManifestList"
+	FederatedAuthRequestIssueReasonManifestListTooBig                    FederatedAuthRequestIssueReason = "ManifestListTooBig"
+	FederatedAuthRequestIssueReasonManifestHTTPNotFound                  FederatedAuthRequestIssueReason = "ManifestHttpNotFound"
+	FederatedAuthRequestIssueReasonManifestNoResponse                    FederatedAuthRequestIssueReason = "ManifestNoResponse"
+	FederatedAuthRequestIssueReasonManifestInvalidResponse               FederatedAuthRequestIssueReason = "ManifestInvalidResponse"
+	FederatedAuthRequestIssueReasonClientMetadataHTTPNotFound            FederatedAuthRequestIssueReason = "ClientMetadataHttpNotFound"
+	FederatedAuthRequestIssueReasonClientMetadataNoResponse              FederatedAuthRequestIssueReason = "ClientMetadataNoResponse"
+	FederatedAuthRequestIssueReasonClientMetadataInvalidResponse         FederatedAuthRequestIssueReason = "ClientMetadataInvalidResponse"
+	FederatedAuthRequestIssueReasonClientMetadataMissingPrivacyPolicyURL FederatedAuthRequestIssueReason = "ClientMetadataMissingPrivacyPolicyUrl"
+	FederatedAuthRequestIssueReasonDisabledInSettings                    FederatedAuthRequestIssueReason = "DisabledInSettings"
+	FederatedAuthRequestIssueReasonErrorFetchingSignin                   FederatedAuthRequestIssueReason = "ErrorFetchingSignin"
+	FederatedAuthRequestIssueReasonInvalidSigninResponse                 FederatedAuthRequestIssueReason = "InvalidSigninResponse"
+	FederatedAuthRequestIssueReasonAccountsHTTPNotFound                  FederatedAuthRequestIssueReason = "AccountsHttpNotFound"
+	FederatedAuthRequestIssueReasonAccountsNoResponse                    FederatedAuthRequestIssueReason = "AccountsNoResponse"
+	FederatedAuthRequestIssueReasonAccountsInvalidResponse               FederatedAuthRequestIssueReason = "AccountsInvalidResponse"
+	FederatedAuthRequestIssueReasonIDTokenHTTPNotFound                   FederatedAuthRequestIssueReason = "IdTokenHttpNotFound"
+	FederatedAuthRequestIssueReasonIDTokenNoResponse                     FederatedAuthRequestIssueReason = "IdTokenNoResponse"
+	FederatedAuthRequestIssueReasonIDTokenInvalidResponse                FederatedAuthRequestIssueReason = "IdTokenInvalidResponse"
+	FederatedAuthRequestIssueReasonIDTokenInvalidRequest                 FederatedAuthRequestIssueReason = "IdTokenInvalidRequest"
+	FederatedAuthRequestIssueReasonErrorIDToken                          FederatedAuthRequestIssueReason = "ErrorIdToken"
+	FederatedAuthRequestIssueReasonCanceled                              FederatedAuthRequestIssueReason = "Canceled"
+)
+
+func (e FederatedAuthRequestIssueReason) Valid() bool {
+	switch e {
+	case "ApprovalDeclined", "TooManyRequests", "ManifestListHttpNotFound", "ManifestListNoResponse", "ManifestListInvalidResponse", "ManifestNotInManifestList", "ManifestListTooBig", "ManifestHttpNotFound", "ManifestNoResponse", "ManifestInvalidResponse", "ClientMetadataHttpNotFound", "ClientMetadataNoResponse", "ClientMetadataInvalidResponse", "ClientMetadataMissingPrivacyPolicyUrl", "DisabledInSettings", "ErrorFetchingSignin", "InvalidSigninResponse", "AccountsHttpNotFound", "AccountsNoResponse", "AccountsInvalidResponse", "IdTokenHttpNotFound", "IdTokenNoResponse", "IdTokenInvalidResponse", "IdTokenInvalidRequest", "ErrorIdToken", "Canceled":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e FederatedAuthRequestIssueReason) String() string {
+	return string(e)
+}
+
+// ClientHintIssueDetails This issue tracks client hints related issues. It's
+// used to deprecate old features, encourage the use of new ones, and provide
+// general guidance.
+type ClientHintIssueDetails struct {
+	SourceCodeLocation    SourceCodeLocation    `json:"sourceCodeLocation"`    // No description.
+	ClientHintIssueReason ClientHintIssueReason `json:"clientHintIssueReason"` // No description.
 }
 
 // InspectorIssueCode A unique identifier for the type of issue. Each type may
@@ -494,25 +689,28 @@ type InspectorIssueCode string
 
 // InspectorIssueCode as enums.
 const (
-	InspectorIssueCodeNotSet                            InspectorIssueCode = ""
-	InspectorIssueCodeSameSiteCookieIssue               InspectorIssueCode = "SameSiteCookieIssue"
-	InspectorIssueCodeMixedContentIssue                 InspectorIssueCode = "MixedContentIssue"
-	InspectorIssueCodeBlockedByResponseIssue            InspectorIssueCode = "BlockedByResponseIssue"
-	InspectorIssueCodeHeavyAdIssue                      InspectorIssueCode = "HeavyAdIssue"
-	InspectorIssueCodeContentSecurityPolicyIssue        InspectorIssueCode = "ContentSecurityPolicyIssue"
-	InspectorIssueCodeSharedArrayBufferIssue            InspectorIssueCode = "SharedArrayBufferIssue"
-	InspectorIssueCodeTrustedWebActivityIssue           InspectorIssueCode = "TrustedWebActivityIssue"
-	InspectorIssueCodeLowTextContrastIssue              InspectorIssueCode = "LowTextContrastIssue"
-	InspectorIssueCodeCORSIssue                         InspectorIssueCode = "CorsIssue"
-	InspectorIssueCodeAttributionReportingIssue         InspectorIssueCode = "AttributionReportingIssue"
-	InspectorIssueCodeQuirksModeIssue                   InspectorIssueCode = "QuirksModeIssue"
-	InspectorIssueCodeNavigatorUserAgentIssue           InspectorIssueCode = "NavigatorUserAgentIssue"
-	InspectorIssueCodeWASMCrossOriginModuleSharingIssue InspectorIssueCode = "WasmCrossOriginModuleSharingIssue"
+	InspectorIssueCodeNotSet                     InspectorIssueCode = ""
+	InspectorIssueCodeCookieIssue                InspectorIssueCode = "CookieIssue"
+	InspectorIssueCodeMixedContentIssue          InspectorIssueCode = "MixedContentIssue"
+	InspectorIssueCodeBlockedByResponseIssue     InspectorIssueCode = "BlockedByResponseIssue"
+	InspectorIssueCodeHeavyAdIssue               InspectorIssueCode = "HeavyAdIssue"
+	InspectorIssueCodeContentSecurityPolicyIssue InspectorIssueCode = "ContentSecurityPolicyIssue"
+	InspectorIssueCodeSharedArrayBufferIssue     InspectorIssueCode = "SharedArrayBufferIssue"
+	InspectorIssueCodeTrustedWebActivityIssue    InspectorIssueCode = "TrustedWebActivityIssue"
+	InspectorIssueCodeLowTextContrastIssue       InspectorIssueCode = "LowTextContrastIssue"
+	InspectorIssueCodeCORSIssue                  InspectorIssueCode = "CorsIssue"
+	InspectorIssueCodeAttributionReportingIssue  InspectorIssueCode = "AttributionReportingIssue"
+	InspectorIssueCodeQuirksModeIssue            InspectorIssueCode = "QuirksModeIssue"
+	InspectorIssueCodeNavigatorUserAgentIssue    InspectorIssueCode = "NavigatorUserAgentIssue"
+	InspectorIssueCodeGenericIssue               InspectorIssueCode = "GenericIssue"
+	InspectorIssueCodeDeprecationIssue           InspectorIssueCode = "DeprecationIssue"
+	InspectorIssueCodeClientHintIssue            InspectorIssueCode = "ClientHintIssue"
+	InspectorIssueCodeFederatedAuthRequestIssue  InspectorIssueCode = "FederatedAuthRequestIssue"
 )
 
 func (e InspectorIssueCode) Valid() bool {
 	switch e {
-	case "SameSiteCookieIssue", "MixedContentIssue", "BlockedByResponseIssue", "HeavyAdIssue", "ContentSecurityPolicyIssue", "SharedArrayBufferIssue", "TrustedWebActivityIssue", "LowTextContrastIssue", "CorsIssue", "AttributionReportingIssue", "QuirksModeIssue", "NavigatorUserAgentIssue", "WasmCrossOriginModuleSharingIssue":
+	case "CookieIssue", "MixedContentIssue", "BlockedByResponseIssue", "HeavyAdIssue", "ContentSecurityPolicyIssue", "SharedArrayBufferIssue", "TrustedWebActivityIssue", "LowTextContrastIssue", "CorsIssue", "AttributionReportingIssue", "QuirksModeIssue", "NavigatorUserAgentIssue", "GenericIssue", "DeprecationIssue", "ClientHintIssue", "FederatedAuthRequestIssue":
 		return true
 	default:
 		return false
@@ -527,19 +725,22 @@ func (e InspectorIssueCode) String() string {
 // additional information specific to the kind of issue. When adding a new
 // issue code, please also add a new optional field to this type.
 type InspectorIssueDetails struct {
-	SameSiteCookieIssueDetails        *SameSiteCookieIssueDetails               `json:"sameSiteCookieIssueDetails,omitempty"`        // No description.
-	MixedContentIssueDetails          *MixedContentIssueDetails                 `json:"mixedContentIssueDetails,omitempty"`          // No description.
-	BlockedByResponseIssueDetails     *BlockedByResponseIssueDetails            `json:"blockedByResponseIssueDetails,omitempty"`     // No description.
-	HeavyAdIssueDetails               *HeavyAdIssueDetails                      `json:"heavyAdIssueDetails,omitempty"`               // No description.
-	ContentSecurityPolicyIssueDetails *ContentSecurityPolicyIssueDetails        `json:"contentSecurityPolicyIssueDetails,omitempty"` // No description.
-	SharedArrayBufferIssueDetails     *SharedArrayBufferIssueDetails            `json:"sharedArrayBufferIssueDetails,omitempty"`     // No description.
-	TwaQualityEnforcementDetails      *TrustedWebActivityIssueDetails           `json:"twaQualityEnforcementDetails,omitempty"`      // No description.
-	LowTextContrastIssueDetails       *LowTextContrastIssueDetails              `json:"lowTextContrastIssueDetails,omitempty"`       // No description.
-	CORSIssueDetails                  *CORSIssueDetails                         `json:"corsIssueDetails,omitempty"`                  // No description.
-	AttributionReportingIssueDetails  *AttributionReportingIssueDetails         `json:"attributionReportingIssueDetails,omitempty"`  // No description.
-	QuirksModeIssueDetails            *QuirksModeIssueDetails                   `json:"quirksModeIssueDetails,omitempty"`            // No description.
-	NavigatorUserAgentIssueDetails    *NavigatorUserAgentIssueDetails           `json:"navigatorUserAgentIssueDetails,omitempty"`    // No description.
-	WASMCrossOriginModuleSharingIssue *WASMCrossOriginModuleSharingIssueDetails `json:"wasmCrossOriginModuleSharingIssue,omitempty"` // No description.
+	CookieIssueDetails                *CookieIssueDetails                `json:"cookieIssueDetails,omitempty"`                // No description.
+	MixedContentIssueDetails          *MixedContentIssueDetails          `json:"mixedContentIssueDetails,omitempty"`          // No description.
+	BlockedByResponseIssueDetails     *BlockedByResponseIssueDetails     `json:"blockedByResponseIssueDetails,omitempty"`     // No description.
+	HeavyAdIssueDetails               *HeavyAdIssueDetails               `json:"heavyAdIssueDetails,omitempty"`               // No description.
+	ContentSecurityPolicyIssueDetails *ContentSecurityPolicyIssueDetails `json:"contentSecurityPolicyIssueDetails,omitempty"` // No description.
+	SharedArrayBufferIssueDetails     *SharedArrayBufferIssueDetails     `json:"sharedArrayBufferIssueDetails,omitempty"`     // No description.
+	TwaQualityEnforcementDetails      *TrustedWebActivityIssueDetails    `json:"twaQualityEnforcementDetails,omitempty"`      // No description.
+	LowTextContrastIssueDetails       *LowTextContrastIssueDetails       `json:"lowTextContrastIssueDetails,omitempty"`       // No description.
+	CORSIssueDetails                  *CORSIssueDetails                  `json:"corsIssueDetails,omitempty"`                  // No description.
+	AttributionReportingIssueDetails  *AttributionReportingIssueDetails  `json:"attributionReportingIssueDetails,omitempty"`  // No description.
+	QuirksModeIssueDetails            *QuirksModeIssueDetails            `json:"quirksModeIssueDetails,omitempty"`            // No description.
+	NavigatorUserAgentIssueDetails    *NavigatorUserAgentIssueDetails    `json:"navigatorUserAgentIssueDetails,omitempty"`    // No description.
+	GenericIssueDetails               *GenericIssueDetails               `json:"genericIssueDetails,omitempty"`               // No description.
+	DeprecationIssueDetails           *DeprecationIssueDetails           `json:"deprecationIssueDetails,omitempty"`           // No description.
+	ClientHintIssueDetails            *ClientHintIssueDetails            `json:"clientHintIssueDetails,omitempty"`            // No description.
+	FederatedAuthRequestIssueDetails  *FederatedAuthRequestIssueDetails  `json:"federatedAuthRequestIssueDetails,omitempty"`  // No description.
 }
 
 // IssueID A unique id for a DevTools inspector issue. Allows other entities

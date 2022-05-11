@@ -477,3 +477,15 @@ func (a *SetShowHingeArgs) SetHingeConfig(hingeConfig HingeConfig) *SetShowHinge
 	a.HingeConfig = &hingeConfig
 	return a
 }
+
+// SetShowIsolatedElementsArgs represents the arguments for SetShowIsolatedElements in the Overlay domain.
+type SetShowIsolatedElementsArgs struct {
+	IsolatedElementHighlightConfigs []IsolatedElementHighlightConfig `json:"isolatedElementHighlightConfigs"` // An array of node identifiers and descriptors for the highlight appearance.
+}
+
+// NewSetShowIsolatedElementsArgs initializes SetShowIsolatedElementsArgs with the required arguments.
+func NewSetShowIsolatedElementsArgs(isolatedElementHighlightConfigs []IsolatedElementHighlightConfig) *SetShowIsolatedElementsArgs {
+	args := new(SetShowIsolatedElementsArgs)
+	args.IsolatedElementHighlightConfigs = isolatedElementHighlightConfigs
+	return args
+}

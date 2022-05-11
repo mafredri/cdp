@@ -78,20 +78,3 @@ type ScriptTypeProfile struct {
 	URL      string             `json:"url"`      // JavaScript script name or url.
 	Entries  []TypeProfileEntry `json:"entries"`  // Type profile entries for parameters and return values of the functions in the script.
 }
-
-// CounterInfo Collected counter information.
-//
-// Note: This type is experimental.
-type CounterInfo struct {
-	Name  string `json:"name"`  // Counter name.
-	Value int    `json:"value"` // Counter value.
-}
-
-// RuntimeCallCounterInfo Runtime call counter information.
-//
-// Note: This type is experimental.
-type RuntimeCallCounterInfo struct {
-	Name  string  `json:"name"`  // Counter name.
-	Value float64 `json:"value"` // Counter value.
-	Time  float64 `json:"time"`  // Counter time in seconds.
-}

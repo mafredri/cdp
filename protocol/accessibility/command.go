@@ -4,6 +4,7 @@ package accessibility
 
 import (
 	"github.com/mafredri/cdp/protocol/dom"
+	"github.com/mafredri/cdp/protocol/page"
 	"github.com/mafredri/cdp/protocol/runtime"
 )
 
@@ -59,7 +60,8 @@ type GetPartialAXTreeReply struct {
 
 // GetFullAXTreeArgs represents the arguments for GetFullAXTree in the Accessibility domain.
 type GetFullAXTreeArgs struct {
-	MaxDepth *int `json:"max_depth,omitempty"` // The maximum depth at which descendants of the root node should be retrieved. If omitted, the full tree is returned.
+	Depth   *int          `json:"depth,omitempty"`   // The maximum depth at which descendants of the root node should be retrieved. If omitted, the full tree is returned.
+	FrameID *page.FrameID `json:"frameId,omitempty"` // The frame for whose document the AX tree should be retrieved. If omitted, the root frame is used.
 }
 
 // NewGetFullAXTreeArgs initializes GetFullAXTreeArgs with the required arguments.
@@ -69,11 +71,19 @@ func NewGetFullAXTreeArgs() *GetFullAXTreeArgs {
 	return args
 }
 
-// SetMaxDepth sets the MaxDepth optional argument. The maximum depth
-// at which descendants of the root node should be retrieved. If
-// omitted, the full tree is returned.
-func (a *GetFullAXTreeArgs) SetMaxDepth(maxDepth int) *GetFullAXTreeArgs {
-	a.MaxDepth = &maxDepth
+// SetDepth sets the Depth optional argument. The maximum depth at
+// which descendants of the root node should be retrieved. If omitted,
+// the full tree is returned.
+func (a *GetFullAXTreeArgs) SetDepth(depth int) *GetFullAXTreeArgs {
+	a.Depth = &depth
+	return a
+}
+
+// SetFrameID sets the FrameID optional argument. The frame for whose
+// document the AX tree should be retrieved. If omitted, the root frame
+// is used.
+func (a *GetFullAXTreeArgs) SetFrameID(frameID page.FrameID) *GetFullAXTreeArgs {
+	a.FrameID = &frameID
 	return a
 }
 
@@ -82,9 +92,74 @@ type GetFullAXTreeReply struct {
 	Nodes []AXNode `json:"nodes"` // No description.
 }
 
+// GetRootAXNodeArgs represents the arguments for GetRootAXNode in the Accessibility domain.
+type GetRootAXNodeArgs struct {
+	FrameID *page.FrameID `json:"frameId,omitempty"` // The frame in whose document the node resides. If omitted, the root frame is used.
+}
+
+// NewGetRootAXNodeArgs initializes GetRootAXNodeArgs with the required arguments.
+func NewGetRootAXNodeArgs() *GetRootAXNodeArgs {
+	args := new(GetRootAXNodeArgs)
+
+	return args
+}
+
+// SetFrameID sets the FrameID optional argument. The frame in whose
+// document the node resides. If omitted, the root frame is used.
+func (a *GetRootAXNodeArgs) SetFrameID(frameID page.FrameID) *GetRootAXNodeArgs {
+	a.FrameID = &frameID
+	return a
+}
+
+// GetRootAXNodeReply represents the return values for GetRootAXNode in the Accessibility domain.
+type GetRootAXNodeReply struct {
+	Node AXNode `json:"node"` // No description.
+}
+
+// GetAXNodeAndAncestorsArgs represents the arguments for GetAXNodeAndAncestors in the Accessibility domain.
+type GetAXNodeAndAncestorsArgs struct {
+	NodeID        *dom.NodeID             `json:"nodeId,omitempty"`        // Identifier of the node to get.
+	BackendNodeID *dom.BackendNodeID      `json:"backendNodeId,omitempty"` // Identifier of the backend node to get.
+	ObjectID      *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node wrapper to get.
+}
+
+// NewGetAXNodeAndAncestorsArgs initializes GetAXNodeAndAncestorsArgs with the required arguments.
+func NewGetAXNodeAndAncestorsArgs() *GetAXNodeAndAncestorsArgs {
+	args := new(GetAXNodeAndAncestorsArgs)
+
+	return args
+}
+
+// SetNodeID sets the NodeID optional argument. Identifier of the node
+// to get.
+func (a *GetAXNodeAndAncestorsArgs) SetNodeID(nodeID dom.NodeID) *GetAXNodeAndAncestorsArgs {
+	a.NodeID = &nodeID
+	return a
+}
+
+// SetBackendNodeID sets the BackendNodeID optional argument.
+// Identifier of the backend node to get.
+func (a *GetAXNodeAndAncestorsArgs) SetBackendNodeID(backendNodeID dom.BackendNodeID) *GetAXNodeAndAncestorsArgs {
+	a.BackendNodeID = &backendNodeID
+	return a
+}
+
+// SetObjectID sets the ObjectID optional argument. JavaScript object
+// id of the node wrapper to get.
+func (a *GetAXNodeAndAncestorsArgs) SetObjectID(objectID runtime.RemoteObjectID) *GetAXNodeAndAncestorsArgs {
+	a.ObjectID = &objectID
+	return a
+}
+
+// GetAXNodeAndAncestorsReply represents the return values for GetAXNodeAndAncestors in the Accessibility domain.
+type GetAXNodeAndAncestorsReply struct {
+	Nodes []AXNode `json:"nodes"` // No description.
+}
+
 // GetChildAXNodesArgs represents the arguments for GetChildAXNodes in the Accessibility domain.
 type GetChildAXNodesArgs struct {
-	ID AXNodeID `json:"id"` // No description.
+	ID      AXNodeID      `json:"id"`                // No description.
+	FrameID *page.FrameID `json:"frameId,omitempty"` // The frame in whose document the node resides. If omitted, the root frame is used.
 }
 
 // NewGetChildAXNodesArgs initializes GetChildAXNodesArgs with the required arguments.
@@ -92,6 +167,13 @@ func NewGetChildAXNodesArgs(id AXNodeID) *GetChildAXNodesArgs {
 	args := new(GetChildAXNodesArgs)
 	args.ID = id
 	return args
+}
+
+// SetFrameID sets the FrameID optional argument. The frame in whose
+// document the node resides. If omitted, the root frame is used.
+func (a *GetChildAXNodesArgs) SetFrameID(frameID page.FrameID) *GetChildAXNodesArgs {
+	a.FrameID = &frameID
+	return a
 }
 
 // GetChildAXNodesReply represents the return values for GetChildAXNodes in the Accessibility domain.

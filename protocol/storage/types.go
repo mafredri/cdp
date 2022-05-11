@@ -2,6 +2,13 @@
 
 package storage
 
+import (
+	"github.com/mafredri/cdp/protocol/network"
+)
+
+// SerializedStorageKey
+type SerializedStorageKey string
+
 // Type Enum of possible storage types.
 type Type string
 
@@ -17,13 +24,14 @@ const (
 	TypeWebsql         Type = "websql"
 	TypeServiceWorkers Type = "service_workers"
 	TypeCacheStorage   Type = "cache_storage"
+	TypeInterestGroups Type = "interest_groups"
 	TypeAll            Type = "all"
 	TypeOther          Type = "other"
 )
 
 func (e Type) Valid() bool {
 	switch e {
-	case "appcache", "cookies", "file_systems", "indexeddb", "local_storage", "shader_cache", "websql", "service_workers", "cache_storage", "all", "other":
+	case "appcache", "cookies", "file_systems", "indexeddb", "local_storage", "shader_cache", "websql", "service_workers", "cache_storage", "interest_groups", "all", "other":
 		return true
 	default:
 		return false
@@ -47,4 +55,52 @@ type UsageForType struct {
 type TrustTokens struct {
 	IssuerOrigin string  `json:"issuerOrigin"` // No description.
 	Count        float64 `json:"count"`        // No description.
+}
+
+// InterestGroupAccessType Enum of interest group access types.
+type InterestGroupAccessType string
+
+// InterestGroupAccessType as enums.
+const (
+	InterestGroupAccessTypeNotSet InterestGroupAccessType = ""
+	InterestGroupAccessTypeJoin   InterestGroupAccessType = "join"
+	InterestGroupAccessTypeLeave  InterestGroupAccessType = "leave"
+	InterestGroupAccessTypeUpdate InterestGroupAccessType = "update"
+	InterestGroupAccessTypeBid    InterestGroupAccessType = "bid"
+	InterestGroupAccessTypeWin    InterestGroupAccessType = "win"
+)
+
+func (e InterestGroupAccessType) Valid() bool {
+	switch e {
+	case "join", "leave", "update", "bid", "win":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e InterestGroupAccessType) String() string {
+	return string(e)
+}
+
+// InterestGroupAd Ad advertising element inside an interest group.
+type InterestGroupAd struct {
+	RenderURL string  `json:"renderUrl"`          // No description.
+	Metadata  *string `json:"metadata,omitempty"` // No description.
+}
+
+// InterestGroupDetails The full details of an interest group.
+type InterestGroupDetails struct {
+	OwnerOrigin               string                 `json:"ownerOrigin"`                        // No description.
+	Name                      string                 `json:"name"`                               // No description.
+	ExpirationTime            network.TimeSinceEpoch `json:"expirationTime"`                     // No description.
+	JoiningOrigin             string                 `json:"joiningOrigin"`                      // No description.
+	BiddingURL                *string                `json:"biddingUrl,omitempty"`               // No description.
+	BiddingWASMHelperURL      *string                `json:"biddingWasmHelperUrl,omitempty"`     // No description.
+	UpdateURL                 *string                `json:"updateUrl,omitempty"`                // No description.
+	TrustedBiddingSignalsURL  *string                `json:"trustedBiddingSignalsUrl,omitempty"` // No description.
+	TrustedBiddingSignalsKeys []string               `json:"trustedBiddingSignalsKeys"`          // No description.
+	UserBiddingSignals        *string                `json:"userBiddingSignals,omitempty"`       // No description.
+	Ads                       []InterestGroupAd      `json:"ads"`                                // No description.
+	AdComponents              []InterestGroupAd      `json:"adComponents"`                       // No description.
 }

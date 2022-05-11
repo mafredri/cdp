@@ -3,6 +3,7 @@
 package storage
 
 import (
+	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/rpcc"
 )
 
@@ -63,4 +64,21 @@ type IndexedDBListUpdatedClient interface {
 // IndexedDBListUpdatedReply is the reply for IndexedDBListUpdated events.
 type IndexedDBListUpdatedReply struct {
 	Origin string `json:"origin"` // Origin to update.
+}
+
+// InterestGroupAccessedClient is a client for InterestGroupAccessed events.
+// One of the interest groups was accessed by the associated page.
+type InterestGroupAccessedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*InterestGroupAccessedReply, error)
+	rpcc.Stream
+}
+
+// InterestGroupAccessedReply is the reply for InterestGroupAccessed events.
+type InterestGroupAccessedReply struct {
+	AccessTime  network.TimeSinceEpoch  `json:"accessTime"`  // No description.
+	Type        InterestGroupAccessType `json:"type"`        // No description.
+	OwnerOrigin string                  `json:"ownerOrigin"` // No description.
+	Name        string                  `json:"name"`        // No description.
 }

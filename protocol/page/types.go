@@ -167,22 +167,29 @@ const (
 	PermissionsPolicyFeatureAmbientLightSensor          PermissionsPolicyFeature = "ambient-light-sensor"
 	PermissionsPolicyFeatureAttributionReporting        PermissionsPolicyFeature = "attribution-reporting"
 	PermissionsPolicyFeatureAutoplay                    PermissionsPolicyFeature = "autoplay"
+	PermissionsPolicyFeatureBrowsingTopics              PermissionsPolicyFeature = "browsing-topics"
 	PermissionsPolicyFeatureCamera                      PermissionsPolicyFeature = "camera"
 	PermissionsPolicyFeatureChDpr                       PermissionsPolicyFeature = "ch-dpr"
 	PermissionsPolicyFeatureChDeviceMemory              PermissionsPolicyFeature = "ch-device-memory"
 	PermissionsPolicyFeatureChDownlink                  PermissionsPolicyFeature = "ch-downlink"
 	PermissionsPolicyFeatureChEct                       PermissionsPolicyFeature = "ch-ect"
-	PermissionsPolicyFeatureChLang                      PermissionsPolicyFeature = "ch-lang"
+	PermissionsPolicyFeatureChPartitionedCookies        PermissionsPolicyFeature = "ch-partitioned-cookies"
 	PermissionsPolicyFeatureChPrefersColorScheme        PermissionsPolicyFeature = "ch-prefers-color-scheme"
 	PermissionsPolicyFeatureChRtt                       PermissionsPolicyFeature = "ch-rtt"
+	PermissionsPolicyFeatureChSaveData                  PermissionsPolicyFeature = "ch-save-data"
 	PermissionsPolicyFeatureChUa                        PermissionsPolicyFeature = "ch-ua"
 	PermissionsPolicyFeatureChUaArch                    PermissionsPolicyFeature = "ch-ua-arch"
 	PermissionsPolicyFeatureChUaBitness                 PermissionsPolicyFeature = "ch-ua-bitness"
 	PermissionsPolicyFeatureChUaPlatform                PermissionsPolicyFeature = "ch-ua-platform"
 	PermissionsPolicyFeatureChUaModel                   PermissionsPolicyFeature = "ch-ua-model"
 	PermissionsPolicyFeatureChUaMobile                  PermissionsPolicyFeature = "ch-ua-mobile"
+	PermissionsPolicyFeatureChUaFull                    PermissionsPolicyFeature = "ch-ua-full"
 	PermissionsPolicyFeatureChUaFullVersion             PermissionsPolicyFeature = "ch-ua-full-version"
+	PermissionsPolicyFeatureChUaFullVersionList         PermissionsPolicyFeature = "ch-ua-full-version-list"
 	PermissionsPolicyFeatureChUaPlatformVersion         PermissionsPolicyFeature = "ch-ua-platform-version"
+	PermissionsPolicyFeatureChUaReduced                 PermissionsPolicyFeature = "ch-ua-reduced"
+	PermissionsPolicyFeatureChUaWow64                   PermissionsPolicyFeature = "ch-ua-wow64"
+	PermissionsPolicyFeatureChViewportHeight            PermissionsPolicyFeature = "ch-viewport-height"
 	PermissionsPolicyFeatureChViewportWidth             PermissionsPolicyFeature = "ch-viewport-width"
 	PermissionsPolicyFeatureChWidth                     PermissionsPolicyFeature = "ch-width"
 	PermissionsPolicyFeatureClipboardRead               PermissionsPolicyFeature = "clipboard-read"
@@ -203,6 +210,9 @@ const (
 	PermissionsPolicyFeatureHid                         PermissionsPolicyFeature = "hid"
 	PermissionsPolicyFeatureIdleDetection               PermissionsPolicyFeature = "idle-detection"
 	PermissionsPolicyFeatureInterestCohort              PermissionsPolicyFeature = "interest-cohort"
+	PermissionsPolicyFeatureJoinAdInterestGroup         PermissionsPolicyFeature = "join-ad-interest-group"
+	PermissionsPolicyFeatureKeyboardMap                 PermissionsPolicyFeature = "keyboard-map"
+	PermissionsPolicyFeatureLocalFonts                  PermissionsPolicyFeature = "local-fonts"
 	PermissionsPolicyFeatureMagnetometer                PermissionsPolicyFeature = "magnetometer"
 	PermissionsPolicyFeatureMicrophone                  PermissionsPolicyFeature = "microphone"
 	PermissionsPolicyFeatureMidi                        PermissionsPolicyFeature = "midi"
@@ -210,6 +220,7 @@ const (
 	PermissionsPolicyFeaturePayment                     PermissionsPolicyFeature = "payment"
 	PermissionsPolicyFeaturePictureInPicture            PermissionsPolicyFeature = "picture-in-picture"
 	PermissionsPolicyFeaturePublickeyCredentialsGet     PermissionsPolicyFeature = "publickey-credentials-get"
+	PermissionsPolicyFeatureRunAdAuction                PermissionsPolicyFeature = "run-ad-auction"
 	PermissionsPolicyFeatureScreenWakeLock              PermissionsPolicyFeature = "screen-wake-lock"
 	PermissionsPolicyFeatureSerial                      PermissionsPolicyFeature = "serial"
 	PermissionsPolicyFeatureSharedAutofill              PermissionsPolicyFeature = "shared-autofill"
@@ -225,7 +236,7 @@ const (
 
 func (e PermissionsPolicyFeature) Valid() bool {
 	switch e {
-	case "accelerometer", "ambient-light-sensor", "attribution-reporting", "autoplay", "camera", "ch-dpr", "ch-device-memory", "ch-downlink", "ch-ect", "ch-lang", "ch-prefers-color-scheme", "ch-rtt", "ch-ua", "ch-ua-arch", "ch-ua-bitness", "ch-ua-platform", "ch-ua-model", "ch-ua-mobile", "ch-ua-full-version", "ch-ua-platform-version", "ch-viewport-width", "ch-width", "clipboard-read", "clipboard-write", "cross-origin-isolated", "direct-sockets", "display-capture", "document-domain", "encrypted-media", "execution-while-out-of-viewport", "execution-while-not-rendered", "focus-without-user-activation", "fullscreen", "frobulate", "gamepad", "geolocation", "gyroscope", "hid", "idle-detection", "interest-cohort", "magnetometer", "microphone", "midi", "otp-credentials", "payment", "picture-in-picture", "publickey-credentials-get", "screen-wake-lock", "serial", "shared-autofill", "storage-access-api", "sync-xhr", "trust-token-redemption", "usb", "vertical-scroll", "web-share", "window-placement", "xr-spatial-tracking":
+	case "accelerometer", "ambient-light-sensor", "attribution-reporting", "autoplay", "browsing-topics", "camera", "ch-dpr", "ch-device-memory", "ch-downlink", "ch-ect", "ch-partitioned-cookies", "ch-prefers-color-scheme", "ch-rtt", "ch-save-data", "ch-ua", "ch-ua-arch", "ch-ua-bitness", "ch-ua-platform", "ch-ua-model", "ch-ua-mobile", "ch-ua-full", "ch-ua-full-version", "ch-ua-full-version-list", "ch-ua-platform-version", "ch-ua-reduced", "ch-ua-wow64", "ch-viewport-height", "ch-viewport-width", "ch-width", "clipboard-read", "clipboard-write", "cross-origin-isolated", "direct-sockets", "display-capture", "document-domain", "encrypted-media", "execution-while-out-of-viewport", "execution-while-not-rendered", "focus-without-user-activation", "fullscreen", "frobulate", "gamepad", "geolocation", "gyroscope", "hid", "idle-detection", "interest-cohort", "join-ad-interest-group", "keyboard-map", "local-fonts", "magnetometer", "microphone", "midi", "otp-credentials", "payment", "picture-in-picture", "publickey-credentials-get", "run-ad-auction", "screen-wake-lock", "serial", "shared-autofill", "storage-access-api", "sync-xhr", "trust-token-redemption", "usb", "vertical-scroll", "web-share", "window-placement", "xr-spatial-tracking":
 		return true
 	default:
 		return false
@@ -244,14 +255,15 @@ type PermissionsPolicyBlockReason string
 
 // PermissionsPolicyBlockReason as enums.
 const (
-	PermissionsPolicyBlockReasonNotSet          PermissionsPolicyBlockReason = ""
-	PermissionsPolicyBlockReasonHeader          PermissionsPolicyBlockReason = "Header"
-	PermissionsPolicyBlockReasonIframeAttribute PermissionsPolicyBlockReason = "IframeAttribute"
+	PermissionsPolicyBlockReasonNotSet            PermissionsPolicyBlockReason = ""
+	PermissionsPolicyBlockReasonHeader            PermissionsPolicyBlockReason = "Header"
+	PermissionsPolicyBlockReasonIframeAttribute   PermissionsPolicyBlockReason = "IframeAttribute"
+	PermissionsPolicyBlockReasonInFencedFrameTree PermissionsPolicyBlockReason = "InFencedFrameTree"
 )
 
 func (e PermissionsPolicyBlockReason) Valid() bool {
 	switch e {
-	case "Header", "IframeAttribute":
+	case "Header", "IframeAttribute", "InFencedFrameTree":
 		return true
 	default:
 		return false
@@ -300,11 +312,12 @@ const (
 	OriginTrialTokenStatusFeatureDisabled        OriginTrialTokenStatus = "FeatureDisabled"
 	OriginTrialTokenStatusTokenDisabled          OriginTrialTokenStatus = "TokenDisabled"
 	OriginTrialTokenStatusFeatureDisabledForUser OriginTrialTokenStatus = "FeatureDisabledForUser"
+	OriginTrialTokenStatusUnknownTrial           OriginTrialTokenStatus = "UnknownTrial"
 )
 
 func (e OriginTrialTokenStatus) Valid() bool {
 	switch e {
-	case "Success", "NotSupported", "Insecure", "Expired", "WrongOrigin", "InvalidSignature", "Malformed", "WrongVersion", "FeatureDisabled", "TokenDisabled", "FeatureDisabledForUser":
+	case "Success", "NotSupported", "Insecure", "Expired", "WrongOrigin", "InvalidSignature", "Malformed", "WrongVersion", "FeatureDisabled", "TokenDisabled", "FeatureDisabledForUser", "UnknownTrial":
 		return true
 	default:
 		return false
@@ -443,11 +456,6 @@ type Frame struct {
 	//
 	// Note: This property is experimental.
 	GatedAPIFeatures []GatedAPIFeatures `json:"gatedAPIFeatures"`
-	// OriginTrials Frame document's origin trials with at least one token
-	// present.
-	//
-	// Note: This property is experimental.
-	OriginTrials []OriginTrial `json:"originTrials,omitempty"`
 }
 
 // FrameResource Information about the Resource on the page.
@@ -611,13 +619,21 @@ type Viewport struct {
 //
 // Note: This type is experimental.
 type FontFamilies struct {
-	Standard   *string `json:"standard,omitempty"`   // The standard font-family.
-	Fixed      *string `json:"fixed,omitempty"`      // The fixed font-family.
-	Serif      *string `json:"serif,omitempty"`      // The serif font-family.
-	SansSerif  *string `json:"sansSerif,omitempty"`  // The sansSerif font-family.
-	Cursive    *string `json:"cursive,omitempty"`    // The cursive font-family.
-	Fantasy    *string `json:"fantasy,omitempty"`    // The fantasy font-family.
-	Pictograph *string `json:"pictograph,omitempty"` // The pictograph font-family.
+	Standard  *string `json:"standard,omitempty"`  // The standard font-family.
+	Fixed     *string `json:"fixed,omitempty"`     // The fixed font-family.
+	Serif     *string `json:"serif,omitempty"`     // The serif font-family.
+	SansSerif *string `json:"sansSerif,omitempty"` // The sansSerif font-family.
+	Cursive   *string `json:"cursive,omitempty"`   // The cursive font-family.
+	Fantasy   *string `json:"fantasy,omitempty"`   // The fantasy font-family.
+	Math      *string `json:"math,omitempty"`      // The math font-family.
+}
+
+// ScriptFontFamilies Font families collection for a script.
+//
+// Note: This type is experimental.
+type ScriptFontFamilies struct {
+	Script       string       `json:"script"`       // Name of the script which these font families are defined for.
+	FontFamilies FontFamilies `json:"fontFamilies"` // Generic font families collection for the script.
 }
 
 // FontSizes Default font sizes.
@@ -775,106 +791,135 @@ type BackForwardCacheNotRestoredReason string
 
 // BackForwardCacheNotRestoredReason as enums.
 const (
-	BackForwardCacheNotRestoredReasonNotSet                                              BackForwardCacheNotRestoredReason = ""
-	BackForwardCacheNotRestoredReasonNotMainFrame                                        BackForwardCacheNotRestoredReason = "NotMainFrame"
-	BackForwardCacheNotRestoredReasonBackForwardCacheDisabled                            BackForwardCacheNotRestoredReason = "BackForwardCacheDisabled"
-	BackForwardCacheNotRestoredReasonRelatedActiveContentsExist                          BackForwardCacheNotRestoredReason = "RelatedActiveContentsExist"
-	BackForwardCacheNotRestoredReasonHTTPStatusNotOK                                     BackForwardCacheNotRestoredReason = "HTTPStatusNotOK"
-	BackForwardCacheNotRestoredReasonSchemeNotHTTPOrHTTPS                                BackForwardCacheNotRestoredReason = "SchemeNotHTTPOrHTTPS"
-	BackForwardCacheNotRestoredReasonLoading                                             BackForwardCacheNotRestoredReason = "Loading"
-	BackForwardCacheNotRestoredReasonWasGrantedMediaAccess                               BackForwardCacheNotRestoredReason = "WasGrantedMediaAccess"
-	BackForwardCacheNotRestoredReasonDisableForRenderFrameHostCalled                     BackForwardCacheNotRestoredReason = "DisableForRenderFrameHostCalled"
-	BackForwardCacheNotRestoredReasonDomainNotAllowed                                    BackForwardCacheNotRestoredReason = "DomainNotAllowed"
-	BackForwardCacheNotRestoredReasonHTTPMethodNotGET                                    BackForwardCacheNotRestoredReason = "HTTPMethodNotGET"
-	BackForwardCacheNotRestoredReasonSubframeIsNavigating                                BackForwardCacheNotRestoredReason = "SubframeIsNavigating"
-	BackForwardCacheNotRestoredReasonTimeout                                             BackForwardCacheNotRestoredReason = "Timeout"
-	BackForwardCacheNotRestoredReasonCacheLimit                                          BackForwardCacheNotRestoredReason = "CacheLimit"
-	BackForwardCacheNotRestoredReasonJavaScriptExecution                                 BackForwardCacheNotRestoredReason = "JavaScriptExecution"
-	BackForwardCacheNotRestoredReasonRendererProcessKilled                               BackForwardCacheNotRestoredReason = "RendererProcessKilled"
-	BackForwardCacheNotRestoredReasonRendererProcessCrashed                              BackForwardCacheNotRestoredReason = "RendererProcessCrashed"
-	BackForwardCacheNotRestoredReasonGrantedMediaStreamAccess                            BackForwardCacheNotRestoredReason = "GrantedMediaStreamAccess"
-	BackForwardCacheNotRestoredReasonSchedulerTrackedFeatureUsed                         BackForwardCacheNotRestoredReason = "SchedulerTrackedFeatureUsed"
-	BackForwardCacheNotRestoredReasonConflictingBrowsingInstance                         BackForwardCacheNotRestoredReason = "ConflictingBrowsingInstance"
-	BackForwardCacheNotRestoredReasonCacheFlushed                                        BackForwardCacheNotRestoredReason = "CacheFlushed"
-	BackForwardCacheNotRestoredReasonServiceWorkerVersionActivation                      BackForwardCacheNotRestoredReason = "ServiceWorkerVersionActivation"
-	BackForwardCacheNotRestoredReasonSessionRestored                                     BackForwardCacheNotRestoredReason = "SessionRestored"
-	BackForwardCacheNotRestoredReasonServiceWorkerPostMessage                            BackForwardCacheNotRestoredReason = "ServiceWorkerPostMessage"
-	BackForwardCacheNotRestoredReasonEnteredBackForwardCacheBeforeServiceWorkerHostAdded BackForwardCacheNotRestoredReason = "EnteredBackForwardCacheBeforeServiceWorkerHostAdded"
-	BackForwardCacheNotRestoredReasonRenderFrameHostReusedSameSite                       BackForwardCacheNotRestoredReason = "RenderFrameHostReused_SameSite"
-	BackForwardCacheNotRestoredReasonRenderFrameHostReusedCrossSite                      BackForwardCacheNotRestoredReason = "RenderFrameHostReused_CrossSite"
-	BackForwardCacheNotRestoredReasonServiceWorkerClaim                                  BackForwardCacheNotRestoredReason = "ServiceWorkerClaim"
-	BackForwardCacheNotRestoredReasonIgnoreEventAndEvict                                 BackForwardCacheNotRestoredReason = "IgnoreEventAndEvict"
-	BackForwardCacheNotRestoredReasonHaveInnerContents                                   BackForwardCacheNotRestoredReason = "HaveInnerContents"
-	BackForwardCacheNotRestoredReasonTimeoutPuttingInCache                               BackForwardCacheNotRestoredReason = "TimeoutPuttingInCache"
-	BackForwardCacheNotRestoredReasonBackForwardCacheDisabledByLowMemory                 BackForwardCacheNotRestoredReason = "BackForwardCacheDisabledByLowMemory"
-	BackForwardCacheNotRestoredReasonBackForwardCacheDisabledByCommandLine               BackForwardCacheNotRestoredReason = "BackForwardCacheDisabledByCommandLine"
-	BackForwardCacheNotRestoredReasonNetworkRequestDatapipeDrainedAsBytesConsumer        BackForwardCacheNotRestoredReason = "NetworkRequestDatapipeDrainedAsBytesConsumer"
-	BackForwardCacheNotRestoredReasonNetworkRequestRedirected                            BackForwardCacheNotRestoredReason = "NetworkRequestRedirected"
-	BackForwardCacheNotRestoredReasonNetworkRequestTimeout                               BackForwardCacheNotRestoredReason = "NetworkRequestTimeout"
-	BackForwardCacheNotRestoredReasonNetworkExceedsBufferLimit                           BackForwardCacheNotRestoredReason = "NetworkExceedsBufferLimit"
-	BackForwardCacheNotRestoredReasonNavigationCancelledWhileRestoring                   BackForwardCacheNotRestoredReason = "NavigationCancelledWhileRestoring"
-	BackForwardCacheNotRestoredReasonNotMostRecentNavigationEntry                        BackForwardCacheNotRestoredReason = "NotMostRecentNavigationEntry"
-	BackForwardCacheNotRestoredReasonBackForwardCacheDisabledForPrerender                BackForwardCacheNotRestoredReason = "BackForwardCacheDisabledForPrerender"
-	BackForwardCacheNotRestoredReasonUserAgentOverrideDiffers                            BackForwardCacheNotRestoredReason = "UserAgentOverrideDiffers"
-	BackForwardCacheNotRestoredReasonForegroundCacheLimit                                BackForwardCacheNotRestoredReason = "ForegroundCacheLimit"
-	BackForwardCacheNotRestoredReasonBrowsingInstanceNotSwapped                          BackForwardCacheNotRestoredReason = "BrowsingInstanceNotSwapped"
-	BackForwardCacheNotRestoredReasonBackForwardCacheDisabledForDelegate                 BackForwardCacheNotRestoredReason = "BackForwardCacheDisabledForDelegate"
-	BackForwardCacheNotRestoredReasonOptInUnloadHeaderNotPresent                         BackForwardCacheNotRestoredReason = "OptInUnloadHeaderNotPresent"
-	BackForwardCacheNotRestoredReasonUnloadHandlerExistsInSubFrame                       BackForwardCacheNotRestoredReason = "UnloadHandlerExistsInSubFrame"
-	BackForwardCacheNotRestoredReasonServiceWorkerUnregistration                         BackForwardCacheNotRestoredReason = "ServiceWorkerUnregistration"
-	BackForwardCacheNotRestoredReasonCacheControlNoStore                                 BackForwardCacheNotRestoredReason = "CacheControlNoStore"
-	BackForwardCacheNotRestoredReasonCacheControlNoStoreCookieModified                   BackForwardCacheNotRestoredReason = "CacheControlNoStoreCookieModified"
-	BackForwardCacheNotRestoredReasonCacheControlNoStoreHTTPOnlyCookieModified           BackForwardCacheNotRestoredReason = "CacheControlNoStoreHTTPOnlyCookieModified"
-	BackForwardCacheNotRestoredReasonWebSocket                                           BackForwardCacheNotRestoredReason = "WebSocket"
-	BackForwardCacheNotRestoredReasonWebRTC                                              BackForwardCacheNotRestoredReason = "WebRTC"
-	BackForwardCacheNotRestoredReasonMainResourceHasCacheControlNoStore                  BackForwardCacheNotRestoredReason = "MainResourceHasCacheControlNoStore"
-	BackForwardCacheNotRestoredReasonMainResourceHasCacheControlNoCache                  BackForwardCacheNotRestoredReason = "MainResourceHasCacheControlNoCache"
-	BackForwardCacheNotRestoredReasonSubresourceHasCacheControlNoStore                   BackForwardCacheNotRestoredReason = "SubresourceHasCacheControlNoStore"
-	BackForwardCacheNotRestoredReasonSubresourceHasCacheControlNoCache                   BackForwardCacheNotRestoredReason = "SubresourceHasCacheControlNoCache"
-	BackForwardCacheNotRestoredReasonContainsPlugins                                     BackForwardCacheNotRestoredReason = "ContainsPlugins"
-	BackForwardCacheNotRestoredReasonDocumentLoaded                                      BackForwardCacheNotRestoredReason = "DocumentLoaded"
-	BackForwardCacheNotRestoredReasonDedicatedWorkerOrWorklet                            BackForwardCacheNotRestoredReason = "DedicatedWorkerOrWorklet"
-	BackForwardCacheNotRestoredReasonOutstandingNetworkRequestOthers                     BackForwardCacheNotRestoredReason = "OutstandingNetworkRequestOthers"
-	BackForwardCacheNotRestoredReasonOutstandingIndexedDBTransaction                     BackForwardCacheNotRestoredReason = "OutstandingIndexedDBTransaction"
-	BackForwardCacheNotRestoredReasonRequestedNotificationsPermission                    BackForwardCacheNotRestoredReason = "RequestedNotificationsPermission"
-	BackForwardCacheNotRestoredReasonRequestedMIDIPermission                             BackForwardCacheNotRestoredReason = "RequestedMIDIPermission"
-	BackForwardCacheNotRestoredReasonRequestedAudioCapturePermission                     BackForwardCacheNotRestoredReason = "RequestedAudioCapturePermission"
-	BackForwardCacheNotRestoredReasonRequestedVideoCapturePermission                     BackForwardCacheNotRestoredReason = "RequestedVideoCapturePermission"
-	BackForwardCacheNotRestoredReasonRequestedBackForwardCacheBlockedSensors             BackForwardCacheNotRestoredReason = "RequestedBackForwardCacheBlockedSensors"
-	BackForwardCacheNotRestoredReasonRequestedBackgroundWorkPermission                   BackForwardCacheNotRestoredReason = "RequestedBackgroundWorkPermission"
-	BackForwardCacheNotRestoredReasonBroadcastChannel                                    BackForwardCacheNotRestoredReason = "BroadcastChannel"
-	BackForwardCacheNotRestoredReasonIndexedDBConnection                                 BackForwardCacheNotRestoredReason = "IndexedDBConnection"
-	BackForwardCacheNotRestoredReasonWebXR                                               BackForwardCacheNotRestoredReason = "WebXR"
-	BackForwardCacheNotRestoredReasonSharedWorker                                        BackForwardCacheNotRestoredReason = "SharedWorker"
-	BackForwardCacheNotRestoredReasonWebLocks                                            BackForwardCacheNotRestoredReason = "WebLocks"
-	BackForwardCacheNotRestoredReasonWebHID                                              BackForwardCacheNotRestoredReason = "WebHID"
-	BackForwardCacheNotRestoredReasonWebShare                                            BackForwardCacheNotRestoredReason = "WebShare"
-	BackForwardCacheNotRestoredReasonRequestedStorageAccessGrant                         BackForwardCacheNotRestoredReason = "RequestedStorageAccessGrant"
-	BackForwardCacheNotRestoredReasonWebNFC                                              BackForwardCacheNotRestoredReason = "WebNfc"
-	BackForwardCacheNotRestoredReasonWebFileSystem                                       BackForwardCacheNotRestoredReason = "WebFileSystem"
-	BackForwardCacheNotRestoredReasonOutstandingNetworkRequestFetch                      BackForwardCacheNotRestoredReason = "OutstandingNetworkRequestFetch"
-	BackForwardCacheNotRestoredReasonOutstandingNetworkRequestXHR                        BackForwardCacheNotRestoredReason = "OutstandingNetworkRequestXHR"
-	BackForwardCacheNotRestoredReasonAppBanner                                           BackForwardCacheNotRestoredReason = "AppBanner"
-	BackForwardCacheNotRestoredReasonPrinting                                            BackForwardCacheNotRestoredReason = "Printing"
-	BackForwardCacheNotRestoredReasonWebDatabase                                         BackForwardCacheNotRestoredReason = "WebDatabase"
-	BackForwardCacheNotRestoredReasonPictureInPicture                                    BackForwardCacheNotRestoredReason = "PictureInPicture"
-	BackForwardCacheNotRestoredReasonPortal                                              BackForwardCacheNotRestoredReason = "Portal"
-	BackForwardCacheNotRestoredReasonSpeechRecognizer                                    BackForwardCacheNotRestoredReason = "SpeechRecognizer"
-	BackForwardCacheNotRestoredReasonIdleManager                                         BackForwardCacheNotRestoredReason = "IdleManager"
-	BackForwardCacheNotRestoredReasonPaymentManager                                      BackForwardCacheNotRestoredReason = "PaymentManager"
-	BackForwardCacheNotRestoredReasonSpeechSynthesis                                     BackForwardCacheNotRestoredReason = "SpeechSynthesis"
-	BackForwardCacheNotRestoredReasonKeyboardLock                                        BackForwardCacheNotRestoredReason = "KeyboardLock"
-	BackForwardCacheNotRestoredReasonWebOTPService                                       BackForwardCacheNotRestoredReason = "WebOTPService"
-	BackForwardCacheNotRestoredReasonOutstandingNetworkRequestDirectSocket               BackForwardCacheNotRestoredReason = "OutstandingNetworkRequestDirectSocket"
-	BackForwardCacheNotRestoredReasonIsolatedWorldScript                                 BackForwardCacheNotRestoredReason = "IsolatedWorldScript"
-	BackForwardCacheNotRestoredReasonInjectedStyleSheet                                  BackForwardCacheNotRestoredReason = "InjectedStyleSheet"
-	BackForwardCacheNotRestoredReasonMediaSessionImplOnServiceCreated                    BackForwardCacheNotRestoredReason = "MediaSessionImplOnServiceCreated"
-	BackForwardCacheNotRestoredReasonUnknown                                             BackForwardCacheNotRestoredReason = "Unknown"
+	BackForwardCacheNotRestoredReasonNotSet                                                   BackForwardCacheNotRestoredReason = ""
+	BackForwardCacheNotRestoredReasonNotPrimaryMainFrame                                      BackForwardCacheNotRestoredReason = "NotPrimaryMainFrame"
+	BackForwardCacheNotRestoredReasonBackForwardCacheDisabled                                 BackForwardCacheNotRestoredReason = "BackForwardCacheDisabled"
+	BackForwardCacheNotRestoredReasonRelatedActiveContentsExist                               BackForwardCacheNotRestoredReason = "RelatedActiveContentsExist"
+	BackForwardCacheNotRestoredReasonHTTPStatusNotOK                                          BackForwardCacheNotRestoredReason = "HTTPStatusNotOK"
+	BackForwardCacheNotRestoredReasonSchemeNotHTTPOrHTTPS                                     BackForwardCacheNotRestoredReason = "SchemeNotHTTPOrHTTPS"
+	BackForwardCacheNotRestoredReasonLoading                                                  BackForwardCacheNotRestoredReason = "Loading"
+	BackForwardCacheNotRestoredReasonWasGrantedMediaAccess                                    BackForwardCacheNotRestoredReason = "WasGrantedMediaAccess"
+	BackForwardCacheNotRestoredReasonDisableForRenderFrameHostCalled                          BackForwardCacheNotRestoredReason = "DisableForRenderFrameHostCalled"
+	BackForwardCacheNotRestoredReasonDomainNotAllowed                                         BackForwardCacheNotRestoredReason = "DomainNotAllowed"
+	BackForwardCacheNotRestoredReasonHTTPMethodNotGET                                         BackForwardCacheNotRestoredReason = "HTTPMethodNotGET"
+	BackForwardCacheNotRestoredReasonSubframeIsNavigating                                     BackForwardCacheNotRestoredReason = "SubframeIsNavigating"
+	BackForwardCacheNotRestoredReasonTimeout                                                  BackForwardCacheNotRestoredReason = "Timeout"
+	BackForwardCacheNotRestoredReasonCacheLimit                                               BackForwardCacheNotRestoredReason = "CacheLimit"
+	BackForwardCacheNotRestoredReasonJavaScriptExecution                                      BackForwardCacheNotRestoredReason = "JavaScriptExecution"
+	BackForwardCacheNotRestoredReasonRendererProcessKilled                                    BackForwardCacheNotRestoredReason = "RendererProcessKilled"
+	BackForwardCacheNotRestoredReasonRendererProcessCrashed                                   BackForwardCacheNotRestoredReason = "RendererProcessCrashed"
+	BackForwardCacheNotRestoredReasonSchedulerTrackedFeatureUsed                              BackForwardCacheNotRestoredReason = "SchedulerTrackedFeatureUsed"
+	BackForwardCacheNotRestoredReasonConflictingBrowsingInstance                              BackForwardCacheNotRestoredReason = "ConflictingBrowsingInstance"
+	BackForwardCacheNotRestoredReasonCacheFlushed                                             BackForwardCacheNotRestoredReason = "CacheFlushed"
+	BackForwardCacheNotRestoredReasonServiceWorkerVersionActivation                           BackForwardCacheNotRestoredReason = "ServiceWorkerVersionActivation"
+	BackForwardCacheNotRestoredReasonSessionRestored                                          BackForwardCacheNotRestoredReason = "SessionRestored"
+	BackForwardCacheNotRestoredReasonServiceWorkerPostMessage                                 BackForwardCacheNotRestoredReason = "ServiceWorkerPostMessage"
+	BackForwardCacheNotRestoredReasonEnteredBackForwardCacheBeforeServiceWorkerHostAdded      BackForwardCacheNotRestoredReason = "EnteredBackForwardCacheBeforeServiceWorkerHostAdded"
+	BackForwardCacheNotRestoredReasonRenderFrameHostReusedSameSite                            BackForwardCacheNotRestoredReason = "RenderFrameHostReused_SameSite"
+	BackForwardCacheNotRestoredReasonRenderFrameHostReusedCrossSite                           BackForwardCacheNotRestoredReason = "RenderFrameHostReused_CrossSite"
+	BackForwardCacheNotRestoredReasonServiceWorkerClaim                                       BackForwardCacheNotRestoredReason = "ServiceWorkerClaim"
+	BackForwardCacheNotRestoredReasonIgnoreEventAndEvict                                      BackForwardCacheNotRestoredReason = "IgnoreEventAndEvict"
+	BackForwardCacheNotRestoredReasonHaveInnerContents                                        BackForwardCacheNotRestoredReason = "HaveInnerContents"
+	BackForwardCacheNotRestoredReasonTimeoutPuttingInCache                                    BackForwardCacheNotRestoredReason = "TimeoutPuttingInCache"
+	BackForwardCacheNotRestoredReasonBackForwardCacheDisabledByLowMemory                      BackForwardCacheNotRestoredReason = "BackForwardCacheDisabledByLowMemory"
+	BackForwardCacheNotRestoredReasonBackForwardCacheDisabledByCommandLine                    BackForwardCacheNotRestoredReason = "BackForwardCacheDisabledByCommandLine"
+	BackForwardCacheNotRestoredReasonNetworkRequestDatapipeDrainedAsBytesConsumer             BackForwardCacheNotRestoredReason = "NetworkRequestDatapipeDrainedAsBytesConsumer"
+	BackForwardCacheNotRestoredReasonNetworkRequestRedirected                                 BackForwardCacheNotRestoredReason = "NetworkRequestRedirected"
+	BackForwardCacheNotRestoredReasonNetworkRequestTimeout                                    BackForwardCacheNotRestoredReason = "NetworkRequestTimeout"
+	BackForwardCacheNotRestoredReasonNetworkExceedsBufferLimit                                BackForwardCacheNotRestoredReason = "NetworkExceedsBufferLimit"
+	BackForwardCacheNotRestoredReasonNavigationCancelledWhileRestoring                        BackForwardCacheNotRestoredReason = "NavigationCancelledWhileRestoring"
+	BackForwardCacheNotRestoredReasonNotMostRecentNavigationEntry                             BackForwardCacheNotRestoredReason = "NotMostRecentNavigationEntry"
+	BackForwardCacheNotRestoredReasonBackForwardCacheDisabledForPrerender                     BackForwardCacheNotRestoredReason = "BackForwardCacheDisabledForPrerender"
+	BackForwardCacheNotRestoredReasonUserAgentOverrideDiffers                                 BackForwardCacheNotRestoredReason = "UserAgentOverrideDiffers"
+	BackForwardCacheNotRestoredReasonForegroundCacheLimit                                     BackForwardCacheNotRestoredReason = "ForegroundCacheLimit"
+	BackForwardCacheNotRestoredReasonBrowsingInstanceNotSwapped                               BackForwardCacheNotRestoredReason = "BrowsingInstanceNotSwapped"
+	BackForwardCacheNotRestoredReasonBackForwardCacheDisabledForDelegate                      BackForwardCacheNotRestoredReason = "BackForwardCacheDisabledForDelegate"
+	BackForwardCacheNotRestoredReasonUnloadHandlerExistsInMainFrame                           BackForwardCacheNotRestoredReason = "UnloadHandlerExistsInMainFrame"
+	BackForwardCacheNotRestoredReasonUnloadHandlerExistsInSubFrame                            BackForwardCacheNotRestoredReason = "UnloadHandlerExistsInSubFrame"
+	BackForwardCacheNotRestoredReasonServiceWorkerUnregistration                              BackForwardCacheNotRestoredReason = "ServiceWorkerUnregistration"
+	BackForwardCacheNotRestoredReasonCacheControlNoStore                                      BackForwardCacheNotRestoredReason = "CacheControlNoStore"
+	BackForwardCacheNotRestoredReasonCacheControlNoStoreCookieModified                        BackForwardCacheNotRestoredReason = "CacheControlNoStoreCookieModified"
+	BackForwardCacheNotRestoredReasonCacheControlNoStoreHTTPOnlyCookieModified                BackForwardCacheNotRestoredReason = "CacheControlNoStoreHTTPOnlyCookieModified"
+	BackForwardCacheNotRestoredReasonNoResponseHead                                           BackForwardCacheNotRestoredReason = "NoResponseHead"
+	BackForwardCacheNotRestoredReasonUnknown                                                  BackForwardCacheNotRestoredReason = "Unknown"
+	BackForwardCacheNotRestoredReasonActivationNavigationsDisallowedForBug1234857             BackForwardCacheNotRestoredReason = "ActivationNavigationsDisallowedForBug1234857"
+	BackForwardCacheNotRestoredReasonErrorDocument                                            BackForwardCacheNotRestoredReason = "ErrorDocument"
+	BackForwardCacheNotRestoredReasonFencedFramesEmbedder                                     BackForwardCacheNotRestoredReason = "FencedFramesEmbedder"
+	BackForwardCacheNotRestoredReasonWebSocket                                                BackForwardCacheNotRestoredReason = "WebSocket"
+	BackForwardCacheNotRestoredReasonWebTransport                                             BackForwardCacheNotRestoredReason = "WebTransport"
+	BackForwardCacheNotRestoredReasonWebRTC                                                   BackForwardCacheNotRestoredReason = "WebRTC"
+	BackForwardCacheNotRestoredReasonMainResourceHasCacheControlNoStore                       BackForwardCacheNotRestoredReason = "MainResourceHasCacheControlNoStore"
+	BackForwardCacheNotRestoredReasonMainResourceHasCacheControlNoCache                       BackForwardCacheNotRestoredReason = "MainResourceHasCacheControlNoCache"
+	BackForwardCacheNotRestoredReasonSubresourceHasCacheControlNoStore                        BackForwardCacheNotRestoredReason = "SubresourceHasCacheControlNoStore"
+	BackForwardCacheNotRestoredReasonSubresourceHasCacheControlNoCache                        BackForwardCacheNotRestoredReason = "SubresourceHasCacheControlNoCache"
+	BackForwardCacheNotRestoredReasonContainsPlugins                                          BackForwardCacheNotRestoredReason = "ContainsPlugins"
+	BackForwardCacheNotRestoredReasonDocumentLoaded                                           BackForwardCacheNotRestoredReason = "DocumentLoaded"
+	BackForwardCacheNotRestoredReasonDedicatedWorkerOrWorklet                                 BackForwardCacheNotRestoredReason = "DedicatedWorkerOrWorklet"
+	BackForwardCacheNotRestoredReasonOutstandingNetworkRequestOthers                          BackForwardCacheNotRestoredReason = "OutstandingNetworkRequestOthers"
+	BackForwardCacheNotRestoredReasonOutstandingIndexedDBTransaction                          BackForwardCacheNotRestoredReason = "OutstandingIndexedDBTransaction"
+	BackForwardCacheNotRestoredReasonRequestedNotificationsPermission                         BackForwardCacheNotRestoredReason = "RequestedNotificationsPermission"
+	BackForwardCacheNotRestoredReasonRequestedMIDIPermission                                  BackForwardCacheNotRestoredReason = "RequestedMIDIPermission"
+	BackForwardCacheNotRestoredReasonRequestedAudioCapturePermission                          BackForwardCacheNotRestoredReason = "RequestedAudioCapturePermission"
+	BackForwardCacheNotRestoredReasonRequestedVideoCapturePermission                          BackForwardCacheNotRestoredReason = "RequestedVideoCapturePermission"
+	BackForwardCacheNotRestoredReasonRequestedBackForwardCacheBlockedSensors                  BackForwardCacheNotRestoredReason = "RequestedBackForwardCacheBlockedSensors"
+	BackForwardCacheNotRestoredReasonRequestedBackgroundWorkPermission                        BackForwardCacheNotRestoredReason = "RequestedBackgroundWorkPermission"
+	BackForwardCacheNotRestoredReasonBroadcastChannel                                         BackForwardCacheNotRestoredReason = "BroadcastChannel"
+	BackForwardCacheNotRestoredReasonIndexedDBConnection                                      BackForwardCacheNotRestoredReason = "IndexedDBConnection"
+	BackForwardCacheNotRestoredReasonWebXR                                                    BackForwardCacheNotRestoredReason = "WebXR"
+	BackForwardCacheNotRestoredReasonSharedWorker                                             BackForwardCacheNotRestoredReason = "SharedWorker"
+	BackForwardCacheNotRestoredReasonWebLocks                                                 BackForwardCacheNotRestoredReason = "WebLocks"
+	BackForwardCacheNotRestoredReasonWebHID                                                   BackForwardCacheNotRestoredReason = "WebHID"
+	BackForwardCacheNotRestoredReasonWebShare                                                 BackForwardCacheNotRestoredReason = "WebShare"
+	BackForwardCacheNotRestoredReasonRequestedStorageAccessGrant                              BackForwardCacheNotRestoredReason = "RequestedStorageAccessGrant"
+	BackForwardCacheNotRestoredReasonWebNFC                                                   BackForwardCacheNotRestoredReason = "WebNfc"
+	BackForwardCacheNotRestoredReasonOutstandingNetworkRequestFetch                           BackForwardCacheNotRestoredReason = "OutstandingNetworkRequestFetch"
+	BackForwardCacheNotRestoredReasonOutstandingNetworkRequestXHR                             BackForwardCacheNotRestoredReason = "OutstandingNetworkRequestXHR"
+	BackForwardCacheNotRestoredReasonAppBanner                                                BackForwardCacheNotRestoredReason = "AppBanner"
+	BackForwardCacheNotRestoredReasonPrinting                                                 BackForwardCacheNotRestoredReason = "Printing"
+	BackForwardCacheNotRestoredReasonWebDatabase                                              BackForwardCacheNotRestoredReason = "WebDatabase"
+	BackForwardCacheNotRestoredReasonPictureInPicture                                         BackForwardCacheNotRestoredReason = "PictureInPicture"
+	BackForwardCacheNotRestoredReasonPortal                                                   BackForwardCacheNotRestoredReason = "Portal"
+	BackForwardCacheNotRestoredReasonSpeechRecognizer                                         BackForwardCacheNotRestoredReason = "SpeechRecognizer"
+	BackForwardCacheNotRestoredReasonIdleManager                                              BackForwardCacheNotRestoredReason = "IdleManager"
+	BackForwardCacheNotRestoredReasonPaymentManager                                           BackForwardCacheNotRestoredReason = "PaymentManager"
+	BackForwardCacheNotRestoredReasonSpeechSynthesis                                          BackForwardCacheNotRestoredReason = "SpeechSynthesis"
+	BackForwardCacheNotRestoredReasonKeyboardLock                                             BackForwardCacheNotRestoredReason = "KeyboardLock"
+	BackForwardCacheNotRestoredReasonWebOTPService                                            BackForwardCacheNotRestoredReason = "WebOTPService"
+	BackForwardCacheNotRestoredReasonOutstandingNetworkRequestDirectSocket                    BackForwardCacheNotRestoredReason = "OutstandingNetworkRequestDirectSocket"
+	BackForwardCacheNotRestoredReasonInjectedJavascript                                       BackForwardCacheNotRestoredReason = "InjectedJavascript"
+	BackForwardCacheNotRestoredReasonInjectedStyleSheet                                       BackForwardCacheNotRestoredReason = "InjectedStyleSheet"
+	BackForwardCacheNotRestoredReasonDummy                                                    BackForwardCacheNotRestoredReason = "Dummy"
+	BackForwardCacheNotRestoredReasonContentSecurityHandler                                   BackForwardCacheNotRestoredReason = "ContentSecurityHandler"
+	BackForwardCacheNotRestoredReasonContentWebAuthenticationAPI                              BackForwardCacheNotRestoredReason = "ContentWebAuthenticationAPI"
+	BackForwardCacheNotRestoredReasonContentFileChooser                                       BackForwardCacheNotRestoredReason = "ContentFileChooser"
+	BackForwardCacheNotRestoredReasonContentSerial                                            BackForwardCacheNotRestoredReason = "ContentSerial"
+	BackForwardCacheNotRestoredReasonContentFileSystemAccess                                  BackForwardCacheNotRestoredReason = "ContentFileSystemAccess"
+	BackForwardCacheNotRestoredReasonContentMediaDevicesDispatcherHost                        BackForwardCacheNotRestoredReason = "ContentMediaDevicesDispatcherHost"
+	BackForwardCacheNotRestoredReasonContentWebBluetooth                                      BackForwardCacheNotRestoredReason = "ContentWebBluetooth"
+	BackForwardCacheNotRestoredReasonContentWebUSB                                            BackForwardCacheNotRestoredReason = "ContentWebUSB"
+	BackForwardCacheNotRestoredReasonContentMediaSession                                      BackForwardCacheNotRestoredReason = "ContentMediaSession"
+	BackForwardCacheNotRestoredReasonContentMediaSessionService                               BackForwardCacheNotRestoredReason = "ContentMediaSessionService"
+	BackForwardCacheNotRestoredReasonContentScreenReader                                      BackForwardCacheNotRestoredReason = "ContentScreenReader"
+	BackForwardCacheNotRestoredReasonEmbedderPopupBlockerTabHelper                            BackForwardCacheNotRestoredReason = "EmbedderPopupBlockerTabHelper"
+	BackForwardCacheNotRestoredReasonEmbedderSafeBrowsingTriggeredPopupBlocker                BackForwardCacheNotRestoredReason = "EmbedderSafeBrowsingTriggeredPopupBlocker"
+	BackForwardCacheNotRestoredReasonEmbedderSafeBrowsingThreatDetails                        BackForwardCacheNotRestoredReason = "EmbedderSafeBrowsingThreatDetails"
+	BackForwardCacheNotRestoredReasonEmbedderAppBannerManager                                 BackForwardCacheNotRestoredReason = "EmbedderAppBannerManager"
+	BackForwardCacheNotRestoredReasonEmbedderDOMDistillerViewerSource                         BackForwardCacheNotRestoredReason = "EmbedderDomDistillerViewerSource"
+	BackForwardCacheNotRestoredReasonEmbedderDOMDistillerSelfDeletingRequestDelegate          BackForwardCacheNotRestoredReason = "EmbedderDomDistillerSelfDeletingRequestDelegate"
+	BackForwardCacheNotRestoredReasonEmbedderOomInterventionTabHelper                         BackForwardCacheNotRestoredReason = "EmbedderOomInterventionTabHelper"
+	BackForwardCacheNotRestoredReasonEmbedderOfflinePage                                      BackForwardCacheNotRestoredReason = "EmbedderOfflinePage"
+	BackForwardCacheNotRestoredReasonEmbedderChromePasswordManagerClientBindCredentialManager BackForwardCacheNotRestoredReason = "EmbedderChromePasswordManagerClientBindCredentialManager"
+	BackForwardCacheNotRestoredReasonEmbedderPermissionRequestManager                         BackForwardCacheNotRestoredReason = "EmbedderPermissionRequestManager"
+	BackForwardCacheNotRestoredReasonEmbedderModalDialog                                      BackForwardCacheNotRestoredReason = "EmbedderModalDialog"
+	BackForwardCacheNotRestoredReasonEmbedderExtensions                                       BackForwardCacheNotRestoredReason = "EmbedderExtensions"
+	BackForwardCacheNotRestoredReasonEmbedderExtensionMessaging                               BackForwardCacheNotRestoredReason = "EmbedderExtensionMessaging"
+	BackForwardCacheNotRestoredReasonEmbedderExtensionMessagingForOpenPort                    BackForwardCacheNotRestoredReason = "EmbedderExtensionMessagingForOpenPort"
+	BackForwardCacheNotRestoredReasonEmbedderExtensionSentMessageToCachedFrame                BackForwardCacheNotRestoredReason = "EmbedderExtensionSentMessageToCachedFrame"
 )
 
 func (e BackForwardCacheNotRestoredReason) Valid() bool {
 	switch e {
-	case "NotMainFrame", "BackForwardCacheDisabled", "RelatedActiveContentsExist", "HTTPStatusNotOK", "SchemeNotHTTPOrHTTPS", "Loading", "WasGrantedMediaAccess", "DisableForRenderFrameHostCalled", "DomainNotAllowed", "HTTPMethodNotGET", "SubframeIsNavigating", "Timeout", "CacheLimit", "JavaScriptExecution", "RendererProcessKilled", "RendererProcessCrashed", "GrantedMediaStreamAccess", "SchedulerTrackedFeatureUsed", "ConflictingBrowsingInstance", "CacheFlushed", "ServiceWorkerVersionActivation", "SessionRestored", "ServiceWorkerPostMessage", "EnteredBackForwardCacheBeforeServiceWorkerHostAdded", "RenderFrameHostReused_SameSite", "RenderFrameHostReused_CrossSite", "ServiceWorkerClaim", "IgnoreEventAndEvict", "HaveInnerContents", "TimeoutPuttingInCache", "BackForwardCacheDisabledByLowMemory", "BackForwardCacheDisabledByCommandLine", "NetworkRequestDatapipeDrainedAsBytesConsumer", "NetworkRequestRedirected", "NetworkRequestTimeout", "NetworkExceedsBufferLimit", "NavigationCancelledWhileRestoring", "NotMostRecentNavigationEntry", "BackForwardCacheDisabledForPrerender", "UserAgentOverrideDiffers", "ForegroundCacheLimit", "BrowsingInstanceNotSwapped", "BackForwardCacheDisabledForDelegate", "OptInUnloadHeaderNotPresent", "UnloadHandlerExistsInSubFrame", "ServiceWorkerUnregistration", "CacheControlNoStore", "CacheControlNoStoreCookieModified", "CacheControlNoStoreHTTPOnlyCookieModified", "WebSocket", "WebRTC", "MainResourceHasCacheControlNoStore", "MainResourceHasCacheControlNoCache", "SubresourceHasCacheControlNoStore", "SubresourceHasCacheControlNoCache", "ContainsPlugins", "DocumentLoaded", "DedicatedWorkerOrWorklet", "OutstandingNetworkRequestOthers", "OutstandingIndexedDBTransaction", "RequestedNotificationsPermission", "RequestedMIDIPermission", "RequestedAudioCapturePermission", "RequestedVideoCapturePermission", "RequestedBackForwardCacheBlockedSensors", "RequestedBackgroundWorkPermission", "BroadcastChannel", "IndexedDBConnection", "WebXR", "SharedWorker", "WebLocks", "WebHID", "WebShare", "RequestedStorageAccessGrant", "WebNfc", "WebFileSystem", "OutstandingNetworkRequestFetch", "OutstandingNetworkRequestXHR", "AppBanner", "Printing", "WebDatabase", "PictureInPicture", "Portal", "SpeechRecognizer", "IdleManager", "PaymentManager", "SpeechSynthesis", "KeyboardLock", "WebOTPService", "OutstandingNetworkRequestDirectSocket", "IsolatedWorldScript", "InjectedStyleSheet", "MediaSessionImplOnServiceCreated", "Unknown":
+	case "NotPrimaryMainFrame", "BackForwardCacheDisabled", "RelatedActiveContentsExist", "HTTPStatusNotOK", "SchemeNotHTTPOrHTTPS", "Loading", "WasGrantedMediaAccess", "DisableForRenderFrameHostCalled", "DomainNotAllowed", "HTTPMethodNotGET", "SubframeIsNavigating", "Timeout", "CacheLimit", "JavaScriptExecution", "RendererProcessKilled", "RendererProcessCrashed", "SchedulerTrackedFeatureUsed", "ConflictingBrowsingInstance", "CacheFlushed", "ServiceWorkerVersionActivation", "SessionRestored", "ServiceWorkerPostMessage", "EnteredBackForwardCacheBeforeServiceWorkerHostAdded", "RenderFrameHostReused_SameSite", "RenderFrameHostReused_CrossSite", "ServiceWorkerClaim", "IgnoreEventAndEvict", "HaveInnerContents", "TimeoutPuttingInCache", "BackForwardCacheDisabledByLowMemory", "BackForwardCacheDisabledByCommandLine", "NetworkRequestDatapipeDrainedAsBytesConsumer", "NetworkRequestRedirected", "NetworkRequestTimeout", "NetworkExceedsBufferLimit", "NavigationCancelledWhileRestoring", "NotMostRecentNavigationEntry", "BackForwardCacheDisabledForPrerender", "UserAgentOverrideDiffers", "ForegroundCacheLimit", "BrowsingInstanceNotSwapped", "BackForwardCacheDisabledForDelegate", "UnloadHandlerExistsInMainFrame", "UnloadHandlerExistsInSubFrame", "ServiceWorkerUnregistration", "CacheControlNoStore", "CacheControlNoStoreCookieModified", "CacheControlNoStoreHTTPOnlyCookieModified", "NoResponseHead", "Unknown", "ActivationNavigationsDisallowedForBug1234857", "ErrorDocument", "FencedFramesEmbedder", "WebSocket", "WebTransport", "WebRTC", "MainResourceHasCacheControlNoStore", "MainResourceHasCacheControlNoCache", "SubresourceHasCacheControlNoStore", "SubresourceHasCacheControlNoCache", "ContainsPlugins", "DocumentLoaded", "DedicatedWorkerOrWorklet", "OutstandingNetworkRequestOthers", "OutstandingIndexedDBTransaction", "RequestedNotificationsPermission", "RequestedMIDIPermission", "RequestedAudioCapturePermission", "RequestedVideoCapturePermission", "RequestedBackForwardCacheBlockedSensors", "RequestedBackgroundWorkPermission", "BroadcastChannel", "IndexedDBConnection", "WebXR", "SharedWorker", "WebLocks", "WebHID", "WebShare", "RequestedStorageAccessGrant", "WebNfc", "OutstandingNetworkRequestFetch", "OutstandingNetworkRequestXHR", "AppBanner", "Printing", "WebDatabase", "PictureInPicture", "Portal", "SpeechRecognizer", "IdleManager", "PaymentManager", "SpeechSynthesis", "KeyboardLock", "WebOTPService", "OutstandingNetworkRequestDirectSocket", "InjectedJavascript", "InjectedStyleSheet", "Dummy", "ContentSecurityHandler", "ContentWebAuthenticationAPI", "ContentFileChooser", "ContentSerial", "ContentFileSystemAccess", "ContentMediaDevicesDispatcherHost", "ContentWebBluetooth", "ContentWebUSB", "ContentMediaSession", "ContentMediaSessionService", "ContentScreenReader", "EmbedderPopupBlockerTabHelper", "EmbedderSafeBrowsingTriggeredPopupBlocker", "EmbedderSafeBrowsingThreatDetails", "EmbedderAppBannerManager", "EmbedderDomDistillerViewerSource", "EmbedderDomDistillerSelfDeletingRequestDelegate", "EmbedderOomInterventionTabHelper", "EmbedderOfflinePage", "EmbedderChromePasswordManagerClientBindCredentialManager", "EmbedderPermissionRequestManager", "EmbedderModalDialog", "EmbedderExtensions", "EmbedderExtensionMessaging", "EmbedderExtensionMessagingForOpenPort", "EmbedderExtensionSentMessageToCachedFrame":
 		return true
 	default:
 		return false
@@ -916,6 +961,70 @@ func (e BackForwardCacheNotRestoredReasonType) String() string {
 //
 // Note: This type is experimental.
 type BackForwardCacheNotRestoredExplanation struct {
-	Type   BackForwardCacheNotRestoredReasonType `json:"type"`   // Type of the reason
-	Reason BackForwardCacheNotRestoredReason     `json:"reason"` // Not restored reason
+	Type    BackForwardCacheNotRestoredReasonType `json:"type"`              // Type of the reason
+	Reason  BackForwardCacheNotRestoredReason     `json:"reason"`            // Not restored reason
+	Context *string                               `json:"context,omitempty"` // Context associated with the reason. The meaning of this context is dependent on the reason: - EmbedderExtensionSentMessageToCachedFrame: the extension ID.
+}
+
+// BackForwardCacheNotRestoredExplanationTree
+//
+// Note: This type is experimental.
+type BackForwardCacheNotRestoredExplanationTree struct {
+	URL          string                                       `json:"url"`          // URL of each frame
+	Explanations []BackForwardCacheNotRestoredExplanation     `json:"explanations"` // Not restored reasons of each frame
+	Children     []BackForwardCacheNotRestoredExplanationTree `json:"children"`     // Array of children frame
+}
+
+// PrerenderFinalStatus List of FinalStatus reasons for Prerender2.
+type PrerenderFinalStatus string
+
+// PrerenderFinalStatus as enums.
+const (
+	PrerenderFinalStatusNotSet                                    PrerenderFinalStatus = ""
+	PrerenderFinalStatusActivated                                 PrerenderFinalStatus = "Activated"
+	PrerenderFinalStatusDestroyed                                 PrerenderFinalStatus = "Destroyed"
+	PrerenderFinalStatusLowEndDevice                              PrerenderFinalStatus = "LowEndDevice"
+	PrerenderFinalStatusCrossOriginRedirect                       PrerenderFinalStatus = "CrossOriginRedirect"
+	PrerenderFinalStatusCrossOriginNavigation                     PrerenderFinalStatus = "CrossOriginNavigation"
+	PrerenderFinalStatusInvalidSchemeRedirect                     PrerenderFinalStatus = "InvalidSchemeRedirect"
+	PrerenderFinalStatusInvalidSchemeNavigation                   PrerenderFinalStatus = "InvalidSchemeNavigation"
+	PrerenderFinalStatusInProgressNavigation                      PrerenderFinalStatus = "InProgressNavigation"
+	PrerenderFinalStatusNavigationRequestBlockedByCsp             PrerenderFinalStatus = "NavigationRequestBlockedByCsp"
+	PrerenderFinalStatusMainFrameNavigation                       PrerenderFinalStatus = "MainFrameNavigation"
+	PrerenderFinalStatusMojoBinderPolicy                          PrerenderFinalStatus = "MojoBinderPolicy"
+	PrerenderFinalStatusRendererProcessCrashed                    PrerenderFinalStatus = "RendererProcessCrashed"
+	PrerenderFinalStatusRendererProcessKilled                     PrerenderFinalStatus = "RendererProcessKilled"
+	PrerenderFinalStatusDownload                                  PrerenderFinalStatus = "Download"
+	PrerenderFinalStatusTriggerDestroyed                          PrerenderFinalStatus = "TriggerDestroyed"
+	PrerenderFinalStatusNavigationNotCommitted                    PrerenderFinalStatus = "NavigationNotCommitted"
+	PrerenderFinalStatusNavigationBadHTTPStatus                   PrerenderFinalStatus = "NavigationBadHttpStatus"
+	PrerenderFinalStatusClientCertRequested                       PrerenderFinalStatus = "ClientCertRequested"
+	PrerenderFinalStatusNavigationRequestNetworkError             PrerenderFinalStatus = "NavigationRequestNetworkError"
+	PrerenderFinalStatusMaxNumOfRunningPrerendersExceeded         PrerenderFinalStatus = "MaxNumOfRunningPrerendersExceeded"
+	PrerenderFinalStatusCancelAllHostsForTesting                  PrerenderFinalStatus = "CancelAllHostsForTesting"
+	PrerenderFinalStatusDidFailLoad                               PrerenderFinalStatus = "DidFailLoad"
+	PrerenderFinalStatusStop                                      PrerenderFinalStatus = "Stop"
+	PrerenderFinalStatusSSLCertificateError                       PrerenderFinalStatus = "SslCertificateError"
+	PrerenderFinalStatusLoginAuthRequested                        PrerenderFinalStatus = "LoginAuthRequested"
+	PrerenderFinalStatusUaChangeRequiresReload                    PrerenderFinalStatus = "UaChangeRequiresReload"
+	PrerenderFinalStatusBlockedByClient                           PrerenderFinalStatus = "BlockedByClient"
+	PrerenderFinalStatusAudioOutputDeviceRequested                PrerenderFinalStatus = "AudioOutputDeviceRequested"
+	PrerenderFinalStatusMixedContent                              PrerenderFinalStatus = "MixedContent"
+	PrerenderFinalStatusTriggerBackgrounded                       PrerenderFinalStatus = "TriggerBackgrounded"
+	PrerenderFinalStatusEmbedderTriggeredAndSameOriginRedirected  PrerenderFinalStatus = "EmbedderTriggeredAndSameOriginRedirected"
+	PrerenderFinalStatusEmbedderTriggeredAndCrossOriginRedirected PrerenderFinalStatus = "EmbedderTriggeredAndCrossOriginRedirected"
+	PrerenderFinalStatusEmbedderTriggeredAndDestroyed             PrerenderFinalStatus = "EmbedderTriggeredAndDestroyed"
+)
+
+func (e PrerenderFinalStatus) Valid() bool {
+	switch e {
+	case "Activated", "Destroyed", "LowEndDevice", "CrossOriginRedirect", "CrossOriginNavigation", "InvalidSchemeRedirect", "InvalidSchemeNavigation", "InProgressNavigation", "NavigationRequestBlockedByCsp", "MainFrameNavigation", "MojoBinderPolicy", "RendererProcessCrashed", "RendererProcessKilled", "Download", "TriggerDestroyed", "NavigationNotCommitted", "NavigationBadHttpStatus", "ClientCertRequested", "NavigationRequestNetworkError", "MaxNumOfRunningPrerendersExceeded", "CancelAllHostsForTesting", "DidFailLoad", "Stop", "SslCertificateError", "LoginAuthRequested", "UaChangeRequiresReload", "BlockedByClient", "AudioOutputDeviceRequested", "MixedContent", "TriggerBackgrounded", "EmbedderTriggeredAndSameOriginRedirected", "EmbedderTriggeredAndCrossOriginRedirected", "EmbedderTriggeredAndDestroyed":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e PrerenderFinalStatus) String() string {
+	return string(e)
 }

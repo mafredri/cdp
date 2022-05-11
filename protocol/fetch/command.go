@@ -57,7 +57,7 @@ type FulfillRequestArgs struct {
 	ResponseCode          int           `json:"responseCode"`                    // An HTTP response code.
 	ResponseHeaders       []HeaderEntry `json:"responseHeaders,omitempty"`       // Response headers.
 	BinaryResponseHeaders []byte        `json:"binaryResponseHeaders,omitempty"` // Alternative way of specifying response headers as a \0-separated series of name: value pairs. Prefer the above method unless you need to represent some non-UTF8 values that can't be transmitted over the protocol as text. (Encoded as a base64 string when passed over JSON)
-	Body                  []byte        `json:"body,omitempty"`                  // A response body. (Encoded as a base64 string when passed over JSON)
+	Body                  []byte        `json:"body,omitempty"`                  // A response body. If absent, original response body will be used if the request is intercepted at the response stage and empty body will be used if the request is intercepted at the request stage. (Encoded as a base64 string when passed over JSON)
 	ResponsePhrase        *string       `json:"responsePhrase,omitempty"`        // A textual representation of responseCode. If absent, a standard phrase matching responseCode is used.
 }
 
@@ -86,8 +86,11 @@ func (a *FulfillRequestArgs) SetBinaryResponseHeaders(binaryResponseHeaders []by
 	return a
 }
 
-// SetBody sets the Body optional argument. A response body. (Encoded
-// as a base64 string when passed over JSON)
+// SetBody sets the Body optional argument. A response body. If
+// absent, original response body will be used if the request is
+// intercepted at the response stage and empty body will be used if the
+// request is intercepted at the request stage. (Encoded as a base64
+// string when passed over JSON)
 func (a *FulfillRequestArgs) SetBody(body []byte) *FulfillRequestArgs {
 	a.Body = body
 	return a
@@ -108,6 +111,11 @@ type ContinueRequestArgs struct {
 	Method    *string       `json:"method,omitempty"`   // If set, the request method is overridden.
 	PostData  []byte        `json:"postData,omitempty"` // If set, overrides the post data in the request. (Encoded as a base64 string when passed over JSON)
 	Headers   []HeaderEntry `json:"headers,omitempty"`  // If set, overrides the request headers.
+	// InterceptResponse If set, overrides response interception behavior
+	// for this request.
+	//
+	// Note: This property is experimental.
+	InterceptResponse *bool `json:"interceptResponse,omitempty"`
 }
 
 // NewContinueRequestArgs initializes ContinueRequestArgs with the required arguments.
@@ -146,6 +154,15 @@ func (a *ContinueRequestArgs) SetHeaders(headers []HeaderEntry) *ContinueRequest
 	return a
 }
 
+// SetInterceptResponse sets the InterceptResponse optional argument.
+// If set, overrides response interception behavior for this request.
+//
+// Note: This property is experimental.
+func (a *ContinueRequestArgs) SetInterceptResponse(interceptResponse bool) *ContinueRequestArgs {
+	a.InterceptResponse = &interceptResponse
+	return a
+}
+
 // ContinueWithAuthArgs represents the arguments for ContinueWithAuth in the Fetch domain.
 type ContinueWithAuthArgs struct {
 	RequestID             RequestID             `json:"requestId"`             // An id the client received in authRequired event.
@@ -158,6 +175,54 @@ func NewContinueWithAuthArgs(requestID RequestID, authChallengeResponse AuthChal
 	args.RequestID = requestID
 	args.AuthChallengeResponse = authChallengeResponse
 	return args
+}
+
+// ContinueResponseArgs represents the arguments for ContinueResponse in the Fetch domain.
+type ContinueResponseArgs struct {
+	RequestID             RequestID     `json:"requestId"`                       // An id the client received in requestPaused event.
+	ResponseCode          *int          `json:"responseCode,omitempty"`          // An HTTP response code. If absent, original response code will be used.
+	ResponsePhrase        *string       `json:"responsePhrase,omitempty"`        // A textual representation of responseCode. If absent, a standard phrase matching responseCode is used.
+	ResponseHeaders       []HeaderEntry `json:"responseHeaders,omitempty"`       // Response headers. If absent, original response headers will be used.
+	BinaryResponseHeaders []byte        `json:"binaryResponseHeaders,omitempty"` // Alternative way of specifying response headers as a \0-separated series of name: value pairs. Prefer the above method unless you need to represent some non-UTF8 values that can't be transmitted over the protocol as text. (Encoded as a base64 string when passed over JSON)
+}
+
+// NewContinueResponseArgs initializes ContinueResponseArgs with the required arguments.
+func NewContinueResponseArgs(requestID RequestID) *ContinueResponseArgs {
+	args := new(ContinueResponseArgs)
+	args.RequestID = requestID
+	return args
+}
+
+// SetResponseCode sets the ResponseCode optional argument. An HTTP
+// response code. If absent, original response code will be used.
+func (a *ContinueResponseArgs) SetResponseCode(responseCode int) *ContinueResponseArgs {
+	a.ResponseCode = &responseCode
+	return a
+}
+
+// SetResponsePhrase sets the ResponsePhrase optional argument. A
+// textual representation of responseCode. If absent, a standard phrase
+// matching responseCode is used.
+func (a *ContinueResponseArgs) SetResponsePhrase(responsePhrase string) *ContinueResponseArgs {
+	a.ResponsePhrase = &responsePhrase
+	return a
+}
+
+// SetResponseHeaders sets the ResponseHeaders optional argument.
+// Response headers. If absent, original response headers will be used.
+func (a *ContinueResponseArgs) SetResponseHeaders(responseHeaders []HeaderEntry) *ContinueResponseArgs {
+	a.ResponseHeaders = responseHeaders
+	return a
+}
+
+// SetBinaryResponseHeaders sets the BinaryResponseHeaders optional argument.
+// Alternative way of specifying response headers as a \0-separated
+// series of name: value pairs. Prefer the above method unless you need
+// to represent some non-UTF8 values that can't be transmitted over the
+// protocol as text. (Encoded as a base64 string when passed over JSON)
+func (a *ContinueResponseArgs) SetBinaryResponseHeaders(binaryResponseHeaders []byte) *ContinueResponseArgs {
+	a.BinaryResponseHeaders = binaryResponseHeaders
+	return a
 }
 
 // GetResponseBodyArgs represents the arguments for GetResponseBody in the Fetch domain.

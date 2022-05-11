@@ -55,6 +55,6 @@ type PreciseCoverageDeltaUpdateClient interface {
 // PreciseCoverageDeltaUpdateReply is the reply for PreciseCoverageDeltaUpdate events.
 type PreciseCoverageDeltaUpdateReply struct {
 	Timestamp float64          `json:"timestamp"` // Monotonically increasing time (in seconds) when the coverage update was taken in the backend.
-	Occassion string           `json:"occassion"` // Identifier for distinguishing coverage events.
+	Occasion  string           `json:"occasion"`  // Identifier for distinguishing coverage events.
 	Result    []ScriptCoverage `json:"result"`    // Coverage data for the current isolate.
 }

@@ -52,6 +52,18 @@ type CallFunctionOnArgs struct {
 	AwaitPromise       *bool               `json:"awaitPromise,omitempty"`       // Whether execution should `await` for resulting value and return once awaited promise is resolved.
 	ExecutionContextID *ExecutionContextID `json:"executionContextId,omitempty"` // Specifies execution context which global object will be used to call function on. Either executionContextId or objectId should be specified.
 	ObjectGroup        *string             `json:"objectGroup,omitempty"`        // Symbolic group name that can be used to release multiple objects. If objectGroup is not specified and objectId is, objectGroup will be inherited from object.
+	// ThrowOnSideEffect Whether to throw an exception if side effect
+	// cannot be ruled out during evaluation.
+	//
+	// Note: This property is experimental.
+	ThrowOnSideEffect *bool `json:"throwOnSideEffect,omitempty"`
+	// GenerateWebDriverValue Whether the result should contain
+	// `webDriverValue`, serialized according to
+	// https://w3c.github.io/webdriver-bidi. This is mutually exclusive
+	// with `returnByValue`, but resulting `objectId` is still provided.
+	//
+	// Note: This property is experimental.
+	GenerateWebDriverValue *bool `json:"generateWebDriverValue,omitempty"`
 }
 
 // NewCallFunctionOnArgs initializes CallFunctionOnArgs with the required arguments.
@@ -132,6 +144,28 @@ func (a *CallFunctionOnArgs) SetExecutionContextID(executionContextID ExecutionC
 // inherited from object.
 func (a *CallFunctionOnArgs) SetObjectGroup(objectGroup string) *CallFunctionOnArgs {
 	a.ObjectGroup = &objectGroup
+	return a
+}
+
+// SetThrowOnSideEffect sets the ThrowOnSideEffect optional argument.
+// Whether to throw an exception if side effect cannot be ruled out
+// during evaluation.
+//
+// Note: This property is experimental.
+func (a *CallFunctionOnArgs) SetThrowOnSideEffect(throwOnSideEffect bool) *CallFunctionOnArgs {
+	a.ThrowOnSideEffect = &throwOnSideEffect
+	return a
+}
+
+// SetGenerateWebDriverValue sets the GenerateWebDriverValue optional argument.
+// Whether the result should contain `webDriverValue`, serialized
+// according to https://w3c.github.io/webdriver-bidi. This is mutually
+// exclusive with `returnByValue`, but resulting `objectId` is still
+// provided.
+//
+// Note: This property is experimental.
+func (a *CallFunctionOnArgs) SetGenerateWebDriverValue(generateWebDriverValue bool) *CallFunctionOnArgs {
+	a.GenerateWebDriverValue = &generateWebDriverValue
 	return a
 }
 
@@ -225,6 +259,11 @@ type EvaluateArgs struct {
 	//
 	// Note: This property is experimental.
 	UniqueContextID *string `json:"uniqueContextId,omitempty"`
+	// GenerateWebDriverValue Whether the result should be serialized
+	// according to https://w3c.github.io/webdriver-bidi.
+	//
+	// Note: This property is experimental.
+	GenerateWebDriverValue *bool `json:"generateWebDriverValue,omitempty"`
 }
 
 // NewEvaluateArgs initializes EvaluateArgs with the required arguments.
@@ -366,6 +405,16 @@ func (a *EvaluateArgs) SetUniqueContextID(uniqueContextID string) *EvaluateArgs 
 	return a
 }
 
+// SetGenerateWebDriverValue sets the GenerateWebDriverValue optional argument.
+// Whether the result should be serialized according to
+// https://w3c.github.io/webdriver-bidi.
+//
+// Note: This property is experimental.
+func (a *EvaluateArgs) SetGenerateWebDriverValue(generateWebDriverValue bool) *EvaluateArgs {
+	a.GenerateWebDriverValue = &generateWebDriverValue
+	return a
+}
+
 // EvaluateReply represents the return values for Evaluate in the Runtime domain.
 type EvaluateReply struct {
 	Result           RemoteObject      `json:"result"`                     // Evaluation result.
@@ -397,6 +446,11 @@ type GetPropertiesArgs struct {
 	//
 	// Note: This property is experimental.
 	GeneratePreview *bool `json:"generatePreview,omitempty"`
+	// NonIndexedPropertiesOnly If true, returns non-indexed properties
+	// only.
+	//
+	// Note: This property is experimental.
+	NonIndexedPropertiesOnly *bool `json:"nonIndexedPropertiesOnly,omitempty"`
 }
 
 // NewGetPropertiesArgs initializes GetPropertiesArgs with the required arguments.
@@ -430,6 +484,15 @@ func (a *GetPropertiesArgs) SetAccessorPropertiesOnly(accessorPropertiesOnly boo
 // Note: This property is experimental.
 func (a *GetPropertiesArgs) SetGeneratePreview(generatePreview bool) *GetPropertiesArgs {
 	a.GeneratePreview = &generatePreview
+	return a
+}
+
+// SetNonIndexedPropertiesOnly sets the NonIndexedPropertiesOnly optional argument.
+// If true, returns non-indexed properties only.
+//
+// Note: This property is experimental.
+func (a *GetPropertiesArgs) SetNonIndexedPropertiesOnly(nonIndexedPropertiesOnly bool) *GetPropertiesArgs {
+	a.NonIndexedPropertiesOnly = &nonIndexedPropertiesOnly
 	return a
 }
 
@@ -624,8 +687,18 @@ func NewSetMaxCallStackSizeToCaptureArgs(size int) *SetMaxCallStackSizeToCapture
 
 // AddBindingArgs represents the arguments for AddBinding in the Runtime domain.
 type AddBindingArgs struct {
-	Name               string              `json:"name"`                         // No description.
-	ExecutionContextID *ExecutionContextID `json:"executionContextId,omitempty"` // If specified, the binding would only be exposed to the specified execution context. If omitted and `executionContextName` is not set, the binding is exposed to all execution contexts of the target. This parameter is mutually exclusive with `executionContextName`.
+	Name string `json:"name"` // No description.
+	// ExecutionContextID is deprecated.
+	//
+	// Deprecated: If specified, the binding would only be exposed to the
+	// specified execution context. If omitted and `executionContextName`
+	// is not set, the binding is exposed to all execution contexts of the
+	// target. This parameter is mutually exclusive with
+	// `executionContextName`. Deprecated in favor of
+	// `executionContextName` due to an unclear use case and bugs in
+	// implementation (crbug.com/1169639). `executionContextId` will be
+	// removed in the future.
+	ExecutionContextID *ExecutionContextID `json:"executionContextId,omitempty"`
 	// ExecutionContextName If specified, the binding is exposed to the
 	// executionContext with matching name, even for contexts created after
 	// the binding is added. See also `ExecutionContext.name` and
@@ -644,10 +717,15 @@ func NewAddBindingArgs(name string) *AddBindingArgs {
 }
 
 // SetExecutionContextID sets the ExecutionContextID optional argument.
+//
+// Deprecated:
 // If specified, the binding would only be exposed to the specified
 // execution context. If omitted and `executionContextName` is not set,
 // the binding is exposed to all execution contexts of the target. This
 // parameter is mutually exclusive with `executionContextName`.
+// Deprecated in favor of `executionContextName` due to an unclear use
+// case and bugs in implementation (crbug.com/1169639).
+// `executionContextId` will be removed in the future.
 func (a *AddBindingArgs) SetExecutionContextID(executionContextID ExecutionContextID) *AddBindingArgs {
 	a.ExecutionContextID = &executionContextID
 	return a
@@ -676,4 +754,21 @@ func NewRemoveBindingArgs(name string) *RemoveBindingArgs {
 	args := new(RemoveBindingArgs)
 	args.Name = name
 	return args
+}
+
+// GetExceptionDetailsArgs represents the arguments for GetExceptionDetails in the Runtime domain.
+type GetExceptionDetailsArgs struct {
+	ErrorObjectID RemoteObjectID `json:"errorObjectId"` // The error object for which to resolve the exception details.
+}
+
+// NewGetExceptionDetailsArgs initializes GetExceptionDetailsArgs with the required arguments.
+func NewGetExceptionDetailsArgs(errorObjectID RemoteObjectID) *GetExceptionDetailsArgs {
+	args := new(GetExceptionDetailsArgs)
+	args.ErrorObjectID = errorObjectID
+	return args
+}
+
+// GetExceptionDetailsReply represents the return values for GetExceptionDetails in the Runtime domain.
+type GetExceptionDetailsReply struct {
+	ExceptionDetails *ExceptionDetails `json:"exceptionDetails,omitempty"` // No description.
 }

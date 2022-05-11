@@ -55,7 +55,7 @@ type DispatchKeyEventArgs struct {
 	// 'selectAll') (default: []). These are related to but not equal the
 	// command names used in `document.execCommand` and
 	// NSStandardKeyBindingResponding. See
-	// https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/editing/commands/editor_command_names.h
+	// https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/editing/commands/editor_command_names.h
 	// for valid command names.
 	//
 	// Note: This property is experimental.
@@ -170,7 +170,7 @@ func (a *DispatchKeyEventArgs) SetLocation(location int) *DispatchKeyEventArgs {
 // to send with the key event (e.g., 'selectAll') (default: []). These
 // are related to but not equal the command names used in
 // `document.execCommand` and NSStandardKeyBindingResponding. See
-// https://source.chromium.org/chromium/chromium/src/+/master:third_party/blink/renderer/core/editing/commands/editor_command_names.h
+// https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/core/editing/commands/editor_command_names.h
 // for valid command names.
 //
 // Note: This property is experimental.
@@ -189,6 +189,38 @@ func NewInsertTextArgs(text string) *InsertTextArgs {
 	args := new(InsertTextArgs)
 	args.Text = text
 	return args
+}
+
+// ImeSetCompositionArgs represents the arguments for ImeSetComposition in the Input domain.
+type ImeSetCompositionArgs struct {
+	Text             string `json:"text"`                       // The text to insert
+	SelectionStart   int    `json:"selectionStart"`             // selection start
+	SelectionEnd     int    `json:"selectionEnd"`               // selection end
+	ReplacementStart *int   `json:"replacementStart,omitempty"` // replacement start
+	ReplacementEnd   *int   `json:"replacementEnd,omitempty"`   // replacement end
+}
+
+// NewImeSetCompositionArgs initializes ImeSetCompositionArgs with the required arguments.
+func NewImeSetCompositionArgs(text string, selectionStart int, selectionEnd int) *ImeSetCompositionArgs {
+	args := new(ImeSetCompositionArgs)
+	args.Text = text
+	args.SelectionStart = selectionStart
+	args.SelectionEnd = selectionEnd
+	return args
+}
+
+// SetReplacementStart sets the ReplacementStart optional argument.
+// replacement start
+func (a *ImeSetCompositionArgs) SetReplacementStart(replacementStart int) *ImeSetCompositionArgs {
+	a.ReplacementStart = &replacementStart
+	return a
+}
+
+// SetReplacementEnd sets the ReplacementEnd optional argument.
+// replacement end
+func (a *ImeSetCompositionArgs) SetReplacementEnd(replacementEnd int) *ImeSetCompositionArgs {
+	a.ReplacementEnd = &replacementEnd
+	return a
 }
 
 // DispatchMouseEventArgs represents the arguments for DispatchMouseEvent in the Input domain.

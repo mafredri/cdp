@@ -336,9 +336,26 @@ type BackForwardCacheNotUsedClient interface {
 
 // BackForwardCacheNotUsedReply is the reply for BackForwardCacheNotUsed events.
 type BackForwardCacheNotUsedReply struct {
-	LoaderID                network.LoaderID                         `json:"loaderId"`                // The loader id for the associated navgation.
-	FrameID                 FrameID                                  `json:"frameId"`                 // The frame id of the associated frame.
-	NotRestoredExplanations []BackForwardCacheNotRestoredExplanation `json:"notRestoredExplanations"` // Array of reasons why the page could not be cached. This must not be empty.
+	LoaderID                    network.LoaderID                            `json:"loaderId"`                              // The loader id for the associated navgation.
+	FrameID                     FrameID                                     `json:"frameId"`                               // The frame id of the associated frame.
+	NotRestoredExplanations     []BackForwardCacheNotRestoredExplanation    `json:"notRestoredExplanations"`               // Array of reasons why the page could not be cached. This must not be empty.
+	NotRestoredExplanationsTree *BackForwardCacheNotRestoredExplanationTree `json:"notRestoredExplanationsTree,omitempty"` // Tree structure of reasons why the page could not be cached for each frame.
+}
+
+// PrerenderAttemptCompletedClient is a client for PrerenderAttemptCompleted events.
+// Fired when a prerender attempt is completed.
+type PrerenderAttemptCompletedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*PrerenderAttemptCompletedReply, error)
+	rpcc.Stream
+}
+
+// PrerenderAttemptCompletedReply is the reply for PrerenderAttemptCompleted events.
+type PrerenderAttemptCompletedReply struct {
+	InitiatingFrameID FrameID              `json:"initiatingFrameId"` // The frame id of the frame initiating prerendering.
+	PrerenderingURL   string               `json:"prerenderingUrl"`   // No description.
+	FinalStatus       PrerenderFinalStatus `json:"finalStatus"`       // No description.
 }
 
 // LoadEventFiredClient is a client for LoadEventFired events.

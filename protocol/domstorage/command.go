@@ -2,6 +2,10 @@
 
 package domstorage
 
+import (
+	"github.com/mafredri/cdp/protocol/page"
+)
+
 // ClearArgs represents the arguments for Clear in the DOMStorage domain.
 type ClearArgs struct {
 	StorageID StorageID `json:"storageId"` // No description.
@@ -59,4 +63,21 @@ func NewSetDOMStorageItemArgs(storageID StorageID, key string, value string) *Se
 	args.Key = key
 	args.Value = value
 	return args
+}
+
+// GetStorageKeyForFrameArgs represents the arguments for GetStorageKeyForFrame in the DOMStorage domain.
+type GetStorageKeyForFrameArgs struct {
+	FrameID page.FrameID `json:"frameId"` // No description.
+}
+
+// NewGetStorageKeyForFrameArgs initializes GetStorageKeyForFrameArgs with the required arguments.
+func NewGetStorageKeyForFrameArgs(frameID page.FrameID) *GetStorageKeyForFrameArgs {
+	args := new(GetStorageKeyForFrameArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// GetStorageKeyForFrameReply represents the return values for GetStorageKeyForFrame in the DOMStorage domain.
+type GetStorageKeyForFrameReply struct {
+	StorageKey SerializedStorageKey `json:"storageKey"` // No description.
 }

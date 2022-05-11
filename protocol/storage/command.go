@@ -199,3 +199,34 @@ func NewClearTrustTokensArgs(issuerOrigin string) *ClearTrustTokensArgs {
 type ClearTrustTokensReply struct {
 	DidDeleteTokens bool `json:"didDeleteTokens"` // True if any tokens were deleted, false otherwise.
 }
+
+// GetInterestGroupDetailsArgs represents the arguments for GetInterestGroupDetails in the Storage domain.
+type GetInterestGroupDetailsArgs struct {
+	OwnerOrigin string `json:"ownerOrigin"` // No description.
+	Name        string `json:"name"`        // No description.
+}
+
+// NewGetInterestGroupDetailsArgs initializes GetInterestGroupDetailsArgs with the required arguments.
+func NewGetInterestGroupDetailsArgs(ownerOrigin string, name string) *GetInterestGroupDetailsArgs {
+	args := new(GetInterestGroupDetailsArgs)
+	args.OwnerOrigin = ownerOrigin
+	args.Name = name
+	return args
+}
+
+// GetInterestGroupDetailsReply represents the return values for GetInterestGroupDetails in the Storage domain.
+type GetInterestGroupDetailsReply struct {
+	Details InterestGroupDetails `json:"details"` // No description.
+}
+
+// SetInterestGroupTrackingArgs represents the arguments for SetInterestGroupTracking in the Storage domain.
+type SetInterestGroupTrackingArgs struct {
+	Enable bool `json:"enable"` // No description.
+}
+
+// NewSetInterestGroupTrackingArgs initializes SetInterestGroupTrackingArgs with the required arguments.
+func NewSetInterestGroupTrackingArgs(enable bool) *SetInterestGroupTrackingArgs {
+	args := new(SetInterestGroupTrackingArgs)
+	args.Enable = enable
+	return args
+}

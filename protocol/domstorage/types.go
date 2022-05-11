@@ -2,10 +2,14 @@
 
 package domstorage
 
+// SerializedStorageKey
+type SerializedStorageKey string
+
 // StorageID DOM Storage identifier.
 type StorageID struct {
-	SecurityOrigin string `json:"securityOrigin"` // Security origin for the storage.
-	IsLocalStorage bool   `json:"isLocalStorage"` // Whether the storage is local storage (not session storage).
+	SecurityOrigin *string               `json:"securityOrigin,omitempty"` // Security origin for the storage.
+	StorageKey     *SerializedStorageKey `json:"storageKey,omitempty"`     // Represents a key by which DOM Storage keys its CachedStorageAreas
+	IsLocalStorage bool                  `json:"isLocalStorage"`           // Whether the storage is local storage (not session storage).
 }
 
 // Item DOM Storage item.

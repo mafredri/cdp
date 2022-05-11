@@ -38,14 +38,26 @@ type LocationRange struct {
 
 // CallFrame JavaScript call frame. Array of call frames form the call stack.
 type CallFrame struct {
-	CallFrameID      CallFrameID           `json:"callFrameId"`                // Call frame identifier. This identifier is only valid while the virtual machine is paused.
-	FunctionName     string                `json:"functionName"`               // Name of the JavaScript function called on this call frame.
-	FunctionLocation *Location             `json:"functionLocation,omitempty"` // Location in the source code.
-	Location         Location              `json:"location"`                   // Location in the source code.
-	URL              string                `json:"url"`                        // JavaScript script name or url.
-	ScopeChain       []Scope               `json:"scopeChain"`                 // Scope chain for this call frame.
-	This             runtime.RemoteObject  `json:"this"`                       // `this` object for this call frame.
-	ReturnValue      *runtime.RemoteObject `json:"returnValue,omitempty"`      // The value being returned, if the function is at return point.
+	CallFrameID      CallFrameID `json:"callFrameId"`                // Call frame identifier. This identifier is only valid while the virtual machine is paused.
+	FunctionName     string      `json:"functionName"`               // Name of the JavaScript function called on this call frame.
+	FunctionLocation *Location   `json:"functionLocation,omitempty"` // Location in the source code.
+	Location         Location    `json:"location"`                   // Location in the source code.
+	// URL is deprecated.
+	//
+	// Deprecated: JavaScript script name or url. Deprecated in favor of
+	// using the `location.scriptId` to resolve the URL via a previously
+	// sent `Debugger.scriptParsed` event.
+	URL         string                `json:"url"`
+	ScopeChain  []Scope               `json:"scopeChain"`            // Scope chain for this call frame.
+	This        runtime.RemoteObject  `json:"this"`                  // `this` object for this call frame.
+	ReturnValue *runtime.RemoteObject `json:"returnValue,omitempty"` // The value being returned, if the function is at return point.
+	// CanBeRestarted Valid only while the VM is paused and indicates
+	// whether this frame can be restarted or not. Note that a `true` value
+	// here does not guarantee that Debugger#restartFrame with this
+	// CallFrameId will be successful, but it is very likely.
+	//
+	// Note: This property is experimental.
+	CanBeRestarted *bool `json:"canBeRestarted,omitempty"`
 }
 
 // Scope Scope description.

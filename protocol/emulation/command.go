@@ -25,6 +25,26 @@ func NewSetFocusEmulationEnabledArgs(enabled bool) *SetFocusEmulationEnabledArgs
 	return args
 }
 
+// SetAutoDarkModeOverrideArgs represents the arguments for SetAutoDarkModeOverride in the Emulation domain.
+type SetAutoDarkModeOverrideArgs struct {
+	Enabled *bool `json:"enabled,omitempty"` // Whether to enable or disable automatic dark mode. If not specified, any existing override will be cleared.
+}
+
+// NewSetAutoDarkModeOverrideArgs initializes SetAutoDarkModeOverrideArgs with the required arguments.
+func NewSetAutoDarkModeOverrideArgs() *SetAutoDarkModeOverrideArgs {
+	args := new(SetAutoDarkModeOverrideArgs)
+
+	return args
+}
+
+// SetEnabled sets the Enabled optional argument. Whether to enable or
+// disable automatic dark mode. If not specified, any existing override
+// will be cleared.
+func (a *SetAutoDarkModeOverrideArgs) SetEnabled(enabled bool) *SetAutoDarkModeOverrideArgs {
+	a.Enabled = &enabled
+	return a
+}
+
 // SetCPUThrottlingRateArgs represents the arguments for SetCPUThrottlingRate in the Emulation domain.
 type SetCPUThrottlingRateArgs struct {
 	Rate float64 `json:"rate"` // Throttling rate as a slowdown factor (1 is no throttle, 2 is 2x slowdown, etc).
@@ -398,7 +418,6 @@ type SetVirtualTimePolicyArgs struct {
 	Policy                            VirtualTimePolicy      `json:"policy"`                                      // No description.
 	Budget                            *float64               `json:"budget,omitempty"`                            // If set, after this many virtual milliseconds have elapsed virtual time will be paused and a virtualTimeBudgetExpired event is sent.
 	MaxVirtualTimeTaskStarvationCount *int                   `json:"maxVirtualTimeTaskStarvationCount,omitempty"` // If set this specifies the maximum number of tasks that can be run before virtual is forced forwards to prevent deadlock.
-	WaitForNavigation                 *bool                  `json:"waitForNavigation,omitempty"`                 // If set the virtual time policy change should be deferred until any frame starts navigating. Note any previous deferred policy change is superseded.
 	InitialVirtualTime                network.TimeSinceEpoch `json:"initialVirtualTime,omitempty"`                // If set, base::Time::Now will be overridden to initially return this value.
 }
 
@@ -422,15 +441,6 @@ func (a *SetVirtualTimePolicyArgs) SetBudget(budget float64) *SetVirtualTimePoli
 // before virtual is forced forwards to prevent deadlock.
 func (a *SetVirtualTimePolicyArgs) SetMaxVirtualTimeTaskStarvationCount(maxVirtualTimeTaskStarvationCount int) *SetVirtualTimePolicyArgs {
 	a.MaxVirtualTimeTaskStarvationCount = &maxVirtualTimeTaskStarvationCount
-	return a
-}
-
-// SetWaitForNavigation sets the WaitForNavigation optional argument.
-// If set the virtual time policy change should be deferred until any
-// frame starts navigating. Note any previous deferred policy change is
-// superseded.
-func (a *SetVirtualTimePolicyArgs) SetWaitForNavigation(waitForNavigation bool) *SetVirtualTimePolicyArgs {
-	a.WaitForNavigation = &waitForNavigation
 	return a
 }
 
@@ -546,4 +556,16 @@ func (a *SetUserAgentOverrideArgs) SetPlatform(platform string) *SetUserAgentOve
 func (a *SetUserAgentOverrideArgs) SetUserAgentMetadata(userAgentMetadata UserAgentMetadata) *SetUserAgentOverrideArgs {
 	a.UserAgentMetadata = &userAgentMetadata
 	return a
+}
+
+// SetAutomationOverrideArgs represents the arguments for SetAutomationOverride in the Emulation domain.
+type SetAutomationOverrideArgs struct {
+	Enabled bool `json:"enabled"` // Whether the override should be enabled.
+}
+
+// NewSetAutomationOverrideArgs initializes SetAutomationOverrideArgs with the required arguments.
+func NewSetAutomationOverrideArgs(enabled bool) *SetAutomationOverrideArgs {
+	args := new(SetAutomationOverrideArgs)
+	args.Enabled = enabled
+	return args
 }

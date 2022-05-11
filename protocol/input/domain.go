@@ -60,6 +60,21 @@ func (d *domainClient) InsertText(ctx context.Context, args *InsertTextArgs) (er
 	return
 }
 
+// ImeSetComposition invokes the Input method. This method sets the current
+// candidate text for ime. Use imeCommitComposition to commit the final text.
+// Use imeSetComposition with empty string as text to cancel composition.
+func (d *domainClient) ImeSetComposition(ctx context.Context, args *ImeSetCompositionArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Input.imeSetComposition", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Input.imeSetComposition", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Input", Op: "ImeSetComposition", Err: err}
+	}
+	return
+}
+
 // DispatchMouseEvent invokes the Input method. Dispatches a mouse event to
 // the page.
 func (d *domainClient) DispatchMouseEvent(ctx context.Context, args *DispatchMouseEventArgs) (err error) {

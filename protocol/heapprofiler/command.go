@@ -112,6 +112,7 @@ type StopSamplingReply struct {
 type StopTrackingHeapObjectsArgs struct {
 	ReportProgress            *bool `json:"reportProgress,omitempty"`            // If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken when the tracking is stopped.
 	TreatGlobalObjectsAsRoots *bool `json:"treatGlobalObjectsAsRoots,omitempty"` // No description.
+	CaptureNumericValue       *bool `json:"captureNumericValue,omitempty"`       // If true, numerical values are included in the snapshot
 }
 
 // NewStopTrackingHeapObjectsArgs initializes StopTrackingHeapObjectsArgs with the required arguments.
@@ -135,10 +136,18 @@ func (a *StopTrackingHeapObjectsArgs) SetTreatGlobalObjectsAsRoots(treatGlobalOb
 	return a
 }
 
+// SetCaptureNumericValue sets the CaptureNumericValue optional argument.
+// If true, numerical values are included in the snapshot
+func (a *StopTrackingHeapObjectsArgs) SetCaptureNumericValue(captureNumericValue bool) *StopTrackingHeapObjectsArgs {
+	a.CaptureNumericValue = &captureNumericValue
+	return a
+}
+
 // TakeHeapSnapshotArgs represents the arguments for TakeHeapSnapshot in the HeapProfiler domain.
 type TakeHeapSnapshotArgs struct {
 	ReportProgress            *bool `json:"reportProgress,omitempty"`            // If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
 	TreatGlobalObjectsAsRoots *bool `json:"treatGlobalObjectsAsRoots,omitempty"` // If true, a raw snapshot without artificial roots will be generated
+	CaptureNumericValue       *bool `json:"captureNumericValue,omitempty"`       // If true, numerical values are included in the snapshot
 }
 
 // NewTakeHeapSnapshotArgs initializes TakeHeapSnapshotArgs with the required arguments.
@@ -160,5 +169,12 @@ func (a *TakeHeapSnapshotArgs) SetReportProgress(reportProgress bool) *TakeHeapS
 // If true, a raw snapshot without artificial roots will be generated
 func (a *TakeHeapSnapshotArgs) SetTreatGlobalObjectsAsRoots(treatGlobalObjectsAsRoots bool) *TakeHeapSnapshotArgs {
 	a.TreatGlobalObjectsAsRoots = &treatGlobalObjectsAsRoots
+	return a
+}
+
+// SetCaptureNumericValue sets the CaptureNumericValue optional argument.
+// If true, numerical values are included in the snapshot
+func (a *TakeHeapSnapshotArgs) SetCaptureNumericValue(captureNumericValue bool) *TakeHeapSnapshotArgs {
+	a.CaptureNumericValue = &captureNumericValue
 	return a
 }

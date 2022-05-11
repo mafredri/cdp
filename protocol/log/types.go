@@ -16,8 +16,12 @@ type Entry struct {
 	// Level Log entry severity.
 	//
 	// Values: "verbose", "info", "warning", "error".
-	Level            string                 `json:"level"`
-	Text             string                 `json:"text"`                       // Logged text.
+	Level string `json:"level"`
+	Text  string `json:"text"` // Logged text.
+	// Category
+	//
+	// Values: "cors".
+	Category         *string                `json:"category,omitempty"`
 	Timestamp        runtime.Timestamp      `json:"timestamp"`                  // Timestamp when this entry was added.
 	URL              *string                `json:"url,omitempty"`              // URL of the resource if known.
 	LineNumber       *int                   `json:"lineNumber,omitempty"`       // Line number in the resource.

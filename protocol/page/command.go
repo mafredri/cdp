@@ -235,6 +235,12 @@ type GetManifestIconsReply struct {
 	PrimaryIcon *string `json:"primaryIcon,omitempty"` // No description.
 }
 
+// GetAppIDReply represents the return values for GetAppID in the Page domain.
+type GetAppIDReply struct {
+	AppID         *string `json:"appId,omitempty"`         // App id, either from manifest's id attribute or computed from start_url
+	RecommendedID *string `json:"recommendedId,omitempty"` // Recommendation for manifest's id attribute to match current id computed from start_url
+}
+
 // GetFrameTreeReply represents the return values for GetFrameTree in the Page domain.
 type GetFrameTreeReply struct {
 	FrameTree FrameTree `json:"frameTree"` // Present frame tree structure.
@@ -244,20 +250,17 @@ type GetFrameTreeReply struct {
 type GetLayoutMetricsReply struct {
 	// LayoutViewport is deprecated.
 	//
-	// Deprecated: Deprecated metrics relating to the layout viewport. Can
-	// be in DP or in CSS pixels depending on the `enable-use-zoom-for-dsf`
-	// flag. Use `cssLayoutViewport` instead.
+	// Deprecated: Deprecated metrics relating to the layout viewport. Is
+	// in device pixels. Use `cssLayoutViewport` instead.
 	LayoutViewport LayoutViewport `json:"layoutViewport"`
 	// VisualViewport is deprecated.
 	//
-	// Deprecated: Deprecated metrics relating to the visual viewport. Can
-	// be in DP or in CSS pixels depending on the `enable-use-zoom-for-dsf`
-	// flag. Use `cssVisualViewport` instead.
+	// Deprecated: Deprecated metrics relating to the visual viewport. Is
+	// in device pixels. Use `cssVisualViewport` instead.
 	VisualViewport VisualViewport `json:"visualViewport"`
 	// ContentSize is deprecated.
 	//
-	// Deprecated: Deprecated size of scrollable area. Can be in DP or in
-	// CSS pixels depending on the `enable-use-zoom-for-dsf` flag. Use
+	// Deprecated: Deprecated size of scrollable area. Is in DP. Use
 	// `cssContentSize` instead.
 	ContentSize       dom.Rect       `json:"contentSize"`
 	CSSLayoutViewport LayoutViewport `json:"cssLayoutViewport"` // Metrics relating to the layout viewport in CSS pixels.
@@ -386,21 +389,20 @@ func NewNavigateToHistoryEntryArgs(entryID int) *NavigateToHistoryEntryArgs {
 
 // PrintToPDFArgs represents the arguments for PrintToPDF in the Page domain.
 type PrintToPDFArgs struct {
-	Landscape               *bool    `json:"landscape,omitempty"`               // Paper orientation. Defaults to false.
-	DisplayHeaderFooter     *bool    `json:"displayHeaderFooter,omitempty"`     // Display header and footer. Defaults to false.
-	PrintBackground         *bool    `json:"printBackground,omitempty"`         // Print background graphics. Defaults to false.
-	Scale                   *float64 `json:"scale,omitempty"`                   // Scale of the webpage rendering. Defaults to 1.
-	PaperWidth              *float64 `json:"paperWidth,omitempty"`              // Paper width in inches. Defaults to 8.5 inches.
-	PaperHeight             *float64 `json:"paperHeight,omitempty"`             // Paper height in inches. Defaults to 11 inches.
-	MarginTop               *float64 `json:"marginTop,omitempty"`               // Top margin in inches. Defaults to 1cm (~0.4 inches).
-	MarginBottom            *float64 `json:"marginBottom,omitempty"`            // Bottom margin in inches. Defaults to 1cm (~0.4 inches).
-	MarginLeft              *float64 `json:"marginLeft,omitempty"`              // Left margin in inches. Defaults to 1cm (~0.4 inches).
-	MarginRight             *float64 `json:"marginRight,omitempty"`             // Right margin in inches. Defaults to 1cm (~0.4 inches).
-	PageRanges              *string  `json:"pageRanges,omitempty"`              // Paper ranges to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which means print all pages.
-	IgnoreInvalidPageRanges *bool    `json:"ignoreInvalidPageRanges,omitempty"` // Whether to silently ignore invalid but successfully parsed page ranges, such as '3-2'. Defaults to false.
-	HeaderTemplate          *string  `json:"headerTemplate,omitempty"`          // HTML template for the print header. Should be valid HTML markup with following classes used to inject printing values into them: - `date`: formatted print date - `title`: document title - `url`: document location - `pageNumber`: current page number - `totalPages`: total pages in the document For example, `<span class=title></span>` would generate span containing the title.
-	FooterTemplate          *string  `json:"footerTemplate,omitempty"`          // HTML template for the print footer. Should use the same format as the `headerTemplate`.
-	PreferCSSPageSize       *bool    `json:"preferCSSPageSize,omitempty"`       // Whether or not to prefer page size as defined by css. Defaults to false, in which case the content will be scaled to fit the paper size.
+	Landscape           *bool    `json:"landscape,omitempty"`           // Paper orientation. Defaults to false.
+	DisplayHeaderFooter *bool    `json:"displayHeaderFooter,omitempty"` // Display header and footer. Defaults to false.
+	PrintBackground     *bool    `json:"printBackground,omitempty"`     // Print background graphics. Defaults to false.
+	Scale               *float64 `json:"scale,omitempty"`               // Scale of the webpage rendering. Defaults to 1.
+	PaperWidth          *float64 `json:"paperWidth,omitempty"`          // Paper width in inches. Defaults to 8.5 inches.
+	PaperHeight         *float64 `json:"paperHeight,omitempty"`         // Paper height in inches. Defaults to 11 inches.
+	MarginTop           *float64 `json:"marginTop,omitempty"`           // Top margin in inches. Defaults to 1cm (~0.4 inches).
+	MarginBottom        *float64 `json:"marginBottom,omitempty"`        // Bottom margin in inches. Defaults to 1cm (~0.4 inches).
+	MarginLeft          *float64 `json:"marginLeft,omitempty"`          // Left margin in inches. Defaults to 1cm (~0.4 inches).
+	MarginRight         *float64 `json:"marginRight,omitempty"`         // Right margin in inches. Defaults to 1cm (~0.4 inches).
+	PageRanges          *string  `json:"pageRanges,omitempty"`          // Paper ranges to print, one based, e.g., '1-5, 8, 11-13'. Pages are printed in the document order, not in the order specified, and no more than once. Defaults to empty string, which implies the entire document is printed. The page numbers are quietly capped to actual page count of the document, and ranges beyond the end of the document are ignored. If this results in no pages to print, an error is reported. It is an error to specify a range with start greater than end.
+	HeaderTemplate      *string  `json:"headerTemplate,omitempty"`      // HTML template for the print header. Should be valid HTML markup with following classes used to inject printing values into them: - `date`: formatted print date - `title`: document title - `url`: document location - `pageNumber`: current page number - `totalPages`: total pages in the document For example, `<span class=title></span>` would generate span containing the title.
+	FooterTemplate      *string  `json:"footerTemplate,omitempty"`      // HTML template for the print footer. Should use the same format as the `headerTemplate`.
+	PreferCSSPageSize   *bool    `json:"preferCSSPageSize,omitempty"`   // Whether or not to prefer page size as defined by css. Defaults to false, in which case the content will be scaled to fit the paper size.
 	// TransferMode return as stream
 	//
 	// Values: "ReturnAsBase64", "ReturnAsStream".
@@ -487,18 +489,15 @@ func (a *PrintToPDFArgs) SetMarginRight(marginRight float64) *PrintToPDFArgs {
 }
 
 // SetPageRanges sets the PageRanges optional argument. Paper ranges
-// to print, e.g., '1-5, 8, 11-13'. Defaults to the empty string, which
-// means print all pages.
+// to print, one based, e.g., '1-5, 8, 11-13'. Pages are printed in the
+// document order, not in the order specified, and no more than once.
+// Defaults to empty string, which implies the entire document is
+// printed. The page numbers are quietly capped to actual page count of
+// the document, and ranges beyond the end of the document are ignored.
+// If this results in no pages to print, an error is reported. It is an
+// error to specify a range with start greater than end.
 func (a *PrintToPDFArgs) SetPageRanges(pageRanges string) *PrintToPDFArgs {
 	a.PageRanges = &pageRanges
-	return a
-}
-
-// SetIgnoreInvalidPageRanges sets the IgnoreInvalidPageRanges optional argument.
-// Whether to silently ignore invalid but successfully parsed page
-// ranges, such as '3-2'. Defaults to false.
-func (a *PrintToPDFArgs) SetIgnoreInvalidPageRanges(ignoreInvalidPageRanges bool) *PrintToPDFArgs {
-	a.IgnoreInvalidPageRanges = &ignoreInvalidPageRanges
 	return a
 }
 
@@ -696,9 +695,27 @@ type GetPermissionsPolicyStateReply struct {
 	States []PermissionsPolicyFeatureState `json:"states"` // No description.
 }
 
+// GetOriginTrialsArgs represents the arguments for GetOriginTrials in the Page domain.
+type GetOriginTrialsArgs struct {
+	FrameID FrameID `json:"frameId"` // No description.
+}
+
+// NewGetOriginTrialsArgs initializes GetOriginTrialsArgs with the required arguments.
+func NewGetOriginTrialsArgs(frameID FrameID) *GetOriginTrialsArgs {
+	args := new(GetOriginTrialsArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// GetOriginTrialsReply represents the return values for GetOriginTrials in the Page domain.
+type GetOriginTrialsReply struct {
+	OriginTrials []OriginTrial `json:"originTrials"` // No description.
+}
+
 // SetFontFamiliesArgs represents the arguments for SetFontFamilies in the Page domain.
 type SetFontFamiliesArgs struct {
-	FontFamilies FontFamilies `json:"fontFamilies"` // Specifies font families to set. If a font family is not specified, it won't be changed.
+	FontFamilies FontFamilies         `json:"fontFamilies"`         // Specifies font families to set. If a font family is not specified, it won't be changed.
+	ForScripts   []ScriptFontFamilies `json:"forScripts,omitempty"` // Specifies font families to set for individual scripts.
 }
 
 // NewSetFontFamiliesArgs initializes SetFontFamiliesArgs with the required arguments.
@@ -706,6 +723,13 @@ func NewSetFontFamiliesArgs(fontFamilies FontFamilies) *SetFontFamiliesArgs {
 	args := new(SetFontFamiliesArgs)
 	args.FontFamilies = fontFamilies
 	return args
+}
+
+// SetForScripts sets the ForScripts optional argument. Specifies font
+// families to set for individual scripts.
+func (a *SetFontFamiliesArgs) SetForScripts(forScripts []ScriptFontFamilies) *SetFontFamiliesArgs {
+	a.ForScripts = forScripts
+	return a
 }
 
 // SetFontSizesArgs represents the arguments for SetFontSizes in the Page domain.
@@ -842,18 +866,6 @@ func NewSetWebLifecycleStateArgs(state string) *SetWebLifecycleStateArgs {
 	return args
 }
 
-// SetProduceCompilationCacheArgs represents the arguments for SetProduceCompilationCache in the Page domain.
-type SetProduceCompilationCacheArgs struct {
-	Enabled bool `json:"enabled"` // No description.
-}
-
-// NewSetProduceCompilationCacheArgs initializes SetProduceCompilationCacheArgs with the required arguments.
-func NewSetProduceCompilationCacheArgs(enabled bool) *SetProduceCompilationCacheArgs {
-	args := new(SetProduceCompilationCacheArgs)
-	args.Enabled = enabled
-	return args
-}
-
 // ProduceCompilationCacheArgs represents the arguments for ProduceCompilationCache in the Page domain.
 type ProduceCompilationCacheArgs struct {
 	Scripts []CompilationCacheParams `json:"scripts"` // No description.
@@ -877,6 +889,21 @@ func NewAddCompilationCacheArgs(url string, data []byte) *AddCompilationCacheArg
 	args := new(AddCompilationCacheArgs)
 	args.URL = url
 	args.Data = data
+	return args
+}
+
+// SetSPCTransactionModeArgs represents the arguments for SetSPCTransactionMode in the Page domain.
+type SetSPCTransactionModeArgs struct {
+	// Mode
+	//
+	// Values: "none", "autoaccept", "autoreject".
+	Mode string `json:"mode"`
+}
+
+// NewSetSPCTransactionModeArgs initializes SetSPCTransactionModeArgs with the required arguments.
+func NewSetSPCTransactionModeArgs(mode string) *SetSPCTransactionModeArgs {
+	args := new(SetSPCTransactionModeArgs)
+	args.Mode = mode
 	return args
 }
 

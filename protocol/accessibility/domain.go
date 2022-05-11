@@ -71,6 +71,37 @@ func (d *domainClient) GetFullAXTree(ctx context.Context, args *GetFullAXTreeArg
 	return
 }
 
+// GetRootAXNode invokes the Accessibility method. Fetches the root node.
+// Requires `enable()` to have been called previously.
+func (d *domainClient) GetRootAXNode(ctx context.Context, args *GetRootAXNodeArgs) (reply *GetRootAXNodeReply, err error) {
+	reply = new(GetRootAXNodeReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Accessibility.getRootAXNode", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Accessibility.getRootAXNode", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Accessibility", Op: "GetRootAXNode", Err: err}
+	}
+	return
+}
+
+// GetAXNodeAndAncestors invokes the Accessibility method. Fetches a node and
+// all ancestors up to and including the root. Requires `enable()` to have been
+// called previously.
+func (d *domainClient) GetAXNodeAndAncestors(ctx context.Context, args *GetAXNodeAndAncestorsArgs) (reply *GetAXNodeAndAncestorsReply, err error) {
+	reply = new(GetAXNodeAndAncestorsReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Accessibility.getAXNodeAndAncestors", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Accessibility.getAXNodeAndAncestors", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Accessibility", Op: "GetAXNodeAndAncestors", Err: err}
+	}
+	return
+}
+
 // GetChildAXNodes invokes the Accessibility method. Fetches a particular
 // accessibility node by AXNodeId. Requires `enable()` to have been called
 // previously.
@@ -105,4 +136,46 @@ func (d *domainClient) QueryAXTree(ctx context.Context, args *QueryAXTreeArgs) (
 		err = &internal.OpError{Domain: "Accessibility", Op: "QueryAXTree", Err: err}
 	}
 	return
+}
+
+func (d *domainClient) LoadComplete(ctx context.Context) (LoadCompleteClient, error) {
+	s, err := rpcc.NewStream(ctx, "Accessibility.loadComplete", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &loadCompleteClient{Stream: s}, nil
+}
+
+type loadCompleteClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *loadCompleteClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *loadCompleteClient) Recv() (*LoadCompleteReply, error) {
+	event := new(LoadCompleteReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Accessibility", Op: "LoadComplete Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) NodesUpdated(ctx context.Context) (NodesUpdatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Accessibility.nodesUpdated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &nodesUpdatedClient{Stream: s}, nil
+}
+
+type nodesUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *nodesUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *nodesUpdatedClient) Recv() (*NodesUpdatedReply, error) {
+	event := new(NodesUpdatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Accessibility", Op: "NodesUpdated Recv", Err: err}
+	}
+	return event, nil
 }

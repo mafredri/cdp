@@ -167,6 +167,36 @@ func NewDiscardSearchResultsArgs(searchID string) *DiscardSearchResultsArgs {
 	return args
 }
 
+// EnableArgs represents the arguments for Enable in the DOM domain.
+type EnableArgs struct {
+	// IncludeWhitespace Whether to include whitespaces in the children
+	// array of returned Nodes.
+	//
+	// Values: "none", "all".
+	//
+	// Note: This property is experimental.
+	IncludeWhitespace *string `json:"includeWhitespace,omitempty"`
+}
+
+// NewEnableArgs initializes EnableArgs with the required arguments.
+func NewEnableArgs() *EnableArgs {
+	args := new(EnableArgs)
+
+	return args
+}
+
+// SetIncludeWhitespace sets the IncludeWhitespace optional argument.
+// Whether to include whitespaces in the children array of returned
+// Nodes.
+//
+// Values: "none", "all".
+//
+// Note: This property is experimental.
+func (a *EnableArgs) SetIncludeWhitespace(includeWhitespace string) *EnableArgs {
+	a.IncludeWhitespace = &includeWhitespace
+	return a
+}
+
 // FocusArgs represents the arguments for Focus in the DOM domain.
 type FocusArgs struct {
 	NodeID        *NodeID                 `json:"nodeId,omitempty"`        // Identifier of the node.
@@ -979,4 +1009,21 @@ func (a *GetContainerForNodeArgs) SetContainerName(containerName string) *GetCon
 // GetContainerForNodeReply represents the return values for GetContainerForNode in the DOM domain.
 type GetContainerForNodeReply struct {
 	NodeID *NodeID `json:"nodeId,omitempty"` // The container node for the given node, or null if not found.
+}
+
+// GetQueryingDescendantsForContainerArgs represents the arguments for GetQueryingDescendantsForContainer in the DOM domain.
+type GetQueryingDescendantsForContainerArgs struct {
+	NodeID NodeID `json:"nodeId"` // Id of the container node to find querying descendants from.
+}
+
+// NewGetQueryingDescendantsForContainerArgs initializes GetQueryingDescendantsForContainerArgs with the required arguments.
+func NewGetQueryingDescendantsForContainerArgs(nodeID NodeID) *GetQueryingDescendantsForContainerArgs {
+	args := new(GetQueryingDescendantsForContainerArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// GetQueryingDescendantsForContainerReply represents the return values for GetQueryingDescendantsForContainer in the DOM domain.
+type GetQueryingDescendantsForContainerReply struct {
+	NodeIDs []NodeID `json:"nodeIds"` // Descendant nodes with container queries against the given container.
 }
