@@ -22,7 +22,7 @@ jobs:
           chrome --headless --disable-gpu --remote-debugging-port=9222 --disable-setuid-sandbox --no-sandbox about:blank &
           chrome_pid=$!
           go list -f '{{if len .TestGoFiles}}-coverprofile={{.Name}}_coverage.out {{.ImportPath}}{{end}}' ./... | xargs -L1 go test -race -covermode=atomic
-          go test ./session -browser -race -covermode=atomic
+          go test ./session -browser -race -covermode=atomic -coverprofile=session_coverage.out
           go test . -browser
           kill -9 $chrome_pid
       - name: Upload coverage to Codecov
