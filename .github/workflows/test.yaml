@@ -1,0 +1,32 @@
+name: Test
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go: ["1.17", "1.18"]
+    name: Test on Go ${{ matrix.go }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+      - run: go version
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@latest
+      - run: chrome --version
+      - name: Run tests
+        run: |
+          chrome --headless --disable-gpu --remote-debugging-port=9222 --disable-setuid-sandbox --no-sandbox about:blank &
+          chrome_pid=$!
+          go list -f '{{if len .TestGoFiles}}-coverprofile={{.Name}}_coverage.out {{.ImportPath}}{{end}}' ./... | xargs -L1 go test -race -covermode=atomic
+          go test ./session -browser -race -covermode=atomic -coverprofile=session_coverage.out
+          go test . -browser
+          kill -9 $chrome_pid
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
+        with:
+          fail_ci_if_error: true
+          verbose: true
