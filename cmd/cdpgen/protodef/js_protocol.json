@@ -1557,7 +1557,6 @@
                         "CrossOriginWindowAlert",
                         "CrossOriginWindowConfirm",
                         "CSSSelectorInternalMediaControlsOverlayCastButton",
-                        "CustomCursorIntersectsViewport",
                         "DeprecationExample",
                         "DocumentDomainSettingWithoutOriginAgentClusterHeader",
                         "EventPath",
@@ -1568,7 +1567,6 @@
                         "InsecurePrivateNetworkSubresourceRequest",
                         "LegacyConstraintGoogIPv6",
                         "LocalCSSFileExtensionRejected",
-                        "MediaElementAudioSourceNode",
                         "MediaSourceAbortRemove",
                         "MediaSourceDurationTruncatingBuffered",
                         "NoSysexWebMIDIWithoutPermission",
@@ -1576,7 +1574,6 @@
                         "NotificationPermissionRequestedIframe",
                         "ObsoleteWebRtcCipherSuite",
                         "PaymentRequestBasicCard",
-                        "PaymentRequestShowWithoutGesture",
                         "PictureSourceSrc",
                         "PrefixedCancelAnimationFrame",
                         "PrefixedRequestAnimationFrame",
@@ -1594,7 +1591,6 @@
                         "RTCPeerConnectionComplexPlanBSdpUsingDefaultSdpSemantics",
                         "RTCPeerConnectionSdpSemanticsPlanB",
                         "RtcpMuxPolicyNegotiate",
-                        "RTPDataChannel",
                         "SharedArrayBufferConstructedWithoutIsolation",
                         "TextToSpeech_DisallowedByAutoplay",
                         "V8SharedArrayBufferConstructedInExtensionWithoutIsolation",
@@ -4804,6 +4800,11 @@
                             "name": "compatibilityMode",
                             "optional": true,
                             "$ref": "CompatibilityMode"
+                        },
+                        {
+                            "name": "assignedSlot",
+                            "optional": true,
+                            "$ref": "BackendNode"
                         }
                     ]
                 },
@@ -7469,21 +7470,6 @@
                             "type": "string"
                         }
                     ]
-                },
-                {
-                    "name": "getStorageKeyForFrame",
-                    "parameters": [
-                        {
-                            "name": "frameId",
-                            "$ref": "Page.FrameId"
-                        }
-                    ],
-                    "returns": [
-                        {
-                            "name": "storageKey",
-                            "$ref": "SerializedStorageKey"
-                        }
-                    ]
                 }
             ],
             "events": [
@@ -8315,6 +8301,17 @@
                             "items": {
                                 "$ref": "DisabledImageType"
                             }
+                        }
+                    ]
+                },
+                {
+                    "name": "setHardwareConcurrencyOverride",
+                    "experimental": true,
+                    "parameters": [
+                        {
+                            "name": "hardwareConcurrency",
+                            "description": "Hardware concurrency to report",
+                            "type": "integer"
                         }
                     ]
                 },
@@ -15008,13 +15005,13 @@
                         "ambient-light-sensor",
                         "attribution-reporting",
                         "autoplay",
+                        "bluetooth",
                         "browsing-topics",
                         "camera",
                         "ch-dpr",
                         "ch-device-memory",
                         "ch-downlink",
                         "ch-ect",
-                        "ch-partitioned-cookies",
                         "ch-prefers-color-scheme",
                         "ch-rtt",
                         "ch-save-data",
@@ -15993,7 +15990,6 @@
                         "ContentMediaDevicesDispatcherHost",
                         "ContentWebBluetooth",
                         "ContentWebUSB",
-                        "ContentMediaSession",
                         "ContentMediaSessionService",
                         "ContentScreenReader",
                         "EmbedderPopupBlockerTabHelper",
@@ -16585,7 +16581,7 @@
                         },
                         {
                             "name": "loaderId",
-                            "description": "Loader identifier.",
+                            "description": "Loader identifier. This is omitted in case of same-document navigation,\nas the previously committed loaderId would not change.",
                             "optional": true,
                             "$ref": "Network.LoaderId"
                         },
@@ -18930,6 +18926,22 @@
                 }
             ],
             "commands": [
+                {
+                    "name": "getStorageKeyForFrame",
+                    "description": "Returns a storage key given a frame id.",
+                    "parameters": [
+                        {
+                            "name": "frameId",
+                            "$ref": "Page.FrameId"
+                        }
+                    ],
+                    "returns": [
+                        {
+                            "name": "storageKey",
+                            "$ref": "SerializedStorageKey"
+                        }
+                    ]
+                },
                 {
                     "name": "clearDataForOrigin",
                     "description": "Clears storage for origin.",
@@ -21492,7 +21504,15 @@
             "commands": [
                 {
                     "name": "enable",
-                    "description": "Enable the WebAuthn domain and start intercepting credential storage and\nretrieval with a virtual authenticator."
+                    "description": "Enable the WebAuthn domain and start intercepting credential storage and\nretrieval with a virtual authenticator.",
+                    "parameters": [
+                        {
+                            "name": "enableUI",
+                            "description": "Whether to enable the WebAuthn user interface. Enabling the UI is\nrecommended for debugging and demo purposes, as it is closer to the real\nexperience. Disabling the UI is recommended for automated testing.\nSupported at the embedder's discretion if UI is available.\nDefaults to false.",
+                            "optional": true,
+                            "type": "boolean"
+                        }
+                    ]
                 },
                 {
                     "name": "disable",

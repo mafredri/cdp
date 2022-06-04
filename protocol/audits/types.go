@@ -527,7 +527,6 @@ const (
 	DeprecationIssueTypeCrossOriginWindowAlert                                    DeprecationIssueType = "CrossOriginWindowAlert"
 	DeprecationIssueTypeCrossOriginWindowConfirm                                  DeprecationIssueType = "CrossOriginWindowConfirm"
 	DeprecationIssueTypeCSSSelectorInternalMediaControlsOverlayCastButton         DeprecationIssueType = "CSSSelectorInternalMediaControlsOverlayCastButton"
-	DeprecationIssueTypeCustomCursorIntersectsViewport                            DeprecationIssueType = "CustomCursorIntersectsViewport"
 	DeprecationIssueTypeDeprecationExample                                        DeprecationIssueType = "DeprecationExample"
 	DeprecationIssueTypeDocumentDomainSettingWithoutOriginAgentClusterHeader      DeprecationIssueType = "DocumentDomainSettingWithoutOriginAgentClusterHeader"
 	DeprecationIssueTypeEventPath                                                 DeprecationIssueType = "EventPath"
@@ -538,7 +537,6 @@ const (
 	DeprecationIssueTypeInsecurePrivateNetworkSubresourceRequest                  DeprecationIssueType = "InsecurePrivateNetworkSubresourceRequest"
 	DeprecationIssueTypeLegacyConstraintGoogIPv6                                  DeprecationIssueType = "LegacyConstraintGoogIPv6"
 	DeprecationIssueTypeLocalCSSFileExtensionRejected                             DeprecationIssueType = "LocalCSSFileExtensionRejected"
-	DeprecationIssueTypeMediaElementAudioSourceNode                               DeprecationIssueType = "MediaElementAudioSourceNode"
 	DeprecationIssueTypeMediaSourceAbortRemove                                    DeprecationIssueType = "MediaSourceAbortRemove"
 	DeprecationIssueTypeMediaSourceDurationTruncatingBuffered                     DeprecationIssueType = "MediaSourceDurationTruncatingBuffered"
 	DeprecationIssueTypeNoSysexWebMIDIWithoutPermission                           DeprecationIssueType = "NoSysexWebMIDIWithoutPermission"
@@ -546,7 +544,6 @@ const (
 	DeprecationIssueTypeNotificationPermissionRequestedIframe                     DeprecationIssueType = "NotificationPermissionRequestedIframe"
 	DeprecationIssueTypeObsoleteWebRtcCipherSuite                                 DeprecationIssueType = "ObsoleteWebRtcCipherSuite"
 	DeprecationIssueTypePaymentRequestBasicCard                                   DeprecationIssueType = "PaymentRequestBasicCard"
-	DeprecationIssueTypePaymentRequestShowWithoutGesture                          DeprecationIssueType = "PaymentRequestShowWithoutGesture"
 	DeprecationIssueTypePictureSourceSrc                                          DeprecationIssueType = "PictureSourceSrc"
 	DeprecationIssueTypePrefixedCancelAnimationFrame                              DeprecationIssueType = "PrefixedCancelAnimationFrame"
 	DeprecationIssueTypePrefixedRequestAnimationFrame                             DeprecationIssueType = "PrefixedRequestAnimationFrame"
@@ -564,7 +561,6 @@ const (
 	DeprecationIssueTypeRTCPeerConnectionComplexPlanBSdpUsingDefaultSdpSemantics  DeprecationIssueType = "RTCPeerConnectionComplexPlanBSdpUsingDefaultSdpSemantics"
 	DeprecationIssueTypeRTCPeerConnectionSdpSemanticsPlanB                        DeprecationIssueType = "RTCPeerConnectionSdpSemanticsPlanB"
 	DeprecationIssueTypeRtcpMuxPolicyNegotiate                                    DeprecationIssueType = "RtcpMuxPolicyNegotiate"
-	DeprecationIssueTypeRTPDataChannel                                            DeprecationIssueType = "RTPDataChannel"
 	DeprecationIssueTypeSharedArrayBufferConstructedWithoutIsolation              DeprecationIssueType = "SharedArrayBufferConstructedWithoutIsolation"
 	DeprecationIssueTypeTextToSpeechDisallowedByAutoplay                          DeprecationIssueType = "TextToSpeech_DisallowedByAutoplay"
 	DeprecationIssueTypeV8SharedArrayBufferConstructedInExtensionWithoutIsolation DeprecationIssueType = "V8SharedArrayBufferConstructedInExtensionWithoutIsolation"
@@ -575,7 +571,7 @@ const (
 
 func (e DeprecationIssueType) Valid() bool {
 	switch e {
-	case "AuthorizationCoveredByWildcard", "CanRequestURLHTTPContainingNewline", "ChromeLoadTimesConnectionInfo", "ChromeLoadTimesFirstPaintAfterLoadTime", "ChromeLoadTimesWasAlternateProtocolAvailable", "CookieWithTruncatingChar", "CrossOriginAccessBasedOnDocumentDomain", "CrossOriginWindowAlert", "CrossOriginWindowConfirm", "CSSSelectorInternalMediaControlsOverlayCastButton", "CustomCursorIntersectsViewport", "DeprecationExample", "DocumentDomainSettingWithoutOriginAgentClusterHeader", "EventPath", "GeolocationInsecureOrigin", "GeolocationInsecureOriginDeprecatedNotRemoved", "GetUserMediaInsecureOrigin", "HostCandidateAttributeGetter", "InsecurePrivateNetworkSubresourceRequest", "LegacyConstraintGoogIPv6", "LocalCSSFileExtensionRejected", "MediaElementAudioSourceNode", "MediaSourceAbortRemove", "MediaSourceDurationTruncatingBuffered", "NoSysexWebMIDIWithoutPermission", "NotificationInsecureOrigin", "NotificationPermissionRequestedIframe", "ObsoleteWebRtcCipherSuite", "PaymentRequestBasicCard", "PaymentRequestShowWithoutGesture", "PictureSourceSrc", "PrefixedCancelAnimationFrame", "PrefixedRequestAnimationFrame", "PrefixedStorageInfo", "PrefixedVideoDisplayingFullscreen", "PrefixedVideoEnterFullscreen", "PrefixedVideoEnterFullScreen", "PrefixedVideoExitFullscreen", "PrefixedVideoExitFullScreen", "PrefixedVideoSupportsFullscreen", "RangeExpand", "RequestedSubresourceWithEmbeddedCredentials", "RTCConstraintEnableDtlsSrtpFalse", "RTCConstraintEnableDtlsSrtpTrue", "RTCPeerConnectionComplexPlanBSdpUsingDefaultSdpSemantics", "RTCPeerConnectionSdpSemanticsPlanB", "RtcpMuxPolicyNegotiate", "RTPDataChannel", "SharedArrayBufferConstructedWithoutIsolation", "TextToSpeech_DisallowedByAutoplay", "V8SharedArrayBufferConstructedInExtensionWithoutIsolation", "XHRJSONEncodingDetection", "XMLHttpRequestSynchronousInNonWorkerOutsideBeforeUnload", "XRSupportsSession":
+	case "AuthorizationCoveredByWildcard", "CanRequestURLHTTPContainingNewline", "ChromeLoadTimesConnectionInfo", "ChromeLoadTimesFirstPaintAfterLoadTime", "ChromeLoadTimesWasAlternateProtocolAvailable", "CookieWithTruncatingChar", "CrossOriginAccessBasedOnDocumentDomain", "CrossOriginWindowAlert", "CrossOriginWindowConfirm", "CSSSelectorInternalMediaControlsOverlayCastButton", "DeprecationExample", "DocumentDomainSettingWithoutOriginAgentClusterHeader", "EventPath", "GeolocationInsecureOrigin", "GeolocationInsecureOriginDeprecatedNotRemoved", "GetUserMediaInsecureOrigin", "HostCandidateAttributeGetter", "InsecurePrivateNetworkSubresourceRequest", "LegacyConstraintGoogIPv6", "LocalCSSFileExtensionRejected", "MediaSourceAbortRemove", "MediaSourceDurationTruncatingBuffered", "NoSysexWebMIDIWithoutPermission", "NotificationInsecureOrigin", "NotificationPermissionRequestedIframe", "ObsoleteWebRtcCipherSuite", "PaymentRequestBasicCard", "PictureSourceSrc", "PrefixedCancelAnimationFrame", "PrefixedRequestAnimationFrame", "PrefixedStorageInfo", "PrefixedVideoDisplayingFullscreen", "PrefixedVideoEnterFullscreen", "PrefixedVideoEnterFullScreen", "PrefixedVideoExitFullscreen", "PrefixedVideoExitFullScreen", "PrefixedVideoSupportsFullscreen", "RangeExpand", "RequestedSubresourceWithEmbeddedCredentials", "RTCConstraintEnableDtlsSrtpFalse", "RTCConstraintEnableDtlsSrtpTrue", "RTCPeerConnectionComplexPlanBSdpUsingDefaultSdpSemantics", "RTCPeerConnectionSdpSemanticsPlanB", "RtcpMuxPolicyNegotiate", "SharedArrayBufferConstructedWithoutIsolation", "TextToSpeech_DisallowedByAutoplay", "V8SharedArrayBufferConstructedInExtensionWithoutIsolation", "XHRJSONEncodingDetection", "XMLHttpRequestSynchronousInNonWorkerOutsideBeforeUnload", "XRSupportsSession":
 		return true
 	default:
 		return false

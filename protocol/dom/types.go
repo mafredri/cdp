@@ -154,6 +154,7 @@ type Node struct {
 	DistributedNodes  []BackendNode     `json:"distributedNodes,omitempty"`  // Distributed nodes for given insertion point.
 	IsSVG             *bool             `json:"isSVG,omitempty"`             // Whether the node is SVG.
 	CompatibilityMode CompatibilityMode `json:"compatibilityMode,omitempty"` // No description.
+	AssignedSlot      *BackendNode      `json:"assignedSlot,omitempty"`      // No description.
 }
 
 // RGBA A structure holding an RGBA color.

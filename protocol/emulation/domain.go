@@ -369,6 +369,19 @@ func (d *domainClient) SetDisabledImageTypes(ctx context.Context, args *SetDisab
 	return
 }
 
+// SetHardwareConcurrencyOverride invokes the Emulation method.
+func (d *domainClient) SetHardwareConcurrencyOverride(ctx context.Context, args *SetHardwareConcurrencyOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setHardwareConcurrencyOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setHardwareConcurrencyOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetHardwareConcurrencyOverride", Err: err}
+	}
+	return
+}
+
 // SetUserAgentOverride invokes the Emulation method. Allows overriding user
 // agent with the given string.
 func (d *domainClient) SetUserAgentOverride(ctx context.Context, args *SetUserAgentOverrideArgs) (err error) {

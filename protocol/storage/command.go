@@ -5,7 +5,25 @@ package storage
 import (
 	"github.com/mafredri/cdp/protocol/browser"
 	"github.com/mafredri/cdp/protocol/network"
+	"github.com/mafredri/cdp/protocol/page"
 )
+
+// GetStorageKeyForFrameArgs represents the arguments for GetStorageKeyForFrame in the Storage domain.
+type GetStorageKeyForFrameArgs struct {
+	FrameID page.FrameID `json:"frameId"` // No description.
+}
+
+// NewGetStorageKeyForFrameArgs initializes GetStorageKeyForFrameArgs with the required arguments.
+func NewGetStorageKeyForFrameArgs(frameID page.FrameID) *GetStorageKeyForFrameArgs {
+	args := new(GetStorageKeyForFrameArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// GetStorageKeyForFrameReply represents the return values for GetStorageKeyForFrame in the Storage domain.
+type GetStorageKeyForFrameReply struct {
+	StorageKey SerializedStorageKey `json:"storageKey"` // No description.
+}
 
 // ClearDataForOriginArgs represents the arguments for ClearDataForOrigin in the Storage domain.
 type ClearDataForOriginArgs struct {

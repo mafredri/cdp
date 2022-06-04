@@ -515,6 +515,18 @@ func NewSetDisabledImageTypesArgs(imageTypes []DisabledImageType) *SetDisabledIm
 	return args
 }
 
+// SetHardwareConcurrencyOverrideArgs represents the arguments for SetHardwareConcurrencyOverride in the Emulation domain.
+type SetHardwareConcurrencyOverrideArgs struct {
+	HardwareConcurrency int `json:"hardwareConcurrency"` // Hardware concurrency to report
+}
+
+// NewSetHardwareConcurrencyOverrideArgs initializes SetHardwareConcurrencyOverrideArgs with the required arguments.
+func NewSetHardwareConcurrencyOverrideArgs(hardwareConcurrency int) *SetHardwareConcurrencyOverrideArgs {
+	args := new(SetHardwareConcurrencyOverrideArgs)
+	args.HardwareConcurrency = hardwareConcurrency
+	return args
+}
+
 // SetUserAgentOverrideArgs represents the arguments for SetUserAgentOverride in the Emulation domain.
 type SetUserAgentOverrideArgs struct {
 	UserAgent      string  `json:"userAgent"`                // User agent to use.
