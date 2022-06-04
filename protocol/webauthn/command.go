@@ -2,6 +2,28 @@
 
 package webauthn
 
+// EnableArgs represents the arguments for Enable in the WebAuthn domain.
+type EnableArgs struct {
+	EnableUI *bool `json:"enableUI,omitempty"` // Whether to enable the WebAuthn user interface. Enabling the UI is recommended for debugging and demo purposes, as it is closer to the real experience. Disabling the UI is recommended for automated testing. Supported at the embedder's discretion if UI is available. Defaults to false.
+}
+
+// NewEnableArgs initializes EnableArgs with the required arguments.
+func NewEnableArgs() *EnableArgs {
+	args := new(EnableArgs)
+
+	return args
+}
+
+// SetEnableUI sets the EnableUI optional argument. Whether to enable
+// the WebAuthn user interface. Enabling the UI is recommended for
+// debugging and demo purposes, as it is closer to the real experience.
+// Disabling the UI is recommended for automated testing. Supported at
+// the embedder's discretion if UI is available. Defaults to false.
+func (a *EnableArgs) SetEnableUI(enableUI bool) *EnableArgs {
+	a.EnableUI = &enableUI
+	return a
+}
+
 // AddVirtualAuthenticatorArgs represents the arguments for AddVirtualAuthenticator in the WebAuthn domain.
 type AddVirtualAuthenticatorArgs struct {
 	Options VirtualAuthenticatorOptions `json:"options"` // No description.

@@ -1261,9 +1261,6 @@ type DOMStorage interface {
 	// Command SetDOMStorageItem
 	SetDOMStorageItem(context.Context, *domstorage.SetDOMStorageItemArgs) error
 
-	// Command GetStorageKeyForFrame
-	GetStorageKeyForFrame(context.Context, *domstorage.GetStorageKeyForFrameArgs) (*domstorage.GetStorageKeyForFrameReply, error)
-
 	// Event DOMStorageItemAdded
 	DOMStorageItemAdded(context.Context) (domstorage.ItemAddedClient, error)
 
@@ -1705,6 +1702,11 @@ type Emulation interface {
 	//
 	// Note: This command is experimental.
 	SetDisabledImageTypes(context.Context, *emulation.SetDisabledImageTypesArgs) error
+
+	// Command SetHardwareConcurrencyOverride
+	//
+	// Note: This command is experimental.
+	SetHardwareConcurrencyOverride(context.Context, *emulation.SetHardwareConcurrencyOverrideArgs) error
 
 	// Command SetUserAgentOverride
 	//
@@ -3847,6 +3849,11 @@ type ServiceWorker interface {
 //
 // Note: This domain is experimental.
 type Storage interface {
+	// Command GetStorageKeyForFrame
+	//
+	// Returns a storage key given a frame id.
+	GetStorageKeyForFrame(context.Context, *storage.GetStorageKeyForFrameArgs) (*storage.GetStorageKeyForFrameReply, error)
+
 	// Command ClearDataForOrigin
 	//
 	// Clears storage for origin.
@@ -4318,7 +4325,7 @@ type WebAuthn interface {
 	//
 	// Enable the WebAuthn domain and start intercepting credential
 	// storage and retrieval with a virtual authenticator.
-	Enable(context.Context) error
+	Enable(context.Context, *webauthn.EnableArgs) error
 
 	// Command Disable
 	//

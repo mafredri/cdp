@@ -22,8 +22,12 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 
 // Enable invokes the WebAuthn method. Enable the WebAuthn domain and start
 // intercepting credential storage and retrieval with a virtual authenticator.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "WebAuthn.enable", nil, nil, d.conn)
+func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "WebAuthn.enable", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "WebAuthn.enable", nil, nil, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "WebAuthn", Op: "Enable", Err: err}
 	}

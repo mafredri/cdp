@@ -18,6 +18,21 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
+// GetStorageKeyForFrame invokes the Storage method. Returns a storage key
+// given a frame id.
+func (d *domainClient) GetStorageKeyForFrame(ctx context.Context, args *GetStorageKeyForFrameArgs) (reply *GetStorageKeyForFrameReply, err error) {
+	reply = new(GetStorageKeyForFrameReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.getStorageKeyForFrame", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.getStorageKeyForFrame", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "GetStorageKeyForFrame", Err: err}
+	}
+	return
+}
+
 // ClearDataForOrigin invokes the Storage method. Clears storage for origin.
 func (d *domainClient) ClearDataForOrigin(ctx context.Context, args *ClearDataForOriginArgs) (err error) {
 	if args != nil {

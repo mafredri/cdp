@@ -93,20 +93,6 @@ func (d *domainClient) SetDOMStorageItem(ctx context.Context, args *SetDOMStorag
 	return
 }
 
-// GetStorageKeyForFrame invokes the DOMStorage method.
-func (d *domainClient) GetStorageKeyForFrame(ctx context.Context, args *GetStorageKeyForFrameArgs) (reply *GetStorageKeyForFrameReply, err error) {
-	reply = new(GetStorageKeyForFrameReply)
-	if args != nil {
-		err = rpcc.Invoke(ctx, "DOMStorage.getStorageKeyForFrame", args, reply, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "DOMStorage.getStorageKeyForFrame", nil, reply, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "DOMStorage", Op: "GetStorageKeyForFrame", Err: err}
-	}
-	return
-}
-
 func (d *domainClient) DOMStorageItemAdded(ctx context.Context) (ItemAddedClient, error) {
 	s, err := rpcc.NewStream(ctx, "DOMStorage.domStorageItemAdded", d.conn)
 	if err != nil {

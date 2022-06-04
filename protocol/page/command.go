@@ -371,7 +371,7 @@ func (a *NavigateArgs) SetReferrerPolicy(referrerPolicy ReferrerPolicy) *Navigat
 // NavigateReply represents the return values for Navigate in the Page domain.
 type NavigateReply struct {
 	FrameID   FrameID           `json:"frameId"`             // Frame id that has navigated (or failed to navigate)
-	LoaderID  *network.LoaderID `json:"loaderId,omitempty"`  // Loader identifier.
+	LoaderID  *network.LoaderID `json:"loaderId,omitempty"`  // Loader identifier. This is omitted in case of same-document navigation, as the previously committed loaderId would not change.
 	ErrorText *string           `json:"errorText,omitempty"` // User friendly error message, present if and only if navigation has failed.
 }
 
