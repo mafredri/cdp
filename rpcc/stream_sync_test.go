@@ -2,6 +2,7 @@ package rpcc
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"strings"
 	"sync"
@@ -81,9 +82,7 @@ func (s *fakeStream) Ready() <-chan struct{}      { return nil }
 func (s *fakeStream) RecvMsg(m interface{}) error { return nil }
 func (s *fakeStream) Close() error                { return nil }
 
-var (
-	_ Stream = (*fakeStream)(nil)
-)
+var _ Stream = (*fakeStream)(nil)
 
 func TestSyncError(t *testing.T) {
 	conn1, connCancel1 := newTestStreamConn()
@@ -149,7 +148,6 @@ func TestSyncError(t *testing.T) {
 				t.Error("Expected error, got nil")
 			}
 		})
-
 	}
 }
 
@@ -163,18 +161,25 @@ func TestStreamSyncNotifyDeadlock(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer s1.Close()
 	s2, err := NewStream(ctx, "test2", conn)
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer s2.Close()
 
-	go conn.notify("test1", []byte(`{"hello": "world"}`))
-	go conn.notify("test2", []byte(`{"hello": "world"}`))
-
-	// This could cause a deadlock due to competition for same mutexes:
-	// https://github.com/mafredri/cdp/issues/90
-	// https://github.com/mafredri/cdp/pull/91
-	err = Sync(s1, s2)
+	syncErr := make(chan error)
+	go func() {
+		// This could cause a deadlock due to competition for same mutexes:
+		// https://github.com/mafredri/cdp/issues/90
+		// https://github.com/mafredri/cdp/pull/91
+		syncErr <- Sync(s1, s2)
+	}()
+	for i := 0; i < 10; i++ {
+		conn.notify("test1", []byte(fmt.Sprintf(`{"hello": "world", "count": %d}`, i)))
+		conn.notify("test2", []byte(fmt.Sprintf(`{"hello": "world", "count": %d}`, i)))
+	}
+	err = <-syncErr
 	if err != nil {
 		t.Fatal(err)
 	}
