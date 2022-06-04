@@ -29,11 +29,9 @@ func (e *closeError) Closed() bool  { return true }
 func (e *closeError) Cause() error  { return e.err }
 func (e *closeError) Unwrap() error { return e.err }
 
-var (
-	// ErrConnClosing indicates that the operation is illegal because
-	// the connection is closing.
-	ErrConnClosing = &closeError{msg: "rpcc: the connection is closing"}
-)
+// ErrConnClosing indicates that the operation is illegal because
+// the connection is closing.
+var ErrConnClosing = &closeError{msg: "rpcc: the connection is closing"}
 
 const (
 	defaultWriteBufferSize = 4096
@@ -313,9 +311,7 @@ func (e *ResponseError) Error() string {
 	return fmt.Sprintf("rpc error: %s (code = %d%s)", e.Message, e.Code, data)
 }
 
-var (
-	_ error = (*ResponseError)(nil)
-)
+var _ error = (*ResponseError)(nil)
 
 // Context returns the underlying context for this connection.
 func (c *Conn) Context() context.Context {

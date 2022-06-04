@@ -7,11 +7,9 @@ import (
 	"sync"
 )
 
-var (
-	// ErrStreamClosing indicates that the operation is illegal because
-	// the stream is closing and there are no pending messages.
-	ErrStreamClosing = &closeError{msg: "rpcc: the stream is closing"}
-)
+// ErrStreamClosing indicates that the operation is illegal because
+// the stream is closing and there are no pending messages.
+var ErrStreamClosing = &closeError{msg: "rpcc: the stream is closing"}
 
 // message contains the invoked method name, data and next func.
 type message struct {

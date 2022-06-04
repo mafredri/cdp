@@ -34,7 +34,7 @@ func panicErr(err error) {
 }
 
 func mkdir(name string) error {
-	err := os.Mkdir(name, 0755)
+	err := os.Mkdir(name, 0o755)
 	if os.IsExist(err) {
 		return nil
 	}
@@ -280,7 +280,7 @@ func (g *Generator) writeFile(f string) {
 		return
 	}
 	log.Printf("Writing %s...", fp)
-	err := ioutil.WriteFile(fp, g.format(), 0644)
+	err := ioutil.WriteFile(fp, g.format(), 0o644)
 	panicErr(err)
 
 	if g.testbuf.Len() > 0 {
@@ -291,7 +291,7 @@ func (g *Generator) writeFile(f string) {
 		fptest := strings.Replace(fp, ".go", "_test.go", 1)
 		log.Printf("Writing %s...", fptest)
 
-		err = ioutil.WriteFile(fptest, g.format(), 0644)
+		err = ioutil.WriteFile(fptest, g.format(), 0o644)
 		panicErr(err)
 	}
 	g.clear()

@@ -42,9 +42,11 @@ type wrapped struct {
 	msg string
 }
 
-var _ error = (*wrapped)(nil)
-var _ causer = (*wrapped)(nil)
-var _ wrapper = (*wrapped)(nil)
+var (
+	_ error   = (*wrapped)(nil)
+	_ causer  = (*wrapped)(nil)
+	_ wrapper = (*wrapped)(nil)
+)
 
 func (e *wrapped) Error() string { return fmt.Sprintf("%s: %s", e.msg, e.err.Error()) }
 func (e *wrapped) Cause() error  { return e.err }
@@ -69,9 +71,11 @@ type merged struct {
 	s []error
 }
 
-var _ error = (*merged)(nil)
-var _ causer = (*merged)(nil)
-var _ wrapper = (*merged)(nil)
+var (
+	_ error   = (*merged)(nil)
+	_ causer  = (*merged)(nil)
+	_ wrapper = (*merged)(nil)
+)
 
 func (e *merged) Error() string {
 	var s strings.Builder
