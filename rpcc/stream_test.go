@@ -76,7 +76,6 @@ func TestStream_Ready(t *testing.T) {
 			if closeEarly {
 				s.Close()
 			}
-
 		}()
 
 		for i := 0; i < 10; i++ {

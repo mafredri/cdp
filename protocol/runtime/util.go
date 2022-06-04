@@ -14,9 +14,7 @@ func (r ExceptionDetails) Error() string {
 	return fmt.Sprintf("runtime.ExceptionDetails: %s exception at %d:%d%s", r.Text, r.LineNumber, r.ColumnNumber, desc)
 }
 
-var (
-	_ error = (*ExceptionDetails)(nil)
-)
+var _ error = (*ExceptionDetails)(nil)
 
 // String returns a human readable string of a runtime object.
 func (r RemoteObject) String() string {

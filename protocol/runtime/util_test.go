@@ -48,7 +48,7 @@ func TestRuntimeRemoteObject_String(t *testing.T) {
 
 	if got := buf.Bytes(); !bytes.Equal(got, want) {
 		if *update {
-			err := ioutil.WriteFile(out, got, 0666)
+			err := ioutil.WriteFile(out, got, 0o666)
 			if err != nil {
 				t.Error(err)
 			}

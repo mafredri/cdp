@@ -19,9 +19,7 @@ type wsReadWriteCloser struct {
 	r io.Reader
 }
 
-var (
-	_ io.ReadWriteCloser = (*wsReadWriteCloser)(nil)
-)
+var _ io.ReadWriteCloser = (*wsReadWriteCloser)(nil)
 
 // Read calls Read on the WebSocket Reader and requests the NextReader
 // when io.EOF is encountered. Imlpements io.Reader.

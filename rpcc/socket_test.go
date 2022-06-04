@@ -21,12 +21,14 @@ func (c *fakeSocketConn) NextReader() (int, io.Reader, error) {
 	c.reader = new(fakeReader)
 	return 0, c.reader, nil
 }
+
 func (c *fakeSocketConn) NextWriter(int) (io.WriteCloser, error) {
 	c.nextWriterCount++
 	c.writer = new(fakeWriteCloser)
 	c.writer.err = c.writerErr
 	return c.writer, c.nextWriterErr
 }
+
 func (c *fakeSocketConn) Close() error {
 	c.closed = true
 	return nil
@@ -54,6 +56,7 @@ func (c *fakeWriteCloser) Write(p []byte) (n int, err error) {
 	c.count++
 	return c.n, c.err
 }
+
 func (c *fakeWriteCloser) Close() error {
 	c.closed = true
 	return c.err

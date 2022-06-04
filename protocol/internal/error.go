@@ -25,8 +25,10 @@ func (e *OpError) Unwrap() error {
 	return e.Err
 }
 
-type causer interface{ Cause() error }
-type wrapper interface{ Unwrap() error }
+type (
+	causer  interface{ Cause() error }
+	wrapper interface{ Unwrap() error }
+)
 
 var (
 	_ error   = (*OpError)(nil)

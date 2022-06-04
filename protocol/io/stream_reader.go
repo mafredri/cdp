@@ -18,16 +18,15 @@ type StreamReader struct {
 	eof   bool
 }
 
-var (
-	_ io.ReadCloser = (*StreamReader)(nil)
-)
+var _ io.ReadCloser = (*StreamReader)(nil)
 
 // NewStreamReader returns a reader for io.Streams that implements io.Reader
 // from the standard library.
 func NewStreamReader(ctx context.Context, ioClient interface {
 	Read(context.Context, *ReadArgs) (*ReadReply, error)
 	Close(context.Context, *CloseArgs) error
-}, handle StreamHandle) *StreamReader {
+}, handle StreamHandle,
+) *StreamReader {
 	args := NewReadArgs(handle)
 	return &StreamReader{
 		next: func(pos, size int) (*ReadReply, error) {

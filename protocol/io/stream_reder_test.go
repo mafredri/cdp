@@ -70,6 +70,7 @@ func (c *streamReaderTestClient) Read(context.Context, *ReadArgs) (*ReadReply, e
 	c.reply = c.reply[1:]
 	return &reply, nil
 }
+
 func (c *streamReaderTestClient) Close(context.Context, *CloseArgs) error {
 	return c.close
 }

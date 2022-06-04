@@ -143,7 +143,7 @@ func run(timeout time.Duration) error {
 	if err != nil {
 		return err
 	}
-	if err = ioutil.WriteFile(screenshotName, screenshot.Data, 0644); err != nil {
+	if err = ioutil.WriteFile(screenshotName, screenshot.Data, 0o644); err != nil {
 		return err
 	}
 

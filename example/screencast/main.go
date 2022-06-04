@@ -88,7 +88,7 @@ func run() error {
 
 			// Write the frame to file (without blocking).
 			go func() {
-				err = ioutil.WriteFile(name, ev.Data, 0644)
+				err = ioutil.WriteFile(name, ev.Data, 0o644)
 				if err != nil {
 					log.Printf("Failed to write ScreencastFrame to %q: %v", name, err)
 				}

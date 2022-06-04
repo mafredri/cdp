@@ -404,10 +404,13 @@ func cleanDescription(d string, indent, startOffset int) string {
 		old string
 		new string
 	}{
-		{"<code>", ""}, {"</code>", ""},
+		{"<code>", ""},
+		{"</code>", ""},
 		// <p> is only used by DOM description.
-		{"<p>", "\n\n"}, {"</p>", ""},
-		{"&lt;", "<"}, {"&gt;", ">"},
+		{"<p>", "\n\n"},
+		{"</p>", ""},
+		{"&lt;", "<"},
+		{"&gt;", ">"},
 		// Fix typo...
 		{"&gt ", "> "},
 	}

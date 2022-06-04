@@ -194,9 +194,7 @@ func TestManager_NewOnClosedConn(t *testing.T) {
 	}
 }
 
-var (
-	browserFlag = flag.Bool("browser", false, "Test with browser")
-)
+var browserFlag = flag.Bool("browser", false, "Test with browser")
 
 func TestMain(m *testing.M) {
 	flag.Parse()
