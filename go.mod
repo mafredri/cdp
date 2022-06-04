@@ -11,4 +11,5 @@ require (
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 	golang.org/x/sys v0.0.0-20210319071255-635bc2c9138d // indirect
 	golang.org/x/tools v0.1.0 // indirect
+	nhooyr.io/websocket v1.8.7
 )
