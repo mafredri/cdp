@@ -3,6 +3,7 @@ package devtool
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net"
@@ -93,11 +94,15 @@ func (d *DevTools) CreateURL(ctx context.Context, openURL string) (*Target, erro
 	}
 	defer resp.Body.Close()
 
+	if ok, err := d.handleNodeUnsupportedMethod(ctx, resp, "CreateURL"); ok {
+		return nil, err
+	}
+
 	switch resp.StatusCode {
 	// Returned by Headless Chrome that does
 	// not support the "/json/new" endpoint.
 	case http.StatusInternalServerError:
-		err2 := parseError("CreateUrl: StatusInternalServerError", resp.Body)
+		err2 := parseError("CreateURL: StatusInternalServerError", resp.Body)
 
 		v, err := d.Version(ctx)
 		if err != nil {
@@ -160,6 +165,10 @@ func (d *DevTools) Activate(ctx context.Context, t *Target) error {
 	}
 	defer resp.Body.Close()
 
+	if ok, err := d.handleNodeUnsupportedMethod(ctx, resp, "Activate"); ok {
+		return err
+	}
+
 	if resp.StatusCode != http.StatusOK {
 		return parseError("Activate", resp.Body)
 	}
@@ -174,6 +183,10 @@ func (d *DevTools) Close(ctx context.Context, t *Target) error {
 		return err
 	}
 	defer resp.Body.Close()
+
+	if ok, err := d.handleNodeUnsupportedMethod(ctx, resp, "Close"); ok {
+		return err
+	}
 
 	if resp.StatusCode != http.StatusOK {
 		return parseError("Close", resp.Body)
@@ -299,6 +312,25 @@ func (d *DevTools) resolveHost(ctx context.Context) error {
 	d.url = newURL
 
 	return nil
+}
+
+// handleNodeUnsupportedMethod returns a nicer error message for
+// unsupported methods when used with Node.js.
+func (d *DevTools) handleNodeUnsupportedMethod(ctx context.Context, resp *http.Response, from string) (ok bool, err error) {
+	if resp.StatusCode != http.StatusBadRequest {
+		return false, nil
+	}
+
+	v, err := d.Version(ctx)
+	if err != nil {
+		return false, nil
+	}
+
+	if strings.HasPrefix(v.Browser, "node.js") {
+		return true, parseError(fmt.Sprintf("%s: not supported by Node.js", from), resp.Body)
+	}
+
+	return false, nil
 }
 
 func parseError(from string, r io.Reader) error {
