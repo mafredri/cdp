@@ -88,7 +88,7 @@ func (d *DevTools) CreateURL(ctx context.Context, openURL string) (*Target, erro
 		escapedQueryURL = "?" + url.QueryEscape(openURL)
 	}
 
-	resp, err := d.httpGet(ctx, "/json/new"+escapedQueryURL)
+	resp, err := d.httpPut(ctx, "/json/new"+escapedQueryURL)
 	if err != nil {
 		return nil, err
 	}
@@ -143,7 +143,7 @@ func (d *DevTools) Get(ctx context.Context, typ Type) (*Target, error) {
 
 // List returns a list with all devtools Targets.
 func (d *DevTools) List(ctx context.Context) ([]*Target, error) {
-	resp, err := d.httpGet(ctx, "/json/list")
+	resp, err := d.httpPut(ctx, "/json/list")
 	if err != nil {
 		return nil, err
 	}
@@ -159,7 +159,7 @@ func (d *DevTools) List(ctx context.Context) ([]*Target, error) {
 
 // Activate brings focus to the Target.
 func (d *DevTools) Activate(ctx context.Context, t *Target) error {
-	resp, err := d.httpGet(ctx, "/json/activate/"+t.ID)
+	resp, err := d.httpPut(ctx, "/json/activate/"+t.ID)
 	if err != nil {
 		return err
 	}
@@ -178,7 +178,7 @@ func (d *DevTools) Activate(ctx context.Context, t *Target) error {
 
 // Close the Target.
 func (d *DevTools) Close(ctx context.Context, t *Target) error {
-	resp, err := d.httpGet(ctx, "/json/close/"+t.ID)
+	resp, err := d.httpPut(ctx, "/json/close/"+t.ID)
 	if err != nil {
 		return err
 	}
@@ -215,7 +215,7 @@ type Version struct {
 
 // Version returns the version information for the DevTools endpoint.
 func (d *DevTools) Version(ctx context.Context) (*Version, error) {
-	resp, err := d.httpGet(ctx, "/json/version")
+	resp, err := d.httpPut(ctx, "/json/version")
 	if err != nil {
 		return nil, err
 	}
@@ -229,7 +229,7 @@ func (d *DevTools) Version(ctx context.Context) (*Version, error) {
 	return v, json.NewDecoder(resp.Body).Decode(&v)
 }
 
-func (d *DevTools) httpGet(ctx context.Context, path string) (*http.Response, error) {
+func (d *DevTools) httpPut(ctx context.Context, path string) (*http.Response, error) {
 	if ctx == nil {
 		ctx = context.Background()
 	}
@@ -239,7 +239,19 @@ func (d *DevTools) httpGet(ctx context.Context, path string) (*http.Response, er
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodGet, d.url+path, nil)
+	// New versions of Chromium require PUT requests as a security measure.
+	req, err := http.NewRequest(http.MethodPut, d.url+path, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := d.client.Do(req.WithContext(ctx))
+	if err == nil {
+		return resp, nil
+	}
+
+	// Fallback to old method, use GET request.
+	req, err = http.NewRequest(http.MethodGet, d.url+path, nil)
 	if err != nil {
 		return nil, err
 	}
