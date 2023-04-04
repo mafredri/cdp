@@ -67,6 +67,7 @@ func TestDevTools_HeadlessCreateURL(t *testing.T) {
 		h: []http.Handler{
 			&testHandler{hostnameLookup: true},
 			&testHandler{status: 500},
+			&testHandler{status: 500}, // Two tries because of Node fallback.
 			&testHandler{status: 200, body: []byte(`{
 				"Browser": "HeadlessChrome/60.0.3578.30"
 			}`)},
@@ -98,6 +99,7 @@ func TestDevTools_HeadlessCreateURLFail(t *testing.T) {
 		t: t,
 		h: []http.Handler{
 			&testHandler{status: 500},
+			&testHandler{status: 500}, // Two tries because of Node fallback.
 			&testHandler{status: 200, body: []byte(`{
 				"Browser": "HeadlessChrome/71.0.3578.30",
 				"webSocketDebuggerUrl": "ws://localhost:9222/devtools/browser/14731399-e013-4802-a8b6-500b3870288e"

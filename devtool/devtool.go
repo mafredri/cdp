@@ -247,7 +247,11 @@ func (d *DevTools) httpPut(ctx context.Context, path string) (*http.Response, er
 
 	resp, err := d.client.Do(req.WithContext(ctx))
 	if err == nil {
-		return resp, nil
+		// Node.js returns status 400 for PUT requests.
+		if resp.StatusCode < 400 {
+			return resp, nil
+		}
+		resp.Body.Close()
 	}
 
 	// Fallback to old method, use GET request.
