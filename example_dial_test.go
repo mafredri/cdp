@@ -6,7 +6,7 @@ import (
 	"io"
 	"log"
 
-	"nhooyr.io/websocket"
+	"github.com/coder/websocket"
 
 	"github.com/mafredri/cdp"
 	"github.com/mafredri/cdp/devtool"
