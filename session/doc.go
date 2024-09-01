@@ -1,5 +1,4 @@
 /*
-
 Package session implements a session Manager for establishing session
 connections to targets (via the Target domain). Session connections allow a
 single websocket connection (from the provided cdp.Client) to be used for
@@ -38,6 +37,5 @@ Manager by checking the error channel.
 		}
 		// Manager is closed.
 	}()
-
 */
 package session

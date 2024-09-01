@@ -1,5 +1,4 @@
 /*
-
 Package rpcc provides an RPC client connection with support for the
 JSON-RPC 2.0 specification, not including Batch requests. Server side
 RPC notifications are also supported.
@@ -34,7 +33,7 @@ over other protocols.
 	conn, err := rpcc.Dial("127.0.0.1:9999", rpcc.WithDialer(netDial))
 	// ...
 
-Communicating with the server
+# Communicating with the server
 
 Send a request using Invoke:
 
@@ -69,6 +68,5 @@ When order is important, two streams can be synchronized with Sync:
 	if err != nil {
 		// Handle error.
 	}
-
 */
 package rpcc

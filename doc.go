@@ -1,5 +1,4 @@
 /*
-
 Package cdp provides type-safe bindings for the Chrome DevTools
 Protocol (CDP) and can be used with any debug target that implements it.
 
@@ -28,7 +27,7 @@ devtool documentation for more):
 	conn, err := rpcc.Dial(pg.WebSocketDebuggerURL)
 	// ...
 
-Domain methods
+# Domain methods
 
 Domain methods are used to perform actions or request data over the
 Chrome DevTools Protocol.
@@ -42,7 +41,7 @@ Methods can be invoked from the Client:
 	}
 	// ...
 
-Domain events
+# Domain events
 
 Event clients are used to handle events sent over the protocol. A client
 will buffer all events, preserving order, after creation until it is
@@ -139,7 +138,6 @@ single websocket connection.
 
 	newPageClient := cdp.NewClient(newPageConn)
 	// ...
-
 */
 package cdp
 

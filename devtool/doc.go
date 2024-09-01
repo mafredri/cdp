@@ -1,5 +1,4 @@
 /*
-
 Package devtool provides methods for interacting with a DevTools
 endpoint.
 
@@ -37,6 +36,5 @@ Set request timeouts via contexts:
 		// Handle error.
 	}
 	// ...
-
 */
 package devtool
