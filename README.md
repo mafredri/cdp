@@ -1,6 +1,6 @@
 # cdp
 
-[![Build Status][travis-badge]][travis] [![Coverage Status][codecov-badge]][codecov] [![Go Report Card][goreportcard-badge]][goreportcard] [![GoDoc][godoc-badge]][godoc]
+[![Coverage Status][codecov-badge]][codecov] [![Go Report Card][goreportcard-badge]][goreportcard] [![GoDoc][gopkg-badge]][gopkg]
 
 Package `cdp` provides type-safe bindings for the [Chrome DevTools Protocol][chrome-devtools-protocol] (CDP), written in the Go programming language. The bindings are generated (by [cdpgen][cdpgen]) from the latest [tip-of-tree (tot)][tip-of-tree] protocol definitions and are mainly intended for use with Google Chrome or Chromium, however, they can be used with any debug target ([Node.js][node-debugging], [Edge DevTools Protocol][edge-devtools-protocol], [Safari][ios-webkit-debug-proxy], etc.) that implement the protocol.
 
@@ -29,7 +29,7 @@ $ go get -u github.com/mafredri/cdp
 
 ## Documentation
 
-See [API documentation][godoc] for package, API descriptions and examples. Examples can also be found in this repository, see the [simple][simple-example], [advanced][advanced-example], [logging][logging-example] and [incognito][incognito-example] examples.
+See [API documentation][gopkg] for package, API descriptions and examples. Examples can also be found in this repository, see the [simple][simple-example], [advanced][advanced-example], [logging][logging-example] and [incognito][incognito-example] examples.
 
 ## Usage
 
@@ -217,5 +217,5 @@ The Go implementation of gRPC ([grpc-go](https://github.com/grpc/grpc-go)) has b
 [codecov-badge]: https://codecov.io/gh/mafredri/cdp/branch/master/graph/badge.svg
 [goreportcard]: https://goreportcard.com/report/github.com/mafredri/cdp
 [goreportcard-badge]: https://goreportcard.com/badge/github.com/mafredri/cdp
-[godoc]: https://godoc.org/github.com/mafredri/cdp
-[godoc-badge]: https://godoc.org/mafredri/cdp?status.svg
+[gopkg]: https://pkg.go.dev/github.com/mafredri/cdp
+[gopkg-badge]: https://pkg.go.dev/badge/mafredri/cdp
