@@ -134,6 +134,33 @@ func (d *domainClient) SetDeviceMetricsOverride(ctx context.Context, args *SetDe
 	return
 }
 
+// SetDevicePostureOverride invokes the Emulation method. Start reporting the
+// given posture value to the Device Posture API. This override can also be set
+// in setDeviceMetricsOverride().
+func (d *domainClient) SetDevicePostureOverride(ctx context.Context, args *SetDevicePostureOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setDevicePostureOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setDevicePostureOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetDevicePostureOverride", Err: err}
+	}
+	return
+}
+
+// ClearDevicePostureOverride invokes the Emulation method. Clears a device
+// posture override set with either setDeviceMetricsOverride() or
+// setDevicePostureOverride() and starts using posture information from the
+// platform again. Does nothing if no override is set.
+func (d *domainClient) ClearDevicePostureOverride(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Emulation.clearDevicePostureOverride", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "ClearDevicePostureOverride", Err: err}
+	}
+	return
+}
+
 // SetScrollbarsHidden invokes the Emulation method.
 func (d *domainClient) SetScrollbarsHidden(ctx context.Context, args *SetScrollbarsHiddenArgs) (err error) {
 	if args != nil {
@@ -212,6 +239,86 @@ func (d *domainClient) SetGeolocationOverride(ctx context.Context, args *SetGeol
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetGeolocationOverride", Err: err}
+	}
+	return
+}
+
+// GetOverriddenSensorInformation invokes the Emulation method.
+func (d *domainClient) GetOverriddenSensorInformation(ctx context.Context, args *GetOverriddenSensorInformationArgs) (reply *GetOverriddenSensorInformationReply, err error) {
+	reply = new(GetOverriddenSensorInformationReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.getOverriddenSensorInformation", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.getOverriddenSensorInformation", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "GetOverriddenSensorInformation", Err: err}
+	}
+	return
+}
+
+// SetSensorOverrideEnabled invokes the Emulation method. Overrides a platform
+// sensor of a given type. If |enabled| is true, calls to Sensor.start() will
+// use a virtual sensor as backend rather than fetching data from a real
+// hardware sensor. Otherwise, existing virtual sensor-backend Sensor objects
+// will fire an error event and new calls to Sensor.start() will attempt to use
+// a real sensor instead.
+func (d *domainClient) SetSensorOverrideEnabled(ctx context.Context, args *SetSensorOverrideEnabledArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setSensorOverrideEnabled", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setSensorOverrideEnabled", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetSensorOverrideEnabled", Err: err}
+	}
+	return
+}
+
+// SetSensorOverrideReadings invokes the Emulation method. Updates the sensor
+// readings reported by a sensor type previously overridden by
+// setSensorOverrideEnabled.
+func (d *domainClient) SetSensorOverrideReadings(ctx context.Context, args *SetSensorOverrideReadingsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setSensorOverrideReadings", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setSensorOverrideReadings", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetSensorOverrideReadings", Err: err}
+	}
+	return
+}
+
+// SetPressureSourceOverrideEnabled invokes the Emulation method. Overrides a
+// pressure source of a given type, as used by the Compute Pressure API, so
+// that updates to PressureObserver.observe() are provided via
+// setPressureStateOverride instead of being retrieved from platform-provided
+// telemetry data.
+func (d *domainClient) SetPressureSourceOverrideEnabled(ctx context.Context, args *SetPressureSourceOverrideEnabledArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setPressureSourceOverrideEnabled", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setPressureSourceOverrideEnabled", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetPressureSourceOverrideEnabled", Err: err}
+	}
+	return
+}
+
+// SetPressureStateOverride invokes the Emulation method. Provides a given
+// pressure state that will be processed and eventually be delivered to
+// PressureObserver users. |source| must have been previously overridden by
+// setPressureSourceOverrideEnabled.
+func (d *domainClient) SetPressureStateOverride(ctx context.Context, args *SetPressureStateOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setPressureStateOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setPressureStateOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetPressureStateOverride", Err: err}
 	}
 	return
 }
@@ -383,7 +490,8 @@ func (d *domainClient) SetHardwareConcurrencyOverride(ctx context.Context, args 
 }
 
 // SetUserAgentOverride invokes the Emulation method. Allows overriding user
-// agent with the given string.
+// agent with the given string. `userAgentMetadata` must be set for Client Hint
+// headers to be sent.
 func (d *domainClient) SetUserAgentOverride(ctx context.Context, args *SetUserAgentOverrideArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Emulation.setUserAgentOverride", args, nil, d.conn)

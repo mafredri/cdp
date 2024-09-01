@@ -82,18 +82,6 @@ func (a *RemoveEventListenerBreakpointArgs) SetTargetName(targetName string) *Re
 	return a
 }
 
-// RemoveInstrumentationBreakpointArgs represents the arguments for RemoveInstrumentationBreakpoint in the DOMDebugger domain.
-type RemoveInstrumentationBreakpointArgs struct {
-	EventName string `json:"eventName"` // Instrumentation name to stop on.
-}
-
-// NewRemoveInstrumentationBreakpointArgs initializes RemoveInstrumentationBreakpointArgs with the required arguments.
-func NewRemoveInstrumentationBreakpointArgs(eventName string) *RemoveInstrumentationBreakpointArgs {
-	args := new(RemoveInstrumentationBreakpointArgs)
-	args.EventName = eventName
-	return args
-}
-
 // RemoveXHRBreakpointArgs represents the arguments for RemoveXHRBreakpoint in the DOMDebugger domain.
 type RemoveXHRBreakpointArgs struct {
 	URL string `json:"url"` // Resource URL substring.
@@ -157,18 +145,6 @@ func NewSetEventListenerBreakpointArgs(eventName string) *SetEventListenerBreakp
 func (a *SetEventListenerBreakpointArgs) SetTargetName(targetName string) *SetEventListenerBreakpointArgs {
 	a.TargetName = &targetName
 	return a
-}
-
-// SetInstrumentationBreakpointArgs represents the arguments for SetInstrumentationBreakpoint in the DOMDebugger domain.
-type SetInstrumentationBreakpointArgs struct {
-	EventName string `json:"eventName"` // Instrumentation name to stop on.
-}
-
-// NewSetInstrumentationBreakpointArgs initializes SetInstrumentationBreakpointArgs with the required arguments.
-func NewSetInstrumentationBreakpointArgs(eventName string) *SetInstrumentationBreakpointArgs {
-	args := new(SetInstrumentationBreakpointArgs)
-	args.EventName = eventName
-	return args
 }
 
 // SetXHRBreakpointArgs represents the arguments for SetXHRBreakpoint in the DOMDebugger domain.

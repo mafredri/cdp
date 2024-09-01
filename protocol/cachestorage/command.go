@@ -2,6 +2,10 @@
 
 package cachestorage
 
+import (
+	"github.com/mafredri/cdp/protocol/storage"
+)
+
 // DeleteCacheArgs represents the arguments for DeleteCache in the CacheStorage domain.
 type DeleteCacheArgs struct {
 	CacheID CacheID `json:"cacheId"` // Id of cache for deletion.
@@ -30,14 +34,37 @@ func NewDeleteEntryArgs(cacheID CacheID, request string) *DeleteEntryArgs {
 
 // RequestCacheNamesArgs represents the arguments for RequestCacheNames in the CacheStorage domain.
 type RequestCacheNamesArgs struct {
-	SecurityOrigin string `json:"securityOrigin"` // Security origin.
+	SecurityOrigin *string         `json:"securityOrigin,omitempty"` // At least and at most one of securityOrigin, storageKey, storageBucket must be specified. Security origin.
+	StorageKey     *string         `json:"storageKey,omitempty"`     // Storage key.
+	StorageBucket  *storage.Bucket `json:"storageBucket,omitempty"`  // Storage bucket. If not specified, it uses the default bucket.
 }
 
 // NewRequestCacheNamesArgs initializes RequestCacheNamesArgs with the required arguments.
-func NewRequestCacheNamesArgs(securityOrigin string) *RequestCacheNamesArgs {
+func NewRequestCacheNamesArgs() *RequestCacheNamesArgs {
 	args := new(RequestCacheNamesArgs)
-	args.SecurityOrigin = securityOrigin
+
 	return args
+}
+
+// SetSecurityOrigin sets the SecurityOrigin optional argument. At
+// least and at most one of securityOrigin, storageKey, storageBucket
+// must be specified. Security origin.
+func (a *RequestCacheNamesArgs) SetSecurityOrigin(securityOrigin string) *RequestCacheNamesArgs {
+	a.SecurityOrigin = &securityOrigin
+	return a
+}
+
+// SetStorageKey sets the StorageKey optional argument. Storage key.
+func (a *RequestCacheNamesArgs) SetStorageKey(storageKey string) *RequestCacheNamesArgs {
+	a.StorageKey = &storageKey
+	return a
+}
+
+// SetStorageBucket sets the StorageBucket optional argument. Storage
+// bucket. If not specified, it uses the default bucket.
+func (a *RequestCacheNamesArgs) SetStorageBucket(storageBucket storage.Bucket) *RequestCacheNamesArgs {
+	a.StorageBucket = &storageBucket
+	return a
 }
 
 // RequestCacheNamesReply represents the return values for RequestCacheNames in the CacheStorage domain.

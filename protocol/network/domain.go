@@ -119,7 +119,7 @@ func (d *domainClient) ContinueInterceptedRequest(ctx context.Context, args *Con
 }
 
 // DeleteCookies invokes the Network method. Deletes browser cookies with
-// matching name and url or domain/path pair.
+// matching name and url or domain/path/partitionKey pair.
 func (d *domainClient) DeleteCookies(ctx context.Context, args *DeleteCookiesArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Network.deleteCookies", args, nil, d.conn)
@@ -172,7 +172,7 @@ func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error)
 
 // GetAllCookies invokes the Network method. Returns all browser cookies.
 // Depending on the backend support, will return detailed cookie information in
-// the `cookies` field.
+// the `cookies` field. Deprecated. Use Storage.getCookies instead.
 func (d *domainClient) GetAllCookies(ctx context.Context) (reply *GetAllCookiesReply, err error) {
 	reply = new(GetAllCookiesReply)
 	err = rpcc.Invoke(ctx, "Network.getAllCookies", nil, reply, d.conn)
@@ -415,6 +415,22 @@ func (d *domainClient) SetRequestInterception(ctx context.Context, args *SetRequ
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "SetRequestInterception", Err: err}
+	}
+	return
+}
+
+// StreamResourceContent invokes the Network method. Enables streaming of the
+// response for the given requestId. If enabled, the dataReceived event
+// contains the data that was received during streaming.
+func (d *domainClient) StreamResourceContent(ctx context.Context, args *StreamResourceContentArgs) (reply *StreamResourceContentReply, err error) {
+	reply = new(StreamResourceContentReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.streamResourceContent", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.streamResourceContent", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "StreamResourceContent", Err: err}
 	}
 	return
 }
@@ -927,6 +943,27 @@ func (c *responseReceivedExtraInfoClient) Recv() (*ResponseReceivedExtraInfoRepl
 	return event, nil
 }
 
+func (d *domainClient) ResponseReceivedEarlyHints(ctx context.Context) (ResponseReceivedEarlyHintsClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.responseReceivedEarlyHints", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &responseReceivedEarlyHintsClient{Stream: s}, nil
+}
+
+type responseReceivedEarlyHintsClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *responseReceivedEarlyHintsClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *responseReceivedEarlyHintsClient) Recv() (*ResponseReceivedEarlyHintsReply, error) {
+	event := new(ResponseReceivedEarlyHintsReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "ResponseReceivedEarlyHints Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) TrustTokenOperationDone(ctx context.Context) (TrustTokenOperationDoneClient, error) {
 	s, err := rpcc.NewStream(ctx, "Network.trustTokenOperationDone", d.conn)
 	if err != nil {
@@ -944,6 +981,27 @@ func (c *trustTokenOperationDoneClient) Recv() (*TrustTokenOperationDoneReply, e
 	event := new(TrustTokenOperationDoneReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Network", Op: "TrustTokenOperationDone Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) PolicyUpdated(ctx context.Context) (PolicyUpdatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.policyUpdated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &policyUpdatedClient{Stream: s}, nil
+}
+
+type policyUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *policyUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *policyUpdatedClient) Recv() (*PolicyUpdatedReply, error) {
+	event := new(PolicyUpdatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "PolicyUpdated Recv", Err: err}
 	}
 	return event, nil
 }

@@ -43,7 +43,7 @@ type CallFunctionOnArgs struct {
 	ObjectID            *RemoteObjectID `json:"objectId,omitempty"`      // Identifier of the object to call function on. Either objectId or executionContextId should be specified.
 	Arguments           []CallArgument  `json:"arguments,omitempty"`     // Call arguments. All call arguments must belong to the same JavaScript world as the target object.
 	Silent              *bool           `json:"silent,omitempty"`        // In silent mode exceptions thrown during evaluation are not reported and do not pause execution. Overrides `setPauseOnException` state.
-	ReturnByValue       *bool           `json:"returnByValue,omitempty"` // Whether the result is expected to be a JSON object which should be sent by value.
+	ReturnByValue       *bool           `json:"returnByValue,omitempty"` // Whether the result is expected to be a JSON object which should be sent by value. Can be overridden by `serializationOptions`.
 	// GeneratePreview Whether preview should be generated for the result.
 	//
 	// Note: This property is experimental.
@@ -57,13 +57,20 @@ type CallFunctionOnArgs struct {
 	//
 	// Note: This property is experimental.
 	ThrowOnSideEffect *bool `json:"throwOnSideEffect,omitempty"`
-	// GenerateWebDriverValue Whether the result should contain
-	// `webDriverValue`, serialized according to
-	// https://w3c.github.io/webdriver-bidi. This is mutually exclusive
-	// with `returnByValue`, but resulting `objectId` is still provided.
+	// UniqueContextID An alternative way to specify the execution context
+	// to call function on. Compared to contextId that may be reused across
+	// processes, this is guaranteed to be system-unique, so it can be used
+	// to prevent accidental function call in context different than
+	// intended (e.g. as a result of navigation across process boundaries).
+	// This is mutually exclusive with `executionContextId`.
 	//
 	// Note: This property is experimental.
-	GenerateWebDriverValue *bool `json:"generateWebDriverValue,omitempty"`
+	UniqueContextID *string `json:"uniqueContextId,omitempty"`
+	// SerializationOptions Specifies the result serialization. If
+	// provided, overrides `generatePreview` and `returnByValue`.
+	//
+	// Note: This property is experimental.
+	SerializationOptions *SerializationOptions `json:"serializationOptions,omitempty"`
 }
 
 // NewCallFunctionOnArgs initializes CallFunctionOnArgs with the required arguments.
@@ -99,7 +106,7 @@ func (a *CallFunctionOnArgs) SetSilent(silent bool) *CallFunctionOnArgs {
 
 // SetReturnByValue sets the ReturnByValue optional argument. Whether
 // the result is expected to be a JSON object which should be sent by
-// value.
+// value. Can be overridden by `serializationOptions`.
 func (a *CallFunctionOnArgs) SetReturnByValue(returnByValue bool) *CallFunctionOnArgs {
 	a.ReturnByValue = &returnByValue
 	return a
@@ -157,15 +164,27 @@ func (a *CallFunctionOnArgs) SetThrowOnSideEffect(throwOnSideEffect bool) *CallF
 	return a
 }
 
-// SetGenerateWebDriverValue sets the GenerateWebDriverValue optional argument.
-// Whether the result should contain `webDriverValue`, serialized
-// according to https://w3c.github.io/webdriver-bidi. This is mutually
-// exclusive with `returnByValue`, but resulting `objectId` is still
-// provided.
+// SetUniqueContextID sets the UniqueContextID optional argument. An
+// alternative way to specify the execution context to call function
+// on. Compared to contextId that may be reused across processes, this
+// is guaranteed to be system-unique, so it can be used to prevent
+// accidental function call in context different than intended (e.g. as
+// a result of navigation across process boundaries). This is mutually
+// exclusive with `executionContextId`.
 //
 // Note: This property is experimental.
-func (a *CallFunctionOnArgs) SetGenerateWebDriverValue(generateWebDriverValue bool) *CallFunctionOnArgs {
-	a.GenerateWebDriverValue = &generateWebDriverValue
+func (a *CallFunctionOnArgs) SetUniqueContextID(uniqueContextID string) *CallFunctionOnArgs {
+	a.UniqueContextID = &uniqueContextID
+	return a
+}
+
+// SetSerializationOptions sets the SerializationOptions optional argument.
+// Specifies the result serialization. If provided, overrides
+// `generatePreview` and `returnByValue`.
+//
+// Note: This property is experimental.
+func (a *CallFunctionOnArgs) SetSerializationOptions(serializationOptions SerializationOptions) *CallFunctionOnArgs {
+	a.SerializationOptions = &serializationOptions
 	return a
 }
 
@@ -259,11 +278,11 @@ type EvaluateArgs struct {
 	//
 	// Note: This property is experimental.
 	UniqueContextID *string `json:"uniqueContextId,omitempty"`
-	// GenerateWebDriverValue Whether the result should be serialized
-	// according to https://w3c.github.io/webdriver-bidi.
+	// SerializationOptions Specifies the result serialization. If
+	// provided, overrides `generatePreview` and `returnByValue`.
 	//
 	// Note: This property is experimental.
-	GenerateWebDriverValue *bool `json:"generateWebDriverValue,omitempty"`
+	SerializationOptions *SerializationOptions `json:"serializationOptions,omitempty"`
 }
 
 // NewEvaluateArgs initializes EvaluateArgs with the required arguments.
@@ -405,13 +424,13 @@ func (a *EvaluateArgs) SetUniqueContextID(uniqueContextID string) *EvaluateArgs 
 	return a
 }
 
-// SetGenerateWebDriverValue sets the GenerateWebDriverValue optional argument.
-// Whether the result should be serialized according to
-// https://w3c.github.io/webdriver-bidi.
+// SetSerializationOptions sets the SerializationOptions optional argument.
+// Specifies the result serialization. If provided, overrides
+// `generatePreview` and `returnByValue`.
 //
 // Note: This property is experimental.
-func (a *EvaluateArgs) SetGenerateWebDriverValue(generateWebDriverValue bool) *EvaluateArgs {
-	a.GenerateWebDriverValue = &generateWebDriverValue
+func (a *EvaluateArgs) SetSerializationOptions(serializationOptions SerializationOptions) *EvaluateArgs {
+	a.SerializationOptions = &serializationOptions
 	return a
 }
 
@@ -698,15 +717,10 @@ type AddBindingArgs struct {
 	// `executionContextName` due to an unclear use case and bugs in
 	// implementation (crbug.com/1169639). `executionContextId` will be
 	// removed in the future.
-	ExecutionContextID *ExecutionContextID `json:"executionContextId,omitempty"`
-	// ExecutionContextName If specified, the binding is exposed to the
-	// executionContext with matching name, even for contexts created after
-	// the binding is added. See also `ExecutionContext.name` and
-	// `worldName` parameter to `Page.addScriptToEvaluateOnNewDocument`.
-	// This parameter is mutually exclusive with `executionContextId`.
 	//
 	// Note: This property is experimental.
-	ExecutionContextName *string `json:"executionContextName,omitempty"`
+	ExecutionContextID   *ExecutionContextID `json:"executionContextId,omitempty"`
+	ExecutionContextName *string             `json:"executionContextName,omitempty"` // If specified, the binding is exposed to the executionContext with matching name, even for contexts created after the binding is added. See also `ExecutionContext.name` and `worldName` parameter to `Page.addScriptToEvaluateOnNewDocument`. This parameter is mutually exclusive with `executionContextId`.
 }
 
 // NewAddBindingArgs initializes AddBindingArgs with the required arguments.
@@ -726,6 +740,8 @@ func NewAddBindingArgs(name string) *AddBindingArgs {
 // Deprecated in favor of `executionContextName` due to an unclear use
 // case and bugs in implementation (crbug.com/1169639).
 // `executionContextId` will be removed in the future.
+//
+// Note: This property is experimental.
 func (a *AddBindingArgs) SetExecutionContextID(executionContextID ExecutionContextID) *AddBindingArgs {
 	a.ExecutionContextID = &executionContextID
 	return a
@@ -737,8 +753,6 @@ func (a *AddBindingArgs) SetExecutionContextID(executionContextID ExecutionConte
 // See also `ExecutionContext.name` and `worldName` parameter to
 // `Page.addScriptToEvaluateOnNewDocument`. This parameter is mutually
 // exclusive with `executionContextId`.
-//
-// Note: This property is experimental.
 func (a *AddBindingArgs) SetExecutionContextName(executionContextName string) *AddBindingArgs {
 	a.ExecutionContextName = &executionContextName
 	return a

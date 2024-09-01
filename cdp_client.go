@@ -6,7 +6,9 @@ import (
 	"github.com/mafredri/cdp/protocol/accessibility"
 	"github.com/mafredri/cdp/protocol/animation"
 	"github.com/mafredri/cdp/protocol/audits"
+	"github.com/mafredri/cdp/protocol/autofill"
 	"github.com/mafredri/cdp/protocol/backgroundservice"
+	"github.com/mafredri/cdp/protocol/bluetoothemulation"
 	"github.com/mafredri/cdp/protocol/browser"
 	"github.com/mafredri/cdp/protocol/cachestorage"
 	"github.com/mafredri/cdp/protocol/cast"
@@ -14,6 +16,7 @@ import (
 	"github.com/mafredri/cdp/protocol/css"
 	"github.com/mafredri/cdp/protocol/database"
 	"github.com/mafredri/cdp/protocol/debugger"
+	"github.com/mafredri/cdp/protocol/deviceaccess"
 	"github.com/mafredri/cdp/protocol/deviceorientation"
 	"github.com/mafredri/cdp/protocol/dom"
 	"github.com/mafredri/cdp/protocol/domdebugger"
@@ -21,7 +24,10 @@ import (
 	"github.com/mafredri/cdp/protocol/domstorage"
 	"github.com/mafredri/cdp/protocol/emulation"
 	"github.com/mafredri/cdp/protocol/eventbreakpoints"
+	"github.com/mafredri/cdp/protocol/extensions"
+	"github.com/mafredri/cdp/protocol/fedcm"
 	"github.com/mafredri/cdp/protocol/fetch"
+	"github.com/mafredri/cdp/protocol/filesystem"
 	"github.com/mafredri/cdp/protocol/headlessexperimental"
 	"github.com/mafredri/cdp/protocol/heapprofiler"
 	"github.com/mafredri/cdp/protocol/indexeddb"
@@ -37,7 +43,9 @@ import (
 	"github.com/mafredri/cdp/protocol/page"
 	"github.com/mafredri/cdp/protocol/performance"
 	"github.com/mafredri/cdp/protocol/performancetimeline"
+	"github.com/mafredri/cdp/protocol/preload"
 	"github.com/mafredri/cdp/protocol/profiler"
+	"github.com/mafredri/cdp/protocol/pwa"
 	"github.com/mafredri/cdp/protocol/runtime"
 	"github.com/mafredri/cdp/protocol/schema"
 	"github.com/mafredri/cdp/protocol/security"
@@ -59,7 +67,9 @@ type Client struct {
 	Accessibility        Accessibility
 	Animation            Animation
 	Audits               Audits
+	Autofill             Autofill
 	BackgroundService    BackgroundService
+	BluetoothEmulation   BluetoothEmulation
 	Browser              Browser
 	CSS                  CSS
 	CacheStorage         CacheStorage
@@ -71,10 +81,14 @@ type Client struct {
 	DOMStorage           DOMStorage
 	Database             Database
 	Debugger             Debugger
+	DeviceAccess         DeviceAccess
 	DeviceOrientation    DeviceOrientation
 	Emulation            Emulation
 	EventBreakpoints     EventBreakpoints
+	Extensions           Extensions
+	FedCM                FedCM
 	Fetch                Fetch
+	FileSystem           FileSystem
 	HeadlessExperimental HeadlessExperimental
 	HeapProfiler         HeapProfiler
 	IO                   IO
@@ -87,9 +101,11 @@ type Client struct {
 	Memory               Memory
 	Network              Network
 	Overlay              Overlay
+	PWA                  PWA
 	Page                 Page
 	Performance          Performance
 	PerformanceTimeline  PerformanceTimeline
+	Preload              Preload
 	Profiler             Profiler
 	Runtime              Runtime
 	Schema               Schema
@@ -111,7 +127,9 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Accessibility:        accessibility.NewClient(conn),
 		Animation:            animation.NewClient(conn),
 		Audits:               audits.NewClient(conn),
+		Autofill:             autofill.NewClient(conn),
 		BackgroundService:    backgroundservice.NewClient(conn),
+		BluetoothEmulation:   bluetoothemulation.NewClient(conn),
 		Browser:              browser.NewClient(conn),
 		CSS:                  css.NewClient(conn),
 		CacheStorage:         cachestorage.NewClient(conn),
@@ -123,10 +141,14 @@ func NewClient(conn *rpcc.Conn) *Client {
 		DOMStorage:           domstorage.NewClient(conn),
 		Database:             database.NewClient(conn),
 		Debugger:             debugger.NewClient(conn),
+		DeviceAccess:         deviceaccess.NewClient(conn),
 		DeviceOrientation:    deviceorientation.NewClient(conn),
 		Emulation:            emulation.NewClient(conn),
 		EventBreakpoints:     eventbreakpoints.NewClient(conn),
+		Extensions:           extensions.NewClient(conn),
+		FedCM:                fedcm.NewClient(conn),
 		Fetch:                fetch.NewClient(conn),
+		FileSystem:           filesystem.NewClient(conn),
 		HeadlessExperimental: headlessexperimental.NewClient(conn),
 		HeapProfiler:         heapprofiler.NewClient(conn),
 		IO:                   io.NewClient(conn),
@@ -139,9 +161,11 @@ func NewClient(conn *rpcc.Conn) *Client {
 		Memory:               memory.NewClient(conn),
 		Network:              network.NewClient(conn),
 		Overlay:              overlay.NewClient(conn),
+		PWA:                  pwa.NewClient(conn),
 		Page:                 page.NewClient(conn),
 		Performance:          performance.NewClient(conn),
 		PerformanceTimeline:  performancetimeline.NewClient(conn),
+		Preload:              preload.NewClient(conn),
 		Profiler:             profiler.NewClient(conn),
 		Runtime:              runtime.NewClient(conn),
 		Schema:               schema.NewClient(conn),

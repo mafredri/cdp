@@ -31,5 +31,5 @@ type DidChangeClient interface {
 
 // DidChangeReply is the reply for LayerTreeDidChange events.
 type DidChangeReply struct {
-	Layers []Layer `json:"layers,omitempty"` // Layer tree, absent if not in the comspositing mode.
+	Layers []Layer `json:"layers,omitempty"` // Layer tree, absent if not in the compositing mode.
 }

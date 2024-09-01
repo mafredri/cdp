@@ -37,14 +37,15 @@ type FileChooserOpenedReply struct {
 	//
 	// Note: This property is experimental.
 	FrameID FrameID `json:"frameId"`
-	// BackendNodeID Input node id.
-	//
-	// Note: This property is experimental.
-	BackendNodeID dom.BackendNodeID `json:"backendNodeId"`
 	// Mode Input mode.
 	//
 	// Values: "selectSingle", "selectMultiple".
 	Mode string `json:"mode"`
+	// BackendNodeID Input node id. Only present for file choosers opened
+	// via an `<input type="file">` element.
+	//
+	// Note: This property is experimental.
+	BackendNodeID *dom.BackendNodeID `json:"backendNodeId,omitempty"`
 }
 
 // FrameAttachedClient is a client for FrameAttached events. Fired when frame
@@ -95,6 +96,21 @@ type FrameDetachedReply struct {
 	//
 	// Note: This property is experimental.
 	Reason string `json:"reason"`
+}
+
+// FrameSubtreeWillBeDetachedClient is a client for FrameSubtreeWillBeDetached events.
+// Fired before frame subtree is detached. Emitted before any frame of the
+// subtree is actually detached.
+type FrameSubtreeWillBeDetachedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*FrameSubtreeWillBeDetachedReply, error)
+	rpcc.Stream
+}
+
+// FrameSubtreeWillBeDetachedReply is the reply for FrameSubtreeWillBeDetached events.
+type FrameSubtreeWillBeDetachedReply struct {
+	FrameID FrameID `json:"frameId"` // Id of the frame that is the root of the subtree that will be detached.
 }
 
 // FrameNavigatedClient is a client for FrameNavigated events. Fired once
@@ -336,26 +352,10 @@ type BackForwardCacheNotUsedClient interface {
 
 // BackForwardCacheNotUsedReply is the reply for BackForwardCacheNotUsed events.
 type BackForwardCacheNotUsedReply struct {
-	LoaderID                    network.LoaderID                            `json:"loaderId"`                              // The loader id for the associated navgation.
+	LoaderID                    network.LoaderID                            `json:"loaderId"`                              // The loader id for the associated navigation.
 	FrameID                     FrameID                                     `json:"frameId"`                               // The frame id of the associated frame.
 	NotRestoredExplanations     []BackForwardCacheNotRestoredExplanation    `json:"notRestoredExplanations"`               // Array of reasons why the page could not be cached. This must not be empty.
 	NotRestoredExplanationsTree *BackForwardCacheNotRestoredExplanationTree `json:"notRestoredExplanationsTree,omitempty"` // Tree structure of reasons why the page could not be cached for each frame.
-}
-
-// PrerenderAttemptCompletedClient is a client for PrerenderAttemptCompleted events.
-// Fired when a prerender attempt is completed.
-type PrerenderAttemptCompletedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*PrerenderAttemptCompletedReply, error)
-	rpcc.Stream
-}
-
-// PrerenderAttemptCompletedReply is the reply for PrerenderAttemptCompleted events.
-type PrerenderAttemptCompletedReply struct {
-	InitiatingFrameID FrameID              `json:"initiatingFrameId"` // The frame id of the frame initiating prerendering.
-	PrerenderingURL   string               `json:"prerenderingUrl"`   // No description.
-	FinalStatus       PrerenderFinalStatus `json:"finalStatus"`       // No description.
 }
 
 // LoadEventFiredClient is a client for LoadEventFired events.
@@ -385,6 +385,10 @@ type NavigatedWithinDocumentClient interface {
 type NavigatedWithinDocumentReply struct {
 	FrameID FrameID `json:"frameId"` // Id of the frame.
 	URL     string  `json:"url"`     // Frame's new url.
+	// NavigationType Navigation type
+	//
+	// Values: "fragment", "historyApi", "other".
+	NavigationType string `json:"navigationType"`
 }
 
 // ScreencastFrameClient is a client for ScreencastFrame events. Compressed

@@ -31,6 +31,21 @@ func (d *domainClient) GetInfo(ctx context.Context) (reply *GetInfoReply, err er
 	return
 }
 
+// GetFeatureState invokes the SystemInfo method. Returns information about
+// the feature state.
+func (d *domainClient) GetFeatureState(ctx context.Context, args *GetFeatureStateArgs) (reply *GetFeatureStateReply, err error) {
+	reply = new(GetFeatureStateReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "SystemInfo.getFeatureState", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "SystemInfo.getFeatureState", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "SystemInfo", Op: "GetFeatureState", Err: err}
+	}
+	return
+}
+
 // GetProcessInfo invokes the SystemInfo method. Returns information about all
 // running processes.
 func (d *domainClient) GetProcessInfo(ctx context.Context) (reply *GetProcessInfoReply, err error) {

@@ -124,6 +124,14 @@ type SetDeviceMetricsOverrideArgs struct {
 	//
 	// Note: This property is experimental.
 	DisplayFeature *DisplayFeature `json:"displayFeature,omitempty"`
+	// DevicePosture is deprecated.
+	//
+	// Deprecated: If set, the posture of a foldable device. If not set
+	// the posture is set to continuous. Deprecated, use
+	// Emulation.setDevicePostureOverride.
+	//
+	// Note: This property is experimental.
+	DevicePosture *DevicePosture `json:"devicePosture,omitempty"`
 }
 
 // NewSetDeviceMetricsOverrideArgs initializes SetDeviceMetricsOverrideArgs with the required arguments.
@@ -219,6 +227,30 @@ func (a *SetDeviceMetricsOverrideArgs) SetDisplayFeature(displayFeature DisplayF
 	return a
 }
 
+// SetDevicePosture sets the DevicePosture optional argument.
+//
+// Deprecated: If set,
+// the posture of a foldable device. If not set the posture is set to
+// continuous. Deprecated, use Emulation.setDevicePostureOverride.
+//
+// Note: This property is experimental.
+func (a *SetDeviceMetricsOverrideArgs) SetDevicePosture(devicePosture DevicePosture) *SetDeviceMetricsOverrideArgs {
+	a.DevicePosture = &devicePosture
+	return a
+}
+
+// SetDevicePostureOverrideArgs represents the arguments for SetDevicePostureOverride in the Emulation domain.
+type SetDevicePostureOverrideArgs struct {
+	Posture DevicePosture `json:"posture"` // No description.
+}
+
+// NewSetDevicePostureOverrideArgs initializes SetDevicePostureOverrideArgs with the required arguments.
+func NewSetDevicePostureOverrideArgs(posture DevicePosture) *SetDevicePostureOverrideArgs {
+	args := new(SetDevicePostureOverrideArgs)
+	args.Posture = posture
+	return args
+}
+
 // SetScrollbarsHiddenArgs represents the arguments for SetScrollbarsHidden in the Emulation domain.
 type SetScrollbarsHiddenArgs struct {
 	Hidden bool `json:"hidden"` // Whether scrollbars should be always hidden.
@@ -298,9 +330,11 @@ func (a *SetEmulatedMediaArgs) SetFeatures(features []MediaFeature) *SetEmulated
 
 // SetEmulatedVisionDeficiencyArgs represents the arguments for SetEmulatedVisionDeficiency in the Emulation domain.
 type SetEmulatedVisionDeficiencyArgs struct {
-	// Type Vision deficiency to emulate.
+	// Type Vision deficiency to emulate. Order: best-effort emulations
+	// come first, followed by any physiologically accurate emulations for
+	// medically recognized color vision deficiencies.
 	//
-	// Values: "none", "achromatopsia", "blurredVision", "deuteranopia", "protanopia", "tritanopia".
+	// Values: "none", "blurredVision", "reducedContrast", "achromatopsia", "deuteranopia", "protanopia", "tritanopia".
 	Type string `json:"type"`
 }
 
@@ -341,6 +375,93 @@ func (a *SetGeolocationOverrideArgs) SetLongitude(longitude float64) *SetGeoloca
 func (a *SetGeolocationOverrideArgs) SetAccuracy(accuracy float64) *SetGeolocationOverrideArgs {
 	a.Accuracy = &accuracy
 	return a
+}
+
+// GetOverriddenSensorInformationArgs represents the arguments for GetOverriddenSensorInformation in the Emulation domain.
+type GetOverriddenSensorInformationArgs struct {
+	Type SensorType `json:"type"` // No description.
+}
+
+// NewGetOverriddenSensorInformationArgs initializes GetOverriddenSensorInformationArgs with the required arguments.
+func NewGetOverriddenSensorInformationArgs(typ SensorType) *GetOverriddenSensorInformationArgs {
+	args := new(GetOverriddenSensorInformationArgs)
+	args.Type = typ
+	return args
+}
+
+// GetOverriddenSensorInformationReply represents the return values for GetOverriddenSensorInformation in the Emulation domain.
+type GetOverriddenSensorInformationReply struct {
+	RequestedSamplingFrequency float64 `json:"requestedSamplingFrequency"` // No description.
+}
+
+// SetSensorOverrideEnabledArgs represents the arguments for SetSensorOverrideEnabled in the Emulation domain.
+type SetSensorOverrideEnabledArgs struct {
+	Enabled  bool            `json:"enabled"`            // No description.
+	Type     SensorType      `json:"type"`               // No description.
+	Metadata *SensorMetadata `json:"metadata,omitempty"` // No description.
+}
+
+// NewSetSensorOverrideEnabledArgs initializes SetSensorOverrideEnabledArgs with the required arguments.
+func NewSetSensorOverrideEnabledArgs(enabled bool, typ SensorType) *SetSensorOverrideEnabledArgs {
+	args := new(SetSensorOverrideEnabledArgs)
+	args.Enabled = enabled
+	args.Type = typ
+	return args
+}
+
+// SetMetadata sets the Metadata optional argument.
+func (a *SetSensorOverrideEnabledArgs) SetMetadata(metadata SensorMetadata) *SetSensorOverrideEnabledArgs {
+	a.Metadata = &metadata
+	return a
+}
+
+// SetSensorOverrideReadingsArgs represents the arguments for SetSensorOverrideReadings in the Emulation domain.
+type SetSensorOverrideReadingsArgs struct {
+	Type    SensorType    `json:"type"`    // No description.
+	Reading SensorReading `json:"reading"` // No description.
+}
+
+// NewSetSensorOverrideReadingsArgs initializes SetSensorOverrideReadingsArgs with the required arguments.
+func NewSetSensorOverrideReadingsArgs(typ SensorType, reading SensorReading) *SetSensorOverrideReadingsArgs {
+	args := new(SetSensorOverrideReadingsArgs)
+	args.Type = typ
+	args.Reading = reading
+	return args
+}
+
+// SetPressureSourceOverrideEnabledArgs represents the arguments for SetPressureSourceOverrideEnabled in the Emulation domain.
+type SetPressureSourceOverrideEnabledArgs struct {
+	Enabled  bool              `json:"enabled"`            // No description.
+	Source   PressureSource    `json:"source"`             // No description.
+	Metadata *PressureMetadata `json:"metadata,omitempty"` // No description.
+}
+
+// NewSetPressureSourceOverrideEnabledArgs initializes SetPressureSourceOverrideEnabledArgs with the required arguments.
+func NewSetPressureSourceOverrideEnabledArgs(enabled bool, source PressureSource) *SetPressureSourceOverrideEnabledArgs {
+	args := new(SetPressureSourceOverrideEnabledArgs)
+	args.Enabled = enabled
+	args.Source = source
+	return args
+}
+
+// SetMetadata sets the Metadata optional argument.
+func (a *SetPressureSourceOverrideEnabledArgs) SetMetadata(metadata PressureMetadata) *SetPressureSourceOverrideEnabledArgs {
+	a.Metadata = &metadata
+	return a
+}
+
+// SetPressureStateOverrideArgs represents the arguments for SetPressureStateOverride in the Emulation domain.
+type SetPressureStateOverrideArgs struct {
+	Source PressureSource `json:"source"` // No description.
+	State  PressureState  `json:"state"`  // No description.
+}
+
+// NewSetPressureStateOverrideArgs initializes SetPressureStateOverrideArgs with the required arguments.
+func NewSetPressureStateOverrideArgs(source PressureSource, state PressureState) *SetPressureStateOverrideArgs {
+	args := new(SetPressureStateOverrideArgs)
+	args.Source = source
+	args.State = state
+	return args
 }
 
 // SetIdleOverrideArgs represents the arguments for SetIdleOverride in the Emulation domain.
@@ -479,7 +600,7 @@ func (a *SetLocaleOverrideArgs) SetLocale(locale string) *SetLocaleOverrideArgs 
 
 // SetTimezoneOverrideArgs represents the arguments for SetTimezoneOverride in the Emulation domain.
 type SetTimezoneOverrideArgs struct {
-	TimezoneID string `json:"timezoneId"` // The timezone identifier. If empty, disables the override and restores default host system timezone.
+	TimezoneID string `json:"timezoneId"` // The timezone identifier. List of supported timezones: https://source.chromium.org/chromium/chromium/deps/icu.git/+/faee8bc70570192d82d2978a71e2a615788597d1:source/data/misc/metaZones.txt If empty, disables the override and restores default host system timezone.
 }
 
 // NewSetTimezoneOverrideArgs initializes SetTimezoneOverrideArgs with the required arguments.
@@ -530,7 +651,7 @@ func NewSetHardwareConcurrencyOverrideArgs(hardwareConcurrency int) *SetHardware
 // SetUserAgentOverrideArgs represents the arguments for SetUserAgentOverride in the Emulation domain.
 type SetUserAgentOverrideArgs struct {
 	UserAgent      string  `json:"userAgent"`                // User agent to use.
-	AcceptLanguage *string `json:"acceptLanguage,omitempty"` // Browser langugage to emulate.
+	AcceptLanguage *string `json:"acceptLanguage,omitempty"` // Browser language to emulate.
 	Platform       *string `json:"platform,omitempty"`       // The platform navigator.platform should return.
 	// UserAgentMetadata To be sent in Sec-CH-UA-* headers and returned in
 	// navigator.userAgentData
@@ -547,7 +668,7 @@ func NewSetUserAgentOverrideArgs(userAgent string) *SetUserAgentOverrideArgs {
 }
 
 // SetAcceptLanguage sets the AcceptLanguage optional argument.
-// Browser langugage to emulate.
+// Browser language to emulate.
 func (a *SetUserAgentOverrideArgs) SetAcceptLanguage(acceptLanguage string) *SetUserAgentOverrideArgs {
 	a.AcceptLanguage = &acceptLanguage
 	return a

@@ -25,13 +25,15 @@ const (
 	TypeServiceWorkers Type = "service_workers"
 	TypeCacheStorage   Type = "cache_storage"
 	TypeInterestGroups Type = "interest_groups"
+	TypeSharedStorage  Type = "shared_storage"
+	TypeStorageBuckets Type = "storage_buckets"
 	TypeAll            Type = "all"
 	TypeOther          Type = "other"
 )
 
 func (e Type) Valid() bool {
 	switch e {
-	case "appcache", "cookies", "file_systems", "indexeddb", "local_storage", "shader_cache", "websql", "service_workers", "cache_storage", "interest_groups", "all", "other":
+	case "appcache", "cookies", "file_systems", "indexeddb", "local_storage", "shader_cache", "websql", "service_workers", "cache_storage", "interest_groups", "shared_storage", "storage_buckets", "all", "other":
 		return true
 	default:
 		return false
@@ -57,22 +59,32 @@ type TrustTokens struct {
 	Count        float64 `json:"count"`        // No description.
 }
 
+// InterestGroupAuctionID Protected audience interest group auction
+// identifier.
+type InterestGroupAuctionID string
+
 // InterestGroupAccessType Enum of interest group access types.
 type InterestGroupAccessType string
 
 // InterestGroupAccessType as enums.
 const (
-	InterestGroupAccessTypeNotSet InterestGroupAccessType = ""
-	InterestGroupAccessTypeJoin   InterestGroupAccessType = "join"
-	InterestGroupAccessTypeLeave  InterestGroupAccessType = "leave"
-	InterestGroupAccessTypeUpdate InterestGroupAccessType = "update"
-	InterestGroupAccessTypeBid    InterestGroupAccessType = "bid"
-	InterestGroupAccessTypeWin    InterestGroupAccessType = "win"
+	InterestGroupAccessTypeNotSet                InterestGroupAccessType = ""
+	InterestGroupAccessTypeJoin                  InterestGroupAccessType = "join"
+	InterestGroupAccessTypeLeave                 InterestGroupAccessType = "leave"
+	InterestGroupAccessTypeUpdate                InterestGroupAccessType = "update"
+	InterestGroupAccessTypeLoaded                InterestGroupAccessType = "loaded"
+	InterestGroupAccessTypeBid                   InterestGroupAccessType = "bid"
+	InterestGroupAccessTypeWin                   InterestGroupAccessType = "win"
+	InterestGroupAccessTypeAdditionalBid         InterestGroupAccessType = "additionalBid"
+	InterestGroupAccessTypeAdditionalBidWin      InterestGroupAccessType = "additionalBidWin"
+	InterestGroupAccessTypeTopLevelBid           InterestGroupAccessType = "topLevelBid"
+	InterestGroupAccessTypeTopLevelAdditionalBid InterestGroupAccessType = "topLevelAdditionalBid"
+	InterestGroupAccessTypeClear                 InterestGroupAccessType = "clear"
 )
 
 func (e InterestGroupAccessType) Valid() bool {
 	switch e {
-	case "join", "leave", "update", "bid", "win":
+	case "join", "leave", "update", "loaded", "bid", "win", "additionalBid", "additionalBidWin", "topLevelBid", "topLevelAdditionalBid", "clear":
 		return true
 	default:
 		return false
@@ -83,24 +95,552 @@ func (e InterestGroupAccessType) String() string {
 	return string(e)
 }
 
-// InterestGroupAd Ad advertising element inside an interest group.
-type InterestGroupAd struct {
-	RenderURL string  `json:"renderUrl"`          // No description.
-	Metadata  *string `json:"metadata,omitempty"` // No description.
+// InterestGroupAuctionEventType Enum of auction events.
+type InterestGroupAuctionEventType string
+
+// InterestGroupAuctionEventType as enums.
+const (
+	InterestGroupAuctionEventTypeNotSet         InterestGroupAuctionEventType = ""
+	InterestGroupAuctionEventTypeStarted        InterestGroupAuctionEventType = "started"
+	InterestGroupAuctionEventTypeConfigResolved InterestGroupAuctionEventType = "configResolved"
+)
+
+func (e InterestGroupAuctionEventType) Valid() bool {
+	switch e {
+	case "started", "configResolved":
+		return true
+	default:
+		return false
+	}
 }
 
-// InterestGroupDetails The full details of an interest group.
-type InterestGroupDetails struct {
-	OwnerOrigin               string                 `json:"ownerOrigin"`                        // No description.
-	Name                      string                 `json:"name"`                               // No description.
-	ExpirationTime            network.TimeSinceEpoch `json:"expirationTime"`                     // No description.
-	JoiningOrigin             string                 `json:"joiningOrigin"`                      // No description.
-	BiddingURL                *string                `json:"biddingUrl,omitempty"`               // No description.
-	BiddingWASMHelperURL      *string                `json:"biddingWasmHelperUrl,omitempty"`     // No description.
-	UpdateURL                 *string                `json:"updateUrl,omitempty"`                // No description.
-	TrustedBiddingSignalsURL  *string                `json:"trustedBiddingSignalsUrl,omitempty"` // No description.
-	TrustedBiddingSignalsKeys []string               `json:"trustedBiddingSignalsKeys"`          // No description.
-	UserBiddingSignals        *string                `json:"userBiddingSignals,omitempty"`       // No description.
-	Ads                       []InterestGroupAd      `json:"ads"`                                // No description.
-	AdComponents              []InterestGroupAd      `json:"adComponents"`                       // No description.
+func (e InterestGroupAuctionEventType) String() string {
+	return string(e)
+}
+
+// InterestGroupAuctionFetchType Enum of network fetches auctions can do.
+type InterestGroupAuctionFetchType string
+
+// InterestGroupAuctionFetchType as enums.
+const (
+	InterestGroupAuctionFetchTypeNotSet               InterestGroupAuctionFetchType = ""
+	InterestGroupAuctionFetchTypeBidderJs             InterestGroupAuctionFetchType = "bidderJs"
+	InterestGroupAuctionFetchTypeBidderWASM           InterestGroupAuctionFetchType = "bidderWasm"
+	InterestGroupAuctionFetchTypeSellerJs             InterestGroupAuctionFetchType = "sellerJs"
+	InterestGroupAuctionFetchTypeBidderTrustedSignals InterestGroupAuctionFetchType = "bidderTrustedSignals"
+	InterestGroupAuctionFetchTypeSellerTrustedSignals InterestGroupAuctionFetchType = "sellerTrustedSignals"
+)
+
+func (e InterestGroupAuctionFetchType) Valid() bool {
+	switch e {
+	case "bidderJs", "bidderWasm", "sellerJs", "bidderTrustedSignals", "sellerTrustedSignals":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e InterestGroupAuctionFetchType) String() string {
+	return string(e)
+}
+
+// SharedStorageAccessType Enum of shared storage access types.
+type SharedStorageAccessType string
+
+// SharedStorageAccessType as enums.
+const (
+	SharedStorageAccessTypeNotSet                 SharedStorageAccessType = ""
+	SharedStorageAccessTypeDocumentAddModule      SharedStorageAccessType = "documentAddModule"
+	SharedStorageAccessTypeDocumentSelectURL      SharedStorageAccessType = "documentSelectURL"
+	SharedStorageAccessTypeDocumentRun            SharedStorageAccessType = "documentRun"
+	SharedStorageAccessTypeDocumentSet            SharedStorageAccessType = "documentSet"
+	SharedStorageAccessTypeDocumentAppend         SharedStorageAccessType = "documentAppend"
+	SharedStorageAccessTypeDocumentDelete         SharedStorageAccessType = "documentDelete"
+	SharedStorageAccessTypeDocumentClear          SharedStorageAccessType = "documentClear"
+	SharedStorageAccessTypeDocumentGet            SharedStorageAccessType = "documentGet"
+	SharedStorageAccessTypeWorkletSet             SharedStorageAccessType = "workletSet"
+	SharedStorageAccessTypeWorkletAppend          SharedStorageAccessType = "workletAppend"
+	SharedStorageAccessTypeWorkletDelete          SharedStorageAccessType = "workletDelete"
+	SharedStorageAccessTypeWorkletClear           SharedStorageAccessType = "workletClear"
+	SharedStorageAccessTypeWorkletGet             SharedStorageAccessType = "workletGet"
+	SharedStorageAccessTypeWorkletKeys            SharedStorageAccessType = "workletKeys"
+	SharedStorageAccessTypeWorkletEntries         SharedStorageAccessType = "workletEntries"
+	SharedStorageAccessTypeWorkletLength          SharedStorageAccessType = "workletLength"
+	SharedStorageAccessTypeWorkletRemainingBudget SharedStorageAccessType = "workletRemainingBudget"
+	SharedStorageAccessTypeHeaderSet              SharedStorageAccessType = "headerSet"
+	SharedStorageAccessTypeHeaderAppend           SharedStorageAccessType = "headerAppend"
+	SharedStorageAccessTypeHeaderDelete           SharedStorageAccessType = "headerDelete"
+	SharedStorageAccessTypeHeaderClear            SharedStorageAccessType = "headerClear"
+)
+
+func (e SharedStorageAccessType) Valid() bool {
+	switch e {
+	case "documentAddModule", "documentSelectURL", "documentRun", "documentSet", "documentAppend", "documentDelete", "documentClear", "documentGet", "workletSet", "workletAppend", "workletDelete", "workletClear", "workletGet", "workletKeys", "workletEntries", "workletLength", "workletRemainingBudget", "headerSet", "headerAppend", "headerDelete", "headerClear":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e SharedStorageAccessType) String() string {
+	return string(e)
+}
+
+// SharedStorageEntry Struct for a single key-value pair in an origin's shared
+// storage.
+type SharedStorageEntry struct {
+	Key   string `json:"key"`   // No description.
+	Value string `json:"value"` // No description.
+}
+
+// SharedStorageMetadata Details for an origin's shared storage.
+type SharedStorageMetadata struct {
+	CreationTime    network.TimeSinceEpoch `json:"creationTime"`    // Time when the origin's shared storage was last created.
+	Length          int                    `json:"length"`          // Number of key-value pairs stored in origin's shared storage.
+	RemainingBudget float64                `json:"remainingBudget"` // Current amount of bits of entropy remaining in the navigation budget.
+	BytesUsed       int                    `json:"bytesUsed"`       // Total number of bytes stored as key-value pairs in origin's shared storage.
+}
+
+// SharedStorageReportingMetadata Pair of reporting metadata details for a
+// candidate URL for `selectURL()`.
+type SharedStorageReportingMetadata struct {
+	EventType    string `json:"eventType"`    // No description.
+	ReportingURL string `json:"reportingUrl"` // No description.
+}
+
+// SharedStorageURLWithMetadata Bundles a candidate URL with its reporting
+// metadata.
+type SharedStorageURLWithMetadata struct {
+	URL               string                           `json:"url"`               // Spec of candidate URL.
+	ReportingMetadata []SharedStorageReportingMetadata `json:"reportingMetadata"` // Any associated reporting metadata.
+}
+
+// SharedStorageAccessParams Bundles the parameters for shared storage access
+// events whose presence/absence can vary according to SharedStorageAccessType.
+type SharedStorageAccessParams struct {
+	ScriptSourceURL  *string                        `json:"scriptSourceUrl,omitempty"`  // Spec of the module script URL. Present only for SharedStorageAccessType.documentAddModule.
+	OperationName    *string                        `json:"operationName,omitempty"`    // Name of the registered operation to be run. Present only for SharedStorageAccessType.documentRun and SharedStorageAccessType.documentSelectURL.
+	SerializedData   *string                        `json:"serializedData,omitempty"`   // The operation's serialized data in bytes (converted to a string). Present only for SharedStorageAccessType.documentRun and SharedStorageAccessType.documentSelectURL.
+	URLsWithMetadata []SharedStorageURLWithMetadata `json:"urlsWithMetadata,omitempty"` // Array of candidate URLs' specs, along with any associated metadata. Present only for SharedStorageAccessType.documentSelectURL.
+	Key              *string                        `json:"key,omitempty"`              // Key for a specific entry in an origin's shared storage. Present only for SharedStorageAccessType.documentSet, SharedStorageAccessType.documentAppend, SharedStorageAccessType.documentDelete, SharedStorageAccessType.workletSet, SharedStorageAccessType.workletAppend, SharedStorageAccessType.workletDelete, SharedStorageAccessType.workletGet, SharedStorageAccessType.headerSet, SharedStorageAccessType.headerAppend, and SharedStorageAccessType.headerDelete.
+	Value            *string                        `json:"value,omitempty"`            // Value for a specific entry in an origin's shared storage. Present only for SharedStorageAccessType.documentSet, SharedStorageAccessType.documentAppend, SharedStorageAccessType.workletSet, SharedStorageAccessType.workletAppend, SharedStorageAccessType.headerSet, and SharedStorageAccessType.headerAppend.
+	IgnoreIfPresent  *bool                          `json:"ignoreIfPresent,omitempty"`  // Whether or not to set an entry for a key if that key is already present. Present only for SharedStorageAccessType.documentSet, SharedStorageAccessType.workletSet, and SharedStorageAccessType.headerSet.
+}
+
+// BucketsDurability
+type BucketsDurability string
+
+// BucketsDurability as enums.
+const (
+	BucketsDurabilityNotSet  BucketsDurability = ""
+	BucketsDurabilityRelaxed BucketsDurability = "relaxed"
+	BucketsDurabilityStrict  BucketsDurability = "strict"
+)
+
+func (e BucketsDurability) Valid() bool {
+	switch e {
+	case "relaxed", "strict":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e BucketsDurability) String() string {
+	return string(e)
+}
+
+// Bucket
+type Bucket struct {
+	StorageKey SerializedStorageKey `json:"storageKey"`     // No description.
+	Name       *string              `json:"name,omitempty"` // If not specified, it is the default bucket of the storageKey.
+}
+
+// BucketInfo
+type BucketInfo struct {
+	Bucket     Bucket                 `json:"bucket"`     // No description.
+	ID         string                 `json:"id"`         // No description.
+	Expiration network.TimeSinceEpoch `json:"expiration"` // No description.
+	Quota      float64                `json:"quota"`      // Storage quota (bytes).
+	Persistent bool                   `json:"persistent"` // No description.
+	Durability BucketsDurability      `json:"durability"` // No description.
+}
+
+// AttributionReportingSourceType
+//
+// Note: This type is experimental.
+type AttributionReportingSourceType string
+
+// AttributionReportingSourceType as enums.
+const (
+	AttributionReportingSourceTypeNotSet     AttributionReportingSourceType = ""
+	AttributionReportingSourceTypeNavigation AttributionReportingSourceType = "navigation"
+	AttributionReportingSourceTypeEvent      AttributionReportingSourceType = "event"
+)
+
+func (e AttributionReportingSourceType) Valid() bool {
+	switch e {
+	case "navigation", "event":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e AttributionReportingSourceType) String() string {
+	return string(e)
+}
+
+// UnsignedInt64AsBase10
+//
+// Note: This type is experimental.
+type UnsignedInt64AsBase10 string
+
+// UnsignedInt128AsBase16
+//
+// Note: This type is experimental.
+type UnsignedInt128AsBase16 string
+
+// SignedInt64AsBase10
+//
+// Note: This type is experimental.
+type SignedInt64AsBase10 string
+
+// AttributionReportingFilterDataEntry
+//
+// Note: This type is experimental.
+type AttributionReportingFilterDataEntry struct {
+	Key    string   `json:"key"`    // No description.
+	Values []string `json:"values"` // No description.
+}
+
+// AttributionReportingFilterConfig
+//
+// Note: This type is experimental.
+type AttributionReportingFilterConfig struct {
+	FilterValues   []AttributionReportingFilterDataEntry `json:"filterValues"`             // No description.
+	LookbackWindow *int                                  `json:"lookbackWindow,omitempty"` // duration in seconds
+}
+
+// AttributionReportingFilterPair
+//
+// Note: This type is experimental.
+type AttributionReportingFilterPair struct {
+	Filters    []AttributionReportingFilterConfig `json:"filters"`    // No description.
+	NotFilters []AttributionReportingFilterConfig `json:"notFilters"` // No description.
+}
+
+// AttributionReportingAggregationKeysEntry
+//
+// Note: This type is experimental.
+type AttributionReportingAggregationKeysEntry struct {
+	Key   string                 `json:"key"`   // No description.
+	Value UnsignedInt128AsBase16 `json:"value"` // No description.
+}
+
+// AttributionReportingEventReportWindows
+//
+// Note: This type is experimental.
+type AttributionReportingEventReportWindows struct {
+	Start int   `json:"start"` // duration in seconds
+	Ends  []int `json:"ends"`  // duration in seconds
+}
+
+// AttributionReportingTriggerSpec
+//
+// Note: This type is experimental.
+type AttributionReportingTriggerSpec struct {
+	TriggerData        []float64                              `json:"triggerData"`        // number instead of integer because not all uint32 can be represented by int
+	EventReportWindows AttributionReportingEventReportWindows `json:"eventReportWindows"` // No description.
+}
+
+// AttributionReportingTriggerDataMatching
+//
+// Note: This type is experimental.
+type AttributionReportingTriggerDataMatching string
+
+// AttributionReportingTriggerDataMatching as enums.
+const (
+	AttributionReportingTriggerDataMatchingNotSet  AttributionReportingTriggerDataMatching = ""
+	AttributionReportingTriggerDataMatchingExact   AttributionReportingTriggerDataMatching = "exact"
+	AttributionReportingTriggerDataMatchingModulus AttributionReportingTriggerDataMatching = "modulus"
+)
+
+func (e AttributionReportingTriggerDataMatching) Valid() bool {
+	switch e {
+	case "exact", "modulus":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e AttributionReportingTriggerDataMatching) String() string {
+	return string(e)
+}
+
+// AttributionReportingAggregatableDebugReportingData
+//
+// Note: This type is experimental.
+type AttributionReportingAggregatableDebugReportingData struct {
+	KeyPiece UnsignedInt128AsBase16 `json:"keyPiece"` // No description.
+	Value    float64                `json:"value"`    // number instead of integer because not all uint32 can be represented by int
+	Types    []string               `json:"types"`    // No description.
+}
+
+// AttributionReportingAggregatableDebugReportingConfig
+//
+// Note: This type is experimental.
+type AttributionReportingAggregatableDebugReportingConfig struct {
+	Budget                       *float64                                             `json:"budget,omitempty"`                       // number instead of integer because not all uint32 can be represented by int, only present for source registrations
+	KeyPiece                     UnsignedInt128AsBase16                               `json:"keyPiece"`                               // No description.
+	DebugData                    []AttributionReportingAggregatableDebugReportingData `json:"debugData"`                              // No description.
+	AggregationCoordinatorOrigin *string                                              `json:"aggregationCoordinatorOrigin,omitempty"` // No description.
+}
+
+// AttributionScopesData
+//
+// Note: This type is experimental.
+type AttributionScopesData struct {
+	Values         []string `json:"values"`         // No description.
+	Limit          float64  `json:"limit"`          // number instead of integer because not all uint32 can be represented by int
+	MaxEventStates float64  `json:"maxEventStates"` // No description.
+}
+
+// AttributionReportingSourceRegistration
+//
+// Note: This type is experimental.
+type AttributionReportingSourceRegistration struct {
+	Time                             network.TimeSinceEpoch                               `json:"time"`                             // No description.
+	Expiry                           int                                                  `json:"expiry"`                           // duration in seconds
+	TriggerSpecs                     []AttributionReportingTriggerSpec                    `json:"triggerSpecs"`                     // No description.
+	AggregatableReportWindow         int                                                  `json:"aggregatableReportWindow"`         // duration in seconds
+	Type                             AttributionReportingSourceType                       `json:"type"`                             // No description.
+	SourceOrigin                     string                                               `json:"sourceOrigin"`                     // No description.
+	ReportingOrigin                  string                                               `json:"reportingOrigin"`                  // No description.
+	DestinationSites                 []string                                             `json:"destinationSites"`                 // No description.
+	EventID                          UnsignedInt64AsBase10                                `json:"eventId"`                          // No description.
+	Priority                         SignedInt64AsBase10                                  `json:"priority"`                         // No description.
+	FilterData                       []AttributionReportingFilterDataEntry                `json:"filterData"`                       // No description.
+	AggregationKeys                  []AttributionReportingAggregationKeysEntry           `json:"aggregationKeys"`                  // No description.
+	DebugKey                         *UnsignedInt64AsBase10                               `json:"debugKey,omitempty"`               // No description.
+	TriggerDataMatching              AttributionReportingTriggerDataMatching              `json:"triggerDataMatching"`              // No description.
+	DestinationLimitPriority         SignedInt64AsBase10                                  `json:"destinationLimitPriority"`         // No description.
+	AggregatableDebugReportingConfig AttributionReportingAggregatableDebugReportingConfig `json:"aggregatableDebugReportingConfig"` // No description.
+	ScopesData                       *AttributionScopesData                               `json:"scopesData,omitempty"`             // No description.
+}
+
+// AttributionReportingSourceRegistrationResult
+//
+// Note: This type is experimental.
+type AttributionReportingSourceRegistrationResult string
+
+// AttributionReportingSourceRegistrationResult as enums.
+const (
+	AttributionReportingSourceRegistrationResultNotSet                                 AttributionReportingSourceRegistrationResult = ""
+	AttributionReportingSourceRegistrationResultSuccess                                AttributionReportingSourceRegistrationResult = "success"
+	AttributionReportingSourceRegistrationResultInternalError                          AttributionReportingSourceRegistrationResult = "internalError"
+	AttributionReportingSourceRegistrationResultInsufficientSourceCapacity             AttributionReportingSourceRegistrationResult = "insufficientSourceCapacity"
+	AttributionReportingSourceRegistrationResultInsufficientUniqueDestinationCapacity  AttributionReportingSourceRegistrationResult = "insufficientUniqueDestinationCapacity"
+	AttributionReportingSourceRegistrationResultExcessiveReportingOrigins              AttributionReportingSourceRegistrationResult = "excessiveReportingOrigins"
+	AttributionReportingSourceRegistrationResultProhibitedByBrowserPolicy              AttributionReportingSourceRegistrationResult = "prohibitedByBrowserPolicy"
+	AttributionReportingSourceRegistrationResultSuccessNoised                          AttributionReportingSourceRegistrationResult = "successNoised"
+	AttributionReportingSourceRegistrationResultDestinationReportingLimitReached       AttributionReportingSourceRegistrationResult = "destinationReportingLimitReached"
+	AttributionReportingSourceRegistrationResultDestinationGlobalLimitReached          AttributionReportingSourceRegistrationResult = "destinationGlobalLimitReached"
+	AttributionReportingSourceRegistrationResultDestinationBothLimitsReached           AttributionReportingSourceRegistrationResult = "destinationBothLimitsReached"
+	AttributionReportingSourceRegistrationResultReportingOriginsPerSiteLimitReached    AttributionReportingSourceRegistrationResult = "reportingOriginsPerSiteLimitReached"
+	AttributionReportingSourceRegistrationResultExceedsMaxChannelCapacity              AttributionReportingSourceRegistrationResult = "exceedsMaxChannelCapacity"
+	AttributionReportingSourceRegistrationResultExceedsMaxScopesChannelCapacity        AttributionReportingSourceRegistrationResult = "exceedsMaxScopesChannelCapacity"
+	AttributionReportingSourceRegistrationResultExceedsMaxTriggerStateCardinality      AttributionReportingSourceRegistrationResult = "exceedsMaxTriggerStateCardinality"
+	AttributionReportingSourceRegistrationResultExceedsMaxEventStatesLimit             AttributionReportingSourceRegistrationResult = "exceedsMaxEventStatesLimit"
+	AttributionReportingSourceRegistrationResultDestinationPerDayReportingLimitReached AttributionReportingSourceRegistrationResult = "destinationPerDayReportingLimitReached"
+)
+
+func (e AttributionReportingSourceRegistrationResult) Valid() bool {
+	switch e {
+	case "success", "internalError", "insufficientSourceCapacity", "insufficientUniqueDestinationCapacity", "excessiveReportingOrigins", "prohibitedByBrowserPolicy", "successNoised", "destinationReportingLimitReached", "destinationGlobalLimitReached", "destinationBothLimitsReached", "reportingOriginsPerSiteLimitReached", "exceedsMaxChannelCapacity", "exceedsMaxScopesChannelCapacity", "exceedsMaxTriggerStateCardinality", "exceedsMaxEventStatesLimit", "destinationPerDayReportingLimitReached":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e AttributionReportingSourceRegistrationResult) String() string {
+	return string(e)
+}
+
+// AttributionReportingSourceRegistrationTimeConfig
+//
+// Note: This type is experimental.
+type AttributionReportingSourceRegistrationTimeConfig string
+
+// AttributionReportingSourceRegistrationTimeConfig as enums.
+const (
+	AttributionReportingSourceRegistrationTimeConfigNotSet  AttributionReportingSourceRegistrationTimeConfig = ""
+	AttributionReportingSourceRegistrationTimeConfigInclude AttributionReportingSourceRegistrationTimeConfig = "include"
+	AttributionReportingSourceRegistrationTimeConfigExclude AttributionReportingSourceRegistrationTimeConfig = "exclude"
+)
+
+func (e AttributionReportingSourceRegistrationTimeConfig) Valid() bool {
+	switch e {
+	case "include", "exclude":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e AttributionReportingSourceRegistrationTimeConfig) String() string {
+	return string(e)
+}
+
+// AttributionReportingAggregatableValueDictEntry
+//
+// Note: This type is experimental.
+type AttributionReportingAggregatableValueDictEntry struct {
+	Key         string                `json:"key"`         // No description.
+	Value       float64               `json:"value"`       // number instead of integer because not all uint32 can be represented by int
+	FilteringID UnsignedInt64AsBase10 `json:"filteringId"` // No description.
+}
+
+// AttributionReportingAggregatableValueEntry
+//
+// Note: This type is experimental.
+type AttributionReportingAggregatableValueEntry struct {
+	Values  []AttributionReportingAggregatableValueDictEntry `json:"values"`  // No description.
+	Filters AttributionReportingFilterPair                   `json:"filters"` // No description.
+}
+
+// AttributionReportingEventTriggerData
+//
+// Note: This type is experimental.
+type AttributionReportingEventTriggerData struct {
+	Data     UnsignedInt64AsBase10          `json:"data"`               // No description.
+	Priority SignedInt64AsBase10            `json:"priority"`           // No description.
+	DedupKey *UnsignedInt64AsBase10         `json:"dedupKey,omitempty"` // No description.
+	Filters  AttributionReportingFilterPair `json:"filters"`            // No description.
+}
+
+// AttributionReportingAggregatableTriggerData
+//
+// Note: This type is experimental.
+type AttributionReportingAggregatableTriggerData struct {
+	KeyPiece   UnsignedInt128AsBase16         `json:"keyPiece"`   // No description.
+	SourceKeys []string                       `json:"sourceKeys"` // No description.
+	Filters    AttributionReportingFilterPair `json:"filters"`    // No description.
+}
+
+// AttributionReportingAggregatableDedupKey
+//
+// Note: This type is experimental.
+type AttributionReportingAggregatableDedupKey struct {
+	DedupKey *UnsignedInt64AsBase10         `json:"dedupKey,omitempty"` // No description.
+	Filters  AttributionReportingFilterPair `json:"filters"`            // No description.
+}
+
+// AttributionReportingTriggerRegistration
+//
+// Note: This type is experimental.
+type AttributionReportingTriggerRegistration struct {
+	Filters                          AttributionReportingFilterPair                       `json:"filters"`                                // No description.
+	DebugKey                         *UnsignedInt64AsBase10                               `json:"debugKey,omitempty"`                     // No description.
+	AggregatableDedupKeys            []AttributionReportingAggregatableDedupKey           `json:"aggregatableDedupKeys"`                  // No description.
+	EventTriggerData                 []AttributionReportingEventTriggerData               `json:"eventTriggerData"`                       // No description.
+	AggregatableTriggerData          []AttributionReportingAggregatableTriggerData        `json:"aggregatableTriggerData"`                // No description.
+	AggregatableValues               []AttributionReportingAggregatableValueEntry         `json:"aggregatableValues"`                     // No description.
+	AggregatableFilteringIDMaxBytes  int                                                  `json:"aggregatableFilteringIdMaxBytes"`        // No description.
+	DebugReporting                   bool                                                 `json:"debugReporting"`                         // No description.
+	AggregationCoordinatorOrigin     *string                                              `json:"aggregationCoordinatorOrigin,omitempty"` // No description.
+	SourceRegistrationTimeConfig     AttributionReportingSourceRegistrationTimeConfig     `json:"sourceRegistrationTimeConfig"`           // No description.
+	TriggerContextID                 *string                                              `json:"triggerContextId,omitempty"`             // No description.
+	AggregatableDebugReportingConfig AttributionReportingAggregatableDebugReportingConfig `json:"aggregatableDebugReportingConfig"`       // No description.
+	Scopes                           []string                                             `json:"scopes"`                                 // No description.
+}
+
+// AttributionReportingEventLevelResult
+//
+// Note: This type is experimental.
+type AttributionReportingEventLevelResult string
+
+// AttributionReportingEventLevelResult as enums.
+const (
+	AttributionReportingEventLevelResultNotSet                              AttributionReportingEventLevelResult = ""
+	AttributionReportingEventLevelResultSuccess                             AttributionReportingEventLevelResult = "success"
+	AttributionReportingEventLevelResultSuccessDroppedLowerPriority         AttributionReportingEventLevelResult = "successDroppedLowerPriority"
+	AttributionReportingEventLevelResultInternalError                       AttributionReportingEventLevelResult = "internalError"
+	AttributionReportingEventLevelResultNoCapacityForAttributionDestination AttributionReportingEventLevelResult = "noCapacityForAttributionDestination"
+	AttributionReportingEventLevelResultNoMatchingSources                   AttributionReportingEventLevelResult = "noMatchingSources"
+	AttributionReportingEventLevelResultDeduplicated                        AttributionReportingEventLevelResult = "deduplicated"
+	AttributionReportingEventLevelResultExcessiveAttributions               AttributionReportingEventLevelResult = "excessiveAttributions"
+	AttributionReportingEventLevelResultPriorityTooLow                      AttributionReportingEventLevelResult = "priorityTooLow"
+	AttributionReportingEventLevelResultNeverAttributedSource               AttributionReportingEventLevelResult = "neverAttributedSource"
+	AttributionReportingEventLevelResultExcessiveReportingOrigins           AttributionReportingEventLevelResult = "excessiveReportingOrigins"
+	AttributionReportingEventLevelResultNoMatchingSourceFilterData          AttributionReportingEventLevelResult = "noMatchingSourceFilterData"
+	AttributionReportingEventLevelResultProhibitedByBrowserPolicy           AttributionReportingEventLevelResult = "prohibitedByBrowserPolicy"
+	AttributionReportingEventLevelResultNoMatchingConfigurations            AttributionReportingEventLevelResult = "noMatchingConfigurations"
+	AttributionReportingEventLevelResultExcessiveReports                    AttributionReportingEventLevelResult = "excessiveReports"
+	AttributionReportingEventLevelResultFalselyAttributedSource             AttributionReportingEventLevelResult = "falselyAttributedSource"
+	AttributionReportingEventLevelResultReportWindowPassed                  AttributionReportingEventLevelResult = "reportWindowPassed"
+	AttributionReportingEventLevelResultNotRegistered                       AttributionReportingEventLevelResult = "notRegistered"
+	AttributionReportingEventLevelResultReportWindowNotStarted              AttributionReportingEventLevelResult = "reportWindowNotStarted"
+	AttributionReportingEventLevelResultNoMatchingTriggerData               AttributionReportingEventLevelResult = "noMatchingTriggerData"
+)
+
+func (e AttributionReportingEventLevelResult) Valid() bool {
+	switch e {
+	case "success", "successDroppedLowerPriority", "internalError", "noCapacityForAttributionDestination", "noMatchingSources", "deduplicated", "excessiveAttributions", "priorityTooLow", "neverAttributedSource", "excessiveReportingOrigins", "noMatchingSourceFilterData", "prohibitedByBrowserPolicy", "noMatchingConfigurations", "excessiveReports", "falselyAttributedSource", "reportWindowPassed", "notRegistered", "reportWindowNotStarted", "noMatchingTriggerData":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e AttributionReportingEventLevelResult) String() string {
+	return string(e)
+}
+
+// AttributionReportingAggregatableResult
+//
+// Note: This type is experimental.
+type AttributionReportingAggregatableResult string
+
+// AttributionReportingAggregatableResult as enums.
+const (
+	AttributionReportingAggregatableResultNotSet                              AttributionReportingAggregatableResult = ""
+	AttributionReportingAggregatableResultSuccess                             AttributionReportingAggregatableResult = "success"
+	AttributionReportingAggregatableResultInternalError                       AttributionReportingAggregatableResult = "internalError"
+	AttributionReportingAggregatableResultNoCapacityForAttributionDestination AttributionReportingAggregatableResult = "noCapacityForAttributionDestination"
+	AttributionReportingAggregatableResultNoMatchingSources                   AttributionReportingAggregatableResult = "noMatchingSources"
+	AttributionReportingAggregatableResultExcessiveAttributions               AttributionReportingAggregatableResult = "excessiveAttributions"
+	AttributionReportingAggregatableResultExcessiveReportingOrigins           AttributionReportingAggregatableResult = "excessiveReportingOrigins"
+	AttributionReportingAggregatableResultNoHistograms                        AttributionReportingAggregatableResult = "noHistograms"
+	AttributionReportingAggregatableResultInsufficientBudget                  AttributionReportingAggregatableResult = "insufficientBudget"
+	AttributionReportingAggregatableResultNoMatchingSourceFilterData          AttributionReportingAggregatableResult = "noMatchingSourceFilterData"
+	AttributionReportingAggregatableResultNotRegistered                       AttributionReportingAggregatableResult = "notRegistered"
+	AttributionReportingAggregatableResultProhibitedByBrowserPolicy           AttributionReportingAggregatableResult = "prohibitedByBrowserPolicy"
+	AttributionReportingAggregatableResultDeduplicated                        AttributionReportingAggregatableResult = "deduplicated"
+	AttributionReportingAggregatableResultReportWindowPassed                  AttributionReportingAggregatableResult = "reportWindowPassed"
+	AttributionReportingAggregatableResultExcessiveReports                    AttributionReportingAggregatableResult = "excessiveReports"
+)
+
+func (e AttributionReportingAggregatableResult) Valid() bool {
+	switch e {
+	case "success", "internalError", "noCapacityForAttributionDestination", "noMatchingSources", "excessiveAttributions", "excessiveReportingOrigins", "noHistograms", "insufficientBudget", "noMatchingSourceFilterData", "notRegistered", "prohibitedByBrowserPolicy", "deduplicated", "reportWindowPassed", "excessiveReports":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e AttributionReportingAggregatableResult) String() string {
+	return string(e)
+}
+
+// RelatedWebsiteSet A single Related Website Set object.
+//
+// Note: This type is experimental.
+type RelatedWebsiteSet struct {
+	PrimarySites    []string `json:"primarySites"`    // The primary site of this set, along with the ccTLDs if there is any.
+	AssociatedSites []string `json:"associatedSites"` // The associated sites of this set, along with the ccTLDs if there is any.
+	ServiceSites    []string `json:"serviceSites"`    // The service sites of this set, along with the ccTLDs if there is any.
 }

@@ -67,7 +67,9 @@ type GetSamplingProfileReply struct {
 
 // StartSamplingArgs represents the arguments for StartSampling in the HeapProfiler domain.
 type StartSamplingArgs struct {
-	SamplingInterval *float64 `json:"samplingInterval,omitempty"` // Average sample interval in bytes. Poisson distribution is used for the intervals. The default value is 32768 bytes.
+	SamplingInterval                 *float64 `json:"samplingInterval,omitempty"`                 // Average sample interval in bytes. Poisson distribution is used for the intervals. The default value is 32768 bytes.
+	IncludeObjectsCollectedByMajorGC *bool    `json:"includeObjectsCollectedByMajorGC,omitempty"` // By default, the sampling heap profiler reports only objects which are still alive when the profile is returned via getSamplingProfile or stopSampling, which is useful for determining what functions contribute the most to steady-state memory usage. This flag instructs the sampling heap profiler to also include information about objects discarded by major GC, which will show which functions cause large temporary memory usage or long GC pauses.
+	IncludeObjectsCollectedByMinorGC *bool    `json:"includeObjectsCollectedByMinorGC,omitempty"` // By default, the sampling heap profiler reports only objects which are still alive when the profile is returned via getSamplingProfile or stopSampling, which is useful for determining what functions contribute the most to steady-state memory usage. This flag instructs the sampling heap profiler to also include information about objects discarded by minor GC, which is useful when tuning a latency-sensitive application for minimal GC activity.
 }
 
 // NewStartSamplingArgs initializes StartSamplingArgs with the required arguments.
@@ -82,6 +84,32 @@ func NewStartSamplingArgs() *StartSamplingArgs {
 // the intervals. The default value is 32768 bytes.
 func (a *StartSamplingArgs) SetSamplingInterval(samplingInterval float64) *StartSamplingArgs {
 	a.SamplingInterval = &samplingInterval
+	return a
+}
+
+// SetIncludeObjectsCollectedByMajorGC sets the IncludeObjectsCollectedByMajorGC optional argument.
+// By default, the sampling heap profiler reports only objects which
+// are still alive when the profile is returned via getSamplingProfile
+// or stopSampling, which is useful for determining what functions
+// contribute the most to steady-state memory usage. This flag
+// instructs the sampling heap profiler to also include information
+// about objects discarded by major GC, which will show which functions
+// cause large temporary memory usage or long GC pauses.
+func (a *StartSamplingArgs) SetIncludeObjectsCollectedByMajorGC(includeObjectsCollectedByMajorGC bool) *StartSamplingArgs {
+	a.IncludeObjectsCollectedByMajorGC = &includeObjectsCollectedByMajorGC
+	return a
+}
+
+// SetIncludeObjectsCollectedByMinorGC sets the IncludeObjectsCollectedByMinorGC optional argument.
+// By default, the sampling heap profiler reports only objects which
+// are still alive when the profile is returned via getSamplingProfile
+// or stopSampling, which is useful for determining what functions
+// contribute the most to steady-state memory usage. This flag
+// instructs the sampling heap profiler to also include information
+// about objects discarded by minor GC, which is useful when tuning a
+// latency-sensitive application for minimal GC activity.
+func (a *StartSamplingArgs) SetIncludeObjectsCollectedByMinorGC(includeObjectsCollectedByMinorGC bool) *StartSamplingArgs {
+	a.IncludeObjectsCollectedByMinorGC = &includeObjectsCollectedByMinorGC
 	return a
 }
 
@@ -110,9 +138,16 @@ type StopSamplingReply struct {
 
 // StopTrackingHeapObjectsArgs represents the arguments for StopTrackingHeapObjects in the HeapProfiler domain.
 type StopTrackingHeapObjectsArgs struct {
-	ReportProgress            *bool `json:"reportProgress,omitempty"`            // If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken when the tracking is stopped.
-	TreatGlobalObjectsAsRoots *bool `json:"treatGlobalObjectsAsRoots,omitempty"` // No description.
-	CaptureNumericValue       *bool `json:"captureNumericValue,omitempty"`       // If true, numerical values are included in the snapshot
+	ReportProgress *bool `json:"reportProgress,omitempty"` // If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken when the tracking is stopped.
+	// TreatGlobalObjectsAsRoots is deprecated.
+	//
+	// Deprecated: Deprecated in favor of `exposeInternals`.
+	TreatGlobalObjectsAsRoots *bool `json:"treatGlobalObjectsAsRoots,omitempty"`
+	CaptureNumericValue       *bool `json:"captureNumericValue,omitempty"` // If true, numerical values are included in the snapshot
+	// ExposeInternals If true, exposes internals of the snapshot.
+	//
+	// Note: This property is experimental.
+	ExposeInternals *bool `json:"exposeInternals,omitempty"`
 }
 
 // NewStopTrackingHeapObjectsArgs initializes StopTrackingHeapObjectsArgs with the required arguments.
@@ -131,6 +166,9 @@ func (a *StopTrackingHeapObjectsArgs) SetReportProgress(reportProgress bool) *St
 }
 
 // SetTreatGlobalObjectsAsRoots sets the TreatGlobalObjectsAsRoots optional argument.
+//
+// Deprecated:
+// Deprecated in favor of `exposeInternals`.
 func (a *StopTrackingHeapObjectsArgs) SetTreatGlobalObjectsAsRoots(treatGlobalObjectsAsRoots bool) *StopTrackingHeapObjectsArgs {
 	a.TreatGlobalObjectsAsRoots = &treatGlobalObjectsAsRoots
 	return a
@@ -143,11 +181,28 @@ func (a *StopTrackingHeapObjectsArgs) SetCaptureNumericValue(captureNumericValue
 	return a
 }
 
+// SetExposeInternals sets the ExposeInternals optional argument. If
+// true, exposes internals of the snapshot.
+//
+// Note: This property is experimental.
+func (a *StopTrackingHeapObjectsArgs) SetExposeInternals(exposeInternals bool) *StopTrackingHeapObjectsArgs {
+	a.ExposeInternals = &exposeInternals
+	return a
+}
+
 // TakeHeapSnapshotArgs represents the arguments for TakeHeapSnapshot in the HeapProfiler domain.
 type TakeHeapSnapshotArgs struct {
-	ReportProgress            *bool `json:"reportProgress,omitempty"`            // If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
-	TreatGlobalObjectsAsRoots *bool `json:"treatGlobalObjectsAsRoots,omitempty"` // If true, a raw snapshot without artificial roots will be generated
-	CaptureNumericValue       *bool `json:"captureNumericValue,omitempty"`       // If true, numerical values are included in the snapshot
+	ReportProgress *bool `json:"reportProgress,omitempty"` // If true 'reportHeapSnapshotProgress' events will be generated while snapshot is being taken.
+	// TreatGlobalObjectsAsRoots is deprecated.
+	//
+	// Deprecated: If true, a raw snapshot without artificial roots will
+	// be generated. Deprecated in favor of `exposeInternals`.
+	TreatGlobalObjectsAsRoots *bool `json:"treatGlobalObjectsAsRoots,omitempty"`
+	CaptureNumericValue       *bool `json:"captureNumericValue,omitempty"` // If true, numerical values are included in the snapshot
+	// ExposeInternals If true, exposes internals of the snapshot.
+	//
+	// Note: This property is experimental.
+	ExposeInternals *bool `json:"exposeInternals,omitempty"`
 }
 
 // NewTakeHeapSnapshotArgs initializes TakeHeapSnapshotArgs with the required arguments.
@@ -166,7 +221,10 @@ func (a *TakeHeapSnapshotArgs) SetReportProgress(reportProgress bool) *TakeHeapS
 }
 
 // SetTreatGlobalObjectsAsRoots sets the TreatGlobalObjectsAsRoots optional argument.
-// If true, a raw snapshot without artificial roots will be generated
+//
+// Deprecated:
+// If true, a raw snapshot without artificial roots will be generated.
+// Deprecated in favor of `exposeInternals`.
 func (a *TakeHeapSnapshotArgs) SetTreatGlobalObjectsAsRoots(treatGlobalObjectsAsRoots bool) *TakeHeapSnapshotArgs {
 	a.TreatGlobalObjectsAsRoots = &treatGlobalObjectsAsRoots
 	return a
@@ -176,5 +234,14 @@ func (a *TakeHeapSnapshotArgs) SetTreatGlobalObjectsAsRoots(treatGlobalObjectsAs
 // If true, numerical values are included in the snapshot
 func (a *TakeHeapSnapshotArgs) SetCaptureNumericValue(captureNumericValue bool) *TakeHeapSnapshotArgs {
 	a.CaptureNumericValue = &captureNumericValue
+	return a
+}
+
+// SetExposeInternals sets the ExposeInternals optional argument. If
+// true, exposes internals of the snapshot.
+//
+// Note: This property is experimental.
+func (a *TakeHeapSnapshotArgs) SetExposeInternals(exposeInternals bool) *TakeHeapSnapshotArgs {
+	a.ExposeInternals = &exposeInternals
 	return a
 }

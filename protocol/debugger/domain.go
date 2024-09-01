@@ -107,6 +107,37 @@ func (d *domainClient) GetScriptSource(ctx context.Context, args *GetScriptSourc
 	return
 }
 
+// DisassembleWASMModule invokes the Debugger method.
+func (d *domainClient) DisassembleWASMModule(ctx context.Context, args *DisassembleWASMModuleArgs) (reply *DisassembleWASMModuleReply, err error) {
+	reply = new(DisassembleWASMModuleReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.disassembleWasmModule", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.disassembleWasmModule", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Debugger", Op: "DisassembleWASMModule", Err: err}
+	}
+	return
+}
+
+// NextWASMDisassemblyChunk invokes the Debugger method. Disassemble the next
+// chunk of lines for the module corresponding to the stream. If disassembly is
+// complete, this API will invalidate the streamId and return an empty chunk.
+// Any subsequent calls for the now invalid stream will return errors.
+func (d *domainClient) NextWASMDisassemblyChunk(ctx context.Context, args *NextWASMDisassemblyChunkArgs) (reply *NextWASMDisassemblyChunkReply, err error) {
+	reply = new(NextWASMDisassemblyChunkReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.nextWasmDisassemblyChunk", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.nextWasmDisassemblyChunk", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Debugger", Op: "NextWASMDisassemblyChunk", Err: err}
+	}
+	return
+}
+
 // GetWASMBytecode invokes the Debugger method. This command is deprecated.
 // Use getScriptSource instead.
 func (d *domainClient) GetWASMBytecode(ctx context.Context, args *GetWASMBytecodeArgs) (reply *GetWASMBytecodeReply, err error) {
@@ -174,7 +205,19 @@ func (d *domainClient) RemoveBreakpoint(ctx context.Context, args *RemoveBreakpo
 }
 
 // RestartFrame invokes the Debugger method. Restarts particular call frame
-// from the beginning.
+// from the beginning. The old, deprecated behavior of `restartFrame` is to
+// stay paused and allow further CDP commands after a restart was scheduled.
+// This can cause problems with restarting, so we now continue execution
+// immediately after it has been scheduled until we reach the beginning of the
+// restarted frame.
+//
+// To stay back-wards compatible, `restartFrame` now expects a `mode`
+// parameter to be present. If the `mode` parameter is missing, `restartFrame`
+// errors out.
+//
+// The various return values are deprecated and `callFrames` is always empty.
+// Use the call frames from the `Debugger#paused` events instead, that fires
+// once V8 pauses at the beginning of the restarted function.
 func (d *domainClient) RestartFrame(ctx context.Context, args *RestartFrameArgs) (reply *RestartFrameReply, err error) {
 	reply = new(RestartFrameReply)
 	if args != nil {
@@ -345,8 +388,9 @@ func (d *domainClient) SetBreakpointsActive(ctx context.Context, args *SetBreakp
 }
 
 // SetPauseOnExceptions invokes the Debugger method. Defines pause on
-// exceptions state. Can be set to stop on all exceptions, uncaught exceptions
-// or no exceptions. Initial pause on exceptions state is `none`.
+// exceptions state. Can be set to stop on all exceptions, uncaught exceptions,
+// or caught exceptions, no exceptions. Initial pause on exceptions state is
+// `none`.
 func (d *domainClient) SetPauseOnExceptions(ctx context.Context, args *SetPauseOnExceptionsArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Debugger.setPauseOnExceptions", args, nil, d.conn)
@@ -374,6 +418,12 @@ func (d *domainClient) SetReturnValue(ctx context.Context, args *SetReturnValueA
 }
 
 // SetScriptSource invokes the Debugger method. Edits JavaScript source live.
+//
+// In general, functions that are currently on the stack can not be edited
+// with a single exception: If the edited function is the top-most stack frame
+// and that is the only activation of that function on the stack. In this case
+// the live edit will be successful and a `Debugger.restartFrame` for the
+// top-most function is automatically triggered.
 func (d *domainClient) SetScriptSource(ctx context.Context, args *SetScriptSourceArgs) (reply *SetScriptSourceReply, err error) {
 	reply = new(SetScriptSourceReply)
 	if args != nil {

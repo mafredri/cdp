@@ -6,7 +6,8 @@ package headlessexperimental
 type ScreenshotParams struct {
 	// Format Image compression format (defaults to png).
 	//
-	// Values: "jpeg", "png".
-	Format  *string `json:"format,omitempty"`
-	Quality *int    `json:"quality,omitempty"` // Compression quality from range [0..100] (jpeg only).
+	// Values: "jpeg", "png", "webp".
+	Format           *string `json:"format,omitempty"`
+	Quality          *int    `json:"quality,omitempty"`          // Compression quality from range [0..100] (jpeg and webp only).
+	OptimizeForSpeed *bool   `json:"optimizeForSpeed,omitempty"` // Optimize image encoding for speed, not for resulting size (defaults to false)
 }

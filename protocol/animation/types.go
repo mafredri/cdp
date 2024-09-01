@@ -13,14 +13,24 @@ type Animation struct {
 	PausedState  bool    `json:"pausedState"`  // `Animation`'s internal paused state.
 	PlayState    string  `json:"playState"`    // `Animation`'s play state.
 	PlaybackRate float64 `json:"playbackRate"` // `Animation`'s playback rate.
-	StartTime    float64 `json:"startTime"`    // `Animation`'s start time.
+	StartTime    float64 `json:"startTime"`    // `Animation`'s start time. Milliseconds for time based animations and percentage [0 - 100] for scroll driven animations (i.e. when viewOrScrollTimeline exists).
 	CurrentTime  float64 `json:"currentTime"`  // `Animation`'s current time.
 	// Type Animation type of `Animation`.
 	//
 	// Values: "CSSTransition", "CSSAnimation", "WebAnimation".
-	Type   string  `json:"type"`
-	Source *Effect `json:"source,omitempty"` // `Animation`'s source animation node.
-	CSSID  *string `json:"cssId,omitempty"`  // A unique ID for `Animation` representing the sources that triggered this CSS animation/transition.
+	Type                 string                `json:"type"`
+	Source               *Effect               `json:"source,omitempty"`               // `Animation`'s source animation node.
+	CSSID                *string               `json:"cssId,omitempty"`                // A unique ID for `Animation` representing the sources that triggered this CSS animation/transition.
+	ViewOrScrollTimeline *ViewOrScrollTimeline `json:"viewOrScrollTimeline,omitempty"` // View or scroll timeline
+}
+
+// ViewOrScrollTimeline Timeline instance
+type ViewOrScrollTimeline struct {
+	SourceNodeID  *dom.BackendNodeID    `json:"sourceNodeId,omitempty"`  // Scroll container node
+	StartOffset   *float64              `json:"startOffset,omitempty"`   // Represents the starting scroll position of the timeline as a length offset in pixels from scroll origin.
+	EndOffset     *float64              `json:"endOffset,omitempty"`     // Represents the ending scroll position of the timeline as a length offset in pixels from scroll origin.
+	SubjectNodeID *dom.BackendNodeID    `json:"subjectNodeId,omitempty"` // The element whose principal box's visibility in the scrollport defined the progress of the timeline. Does not exist for animations with ScrollTimeline
+	Axis          dom.ScrollOrientation `json:"axis"`                    // Orientation of the scroll
 }
 
 // Effect AnimationEffect instance
@@ -29,7 +39,7 @@ type Effect struct {
 	EndDelay       float64            `json:"endDelay"`                // `AnimationEffect`'s end delay.
 	IterationStart float64            `json:"iterationStart"`          // `AnimationEffect`'s iteration start.
 	Iterations     float64            `json:"iterations"`              // `AnimationEffect`'s iterations.
-	Duration       float64            `json:"duration"`                // `AnimationEffect`'s iteration duration.
+	Duration       float64            `json:"duration"`                // `AnimationEffect`'s iteration duration. Milliseconds for time based animations and percentage [0 - 100] for scroll driven animations (i.e. when viewOrScrollTimeline exists).
 	Direction      string             `json:"direction"`               // `AnimationEffect`'s playback direction.
 	Fill           string             `json:"fill"`                    // `AnimationEffect`'s fill mode.
 	BackendNodeID  *dom.BackendNodeID `json:"backendNodeId,omitempty"` // `AnimationEffect`'s target node.

@@ -92,7 +92,7 @@ func (d *domainClient) RequestData(ctx context.Context, args *RequestDataArgs) (
 	return
 }
 
-// GetMetadata invokes the IndexedDB method. Gets metadata of an object store
+// GetMetadata invokes the IndexedDB method. Gets metadata of an object store.
 func (d *domainClient) GetMetadata(ctx context.Context, args *GetMetadataArgs) (reply *GetMetadataReply, err error) {
 	reply = new(GetMetadataReply)
 	if args != nil {

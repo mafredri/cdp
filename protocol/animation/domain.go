@@ -211,3 +211,24 @@ func (c *startedClient) Recv() (*StartedReply, error) {
 	}
 	return event, nil
 }
+
+func (d *domainClient) AnimationUpdated(ctx context.Context) (UpdatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Animation.animationUpdated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &updatedClient{Stream: s}, nil
+}
+
+type updatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *updatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *updatedClient) Recv() (*UpdatedReply, error) {
+	event := new(UpdatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Animation", Op: "AnimationUpdated Recv", Err: err}
+	}
+	return event, nil
+}

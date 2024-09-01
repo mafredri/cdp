@@ -106,7 +106,14 @@ type ExecutionContextDestroyedClient interface {
 
 // ExecutionContextDestroyedReply is the reply for ExecutionContextDestroyed events.
 type ExecutionContextDestroyedReply struct {
-	ExecutionContextID ExecutionContextID `json:"executionContextId"` // Id of the destroyed context
+	// ExecutionContextID is deprecated.
+	//
+	// Deprecated: Id of the destroyed context
+	ExecutionContextID ExecutionContextID `json:"executionContextId"`
+	// ExecutionContextUniqueID Unique Id of the destroyed context
+	//
+	// Note: This property is experimental.
+	ExecutionContextUniqueID string `json:"executionContextUniqueId"`
 }
 
 // ExecutionContextsClearedClient is a client for ExecutionContextsCleared events.

@@ -5,6 +5,7 @@ package page
 import (
 	"github.com/mafredri/cdp/protocol/internal"
 	"github.com/mafredri/cdp/protocol/network"
+	"github.com/mafredri/cdp/protocol/runtime"
 )
 
 // FrameID Unique frame identifier.
@@ -69,6 +70,15 @@ func (e AdFrameExplanation) String() string {
 type AdFrameStatus struct {
 	AdFrameType  AdFrameType          `json:"adFrameType"`            // No description.
 	Explanations []AdFrameExplanation `json:"explanations,omitempty"` // No description.
+}
+
+// AdScriptID Identifies the bottom-most script which caused the frame to be
+// labeled as an ad.
+//
+// Note: This type is experimental.
+type AdScriptID struct {
+	ScriptID   runtime.ScriptID         `json:"scriptId"`   // Script Id of the bottom-most script which caused the frame to be labeled as an ad.
+	DebuggerID runtime.UniqueDebuggerID `json:"debuggerId"` // Id of adScriptId's debugger.
 }
 
 // SecureContextType Indicates whether the frame is a secure context and why
@@ -162,81 +172,102 @@ type PermissionsPolicyFeature string
 
 // PermissionsPolicyFeature as enums.
 const (
-	PermissionsPolicyFeatureNotSet                      PermissionsPolicyFeature = ""
-	PermissionsPolicyFeatureAccelerometer               PermissionsPolicyFeature = "accelerometer"
-	PermissionsPolicyFeatureAmbientLightSensor          PermissionsPolicyFeature = "ambient-light-sensor"
-	PermissionsPolicyFeatureAttributionReporting        PermissionsPolicyFeature = "attribution-reporting"
-	PermissionsPolicyFeatureAutoplay                    PermissionsPolicyFeature = "autoplay"
-	PermissionsPolicyFeatureBluetooth                   PermissionsPolicyFeature = "bluetooth"
-	PermissionsPolicyFeatureBrowsingTopics              PermissionsPolicyFeature = "browsing-topics"
-	PermissionsPolicyFeatureCamera                      PermissionsPolicyFeature = "camera"
-	PermissionsPolicyFeatureChDpr                       PermissionsPolicyFeature = "ch-dpr"
-	PermissionsPolicyFeatureChDeviceMemory              PermissionsPolicyFeature = "ch-device-memory"
-	PermissionsPolicyFeatureChDownlink                  PermissionsPolicyFeature = "ch-downlink"
-	PermissionsPolicyFeatureChEct                       PermissionsPolicyFeature = "ch-ect"
-	PermissionsPolicyFeatureChPrefersColorScheme        PermissionsPolicyFeature = "ch-prefers-color-scheme"
-	PermissionsPolicyFeatureChRtt                       PermissionsPolicyFeature = "ch-rtt"
-	PermissionsPolicyFeatureChSaveData                  PermissionsPolicyFeature = "ch-save-data"
-	PermissionsPolicyFeatureChUa                        PermissionsPolicyFeature = "ch-ua"
-	PermissionsPolicyFeatureChUaArch                    PermissionsPolicyFeature = "ch-ua-arch"
-	PermissionsPolicyFeatureChUaBitness                 PermissionsPolicyFeature = "ch-ua-bitness"
-	PermissionsPolicyFeatureChUaPlatform                PermissionsPolicyFeature = "ch-ua-platform"
-	PermissionsPolicyFeatureChUaModel                   PermissionsPolicyFeature = "ch-ua-model"
-	PermissionsPolicyFeatureChUaMobile                  PermissionsPolicyFeature = "ch-ua-mobile"
-	PermissionsPolicyFeatureChUaFull                    PermissionsPolicyFeature = "ch-ua-full"
-	PermissionsPolicyFeatureChUaFullVersion             PermissionsPolicyFeature = "ch-ua-full-version"
-	PermissionsPolicyFeatureChUaFullVersionList         PermissionsPolicyFeature = "ch-ua-full-version-list"
-	PermissionsPolicyFeatureChUaPlatformVersion         PermissionsPolicyFeature = "ch-ua-platform-version"
-	PermissionsPolicyFeatureChUaReduced                 PermissionsPolicyFeature = "ch-ua-reduced"
-	PermissionsPolicyFeatureChUaWow64                   PermissionsPolicyFeature = "ch-ua-wow64"
-	PermissionsPolicyFeatureChViewportHeight            PermissionsPolicyFeature = "ch-viewport-height"
-	PermissionsPolicyFeatureChViewportWidth             PermissionsPolicyFeature = "ch-viewport-width"
-	PermissionsPolicyFeatureChWidth                     PermissionsPolicyFeature = "ch-width"
-	PermissionsPolicyFeatureClipboardRead               PermissionsPolicyFeature = "clipboard-read"
-	PermissionsPolicyFeatureClipboardWrite              PermissionsPolicyFeature = "clipboard-write"
-	PermissionsPolicyFeatureCrossOriginIsolated         PermissionsPolicyFeature = "cross-origin-isolated"
-	PermissionsPolicyFeatureDirectSockets               PermissionsPolicyFeature = "direct-sockets"
-	PermissionsPolicyFeatureDisplayCapture              PermissionsPolicyFeature = "display-capture"
-	PermissionsPolicyFeatureDocumentDomain              PermissionsPolicyFeature = "document-domain"
-	PermissionsPolicyFeatureEncryptedMedia              PermissionsPolicyFeature = "encrypted-media"
-	PermissionsPolicyFeatureExecutionWhileOutOfViewport PermissionsPolicyFeature = "execution-while-out-of-viewport"
-	PermissionsPolicyFeatureExecutionWhileNotRendered   PermissionsPolicyFeature = "execution-while-not-rendered"
-	PermissionsPolicyFeatureFocusWithoutUserActivation  PermissionsPolicyFeature = "focus-without-user-activation"
-	PermissionsPolicyFeatureFullscreen                  PermissionsPolicyFeature = "fullscreen"
-	PermissionsPolicyFeatureFrobulate                   PermissionsPolicyFeature = "frobulate"
-	PermissionsPolicyFeatureGamepad                     PermissionsPolicyFeature = "gamepad"
-	PermissionsPolicyFeatureGeolocation                 PermissionsPolicyFeature = "geolocation"
-	PermissionsPolicyFeatureGyroscope                   PermissionsPolicyFeature = "gyroscope"
-	PermissionsPolicyFeatureHid                         PermissionsPolicyFeature = "hid"
-	PermissionsPolicyFeatureIdleDetection               PermissionsPolicyFeature = "idle-detection"
-	PermissionsPolicyFeatureInterestCohort              PermissionsPolicyFeature = "interest-cohort"
-	PermissionsPolicyFeatureJoinAdInterestGroup         PermissionsPolicyFeature = "join-ad-interest-group"
-	PermissionsPolicyFeatureKeyboardMap                 PermissionsPolicyFeature = "keyboard-map"
-	PermissionsPolicyFeatureLocalFonts                  PermissionsPolicyFeature = "local-fonts"
-	PermissionsPolicyFeatureMagnetometer                PermissionsPolicyFeature = "magnetometer"
-	PermissionsPolicyFeatureMicrophone                  PermissionsPolicyFeature = "microphone"
-	PermissionsPolicyFeatureMidi                        PermissionsPolicyFeature = "midi"
-	PermissionsPolicyFeatureOtpCredentials              PermissionsPolicyFeature = "otp-credentials"
-	PermissionsPolicyFeaturePayment                     PermissionsPolicyFeature = "payment"
-	PermissionsPolicyFeaturePictureInPicture            PermissionsPolicyFeature = "picture-in-picture"
-	PermissionsPolicyFeaturePublickeyCredentialsGet     PermissionsPolicyFeature = "publickey-credentials-get"
-	PermissionsPolicyFeatureRunAdAuction                PermissionsPolicyFeature = "run-ad-auction"
-	PermissionsPolicyFeatureScreenWakeLock              PermissionsPolicyFeature = "screen-wake-lock"
-	PermissionsPolicyFeatureSerial                      PermissionsPolicyFeature = "serial"
-	PermissionsPolicyFeatureSharedAutofill              PermissionsPolicyFeature = "shared-autofill"
-	PermissionsPolicyFeatureStorageAccessAPI            PermissionsPolicyFeature = "storage-access-api"
-	PermissionsPolicyFeatureSyncXhr                     PermissionsPolicyFeature = "sync-xhr"
-	PermissionsPolicyFeatureTrustTokenRedemption        PermissionsPolicyFeature = "trust-token-redemption"
-	PermissionsPolicyFeatureUSB                         PermissionsPolicyFeature = "usb"
-	PermissionsPolicyFeatureVerticalScroll              PermissionsPolicyFeature = "vertical-scroll"
-	PermissionsPolicyFeatureWebShare                    PermissionsPolicyFeature = "web-share"
-	PermissionsPolicyFeatureWindowPlacement             PermissionsPolicyFeature = "window-placement"
-	PermissionsPolicyFeatureXrSpatialTracking           PermissionsPolicyFeature = "xr-spatial-tracking"
+	PermissionsPolicyFeatureNotSet                       PermissionsPolicyFeature = ""
+	PermissionsPolicyFeatureAccelerometer                PermissionsPolicyFeature = "accelerometer"
+	PermissionsPolicyFeatureAllScreensCapture            PermissionsPolicyFeature = "all-screens-capture"
+	PermissionsPolicyFeatureAmbientLightSensor           PermissionsPolicyFeature = "ambient-light-sensor"
+	PermissionsPolicyFeatureAttributionReporting         PermissionsPolicyFeature = "attribution-reporting"
+	PermissionsPolicyFeatureAutoplay                     PermissionsPolicyFeature = "autoplay"
+	PermissionsPolicyFeatureBluetooth                    PermissionsPolicyFeature = "bluetooth"
+	PermissionsPolicyFeatureBrowsingTopics               PermissionsPolicyFeature = "browsing-topics"
+	PermissionsPolicyFeatureCamera                       PermissionsPolicyFeature = "camera"
+	PermissionsPolicyFeatureCapturedSurfaceControl       PermissionsPolicyFeature = "captured-surface-control"
+	PermissionsPolicyFeatureChDpr                        PermissionsPolicyFeature = "ch-dpr"
+	PermissionsPolicyFeatureChDeviceMemory               PermissionsPolicyFeature = "ch-device-memory"
+	PermissionsPolicyFeatureChDownlink                   PermissionsPolicyFeature = "ch-downlink"
+	PermissionsPolicyFeatureChEct                        PermissionsPolicyFeature = "ch-ect"
+	PermissionsPolicyFeatureChPrefersColorScheme         PermissionsPolicyFeature = "ch-prefers-color-scheme"
+	PermissionsPolicyFeatureChPrefersReducedMotion       PermissionsPolicyFeature = "ch-prefers-reduced-motion"
+	PermissionsPolicyFeatureChPrefersReducedTransparency PermissionsPolicyFeature = "ch-prefers-reduced-transparency"
+	PermissionsPolicyFeatureChRtt                        PermissionsPolicyFeature = "ch-rtt"
+	PermissionsPolicyFeatureChSaveData                   PermissionsPolicyFeature = "ch-save-data"
+	PermissionsPolicyFeatureChUa                         PermissionsPolicyFeature = "ch-ua"
+	PermissionsPolicyFeatureChUaArch                     PermissionsPolicyFeature = "ch-ua-arch"
+	PermissionsPolicyFeatureChUaBitness                  PermissionsPolicyFeature = "ch-ua-bitness"
+	PermissionsPolicyFeatureChUaPlatform                 PermissionsPolicyFeature = "ch-ua-platform"
+	PermissionsPolicyFeatureChUaModel                    PermissionsPolicyFeature = "ch-ua-model"
+	PermissionsPolicyFeatureChUaMobile                   PermissionsPolicyFeature = "ch-ua-mobile"
+	PermissionsPolicyFeatureChUaFormFactors              PermissionsPolicyFeature = "ch-ua-form-factors"
+	PermissionsPolicyFeatureChUaFullVersion              PermissionsPolicyFeature = "ch-ua-full-version"
+	PermissionsPolicyFeatureChUaFullVersionList          PermissionsPolicyFeature = "ch-ua-full-version-list"
+	PermissionsPolicyFeatureChUaPlatformVersion          PermissionsPolicyFeature = "ch-ua-platform-version"
+	PermissionsPolicyFeatureChUaWow64                    PermissionsPolicyFeature = "ch-ua-wow64"
+	PermissionsPolicyFeatureChViewportHeight             PermissionsPolicyFeature = "ch-viewport-height"
+	PermissionsPolicyFeatureChViewportWidth              PermissionsPolicyFeature = "ch-viewport-width"
+	PermissionsPolicyFeatureChWidth                      PermissionsPolicyFeature = "ch-width"
+	PermissionsPolicyFeatureClipboardRead                PermissionsPolicyFeature = "clipboard-read"
+	PermissionsPolicyFeatureClipboardWrite               PermissionsPolicyFeature = "clipboard-write"
+	PermissionsPolicyFeatureComputePressure              PermissionsPolicyFeature = "compute-pressure"
+	PermissionsPolicyFeatureCrossOriginIsolated          PermissionsPolicyFeature = "cross-origin-isolated"
+	PermissionsPolicyFeatureDeferredFetch                PermissionsPolicyFeature = "deferred-fetch"
+	PermissionsPolicyFeatureDigitalCredentialsGet        PermissionsPolicyFeature = "digital-credentials-get"
+	PermissionsPolicyFeatureDirectSockets                PermissionsPolicyFeature = "direct-sockets"
+	PermissionsPolicyFeatureDisplayCapture               PermissionsPolicyFeature = "display-capture"
+	PermissionsPolicyFeatureDocumentDomain               PermissionsPolicyFeature = "document-domain"
+	PermissionsPolicyFeatureEncryptedMedia               PermissionsPolicyFeature = "encrypted-media"
+	PermissionsPolicyFeatureExecutionWhileOutOfViewport  PermissionsPolicyFeature = "execution-while-out-of-viewport"
+	PermissionsPolicyFeatureExecutionWhileNotRendered    PermissionsPolicyFeature = "execution-while-not-rendered"
+	PermissionsPolicyFeatureFocusWithoutUserActivation   PermissionsPolicyFeature = "focus-without-user-activation"
+	PermissionsPolicyFeatureFullscreen                   PermissionsPolicyFeature = "fullscreen"
+	PermissionsPolicyFeatureFrobulate                    PermissionsPolicyFeature = "frobulate"
+	PermissionsPolicyFeatureGamepad                      PermissionsPolicyFeature = "gamepad"
+	PermissionsPolicyFeatureGeolocation                  PermissionsPolicyFeature = "geolocation"
+	PermissionsPolicyFeatureGyroscope                    PermissionsPolicyFeature = "gyroscope"
+	PermissionsPolicyFeatureHid                          PermissionsPolicyFeature = "hid"
+	PermissionsPolicyFeatureIdentityCredentialsGet       PermissionsPolicyFeature = "identity-credentials-get"
+	PermissionsPolicyFeatureIdleDetection                PermissionsPolicyFeature = "idle-detection"
+	PermissionsPolicyFeatureInterestCohort               PermissionsPolicyFeature = "interest-cohort"
+	PermissionsPolicyFeatureJoinAdInterestGroup          PermissionsPolicyFeature = "join-ad-interest-group"
+	PermissionsPolicyFeatureKeyboardMap                  PermissionsPolicyFeature = "keyboard-map"
+	PermissionsPolicyFeatureLocalFonts                   PermissionsPolicyFeature = "local-fonts"
+	PermissionsPolicyFeatureMagnetometer                 PermissionsPolicyFeature = "magnetometer"
+	PermissionsPolicyFeatureMediaPlaybackWhileNotVisible PermissionsPolicyFeature = "media-playback-while-not-visible"
+	PermissionsPolicyFeatureMicrophone                   PermissionsPolicyFeature = "microphone"
+	PermissionsPolicyFeatureMidi                         PermissionsPolicyFeature = "midi"
+	PermissionsPolicyFeatureOtpCredentials               PermissionsPolicyFeature = "otp-credentials"
+	PermissionsPolicyFeaturePayment                      PermissionsPolicyFeature = "payment"
+	PermissionsPolicyFeaturePictureInPicture             PermissionsPolicyFeature = "picture-in-picture"
+	PermissionsPolicyFeaturePopins                       PermissionsPolicyFeature = "popins"
+	PermissionsPolicyFeaturePrivateAggregation           PermissionsPolicyFeature = "private-aggregation"
+	PermissionsPolicyFeaturePrivateStateTokenIssuance    PermissionsPolicyFeature = "private-state-token-issuance"
+	PermissionsPolicyFeaturePrivateStateTokenRedemption  PermissionsPolicyFeature = "private-state-token-redemption"
+	PermissionsPolicyFeaturePublickeyCredentialsCreate   PermissionsPolicyFeature = "publickey-credentials-create"
+	PermissionsPolicyFeaturePublickeyCredentialsGet      PermissionsPolicyFeature = "publickey-credentials-get"
+	PermissionsPolicyFeatureRunAdAuction                 PermissionsPolicyFeature = "run-ad-auction"
+	PermissionsPolicyFeatureScreenWakeLock               PermissionsPolicyFeature = "screen-wake-lock"
+	PermissionsPolicyFeatureSerial                       PermissionsPolicyFeature = "serial"
+	PermissionsPolicyFeatureSharedAutofill               PermissionsPolicyFeature = "shared-autofill"
+	PermissionsPolicyFeatureSharedStorage                PermissionsPolicyFeature = "shared-storage"
+	PermissionsPolicyFeatureSharedStorageSelectURL       PermissionsPolicyFeature = "shared-storage-select-url"
+	PermissionsPolicyFeatureSmartCard                    PermissionsPolicyFeature = "smart-card"
+	PermissionsPolicyFeatureSpeakerSelection             PermissionsPolicyFeature = "speaker-selection"
+	PermissionsPolicyFeatureStorageAccess                PermissionsPolicyFeature = "storage-access"
+	PermissionsPolicyFeatureSubApps                      PermissionsPolicyFeature = "sub-apps"
+	PermissionsPolicyFeatureSyncXhr                      PermissionsPolicyFeature = "sync-xhr"
+	PermissionsPolicyFeatureUnload                       PermissionsPolicyFeature = "unload"
+	PermissionsPolicyFeatureUSB                          PermissionsPolicyFeature = "usb"
+	PermissionsPolicyFeatureUSBUnrestricted              PermissionsPolicyFeature = "usb-unrestricted"
+	PermissionsPolicyFeatureVerticalScroll               PermissionsPolicyFeature = "vertical-scroll"
+	PermissionsPolicyFeatureWebAppInstallation           PermissionsPolicyFeature = "web-app-installation"
+	PermissionsPolicyFeatureWebPrinting                  PermissionsPolicyFeature = "web-printing"
+	PermissionsPolicyFeatureWebShare                     PermissionsPolicyFeature = "web-share"
+	PermissionsPolicyFeatureWindowManagement             PermissionsPolicyFeature = "window-management"
+	PermissionsPolicyFeatureXrSpatialTracking            PermissionsPolicyFeature = "xr-spatial-tracking"
 )
 
 func (e PermissionsPolicyFeature) Valid() bool {
 	switch e {
-	case "accelerometer", "ambient-light-sensor", "attribution-reporting", "autoplay", "bluetooth", "browsing-topics", "camera", "ch-dpr", "ch-device-memory", "ch-downlink", "ch-ect", "ch-prefers-color-scheme", "ch-rtt", "ch-save-data", "ch-ua", "ch-ua-arch", "ch-ua-bitness", "ch-ua-platform", "ch-ua-model", "ch-ua-mobile", "ch-ua-full", "ch-ua-full-version", "ch-ua-full-version-list", "ch-ua-platform-version", "ch-ua-reduced", "ch-ua-wow64", "ch-viewport-height", "ch-viewport-width", "ch-width", "clipboard-read", "clipboard-write", "cross-origin-isolated", "direct-sockets", "display-capture", "document-domain", "encrypted-media", "execution-while-out-of-viewport", "execution-while-not-rendered", "focus-without-user-activation", "fullscreen", "frobulate", "gamepad", "geolocation", "gyroscope", "hid", "idle-detection", "interest-cohort", "join-ad-interest-group", "keyboard-map", "local-fonts", "magnetometer", "microphone", "midi", "otp-credentials", "payment", "picture-in-picture", "publickey-credentials-get", "run-ad-auction", "screen-wake-lock", "serial", "shared-autofill", "storage-access-api", "sync-xhr", "trust-token-redemption", "usb", "vertical-scroll", "web-share", "window-placement", "xr-spatial-tracking":
+	case "accelerometer", "all-screens-capture", "ambient-light-sensor", "attribution-reporting", "autoplay", "bluetooth", "browsing-topics", "camera", "captured-surface-control", "ch-dpr", "ch-device-memory", "ch-downlink", "ch-ect", "ch-prefers-color-scheme", "ch-prefers-reduced-motion", "ch-prefers-reduced-transparency", "ch-rtt", "ch-save-data", "ch-ua", "ch-ua-arch", "ch-ua-bitness", "ch-ua-platform", "ch-ua-model", "ch-ua-mobile", "ch-ua-form-factors", "ch-ua-full-version", "ch-ua-full-version-list", "ch-ua-platform-version", "ch-ua-wow64", "ch-viewport-height", "ch-viewport-width", "ch-width", "clipboard-read", "clipboard-write", "compute-pressure", "cross-origin-isolated", "deferred-fetch", "digital-credentials-get", "direct-sockets", "display-capture", "document-domain", "encrypted-media", "execution-while-out-of-viewport", "execution-while-not-rendered", "focus-without-user-activation", "fullscreen", "frobulate", "gamepad", "geolocation", "gyroscope", "hid", "identity-credentials-get", "idle-detection", "interest-cohort", "join-ad-interest-group", "keyboard-map", "local-fonts", "magnetometer", "media-playback-while-not-visible", "microphone", "midi", "otp-credentials", "payment", "picture-in-picture", "popins", "private-aggregation", "private-state-token-issuance", "private-state-token-redemption", "publickey-credentials-create", "publickey-credentials-get", "run-ad-auction", "screen-wake-lock", "serial", "shared-autofill", "shared-storage", "shared-storage-select-url", "smart-card", "speaker-selection", "storage-access", "sub-apps", "sync-xhr", "unload", "usb", "usb-unrestricted", "vertical-scroll", "web-app-installation", "web-printing", "web-share", "window-management", "xr-spatial-tracking":
 		return true
 	default:
 		return false
@@ -259,11 +290,12 @@ const (
 	PermissionsPolicyBlockReasonHeader            PermissionsPolicyBlockReason = "Header"
 	PermissionsPolicyBlockReasonIframeAttribute   PermissionsPolicyBlockReason = "IframeAttribute"
 	PermissionsPolicyBlockReasonInFencedFrameTree PermissionsPolicyBlockReason = "InFencedFrameTree"
+	PermissionsPolicyBlockReasonInIsolatedApp     PermissionsPolicyBlockReason = "InIsolatedApp"
 )
 
 func (e PermissionsPolicyBlockReason) Valid() bool {
 	switch e {
-	case "Header", "IframeAttribute", "InFencedFrameTree":
+	case "Header", "IframeAttribute", "InFencedFrameTree", "InIsolatedApp":
 		return true
 	default:
 		return false
@@ -574,7 +606,7 @@ func (e DialogType) String() string {
 // AppManifestError Error while paring app manifest.
 type AppManifestError struct {
 	Message  string `json:"message"`  // Error message.
-	Critical int    `json:"critical"` // If criticial, this is a non-recoverable parse error.
+	Critical int    `json:"critical"` // If critical, this is a non-recoverable parse error.
 	Line     int    `json:"line"`     // Error line.
 	Column   int    `json:"column"`   // Error column.
 }
@@ -651,20 +683,22 @@ type ClientNavigationReason string
 
 // ClientNavigationReason as enums.
 const (
-	ClientNavigationReasonNotSet                ClientNavigationReason = ""
-	ClientNavigationReasonFormSubmissionGet     ClientNavigationReason = "formSubmissionGet"
-	ClientNavigationReasonFormSubmissionPost    ClientNavigationReason = "formSubmissionPost"
-	ClientNavigationReasonHTTPHeaderRefresh     ClientNavigationReason = "httpHeaderRefresh"
-	ClientNavigationReasonScriptInitiated       ClientNavigationReason = "scriptInitiated"
-	ClientNavigationReasonMetaTagRefresh        ClientNavigationReason = "metaTagRefresh"
-	ClientNavigationReasonPageBlockInterstitial ClientNavigationReason = "pageBlockInterstitial"
-	ClientNavigationReasonReload                ClientNavigationReason = "reload"
-	ClientNavigationReasonAnchorClick           ClientNavigationReason = "anchorClick"
+	ClientNavigationReasonNotSet                 ClientNavigationReason = ""
+	ClientNavigationReasonAnchorClick            ClientNavigationReason = "anchorClick"
+	ClientNavigationReasonFormSubmissionGet      ClientNavigationReason = "formSubmissionGet"
+	ClientNavigationReasonFormSubmissionPost     ClientNavigationReason = "formSubmissionPost"
+	ClientNavigationReasonHTTPHeaderRefresh      ClientNavigationReason = "httpHeaderRefresh"
+	ClientNavigationReasonInitialFrameNavigation ClientNavigationReason = "initialFrameNavigation"
+	ClientNavigationReasonMetaTagRefresh         ClientNavigationReason = "metaTagRefresh"
+	ClientNavigationReasonOther                  ClientNavigationReason = "other"
+	ClientNavigationReasonPageBlockInterstitial  ClientNavigationReason = "pageBlockInterstitial"
+	ClientNavigationReasonReload                 ClientNavigationReason = "reload"
+	ClientNavigationReasonScriptInitiated        ClientNavigationReason = "scriptInitiated"
 )
 
 func (e ClientNavigationReason) Valid() bool {
 	switch e {
-	case "formSubmissionGet", "formSubmissionPost", "httpHeaderRefresh", "scriptInitiated", "metaTagRefresh", "pageBlockInterstitial", "reload", "anchorClick":
+	case "anchorClick", "formSubmissionGet", "formSubmissionPost", "httpHeaderRefresh", "initialFrameNavigation", "metaTagRefresh", "other", "pageBlockInterstitial", "reload", "scriptInitiated":
 		return true
 	default:
 		return false
@@ -758,6 +792,152 @@ type CompilationCacheParams struct {
 	Eager *bool  `json:"eager,omitempty"` // A hint to the backend whether eager compilation is recommended. (the actual compilation mode used is upon backend discretion).
 }
 
+// FileFilter
+//
+// Note: This type is experimental.
+type FileFilter struct {
+	Name    *string  `json:"name,omitempty"`    // No description.
+	Accepts []string `json:"accepts,omitempty"` // No description.
+}
+
+// FileHandler
+//
+// Note: This type is experimental.
+type FileHandler struct {
+	Action     string          `json:"action"`            // No description.
+	Name       string          `json:"name"`              // No description.
+	Icons      []ImageResource `json:"icons,omitempty"`   // No description.
+	Accepts    []FileFilter    `json:"accepts,omitempty"` // Mimic a map, name is the key, accepts is the value.
+	LaunchType string          `json:"launchType"`        // Won't repeat the enums, using string for easy comparison. Same as the other enums below.
+}
+
+// ImageResource The image definition used in both icon and screenshot.
+//
+// Note: This type is experimental.
+type ImageResource struct {
+	URL   string  `json:"url"`             // The src field in the definition, but changing to url in favor of consistency.
+	Sizes *string `json:"sizes,omitempty"` // No description.
+	Type  *string `json:"type,omitempty"`  // No description.
+}
+
+// LaunchHandler
+//
+// Note: This type is experimental.
+type LaunchHandler struct {
+	ClientMode string `json:"clientMode"` // No description.
+}
+
+// ProtocolHandler
+//
+// Note: This type is experimental.
+type ProtocolHandler struct {
+	Protocol string `json:"protocol"` // No description.
+	URL      string `json:"url"`      // No description.
+}
+
+// RelatedApplication
+//
+// Note: This type is experimental.
+type RelatedApplication struct {
+	ID  *string `json:"id,omitempty"` // No description.
+	URL string  `json:"url"`          // No description.
+}
+
+// ScopeExtension
+//
+// Note: This type is experimental.
+type ScopeExtension struct {
+	Origin            string `json:"origin"`            // Instead of using tuple, this field always returns the serialized string for easy understanding and comparison.
+	HasOriginWildcard bool   `json:"hasOriginWildcard"` // No description.
+}
+
+// Screenshot
+//
+// Note: This type is experimental.
+type Screenshot struct {
+	Image      ImageResource `json:"image"`           // No description.
+	FormFactor string        `json:"formFactor"`      // No description.
+	Label      *string       `json:"label,omitempty"` // No description.
+}
+
+// ShareTarget
+//
+// Note: This type is experimental.
+type ShareTarget struct {
+	Action  string       `json:"action"`          // No description.
+	Method  string       `json:"method"`          // No description.
+	Enctype string       `json:"enctype"`         // No description.
+	Title   *string      `json:"title,omitempty"` // Embed the ShareTargetParams
+	Text    *string      `json:"text,omitempty"`  // No description.
+	URL     *string      `json:"url,omitempty"`   // No description.
+	Files   []FileFilter `json:"files,omitempty"` // No description.
+}
+
+// Shortcut
+//
+// Note: This type is experimental.
+type Shortcut struct {
+	Name string `json:"name"` // No description.
+	URL  string `json:"url"`  // No description.
+}
+
+// WebAppManifest
+//
+// Note: This type is experimental.
+type WebAppManifest struct {
+	BackgroundColor           *string              `json:"backgroundColor,omitempty"`           // No description.
+	Description               *string              `json:"description,omitempty"`               // The extra description provided by the manifest.
+	Dir                       *string              `json:"dir,omitempty"`                       // No description.
+	Display                   *string              `json:"display,omitempty"`                   // No description.
+	DisplayOverrides          []string             `json:"displayOverrides,omitempty"`          // The overrided display mode controlled by the user.
+	FileHandlers              []FileHandler        `json:"fileHandlers,omitempty"`              // The handlers to open files.
+	Icons                     []ImageResource      `json:"icons,omitempty"`                     // No description.
+	ID                        *string              `json:"id,omitempty"`                        // No description.
+	Lang                      *string              `json:"lang,omitempty"`                      // No description.
+	LaunchHandler             *LaunchHandler       `json:"launchHandler,omitempty"`             // TODO(crbug.com/1231886): This field is non-standard and part of a Chrome experiment. See: https://github.com/WICG/web-app-launch/blob/main/launch_handler.md
+	Name                      *string              `json:"name,omitempty"`                      // No description.
+	Orientation               *string              `json:"orientation,omitempty"`               // No description.
+	PreferRelatedApplications *bool                `json:"preferRelatedApplications,omitempty"` // No description.
+	ProtocolHandlers          []ProtocolHandler    `json:"protocolHandlers,omitempty"`          // The handlers to open protocols.
+	RelatedApplications       []RelatedApplication `json:"relatedApplications,omitempty"`       // No description.
+	Scope                     *string              `json:"scope,omitempty"`                     // No description.
+	ScopeExtensions           []ScopeExtension     `json:"scopeExtensions,omitempty"`           // Non-standard, see https://github.com/WICG/manifest-incubations/blob/gh-pages/scope_extensions-explainer.md
+	Screenshots               []Screenshot         `json:"screenshots,omitempty"`               // The screenshots used by chromium.
+	ShareTarget               *ShareTarget         `json:"shareTarget,omitempty"`               // No description.
+	ShortName                 *string              `json:"shortName,omitempty"`                 // No description.
+	Shortcuts                 []Shortcut           `json:"shortcuts,omitempty"`                 // No description.
+	StartURL                  *string              `json:"startUrl,omitempty"`                  // No description.
+	ThemeColor                *string              `json:"themeColor,omitempty"`                // No description.
+}
+
+// AutoResponseMode Enum of possible auto-response for permission / prompt
+// dialogs.
+//
+// Note: This type is experimental.
+type AutoResponseMode string
+
+// AutoResponseMode as enums.
+const (
+	AutoResponseModeNotSet     AutoResponseMode = ""
+	AutoResponseModeNone       AutoResponseMode = "none"
+	AutoResponseModeAutoAccept AutoResponseMode = "autoAccept"
+	AutoResponseModeAutoReject AutoResponseMode = "autoReject"
+	AutoResponseModeAutoOptOut AutoResponseMode = "autoOptOut"
+)
+
+func (e AutoResponseMode) Valid() bool {
+	switch e {
+	case "none", "autoAccept", "autoReject", "autoOptOut":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e AutoResponseMode) String() string {
+	return string(e)
+}
+
 // NavigationType The type of a frameNavigated event.
 //
 // Note: This type is experimental.
@@ -845,6 +1025,15 @@ const (
 	BackForwardCacheNotRestoredReasonActivationNavigationsDisallowedForBug1234857             BackForwardCacheNotRestoredReason = "ActivationNavigationsDisallowedForBug1234857"
 	BackForwardCacheNotRestoredReasonErrorDocument                                            BackForwardCacheNotRestoredReason = "ErrorDocument"
 	BackForwardCacheNotRestoredReasonFencedFramesEmbedder                                     BackForwardCacheNotRestoredReason = "FencedFramesEmbedder"
+	BackForwardCacheNotRestoredReasonCookieDisabled                                           BackForwardCacheNotRestoredReason = "CookieDisabled"
+	BackForwardCacheNotRestoredReasonHTTPAuthRequired                                         BackForwardCacheNotRestoredReason = "HTTPAuthRequired"
+	BackForwardCacheNotRestoredReasonCookieFlushed                                            BackForwardCacheNotRestoredReason = "CookieFlushed"
+	BackForwardCacheNotRestoredReasonBroadcastChannelOnMessage                                BackForwardCacheNotRestoredReason = "BroadcastChannelOnMessage"
+	BackForwardCacheNotRestoredReasonWebViewSettingsChanged                                   BackForwardCacheNotRestoredReason = "WebViewSettingsChanged"
+	BackForwardCacheNotRestoredReasonWebViewJavaScriptObjectChanged                           BackForwardCacheNotRestoredReason = "WebViewJavaScriptObjectChanged"
+	BackForwardCacheNotRestoredReasonWebViewMessageListenerInjected                           BackForwardCacheNotRestoredReason = "WebViewMessageListenerInjected"
+	BackForwardCacheNotRestoredReasonWebViewSafeBrowsingAllowlistChanged                      BackForwardCacheNotRestoredReason = "WebViewSafeBrowsingAllowlistChanged"
+	BackForwardCacheNotRestoredReasonWebViewDocumentStartJavascriptChanged                    BackForwardCacheNotRestoredReason = "WebViewDocumentStartJavascriptChanged"
 	BackForwardCacheNotRestoredReasonWebSocket                                                BackForwardCacheNotRestoredReason = "WebSocket"
 	BackForwardCacheNotRestoredReasonWebTransport                                             BackForwardCacheNotRestoredReason = "WebTransport"
 	BackForwardCacheNotRestoredReasonWebRTC                                                   BackForwardCacheNotRestoredReason = "WebRTC"
@@ -854,17 +1043,13 @@ const (
 	BackForwardCacheNotRestoredReasonSubresourceHasCacheControlNoCache                        BackForwardCacheNotRestoredReason = "SubresourceHasCacheControlNoCache"
 	BackForwardCacheNotRestoredReasonContainsPlugins                                          BackForwardCacheNotRestoredReason = "ContainsPlugins"
 	BackForwardCacheNotRestoredReasonDocumentLoaded                                           BackForwardCacheNotRestoredReason = "DocumentLoaded"
-	BackForwardCacheNotRestoredReasonDedicatedWorkerOrWorklet                                 BackForwardCacheNotRestoredReason = "DedicatedWorkerOrWorklet"
 	BackForwardCacheNotRestoredReasonOutstandingNetworkRequestOthers                          BackForwardCacheNotRestoredReason = "OutstandingNetworkRequestOthers"
-	BackForwardCacheNotRestoredReasonOutstandingIndexedDBTransaction                          BackForwardCacheNotRestoredReason = "OutstandingIndexedDBTransaction"
-	BackForwardCacheNotRestoredReasonRequestedNotificationsPermission                         BackForwardCacheNotRestoredReason = "RequestedNotificationsPermission"
 	BackForwardCacheNotRestoredReasonRequestedMIDIPermission                                  BackForwardCacheNotRestoredReason = "RequestedMIDIPermission"
 	BackForwardCacheNotRestoredReasonRequestedAudioCapturePermission                          BackForwardCacheNotRestoredReason = "RequestedAudioCapturePermission"
 	BackForwardCacheNotRestoredReasonRequestedVideoCapturePermission                          BackForwardCacheNotRestoredReason = "RequestedVideoCapturePermission"
 	BackForwardCacheNotRestoredReasonRequestedBackForwardCacheBlockedSensors                  BackForwardCacheNotRestoredReason = "RequestedBackForwardCacheBlockedSensors"
 	BackForwardCacheNotRestoredReasonRequestedBackgroundWorkPermission                        BackForwardCacheNotRestoredReason = "RequestedBackgroundWorkPermission"
 	BackForwardCacheNotRestoredReasonBroadcastChannel                                         BackForwardCacheNotRestoredReason = "BroadcastChannel"
-	BackForwardCacheNotRestoredReasonIndexedDBConnection                                      BackForwardCacheNotRestoredReason = "IndexedDBConnection"
 	BackForwardCacheNotRestoredReasonWebXR                                                    BackForwardCacheNotRestoredReason = "WebXR"
 	BackForwardCacheNotRestoredReasonSharedWorker                                             BackForwardCacheNotRestoredReason = "SharedWorker"
 	BackForwardCacheNotRestoredReasonWebLocks                                                 BackForwardCacheNotRestoredReason = "WebLocks"
@@ -878,7 +1063,6 @@ const (
 	BackForwardCacheNotRestoredReasonPrinting                                                 BackForwardCacheNotRestoredReason = "Printing"
 	BackForwardCacheNotRestoredReasonWebDatabase                                              BackForwardCacheNotRestoredReason = "WebDatabase"
 	BackForwardCacheNotRestoredReasonPictureInPicture                                         BackForwardCacheNotRestoredReason = "PictureInPicture"
-	BackForwardCacheNotRestoredReasonPortal                                                   BackForwardCacheNotRestoredReason = "Portal"
 	BackForwardCacheNotRestoredReasonSpeechRecognizer                                         BackForwardCacheNotRestoredReason = "SpeechRecognizer"
 	BackForwardCacheNotRestoredReasonIdleManager                                              BackForwardCacheNotRestoredReason = "IdleManager"
 	BackForwardCacheNotRestoredReasonPaymentManager                                           BackForwardCacheNotRestoredReason = "PaymentManager"
@@ -888,7 +1072,17 @@ const (
 	BackForwardCacheNotRestoredReasonOutstandingNetworkRequestDirectSocket                    BackForwardCacheNotRestoredReason = "OutstandingNetworkRequestDirectSocket"
 	BackForwardCacheNotRestoredReasonInjectedJavascript                                       BackForwardCacheNotRestoredReason = "InjectedJavascript"
 	BackForwardCacheNotRestoredReasonInjectedStyleSheet                                       BackForwardCacheNotRestoredReason = "InjectedStyleSheet"
+	BackForwardCacheNotRestoredReasonKeepaliveRequest                                         BackForwardCacheNotRestoredReason = "KeepaliveRequest"
+	BackForwardCacheNotRestoredReasonIndexedDBEvent                                           BackForwardCacheNotRestoredReason = "IndexedDBEvent"
 	BackForwardCacheNotRestoredReasonDummy                                                    BackForwardCacheNotRestoredReason = "Dummy"
+	BackForwardCacheNotRestoredReasonJsNetworkRequestReceivedCacheControlNoStoreResource      BackForwardCacheNotRestoredReason = "JsNetworkRequestReceivedCacheControlNoStoreResource"
+	BackForwardCacheNotRestoredReasonWebRTCSticky                                             BackForwardCacheNotRestoredReason = "WebRTCSticky"
+	BackForwardCacheNotRestoredReasonWebTransportSticky                                       BackForwardCacheNotRestoredReason = "WebTransportSticky"
+	BackForwardCacheNotRestoredReasonWebSocketSticky                                          BackForwardCacheNotRestoredReason = "WebSocketSticky"
+	BackForwardCacheNotRestoredReasonSmartCard                                                BackForwardCacheNotRestoredReason = "SmartCard"
+	BackForwardCacheNotRestoredReasonLiveMediaStreamTrack                                     BackForwardCacheNotRestoredReason = "LiveMediaStreamTrack"
+	BackForwardCacheNotRestoredReasonUnloadHandler                                            BackForwardCacheNotRestoredReason = "UnloadHandler"
+	BackForwardCacheNotRestoredReasonParserAborted                                            BackForwardCacheNotRestoredReason = "ParserAborted"
 	BackForwardCacheNotRestoredReasonContentSecurityHandler                                   BackForwardCacheNotRestoredReason = "ContentSecurityHandler"
 	BackForwardCacheNotRestoredReasonContentWebAuthenticationAPI                              BackForwardCacheNotRestoredReason = "ContentWebAuthenticationAPI"
 	BackForwardCacheNotRestoredReasonContentFileChooser                                       BackForwardCacheNotRestoredReason = "ContentFileChooser"
@@ -899,6 +1093,7 @@ const (
 	BackForwardCacheNotRestoredReasonContentWebUSB                                            BackForwardCacheNotRestoredReason = "ContentWebUSB"
 	BackForwardCacheNotRestoredReasonContentMediaSessionService                               BackForwardCacheNotRestoredReason = "ContentMediaSessionService"
 	BackForwardCacheNotRestoredReasonContentScreenReader                                      BackForwardCacheNotRestoredReason = "ContentScreenReader"
+	BackForwardCacheNotRestoredReasonContentDiscarded                                         BackForwardCacheNotRestoredReason = "ContentDiscarded"
 	BackForwardCacheNotRestoredReasonEmbedderPopupBlockerTabHelper                            BackForwardCacheNotRestoredReason = "EmbedderPopupBlockerTabHelper"
 	BackForwardCacheNotRestoredReasonEmbedderSafeBrowsingTriggeredPopupBlocker                BackForwardCacheNotRestoredReason = "EmbedderSafeBrowsingTriggeredPopupBlocker"
 	BackForwardCacheNotRestoredReasonEmbedderSafeBrowsingThreatDetails                        BackForwardCacheNotRestoredReason = "EmbedderSafeBrowsingThreatDetails"
@@ -914,11 +1109,12 @@ const (
 	BackForwardCacheNotRestoredReasonEmbedderExtensionMessaging                               BackForwardCacheNotRestoredReason = "EmbedderExtensionMessaging"
 	BackForwardCacheNotRestoredReasonEmbedderExtensionMessagingForOpenPort                    BackForwardCacheNotRestoredReason = "EmbedderExtensionMessagingForOpenPort"
 	BackForwardCacheNotRestoredReasonEmbedderExtensionSentMessageToCachedFrame                BackForwardCacheNotRestoredReason = "EmbedderExtensionSentMessageToCachedFrame"
+	BackForwardCacheNotRestoredReasonRequestedByWebViewClient                                 BackForwardCacheNotRestoredReason = "RequestedByWebViewClient"
 )
 
 func (e BackForwardCacheNotRestoredReason) Valid() bool {
 	switch e {
-	case "NotPrimaryMainFrame", "BackForwardCacheDisabled", "RelatedActiveContentsExist", "HTTPStatusNotOK", "SchemeNotHTTPOrHTTPS", "Loading", "WasGrantedMediaAccess", "DisableForRenderFrameHostCalled", "DomainNotAllowed", "HTTPMethodNotGET", "SubframeIsNavigating", "Timeout", "CacheLimit", "JavaScriptExecution", "RendererProcessKilled", "RendererProcessCrashed", "SchedulerTrackedFeatureUsed", "ConflictingBrowsingInstance", "CacheFlushed", "ServiceWorkerVersionActivation", "SessionRestored", "ServiceWorkerPostMessage", "EnteredBackForwardCacheBeforeServiceWorkerHostAdded", "RenderFrameHostReused_SameSite", "RenderFrameHostReused_CrossSite", "ServiceWorkerClaim", "IgnoreEventAndEvict", "HaveInnerContents", "TimeoutPuttingInCache", "BackForwardCacheDisabledByLowMemory", "BackForwardCacheDisabledByCommandLine", "NetworkRequestDatapipeDrainedAsBytesConsumer", "NetworkRequestRedirected", "NetworkRequestTimeout", "NetworkExceedsBufferLimit", "NavigationCancelledWhileRestoring", "NotMostRecentNavigationEntry", "BackForwardCacheDisabledForPrerender", "UserAgentOverrideDiffers", "ForegroundCacheLimit", "BrowsingInstanceNotSwapped", "BackForwardCacheDisabledForDelegate", "UnloadHandlerExistsInMainFrame", "UnloadHandlerExistsInSubFrame", "ServiceWorkerUnregistration", "CacheControlNoStore", "CacheControlNoStoreCookieModified", "CacheControlNoStoreHTTPOnlyCookieModified", "NoResponseHead", "Unknown", "ActivationNavigationsDisallowedForBug1234857", "ErrorDocument", "FencedFramesEmbedder", "WebSocket", "WebTransport", "WebRTC", "MainResourceHasCacheControlNoStore", "MainResourceHasCacheControlNoCache", "SubresourceHasCacheControlNoStore", "SubresourceHasCacheControlNoCache", "ContainsPlugins", "DocumentLoaded", "DedicatedWorkerOrWorklet", "OutstandingNetworkRequestOthers", "OutstandingIndexedDBTransaction", "RequestedNotificationsPermission", "RequestedMIDIPermission", "RequestedAudioCapturePermission", "RequestedVideoCapturePermission", "RequestedBackForwardCacheBlockedSensors", "RequestedBackgroundWorkPermission", "BroadcastChannel", "IndexedDBConnection", "WebXR", "SharedWorker", "WebLocks", "WebHID", "WebShare", "RequestedStorageAccessGrant", "WebNfc", "OutstandingNetworkRequestFetch", "OutstandingNetworkRequestXHR", "AppBanner", "Printing", "WebDatabase", "PictureInPicture", "Portal", "SpeechRecognizer", "IdleManager", "PaymentManager", "SpeechSynthesis", "KeyboardLock", "WebOTPService", "OutstandingNetworkRequestDirectSocket", "InjectedJavascript", "InjectedStyleSheet", "Dummy", "ContentSecurityHandler", "ContentWebAuthenticationAPI", "ContentFileChooser", "ContentSerial", "ContentFileSystemAccess", "ContentMediaDevicesDispatcherHost", "ContentWebBluetooth", "ContentWebUSB", "ContentMediaSessionService", "ContentScreenReader", "EmbedderPopupBlockerTabHelper", "EmbedderSafeBrowsingTriggeredPopupBlocker", "EmbedderSafeBrowsingThreatDetails", "EmbedderAppBannerManager", "EmbedderDomDistillerViewerSource", "EmbedderDomDistillerSelfDeletingRequestDelegate", "EmbedderOomInterventionTabHelper", "EmbedderOfflinePage", "EmbedderChromePasswordManagerClientBindCredentialManager", "EmbedderPermissionRequestManager", "EmbedderModalDialog", "EmbedderExtensions", "EmbedderExtensionMessaging", "EmbedderExtensionMessagingForOpenPort", "EmbedderExtensionSentMessageToCachedFrame":
+	case "NotPrimaryMainFrame", "BackForwardCacheDisabled", "RelatedActiveContentsExist", "HTTPStatusNotOK", "SchemeNotHTTPOrHTTPS", "Loading", "WasGrantedMediaAccess", "DisableForRenderFrameHostCalled", "DomainNotAllowed", "HTTPMethodNotGET", "SubframeIsNavigating", "Timeout", "CacheLimit", "JavaScriptExecution", "RendererProcessKilled", "RendererProcessCrashed", "SchedulerTrackedFeatureUsed", "ConflictingBrowsingInstance", "CacheFlushed", "ServiceWorkerVersionActivation", "SessionRestored", "ServiceWorkerPostMessage", "EnteredBackForwardCacheBeforeServiceWorkerHostAdded", "RenderFrameHostReused_SameSite", "RenderFrameHostReused_CrossSite", "ServiceWorkerClaim", "IgnoreEventAndEvict", "HaveInnerContents", "TimeoutPuttingInCache", "BackForwardCacheDisabledByLowMemory", "BackForwardCacheDisabledByCommandLine", "NetworkRequestDatapipeDrainedAsBytesConsumer", "NetworkRequestRedirected", "NetworkRequestTimeout", "NetworkExceedsBufferLimit", "NavigationCancelledWhileRestoring", "NotMostRecentNavigationEntry", "BackForwardCacheDisabledForPrerender", "UserAgentOverrideDiffers", "ForegroundCacheLimit", "BrowsingInstanceNotSwapped", "BackForwardCacheDisabledForDelegate", "UnloadHandlerExistsInMainFrame", "UnloadHandlerExistsInSubFrame", "ServiceWorkerUnregistration", "CacheControlNoStore", "CacheControlNoStoreCookieModified", "CacheControlNoStoreHTTPOnlyCookieModified", "NoResponseHead", "Unknown", "ActivationNavigationsDisallowedForBug1234857", "ErrorDocument", "FencedFramesEmbedder", "CookieDisabled", "HTTPAuthRequired", "CookieFlushed", "BroadcastChannelOnMessage", "WebViewSettingsChanged", "WebViewJavaScriptObjectChanged", "WebViewMessageListenerInjected", "WebViewSafeBrowsingAllowlistChanged", "WebViewDocumentStartJavascriptChanged", "WebSocket", "WebTransport", "WebRTC", "MainResourceHasCacheControlNoStore", "MainResourceHasCacheControlNoCache", "SubresourceHasCacheControlNoStore", "SubresourceHasCacheControlNoCache", "ContainsPlugins", "DocumentLoaded", "OutstandingNetworkRequestOthers", "RequestedMIDIPermission", "RequestedAudioCapturePermission", "RequestedVideoCapturePermission", "RequestedBackForwardCacheBlockedSensors", "RequestedBackgroundWorkPermission", "BroadcastChannel", "WebXR", "SharedWorker", "WebLocks", "WebHID", "WebShare", "RequestedStorageAccessGrant", "WebNfc", "OutstandingNetworkRequestFetch", "OutstandingNetworkRequestXHR", "AppBanner", "Printing", "WebDatabase", "PictureInPicture", "SpeechRecognizer", "IdleManager", "PaymentManager", "SpeechSynthesis", "KeyboardLock", "WebOTPService", "OutstandingNetworkRequestDirectSocket", "InjectedJavascript", "InjectedStyleSheet", "KeepaliveRequest", "IndexedDBEvent", "Dummy", "JsNetworkRequestReceivedCacheControlNoStoreResource", "WebRTCSticky", "WebTransportSticky", "WebSocketSticky", "SmartCard", "LiveMediaStreamTrack", "UnloadHandler", "ParserAborted", "ContentSecurityHandler", "ContentWebAuthenticationAPI", "ContentFileChooser", "ContentSerial", "ContentFileSystemAccess", "ContentMediaDevicesDispatcherHost", "ContentWebBluetooth", "ContentWebUSB", "ContentMediaSessionService", "ContentScreenReader", "ContentDiscarded", "EmbedderPopupBlockerTabHelper", "EmbedderSafeBrowsingTriggeredPopupBlocker", "EmbedderSafeBrowsingThreatDetails", "EmbedderAppBannerManager", "EmbedderDomDistillerViewerSource", "EmbedderDomDistillerSelfDeletingRequestDelegate", "EmbedderOomInterventionTabHelper", "EmbedderOfflinePage", "EmbedderChromePasswordManagerClientBindCredentialManager", "EmbedderPermissionRequestManager", "EmbedderModalDialog", "EmbedderExtensions", "EmbedderExtensionMessaging", "EmbedderExtensionMessagingForOpenPort", "EmbedderExtensionSentMessageToCachedFrame", "RequestedByWebViewClient":
 		return true
 	default:
 		return false
@@ -956,6 +1152,16 @@ func (e BackForwardCacheNotRestoredReasonType) String() string {
 	return string(e)
 }
 
+// BackForwardCacheBlockingDetails
+//
+// Note: This type is experimental.
+type BackForwardCacheBlockingDetails struct {
+	URL          *string `json:"url,omitempty"`      // Url of the file where blockage happened. Optional because of tests.
+	Function     *string `json:"function,omitempty"` // Function name where blockage happened. Optional because of anonymous functions and tests.
+	LineNumber   int     `json:"lineNumber"`         // Line number in the script (0-based).
+	ColumnNumber int     `json:"columnNumber"`       // Column number in the script (0-based).
+}
+
 // BackForwardCacheNotRestoredExplanation
 //
 // Note: This type is experimental.
@@ -963,6 +1169,7 @@ type BackForwardCacheNotRestoredExplanation struct {
 	Type    BackForwardCacheNotRestoredReasonType `json:"type"`              // Type of the reason
 	Reason  BackForwardCacheNotRestoredReason     `json:"reason"`            // Not restored reason
 	Context *string                               `json:"context,omitempty"` // Context associated with the reason. The meaning of this context is dependent on the reason: - EmbedderExtensionSentMessageToCachedFrame: the extension ID.
+	Details []BackForwardCacheBlockingDetails     `json:"details,omitempty"` // No description.
 }
 
 // BackForwardCacheNotRestoredExplanationTree
@@ -972,58 +1179,4 @@ type BackForwardCacheNotRestoredExplanationTree struct {
 	URL          string                                       `json:"url"`          // URL of each frame
 	Explanations []BackForwardCacheNotRestoredExplanation     `json:"explanations"` // Not restored reasons of each frame
 	Children     []BackForwardCacheNotRestoredExplanationTree `json:"children"`     // Array of children frame
-}
-
-// PrerenderFinalStatus List of FinalStatus reasons for Prerender2.
-type PrerenderFinalStatus string
-
-// PrerenderFinalStatus as enums.
-const (
-	PrerenderFinalStatusNotSet                                    PrerenderFinalStatus = ""
-	PrerenderFinalStatusActivated                                 PrerenderFinalStatus = "Activated"
-	PrerenderFinalStatusDestroyed                                 PrerenderFinalStatus = "Destroyed"
-	PrerenderFinalStatusLowEndDevice                              PrerenderFinalStatus = "LowEndDevice"
-	PrerenderFinalStatusCrossOriginRedirect                       PrerenderFinalStatus = "CrossOriginRedirect"
-	PrerenderFinalStatusCrossOriginNavigation                     PrerenderFinalStatus = "CrossOriginNavigation"
-	PrerenderFinalStatusInvalidSchemeRedirect                     PrerenderFinalStatus = "InvalidSchemeRedirect"
-	PrerenderFinalStatusInvalidSchemeNavigation                   PrerenderFinalStatus = "InvalidSchemeNavigation"
-	PrerenderFinalStatusInProgressNavigation                      PrerenderFinalStatus = "InProgressNavigation"
-	PrerenderFinalStatusNavigationRequestBlockedByCsp             PrerenderFinalStatus = "NavigationRequestBlockedByCsp"
-	PrerenderFinalStatusMainFrameNavigation                       PrerenderFinalStatus = "MainFrameNavigation"
-	PrerenderFinalStatusMojoBinderPolicy                          PrerenderFinalStatus = "MojoBinderPolicy"
-	PrerenderFinalStatusRendererProcessCrashed                    PrerenderFinalStatus = "RendererProcessCrashed"
-	PrerenderFinalStatusRendererProcessKilled                     PrerenderFinalStatus = "RendererProcessKilled"
-	PrerenderFinalStatusDownload                                  PrerenderFinalStatus = "Download"
-	PrerenderFinalStatusTriggerDestroyed                          PrerenderFinalStatus = "TriggerDestroyed"
-	PrerenderFinalStatusNavigationNotCommitted                    PrerenderFinalStatus = "NavigationNotCommitted"
-	PrerenderFinalStatusNavigationBadHTTPStatus                   PrerenderFinalStatus = "NavigationBadHttpStatus"
-	PrerenderFinalStatusClientCertRequested                       PrerenderFinalStatus = "ClientCertRequested"
-	PrerenderFinalStatusNavigationRequestNetworkError             PrerenderFinalStatus = "NavigationRequestNetworkError"
-	PrerenderFinalStatusMaxNumOfRunningPrerendersExceeded         PrerenderFinalStatus = "MaxNumOfRunningPrerendersExceeded"
-	PrerenderFinalStatusCancelAllHostsForTesting                  PrerenderFinalStatus = "CancelAllHostsForTesting"
-	PrerenderFinalStatusDidFailLoad                               PrerenderFinalStatus = "DidFailLoad"
-	PrerenderFinalStatusStop                                      PrerenderFinalStatus = "Stop"
-	PrerenderFinalStatusSSLCertificateError                       PrerenderFinalStatus = "SslCertificateError"
-	PrerenderFinalStatusLoginAuthRequested                        PrerenderFinalStatus = "LoginAuthRequested"
-	PrerenderFinalStatusUaChangeRequiresReload                    PrerenderFinalStatus = "UaChangeRequiresReload"
-	PrerenderFinalStatusBlockedByClient                           PrerenderFinalStatus = "BlockedByClient"
-	PrerenderFinalStatusAudioOutputDeviceRequested                PrerenderFinalStatus = "AudioOutputDeviceRequested"
-	PrerenderFinalStatusMixedContent                              PrerenderFinalStatus = "MixedContent"
-	PrerenderFinalStatusTriggerBackgrounded                       PrerenderFinalStatus = "TriggerBackgrounded"
-	PrerenderFinalStatusEmbedderTriggeredAndSameOriginRedirected  PrerenderFinalStatus = "EmbedderTriggeredAndSameOriginRedirected"
-	PrerenderFinalStatusEmbedderTriggeredAndCrossOriginRedirected PrerenderFinalStatus = "EmbedderTriggeredAndCrossOriginRedirected"
-	PrerenderFinalStatusEmbedderTriggeredAndDestroyed             PrerenderFinalStatus = "EmbedderTriggeredAndDestroyed"
-)
-
-func (e PrerenderFinalStatus) Valid() bool {
-	switch e {
-	case "Activated", "Destroyed", "LowEndDevice", "CrossOriginRedirect", "CrossOriginNavigation", "InvalidSchemeRedirect", "InvalidSchemeNavigation", "InProgressNavigation", "NavigationRequestBlockedByCsp", "MainFrameNavigation", "MojoBinderPolicy", "RendererProcessCrashed", "RendererProcessKilled", "Download", "TriggerDestroyed", "NavigationNotCommitted", "NavigationBadHttpStatus", "ClientCertRequested", "NavigationRequestNetworkError", "MaxNumOfRunningPrerendersExceeded", "CancelAllHostsForTesting", "DidFailLoad", "Stop", "SslCertificateError", "LoginAuthRequested", "UaChangeRequiresReload", "BlockedByClient", "AudioOutputDeviceRequested", "MixedContent", "TriggerBackgrounded", "EmbedderTriggeredAndSameOriginRedirected", "EmbedderTriggeredAndCrossOriginRedirected", "EmbedderTriggeredAndDestroyed":
-		return true
-	default:
-		return false
-	}
-}
-
-func (e PrerenderFinalStatus) String() string {
-	return string(e)
 }

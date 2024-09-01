@@ -489,3 +489,23 @@ func NewSetShowIsolatedElementsArgs(isolatedElementHighlightConfigs []IsolatedEl
 	args.IsolatedElementHighlightConfigs = isolatedElementHighlightConfigs
 	return args
 }
+
+// SetShowWindowControlsOverlayArgs represents the arguments for SetShowWindowControlsOverlay in the Overlay domain.
+type SetShowWindowControlsOverlayArgs struct {
+	WindowControlsOverlayConfig *WindowControlsOverlayConfig `json:"windowControlsOverlayConfig,omitempty"` // Window Controls Overlay data, null means hide Window Controls Overlay
+}
+
+// NewSetShowWindowControlsOverlayArgs initializes SetShowWindowControlsOverlayArgs with the required arguments.
+func NewSetShowWindowControlsOverlayArgs() *SetShowWindowControlsOverlayArgs {
+	args := new(SetShowWindowControlsOverlayArgs)
+
+	return args
+}
+
+// SetWindowControlsOverlayConfig sets the WindowControlsOverlayConfig optional argument.
+// Window Controls Overlay data, null means hide Window Controls
+// Overlay
+func (a *SetShowWindowControlsOverlayArgs) SetWindowControlsOverlayConfig(windowControlsOverlayConfig WindowControlsOverlayConfig) *SetShowWindowControlsOverlayArgs {
+	a.WindowControlsOverlayConfig = &windowControlsOverlayConfig
+	return a
+}

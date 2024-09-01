@@ -18,7 +18,8 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 	return &domainClient{conn: conn}
 }
 
-// GetDOMCounters invokes the Memory method.
+// GetDOMCounters invokes the Memory method. Retruns current DOM object
+// counters.
 func (d *domainClient) GetDOMCounters(ctx context.Context) (reply *GetDOMCountersReply, err error) {
 	reply = new(GetDOMCountersReply)
 	err = rpcc.Invoke(ctx, "Memory.getDOMCounters", nil, reply, d.conn)
@@ -28,7 +29,20 @@ func (d *domainClient) GetDOMCounters(ctx context.Context) (reply *GetDOMCounter
 	return
 }
 
-// PrepareForLeakDetection invokes the Memory method.
+// GetDOMCountersForLeakDetection invokes the Memory method. Retruns DOM
+// object counters after preparing renderer for leak detection.
+func (d *domainClient) GetDOMCountersForLeakDetection(ctx context.Context) (reply *GetDOMCountersForLeakDetectionReply, err error) {
+	reply = new(GetDOMCountersForLeakDetectionReply)
+	err = rpcc.Invoke(ctx, "Memory.getDOMCountersForLeakDetection", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Memory", Op: "GetDOMCountersForLeakDetection", Err: err}
+	}
+	return
+}
+
+// PrepareForLeakDetection invokes the Memory method. Prepares for leak
+// detection by terminating workers, stopping spellcheckers, dropping
+// non-essential internal caches, running garbage collections, etc.
 func (d *domainClient) PrepareForLeakDetection(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "Memory.prepareForLeakDetection", nil, nil, d.conn)
 	if err != nil {

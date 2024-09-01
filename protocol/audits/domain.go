@@ -70,6 +70,17 @@ func (d *domainClient) CheckContrast(ctx context.Context, args *CheckContrastArg
 	return
 }
 
+// CheckFormsIssues invokes the Audits method. Runs the form issues check for
+// the target page. Found issues are reported using Audits.issueAdded event.
+func (d *domainClient) CheckFormsIssues(ctx context.Context) (reply *CheckFormsIssuesReply, err error) {
+	reply = new(CheckFormsIssuesReply)
+	err = rpcc.Invoke(ctx, "Audits.checkFormsIssues", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Audits", Op: "CheckFormsIssues", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) IssueAdded(ctx context.Context) (IssueAddedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Audits.issueAdded", d.conn)
 	if err != nil {

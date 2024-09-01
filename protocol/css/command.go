@@ -12,6 +12,14 @@ type AddRuleArgs struct {
 	StyleSheetID StyleSheetID `json:"styleSheetId"` // The css style sheet identifier where a new rule should be inserted.
 	RuleText     string       `json:"ruleText"`     // The text of a new rule.
 	Location     SourceRange  `json:"location"`     // Text position of a new rule in the target style sheet.
+	// NodeForPropertySyntaxValidation NodeId for the DOM node in whose
+	// context custom property declarations for registered properties
+	// should be validated. If omitted, declarations in the new rule text
+	// can only be validated statically, which may produce incorrect
+	// results if the declaration contains a var() for example.
+	//
+	// Note: This property is experimental.
+	NodeForPropertySyntaxValidation *dom.NodeID `json:"nodeForPropertySyntaxValidation,omitempty"`
 }
 
 // NewAddRuleArgs initializes AddRuleArgs with the required arguments.
@@ -21,6 +29,19 @@ func NewAddRuleArgs(styleSheetID StyleSheetID, ruleText string, location SourceR
 	args.RuleText = ruleText
 	args.Location = location
 	return args
+}
+
+// SetNodeForPropertySyntaxValidation sets the NodeForPropertySyntaxValidation optional argument.
+// NodeId for the DOM node in whose context custom property
+// declarations for registered properties should be validated. If
+// omitted, declarations in the new rule text can only be validated
+// statically, which may produce incorrect results if the declaration
+// contains a var() for example.
+//
+// Note: This property is experimental.
+func (a *AddRuleArgs) SetNodeForPropertySyntaxValidation(nodeForPropertySyntaxValidation dom.NodeID) *AddRuleArgs {
+	a.NodeForPropertySyntaxValidation = &nodeForPropertySyntaxValidation
+	return a
 }
 
 // AddRuleReply represents the return values for AddRule in the CSS domain.
@@ -144,13 +165,23 @@ func NewGetMatchedStylesForNodeArgs(nodeID dom.NodeID) *GetMatchedStylesForNodeA
 
 // GetMatchedStylesForNodeReply represents the return values for GetMatchedStylesForNode in the CSS domain.
 type GetMatchedStylesForNodeReply struct {
-	InlineStyle             *Style                          `json:"inlineStyle,omitempty"`             // Inline style for the specified DOM node.
-	AttributesStyle         *Style                          `json:"attributesStyle,omitempty"`         // Attribute-defined element style (e.g. resulting from "width=20 height=100%").
-	MatchedCSSRules         []RuleMatch                     `json:"matchedCSSRules,omitempty"`         // CSS rules matching this node, from all applicable stylesheets.
-	PseudoElements          []PseudoElementMatches          `json:"pseudoElements,omitempty"`          // Pseudo style matches for this node.
-	Inherited               []InheritedStyleEntry           `json:"inherited,omitempty"`               // A chain of inherited styles (from the immediate node parent up to the DOM tree root).
-	InheritedPseudoElements []InheritedPseudoElementMatches `json:"inheritedPseudoElements,omitempty"` // A chain of inherited pseudo element styles (from the immediate node parent up to the DOM tree root).
-	CSSKeyframesRules       []KeyframesRule                 `json:"cssKeyframesRules,omitempty"`       // A list of CSS keyframed animations matching this node.
+	InlineStyle                 *Style                          `json:"inlineStyle,omitempty"`                 // Inline style for the specified DOM node.
+	AttributesStyle             *Style                          `json:"attributesStyle,omitempty"`             // Attribute-defined element style (e.g. resulting from "width=20 height=100%").
+	MatchedCSSRules             []RuleMatch                     `json:"matchedCSSRules,omitempty"`             // CSS rules matching this node, from all applicable stylesheets.
+	PseudoElements              []PseudoElementMatches          `json:"pseudoElements,omitempty"`              // Pseudo style matches for this node.
+	Inherited                   []InheritedStyleEntry           `json:"inherited,omitempty"`                   // A chain of inherited styles (from the immediate node parent up to the DOM tree root).
+	InheritedPseudoElements     []InheritedPseudoElementMatches `json:"inheritedPseudoElements,omitempty"`     // A chain of inherited pseudo element styles (from the immediate node parent up to the DOM tree root).
+	CSSKeyframesRules           []KeyframesRule                 `json:"cssKeyframesRules,omitempty"`           // A list of CSS keyframed animations matching this node.
+	CSSPositionTryRules         []PositionTryRule               `json:"cssPositionTryRules,omitempty"`         // A list of CSS @position-try rules matching this node, based on the position-try-fallbacks property.
+	ActivePositionFallbackIndex *int                            `json:"activePositionFallbackIndex,omitempty"` // Index of the active fallback in the applied position-try-fallback property, will not be set if there is no active position-try fallback.
+	CSSPropertyRules            []PropertyRule                  `json:"cssPropertyRules,omitempty"`            // A list of CSS at-property rules matching this node.
+	CSSPropertyRegistrations    []PropertyRegistration          `json:"cssPropertyRegistrations,omitempty"`    // A list of CSS property registrations matching this node.
+	CSSFontPaletteValuesRule    *FontPaletteValuesRule          `json:"cssFontPaletteValuesRule,omitempty"`    // A font-palette-values rule matching this node.
+	// ParentLayoutNodeID Id of the first parent element that does not
+	// have display: contents.
+	//
+	// Note: This property is experimental.
+	ParentLayoutNodeID *dom.NodeID `json:"parentLayoutNodeId,omitempty"`
 }
 
 // GetMediaQueriesReply represents the return values for GetMediaQueries in the CSS domain.
@@ -209,6 +240,25 @@ type GetLayersForNodeReply struct {
 	RootLayer LayerData `json:"rootLayer"` // No description.
 }
 
+// GetLocationForSelectorArgs represents the arguments for GetLocationForSelector in the CSS domain.
+type GetLocationForSelectorArgs struct {
+	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
+	SelectorText string       `json:"selectorText"` // No description.
+}
+
+// NewGetLocationForSelectorArgs initializes GetLocationForSelectorArgs with the required arguments.
+func NewGetLocationForSelectorArgs(styleSheetID StyleSheetID, selectorText string) *GetLocationForSelectorArgs {
+	args := new(GetLocationForSelectorArgs)
+	args.StyleSheetID = styleSheetID
+	args.SelectorText = selectorText
+	return args
+}
+
+// GetLocationForSelectorReply represents the return values for GetLocationForSelector in the CSS domain.
+type GetLocationForSelectorReply struct {
+	Ranges []SourceRange `json:"ranges"` // No description.
+}
+
 // TrackComputedStyleUpdatesArgs represents the arguments for TrackComputedStyleUpdates in the CSS domain.
 type TrackComputedStyleUpdatesArgs struct {
 	PropertiesToTrack []ComputedStyleProperty `json:"propertiesToTrack"` // No description.
@@ -223,7 +273,7 @@ func NewTrackComputedStyleUpdatesArgs(propertiesToTrack []ComputedStyleProperty)
 
 // TakeComputedStyleUpdatesReply represents the return values for TakeComputedStyleUpdates in the CSS domain.
 type TakeComputedStyleUpdatesReply struct {
-	NodeIDs []dom.NodeID `json:"nodeIds"` // The list of node Ids that have their tracked computed styles updated
+	NodeIDs []dom.NodeID `json:"nodeIds"` // The list of node Ids that have their tracked computed styles updated.
 }
 
 // SetEffectivePropertyValueForNodeArgs represents the arguments for SetEffectivePropertyValueForNode in the CSS domain.
@@ -240,6 +290,27 @@ func NewSetEffectivePropertyValueForNodeArgs(nodeID dom.NodeID, propertyName str
 	args.PropertyName = propertyName
 	args.Value = value
 	return args
+}
+
+// SetPropertyRulePropertyNameArgs represents the arguments for SetPropertyRulePropertyName in the CSS domain.
+type SetPropertyRulePropertyNameArgs struct {
+	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange  `json:"range"`        // No description.
+	PropertyName string       `json:"propertyName"` // No description.
+}
+
+// NewSetPropertyRulePropertyNameArgs initializes SetPropertyRulePropertyNameArgs with the required arguments.
+func NewSetPropertyRulePropertyNameArgs(styleSheetID StyleSheetID, rang SourceRange, propertyName string) *SetPropertyRulePropertyNameArgs {
+	args := new(SetPropertyRulePropertyNameArgs)
+	args.StyleSheetID = styleSheetID
+	args.Range = rang
+	args.PropertyName = propertyName
+	return args
+}
+
+// SetPropertyRulePropertyNameReply represents the return values for SetPropertyRulePropertyName in the CSS domain.
+type SetPropertyRulePropertyNameReply struct {
+	PropertyName Value `json:"propertyName"` // The resulting key text after modification.
 }
 
 // SetKeyframeKeyArgs represents the arguments for SetKeyframeKey in the CSS domain.
@@ -326,6 +397,27 @@ type SetSupportsTextReply struct {
 	Supports Supports `json:"supports"` // The resulting CSS Supports rule after modification.
 }
 
+// SetScopeTextArgs represents the arguments for SetScopeText in the CSS domain.
+type SetScopeTextArgs struct {
+	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange  `json:"range"`        // No description.
+	Text         string       `json:"text"`         // No description.
+}
+
+// NewSetScopeTextArgs initializes SetScopeTextArgs with the required arguments.
+func NewSetScopeTextArgs(styleSheetID StyleSheetID, rang SourceRange, text string) *SetScopeTextArgs {
+	args := new(SetScopeTextArgs)
+	args.StyleSheetID = styleSheetID
+	args.Range = rang
+	args.Text = text
+	return args
+}
+
+// SetScopeTextReply represents the return values for SetScopeText in the CSS domain.
+type SetScopeTextReply struct {
+	Scope Scope `json:"scope"` // The resulting CSS Scope rule after modification.
+}
+
 // SetRuleSelectorArgs represents the arguments for SetRuleSelector in the CSS domain.
 type SetRuleSelectorArgs struct {
 	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
@@ -369,6 +461,14 @@ type SetStyleSheetTextReply struct {
 // SetStyleTextsArgs represents the arguments for SetStyleTexts in the CSS domain.
 type SetStyleTextsArgs struct {
 	Edits []StyleDeclarationEdit `json:"edits"` // No description.
+	// NodeForPropertySyntaxValidation NodeId for the DOM node in whose
+	// context custom property declarations for registered properties
+	// should be validated. If omitted, declarations in the new rule text
+	// can only be validated statically, which may produce incorrect
+	// results if the declaration contains a var() for example.
+	//
+	// Note: This property is experimental.
+	NodeForPropertySyntaxValidation *dom.NodeID `json:"nodeForPropertySyntaxValidation,omitempty"`
 }
 
 // NewSetStyleTextsArgs initializes SetStyleTextsArgs with the required arguments.
@@ -376,6 +476,19 @@ func NewSetStyleTextsArgs(edits []StyleDeclarationEdit) *SetStyleTextsArgs {
 	args := new(SetStyleTextsArgs)
 	args.Edits = edits
 	return args
+}
+
+// SetNodeForPropertySyntaxValidation sets the NodeForPropertySyntaxValidation optional argument.
+// NodeId for the DOM node in whose context custom property
+// declarations for registered properties should be validated. If
+// omitted, declarations in the new rule text can only be validated
+// statically, which may produce incorrect results if the declaration
+// contains a var() for example.
+//
+// Note: This property is experimental.
+func (a *SetStyleTextsArgs) SetNodeForPropertySyntaxValidation(nodeForPropertySyntaxValidation dom.NodeID) *SetStyleTextsArgs {
+	a.NodeForPropertySyntaxValidation = &nodeForPropertySyntaxValidation
+	return a
 }
 
 // SetStyleTextsReply represents the return values for SetStyleTexts in the CSS domain.

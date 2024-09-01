@@ -246,18 +246,8 @@ type DispatchMouseEventArgs struct {
 	//
 	// Note: This property is experimental.
 	TangentialPressure *float64 `json:"tangentialPressure,omitempty"`
-	// TiltX The plane angle between the Y-Z plane and the plane
-	// containing both the stylus axis and the Y axis, in degrees of the
-	// range [-90,90], a positive tiltX is to the right (default: 0).
-	//
-	// Note: This property is experimental.
-	TiltX *int `json:"tiltX,omitempty"`
-	// TiltY The plane angle between the X-Z plane and the plane
-	// containing both the stylus axis and the X axis, in degrees of the
-	// range [-90,90], a positive tiltY is towards the user (default: 0).
-	//
-	// Note: This property is experimental.
-	TiltY *int `json:"tiltY,omitempty"`
+	TiltX              *float64 `json:"tiltX,omitempty"` // The plane angle between the Y-Z plane and the plane containing both the stylus axis and the Y axis, in degrees of the range [-90,90], a positive tiltX is to the right (default: 0).
+	TiltY              *float64 `json:"tiltY,omitempty"` // The plane angle between the X-Z plane and the plane containing both the stylus axis and the X axis, in degrees of the range [-90,90], a positive tiltY is towards the user (default: 0).
 	// Twist The clockwise rotation of a pen stylus around its own major
 	// axis, in degrees in the range [0,359] (default: 0).
 	//
@@ -340,9 +330,7 @@ func (a *DispatchMouseEventArgs) SetTangentialPressure(tangentialPressure float6
 // the Y-Z plane and the plane containing both the stylus axis and the
 // Y axis, in degrees of the range [-90,90], a positive tiltX is to the
 // right (default: 0).
-//
-// Note: This property is experimental.
-func (a *DispatchMouseEventArgs) SetTiltX(tiltX int) *DispatchMouseEventArgs {
+func (a *DispatchMouseEventArgs) SetTiltX(tiltX float64) *DispatchMouseEventArgs {
 	a.TiltX = &tiltX
 	return a
 }
@@ -351,9 +339,7 @@ func (a *DispatchMouseEventArgs) SetTiltX(tiltX int) *DispatchMouseEventArgs {
 // the X-Z plane and the plane containing both the stylus axis and the
 // X axis, in degrees of the range [-90,90], a positive tiltY is
 // towards the user (default: 0).
-//
-// Note: This property is experimental.
-func (a *DispatchMouseEventArgs) SetTiltY(tiltY int) *DispatchMouseEventArgs {
+func (a *DispatchMouseEventArgs) SetTiltY(tiltY float64) *DispatchMouseEventArgs {
 	a.TiltY = &tiltY
 	return a
 }

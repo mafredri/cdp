@@ -14,7 +14,11 @@ import (
 // failRequest or fulfillRequest. The stage of the request can be determined by
 // presence of responseErrorReason and responseStatusCode -- the request is at
 // the response stage if either of these fields is present and in the request
-// stage otherwise.
+// stage otherwise. Redirect responses and subsequent requests are reported
+// similarly to regular responses and requests. Redirect responses may be
+// distinguished by the value of `responseStatusCode` (which is one of 301,
+// 302, 303, 307, 308) along with presence of the `location` header. Requests
+// resulting from a redirect will have `redirectedRequestId` field set.
 type RequestPausedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -32,7 +36,12 @@ type RequestPausedReply struct {
 	ResponseStatusCode  *int                 `json:"responseStatusCode,omitempty"`  // Response code if intercepted at response stage.
 	ResponseStatusText  *string              `json:"responseStatusText,omitempty"`  // Response status text if intercepted at response stage.
 	ResponseHeaders     []HeaderEntry        `json:"responseHeaders,omitempty"`     // Response headers if intercepted at the response stage.
-	NetworkID           *RequestID           `json:"networkId,omitempty"`           // If the intercepted request had a corresponding Network.requestWillBeSent event fired for it, then this networkId will be the same as the requestId present in the requestWillBeSent event.
+	NetworkID           *network.RequestID   `json:"networkId,omitempty"`           // If the intercepted request had a corresponding Network.requestWillBeSent event fired for it, then this networkId will be the same as the requestId present in the requestWillBeSent event.
+	// RedirectedRequestID If the request is due to a redirect response
+	// from the server, the id of the request that has caused the redirect.
+	//
+	// Note: This property is experimental.
+	RedirectedRequestID *RequestID `json:"redirectedRequestId,omitempty"`
 }
 
 // AuthRequiredClient is a client for AuthRequired events. Issued when the

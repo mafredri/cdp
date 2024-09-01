@@ -61,7 +61,7 @@ func (d *domainClient) InsertText(ctx context.Context, args *InsertTextArgs) (er
 }
 
 // IMESetComposition invokes the Input method. This method sets the current
-// candidate text for ime. Use imeCommitComposition to commit the final text.
+// candidate text for IME. Use imeCommitComposition to commit the final text.
 // Use imeSetComposition with empty string as text to cancel composition.
 func (d *domainClient) IMESetComposition(ctx context.Context, args *IMESetCompositionArgs) (err error) {
 	if args != nil {
@@ -99,6 +99,16 @@ func (d *domainClient) DispatchTouchEvent(ctx context.Context, args *DispatchTou
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Input", Op: "DispatchTouchEvent", Err: err}
+	}
+	return
+}
+
+// CancelDragging invokes the Input method. Cancels any active dragging in the
+// page.
+func (d *domainClient) CancelDragging(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Input.cancelDragging", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Input", Op: "CancelDragging", Err: err}
 	}
 	return
 }

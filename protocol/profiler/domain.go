@@ -88,15 +88,6 @@ func (d *domainClient) StartPreciseCoverage(ctx context.Context, args *StartPrec
 	return
 }
 
-// StartTypeProfile invokes the Profiler method. Enable type profile.
-func (d *domainClient) StartTypeProfile(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Profiler.startTypeProfile", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Profiler", Op: "StartTypeProfile", Err: err}
-	}
-	return
-}
-
 // Stop invokes the Profiler method.
 func (d *domainClient) Stop(ctx context.Context) (reply *StopReply, err error) {
 	reply = new(StopReply)
@@ -118,16 +109,6 @@ func (d *domainClient) StopPreciseCoverage(ctx context.Context) (err error) {
 	return
 }
 
-// StopTypeProfile invokes the Profiler method. Disable type profile.
-// Disabling releases type profile data collected so far.
-func (d *domainClient) StopTypeProfile(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Profiler.stopTypeProfile", nil, nil, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Profiler", Op: "StopTypeProfile", Err: err}
-	}
-	return
-}
-
 // TakePreciseCoverage invokes the Profiler method. Collect coverage data for
 // the current isolate, and resets execution counters. Precise code coverage
 // needs to have started.
@@ -136,16 +117,6 @@ func (d *domainClient) TakePreciseCoverage(ctx context.Context) (reply *TakePrec
 	err = rpcc.Invoke(ctx, "Profiler.takePreciseCoverage", nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Profiler", Op: "TakePreciseCoverage", Err: err}
-	}
-	return
-}
-
-// TakeTypeProfile invokes the Profiler method. Collect type profile.
-func (d *domainClient) TakeTypeProfile(ctx context.Context) (reply *TakeTypeProfileReply, err error) {
-	reply = new(TakeTypeProfileReply)
-	err = rpcc.Invoke(ctx, "Profiler.takeTypeProfile", nil, reply, d.conn)
-	if err != nil {
-		err = &internal.OpError{Domain: "Profiler", Op: "TakeTypeProfile", Err: err}
 	}
 	return
 }

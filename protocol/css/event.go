@@ -8,7 +8,7 @@ import (
 
 // FontsUpdatedClient is a client for FontsUpdated events. Fires whenever a
 // web font is updated. A non-empty font parameter indicates a successfully
-// loaded web font
+// loaded web font.
 type FontsUpdatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

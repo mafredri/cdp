@@ -122,10 +122,18 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 	return
 }
 
-// GetAppManifest invokes the Page method.
-func (d *domainClient) GetAppManifest(ctx context.Context) (reply *GetAppManifestReply, err error) {
+// GetAppManifest invokes the Page method. Gets the processed manifest for
+// this current document. This API always waits for the manifest to be loaded.
+// If manifestId is provided, and it does not match the manifest of the current
+// document, this API errors out. If there is not a loaded page, this API
+// errors out immediately.
+func (d *domainClient) GetAppManifest(ctx context.Context, args *GetAppManifestArgs) (reply *GetAppManifestReply, err error) {
 	reply = new(GetAppManifestReply)
-	err = rpcc.Invoke(ctx, "Page.getAppManifest", nil, reply, d.conn)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.getAppManifest", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.getAppManifest", nil, reply, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "GetAppManifest", Err: err}
 	}
@@ -142,7 +150,9 @@ func (d *domainClient) GetInstallabilityErrors(ctx context.Context) (reply *GetI
 	return
 }
 
-// GetManifestIcons invokes the Page method.
+// GetManifestIcons invokes the Page method. Deprecated because it's not
+// guaranteed that the returned icon is in fact the one used for PWA
+// installation.
 func (d *domainClient) GetManifestIcons(ctx context.Context) (reply *GetManifestIconsReply, err error) {
 	reply = new(GetManifestIconsReply)
 	err = rpcc.Invoke(ctx, "Page.getManifestIcons", nil, reply, d.conn)
@@ -159,6 +169,20 @@ func (d *domainClient) GetAppID(ctx context.Context) (reply *GetAppIDReply, err 
 	err = rpcc.Invoke(ctx, "Page.getAppId", nil, reply, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "GetAppID", Err: err}
+	}
+	return
+}
+
+// GetAdScriptID invokes the Page method.
+func (d *domainClient) GetAdScriptID(ctx context.Context, args *GetAdScriptIDArgs) (reply *GetAdScriptIDReply, err error) {
+	reply = new(GetAdScriptIDReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.getAdScriptId", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.getAdScriptId", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetAdScriptID", Err: err}
 	}
 	return
 }
@@ -553,7 +577,7 @@ func (d *domainClient) StopScreencast(ctx context.Context) (err error) {
 }
 
 // ProduceCompilationCache invokes the Page method. Requests backend to
-// produce compilation cache for the specified scripts. `scripts` are appeneded
+// produce compilation cache for the specified scripts. `scripts` are appended
 // to the list of scripts for which the cache would be produced. The list may
 // be reset during page navigation. When script with a matching URL is
 // encountered, the cache is optionally produced upon backend discretion, based
@@ -609,6 +633,21 @@ func (d *domainClient) SetSPCTransactionMode(ctx context.Context, args *SetSPCTr
 	return
 }
 
+// SetRPHRegistrationMode invokes the Page method. Extensions for Custom
+// Handlers API:
+// https://html.spec.whatwg.org/multipage/system-state.html#rph-automation
+func (d *domainClient) SetRPHRegistrationMode(ctx context.Context, args *SetRPHRegistrationModeArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setRPHRegistrationMode", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setRPHRegistrationMode", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetRPHRegistrationMode", Err: err}
+	}
+	return
+}
+
 // GenerateTestReport invokes the Page method. Generates a report for testing.
 func (d *domainClient) GenerateTestReport(ctx context.Context, args *GenerateTestReportArgs) (err error) {
 	if args != nil {
@@ -644,6 +683,27 @@ func (d *domainClient) SetInterceptFileChooserDialog(ctx context.Context, args *
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "SetInterceptFileChooserDialog", Err: err}
+	}
+	return
+}
+
+// SetPrerenderingAllowed invokes the Page method. Enable/disable prerendering
+// manually.
+//
+// This command is a short-term solution for https://crbug.com/1440085. See
+// https://docs.google.com/document/d/12HVmFxYj5Jc-eJr5OmWsa2bqTJsbgGLKI6ZIyx0_wpA
+// for more details.
+//
+// TODO(https://crbug.com/1440085): Remove this once Puppeteer supports tab
+// targets.
+func (d *domainClient) SetPrerenderingAllowed(ctx context.Context, args *SetPrerenderingAllowedArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.setPrerenderingAllowed", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.setPrerenderingAllowed", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "SetPrerenderingAllowed", Err: err}
 	}
 	return
 }
@@ -749,6 +809,27 @@ func (c *frameDetachedClient) Recv() (*FrameDetachedReply, error) {
 	event := new(FrameDetachedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "FrameDetached Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) FrameSubtreeWillBeDetached(ctx context.Context) (FrameSubtreeWillBeDetachedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.frameSubtreeWillBeDetached", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &frameSubtreeWillBeDetachedClient{Stream: s}, nil
+}
+
+type frameSubtreeWillBeDetachedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameSubtreeWillBeDetachedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *frameSubtreeWillBeDetachedClient) Recv() (*FrameSubtreeWillBeDetachedReply, error) {
+	event := new(FrameSubtreeWillBeDetachedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "FrameSubtreeWillBeDetached Recv", Err: err}
 	}
 	return event, nil
 }
@@ -1064,27 +1145,6 @@ func (c *backForwardCacheNotUsedClient) Recv() (*BackForwardCacheNotUsedReply, e
 	event := new(BackForwardCacheNotUsedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "BackForwardCacheNotUsed Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) PrerenderAttemptCompleted(ctx context.Context) (PrerenderAttemptCompletedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Page.prerenderAttemptCompleted", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &prerenderAttemptCompletedClient{Stream: s}, nil
-}
-
-type prerenderAttemptCompletedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *prerenderAttemptCompletedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *prerenderAttemptCompletedClient) Recv() (*PrerenderAttemptCompletedReply, error) {
-	event := new(PrerenderAttemptCompletedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Page", Op: "PrerenderAttemptCompleted Recv", Err: err}
 	}
 	return event, nil
 }

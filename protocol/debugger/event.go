@@ -38,7 +38,7 @@ type PausedReply struct {
 	CallFrames []CallFrame `json:"callFrames"` // Call stack the virtual machine stopped on.
 	// Reason Pause reason.
 	//
-	// Values: "ambiguous", "assert", "CSPViolation", "debugCommand", "DOM", "EventListener", "exception", "instrumentation", "OOM", "other", "promiseRejection", "XHR".
+	// Values: "ambiguous", "assert", "CSPViolation", "debugCommand", "DOM", "EventListener", "exception", "instrumentation", "OOM", "other", "promiseRejection", "XHR", "step".
 	Reason          string              `json:"reason"`
 	Data            json.RawMessage     `json:"data,omitempty"`            // Object containing break-specific auxiliary properties.
 	HitBreakpoints  []string            `json:"hitBreakpoints,omitempty"`  // Hit breakpoints IDs
@@ -87,7 +87,7 @@ type ScriptFailedToParseReply struct {
 	EndColumn               int                        `json:"endColumn"`                         // Length of the last line of the script.
 	ExecutionContextID      runtime.ExecutionContextID `json:"executionContextId"`                // Specifies script creation context.
 	Hash                    string                     `json:"hash"`                              // Content hash of the script, SHA-256.
-	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
+	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data likely matching {isDefault: boolean, type: 'default'|'isolated'|'worker', frameId: string}
 	SourceMapURL            *string                    `json:"sourceMapURL,omitempty"`            // URL of source map associated with script (if any).
 	HasSourceURL            *bool                      `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
 	IsModule                *bool                      `json:"isModule,omitempty"`                // True, if this script is ES6 module.
@@ -132,7 +132,7 @@ type ScriptParsedReply struct {
 	EndColumn               int                        `json:"endColumn"`                         // Length of the last line of the script.
 	ExecutionContextID      runtime.ExecutionContextID `json:"executionContextId"`                // Specifies script creation context.
 	Hash                    string                     `json:"hash"`                              // Content hash of the script, SHA-256.
-	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data.
+	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data likely matching {isDefault: boolean, type: 'default'|'isolated'|'worker', frameId: string}
 	// IsLiveEdit True, if this script is generated as a result of the
 	// live edit operation.
 	//

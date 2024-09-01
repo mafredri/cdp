@@ -47,3 +47,17 @@ type StartedClient interface {
 type StartedReply struct {
 	Animation Animation `json:"animation"` // Animation that was started.
 }
+
+// UpdatedClient is a client for AnimationUpdated events. Event for animation
+// that has been updated.
+type UpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*UpdatedReply, error)
+	rpcc.Stream
+}
+
+// UpdatedReply is the reply for AnimationUpdated events.
+type UpdatedReply struct {
+	Animation Animation `json:"animation"` // Animation that was updated.
+}

@@ -80,7 +80,7 @@ func (d *domainClient) CloseTarget(ctx context.Context, args *CloseTargetArgs) (
 //
 // Injected object will be available as `window[bindingName]`.
 //
-// The object has the follwing API: - `binding.send(json)` - a method to send
+// The object has the following API: - `binding.send(json)` - a method to send
 // messages over the remote debugging protocol - `binding.onmessage = json =>
 // handleMessage(json)` - a callback that will be called for the protocol
 // notifications and command responses.
@@ -182,9 +182,13 @@ func (d *domainClient) GetTargetInfo(ctx context.Context, args *GetTargetInfoArg
 
 // GetTargets invokes the Target method. Retrieves a list of available
 // targets.
-func (d *domainClient) GetTargets(ctx context.Context) (reply *GetTargetsReply, err error) {
+func (d *domainClient) GetTargets(ctx context.Context, args *GetTargetsArgs) (reply *GetTargetsReply, err error) {
 	reply = new(GetTargetsReply)
-	err = rpcc.Invoke(ctx, "Target.getTargets", nil, reply, d.conn)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Target.getTargets", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Target.getTargets", nil, reply, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "GetTargets", Err: err}
 	}

@@ -3,6 +3,8 @@
 package storage
 
 import (
+	"encoding/json"
+
 	"github.com/mafredri/cdp/protocol/browser"
 	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/page"
@@ -35,6 +37,20 @@ type ClearDataForOriginArgs struct {
 func NewClearDataForOriginArgs(origin string, storageTypes string) *ClearDataForOriginArgs {
 	args := new(ClearDataForOriginArgs)
 	args.Origin = origin
+	args.StorageTypes = storageTypes
+	return args
+}
+
+// ClearDataForStorageKeyArgs represents the arguments for ClearDataForStorageKey in the Storage domain.
+type ClearDataForStorageKeyArgs struct {
+	StorageKey   string `json:"storageKey"`   // Storage key.
+	StorageTypes string `json:"storageTypes"` // Comma separated list of StorageType to clear.
+}
+
+// NewClearDataForStorageKeyArgs initializes ClearDataForStorageKeyArgs with the required arguments.
+func NewClearDataForStorageKeyArgs(storageKey string, storageTypes string) *ClearDataForStorageKeyArgs {
+	args := new(ClearDataForStorageKeyArgs)
+	args.StorageKey = storageKey
 	args.StorageTypes = storageTypes
 	return args
 }
@@ -160,6 +176,18 @@ func NewTrackCacheStorageForOriginArgs(origin string) *TrackCacheStorageForOrigi
 	return args
 }
 
+// TrackCacheStorageForStorageKeyArgs represents the arguments for TrackCacheStorageForStorageKey in the Storage domain.
+type TrackCacheStorageForStorageKeyArgs struct {
+	StorageKey string `json:"storageKey"` // Storage key.
+}
+
+// NewTrackCacheStorageForStorageKeyArgs initializes TrackCacheStorageForStorageKeyArgs with the required arguments.
+func NewTrackCacheStorageForStorageKeyArgs(storageKey string) *TrackCacheStorageForStorageKeyArgs {
+	args := new(TrackCacheStorageForStorageKeyArgs)
+	args.StorageKey = storageKey
+	return args
+}
+
 // TrackIndexedDBForOriginArgs represents the arguments for TrackIndexedDBForOrigin in the Storage domain.
 type TrackIndexedDBForOriginArgs struct {
 	Origin string `json:"origin"` // Security origin.
@@ -169,6 +197,18 @@ type TrackIndexedDBForOriginArgs struct {
 func NewTrackIndexedDBForOriginArgs(origin string) *TrackIndexedDBForOriginArgs {
 	args := new(TrackIndexedDBForOriginArgs)
 	args.Origin = origin
+	return args
+}
+
+// TrackIndexedDBForStorageKeyArgs represents the arguments for TrackIndexedDBForStorageKey in the Storage domain.
+type TrackIndexedDBForStorageKeyArgs struct {
+	StorageKey string `json:"storageKey"` // Storage key.
+}
+
+// NewTrackIndexedDBForStorageKeyArgs initializes TrackIndexedDBForStorageKeyArgs with the required arguments.
+func NewTrackIndexedDBForStorageKeyArgs(storageKey string) *TrackIndexedDBForStorageKeyArgs {
+	args := new(TrackIndexedDBForStorageKeyArgs)
+	args.StorageKey = storageKey
 	return args
 }
 
@@ -184,6 +224,18 @@ func NewUntrackCacheStorageForOriginArgs(origin string) *UntrackCacheStorageForO
 	return args
 }
 
+// UntrackCacheStorageForStorageKeyArgs represents the arguments for UntrackCacheStorageForStorageKey in the Storage domain.
+type UntrackCacheStorageForStorageKeyArgs struct {
+	StorageKey string `json:"storageKey"` // Storage key.
+}
+
+// NewUntrackCacheStorageForStorageKeyArgs initializes UntrackCacheStorageForStorageKeyArgs with the required arguments.
+func NewUntrackCacheStorageForStorageKeyArgs(storageKey string) *UntrackCacheStorageForStorageKeyArgs {
+	args := new(UntrackCacheStorageForStorageKeyArgs)
+	args.StorageKey = storageKey
+	return args
+}
+
 // UntrackIndexedDBForOriginArgs represents the arguments for UntrackIndexedDBForOrigin in the Storage domain.
 type UntrackIndexedDBForOriginArgs struct {
 	Origin string `json:"origin"` // Security origin.
@@ -193,6 +245,18 @@ type UntrackIndexedDBForOriginArgs struct {
 func NewUntrackIndexedDBForOriginArgs(origin string) *UntrackIndexedDBForOriginArgs {
 	args := new(UntrackIndexedDBForOriginArgs)
 	args.Origin = origin
+	return args
+}
+
+// UntrackIndexedDBForStorageKeyArgs represents the arguments for UntrackIndexedDBForStorageKey in the Storage domain.
+type UntrackIndexedDBForStorageKeyArgs struct {
+	StorageKey string `json:"storageKey"` // Storage key.
+}
+
+// NewUntrackIndexedDBForStorageKeyArgs initializes UntrackIndexedDBForStorageKeyArgs with the required arguments.
+func NewUntrackIndexedDBForStorageKeyArgs(storageKey string) *UntrackIndexedDBForStorageKeyArgs {
+	args := new(UntrackIndexedDBForStorageKeyArgs)
+	args.StorageKey = storageKey
 	return args
 }
 
@@ -234,7 +298,7 @@ func NewGetInterestGroupDetailsArgs(ownerOrigin string, name string) *GetInteres
 
 // GetInterestGroupDetailsReply represents the return values for GetInterestGroupDetails in the Storage domain.
 type GetInterestGroupDetailsReply struct {
-	Details InterestGroupDetails `json:"details"` // No description.
+	Details json.RawMessage `json:"details"` // This largely corresponds to: https://wicg.github.io/turtledove/#dictdef-generatebidinterestgroup but has absolute expirationTime instead of relative lifetimeMs and also adds joiningOrigin.
 }
 
 // SetInterestGroupTrackingArgs represents the arguments for SetInterestGroupTracking in the Storage domain.
@@ -247,4 +311,190 @@ func NewSetInterestGroupTrackingArgs(enable bool) *SetInterestGroupTrackingArgs 
 	args := new(SetInterestGroupTrackingArgs)
 	args.Enable = enable
 	return args
+}
+
+// SetInterestGroupAuctionTrackingArgs represents the arguments for SetInterestGroupAuctionTracking in the Storage domain.
+type SetInterestGroupAuctionTrackingArgs struct {
+	Enable bool `json:"enable"` // No description.
+}
+
+// NewSetInterestGroupAuctionTrackingArgs initializes SetInterestGroupAuctionTrackingArgs with the required arguments.
+func NewSetInterestGroupAuctionTrackingArgs(enable bool) *SetInterestGroupAuctionTrackingArgs {
+	args := new(SetInterestGroupAuctionTrackingArgs)
+	args.Enable = enable
+	return args
+}
+
+// GetSharedStorageMetadataArgs represents the arguments for GetSharedStorageMetadata in the Storage domain.
+type GetSharedStorageMetadataArgs struct {
+	OwnerOrigin string `json:"ownerOrigin"` // No description.
+}
+
+// NewGetSharedStorageMetadataArgs initializes GetSharedStorageMetadataArgs with the required arguments.
+func NewGetSharedStorageMetadataArgs(ownerOrigin string) *GetSharedStorageMetadataArgs {
+	args := new(GetSharedStorageMetadataArgs)
+	args.OwnerOrigin = ownerOrigin
+	return args
+}
+
+// GetSharedStorageMetadataReply represents the return values for GetSharedStorageMetadata in the Storage domain.
+type GetSharedStorageMetadataReply struct {
+	Metadata SharedStorageMetadata `json:"metadata"` // No description.
+}
+
+// GetSharedStorageEntriesArgs represents the arguments for GetSharedStorageEntries in the Storage domain.
+type GetSharedStorageEntriesArgs struct {
+	OwnerOrigin string `json:"ownerOrigin"` // No description.
+}
+
+// NewGetSharedStorageEntriesArgs initializes GetSharedStorageEntriesArgs with the required arguments.
+func NewGetSharedStorageEntriesArgs(ownerOrigin string) *GetSharedStorageEntriesArgs {
+	args := new(GetSharedStorageEntriesArgs)
+	args.OwnerOrigin = ownerOrigin
+	return args
+}
+
+// GetSharedStorageEntriesReply represents the return values for GetSharedStorageEntries in the Storage domain.
+type GetSharedStorageEntriesReply struct {
+	Entries []SharedStorageEntry `json:"entries"` // No description.
+}
+
+// SetSharedStorageEntryArgs represents the arguments for SetSharedStorageEntry in the Storage domain.
+type SetSharedStorageEntryArgs struct {
+	OwnerOrigin     string `json:"ownerOrigin"`               // No description.
+	Key             string `json:"key"`                       // No description.
+	Value           string `json:"value"`                     // No description.
+	IgnoreIfPresent *bool  `json:"ignoreIfPresent,omitempty"` // If `ignoreIfPresent` is included and true, then only sets the entry if `key` doesn't already exist.
+}
+
+// NewSetSharedStorageEntryArgs initializes SetSharedStorageEntryArgs with the required arguments.
+func NewSetSharedStorageEntryArgs(ownerOrigin string, key string, value string) *SetSharedStorageEntryArgs {
+	args := new(SetSharedStorageEntryArgs)
+	args.OwnerOrigin = ownerOrigin
+	args.Key = key
+	args.Value = value
+	return args
+}
+
+// SetIgnoreIfPresent sets the IgnoreIfPresent optional argument. If
+// `ignoreIfPresent` is included and true, then only sets the entry if
+// `key` doesn't already exist.
+func (a *SetSharedStorageEntryArgs) SetIgnoreIfPresent(ignoreIfPresent bool) *SetSharedStorageEntryArgs {
+	a.IgnoreIfPresent = &ignoreIfPresent
+	return a
+}
+
+// DeleteSharedStorageEntryArgs represents the arguments for DeleteSharedStorageEntry in the Storage domain.
+type DeleteSharedStorageEntryArgs struct {
+	OwnerOrigin string `json:"ownerOrigin"` // No description.
+	Key         string `json:"key"`         // No description.
+}
+
+// NewDeleteSharedStorageEntryArgs initializes DeleteSharedStorageEntryArgs with the required arguments.
+func NewDeleteSharedStorageEntryArgs(ownerOrigin string, key string) *DeleteSharedStorageEntryArgs {
+	args := new(DeleteSharedStorageEntryArgs)
+	args.OwnerOrigin = ownerOrigin
+	args.Key = key
+	return args
+}
+
+// ClearSharedStorageEntriesArgs represents the arguments for ClearSharedStorageEntries in the Storage domain.
+type ClearSharedStorageEntriesArgs struct {
+	OwnerOrigin string `json:"ownerOrigin"` // No description.
+}
+
+// NewClearSharedStorageEntriesArgs initializes ClearSharedStorageEntriesArgs with the required arguments.
+func NewClearSharedStorageEntriesArgs(ownerOrigin string) *ClearSharedStorageEntriesArgs {
+	args := new(ClearSharedStorageEntriesArgs)
+	args.OwnerOrigin = ownerOrigin
+	return args
+}
+
+// ResetSharedStorageBudgetArgs represents the arguments for ResetSharedStorageBudget in the Storage domain.
+type ResetSharedStorageBudgetArgs struct {
+	OwnerOrigin string `json:"ownerOrigin"` // No description.
+}
+
+// NewResetSharedStorageBudgetArgs initializes ResetSharedStorageBudgetArgs with the required arguments.
+func NewResetSharedStorageBudgetArgs(ownerOrigin string) *ResetSharedStorageBudgetArgs {
+	args := new(ResetSharedStorageBudgetArgs)
+	args.OwnerOrigin = ownerOrigin
+	return args
+}
+
+// SetSharedStorageTrackingArgs represents the arguments for SetSharedStorageTracking in the Storage domain.
+type SetSharedStorageTrackingArgs struct {
+	Enable bool `json:"enable"` // No description.
+}
+
+// NewSetSharedStorageTrackingArgs initializes SetSharedStorageTrackingArgs with the required arguments.
+func NewSetSharedStorageTrackingArgs(enable bool) *SetSharedStorageTrackingArgs {
+	args := new(SetSharedStorageTrackingArgs)
+	args.Enable = enable
+	return args
+}
+
+// SetStorageBucketTrackingArgs represents the arguments for SetStorageBucketTracking in the Storage domain.
+type SetStorageBucketTrackingArgs struct {
+	StorageKey string `json:"storageKey"` // No description.
+	Enable     bool   `json:"enable"`     // No description.
+}
+
+// NewSetStorageBucketTrackingArgs initializes SetStorageBucketTrackingArgs with the required arguments.
+func NewSetStorageBucketTrackingArgs(storageKey string, enable bool) *SetStorageBucketTrackingArgs {
+	args := new(SetStorageBucketTrackingArgs)
+	args.StorageKey = storageKey
+	args.Enable = enable
+	return args
+}
+
+// DeleteStorageBucketArgs represents the arguments for DeleteStorageBucket in the Storage domain.
+type DeleteStorageBucketArgs struct {
+	Bucket Bucket `json:"bucket"` // No description.
+}
+
+// NewDeleteStorageBucketArgs initializes DeleteStorageBucketArgs with the required arguments.
+func NewDeleteStorageBucketArgs(bucket Bucket) *DeleteStorageBucketArgs {
+	args := new(DeleteStorageBucketArgs)
+	args.Bucket = bucket
+	return args
+}
+
+// RunBounceTrackingMitigationsReply represents the return values for RunBounceTrackingMitigations in the Storage domain.
+type RunBounceTrackingMitigationsReply struct {
+	DeletedSites []string `json:"deletedSites"` // No description.
+}
+
+// SetAttributionReportingLocalTestingModeArgs represents the arguments for SetAttributionReportingLocalTestingMode in the Storage domain.
+type SetAttributionReportingLocalTestingModeArgs struct {
+	Enabled bool `json:"enabled"` // If enabled, noise is suppressed and reports are sent immediately.
+}
+
+// NewSetAttributionReportingLocalTestingModeArgs initializes SetAttributionReportingLocalTestingModeArgs with the required arguments.
+func NewSetAttributionReportingLocalTestingModeArgs(enabled bool) *SetAttributionReportingLocalTestingModeArgs {
+	args := new(SetAttributionReportingLocalTestingModeArgs)
+	args.Enabled = enabled
+	return args
+}
+
+// SetAttributionReportingTrackingArgs represents the arguments for SetAttributionReportingTracking in the Storage domain.
+type SetAttributionReportingTrackingArgs struct {
+	Enable bool `json:"enable"` // No description.
+}
+
+// NewSetAttributionReportingTrackingArgs initializes SetAttributionReportingTrackingArgs with the required arguments.
+func NewSetAttributionReportingTrackingArgs(enable bool) *SetAttributionReportingTrackingArgs {
+	args := new(SetAttributionReportingTrackingArgs)
+	args.Enable = enable
+	return args
+}
+
+// SendPendingAttributionReportsReply represents the return values for SendPendingAttributionReports in the Storage domain.
+type SendPendingAttributionReportsReply struct {
+	NumSent int `json:"numSent"` // The number of reports that were sent.
+}
+
+// GetRelatedWebsiteSetsReply represents the return values for GetRelatedWebsiteSets in the Storage domain.
+type GetRelatedWebsiteSetsReply struct {
+	Sets []RelatedWebsiteSet `json:"sets"` // No description.
 }

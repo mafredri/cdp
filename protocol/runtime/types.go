@@ -11,15 +11,26 @@ import (
 // ScriptID Unique script identifier.
 type ScriptID string
 
-// WebDriverValue Represents the value serialiazed by the WebDriver BiDi
-// specification https://w3c.github.io/webdriver-bidi.
-type WebDriverValue struct {
+// SerializationOptions Represents options for serialization. Overrides
+// `generatePreview` and `returnByValue`.
+type SerializationOptions struct {
+	// Serialization
+	//
+	// Values: "deep", "json", "idOnly".
+	Serialization        string          `json:"serialization"`
+	MaxDepth             *int            `json:"maxDepth,omitempty"`             // Deep serialization depth. Default is full depth. Respected only in `deep` serialization mode.
+	AdditionalParameters json.RawMessage `json:"additionalParameters,omitempty"` // Embedder-specific parameters. For example if connected to V8 in Chrome these control DOM serialization via `maxNodeDepth: integer` and `includeShadowTree: "none" | "open" | "all"`. Values can be only of type string or integer.
+}
+
+// DeepSerializedValue Represents deep serialized value.
+type DeepSerializedValue struct {
 	// Type
 	//
-	// Values: "undefined", "null", "string", "number", "boolean", "bigint", "regexp", "date", "symbol", "array", "object", "function", "map", "set", "weakmap", "weakset", "error", "proxy", "promise", "typedarray", "arraybuffer", "node", "window".
-	Type     string          `json:"type"`
-	Value    json.RawMessage `json:"value,omitempty"`    // No description.
-	ObjectID *string         `json:"objectId,omitempty"` // No description.
+	// Values: "undefined", "null", "string", "number", "boolean", "bigint", "regexp", "date", "symbol", "array", "object", "function", "map", "set", "weakmap", "weakset", "error", "proxy", "promise", "typedarray", "arraybuffer", "node", "window", "generator".
+	Type                     string          `json:"type"`
+	Value                    json.RawMessage `json:"value,omitempty"`                    // No description.
+	ObjectID                 *string         `json:"objectId,omitempty"`                 // No description.
+	WeakLocalObjectReference *int            `json:"weakLocalObjectReference,omitempty"` // Set if value reference met more then once during serialization. In such case, value is provided only to one of the serialized values. Unique per value in the scope of one CDP call.
 }
 
 // RemoteObjectID Unique object identifier.
@@ -45,11 +56,11 @@ type RemoteObject struct {
 	Value               json.RawMessage      `json:"value,omitempty"`               // Remote object value in case of primitive values or JSON values (if it was requested).
 	UnserializableValue *UnserializableValue `json:"unserializableValue,omitempty"` // Primitive value which can not be JSON-stringified does not have `value`, but gets this property.
 	Description         *string              `json:"description,omitempty"`         // String representation of the object.
-	// WebDriverValue WebDriver BiDi representation of the value.
+	// DeepSerializedValue Deep serialized value.
 	//
 	// Note: This property is experimental.
-	WebDriverValue *WebDriverValue `json:"webDriverValue,omitempty"`
-	ObjectID       *RemoteObjectID `json:"objectId,omitempty"` // Unique object identifier (for non-primitive values).
+	DeepSerializedValue *DeepSerializedValue `json:"deepSerializedValue,omitempty"`
+	ObjectID            *RemoteObjectID      `json:"objectId,omitempty"` // Unique object identifier (for non-primitive values).
 	// Preview Preview containing abbreviated property values. Specified
 	// for `object` type values only.
 	//
@@ -170,7 +181,7 @@ type ExecutionContextDescription struct {
 	//
 	// Note: This property is experimental.
 	UniqueID string          `json:"uniqueId"`
-	AuxData  json.RawMessage `json:"auxData,omitempty"` // Embedder-specific auxiliary data.
+	AuxData  json.RawMessage `json:"auxData,omitempty"` // Embedder-specific auxiliary data likely matching {isDefault: boolean, type: 'default'|'isolated'|'worker', frameId: string}
 }
 
 // ExceptionDetails Detailed information about exception (or error) that was

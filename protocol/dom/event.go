@@ -79,7 +79,7 @@ type ChildNodeInsertedClient interface {
 // ChildNodeInsertedReply is the reply for ChildNodeInserted events.
 type ChildNodeInsertedReply struct {
 	ParentNodeID   NodeID `json:"parentNodeId"`   // Id of the node that has changed.
-	PreviousNodeID NodeID `json:"previousNodeId"` // If of the previous siblint.
+	PreviousNodeID NodeID `json:"previousNodeId"` // Id of the previous sibling.
 	Node           Node   `json:"node"`           // Inserted node data.
 }
 
@@ -154,6 +154,19 @@ type PseudoElementAddedClient interface {
 type PseudoElementAddedReply struct {
 	ParentID      NodeID `json:"parentId"`      // Pseudo element's parent element id.
 	PseudoElement Node   `json:"pseudoElement"` // The added pseudo element.
+}
+
+// TopLayerElementsUpdatedClient is a client for TopLayerElementsUpdated events.
+// Called when top layer elements are changed.
+type TopLayerElementsUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*TopLayerElementsUpdatedReply, error)
+	rpcc.Stream
+}
+
+// TopLayerElementsUpdatedReply is the reply for TopLayerElementsUpdated events.
+type TopLayerElementsUpdatedReply struct {
 }
 
 // PseudoElementRemovedClient is a client for PseudoElementRemoved events.

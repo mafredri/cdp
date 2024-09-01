@@ -7,10 +7,9 @@
 // client receives DOM events only for the nodes that are known to the client.
 // Backend keeps track of the nodes that were sent to the client and never
 // sends the same node twice. It is client's responsibility to collect
-// information about the nodes that were sent to the client.
-//
-// Note that `iframe` owner elements will return corresponding document
-// elements as their child nodes.
+// information about the nodes that were sent to the client. Note that `iframe`
+// owner elements will return corresponding document elements as their child
+// nodes.
 package dom
 
 import (
@@ -27,10 +26,9 @@ import (
 // that client receives DOM events only for the nodes that are known to the
 // client. Backend keeps track of the nodes that were sent to the client and
 // never sends the same node twice. It is client's responsibility to collect
-// information about the nodes that were sent to the client.
-//
-// Note that `iframe` owner elements will return corresponding document
-// elements as their child nodes.
+// information about the nodes that were sent to the client. Note that `iframe`
+// owner elements will return corresponding document elements as their child
+// nodes.
 type domainClient struct{ conn *rpcc.Conn }
 
 // NewClient returns a client for the DOM domain with the connection set to conn.
@@ -196,7 +194,8 @@ func (d *domainClient) GetContentQuads(ctx context.Context, args *GetContentQuad
 }
 
 // GetDocument invokes the DOM method. Returns the root DOM node (and
-// optionally the subtree) to the caller.
+// optionally the subtree) to the caller. Implicitly enables the DOM domain
+// events for the current target.
 func (d *domainClient) GetDocument(ctx context.Context, args *GetDocumentArgs) (reply *GetDocumentReply, err error) {
 	reply = new(GetDocumentReply)
 	if args != nil {
@@ -402,6 +401,33 @@ func (d *domainClient) QuerySelectorAll(ctx context.Context, args *QuerySelector
 	return
 }
 
+// GetTopLayerElements invokes the DOM method. Returns NodeIds of current top
+// layer elements. Top layer is rendered closest to the user within a viewport,
+// therefore its elements always appear on top of all other content.
+func (d *domainClient) GetTopLayerElements(ctx context.Context) (reply *GetTopLayerElementsReply, err error) {
+	reply = new(GetTopLayerElementsReply)
+	err = rpcc.Invoke(ctx, "DOM.getTopLayerElements", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "GetTopLayerElements", Err: err}
+	}
+	return
+}
+
+// GetElementByRelation invokes the DOM method. Returns the NodeId of the
+// matched element according to certain relations.
+func (d *domainClient) GetElementByRelation(ctx context.Context, args *GetElementByRelationArgs) (reply *GetElementByRelationReply, err error) {
+	reply = new(GetElementByRelationReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.getElementByRelation", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.getElementByRelation", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "GetElementByRelation", Err: err}
+	}
+	return
+}
+
 // Redo invokes the DOM method. Re-does the last undone action.
 func (d *domainClient) Redo(ctx context.Context) (err error) {
 	err = rpcc.Invoke(ctx, "DOM.redo", nil, nil, d.conn)
@@ -574,6 +600,16 @@ func (d *domainClient) GetFileInfo(ctx context.Context, args *GetFileInfoArgs) (
 	return
 }
 
+// GetDetachedDOMNodes invokes the DOM method. Returns list of detached nodes
+func (d *domainClient) GetDetachedDOMNodes(ctx context.Context) (reply *GetDetachedDOMNodesReply, err error) {
+	reply = new(GetDetachedDOMNodesReply)
+	err = rpcc.Invoke(ctx, "DOM.getDetachedDomNodes", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "GetDetachedDOMNodes", Err: err}
+	}
+	return
+}
+
 // SetInspectedNode invokes the DOM method. Enables console to refer to the
 // node with given id via $x (see Command Line API for more details $x
 // functions).
@@ -656,10 +692,11 @@ func (d *domainClient) GetFrameOwner(ctx context.Context, args *GetFrameOwnerArg
 	return
 }
 
-// GetContainerForNode invokes the DOM method. Returns the container of the
-// given node based on container query conditions. If containerName is given,
-// it will find the nearest container with a matching name; otherwise it will
-// find the nearest container regardless of its container name.
+// GetContainerForNode invokes the DOM method. Returns the query container of
+// the given node based on container query conditions: containerName, physical,
+// and logical axes. If no axes are provided, the style container is returned,
+// which is the direct parent or the closest element with a matching
+// container-name.
 func (d *domainClient) GetContainerForNode(ctx context.Context, args *GetContainerForNodeArgs) (reply *GetContainerForNodeReply, err error) {
 	reply = new(GetContainerForNodeReply)
 	if args != nil {
@@ -685,6 +722,22 @@ func (d *domainClient) GetQueryingDescendantsForContainer(ctx context.Context, a
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "DOM", Op: "GetQueryingDescendantsForContainer", Err: err}
+	}
+	return
+}
+
+// GetAnchorElement invokes the DOM method. Returns the target anchor element
+// of the given anchor query according to
+// https://www.w3.org/TR/css-anchor-position-1/#target.
+func (d *domainClient) GetAnchorElement(ctx context.Context, args *GetAnchorElementArgs) (reply *GetAnchorElementReply, err error) {
+	reply = new(GetAnchorElementReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.getAnchorElement", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.getAnchorElement", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "GetAnchorElement", Err: err}
 	}
 	return
 }
@@ -895,6 +948,27 @@ func (c *pseudoElementAddedClient) Recv() (*PseudoElementAddedReply, error) {
 	event := new(PseudoElementAddedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "DOM", Op: "PseudoElementAdded Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) TopLayerElementsUpdated(ctx context.Context) (TopLayerElementsUpdatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "DOM.topLayerElementsUpdated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &topLayerElementsUpdatedClient{Stream: s}, nil
+}
+
+type topLayerElementsUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *topLayerElementsUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *topLayerElementsUpdatedClient) Recv() (*TopLayerElementsUpdatedReply, error) {
+	event := new(TopLayerElementsUpdatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "DOM", Op: "TopLayerElementsUpdated Recv", Err: err}
 	}
 	return event, nil
 }

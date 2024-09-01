@@ -119,7 +119,10 @@ func (d *domainClient) ContinueResponse(ctx context.Context, args *ContinueRespo
 // issued for a request that is paused in the Response stage and is mutually
 // exclusive with takeResponseBodyForInterceptionAsStream. Calling other
 // methods that affect the request or disabling fetch domain before body is
-// received results in an undefined behavior.
+// received results in an undefined behavior. Note that the response body is
+// not available for redirects. Requests paused in the _redirect received_
+// state may be differentiated by `responseCode` and presence of `location`
+// response header, see comments to `requestPaused` for details.
 func (d *domainClient) GetResponseBody(ctx context.Context, args *GetResponseBodyArgs) (reply *GetResponseBodyReply, err error) {
 	reply = new(GetResponseBodyReply)
 	if args != nil {

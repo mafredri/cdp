@@ -233,6 +233,22 @@ func (d *domainClient) GetLayersForNode(ctx context.Context, args *GetLayersForN
 	return
 }
 
+// GetLocationForSelector invokes the CSS method. Given a CSS selector text
+// and a style sheet ID, getLocationForSelector returns an array of locations
+// of the CSS selector in the style sheet.
+func (d *domainClient) GetLocationForSelector(ctx context.Context, args *GetLocationForSelectorArgs) (reply *GetLocationForSelectorReply, err error) {
+	reply = new(GetLocationForSelectorReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.getLocationForSelector", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.getLocationForSelector", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "GetLocationForSelector", Err: err}
+	}
+	return
+}
+
 // TrackComputedStyleUpdates invokes the CSS method. Starts tracking the given
 // computed styles for updates. The specified array of properties replaces the
 // one previously specified. Pass empty array to disable tracking. Use
@@ -275,6 +291,21 @@ func (d *domainClient) SetEffectivePropertyValueForNode(ctx context.Context, arg
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "SetEffectivePropertyValueForNode", Err: err}
+	}
+	return
+}
+
+// SetPropertyRulePropertyName invokes the CSS method. Modifies the property
+// rule property name.
+func (d *domainClient) SetPropertyRulePropertyName(ctx context.Context, args *SetPropertyRulePropertyNameArgs) (reply *SetPropertyRulePropertyNameReply, err error) {
+	reply = new(SetPropertyRulePropertyNameReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.setPropertyRulePropertyName", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.setPropertyRulePropertyName", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "SetPropertyRulePropertyName", Err: err}
 	}
 	return
 }
@@ -337,6 +368,21 @@ func (d *domainClient) SetSupportsText(ctx context.Context, args *SetSupportsTex
 	return
 }
 
+// SetScopeText invokes the CSS method. Modifies the expression of a scope
+// at-rule.
+func (d *domainClient) SetScopeText(ctx context.Context, args *SetScopeTextArgs) (reply *SetScopeTextReply, err error) {
+	reply = new(SetScopeTextReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.setScopeText", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.setScopeText", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "SetScopeText", Err: err}
+	}
+	return
+}
+
 // SetRuleSelector invokes the CSS method. Modifies the rule selector.
 func (d *domainClient) SetRuleSelector(ctx context.Context, args *SetRuleSelectorArgs) (reply *SetRuleSelectorReply, err error) {
 	reply = new(SetRuleSelectorReply)
@@ -392,7 +438,7 @@ func (d *domainClient) StartRuleUsageTracking(ctx context.Context) (err error) {
 
 // StopRuleUsageTracking invokes the CSS method. Stop tracking rule usage and
 // return the list of rules that were used since last call to
-// `takeCoverageDelta` (or since start of coverage instrumentation)
+// `takeCoverageDelta` (or since start of coverage instrumentation).
 func (d *domainClient) StopRuleUsageTracking(ctx context.Context) (reply *StopRuleUsageTrackingReply, err error) {
 	reply = new(StopRuleUsageTrackingReply)
 	err = rpcc.Invoke(ctx, "CSS.stopRuleUsageTracking", nil, reply, d.conn)
@@ -404,7 +450,7 @@ func (d *domainClient) StopRuleUsageTracking(ctx context.Context) (reply *StopRu
 
 // TakeCoverageDelta invokes the CSS method. Obtain list of rules that became
 // used since last call to this method (or since start of coverage
-// instrumentation)
+// instrumentation).
 func (d *domainClient) TakeCoverageDelta(ctx context.Context) (reply *TakeCoverageDeltaReply, err error) {
 	reply = new(TakeCoverageDeltaReply)
 	err = rpcc.Invoke(ctx, "CSS.takeCoverageDelta", nil, reply, d.conn)

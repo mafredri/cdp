@@ -57,23 +57,44 @@ type StartArgs struct {
 	// Categories is deprecated.
 	//
 	// Deprecated: Category/tag filter
+	//
+	// Note: This property is experimental.
 	Categories *string `json:"categories,omitempty"`
 	// Options is deprecated.
 	//
 	// Deprecated: Tracing options
-	Options                      *string  `json:"options,omitempty"`
-	BufferUsageReportingInterval *float64 `json:"bufferUsageReportingInterval,omitempty"` // If set, the agent will issue bufferUsage events at this interval, specified in milliseconds
+	//
+	// Note: This property is experimental.
+	Options *string `json:"options,omitempty"`
+	// BufferUsageReportingInterval If set, the agent will issue
+	// bufferUsage events at this interval, specified in milliseconds
+	//
+	// Note: This property is experimental.
+	BufferUsageReportingInterval *float64 `json:"bufferUsageReportingInterval,omitempty"`
 	// TransferMode Whether to report trace events as series of
 	// dataCollected events or to save trace to a stream (defaults to
 	// `ReportEvents`).
 	//
 	// Values: "ReportEvents", "ReturnAsStream".
-	TransferMode      *string           `json:"transferMode,omitempty"`
-	StreamFormat      StreamFormat      `json:"streamFormat,omitempty"`      // Trace data format to use. This only applies when using `ReturnAsStream` transfer mode (defaults to `json`).
-	StreamCompression StreamCompression `json:"streamCompression,omitempty"` // Compression format to use. This only applies when using `ReturnAsStream` transfer mode (defaults to `none`)
-	TraceConfig       *TraceConfig      `json:"traceConfig,omitempty"`       // No description.
-	PerfettoConfig    []byte            `json:"perfettoConfig,omitempty"`    // Base64-encoded serialized perfetto.protos.TraceConfig protobuf message When specified, the parameters `categories`, `options`, `traceConfig` are ignored. (Encoded as a base64 string when passed over JSON)
-	TracingBackend    Backend           `json:"tracingBackend,omitempty"`    // Backend type (defaults to `auto`)
+	TransferMode *string      `json:"transferMode,omitempty"`
+	StreamFormat StreamFormat `json:"streamFormat,omitempty"` // Trace data format to use. This only applies when using `ReturnAsStream` transfer mode (defaults to `json`).
+	// StreamCompression Compression format to use. This only applies when
+	// using `ReturnAsStream` transfer mode (defaults to `none`)
+	//
+	// Note: This property is experimental.
+	StreamCompression StreamCompression `json:"streamCompression,omitempty"`
+	TraceConfig       *TraceConfig      `json:"traceConfig,omitempty"` // No description.
+	// PerfettoConfig Base64-encoded serialized
+	// perfetto.protos.TraceConfig protobuf message When specified, the
+	// parameters `categories`, `options`, `traceConfig` are ignored.
+	// (Encoded as a base64 string when passed over JSON)
+	//
+	// Note: This property is experimental.
+	PerfettoConfig []byte `json:"perfettoConfig,omitempty"`
+	// TracingBackend Backend type (defaults to `auto`)
+	//
+	// Note: This property is experimental.
+	TracingBackend Backend `json:"tracingBackend,omitempty"`
 }
 
 // NewStartArgs initializes StartArgs with the required arguments.
@@ -87,6 +108,8 @@ func NewStartArgs() *StartArgs {
 //
 // Deprecated: Category/tag
 // filter
+//
+// Note: This property is experimental.
 func (a *StartArgs) SetCategories(categories string) *StartArgs {
 	a.Categories = &categories
 	return a
@@ -95,6 +118,8 @@ func (a *StartArgs) SetCategories(categories string) *StartArgs {
 // SetOptions sets the Options optional argument.
 //
 // Deprecated: Tracing options
+//
+// Note: This property is experimental.
 func (a *StartArgs) SetOptions(options string) *StartArgs {
 	a.Options = &options
 	return a
@@ -103,6 +128,8 @@ func (a *StartArgs) SetOptions(options string) *StartArgs {
 // SetBufferUsageReportingInterval sets the BufferUsageReportingInterval optional argument.
 // If set, the agent will issue bufferUsage events at this interval,
 // specified in milliseconds
+//
+// Note: This property is experimental.
 func (a *StartArgs) SetBufferUsageReportingInterval(bufferUsageReportingInterval float64) *StartArgs {
 	a.BufferUsageReportingInterval = &bufferUsageReportingInterval
 	return a
@@ -129,6 +156,8 @@ func (a *StartArgs) SetStreamFormat(streamFormat StreamFormat) *StartArgs {
 // SetStreamCompression sets the StreamCompression optional argument.
 // Compression format to use. This only applies when using
 // `ReturnAsStream` transfer mode (defaults to `none`)
+//
+// Note: This property is experimental.
 func (a *StartArgs) SetStreamCompression(streamCompression StreamCompression) *StartArgs {
 	a.StreamCompression = streamCompression
 	return a
@@ -145,6 +174,8 @@ func (a *StartArgs) SetTraceConfig(traceConfig TraceConfig) *StartArgs {
 // message When specified, the parameters `categories`, `options`,
 // `traceConfig` are ignored. (Encoded as a base64 string when passed
 // over JSON)
+//
+// Note: This property is experimental.
 func (a *StartArgs) SetPerfettoConfig(perfettoConfig []byte) *StartArgs {
 	a.PerfettoConfig = perfettoConfig
 	return a
@@ -152,6 +183,8 @@ func (a *StartArgs) SetPerfettoConfig(perfettoConfig []byte) *StartArgs {
 
 // SetTracingBackend sets the TracingBackend optional argument.
 // Backend type (defaults to `auto`)
+//
+// Note: This property is experimental.
 func (a *StartArgs) SetTracingBackend(tracingBackend Backend) *StartArgs {
 	a.TracingBackend = tracingBackend
 	return a

@@ -3,7 +3,10 @@
 package storage
 
 import (
+	"encoding/json"
+
 	"github.com/mafredri/cdp/protocol/network"
+	"github.com/mafredri/cdp/protocol/page"
 	"github.com/mafredri/cdp/rpcc"
 )
 
@@ -18,8 +21,10 @@ type CacheStorageContentUpdatedClient interface {
 
 // CacheStorageContentUpdatedReply is the reply for CacheStorageContentUpdated events.
 type CacheStorageContentUpdatedReply struct {
-	Origin    string `json:"origin"`    // Origin to update.
-	CacheName string `json:"cacheName"` // Name of cache in origin.
+	Origin     string `json:"origin"`     // Origin to update.
+	StorageKey string `json:"storageKey"` // Storage key to update.
+	BucketID   string `json:"bucketId"`   // Storage bucket to update.
+	CacheName  string `json:"cacheName"`  // Name of cache in origin.
 }
 
 // CacheStorageListUpdatedClient is a client for CacheStorageListUpdated events.
@@ -33,7 +38,9 @@ type CacheStorageListUpdatedClient interface {
 
 // CacheStorageListUpdatedReply is the reply for CacheStorageListUpdated events.
 type CacheStorageListUpdatedReply struct {
-	Origin string `json:"origin"` // Origin to update.
+	Origin     string `json:"origin"`     // Origin to update.
+	StorageKey string `json:"storageKey"` // Storage key to update.
+	BucketID   string `json:"bucketId"`   // Storage bucket to update.
 }
 
 // IndexedDBContentUpdatedClient is a client for IndexedDBContentUpdated events.
@@ -48,6 +55,8 @@ type IndexedDBContentUpdatedClient interface {
 // IndexedDBContentUpdatedReply is the reply for IndexedDBContentUpdated events.
 type IndexedDBContentUpdatedReply struct {
 	Origin          string `json:"origin"`          // Origin to update.
+	StorageKey      string `json:"storageKey"`      // Storage key to update.
+	BucketID        string `json:"bucketId"`        // Storage bucket to update.
 	DatabaseName    string `json:"databaseName"`    // Database to update.
 	ObjectStoreName string `json:"objectStoreName"` // ObjectStore to update.
 }
@@ -63,11 +72,14 @@ type IndexedDBListUpdatedClient interface {
 
 // IndexedDBListUpdatedReply is the reply for IndexedDBListUpdated events.
 type IndexedDBListUpdatedReply struct {
-	Origin string `json:"origin"` // Origin to update.
+	Origin     string `json:"origin"`     // Origin to update.
+	StorageKey string `json:"storageKey"` // Storage key to update.
+	BucketID   string `json:"bucketId"`   // Storage bucket to update.
 }
 
 // InterestGroupAccessedClient is a client for InterestGroupAccessed events.
-// One of the interest groups was accessed by the associated page.
+// One of the interest groups was accessed. Note that these events are global
+// to all targets sharing an interest group store.
 type InterestGroupAccessedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -77,8 +89,124 @@ type InterestGroupAccessedClient interface {
 
 // InterestGroupAccessedReply is the reply for InterestGroupAccessed events.
 type InterestGroupAccessedReply struct {
-	AccessTime  network.TimeSinceEpoch  `json:"accessTime"`  // No description.
-	Type        InterestGroupAccessType `json:"type"`        // No description.
-	OwnerOrigin string                  `json:"ownerOrigin"` // No description.
-	Name        string                  `json:"name"`        // No description.
+	AccessTime            network.TimeSinceEpoch  `json:"accessTime"`                      // No description.
+	Type                  InterestGroupAccessType `json:"type"`                            // No description.
+	OwnerOrigin           string                  `json:"ownerOrigin"`                     // No description.
+	Name                  string                  `json:"name"`                            // No description.
+	ComponentSellerOrigin *string                 `json:"componentSellerOrigin,omitempty"` // For topLevelBid/topLevelAdditionalBid, and when appropriate, win and additionalBidWin
+	Bid                   *float64                `json:"bid,omitempty"`                   // For bid or somethingBid event, if done locally and not on a server.
+	BidCurrency           *string                 `json:"bidCurrency,omitempty"`           // No description.
+	UniqueAuctionID       *InterestGroupAuctionID `json:"uniqueAuctionId,omitempty"`       // For non-global events --- links to interestGroupAuctionEvent
+}
+
+// InterestGroupAuctionEventOccurredClient is a client for InterestGroupAuctionEventOccurred events.
+// An auction involving interest groups is taking place. These events are
+// target-specific.
+type InterestGroupAuctionEventOccurredClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*InterestGroupAuctionEventOccurredReply, error)
+	rpcc.Stream
+}
+
+// InterestGroupAuctionEventOccurredReply is the reply for InterestGroupAuctionEventOccurred events.
+type InterestGroupAuctionEventOccurredReply struct {
+	EventTime       network.TimeSinceEpoch        `json:"eventTime"`                 // No description.
+	Type            InterestGroupAuctionEventType `json:"type"`                      // No description.
+	UniqueAuctionID InterestGroupAuctionID        `json:"uniqueAuctionId"`           // No description.
+	ParentAuctionID *InterestGroupAuctionID       `json:"parentAuctionId,omitempty"` // Set for child auctions.
+	AuctionConfig   json.RawMessage               `json:"auctionConfig,omitempty"`   // Set for started and configResolved
+}
+
+// InterestGroupAuctionNetworkRequestCreatedClient is a client for InterestGroupAuctionNetworkRequestCreated events.
+// Specifies which auctions a particular network fetch may be related to, and
+// in what role. Note that it is not ordered with respect to
+// Network.requestWillBeSent (but will happen before loadingFinished
+// loadingFailed).
+type InterestGroupAuctionNetworkRequestCreatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*InterestGroupAuctionNetworkRequestCreatedReply, error)
+	rpcc.Stream
+}
+
+// InterestGroupAuctionNetworkRequestCreatedReply is the reply for InterestGroupAuctionNetworkRequestCreated events.
+type InterestGroupAuctionNetworkRequestCreatedReply struct {
+	Type      InterestGroupAuctionFetchType `json:"type"`      // No description.
+	RequestID network.RequestID             `json:"requestId"` // No description.
+	Auctions  []InterestGroupAuctionID      `json:"auctions"`  // This is the set of the auctions using the worklet that issued this request. In the case of trusted signals, it's possible that only some of them actually care about the keys being queried.
+}
+
+// SharedStorageAccessedClient is a client for SharedStorageAccessed events.
+// Shared storage was accessed by the associated page. The following parameters
+// are included in all events.
+type SharedStorageAccessedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*SharedStorageAccessedReply, error)
+	rpcc.Stream
+}
+
+// SharedStorageAccessedReply is the reply for SharedStorageAccessed events.
+type SharedStorageAccessedReply struct {
+	AccessTime  network.TimeSinceEpoch    `json:"accessTime"`  // Time of the access.
+	Type        SharedStorageAccessType   `json:"type"`        // Enum value indicating the Shared Storage API method invoked.
+	MainFrameID page.FrameID              `json:"mainFrameId"` // DevTools Frame Token for the primary frame tree's root.
+	OwnerOrigin string                    `json:"ownerOrigin"` // Serialized origin for the context that invoked the Shared Storage API.
+	Params      SharedStorageAccessParams `json:"params"`      // The sub-parameters wrapped by `params` are all optional and their presence/absence depends on `type`.
+}
+
+// BucketCreatedOrUpdatedClient is a client for StorageBucketCreatedOrUpdated events.
+type BucketCreatedOrUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*BucketCreatedOrUpdatedReply, error)
+	rpcc.Stream
+}
+
+// BucketCreatedOrUpdatedReply is the reply for StorageBucketCreatedOrUpdated events.
+type BucketCreatedOrUpdatedReply struct {
+	BucketInfo BucketInfo `json:"bucketInfo"` // No description.
+}
+
+// BucketDeletedClient is a client for StorageBucketDeleted events.
+type BucketDeletedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*BucketDeletedReply, error)
+	rpcc.Stream
+}
+
+// BucketDeletedReply is the reply for StorageBucketDeleted events.
+type BucketDeletedReply struct {
+	BucketID string `json:"bucketId"` // No description.
+}
+
+// AttributionReportingSourceRegisteredClient is a client for AttributionReportingSourceRegistered events.
+type AttributionReportingSourceRegisteredClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*AttributionReportingSourceRegisteredReply, error)
+	rpcc.Stream
+}
+
+// AttributionReportingSourceRegisteredReply is the reply for AttributionReportingSourceRegistered events.
+type AttributionReportingSourceRegisteredReply struct {
+	Registration AttributionReportingSourceRegistration       `json:"registration"` // No description.
+	Result       AttributionReportingSourceRegistrationResult `json:"result"`       // No description.
+}
+
+// AttributionReportingTriggerRegisteredClient is a client for AttributionReportingTriggerRegistered events.
+type AttributionReportingTriggerRegisteredClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*AttributionReportingTriggerRegisteredReply, error)
+	rpcc.Stream
+}
+
+// AttributionReportingTriggerRegisteredReply is the reply for AttributionReportingTriggerRegistered events.
+type AttributionReportingTriggerRegisteredReply struct {
+	Registration AttributionReportingTriggerRegistration `json:"registration"` // No description.
+	EventLevel   AttributionReportingEventLevelResult    `json:"eventLevel"`   // No description.
+	Aggregatable AttributionReportingAggregatableResult  `json:"aggregatable"` // No description.
 }

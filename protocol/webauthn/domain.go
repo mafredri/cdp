@@ -58,6 +58,20 @@ func (d *domainClient) AddVirtualAuthenticator(ctx context.Context, args *AddVir
 	return
 }
 
+// SetResponseOverrideBits invokes the WebAuthn method. Resets parameters
+// isBogusSignature, isBadUV, isBadUP to false if they are not present.
+func (d *domainClient) SetResponseOverrideBits(ctx context.Context, args *SetResponseOverrideBitsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "WebAuthn.setResponseOverrideBits", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "WebAuthn.setResponseOverrideBits", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "WebAuthn", Op: "SetResponseOverrideBits", Err: err}
+	}
+	return
+}
+
 // RemoveVirtualAuthenticator invokes the WebAuthn method. Removes the given
 // authenticator.
 func (d *domainClient) RemoveVirtualAuthenticator(ctx context.Context, args *RemoveVirtualAuthenticatorArgs) (err error) {
@@ -171,4 +185,61 @@ func (d *domainClient) SetAutomaticPresenceSimulation(ctx context.Context, args 
 		err = &internal.OpError{Domain: "WebAuthn", Op: "SetAutomaticPresenceSimulation", Err: err}
 	}
 	return
+}
+
+// SetCredentialProperties invokes the WebAuthn method. Allows setting
+// credential properties.
+// https://w3c.github.io/webauthn/#sctn-automation-set-credential-properties
+func (d *domainClient) SetCredentialProperties(ctx context.Context, args *SetCredentialPropertiesArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "WebAuthn.setCredentialProperties", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "WebAuthn.setCredentialProperties", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "WebAuthn", Op: "SetCredentialProperties", Err: err}
+	}
+	return
+}
+
+func (d *domainClient) CredentialAdded(ctx context.Context) (CredentialAddedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAuthn.credentialAdded", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &credentialAddedClient{Stream: s}, nil
+}
+
+type credentialAddedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *credentialAddedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *credentialAddedClient) Recv() (*CredentialAddedReply, error) {
+	event := new(CredentialAddedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAuthn", Op: "CredentialAdded Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) CredentialAsserted(ctx context.Context) (CredentialAssertedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAuthn.credentialAsserted", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &credentialAssertedClient{Stream: s}, nil
+}
+
+type credentialAssertedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *credentialAssertedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *credentialAssertedClient) Recv() (*CredentialAssertedReply, error) {
+	event := new(CredentialAssertedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAuthn", Op: "CredentialAsserted Recv", Err: err}
+	}
+	return event, nil
 }

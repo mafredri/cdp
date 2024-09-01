@@ -234,7 +234,7 @@ func (a *FocusArgs) SetObjectID(objectID runtime.RemoteObjectID) *FocusArgs {
 
 // GetAttributesArgs represents the arguments for GetAttributes in the DOM domain.
 type GetAttributesArgs struct {
-	NodeID NodeID `json:"nodeId"` // Id of the node to retrieve attibutes for.
+	NodeID NodeID `json:"nodeId"` // Id of the node to retrieve attributes for.
 }
 
 // NewGetAttributesArgs initializes GetAttributesArgs with the required arguments.
@@ -668,6 +668,33 @@ type QuerySelectorAllReply struct {
 	NodeIDs []NodeID `json:"nodeIds"` // Query selector result.
 }
 
+// GetTopLayerElementsReply represents the return values for GetTopLayerElements in the DOM domain.
+type GetTopLayerElementsReply struct {
+	NodeIDs []NodeID `json:"nodeIds"` // NodeIds of top layer elements
+}
+
+// GetElementByRelationArgs represents the arguments for GetElementByRelation in the DOM domain.
+type GetElementByRelationArgs struct {
+	NodeID NodeID `json:"nodeId"` // Id of the node from which to query the relation.
+	// Relation Type of relation to get.
+	//
+	// Values: "PopoverTarget".
+	Relation string `json:"relation"`
+}
+
+// NewGetElementByRelationArgs initializes GetElementByRelationArgs with the required arguments.
+func NewGetElementByRelationArgs(nodeID NodeID, relation string) *GetElementByRelationArgs {
+	args := new(GetElementByRelationArgs)
+	args.NodeID = nodeID
+	args.Relation = relation
+	return args
+}
+
+// GetElementByRelationReply represents the return values for GetElementByRelation in the DOM domain.
+type GetElementByRelationReply struct {
+	NodeID NodeID `json:"nodeId"` // NodeId of the element matching the queried relation.
+}
+
 // RemoveAttributeArgs represents the arguments for RemoveAttribute in the DOM domain.
 type RemoveAttributeArgs struct {
 	NodeID NodeID `json:"nodeId"` // Id of the element to remove attribute from.
@@ -910,6 +937,11 @@ type GetFileInfoReply struct {
 	Path string `json:"path"` // No description.
 }
 
+// GetDetachedDOMNodesReply represents the return values for GetDetachedDOMNodes in the DOM domain.
+type GetDetachedDOMNodesReply struct {
+	DetachedNodes []DetachedElementInfo `json:"detachedNodes"` // The list of detached nodes
+}
+
 // SetInspectedNodeArgs represents the arguments for SetInspectedNode in the DOM domain.
 type SetInspectedNodeArgs struct {
 	NodeID NodeID `json:"nodeId"` // DOM node id to be accessible by means of $x command line API.
@@ -989,8 +1021,10 @@ type GetFrameOwnerReply struct {
 
 // GetContainerForNodeArgs represents the arguments for GetContainerForNode in the DOM domain.
 type GetContainerForNodeArgs struct {
-	NodeID        NodeID  `json:"nodeId"`                  // No description.
-	ContainerName *string `json:"containerName,omitempty"` // No description.
+	NodeID        NodeID       `json:"nodeId"`                  // No description.
+	ContainerName *string      `json:"containerName,omitempty"` // No description.
+	PhysicalAxes  PhysicalAxes `json:"physicalAxes,omitempty"`  // No description.
+	LogicalAxes   LogicalAxes  `json:"logicalAxes,omitempty"`   // No description.
 }
 
 // NewGetContainerForNodeArgs initializes GetContainerForNodeArgs with the required arguments.
@@ -1003,6 +1037,18 @@ func NewGetContainerForNodeArgs(nodeID NodeID) *GetContainerForNodeArgs {
 // SetContainerName sets the ContainerName optional argument.
 func (a *GetContainerForNodeArgs) SetContainerName(containerName string) *GetContainerForNodeArgs {
 	a.ContainerName = &containerName
+	return a
+}
+
+// SetPhysicalAxes sets the PhysicalAxes optional argument.
+func (a *GetContainerForNodeArgs) SetPhysicalAxes(physicalAxes PhysicalAxes) *GetContainerForNodeArgs {
+	a.PhysicalAxes = physicalAxes
+	return a
+}
+
+// SetLogicalAxes sets the LogicalAxes optional argument.
+func (a *GetContainerForNodeArgs) SetLogicalAxes(logicalAxes LogicalAxes) *GetContainerForNodeArgs {
+	a.LogicalAxes = logicalAxes
 	return a
 }
 
@@ -1026,4 +1072,32 @@ func NewGetQueryingDescendantsForContainerArgs(nodeID NodeID) *GetQueryingDescen
 // GetQueryingDescendantsForContainerReply represents the return values for GetQueryingDescendantsForContainer in the DOM domain.
 type GetQueryingDescendantsForContainerReply struct {
 	NodeIDs []NodeID `json:"nodeIds"` // Descendant nodes with container queries against the given container.
+}
+
+// GetAnchorElementArgs represents the arguments for GetAnchorElement in the DOM domain.
+type GetAnchorElementArgs struct {
+	NodeID          NodeID  `json:"nodeId"`                    // Id of the positioned element from which to find the anchor.
+	AnchorSpecifier *string `json:"anchorSpecifier,omitempty"` // An optional anchor specifier, as defined in https://www.w3.org/TR/css-anchor-position-1/#anchor-specifier. If not provided, it will return the implicit anchor element for the given positioned element.
+}
+
+// NewGetAnchorElementArgs initializes GetAnchorElementArgs with the required arguments.
+func NewGetAnchorElementArgs(nodeID NodeID) *GetAnchorElementArgs {
+	args := new(GetAnchorElementArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// SetAnchorSpecifier sets the AnchorSpecifier optional argument. An
+// optional anchor specifier, as defined in
+// https://www.w3.org/TR/css-anchor-position-1/#anchor-specifier. If
+// not provided, it will return the implicit anchor element for the
+// given positioned element.
+func (a *GetAnchorElementArgs) SetAnchorSpecifier(anchorSpecifier string) *GetAnchorElementArgs {
+	a.AnchorSpecifier = &anchorSpecifier
+	return a
+}
+
+// GetAnchorElementReply represents the return values for GetAnchorElement in the DOM domain.
+type GetAnchorElementReply struct {
+	NodeID NodeID `json:"nodeId"` // The anchor element of the given anchor query.
 }

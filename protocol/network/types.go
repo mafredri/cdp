@@ -28,6 +28,7 @@ const (
 	ResourceTypeTextTrack          ResourceType = "TextTrack"
 	ResourceTypeXHR                ResourceType = "XHR"
 	ResourceTypeFetch              ResourceType = "Fetch"
+	ResourceTypePrefetch           ResourceType = "Prefetch"
 	ResourceTypeEventSource        ResourceType = "EventSource"
 	ResourceTypeWebSocket          ResourceType = "WebSocket"
 	ResourceTypeManifest           ResourceType = "Manifest"
@@ -40,7 +41,7 @@ const (
 
 func (e ResourceType) Valid() bool {
 	switch e {
-	case "Document", "Stylesheet", "Image", "Media", "Font", "Script", "TextTrack", "XHR", "Fetch", "EventSource", "WebSocket", "Manifest", "SignedExchange", "Ping", "CSPViolationReport", "Preflight", "Other":
+	case "Document", "Stylesheet", "Image", "Media", "Font", "Script", "TextTrack", "XHR", "Fetch", "Prefetch", "EventSource", "WebSocket", "Manifest", "SignedExchange", "Ping", "CSPViolationReport", "Preflight", "Other":
 		return true
 	default:
 		return false
@@ -303,8 +304,18 @@ type ResourceTiming struct {
 	//
 	// Note: This property is experimental.
 	WorkerRespondWithSettled float64 `json:"workerRespondWithSettled"`
-	SendStart                float64 `json:"sendStart"` // Started sending request.
-	SendEnd                  float64 `json:"sendEnd"`   // Finished sending request.
+	// WorkerRouterEvaluationStart Started ServiceWorker static routing
+	// source evaluation.
+	//
+	// Note: This property is experimental.
+	WorkerRouterEvaluationStart *float64 `json:"workerRouterEvaluationStart,omitempty"`
+	// WorkerCacheLookupStart Started cache lookup when the source was
+	// evaluated to `cache`.
+	//
+	// Note: This property is experimental.
+	WorkerCacheLookupStart *float64 `json:"workerCacheLookupStart,omitempty"`
+	SendStart              float64  `json:"sendStart"` // Started sending request.
+	SendEnd                float64  `json:"sendEnd"`   // Finished sending request.
 	// PushStart Time the server started pushing request.
 	//
 	// Note: This property is experimental.
@@ -312,8 +323,12 @@ type ResourceTiming struct {
 	// PushEnd Time the server finished pushing request.
 	//
 	// Note: This property is experimental.
-	PushEnd           float64 `json:"pushEnd"`
-	ReceiveHeadersEnd float64 `json:"receiveHeadersEnd"` // Finished receiving response headers.
+	PushEnd float64 `json:"pushEnd"`
+	// ReceiveHeadersStart Started receiving response headers.
+	//
+	// Note: This property is experimental.
+	ReceiveHeadersStart float64 `json:"receiveHeadersStart"`
+	ReceiveHeadersEnd   float64 `json:"receiveHeadersEnd"` // Finished receiving response headers.
 }
 
 // ResourcePriority Loading priority of a resource request.
@@ -353,10 +368,13 @@ type Request struct {
 	URLFragment *string `json:"urlFragment,omitempty"` // Fragment of the requested URL starting with hash, if present.
 	Method      string  `json:"method"`                // HTTP request method.
 	Headers     Headers `json:"headers"`               // HTTP request headers.
-	PostData    *string `json:"postData,omitempty"`    // HTTP POST request data.
+	// PostData is deprecated.
+	//
+	// Deprecated: HTTP POST request data. Use postDataEntries instead.
+	PostData    *string `json:"postData,omitempty"`
 	HasPostData *bool   `json:"hasPostData,omitempty"` // True when the request has POST data. Note that postData might still be omitted when this flag is true when the data is too long.
-	// PostDataEntries Request body elements. This will be converted from
-	// base64 to binary
+	// PostDataEntries Request body elements (post data broken into
+	// individual entries).
 	//
 	// Note: This property is experimental.
 	PostDataEntries  []PostDataEntry            `json:"postDataEntries,omitempty"`
@@ -375,7 +393,7 @@ type Request struct {
 	// Note: This property is experimental.
 	TrustTokenParams *TrustTokenParams `json:"trustTokenParams,omitempty"`
 	// IsSameSite True if this resource request is considered to be the
-	// 'same site' as the request correspondinfg to the main frame.
+	// 'same site' as the request corresponding to the main frame.
 	//
 	// Note: This property is experimental.
 	IsSameSite *bool `json:"isSameSite,omitempty"`
@@ -395,19 +413,21 @@ type SignedCertificateTimestamp struct {
 
 // SecurityDetails Security details about a request.
 type SecurityDetails struct {
-	Protocol                          string                            `json:"protocol"`                          // Protocol name (e.g. "TLS 1.2" or "QUIC").
-	KeyExchange                       string                            `json:"keyExchange"`                       // Key Exchange used by the connection, or the empty string if not applicable.
-	KeyExchangeGroup                  *string                           `json:"keyExchangeGroup,omitempty"`        // (EC)DH group used by the connection, if applicable.
-	Cipher                            string                            `json:"cipher"`                            // Cipher name.
-	MAC                               *string                           `json:"mac,omitempty"`                     // TLS MAC. Note that AEAD ciphers do not have separate MACs.
-	CertificateID                     security.CertificateID            `json:"certificateId"`                     // Certificate ID value.
-	SubjectName                       string                            `json:"subjectName"`                       // Certificate subject name.
-	SanList                           []string                          `json:"sanList"`                           // Subject Alternative Name (SAN) DNS names and IP addresses.
-	Issuer                            string                            `json:"issuer"`                            // Name of the issuing CA.
-	ValidFrom                         TimeSinceEpoch                    `json:"validFrom"`                         // Certificate valid from date.
-	ValidTo                           TimeSinceEpoch                    `json:"validTo"`                           // Certificate valid to (expiration) date
-	SignedCertificateTimestampList    []SignedCertificateTimestamp      `json:"signedCertificateTimestampList"`    // List of signed certificate timestamps (SCTs).
-	CertificateTransparencyCompliance CertificateTransparencyCompliance `json:"certificateTransparencyCompliance"` // Whether the request complied with Certificate Transparency policy
+	Protocol                          string                            `json:"protocol"`                           // Protocol name (e.g. "TLS 1.2" or "QUIC").
+	KeyExchange                       string                            `json:"keyExchange"`                        // Key Exchange used by the connection, or the empty string if not applicable.
+	KeyExchangeGroup                  *string                           `json:"keyExchangeGroup,omitempty"`         // (EC)DH group used by the connection, if applicable.
+	Cipher                            string                            `json:"cipher"`                             // Cipher name.
+	MAC                               *string                           `json:"mac,omitempty"`                      // TLS MAC. Note that AEAD ciphers do not have separate MACs.
+	CertificateID                     security.CertificateID            `json:"certificateId"`                      // Certificate ID value.
+	SubjectName                       string                            `json:"subjectName"`                        // Certificate subject name.
+	SanList                           []string                          `json:"sanList"`                            // Subject Alternative Name (SAN) DNS names and IP addresses.
+	Issuer                            string                            `json:"issuer"`                             // Name of the issuing CA.
+	ValidFrom                         TimeSinceEpoch                    `json:"validFrom"`                          // Certificate valid from date.
+	ValidTo                           TimeSinceEpoch                    `json:"validTo"`                            // Certificate valid to (expiration) date
+	SignedCertificateTimestampList    []SignedCertificateTimestamp      `json:"signedCertificateTimestampList"`     // List of signed certificate timestamps (SCTs).
+	CertificateTransparencyCompliance CertificateTransparencyCompliance `json:"certificateTransparencyCompliance"`  // Whether the request complied with Certificate Transparency policy
+	ServerSignatureAlgorithm          *int                              `json:"serverSignatureAlgorithm,omitempty"` // The signature algorithm used by the server in the TLS server signature, represented as a TLS SignatureScheme code point. Omitted if not applicable or not known.
+	EncryptedClientHello              bool                              `json:"encryptedClientHello"`               // Whether the connection used Encrypted ClientHello
 }
 
 // CertificateTransparencyCompliance Whether the request complied with
@@ -440,24 +460,26 @@ type BlockedReason string
 
 // BlockedReason as enums.
 const (
-	BlockedReasonNotSet                                            BlockedReason = ""
-	BlockedReasonOther                                             BlockedReason = "other"
-	BlockedReasonCsp                                               BlockedReason = "csp"
-	BlockedReasonMixedContent                                      BlockedReason = "mixed-content"
-	BlockedReasonOrigin                                            BlockedReason = "origin"
-	BlockedReasonInspector                                         BlockedReason = "inspector"
-	BlockedReasonSubresourceFilter                                 BlockedReason = "subresource-filter"
-	BlockedReasonContentType                                       BlockedReason = "content-type"
-	BlockedReasonCoepFrameResourceNeedsCoepHeader                  BlockedReason = "coep-frame-resource-needs-coep-header"
-	BlockedReasonCoopSandboxedIframeCannotNavigateToCoopPage       BlockedReason = "coop-sandboxed-iframe-cannot-navigate-to-coop-page"
-	BlockedReasonCorpNotSameOrigin                                 BlockedReason = "corp-not-same-origin"
-	BlockedReasonCorpNotSameOriginAfterDefaultedToSameOriginByCoep BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-coep"
-	BlockedReasonCorpNotSameSite                                   BlockedReason = "corp-not-same-site"
+	BlockedReasonNotSet                                                  BlockedReason = ""
+	BlockedReasonOther                                                   BlockedReason = "other"
+	BlockedReasonCsp                                                     BlockedReason = "csp"
+	BlockedReasonMixedContent                                            BlockedReason = "mixed-content"
+	BlockedReasonOrigin                                                  BlockedReason = "origin"
+	BlockedReasonInspector                                               BlockedReason = "inspector"
+	BlockedReasonSubresourceFilter                                       BlockedReason = "subresource-filter"
+	BlockedReasonContentType                                             BlockedReason = "content-type"
+	BlockedReasonCOEPFrameResourceNeedsCOEPHeader                        BlockedReason = "coep-frame-resource-needs-coep-header"
+	BlockedReasonCoopSandboxedIframeCannotNavigateToCoopPage             BlockedReason = "coop-sandboxed-iframe-cannot-navigate-to-coop-page"
+	BlockedReasonCorpNotSameOrigin                                       BlockedReason = "corp-not-same-origin"
+	BlockedReasonCorpNotSameOriginAfterDefaultedToSameOriginByCOEP       BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-coep"
+	BlockedReasonCorpNotSameOriginAfterDefaultedToSameOriginByDip        BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-dip"
+	BlockedReasonCorpNotSameOriginAfterDefaultedToSameOriginByCOEPAndDip BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-coep-and-dip"
+	BlockedReasonCorpNotSameSite                                         BlockedReason = "corp-not-same-site"
 )
 
 func (e BlockedReason) Valid() bool {
 	switch e {
-	case "other", "csp", "mixed-content", "origin", "inspector", "subresource-filter", "content-type", "coep-frame-resource-needs-coep-header", "coop-sandboxed-iframe-cannot-navigate-to-coop-page", "corp-not-same-origin", "corp-not-same-origin-after-defaulted-to-same-origin-by-coep", "corp-not-same-site":
+	case "other", "csp", "mixed-content", "origin", "inspector", "subresource-filter", "content-type", "coep-frame-resource-needs-coep-header", "coop-sandboxed-iframe-cannot-navigate-to-coop-page", "corp-not-same-origin", "corp-not-same-origin-after-defaulted-to-same-origin-by-coep", "corp-not-same-origin-after-defaulted-to-same-origin-by-dip", "corp-not-same-origin-after-defaulted-to-same-origin-by-coep-and-dip", "corp-not-same-site":
 		return true
 	default:
 		return false
@@ -473,42 +495,46 @@ type CORSError string
 
 // CORSError as enums.
 const (
-	CORSErrorNotSet                               CORSError = ""
-	CORSErrorDisallowedByMode                     CORSError = "DisallowedByMode"
-	CORSErrorInvalidResponse                      CORSError = "InvalidResponse"
-	CORSErrorWildcardOriginNotAllowed             CORSError = "WildcardOriginNotAllowed"
-	CORSErrorMissingAllowOriginHeader             CORSError = "MissingAllowOriginHeader"
-	CORSErrorMultipleAllowOriginValues            CORSError = "MultipleAllowOriginValues"
-	CORSErrorInvalidAllowOriginValue              CORSError = "InvalidAllowOriginValue"
-	CORSErrorAllowOriginMismatch                  CORSError = "AllowOriginMismatch"
-	CORSErrorInvalidAllowCredentials              CORSError = "InvalidAllowCredentials"
-	CORSErrorCORSDisabledScheme                   CORSError = "CorsDisabledScheme"
-	CORSErrorPreflightInvalidStatus               CORSError = "PreflightInvalidStatus"
-	CORSErrorPreflightDisallowedRedirect          CORSError = "PreflightDisallowedRedirect"
-	CORSErrorPreflightWildcardOriginNotAllowed    CORSError = "PreflightWildcardOriginNotAllowed"
-	CORSErrorPreflightMissingAllowOriginHeader    CORSError = "PreflightMissingAllowOriginHeader"
-	CORSErrorPreflightMultipleAllowOriginValues   CORSError = "PreflightMultipleAllowOriginValues"
-	CORSErrorPreflightInvalidAllowOriginValue     CORSError = "PreflightInvalidAllowOriginValue"
-	CORSErrorPreflightAllowOriginMismatch         CORSError = "PreflightAllowOriginMismatch"
-	CORSErrorPreflightInvalidAllowCredentials     CORSError = "PreflightInvalidAllowCredentials"
-	CORSErrorPreflightMissingAllowExternal        CORSError = "PreflightMissingAllowExternal"
-	CORSErrorPreflightInvalidAllowExternal        CORSError = "PreflightInvalidAllowExternal"
-	CORSErrorPreflightMissingAllowPrivateNetwork  CORSError = "PreflightMissingAllowPrivateNetwork"
-	CORSErrorPreflightInvalidAllowPrivateNetwork  CORSError = "PreflightInvalidAllowPrivateNetwork"
-	CORSErrorInvalidAllowMethodsPreflightResponse CORSError = "InvalidAllowMethodsPreflightResponse"
-	CORSErrorInvalidAllowHeadersPreflightResponse CORSError = "InvalidAllowHeadersPreflightResponse"
-	CORSErrorMethodDisallowedByPreflightResponse  CORSError = "MethodDisallowedByPreflightResponse"
-	CORSErrorHeaderDisallowedByPreflightResponse  CORSError = "HeaderDisallowedByPreflightResponse"
-	CORSErrorRedirectContainsCredentials          CORSError = "RedirectContainsCredentials"
-	CORSErrorInsecurePrivateNetwork               CORSError = "InsecurePrivateNetwork"
-	CORSErrorInvalidPrivateNetworkAccess          CORSError = "InvalidPrivateNetworkAccess"
-	CORSErrorUnexpectedPrivateNetworkAccess       CORSError = "UnexpectedPrivateNetworkAccess"
-	CORSErrorNoCORSRedirectModeNotFollow          CORSError = "NoCorsRedirectModeNotFollow"
+	CORSErrorNotSet                                    CORSError = ""
+	CORSErrorDisallowedByMode                          CORSError = "DisallowedByMode"
+	CORSErrorInvalidResponse                           CORSError = "InvalidResponse"
+	CORSErrorWildcardOriginNotAllowed                  CORSError = "WildcardOriginNotAllowed"
+	CORSErrorMissingAllowOriginHeader                  CORSError = "MissingAllowOriginHeader"
+	CORSErrorMultipleAllowOriginValues                 CORSError = "MultipleAllowOriginValues"
+	CORSErrorInvalidAllowOriginValue                   CORSError = "InvalidAllowOriginValue"
+	CORSErrorAllowOriginMismatch                       CORSError = "AllowOriginMismatch"
+	CORSErrorInvalidAllowCredentials                   CORSError = "InvalidAllowCredentials"
+	CORSErrorCORSDisabledScheme                        CORSError = "CorsDisabledScheme"
+	CORSErrorPreflightInvalidStatus                    CORSError = "PreflightInvalidStatus"
+	CORSErrorPreflightDisallowedRedirect               CORSError = "PreflightDisallowedRedirect"
+	CORSErrorPreflightWildcardOriginNotAllowed         CORSError = "PreflightWildcardOriginNotAllowed"
+	CORSErrorPreflightMissingAllowOriginHeader         CORSError = "PreflightMissingAllowOriginHeader"
+	CORSErrorPreflightMultipleAllowOriginValues        CORSError = "PreflightMultipleAllowOriginValues"
+	CORSErrorPreflightInvalidAllowOriginValue          CORSError = "PreflightInvalidAllowOriginValue"
+	CORSErrorPreflightAllowOriginMismatch              CORSError = "PreflightAllowOriginMismatch"
+	CORSErrorPreflightInvalidAllowCredentials          CORSError = "PreflightInvalidAllowCredentials"
+	CORSErrorPreflightMissingAllowExternal             CORSError = "PreflightMissingAllowExternal"
+	CORSErrorPreflightInvalidAllowExternal             CORSError = "PreflightInvalidAllowExternal"
+	CORSErrorPreflightMissingAllowPrivateNetwork       CORSError = "PreflightMissingAllowPrivateNetwork"
+	CORSErrorPreflightInvalidAllowPrivateNetwork       CORSError = "PreflightInvalidAllowPrivateNetwork"
+	CORSErrorInvalidAllowMethodsPreflightResponse      CORSError = "InvalidAllowMethodsPreflightResponse"
+	CORSErrorInvalidAllowHeadersPreflightResponse      CORSError = "InvalidAllowHeadersPreflightResponse"
+	CORSErrorMethodDisallowedByPreflightResponse       CORSError = "MethodDisallowedByPreflightResponse"
+	CORSErrorHeaderDisallowedByPreflightResponse       CORSError = "HeaderDisallowedByPreflightResponse"
+	CORSErrorRedirectContainsCredentials               CORSError = "RedirectContainsCredentials"
+	CORSErrorInsecurePrivateNetwork                    CORSError = "InsecurePrivateNetwork"
+	CORSErrorInvalidPrivateNetworkAccess               CORSError = "InvalidPrivateNetworkAccess"
+	CORSErrorUnexpectedPrivateNetworkAccess            CORSError = "UnexpectedPrivateNetworkAccess"
+	CORSErrorNoCORSRedirectModeNotFollow               CORSError = "NoCorsRedirectModeNotFollow"
+	CORSErrorPreflightMissingPrivateNetworkAccessID    CORSError = "PreflightMissingPrivateNetworkAccessId"
+	CORSErrorPreflightMissingPrivateNetworkAccessName  CORSError = "PreflightMissingPrivateNetworkAccessName"
+	CORSErrorPrivateNetworkAccessPermissionUnavailable CORSError = "PrivateNetworkAccessPermissionUnavailable"
+	CORSErrorPrivateNetworkAccessPermissionDenied      CORSError = "PrivateNetworkAccessPermissionDenied"
 )
 
 func (e CORSError) Valid() bool {
 	switch e {
-	case "DisallowedByMode", "InvalidResponse", "WildcardOriginNotAllowed", "MissingAllowOriginHeader", "MultipleAllowOriginValues", "InvalidAllowOriginValue", "AllowOriginMismatch", "InvalidAllowCredentials", "CorsDisabledScheme", "PreflightInvalidStatus", "PreflightDisallowedRedirect", "PreflightWildcardOriginNotAllowed", "PreflightMissingAllowOriginHeader", "PreflightMultipleAllowOriginValues", "PreflightInvalidAllowOriginValue", "PreflightAllowOriginMismatch", "PreflightInvalidAllowCredentials", "PreflightMissingAllowExternal", "PreflightInvalidAllowExternal", "PreflightMissingAllowPrivateNetwork", "PreflightInvalidAllowPrivateNetwork", "InvalidAllowMethodsPreflightResponse", "InvalidAllowHeadersPreflightResponse", "MethodDisallowedByPreflightResponse", "HeaderDisallowedByPreflightResponse", "RedirectContainsCredentials", "InsecurePrivateNetwork", "InvalidPrivateNetworkAccess", "UnexpectedPrivateNetworkAccess", "NoCorsRedirectModeNotFollow":
+	case "DisallowedByMode", "InvalidResponse", "WildcardOriginNotAllowed", "MissingAllowOriginHeader", "MultipleAllowOriginValues", "InvalidAllowOriginValue", "AllowOriginMismatch", "InvalidAllowCredentials", "CorsDisabledScheme", "PreflightInvalidStatus", "PreflightDisallowedRedirect", "PreflightWildcardOriginNotAllowed", "PreflightMissingAllowOriginHeader", "PreflightMultipleAllowOriginValues", "PreflightInvalidAllowOriginValue", "PreflightAllowOriginMismatch", "PreflightInvalidAllowCredentials", "PreflightMissingAllowExternal", "PreflightInvalidAllowExternal", "PreflightMissingAllowPrivateNetwork", "PreflightInvalidAllowPrivateNetwork", "InvalidAllowMethodsPreflightResponse", "InvalidAllowHeadersPreflightResponse", "MethodDisallowedByPreflightResponse", "HeaderDisallowedByPreflightResponse", "RedirectContainsCredentials", "InsecurePrivateNetwork", "InvalidPrivateNetworkAccess", "UnexpectedPrivateNetworkAccess", "NoCorsRedirectModeNotFollow", "PreflightMissingPrivateNetworkAccessId", "PreflightMissingPrivateNetworkAccessName", "PrivateNetworkAccessPermissionUnavailable", "PrivateNetworkAccessPermissionDenied":
 		return true
 	default:
 		return false
@@ -556,9 +582,10 @@ func (e ServiceWorkerResponseSource) String() string {
 //
 // Note: This type is experimental.
 type TrustTokenParams struct {
-	Type TrustTokenOperationType `json:"type"` // No description.
-	// RefreshPolicy Only set for "token-redemption" type and determine
-	// whether to request a fresh SRR or use a still valid cached SRR.
+	Operation TrustTokenOperationType `json:"operation"` // No description.
+	// RefreshPolicy Only set for "token-redemption" operation and
+	// determine whether to request a fresh SRR or use a still valid cached
+	// SRR.
 	//
 	// Values: "UseCached", "Refresh".
 	RefreshPolicy string   `json:"refreshPolicy"`
@@ -591,6 +618,72 @@ func (e TrustTokenOperationType) String() string {
 	return string(e)
 }
 
+// AlternateProtocolUsage The reason why Chrome uses a specific transport
+// protocol for HTTP semantics.
+//
+// Note: This type is experimental.
+type AlternateProtocolUsage string
+
+// AlternateProtocolUsage as enums.
+const (
+	AlternateProtocolUsageNotSet                       AlternateProtocolUsage = ""
+	AlternateProtocolUsageAlternativeJobWonWithoutRace AlternateProtocolUsage = "alternativeJobWonWithoutRace"
+	AlternateProtocolUsageAlternativeJobWonRace        AlternateProtocolUsage = "alternativeJobWonRace"
+	AlternateProtocolUsageMainJobWonRace               AlternateProtocolUsage = "mainJobWonRace"
+	AlternateProtocolUsageMappingMissing               AlternateProtocolUsage = "mappingMissing"
+	AlternateProtocolUsageBroken                       AlternateProtocolUsage = "broken"
+	AlternateProtocolUsageDNSAlpnH3JobWonWithoutRace   AlternateProtocolUsage = "dnsAlpnH3JobWonWithoutRace"
+	AlternateProtocolUsageDNSAlpnH3JobWonRace          AlternateProtocolUsage = "dnsAlpnH3JobWonRace"
+	AlternateProtocolUsageUnspecifiedReason            AlternateProtocolUsage = "unspecifiedReason"
+)
+
+func (e AlternateProtocolUsage) Valid() bool {
+	switch e {
+	case "alternativeJobWonWithoutRace", "alternativeJobWonRace", "mainJobWonRace", "mappingMissing", "broken", "dnsAlpnH3JobWonWithoutRace", "dnsAlpnH3JobWonRace", "unspecifiedReason":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e AlternateProtocolUsage) String() string {
+	return string(e)
+}
+
+// ServiceWorkerRouterSource Source of service worker router.
+type ServiceWorkerRouterSource string
+
+// ServiceWorkerRouterSource as enums.
+const (
+	ServiceWorkerRouterSourceNotSet                     ServiceWorkerRouterSource = ""
+	ServiceWorkerRouterSourceNetwork                    ServiceWorkerRouterSource = "network"
+	ServiceWorkerRouterSourceCache                      ServiceWorkerRouterSource = "cache"
+	ServiceWorkerRouterSourceFetchEvent                 ServiceWorkerRouterSource = "fetch-event"
+	ServiceWorkerRouterSourceRaceNetworkAndFetchHandler ServiceWorkerRouterSource = "race-network-and-fetch-handler"
+)
+
+func (e ServiceWorkerRouterSource) Valid() bool {
+	switch e {
+	case "network", "cache", "fetch-event", "race-network-and-fetch-handler":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ServiceWorkerRouterSource) String() string {
+	return string(e)
+}
+
+// ServiceWorkerRouterInfo
+//
+// Note: This type is experimental.
+type ServiceWorkerRouterInfo struct {
+	RuleIDMatched     *int                      `json:"ruleIdMatched,omitempty"`     // ID of the rule matched. If there is a matched rule, this field will be set, otherwiser no value will be set.
+	MatchedSourceType ServiceWorkerRouterSource `json:"matchedSourceType,omitempty"` // The router source of the matched rule. If there is a matched rule, this field will be set, otherwise no value will be set.
+	ActualSourceType  ServiceWorkerRouterSource `json:"actualSourceType,omitempty"`  // The actual router source used.
+}
+
 // Response HTTP response data.
 type Response struct {
 	URL        string  `json:"url"`        // Response URL. This URL can be different from CachedResource.url in case of redirect.
@@ -603,27 +696,42 @@ type Response struct {
 	// the headers in Network.responseReceivedExtraInfo.
 	HeadersText    *string `json:"headersText,omitempty"`
 	MimeType       string  `json:"mimeType"`                 // Resource mimeType as determined by the browser.
+	Charset        string  `json:"charset"`                  // Resource charset as determined by the browser (if applicable).
 	RequestHeaders Headers `json:"requestHeaders,omitempty"` // Refined HTTP request headers that were actually transmitted over the network.
 	// RequestHeadersText is deprecated.
 	//
 	// Deprecated: HTTP request headers text. This has been replaced by
 	// the headers in Network.requestWillBeSentExtraInfo.
-	RequestHeadersText          *string                     `json:"requestHeadersText,omitempty"`
-	ConnectionReused            bool                        `json:"connectionReused"`                      // Specifies whether physical connection was actually reused for this request.
-	ConnectionID                float64                     `json:"connectionId"`                          // Physical connection id that was actually used for this request.
-	RemoteIPAddress             *string                     `json:"remoteIPAddress,omitempty"`             // Remote IP address.
-	RemotePort                  *int                        `json:"remotePort,omitempty"`                  // Remote port.
-	FromDiskCache               *bool                       `json:"fromDiskCache,omitempty"`               // Specifies that the request was served from the disk cache.
-	FromServiceWorker           *bool                       `json:"fromServiceWorker,omitempty"`           // Specifies that the request was served from the ServiceWorker.
-	FromPrefetchCache           *bool                       `json:"fromPrefetchCache,omitempty"`           // Specifies that the request was served from the prefetch cache.
+	RequestHeadersText *string `json:"requestHeadersText,omitempty"`
+	ConnectionReused   bool    `json:"connectionReused"`            // Specifies whether physical connection was actually reused for this request.
+	ConnectionID       float64 `json:"connectionId"`                // Physical connection id that was actually used for this request.
+	RemoteIPAddress    *string `json:"remoteIPAddress,omitempty"`   // Remote IP address.
+	RemotePort         *int    `json:"remotePort,omitempty"`        // Remote port.
+	FromDiskCache      *bool   `json:"fromDiskCache,omitempty"`     // Specifies that the request was served from the disk cache.
+	FromServiceWorker  *bool   `json:"fromServiceWorker,omitempty"` // Specifies that the request was served from the ServiceWorker.
+	FromPrefetchCache  *bool   `json:"fromPrefetchCache,omitempty"` // Specifies that the request was served from the prefetch cache.
+	FromEarlyHints     *bool   `json:"fromEarlyHints,omitempty"`    // Specifies that the request was served from the prefetch cache.
+	// ServiceWorkerRouterInfo Information about how ServiceWorker Static
+	// Router API was used. If this field is set with `matchedSourceType`
+	// field, a matching rule is found. If this field is set without
+	// `matchedSource`, no matching rule is found. Otherwise, the API is
+	// not used.
+	//
+	// Note: This property is experimental.
+	ServiceWorkerRouterInfo     *ServiceWorkerRouterInfo    `json:"serviceWorkerRouterInfo,omitempty"`
 	EncodedDataLength           float64                     `json:"encodedDataLength"`                     // Total number of bytes received for this request so far.
 	Timing                      *ResourceTiming             `json:"timing,omitempty"`                      // Timing information for the given request.
 	ServiceWorkerResponseSource ServiceWorkerResponseSource `json:"serviceWorkerResponseSource,omitempty"` // Response source of response from ServiceWorker.
 	ResponseTime                TimeSinceEpoch              `json:"responseTime,omitempty"`                // The time at which the returned response was generated.
 	CacheStorageCacheName       *string                     `json:"cacheStorageCacheName,omitempty"`       // Cache Storage Cache Name.
 	Protocol                    *string                     `json:"protocol,omitempty"`                    // Protocol used to fetch this request.
-	SecurityState               security.State              `json:"securityState"`                         // Security state of the request resource.
-	SecurityDetails             *SecurityDetails            `json:"securityDetails,omitempty"`             // Security details for the request.
+	// AlternateProtocolUsage The reason why Chrome uses a specific
+	// transport protocol for HTTP semantics.
+	//
+	// Note: This property is experimental.
+	AlternateProtocolUsage AlternateProtocolUsage `json:"alternateProtocolUsage,omitempty"`
+	SecurityState          security.State         `json:"securityState"`             // Security state of the request resource.
+	SecurityDetails        *SecurityDetails       `json:"securityDetails,omitempty"` // Security details for the request.
 }
 
 // WebSocketRequest WebSocket request data.
@@ -670,6 +778,16 @@ type Initiator struct {
 	RequestID    *RequestID          `json:"requestId,omitempty"`    // Set if another request triggered this request (e.g. preflight).
 }
 
+// CookiePartitionKey cookiePartitionKey object The representation of the
+// components of the key that are created by the cookiePartitionKey class
+// contained in net/cookies/cookie_partition_key.h.
+//
+// Note: This type is experimental.
+type CookiePartitionKey struct {
+	TopLevelSite         string `json:"topLevelSite"`         // The site of the top-level URL the browser was visiting at the start of the request to the endpoint that set the cookie.
+	HasCrossSiteAncestor bool   `json:"hasCrossSiteAncestor"` // Indicates if the cookie has any ancestors that are cross-site to the topLevelSite.
+}
+
 // Cookie Cookie object
 type Cookie struct {
 	Name     string         `json:"name"`               // Cookie name.
@@ -686,7 +804,9 @@ type Cookie struct {
 	//
 	// Note: This property is experimental.
 	Priority CookiePriority `json:"priority"`
-	// SameParty True if cookie is SameParty.
+	// SameParty is deprecated.
+	//
+	// Deprecated: True if cookie is SameParty.
 	//
 	// Note: This property is experimental.
 	SameParty bool `json:"sameParty"`
@@ -701,12 +821,10 @@ type Cookie struct {
 	//
 	// Note: This property is experimental.
 	SourcePort int `json:"sourcePort"`
-	// PartitionKey Cookie partition key. The site of the top-level URL
-	// the browser was visiting at the start of the request to the endpoint
-	// that set the cookie.
+	// PartitionKey Cookie partition key.
 	//
 	// Note: This property is experimental.
-	PartitionKey *string `json:"partitionKey,omitempty"`
+	PartitionKey *CookiePartitionKey `json:"partitionKey,omitempty"`
 	// PartitionKeyOpaque True if cookie partition key is opaque.
 	//
 	// Note: This property is experimental.
@@ -728,6 +846,8 @@ const (
 	SetCookieBlockedReasonSameSiteUnspecifiedTreatedAsLax          SetCookieBlockedReason = "SameSiteUnspecifiedTreatedAsLax"
 	SetCookieBlockedReasonSameSiteNoneInsecure                     SetCookieBlockedReason = "SameSiteNoneInsecure"
 	SetCookieBlockedReasonUserPreferences                          SetCookieBlockedReason = "UserPreferences"
+	SetCookieBlockedReasonThirdPartyPhaseout                       SetCookieBlockedReason = "ThirdPartyPhaseout"
+	SetCookieBlockedReasonThirdPartyBlockedInFirstPartySet         SetCookieBlockedReason = "ThirdPartyBlockedInFirstPartySet"
 	SetCookieBlockedReasonSyntaxError                              SetCookieBlockedReason = "SyntaxError"
 	SetCookieBlockedReasonSchemeNotSupported                       SetCookieBlockedReason = "SchemeNotSupported"
 	SetCookieBlockedReasonOverwriteSecure                          SetCookieBlockedReason = "OverwriteSecure"
@@ -740,11 +860,13 @@ const (
 	SetCookieBlockedReasonSamePartyFromCrossPartyContext           SetCookieBlockedReason = "SamePartyFromCrossPartyContext"
 	SetCookieBlockedReasonSamePartyConflictsWithOtherAttributes    SetCookieBlockedReason = "SamePartyConflictsWithOtherAttributes"
 	SetCookieBlockedReasonNameValuePairExceedsMaxSize              SetCookieBlockedReason = "NameValuePairExceedsMaxSize"
+	SetCookieBlockedReasonDisallowedCharacter                      SetCookieBlockedReason = "DisallowedCharacter"
+	SetCookieBlockedReasonNoCookieContent                          SetCookieBlockedReason = "NoCookieContent"
 )
 
 func (e SetCookieBlockedReason) Valid() bool {
 	switch e {
-	case "SecureOnly", "SameSiteStrict", "SameSiteLax", "SameSiteUnspecifiedTreatedAsLax", "SameSiteNoneInsecure", "UserPreferences", "SyntaxError", "SchemeNotSupported", "OverwriteSecure", "InvalidDomain", "InvalidPrefix", "UnknownError", "SchemefulSameSiteStrict", "SchemefulSameSiteLax", "SchemefulSameSiteUnspecifiedTreatedAsLax", "SamePartyFromCrossPartyContext", "SamePartyConflictsWithOtherAttributes", "NameValuePairExceedsMaxSize":
+	case "SecureOnly", "SameSiteStrict", "SameSiteLax", "SameSiteUnspecifiedTreatedAsLax", "SameSiteNoneInsecure", "UserPreferences", "ThirdPartyPhaseout", "ThirdPartyBlockedInFirstPartySet", "SyntaxError", "SchemeNotSupported", "OverwriteSecure", "InvalidDomain", "InvalidPrefix", "UnknownError", "SchemefulSameSiteStrict", "SchemefulSameSiteLax", "SchemefulSameSiteUnspecifiedTreatedAsLax", "SamePartyFromCrossPartyContext", "SamePartyConflictsWithOtherAttributes", "NameValuePairExceedsMaxSize", "DisallowedCharacter", "NoCookieContent":
 		return true
 	default:
 		return false
@@ -772,6 +894,8 @@ const (
 	CookieBlockedReasonSameSiteUnspecifiedTreatedAsLax          CookieBlockedReason = "SameSiteUnspecifiedTreatedAsLax"
 	CookieBlockedReasonSameSiteNoneInsecure                     CookieBlockedReason = "SameSiteNoneInsecure"
 	CookieBlockedReasonUserPreferences                          CookieBlockedReason = "UserPreferences"
+	CookieBlockedReasonThirdPartyPhaseout                       CookieBlockedReason = "ThirdPartyPhaseout"
+	CookieBlockedReasonThirdPartyBlockedInFirstPartySet         CookieBlockedReason = "ThirdPartyBlockedInFirstPartySet"
 	CookieBlockedReasonUnknownError                             CookieBlockedReason = "UnknownError"
 	CookieBlockedReasonSchemefulSameSiteStrict                  CookieBlockedReason = "SchemefulSameSiteStrict"
 	CookieBlockedReasonSchemefulSameSiteLax                     CookieBlockedReason = "SchemefulSameSiteLax"
@@ -782,7 +906,7 @@ const (
 
 func (e CookieBlockedReason) Valid() bool {
 	switch e {
-	case "SecureOnly", "NotOnPath", "DomainMismatch", "SameSiteStrict", "SameSiteLax", "SameSiteUnspecifiedTreatedAsLax", "SameSiteNoneInsecure", "UserPreferences", "UnknownError", "SchemefulSameSiteStrict", "SchemefulSameSiteLax", "SchemefulSameSiteUnspecifiedTreatedAsLax", "SamePartyFromCrossPartyContext", "NameValuePairExceedsMaxSize":
+	case "SecureOnly", "NotOnPath", "DomainMismatch", "SameSiteStrict", "SameSiteLax", "SameSiteUnspecifiedTreatedAsLax", "SameSiteNoneInsecure", "UserPreferences", "ThirdPartyPhaseout", "ThirdPartyBlockedInFirstPartySet", "UnknownError", "SchemefulSameSiteStrict", "SchemefulSameSiteLax", "SchemefulSameSiteUnspecifiedTreatedAsLax", "SamePartyFromCrossPartyContext", "NameValuePairExceedsMaxSize":
 		return true
 	default:
 		return false
@@ -790,6 +914,41 @@ func (e CookieBlockedReason) Valid() bool {
 }
 
 func (e CookieBlockedReason) String() string {
+	return string(e)
+}
+
+// CookieExemptionReason Types of reasons why a cookie should have been
+// blocked by 3PCD but is exempted for the request.
+//
+// Note: This type is experimental.
+type CookieExemptionReason string
+
+// CookieExemptionReason as enums.
+const (
+	CookieExemptionReasonNotSet                       CookieExemptionReason = ""
+	CookieExemptionReasonNone                         CookieExemptionReason = "None"
+	CookieExemptionReasonUserSetting                  CookieExemptionReason = "UserSetting"
+	CookieExemptionReasonTPCDMetadata                 CookieExemptionReason = "TPCDMetadata"
+	CookieExemptionReasonTPCDDeprecationTrial         CookieExemptionReason = "TPCDDeprecationTrial"
+	CookieExemptionReasonTopLevelTPCDDeprecationTrial CookieExemptionReason = "TopLevelTPCDDeprecationTrial"
+	CookieExemptionReasonTPCDHeuristics               CookieExemptionReason = "TPCDHeuristics"
+	CookieExemptionReasonEnterprisePolicy             CookieExemptionReason = "EnterprisePolicy"
+	CookieExemptionReasonStorageAccess                CookieExemptionReason = "StorageAccess"
+	CookieExemptionReasonTopLevelStorageAccess        CookieExemptionReason = "TopLevelStorageAccess"
+	CookieExemptionReasonCORSOptIn                    CookieExemptionReason = "CorsOptIn"
+	CookieExemptionReasonScheme                       CookieExemptionReason = "Scheme"
+)
+
+func (e CookieExemptionReason) Valid() bool {
+	switch e {
+	case "None", "UserSetting", "TPCDMetadata", "TPCDDeprecationTrial", "TopLevelTPCDDeprecationTrial", "TPCDHeuristics", "EnterprisePolicy", "StorageAccess", "TopLevelStorageAccess", "CorsOptIn", "Scheme":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e CookieExemptionReason) String() string {
 	return string(e)
 }
 
@@ -803,13 +962,26 @@ type BlockedSetCookieWithReason struct {
 	Cookie         *Cookie                  `json:"cookie,omitempty"` // The cookie object which represents the cookie which was not stored. It is optional because sometimes complete cookie information is not available, such as in the case of parsing errors.
 }
 
-// BlockedCookieWithReason A cookie with was not sent with a request with the
-// corresponding reason.
+// ExemptedSetCookieWithReason A cookie should have been blocked by 3PCD but
+// is exempted and stored from a response with the corresponding reason. A
+// cookie could only have at most one exemption reason.
 //
 // Note: This type is experimental.
-type BlockedCookieWithReason struct {
-	BlockedReasons []CookieBlockedReason `json:"blockedReasons"` // The reason(s) the cookie was blocked.
-	Cookie         Cookie                `json:"cookie"`         // The cookie object representing the cookie which was not sent.
+type ExemptedSetCookieWithReason struct {
+	ExemptionReason CookieExemptionReason `json:"exemptionReason"` // The reason the cookie was exempted.
+	CookieLine      string                `json:"cookieLine"`      // The string representing this individual cookie as it would appear in the header.
+	Cookie          Cookie                `json:"cookie"`          // The cookie object representing the cookie.
+}
+
+// AssociatedCookie A cookie associated with the request which may or may not
+// be sent with it. Includes the cookies itself and reasons for blocking or
+// exemption.
+//
+// Note: This type is experimental.
+type AssociatedCookie struct {
+	Cookie          Cookie                `json:"cookie"`                    // The cookie object representing the cookie which was not sent.
+	BlockedReasons  []CookieBlockedReason `json:"blockedReasons"`            // The reason(s) the cookie was blocked. If empty means the cookie is included.
+	ExemptionReason CookieExemptionReason `json:"exemptionReason,omitempty"` // The reason the cookie should have been blocked by 3PCD but is exempted. A cookie could only have at most one exemption reason.
 }
 
 // CookieParam Cookie parameter object
@@ -842,13 +1014,11 @@ type CookieParam struct {
 	//
 	// Note: This property is experimental.
 	SourcePort *int `json:"sourcePort,omitempty"`
-	// PartitionKey Cookie partition key. The site of the top-level URL
-	// the browser was visiting at the start of the request to the endpoint
-	// that set the cookie. If not set, the cookie will be set as not
-	// partitioned.
+	// PartitionKey Cookie partition key. If not set, the cookie will be
+	// set as not partitioned.
 	//
 	// Note: This property is experimental.
-	PartitionKey *string `json:"partitionKey,omitempty"`
+	PartitionKey *CookiePartitionKey `json:"partitionKey,omitempty"`
 }
 
 // AuthChallenge Authorization challenge for HTTP status code 401 or 407.
@@ -940,7 +1110,7 @@ type SignedExchangeHeader struct {
 	ResponseCode    int                       `json:"responseCode"`    // Signed exchange response code.
 	ResponseHeaders Headers                   `json:"responseHeaders"` // Signed exchange response headers.
 	Signatures      []SignedExchangeSignature `json:"signatures"`      // Signed exchange response signature.
-	HeaderIntegrity string                    `json:"headerIntegrity"` // Signed exchange header integrity hash in the form of "sha256-<base64-hash-value>".
+	HeaderIntegrity string                    `json:"headerIntegrity"` // Signed exchange header integrity hash in the form of `sha256-<base64-hash-value>`.
 }
 
 // SignedExchangeErrorField Field type for a signed exchange related error.
@@ -988,7 +1158,7 @@ type SignedExchangeInfo struct {
 	OuterResponse   Response              `json:"outerResponse"`             // The outer response of signed HTTP exchange which was received from network.
 	Header          *SignedExchangeHeader `json:"header,omitempty"`          // Information about the signed exchange header.
 	SecurityDetails *SecurityDetails      `json:"securityDetails,omitempty"` // Security details for the signed exchange header.
-	Errors          []SignedExchangeError `json:"errors,omitempty"`          // Errors occurred while handling the signed exchagne.
+	Errors          []SignedExchangeError `json:"errors,omitempty"`          // Errors occurred while handling the signed exchange.
 }
 
 // ContentEncoding List of content encodings supported by the backend.
@@ -1002,11 +1172,12 @@ const (
 	ContentEncodingDeflate ContentEncoding = "deflate"
 	ContentEncodingGzip    ContentEncoding = "gzip"
 	ContentEncodingBR      ContentEncoding = "br"
+	ContentEncodingZstd    ContentEncoding = "zstd"
 )
 
 func (e ContentEncoding) Valid() bool {
 	switch e {
-	case "deflate", "gzip", "br":
+	case "deflate", "gzip", "br", "zstd":
 		return true
 	default:
 		return false
@@ -1095,17 +1266,19 @@ type CrossOriginOpenerPolicyValue string
 
 // CrossOriginOpenerPolicyValue as enums.
 const (
-	CrossOriginOpenerPolicyValueNotSet                        CrossOriginOpenerPolicyValue = ""
-	CrossOriginOpenerPolicyValueSameOrigin                    CrossOriginOpenerPolicyValue = "SameOrigin"
-	CrossOriginOpenerPolicyValueSameOriginAllowPopups         CrossOriginOpenerPolicyValue = "SameOriginAllowPopups"
-	CrossOriginOpenerPolicyValueUnsafeNone                    CrossOriginOpenerPolicyValue = "UnsafeNone"
-	CrossOriginOpenerPolicyValueSameOriginPlusCoep            CrossOriginOpenerPolicyValue = "SameOriginPlusCoep"
-	CrossOriginOpenerPolicyValueSameOriginAllowPopupsPlusCoep CrossOriginOpenerPolicyValue = "SameOriginAllowPopupsPlusCoep"
+	CrossOriginOpenerPolicyValueNotSet                     CrossOriginOpenerPolicyValue = ""
+	CrossOriginOpenerPolicyValueSameOrigin                 CrossOriginOpenerPolicyValue = "SameOrigin"
+	CrossOriginOpenerPolicyValueSameOriginAllowPopups      CrossOriginOpenerPolicyValue = "SameOriginAllowPopups"
+	CrossOriginOpenerPolicyValueRestrictProperties         CrossOriginOpenerPolicyValue = "RestrictProperties"
+	CrossOriginOpenerPolicyValueUnsafeNone                 CrossOriginOpenerPolicyValue = "UnsafeNone"
+	CrossOriginOpenerPolicyValueSameOriginPlusCOEP         CrossOriginOpenerPolicyValue = "SameOriginPlusCoep"
+	CrossOriginOpenerPolicyValueRestrictPropertiesPlusCOEP CrossOriginOpenerPolicyValue = "RestrictPropertiesPlusCoep"
+	CrossOriginOpenerPolicyValueNoopenerAllowPopups        CrossOriginOpenerPolicyValue = "NoopenerAllowPopups"
 )
 
 func (e CrossOriginOpenerPolicyValue) Valid() bool {
 	switch e {
-	case "SameOrigin", "SameOriginAllowPopups", "UnsafeNone", "SameOriginPlusCoep", "SameOriginAllowPopupsPlusCoep":
+	case "SameOrigin", "SameOriginAllowPopups", "RestrictProperties", "UnsafeNone", "SameOriginPlusCoep", "RestrictPropertiesPlusCoep", "NoopenerAllowPopups":
 		return true
 	default:
 		return false
@@ -1162,12 +1335,47 @@ type CrossOriginEmbedderPolicyStatus struct {
 	ReportOnlyReportingEndpoint *string                        `json:"reportOnlyReportingEndpoint,omitempty"` // No description.
 }
 
+// ContentSecurityPolicySource
+//
+// Note: This type is experimental.
+type ContentSecurityPolicySource string
+
+// ContentSecurityPolicySource as enums.
+const (
+	ContentSecurityPolicySourceNotSet ContentSecurityPolicySource = ""
+	ContentSecurityPolicySourceHTTP   ContentSecurityPolicySource = "HTTP"
+	ContentSecurityPolicySourceMeta   ContentSecurityPolicySource = "Meta"
+)
+
+func (e ContentSecurityPolicySource) Valid() bool {
+	switch e {
+	case "HTTP", "Meta":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ContentSecurityPolicySource) String() string {
+	return string(e)
+}
+
+// ContentSecurityPolicyStatus
+//
+// Note: This type is experimental.
+type ContentSecurityPolicyStatus struct {
+	EffectiveDirectives string                      `json:"effectiveDirectives"` // No description.
+	IsEnforced          bool                        `json:"isEnforced"`          // No description.
+	Source              ContentSecurityPolicySource `json:"source"`              // No description.
+}
+
 // SecurityIsolationStatus
 //
 // Note: This type is experimental.
 type SecurityIsolationStatus struct {
 	Coop *CrossOriginOpenerPolicyStatus   `json:"coop,omitempty"` // No description.
-	Coep *CrossOriginEmbedderPolicyStatus `json:"coep,omitempty"` // No description.
+	COEP *CrossOriginEmbedderPolicyStatus `json:"coep,omitempty"` // No description.
+	Csp  []ContentSecurityPolicyStatus    `json:"csp,omitempty"`  // No description.
 }
 
 // ReportStatus The status of a Reporting API report.

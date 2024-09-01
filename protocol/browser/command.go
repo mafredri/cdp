@@ -90,7 +90,7 @@ type SetDownloadBehaviorArgs struct {
 	// Behavior Whether to allow all or deny all download requests, or use
 	// default Chrome behavior if available (otherwise deny).
 	// |allowAndName| allows download and names files according to their
-	// dowmload guids.
+	// download guids.
 	//
 	// Values: "deny", "allow", "allowAndName", "default".
 	Behavior         string     `json:"behavior"`
@@ -167,7 +167,7 @@ type GetBrowserCommandLineReply struct {
 // GetHistogramsArgs represents the arguments for GetHistograms in the Browser domain.
 type GetHistogramsArgs struct {
 	Query *string `json:"query,omitempty"` // Requested substring in name. Only histograms which have query as a substring in their name are extracted. An empty or absent query returns all histograms.
-	Delta *bool   `json:"delta,omitempty"` // If true, retrieve delta since last call.
+	Delta *bool   `json:"delta,omitempty"` // If true, retrieve delta since last delta call.
 }
 
 // NewGetHistogramsArgs initializes GetHistogramsArgs with the required arguments.
@@ -186,7 +186,7 @@ func (a *GetHistogramsArgs) SetQuery(query string) *GetHistogramsArgs {
 }
 
 // SetDelta sets the Delta optional argument. If true, retrieve delta
-// since last call.
+// since last delta call.
 func (a *GetHistogramsArgs) SetDelta(delta bool) *GetHistogramsArgs {
 	a.Delta = &delta
 	return a
@@ -200,7 +200,7 @@ type GetHistogramsReply struct {
 // GetHistogramArgs represents the arguments for GetHistogram in the Browser domain.
 type GetHistogramArgs struct {
 	Name  string `json:"name"`            // Requested histogram name.
-	Delta *bool  `json:"delta,omitempty"` // If true, retrieve delta since last call.
+	Delta *bool  `json:"delta,omitempty"` // If true, retrieve delta since last delta call.
 }
 
 // NewGetHistogramArgs initializes GetHistogramArgs with the required arguments.
@@ -211,7 +211,7 @@ func NewGetHistogramArgs(name string) *GetHistogramArgs {
 }
 
 // SetDelta sets the Delta optional argument. If true, retrieve delta
-// since last call.
+// since last delta call.
 func (a *GetHistogramArgs) SetDelta(delta bool) *GetHistogramArgs {
 	a.Delta = &delta
 	return a
@@ -314,5 +314,17 @@ type ExecuteBrowserCommandArgs struct {
 func NewExecuteBrowserCommandArgs(commandID CommandID) *ExecuteBrowserCommandArgs {
 	args := new(ExecuteBrowserCommandArgs)
 	args.CommandID = commandID
+	return args
+}
+
+// AddPrivacySandboxEnrollmentOverrideArgs represents the arguments for AddPrivacySandboxEnrollmentOverride in the Browser domain.
+type AddPrivacySandboxEnrollmentOverrideArgs struct {
+	URL string `json:"url"` // No description.
+}
+
+// NewAddPrivacySandboxEnrollmentOverrideArgs initializes AddPrivacySandboxEnrollmentOverrideArgs with the required arguments.
+func NewAddPrivacySandboxEnrollmentOverrideArgs(url string) *AddPrivacySandboxEnrollmentOverrideArgs {
+	args := new(AddPrivacySandboxEnrollmentOverrideArgs)
+	args.URL = url
 	return args
 }

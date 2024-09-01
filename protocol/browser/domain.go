@@ -238,6 +238,21 @@ func (d *domainClient) ExecuteBrowserCommand(ctx context.Context, args *ExecuteB
 	return
 }
 
+// AddPrivacySandboxEnrollmentOverride invokes the Browser method. Allows a
+// site to use privacy sandbox features that require enrollment without the
+// site actually being enrolled. Only supported on page targets.
+func (d *domainClient) AddPrivacySandboxEnrollmentOverride(ctx context.Context, args *AddPrivacySandboxEnrollmentOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.addPrivacySandboxEnrollmentOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.addPrivacySandboxEnrollmentOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "AddPrivacySandboxEnrollmentOverride", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) DownloadWillBegin(ctx context.Context) (DownloadWillBeginClient, error) {
 	s, err := rpcc.NewStream(ctx, "Browser.downloadWillBegin", d.conn)
 	if err != nil {

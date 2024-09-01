@@ -92,9 +92,9 @@ func (d *domainClient) HideHighlight(ctx context.Context) (err error) {
 }
 
 // HighlightFrame invokes the Overlay method. Highlights owner element of the
-// frame with given id. Deprecated: Doesn't work reliablity and cannot be fixed
-// due to process separatation (the owner node might be in a different
-// process). Determine the owner node in the client and use highlightNode.
+// frame with given id. Deprecated: Doesn't work reliably and cannot be fixed
+// due to process separation (the owner node might be in a different process).
+// Determine the owner node in the client and use highlightNode.
 func (d *domainClient) HighlightFrame(ctx context.Context, args *HighlightFrameArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Overlay.highlightFrame", args, nil, d.conn)
@@ -395,6 +395,20 @@ func (d *domainClient) SetShowIsolatedElements(ctx context.Context, args *SetSho
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Overlay", Op: "SetShowIsolatedElements", Err: err}
+	}
+	return
+}
+
+// SetShowWindowControlsOverlay invokes the Overlay method. Show Window
+// Controls Overlay for PWA
+func (d *domainClient) SetShowWindowControlsOverlay(ctx context.Context, args *SetShowWindowControlsOverlayArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Overlay.setShowWindowControlsOverlay", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Overlay.setShowWindowControlsOverlay", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Overlay", Op: "SetShowWindowControlsOverlay", Err: err}
 	}
 	return
 }

@@ -42,6 +42,11 @@ type AddScriptToEvaluateOnNewDocumentArgs struct {
 	//
 	// Note: This property is experimental.
 	IncludeCommandLineAPI *bool `json:"includeCommandLineAPI,omitempty"`
+	// RunImmediately If true, runs the script immediately on existing
+	// execution contexts or worlds. Default: false.
+	//
+	// Note: This property is experimental.
+	RunImmediately *bool `json:"runImmediately,omitempty"`
 }
 
 // NewAddScriptToEvaluateOnNewDocumentArgs initializes AddScriptToEvaluateOnNewDocumentArgs with the required arguments.
@@ -73,6 +78,16 @@ func (a *AddScriptToEvaluateOnNewDocumentArgs) SetIncludeCommandLineAPI(includeC
 	return a
 }
 
+// SetRunImmediately sets the RunImmediately optional argument. If
+// true, runs the script immediately on existing execution contexts or
+// worlds. Default: false.
+//
+// Note: This property is experimental.
+func (a *AddScriptToEvaluateOnNewDocumentArgs) SetRunImmediately(runImmediately bool) *AddScriptToEvaluateOnNewDocumentArgs {
+	a.RunImmediately = &runImmediately
+	return a
+}
+
 // AddScriptToEvaluateOnNewDocumentReply represents the return values for AddScriptToEvaluateOnNewDocument in the Page domain.
 type AddScriptToEvaluateOnNewDocumentReply struct {
 	Identifier ScriptIdentifier `json:"identifier"` // Identifier of the added script.
@@ -96,6 +111,11 @@ type CaptureScreenshotArgs struct {
 	//
 	// Note: This property is experimental.
 	CaptureBeyondViewport *bool `json:"captureBeyondViewport,omitempty"`
+	// OptimizeForSpeed Optimize image encoding for speed, not for
+	// resulting size (defaults to false)
+	//
+	// Note: This property is experimental.
+	OptimizeForSpeed *bool `json:"optimizeForSpeed,omitempty"`
 }
 
 // NewCaptureScreenshotArgs initializes CaptureScreenshotArgs with the required arguments.
@@ -143,6 +163,16 @@ func (a *CaptureScreenshotArgs) SetFromSurface(fromSurface bool) *CaptureScreens
 // Note: This property is experimental.
 func (a *CaptureScreenshotArgs) SetCaptureBeyondViewport(captureBeyondViewport bool) *CaptureScreenshotArgs {
 	a.CaptureBeyondViewport = &captureBeyondViewport
+	return a
+}
+
+// SetOptimizeForSpeed sets the OptimizeForSpeed optional argument.
+// Optimize image encoding for speed, not for resulting size (defaults
+// to false)
+//
+// Note: This property is experimental.
+func (a *CaptureScreenshotArgs) SetOptimizeForSpeed(optimizeForSpeed bool) *CaptureScreenshotArgs {
+	a.OptimizeForSpeed = &optimizeForSpeed
 	return a
 }
 
@@ -214,15 +244,40 @@ type CreateIsolatedWorldReply struct {
 	ExecutionContextID runtime.ExecutionContextID `json:"executionContextId"` // Execution context of the isolated world.
 }
 
+// GetAppManifestArgs represents the arguments for GetAppManifest in the Page domain.
+type GetAppManifestArgs struct {
+	ManifestID *string `json:"manifestId,omitempty"` // No description.
+}
+
+// NewGetAppManifestArgs initializes GetAppManifestArgs with the required arguments.
+func NewGetAppManifestArgs() *GetAppManifestArgs {
+	args := new(GetAppManifestArgs)
+
+	return args
+}
+
+// SetManifestID sets the ManifestID optional argument.
+func (a *GetAppManifestArgs) SetManifestID(manifestID string) *GetAppManifestArgs {
+	a.ManifestID = &manifestID
+	return a
+}
+
 // GetAppManifestReply represents the return values for GetAppManifest in the Page domain.
 type GetAppManifestReply struct {
 	URL    string             `json:"url"`            // Manifest location.
 	Errors []AppManifestError `json:"errors"`         // No description.
 	Data   *string            `json:"data,omitempty"` // Manifest content.
-	// Parsed Parsed manifest properties
+	// Parsed is deprecated.
+	//
+	// Deprecated: Parsed manifest properties. Deprecated, use manifest
+	// instead.
 	//
 	// Note: This property is experimental.
 	Parsed *AppManifestParsedProperties `json:"parsed,omitempty"`
+	// Manifest
+	//
+	// Note: This property is experimental.
+	Manifest WebAppManifest `json:"manifest"`
 }
 
 // GetInstallabilityErrorsReply represents the return values for GetInstallabilityErrors in the Page domain.
@@ -239,6 +294,23 @@ type GetManifestIconsReply struct {
 type GetAppIDReply struct {
 	AppID         *string `json:"appId,omitempty"`         // App id, either from manifest's id attribute or computed from start_url
 	RecommendedID *string `json:"recommendedId,omitempty"` // Recommendation for manifest's id attribute to match current id computed from start_url
+}
+
+// GetAdScriptIDArgs represents the arguments for GetAdScriptID in the Page domain.
+type GetAdScriptIDArgs struct {
+	FrameID FrameID `json:"frameId"` // No description.
+}
+
+// NewGetAdScriptIDArgs initializes GetAdScriptIDArgs with the required arguments.
+func NewGetAdScriptIDArgs(frameID FrameID) *GetAdScriptIDArgs {
+	args := new(GetAdScriptIDArgs)
+	args.FrameID = frameID
+	return args
+}
+
+// GetAdScriptIDReply represents the return values for GetAdScriptID in the Page domain.
+type GetAdScriptIDReply struct {
+	AdScriptID *AdScriptID `json:"adScriptId,omitempty"` // Identifies the bottom-most script which caused the frame to be labeled as an ad. Only sent if frame is labeled as an ad and id is available.
 }
 
 // GetFrameTreeReply represents the return values for GetFrameTree in the Page domain.
@@ -409,6 +481,16 @@ type PrintToPDFArgs struct {
 	//
 	// Note: This property is experimental.
 	TransferMode *string `json:"transferMode,omitempty"`
+	// GenerateTaggedPDF Whether or not to generate tagged (accessible)
+	// PDF. Defaults to embedder choice.
+	//
+	// Note: This property is experimental.
+	GenerateTaggedPDF *bool `json:"generateTaggedPDF,omitempty"`
+	// GenerateDocumentOutline Whether or not to embed the document
+	// outline into the PDF.
+	//
+	// Note: This property is experimental.
+	GenerateDocumentOutline *bool `json:"generateDocumentOutline,omitempty"`
 }
 
 // NewPrintToPDFArgs initializes PrintToPDFArgs with the required arguments.
@@ -543,6 +625,25 @@ func (a *PrintToPDFArgs) SetTransferMode(transferMode string) *PrintToPDFArgs {
 	return a
 }
 
+// SetGenerateTaggedPDF sets the GenerateTaggedPDF optional argument.
+// Whether or not to generate tagged (accessible) PDF. Defaults to
+// embedder choice.
+//
+// Note: This property is experimental.
+func (a *PrintToPDFArgs) SetGenerateTaggedPDF(generateTaggedPDF bool) *PrintToPDFArgs {
+	a.GenerateTaggedPDF = &generateTaggedPDF
+	return a
+}
+
+// SetGenerateDocumentOutline sets the GenerateDocumentOutline optional argument.
+// Whether or not to embed the document outline into the PDF.
+//
+// Note: This property is experimental.
+func (a *PrintToPDFArgs) SetGenerateDocumentOutline(generateDocumentOutline bool) *PrintToPDFArgs {
+	a.GenerateDocumentOutline = &generateDocumentOutline
+	return a
+}
+
 // PrintToPDFReply represents the return values for PrintToPDF in the Page domain.
 type PrintToPDFReply struct {
 	Data []byte `json:"data"` // Base64-encoded pdf data. Empty if |returnAsStream| is specified. (Encoded as a base64 string when passed over JSON)
@@ -556,6 +657,13 @@ type PrintToPDFReply struct {
 type ReloadArgs struct {
 	IgnoreCache            *bool   `json:"ignoreCache,omitempty"`            // If true, browser cache is ignored (as if the user pressed Shift+refresh).
 	ScriptToEvaluateOnLoad *string `json:"scriptToEvaluateOnLoad,omitempty"` // If set, the script will be injected into all frames of the inspected page after reload. Argument will be ignored if reloading dataURL origin.
+	// LoaderID If set, an error will be thrown if the target page's main
+	// frame's loader id does not match the provided id. This prevents
+	// accidentally reloading an unintended target in case there's a racing
+	// navigation.
+	//
+	// Note: This property is experimental.
+	LoaderID *network.LoaderID `json:"loaderId,omitempty"`
 }
 
 // NewReloadArgs initializes ReloadArgs with the required arguments.
@@ -578,6 +686,17 @@ func (a *ReloadArgs) SetIgnoreCache(ignoreCache bool) *ReloadArgs {
 // origin.
 func (a *ReloadArgs) SetScriptToEvaluateOnLoad(scriptToEvaluateOnLoad string) *ReloadArgs {
 	a.ScriptToEvaluateOnLoad = &scriptToEvaluateOnLoad
+	return a
+}
+
+// SetLoaderID sets the LoaderID optional argument. If set, an error
+// will be thrown if the target page's main frame's loader id does not
+// match the provided id. This prevents accidentally reloading an
+// unintended target in case there's a racing navigation.
+//
+// Note: This property is experimental.
+func (a *ReloadArgs) SetLoaderID(loaderID network.LoaderID) *ReloadArgs {
+	a.LoaderID = &loaderID
 	return a
 }
 
@@ -894,15 +1013,24 @@ func NewAddCompilationCacheArgs(url string, data []byte) *AddCompilationCacheArg
 
 // SetSPCTransactionModeArgs represents the arguments for SetSPCTransactionMode in the Page domain.
 type SetSPCTransactionModeArgs struct {
-	// Mode
-	//
-	// Values: "none", "autoaccept", "autoreject".
-	Mode string `json:"mode"`
+	Mode AutoResponseMode `json:"mode"` // No description.
 }
 
 // NewSetSPCTransactionModeArgs initializes SetSPCTransactionModeArgs with the required arguments.
-func NewSetSPCTransactionModeArgs(mode string) *SetSPCTransactionModeArgs {
+func NewSetSPCTransactionModeArgs(mode AutoResponseMode) *SetSPCTransactionModeArgs {
 	args := new(SetSPCTransactionModeArgs)
+	args.Mode = mode
+	return args
+}
+
+// SetRPHRegistrationModeArgs represents the arguments for SetRPHRegistrationMode in the Page domain.
+type SetRPHRegistrationModeArgs struct {
+	Mode AutoResponseMode `json:"mode"` // No description.
+}
+
+// NewSetRPHRegistrationModeArgs initializes SetRPHRegistrationModeArgs with the required arguments.
+func NewSetRPHRegistrationModeArgs(mode AutoResponseMode) *SetRPHRegistrationModeArgs {
+	args := new(SetRPHRegistrationModeArgs)
 	args.Mode = mode
 	return args
 }
@@ -936,5 +1064,17 @@ type SetInterceptFileChooserDialogArgs struct {
 func NewSetInterceptFileChooserDialogArgs(enabled bool) *SetInterceptFileChooserDialogArgs {
 	args := new(SetInterceptFileChooserDialogArgs)
 	args.Enabled = enabled
+	return args
+}
+
+// SetPrerenderingAllowedArgs represents the arguments for SetPrerenderingAllowed in the Page domain.
+type SetPrerenderingAllowedArgs struct {
+	IsAllowed bool `json:"isAllowed"` // No description.
+}
+
+// NewSetPrerenderingAllowedArgs initializes SetPrerenderingAllowedArgs with the required arguments.
+func NewSetPrerenderingAllowedArgs(isAllowed bool) *SetPrerenderingAllowedArgs {
+	args := new(SetPrerenderingAllowedArgs)
+	args.IsAllowed = isAllowed
 	return args
 }

@@ -93,10 +93,27 @@ func (a *ExposeDevToolsProtocolArgs) SetBindingName(bindingName string) *ExposeD
 
 // CreateBrowserContextArgs represents the arguments for CreateBrowserContext in the Target domain.
 type CreateBrowserContextArgs struct {
-	DisposeOnDetach                   *bool    `json:"disposeOnDetach,omitempty"`                   // If specified, disposes this context when debugging session disconnects.
-	ProxyServer                       *string  `json:"proxyServer,omitempty"`                       // Proxy server, similar to the one passed to --proxy-server
-	ProxyBypassList                   *string  `json:"proxyBypassList,omitempty"`                   // Proxy bypass list, similar to the one passed to --proxy-bypass-list
-	OriginsWithUniversalNetworkAccess []string `json:"originsWithUniversalNetworkAccess,omitempty"` // An optional list of origins to grant unlimited cross-origin access to. Parts of the URL other than those constituting origin are ignored.
+	// DisposeOnDetach If specified, disposes this context when debugging
+	// session disconnects.
+	//
+	// Note: This property is experimental.
+	DisposeOnDetach *bool `json:"disposeOnDetach,omitempty"`
+	// ProxyServer Proxy server, similar to the one passed to
+	// --proxy-server
+	//
+	// Note: This property is experimental.
+	ProxyServer *string `json:"proxyServer,omitempty"`
+	// ProxyBypassList Proxy bypass list, similar to the one passed to
+	// --proxy-bypass-list
+	//
+	// Note: This property is experimental.
+	ProxyBypassList *string `json:"proxyBypassList,omitempty"`
+	// OriginsWithUniversalNetworkAccess An optional list of origins to
+	// grant unlimited cross-origin access to. Parts of the URL other than
+	// those constituting origin are ignored.
+	//
+	// Note: This property is experimental.
+	OriginsWithUniversalNetworkAccess []string `json:"originsWithUniversalNetworkAccess,omitempty"`
 }
 
 // NewCreateBrowserContextArgs initializes CreateBrowserContextArgs with the required arguments.
@@ -108,6 +125,8 @@ func NewCreateBrowserContextArgs() *CreateBrowserContextArgs {
 
 // SetDisposeOnDetach sets the DisposeOnDetach optional argument. If
 // specified, disposes this context when debugging session disconnects.
+//
+// Note: This property is experimental.
 func (a *CreateBrowserContextArgs) SetDisposeOnDetach(disposeOnDetach bool) *CreateBrowserContextArgs {
 	a.DisposeOnDetach = &disposeOnDetach
 	return a
@@ -115,6 +134,8 @@ func (a *CreateBrowserContextArgs) SetDisposeOnDetach(disposeOnDetach bool) *Cre
 
 // SetProxyServer sets the ProxyServer optional argument. Proxy
 // server, similar to the one passed to --proxy-server
+//
+// Note: This property is experimental.
 func (a *CreateBrowserContextArgs) SetProxyServer(proxyServer string) *CreateBrowserContextArgs {
 	a.ProxyServer = &proxyServer
 	return a
@@ -122,6 +143,8 @@ func (a *CreateBrowserContextArgs) SetProxyServer(proxyServer string) *CreateBro
 
 // SetProxyBypassList sets the ProxyBypassList optional argument.
 // Proxy bypass list, similar to the one passed to --proxy-bypass-list
+//
+// Note: This property is experimental.
 func (a *CreateBrowserContextArgs) SetProxyBypassList(proxyBypassList string) *CreateBrowserContextArgs {
 	a.ProxyBypassList = &proxyBypassList
 	return a
@@ -131,6 +154,8 @@ func (a *CreateBrowserContextArgs) SetProxyBypassList(proxyBypassList string) *C
 // An optional list of origins to grant unlimited cross-origin access
 // to. Parts of the URL other than those constituting origin are
 // ignored.
+//
+// Note: This property is experimental.
 func (a *CreateBrowserContextArgs) SetOriginsWithUniversalNetworkAccess(originsWithUniversalNetworkAccess []string) *CreateBrowserContextArgs {
 	a.OriginsWithUniversalNetworkAccess = originsWithUniversalNetworkAccess
 	return a
@@ -163,6 +188,10 @@ type CreateTargetArgs struct {
 	EnableBeginFrameControl *bool `json:"enableBeginFrameControl,omitempty"`
 	NewWindow               *bool `json:"newWindow,omitempty"`  // Whether to create a new Window or Tab (chrome-only, false by default).
 	Background              *bool `json:"background,omitempty"` // Whether to create the target in background or foreground (chrome-only, false by default).
+	// ForTab Whether to create the target of type "tab".
+	//
+	// Note: This property is experimental.
+	ForTab *bool `json:"forTab,omitempty"`
 }
 
 // NewCreateTargetArgs initializes CreateTargetArgs with the required arguments.
@@ -218,6 +247,15 @@ func (a *CreateTargetArgs) SetNewWindow(newWindow bool) *CreateTargetArgs {
 // default).
 func (a *CreateTargetArgs) SetBackground(background bool) *CreateTargetArgs {
 	a.Background = &background
+	return a
+}
+
+// SetForTab sets the ForTab optional argument. Whether to create the
+// target of type "tab".
+//
+// Note: This property is experimental.
+func (a *CreateTargetArgs) SetForTab(forTab bool) *CreateTargetArgs {
+	a.ForTab = &forTab
 	return a
 }
 
@@ -292,6 +330,34 @@ type GetTargetInfoReply struct {
 	TargetInfo Info `json:"targetInfo"` // No description.
 }
 
+// GetTargetsArgs represents the arguments for GetTargets in the Target domain.
+type GetTargetsArgs struct {
+	// Filter Only targets matching filter will be reported. If filter is
+	// not specified and target discovery is currently enabled, a filter
+	// used for target discovery is used for consistency.
+	//
+	// Note: This property is experimental.
+	Filter Filter `json:"filter,omitempty"`
+}
+
+// NewGetTargetsArgs initializes GetTargetsArgs with the required arguments.
+func NewGetTargetsArgs() *GetTargetsArgs {
+	args := new(GetTargetsArgs)
+
+	return args
+}
+
+// SetFilter sets the Filter optional argument. Only targets matching
+// filter will be reported. If filter is not specified and target
+// discovery is currently enabled, a filter used for target discovery
+// is used for consistency.
+//
+// Note: This property is experimental.
+func (a *GetTargetsArgs) SetFilter(filter Filter) *GetTargetsArgs {
+	a.Filter = filter
+	return a
+}
+
 // GetTargetsReply represents the return values for GetTargets in the Target domain.
 type GetTargetsReply struct {
 	TargetInfos []Info `json:"targetInfos"` // The list of targets.
@@ -331,9 +397,19 @@ func (a *SendMessageToTargetArgs) SetTargetID(targetID ID) *SendMessageToTargetA
 
 // SetAutoAttachArgs represents the arguments for SetAutoAttach in the Target domain.
 type SetAutoAttachArgs struct {
-	AutoAttach             bool  `json:"autoAttach"`             // Whether to auto-attach to related targets.
-	WaitForDebuggerOnStart bool  `json:"waitForDebuggerOnStart"` // Whether to pause new targets when attaching to them. Use `Runtime.runIfWaitingForDebugger` to run paused targets.
-	Flatten                *bool `json:"flatten,omitempty"`      // Enables "flat" access to the session via specifying sessionId attribute in the commands. We plan to make this the default, deprecate non-flattened mode, and eventually retire it. See crbug.com/991325.
+	AutoAttach             bool `json:"autoAttach"`             // Whether to auto-attach to related targets.
+	WaitForDebuggerOnStart bool `json:"waitForDebuggerOnStart"` // Whether to pause new targets when attaching to them. Use `Runtime.runIfWaitingForDebugger` to run paused targets.
+	// Flatten Enables "flat" access to the session via specifying
+	// sessionId attribute in the commands. We plan to make this the
+	// default, deprecate non-flattened mode, and eventually retire it. See
+	// crbug.com/991325.
+	//
+	// Note: This property is experimental.
+	Flatten *bool `json:"flatten,omitempty"`
+	// Filter Only targets matching filter will be attached.
+	//
+	// Note: This property is experimental.
+	Filter Filter `json:"filter,omitempty"`
 }
 
 // NewSetAutoAttachArgs initializes SetAutoAttachArgs with the required arguments.
@@ -348,8 +424,19 @@ func NewSetAutoAttachArgs(autoAttach bool, waitForDebuggerOnStart bool) *SetAuto
 // access to the session via specifying sessionId attribute in the
 // commands. We plan to make this the default, deprecate non-flattened
 // mode, and eventually retire it. See crbug.com/991325.
+//
+// Note: This property is experimental.
 func (a *SetAutoAttachArgs) SetFlatten(flatten bool) *SetAutoAttachArgs {
 	a.Flatten = &flatten
+	return a
+}
+
+// SetFilter sets the Filter optional argument. Only targets matching
+// filter will be attached.
+//
+// Note: This property is experimental.
+func (a *SetAutoAttachArgs) SetFilter(filter Filter) *SetAutoAttachArgs {
+	a.Filter = filter
 	return a
 }
 
@@ -357,6 +444,10 @@ func (a *SetAutoAttachArgs) SetFlatten(flatten bool) *SetAutoAttachArgs {
 type AutoAttachRelatedArgs struct {
 	TargetID               ID   `json:"targetId"`               // No description.
 	WaitForDebuggerOnStart bool `json:"waitForDebuggerOnStart"` // Whether to pause new targets when attaching to them. Use `Runtime.runIfWaitingForDebugger` to run paused targets.
+	// Filter Only targets matching filter will be attached.
+	//
+	// Note: This property is experimental.
+	Filter Filter `json:"filter,omitempty"`
 }
 
 // NewAutoAttachRelatedArgs initializes AutoAttachRelatedArgs with the required arguments.
@@ -367,9 +458,23 @@ func NewAutoAttachRelatedArgs(targetID ID, waitForDebuggerOnStart bool) *AutoAtt
 	return args
 }
 
+// SetFilter sets the Filter optional argument. Only targets matching
+// filter will be attached.
+//
+// Note: This property is experimental.
+func (a *AutoAttachRelatedArgs) SetFilter(filter Filter) *AutoAttachRelatedArgs {
+	a.Filter = filter
+	return a
+}
+
 // SetDiscoverTargetsArgs represents the arguments for SetDiscoverTargets in the Target domain.
 type SetDiscoverTargetsArgs struct {
 	Discover bool `json:"discover"` // Whether to discover available targets.
+	// Filter Only targets matching filter will be attached. If `discover`
+	// is false, `filter` must be omitted or empty.
+	//
+	// Note: This property is experimental.
+	Filter Filter `json:"filter,omitempty"`
 }
 
 // NewSetDiscoverTargetsArgs initializes SetDiscoverTargetsArgs with the required arguments.
@@ -377,6 +482,16 @@ func NewSetDiscoverTargetsArgs(discover bool) *SetDiscoverTargetsArgs {
 	args := new(SetDiscoverTargetsArgs)
 	args.Discover = discover
 	return args
+}
+
+// SetFilter sets the Filter optional argument. Only targets matching
+// filter will be attached. If `discover` is false, `filter` must be
+// omitted or empty.
+//
+// Note: This property is experimental.
+func (a *SetDiscoverTargetsArgs) SetFilter(filter Filter) *SetDiscoverTargetsArgs {
+	a.Filter = filter
+	return a
 }
 
 // SetRemoteLocationsArgs represents the arguments for SetRemoteLocations in the Target domain.

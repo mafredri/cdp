@@ -110,7 +110,7 @@ type ContinueRequestArgs struct {
 	URL       *string       `json:"url,omitempty"`      // If set, the request url will be modified in a way that's not observable by page.
 	Method    *string       `json:"method,omitempty"`   // If set, the request method is overridden.
 	PostData  []byte        `json:"postData,omitempty"` // If set, overrides the post data in the request. (Encoded as a base64 string when passed over JSON)
-	Headers   []HeaderEntry `json:"headers,omitempty"`  // If set, overrides the request headers.
+	Headers   []HeaderEntry `json:"headers,omitempty"`  // If set, overrides the request headers. Note that the overrides do not extend to subsequent redirect hops, if a redirect happens. Another override may be applied to a different request produced by a redirect.
 	// InterceptResponse If set, overrides response interception behavior
 	// for this request.
 	//
@@ -148,7 +148,9 @@ func (a *ContinueRequestArgs) SetPostData(postData []byte) *ContinueRequestArgs 
 }
 
 // SetHeaders sets the Headers optional argument. If set, overrides
-// the request headers.
+// the request headers. Note that the overrides do not extend to
+// subsequent redirect hops, if a redirect happens. Another override
+// may be applied to a different request produced by a redirect.
 func (a *ContinueRequestArgs) SetHeaders(headers []HeaderEntry) *ContinueRequestArgs {
 	a.Headers = headers
 	return a

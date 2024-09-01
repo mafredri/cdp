@@ -9,6 +9,11 @@ type GetDOMCountersReply struct {
 	JsEventListeners int `json:"jsEventListeners"` // No description.
 }
 
+// GetDOMCountersForLeakDetectionReply represents the return values for GetDOMCountersForLeakDetection in the Memory domain.
+type GetDOMCountersForLeakDetectionReply struct {
+	Counters []DOMCounter `json:"counters"` // DOM object counters.
+}
+
 // SetPressureNotificationsSuppressedArgs represents the arguments for SetPressureNotificationsSuppressed in the Memory domain.
 type SetPressureNotificationsSuppressedArgs struct {
 	Suppressed bool `json:"suppressed"` // If true, memory pressure notifications will be suppressed.

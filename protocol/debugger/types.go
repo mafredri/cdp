@@ -89,6 +89,14 @@ type BreakLocation struct {
 	Type *string `json:"type,omitempty"`
 }
 
+// WASMDisassemblyChunk
+//
+// Note: This type is experimental.
+type WASMDisassemblyChunk struct {
+	Lines           []string `json:"lines"`           // The next chunk of disassembled lines.
+	BytecodeOffsets []int    `json:"bytecodeOffsets"` // The bytecode offsets describing the start of each line.
+}
+
 // ScriptLanguage Enum of possible script languages.
 type ScriptLanguage string
 

@@ -69,8 +69,3 @@ type TakePreciseCoverageReply struct {
 	Result    []ScriptCoverage `json:"result"`    // Coverage data for the current isolate.
 	Timestamp float64          `json:"timestamp"` // Monotonically increasing time (in seconds) when the coverage update was taken in the backend.
 }
-
-// TakeTypeProfileReply represents the return values for TakeTypeProfile in the Profiler domain.
-type TakeTypeProfileReply struct {
-	Result []ScriptTypeProfile `json:"result"` // Type profile for all scripts since startTypeProfile() was turned on.
-}

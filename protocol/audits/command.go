@@ -64,3 +64,8 @@ func (a *CheckContrastArgs) SetReportAAA(reportAAA bool) *CheckContrastArgs {
 	a.ReportAAA = &reportAAA
 	return a
 }
+
+// CheckFormsIssuesReply represents the return values for CheckFormsIssues in the Audits domain.
+type CheckFormsIssuesReply struct {
+	FormIssues []GenericIssueDetails `json:"formIssues"` // No description.
+}

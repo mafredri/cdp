@@ -2,6 +2,10 @@
 
 package cachestorage
 
+import (
+	"github.com/mafredri/cdp/protocol/storage"
+)
+
 // CacheID Unique identifier of the Cache object.
 type CacheID string
 
@@ -46,9 +50,11 @@ type DataEntry struct {
 
 // Cache Cache identifier.
 type Cache struct {
-	CacheID        CacheID `json:"cacheId"`        // An opaque unique id of the cache.
-	SecurityOrigin string  `json:"securityOrigin"` // Security origin of the cache.
-	CacheName      string  `json:"cacheName"`      // The name of the cache.
+	CacheID        CacheID         `json:"cacheId"`                 // An opaque unique id of the cache.
+	SecurityOrigin string          `json:"securityOrigin"`          // Security origin of the cache.
+	StorageKey     string          `json:"storageKey"`              // Storage key of the cache.
+	StorageBucket  *storage.Bucket `json:"storageBucket,omitempty"` // Storage bucket of the cache.
+	CacheName      string          `json:"cacheName"`               // The name of the cache.
 }
 
 // Header

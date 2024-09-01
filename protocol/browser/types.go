@@ -66,12 +66,15 @@ const (
 	PermissionTypeAudioCapture             PermissionType = "audioCapture"
 	PermissionTypeBackgroundSync           PermissionType = "backgroundSync"
 	PermissionTypeBackgroundFetch          PermissionType = "backgroundFetch"
+	PermissionTypeCapturedSurfaceControl   PermissionType = "capturedSurfaceControl"
 	PermissionTypeClipboardReadWrite       PermissionType = "clipboardReadWrite"
 	PermissionTypeClipboardSanitizedWrite  PermissionType = "clipboardSanitizedWrite"
 	PermissionTypeDisplayCapture           PermissionType = "displayCapture"
 	PermissionTypeDurableStorage           PermissionType = "durableStorage"
 	PermissionTypeFlash                    PermissionType = "flash"
 	PermissionTypeGeolocation              PermissionType = "geolocation"
+	PermissionTypeIdleDetection            PermissionType = "idleDetection"
+	PermissionTypeLocalFonts               PermissionType = "localFonts"
 	PermissionTypeMidi                     PermissionType = "midi"
 	PermissionTypeMidiSysex                PermissionType = "midiSysex"
 	PermissionTypeNFC                      PermissionType = "nfc"
@@ -80,16 +83,20 @@ const (
 	PermissionTypePeriodicBackgroundSync   PermissionType = "periodicBackgroundSync"
 	PermissionTypeProtectedMediaIdentifier PermissionType = "protectedMediaIdentifier"
 	PermissionTypeSensors                  PermissionType = "sensors"
+	PermissionTypeStorageAccess            PermissionType = "storageAccess"
+	PermissionTypeSpeakerSelection         PermissionType = "speakerSelection"
+	PermissionTypeTopLevelStorageAccess    PermissionType = "topLevelStorageAccess"
 	PermissionTypeVideoCapture             PermissionType = "videoCapture"
 	PermissionTypeVideoCapturePanTiltZoom  PermissionType = "videoCapturePanTiltZoom"
-	PermissionTypeIdleDetection            PermissionType = "idleDetection"
 	PermissionTypeWakeLockScreen           PermissionType = "wakeLockScreen"
 	PermissionTypeWakeLockSystem           PermissionType = "wakeLockSystem"
+	PermissionTypeWebAppInstallation       PermissionType = "webAppInstallation"
+	PermissionTypeWindowManagement         PermissionType = "windowManagement"
 )
 
 func (e PermissionType) Valid() bool {
 	switch e {
-	case "accessibilityEvents", "audioCapture", "backgroundSync", "backgroundFetch", "clipboardReadWrite", "clipboardSanitizedWrite", "displayCapture", "durableStorage", "flash", "geolocation", "midi", "midiSysex", "nfc", "notifications", "paymentHandler", "periodicBackgroundSync", "protectedMediaIdentifier", "sensors", "videoCapture", "videoCapturePanTiltZoom", "idleDetection", "wakeLockScreen", "wakeLockSystem":
+	case "accessibilityEvents", "audioCapture", "backgroundSync", "backgroundFetch", "capturedSurfaceControl", "clipboardReadWrite", "clipboardSanitizedWrite", "displayCapture", "durableStorage", "flash", "geolocation", "idleDetection", "localFonts", "midi", "midiSysex", "nfc", "notifications", "paymentHandler", "periodicBackgroundSync", "protectedMediaIdentifier", "sensors", "storageAccess", "speakerSelection", "topLevelStorageAccess", "videoCapture", "videoCapturePanTiltZoom", "wakeLockScreen", "wakeLockSystem", "webAppInstallation", "windowManagement":
 		return true
 	default:
 		return false
@@ -128,7 +135,7 @@ func (e PermissionSetting) String() string {
 
 // PermissionDescriptor Definition of PermissionDescriptor defined in the
 // Permissions API:
-// https://w3c.github.io/permissions/#dictdef-permissiondescriptor.
+// https://w3c.github.io/permissions/#dom-permissiondescriptor.
 //
 // Note: This type is experimental.
 type PermissionDescriptor struct {
@@ -136,6 +143,7 @@ type PermissionDescriptor struct {
 	Sysex                    *bool  `json:"sysex,omitempty"`                    // For "midi" permission, may also specify sysex control.
 	UserVisibleOnly          *bool  `json:"userVisibleOnly,omitempty"`          // For "push" permission, may specify userVisibleOnly. Note that userVisibleOnly = true is the only currently supported type.
 	AllowWithoutSanitization *bool  `json:"allowWithoutSanitization,omitempty"` // For "clipboard" permission, may specify allowWithoutSanitization.
+	AllowWithoutGesture      *bool  `json:"allowWithoutGesture,omitempty"`      // For "fullscreen" permission, must specify allowWithoutGesture:true.
 	PanTiltZoom              *bool  `json:"panTiltZoom,omitempty"`              // For "camera" permission, may specify panTiltZoom.
 }
 

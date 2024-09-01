@@ -22,6 +22,11 @@ type DataReceivedReply struct {
 	Timestamp         MonotonicTime `json:"timestamp"`         // Timestamp.
 	DataLength        int           `json:"dataLength"`        // Data chunk length.
 	EncodedDataLength int           `json:"encodedDataLength"` // Actual bytes received (might be less than dataLength for compressed encodings).
+	// Data Data that was received. (Encoded as a base64 string when
+	// passed over JSON)
+	//
+	// Note: This property is experimental.
+	Data []byte `json:"data,omitempty"`
 }
 
 // EventSourceMessageReceivedClient is a client for EventSourceMessageReceived events.
@@ -56,7 +61,7 @@ type LoadingFailedReply struct {
 	RequestID       RequestID        `json:"requestId"`                 // Request identifier.
 	Timestamp       MonotonicTime    `json:"timestamp"`                 // Timestamp.
 	Type            ResourceType     `json:"type"`                      // Resource type.
-	ErrorText       string           `json:"errorText"`                 // User friendly error message.
+	ErrorText       string           `json:"errorText"`                 // Error message. List of network errors: https://cs.chromium.org/chromium/src/net/base/net_error_list.h
 	Canceled        *bool            `json:"canceled,omitempty"`        // True if loading was canceled.
 	BlockedReason   BlockedReason    `json:"blockedReason,omitempty"`   // The reason why loading was blocked, if any.
 	CORSErrorStatus *CORSErrorStatus `json:"corsErrorStatus,omitempty"` // The reason why loading was blocked by CORS, if any.
@@ -73,10 +78,9 @@ type LoadingFinishedClient interface {
 
 // LoadingFinishedReply is the reply for LoadingFinished events.
 type LoadingFinishedReply struct {
-	RequestID                RequestID     `json:"requestId"`                          // Request identifier.
-	Timestamp                MonotonicTime `json:"timestamp"`                          // Timestamp.
-	EncodedDataLength        float64       `json:"encodedDataLength"`                  // Total number of bytes received for this request.
-	ShouldReportCorbBlocking *bool         `json:"shouldReportCorbBlocking,omitempty"` // Set when 1) response was blocked by Cross-Origin Read Blocking and also 2) this needs to be reported to the DevTools console.
+	RequestID         RequestID     `json:"requestId"`         // Request identifier.
+	Timestamp         MonotonicTime `json:"timestamp"`         // Timestamp.
+	EncodedDataLength float64       `json:"encodedDataLength"` // Total number of bytes received for this request.
 }
 
 // RequestInterceptedClient is a client for RequestIntercepted events. Details
@@ -380,14 +384,15 @@ type RequestWillBeSentExtraInfoClient interface {
 
 // RequestWillBeSentExtraInfoReply is the reply for RequestWillBeSentExtraInfo events.
 type RequestWillBeSentExtraInfoReply struct {
-	RequestID         RequestID                 `json:"requestId"`         // Request identifier. Used to match this information to an existing requestWillBeSent event.
-	AssociatedCookies []BlockedCookieWithReason `json:"associatedCookies"` // A list of cookies potentially associated to the requested URL. This includes both cookies sent with the request and the ones not sent; the latter are distinguished by having blockedReason field set.
-	Headers           Headers                   `json:"headers"`           // Raw request headers as they will be sent over the wire.
+	RequestID         RequestID          `json:"requestId"`         // Request identifier. Used to match this information to an existing requestWillBeSent event.
+	AssociatedCookies []AssociatedCookie `json:"associatedCookies"` // A list of cookies potentially associated to the requested URL. This includes both cookies sent with the request and the ones not sent; the latter are distinguished by having blockedReasons field set.
+	Headers           Headers            `json:"headers"`           // Raw request headers as they will be sent over the wire.
 	// ConnectTiming Connection timing information for the request.
 	//
 	// Note: This property is experimental.
-	ConnectTiming       ConnectTiming        `json:"connectTiming"`
-	ClientSecurityState *ClientSecurityState `json:"clientSecurityState,omitempty"` // The client security state set for the request.
+	ConnectTiming                 ConnectTiming        `json:"connectTiming"`
+	ClientSecurityState           *ClientSecurityState `json:"clientSecurityState,omitempty"`           // The client security state set for the request.
+	SiteHasCookieInOtherPartition *bool                `json:"siteHasCookieInOtherPartition,omitempty"` // Whether the site has partitioned cookies stored in a partition different than the current one.
 }
 
 // ResponseReceivedExtraInfoClient is a client for ResponseReceivedExtraInfo events.
@@ -410,6 +415,32 @@ type ResponseReceivedExtraInfoReply struct {
 	ResourceIPAddressSpace IPAddressSpace               `json:"resourceIPAddressSpace"` // The IP address space of the resource. The address space can only be determined once the transport established the connection, so we can't send it in `requestWillBeSentExtraInfo`.
 	StatusCode             int                          `json:"statusCode"`             // The status code of the response. This is useful in cases the request failed and no responseReceived event is triggered, which is the case for, e.g., CORS errors. This is also the correct status code for cached requests, where the status in responseReceived is a 200 and this will be 304.
 	HeadersText            *string                      `json:"headersText,omitempty"`  // Raw response header text as it was received over the wire. The raw text may not always be available, such as in the case of HTTP/2 or QUIC.
+	// CookiePartitionKey The cookie partition key that will be used to
+	// store partitioned cookies set in this response. Only sent when
+	// partitioned cookies are enabled.
+	//
+	// Note: This property is experimental.
+	CookiePartitionKey       *CookiePartitionKey           `json:"cookiePartitionKey,omitempty"`
+	CookiePartitionKeyOpaque *bool                         `json:"cookiePartitionKeyOpaque,omitempty"` // True if partitioned cookies are enabled, but the partition key is not serializable to string.
+	ExemptedCookies          []ExemptedSetCookieWithReason `json:"exemptedCookies,omitempty"`          // A list of cookies which should have been blocked by 3PCD but are exempted and stored from the response with the corresponding reason.
+}
+
+// ResponseReceivedEarlyHintsClient is a client for ResponseReceivedEarlyHints events.
+// Fired when 103 Early Hints headers is received in addition to the common
+// response. Not every responseReceived event will have an
+// responseReceivedEarlyHints fired. Only one responseReceivedEarlyHints may be
+// fired for eached responseReceived event.
+type ResponseReceivedEarlyHintsClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*ResponseReceivedEarlyHintsReply, error)
+	rpcc.Stream
+}
+
+// ResponseReceivedEarlyHintsReply is the reply for ResponseReceivedEarlyHints events.
+type ResponseReceivedEarlyHintsReply struct {
+	RequestID RequestID `json:"requestId"` // Request identifier. Used to match this information to another responseReceived event.
+	Headers   Headers   `json:"headers"`   // Raw response headers as they were received over the wire.
 }
 
 // TrustTokenOperationDoneClient is a client for TrustTokenOperationDone events.
@@ -431,13 +462,26 @@ type TrustTokenOperationDoneReply struct {
 	// of the operation already exists und thus, the operation was abort
 	// preemptively (e.g. a cache hit).
 	//
-	// Values: "Ok", "InvalidArgument", "FailedPrecondition", "ResourceExhausted", "AlreadyExists", "Unavailable", "BadResponse", "InternalError", "UnknownError", "FulfilledLocally".
+	// Values: "Ok", "InvalidArgument", "MissingIssuerKeys", "FailedPrecondition", "ResourceExhausted", "AlreadyExists", "ResourceLimited", "Unauthorized", "BadResponse", "InternalError", "UnknownError", "FulfilledLocally".
 	Status           string                  `json:"status"`
 	Type             TrustTokenOperationType `json:"type"`                       // No description.
 	RequestID        RequestID               `json:"requestId"`                  // No description.
 	TopLevelOrigin   *string                 `json:"topLevelOrigin,omitempty"`   // Top level origin. The context in which the operation was attempted.
 	IssuerOrigin     *string                 `json:"issuerOrigin,omitempty"`     // Origin of the issuer in case of a "Issuance" or "Redemption" operation.
 	IssuedTokenCount *int                    `json:"issuedTokenCount,omitempty"` // The number of obtained Trust Tokens on a successful "Issuance" operation.
+}
+
+// PolicyUpdatedClient is a client for PolicyUpdated events. Fired once
+// security policy has been updated.
+type PolicyUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*PolicyUpdatedReply, error)
+	rpcc.Stream
+}
+
+// PolicyUpdatedReply is the reply for PolicyUpdated events.
+type PolicyUpdatedReply struct {
 }
 
 // SubresourceWebBundleMetadataReceivedClient is a client for SubresourceWebBundleMetadataReceived events.

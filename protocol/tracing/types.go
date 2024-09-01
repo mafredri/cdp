@@ -9,6 +9,8 @@ import (
 
 // MemoryDumpConfig Configuration for memory dump. Used only when
 // "memory-infra" category is enabled.
+//
+// Note: This type is experimental.
 type MemoryDumpConfig []byte
 
 // MarshalJSON copies behavior of json.RawMessage.
@@ -36,19 +38,45 @@ type TraceConfig struct {
 	// RecordMode Controls how the trace buffer stores data.
 	//
 	// Values: "recordUntilFull", "recordContinuously", "recordAsMuchAsPossible", "echoToConsole".
-	RecordMode           *string          `json:"recordMode,omitempty"`
-	EnableSampling       *bool            `json:"enableSampling,omitempty"`       // Turns on JavaScript stack sampling.
-	EnableSystrace       *bool            `json:"enableSystrace,omitempty"`       // Turns on system tracing.
-	EnableArgumentFilter *bool            `json:"enableArgumentFilter,omitempty"` // Turns on argument filter.
-	IncludedCategories   []string         `json:"includedCategories,omitempty"`   // Included category filters.
-	ExcludedCategories   []string         `json:"excludedCategories,omitempty"`   // Excluded category filters.
-	SyntheticDelays      []string         `json:"syntheticDelays,omitempty"`      // Configuration to synthesize the delays in tracing.
-	MemoryDumpConfig     MemoryDumpConfig `json:"memoryDumpConfig,omitempty"`     // Configuration for memory dump triggers. Used only when "memory-infra" category is enabled.
+	//
+	// Note: This property is experimental.
+	RecordMode *string `json:"recordMode,omitempty"`
+	// TraceBufferSizeInKb Size of the trace buffer in kilobytes. If not
+	// specified or zero is passed, a default value of 200 MB would be
+	// used.
+	//
+	// Note: This property is experimental.
+	TraceBufferSizeInKb *float64 `json:"traceBufferSizeInKb,omitempty"`
+	// EnableSampling Turns on JavaScript stack sampling.
+	//
+	// Note: This property is experimental.
+	EnableSampling *bool `json:"enableSampling,omitempty"`
+	// EnableSystrace Turns on system tracing.
+	//
+	// Note: This property is experimental.
+	EnableSystrace *bool `json:"enableSystrace,omitempty"`
+	// EnableArgumentFilter Turns on argument filter.
+	//
+	// Note: This property is experimental.
+	EnableArgumentFilter *bool    `json:"enableArgumentFilter,omitempty"`
+	IncludedCategories   []string `json:"includedCategories,omitempty"` // Included category filters.
+	ExcludedCategories   []string `json:"excludedCategories,omitempty"` // Excluded category filters.
+	// SyntheticDelays Configuration to synthesize the delays in tracing.
+	//
+	// Note: This property is experimental.
+	SyntheticDelays []string `json:"syntheticDelays,omitempty"`
+	// MemoryDumpConfig Configuration for memory dump triggers. Used only
+	// when "memory-infra" category is enabled.
+	//
+	// Note: This property is experimental.
+	MemoryDumpConfig MemoryDumpConfig `json:"memoryDumpConfig,omitempty"`
 }
 
 // StreamFormat Data format of a trace. Can be either the legacy JSON format
 // or the protocol buffer format. Note that the JSON format will be deprecated
 // soon.
+//
+// Note: This type is experimental.
 type StreamFormat string
 
 // StreamFormat as enums.
@@ -72,6 +100,8 @@ func (e StreamFormat) String() string {
 }
 
 // StreamCompression Compression type to use for traces returned via streams.
+//
+// Note: This type is experimental.
 type StreamCompression string
 
 // StreamCompression as enums.
@@ -97,6 +127,8 @@ func (e StreamCompression) String() string {
 // MemoryDumpLevelOfDetail Details exposed when memory request explicitly
 // declared. Keep consistent with memory_dump_request_args.h and
 // memory_instrumentation.mojom
+//
+// Note: This type is experimental.
 type MemoryDumpLevelOfDetail string
 
 // MemoryDumpLevelOfDetail as enums.
@@ -126,6 +158,8 @@ func (e MemoryDumpLevelOfDetail) String() string {
 // service. `auto` chooses `system` when the perfettoConfig provided to
 // Tracing.start specifies at least one non-Chrome data source; otherwise uses
 // `chrome`.
+//
+// Note: This type is experimental.
 type Backend string
 
 // Backend as enums.

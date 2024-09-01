@@ -116,7 +116,7 @@ type AXValueSource struct {
 	Attribute         *string                 `json:"attribute,omitempty"`         // The name of the relevant attribute, if any.
 	AttributeValue    *AXValue                `json:"attributeValue,omitempty"`    // The value of the relevant attribute, if any.
 	Superseded        *bool                   `json:"superseded,omitempty"`        // Whether this source is superseded by a higher priority source.
-	NativeSource      AXValueNativeSourceType `json:"nativeSource,omitempty"`      // The native markup source for this value, e.g. a <label> element.
+	NativeSource      AXValueNativeSourceType `json:"nativeSource,omitempty"`      // The native markup source for this value, e.g. a `<label>` element.
 	NativeSourceValue *AXValue                `json:"nativeSourceValue,omitempty"` // The value, such as a node or node list, of the native source.
 	Invalid           *bool                   `json:"invalid,omitempty"`           // Whether the value for this property is invalid.
 	InvalidReason     *string                 `json:"invalidReason,omitempty"`     // Reason for the value being invalid, if it is.
@@ -194,11 +194,12 @@ const (
 	AXPropertyNameFlowto           AXPropertyName = "flowto"
 	AXPropertyNameLabelledby       AXPropertyName = "labelledby"
 	AXPropertyNameOwns             AXPropertyName = "owns"
+	AXPropertyNameURL              AXPropertyName = "url"
 )
 
 func (e AXPropertyName) Valid() bool {
 	switch e {
-	case "busy", "disabled", "editable", "focusable", "focused", "hidden", "hiddenRoot", "invalid", "keyshortcuts", "settable", "roledescription", "live", "atomic", "relevant", "root", "autocomplete", "hasPopup", "level", "multiselectable", "orientation", "multiline", "readonly", "required", "valuemin", "valuemax", "valuetext", "checked", "expanded", "modal", "pressed", "selected", "activedescendant", "controls", "describedby", "details", "errormessage", "flowto", "labelledby", "owns":
+	case "busy", "disabled", "editable", "focusable", "focused", "hidden", "hiddenRoot", "invalid", "keyshortcuts", "settable", "roledescription", "live", "atomic", "relevant", "root", "autocomplete", "hasPopup", "level", "multiselectable", "orientation", "multiline", "readonly", "required", "valuemin", "valuemax", "valuetext", "checked", "expanded", "modal", "pressed", "selected", "activedescendant", "controls", "describedby", "details", "errormessage", "flowto", "labelledby", "owns", "url":
 		return true
 	default:
 		return false
@@ -215,6 +216,7 @@ type AXNode struct {
 	Ignored          bool               `json:"ignored"`                    // Whether this node is ignored for accessibility
 	IgnoredReasons   []AXProperty       `json:"ignoredReasons,omitempty"`   // Collection of reasons why this node is hidden.
 	Role             *AXValue           `json:"role,omitempty"`             // This `Node`'s role, whether explicit or implicit.
+	ChromeRole       *AXValue           `json:"chromeRole,omitempty"`       // This `Node`'s Chrome raw role.
 	Name             *AXValue           `json:"name,omitempty"`             // The accessible name for this `Node`.
 	Description      *AXValue           `json:"description,omitempty"`      // The accessible description for this `Node`.
 	Value            *AXValue           `json:"value,omitempty"`            // The value for this `Node`.

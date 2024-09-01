@@ -10,6 +10,23 @@ type GetInfoReply struct {
 	CommandLine  string  `json:"commandLine"`  // The command line string used to launch the browser. Will be the empty string if not supported.
 }
 
+// GetFeatureStateArgs represents the arguments for GetFeatureState in the SystemInfo domain.
+type GetFeatureStateArgs struct {
+	FeatureState string `json:"featureState"` // No description.
+}
+
+// NewGetFeatureStateArgs initializes GetFeatureStateArgs with the required arguments.
+func NewGetFeatureStateArgs(featureState string) *GetFeatureStateArgs {
+	args := new(GetFeatureStateArgs)
+	args.FeatureState = featureState
+	return args
+}
+
+// GetFeatureStateReply represents the return values for GetFeatureState in the SystemInfo domain.
+type GetFeatureStateReply struct {
+	FeatureEnabled bool `json:"featureEnabled"` // No description.
+}
+
 // GetProcessInfoReply represents the return values for GetProcessInfo in the SystemInfo domain.
 type GetProcessInfoReply struct {
 	ProcessInfo []ProcessInfo `json:"processInfo"` // An array of process info blocks.

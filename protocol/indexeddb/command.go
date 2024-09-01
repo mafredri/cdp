@@ -2,75 +2,167 @@
 
 package indexeddb
 
+import (
+	"github.com/mafredri/cdp/protocol/storage"
+)
+
 // ClearObjectStoreArgs represents the arguments for ClearObjectStore in the IndexedDB domain.
 type ClearObjectStoreArgs struct {
-	SecurityOrigin  string `json:"securityOrigin"`  // Security origin.
-	DatabaseName    string `json:"databaseName"`    // Database name.
-	ObjectStoreName string `json:"objectStoreName"` // Object store name.
+	SecurityOrigin  *string         `json:"securityOrigin,omitempty"` // At least and at most one of securityOrigin, storageKey, or storageBucket must be specified. Security origin.
+	StorageKey      *string         `json:"storageKey,omitempty"`     // Storage key.
+	StorageBucket   *storage.Bucket `json:"storageBucket,omitempty"`  // Storage bucket. If not specified, it uses the default bucket.
+	DatabaseName    string          `json:"databaseName"`             // Database name.
+	ObjectStoreName string          `json:"objectStoreName"`          // Object store name.
 }
 
 // NewClearObjectStoreArgs initializes ClearObjectStoreArgs with the required arguments.
-func NewClearObjectStoreArgs(securityOrigin string, databaseName string, objectStoreName string) *ClearObjectStoreArgs {
+func NewClearObjectStoreArgs(databaseName string, objectStoreName string) *ClearObjectStoreArgs {
 	args := new(ClearObjectStoreArgs)
-	args.SecurityOrigin = securityOrigin
 	args.DatabaseName = databaseName
 	args.ObjectStoreName = objectStoreName
 	return args
 }
 
+// SetSecurityOrigin sets the SecurityOrigin optional argument. At
+// least and at most one of securityOrigin, storageKey, or
+// storageBucket must be specified. Security origin.
+func (a *ClearObjectStoreArgs) SetSecurityOrigin(securityOrigin string) *ClearObjectStoreArgs {
+	a.SecurityOrigin = &securityOrigin
+	return a
+}
+
+// SetStorageKey sets the StorageKey optional argument. Storage key.
+func (a *ClearObjectStoreArgs) SetStorageKey(storageKey string) *ClearObjectStoreArgs {
+	a.StorageKey = &storageKey
+	return a
+}
+
+// SetStorageBucket sets the StorageBucket optional argument. Storage
+// bucket. If not specified, it uses the default bucket.
+func (a *ClearObjectStoreArgs) SetStorageBucket(storageBucket storage.Bucket) *ClearObjectStoreArgs {
+	a.StorageBucket = &storageBucket
+	return a
+}
+
 // DeleteDatabaseArgs represents the arguments for DeleteDatabase in the IndexedDB domain.
 type DeleteDatabaseArgs struct {
-	SecurityOrigin string `json:"securityOrigin"` // Security origin.
-	DatabaseName   string `json:"databaseName"`   // Database name.
+	SecurityOrigin *string         `json:"securityOrigin,omitempty"` // At least and at most one of securityOrigin, storageKey, or storageBucket must be specified. Security origin.
+	StorageKey     *string         `json:"storageKey,omitempty"`     // Storage key.
+	StorageBucket  *storage.Bucket `json:"storageBucket,omitempty"`  // Storage bucket. If not specified, it uses the default bucket.
+	DatabaseName   string          `json:"databaseName"`             // Database name.
 }
 
 // NewDeleteDatabaseArgs initializes DeleteDatabaseArgs with the required arguments.
-func NewDeleteDatabaseArgs(securityOrigin string, databaseName string) *DeleteDatabaseArgs {
+func NewDeleteDatabaseArgs(databaseName string) *DeleteDatabaseArgs {
 	args := new(DeleteDatabaseArgs)
-	args.SecurityOrigin = securityOrigin
 	args.DatabaseName = databaseName
 	return args
 }
 
+// SetSecurityOrigin sets the SecurityOrigin optional argument. At
+// least and at most one of securityOrigin, storageKey, or
+// storageBucket must be specified. Security origin.
+func (a *DeleteDatabaseArgs) SetSecurityOrigin(securityOrigin string) *DeleteDatabaseArgs {
+	a.SecurityOrigin = &securityOrigin
+	return a
+}
+
+// SetStorageKey sets the StorageKey optional argument. Storage key.
+func (a *DeleteDatabaseArgs) SetStorageKey(storageKey string) *DeleteDatabaseArgs {
+	a.StorageKey = &storageKey
+	return a
+}
+
+// SetStorageBucket sets the StorageBucket optional argument. Storage
+// bucket. If not specified, it uses the default bucket.
+func (a *DeleteDatabaseArgs) SetStorageBucket(storageBucket storage.Bucket) *DeleteDatabaseArgs {
+	a.StorageBucket = &storageBucket
+	return a
+}
+
 // DeleteObjectStoreEntriesArgs represents the arguments for DeleteObjectStoreEntries in the IndexedDB domain.
 type DeleteObjectStoreEntriesArgs struct {
-	SecurityOrigin  string   `json:"securityOrigin"`  // No description.
-	DatabaseName    string   `json:"databaseName"`    // No description.
-	ObjectStoreName string   `json:"objectStoreName"` // No description.
-	KeyRange        KeyRange `json:"keyRange"`        // Range of entry keys to delete
+	SecurityOrigin  *string         `json:"securityOrigin,omitempty"` // At least and at most one of securityOrigin, storageKey, or storageBucket must be specified. Security origin.
+	StorageKey      *string         `json:"storageKey,omitempty"`     // Storage key.
+	StorageBucket   *storage.Bucket `json:"storageBucket,omitempty"`  // Storage bucket. If not specified, it uses the default bucket.
+	DatabaseName    string          `json:"databaseName"`             // No description.
+	ObjectStoreName string          `json:"objectStoreName"`          // No description.
+	KeyRange        KeyRange        `json:"keyRange"`                 // Range of entry keys to delete
 }
 
 // NewDeleteObjectStoreEntriesArgs initializes DeleteObjectStoreEntriesArgs with the required arguments.
-func NewDeleteObjectStoreEntriesArgs(securityOrigin string, databaseName string, objectStoreName string, keyRange KeyRange) *DeleteObjectStoreEntriesArgs {
+func NewDeleteObjectStoreEntriesArgs(databaseName string, objectStoreName string, keyRange KeyRange) *DeleteObjectStoreEntriesArgs {
 	args := new(DeleteObjectStoreEntriesArgs)
-	args.SecurityOrigin = securityOrigin
 	args.DatabaseName = databaseName
 	args.ObjectStoreName = objectStoreName
 	args.KeyRange = keyRange
 	return args
 }
 
+// SetSecurityOrigin sets the SecurityOrigin optional argument. At
+// least and at most one of securityOrigin, storageKey, or
+// storageBucket must be specified. Security origin.
+func (a *DeleteObjectStoreEntriesArgs) SetSecurityOrigin(securityOrigin string) *DeleteObjectStoreEntriesArgs {
+	a.SecurityOrigin = &securityOrigin
+	return a
+}
+
+// SetStorageKey sets the StorageKey optional argument. Storage key.
+func (a *DeleteObjectStoreEntriesArgs) SetStorageKey(storageKey string) *DeleteObjectStoreEntriesArgs {
+	a.StorageKey = &storageKey
+	return a
+}
+
+// SetStorageBucket sets the StorageBucket optional argument. Storage
+// bucket. If not specified, it uses the default bucket.
+func (a *DeleteObjectStoreEntriesArgs) SetStorageBucket(storageBucket storage.Bucket) *DeleteObjectStoreEntriesArgs {
+	a.StorageBucket = &storageBucket
+	return a
+}
+
 // RequestDataArgs represents the arguments for RequestData in the IndexedDB domain.
 type RequestDataArgs struct {
-	SecurityOrigin  string    `json:"securityOrigin"`     // Security origin.
-	DatabaseName    string    `json:"databaseName"`       // Database name.
-	ObjectStoreName string    `json:"objectStoreName"`    // Object store name.
-	IndexName       string    `json:"indexName"`          // Index name, empty string for object store data requests.
-	SkipCount       int       `json:"skipCount"`          // Number of records to skip.
-	PageSize        int       `json:"pageSize"`           // Number of records to fetch.
-	KeyRange        *KeyRange `json:"keyRange,omitempty"` // Key range.
+	SecurityOrigin  *string         `json:"securityOrigin,omitempty"` // At least and at most one of securityOrigin, storageKey, or storageBucket must be specified. Security origin.
+	StorageKey      *string         `json:"storageKey,omitempty"`     // Storage key.
+	StorageBucket   *storage.Bucket `json:"storageBucket,omitempty"`  // Storage bucket. If not specified, it uses the default bucket.
+	DatabaseName    string          `json:"databaseName"`             // Database name.
+	ObjectStoreName string          `json:"objectStoreName"`          // Object store name.
+	IndexName       string          `json:"indexName"`                // Index name, empty string for object store data requests.
+	SkipCount       int             `json:"skipCount"`                // Number of records to skip.
+	PageSize        int             `json:"pageSize"`                 // Number of records to fetch.
+	KeyRange        *KeyRange       `json:"keyRange,omitempty"`       // Key range.
 }
 
 // NewRequestDataArgs initializes RequestDataArgs with the required arguments.
-func NewRequestDataArgs(securityOrigin string, databaseName string, objectStoreName string, indexName string, skipCount int, pageSize int) *RequestDataArgs {
+func NewRequestDataArgs(databaseName string, objectStoreName string, indexName string, skipCount int, pageSize int) *RequestDataArgs {
 	args := new(RequestDataArgs)
-	args.SecurityOrigin = securityOrigin
 	args.DatabaseName = databaseName
 	args.ObjectStoreName = objectStoreName
 	args.IndexName = indexName
 	args.SkipCount = skipCount
 	args.PageSize = pageSize
 	return args
+}
+
+// SetSecurityOrigin sets the SecurityOrigin optional argument. At
+// least and at most one of securityOrigin, storageKey, or
+// storageBucket must be specified. Security origin.
+func (a *RequestDataArgs) SetSecurityOrigin(securityOrigin string) *RequestDataArgs {
+	a.SecurityOrigin = &securityOrigin
+	return a
+}
+
+// SetStorageKey sets the StorageKey optional argument. Storage key.
+func (a *RequestDataArgs) SetStorageKey(storageKey string) *RequestDataArgs {
+	a.StorageKey = &storageKey
+	return a
+}
+
+// SetStorageBucket sets the StorageBucket optional argument. Storage
+// bucket. If not specified, it uses the default bucket.
+func (a *RequestDataArgs) SetStorageBucket(storageBucket storage.Bucket) *RequestDataArgs {
+	a.StorageBucket = &storageBucket
+	return a
 }
 
 // SetKeyRange sets the KeyRange optional argument. Key range.
@@ -87,18 +179,40 @@ type RequestDataReply struct {
 
 // GetMetadataArgs represents the arguments for GetMetadata in the IndexedDB domain.
 type GetMetadataArgs struct {
-	SecurityOrigin  string `json:"securityOrigin"`  // Security origin.
-	DatabaseName    string `json:"databaseName"`    // Database name.
-	ObjectStoreName string `json:"objectStoreName"` // Object store name.
+	SecurityOrigin  *string         `json:"securityOrigin,omitempty"` // At least and at most one of securityOrigin, storageKey, or storageBucket must be specified. Security origin.
+	StorageKey      *string         `json:"storageKey,omitempty"`     // Storage key.
+	StorageBucket   *storage.Bucket `json:"storageBucket,omitempty"`  // Storage bucket. If not specified, it uses the default bucket.
+	DatabaseName    string          `json:"databaseName"`             // Database name.
+	ObjectStoreName string          `json:"objectStoreName"`          // Object store name.
 }
 
 // NewGetMetadataArgs initializes GetMetadataArgs with the required arguments.
-func NewGetMetadataArgs(securityOrigin string, databaseName string, objectStoreName string) *GetMetadataArgs {
+func NewGetMetadataArgs(databaseName string, objectStoreName string) *GetMetadataArgs {
 	args := new(GetMetadataArgs)
-	args.SecurityOrigin = securityOrigin
 	args.DatabaseName = databaseName
 	args.ObjectStoreName = objectStoreName
 	return args
+}
+
+// SetSecurityOrigin sets the SecurityOrigin optional argument. At
+// least and at most one of securityOrigin, storageKey, or
+// storageBucket must be specified. Security origin.
+func (a *GetMetadataArgs) SetSecurityOrigin(securityOrigin string) *GetMetadataArgs {
+	a.SecurityOrigin = &securityOrigin
+	return a
+}
+
+// SetStorageKey sets the StorageKey optional argument. Storage key.
+func (a *GetMetadataArgs) SetStorageKey(storageKey string) *GetMetadataArgs {
+	a.StorageKey = &storageKey
+	return a
+}
+
+// SetStorageBucket sets the StorageBucket optional argument. Storage
+// bucket. If not specified, it uses the default bucket.
+func (a *GetMetadataArgs) SetStorageBucket(storageBucket storage.Bucket) *GetMetadataArgs {
+	a.StorageBucket = &storageBucket
+	return a
 }
 
 // GetMetadataReply represents the return values for GetMetadata in the IndexedDB domain.
@@ -109,16 +223,38 @@ type GetMetadataReply struct {
 
 // RequestDatabaseArgs represents the arguments for RequestDatabase in the IndexedDB domain.
 type RequestDatabaseArgs struct {
-	SecurityOrigin string `json:"securityOrigin"` // Security origin.
-	DatabaseName   string `json:"databaseName"`   // Database name.
+	SecurityOrigin *string         `json:"securityOrigin,omitempty"` // At least and at most one of securityOrigin, storageKey, or storageBucket must be specified. Security origin.
+	StorageKey     *string         `json:"storageKey,omitempty"`     // Storage key.
+	StorageBucket  *storage.Bucket `json:"storageBucket,omitempty"`  // Storage bucket. If not specified, it uses the default bucket.
+	DatabaseName   string          `json:"databaseName"`             // Database name.
 }
 
 // NewRequestDatabaseArgs initializes RequestDatabaseArgs with the required arguments.
-func NewRequestDatabaseArgs(securityOrigin string, databaseName string) *RequestDatabaseArgs {
+func NewRequestDatabaseArgs(databaseName string) *RequestDatabaseArgs {
 	args := new(RequestDatabaseArgs)
-	args.SecurityOrigin = securityOrigin
 	args.DatabaseName = databaseName
 	return args
+}
+
+// SetSecurityOrigin sets the SecurityOrigin optional argument. At
+// least and at most one of securityOrigin, storageKey, or
+// storageBucket must be specified. Security origin.
+func (a *RequestDatabaseArgs) SetSecurityOrigin(securityOrigin string) *RequestDatabaseArgs {
+	a.SecurityOrigin = &securityOrigin
+	return a
+}
+
+// SetStorageKey sets the StorageKey optional argument. Storage key.
+func (a *RequestDatabaseArgs) SetStorageKey(storageKey string) *RequestDatabaseArgs {
+	a.StorageKey = &storageKey
+	return a
+}
+
+// SetStorageBucket sets the StorageBucket optional argument. Storage
+// bucket. If not specified, it uses the default bucket.
+func (a *RequestDatabaseArgs) SetStorageBucket(storageBucket storage.Bucket) *RequestDatabaseArgs {
+	a.StorageBucket = &storageBucket
+	return a
 }
 
 // RequestDatabaseReply represents the return values for RequestDatabase in the IndexedDB domain.
@@ -128,14 +264,37 @@ type RequestDatabaseReply struct {
 
 // RequestDatabaseNamesArgs represents the arguments for RequestDatabaseNames in the IndexedDB domain.
 type RequestDatabaseNamesArgs struct {
-	SecurityOrigin string `json:"securityOrigin"` // Security origin.
+	SecurityOrigin *string         `json:"securityOrigin,omitempty"` // At least and at most one of securityOrigin, storageKey, or storageBucket must be specified. Security origin.
+	StorageKey     *string         `json:"storageKey,omitempty"`     // Storage key.
+	StorageBucket  *storage.Bucket `json:"storageBucket,omitempty"`  // Storage bucket. If not specified, it uses the default bucket.
 }
 
 // NewRequestDatabaseNamesArgs initializes RequestDatabaseNamesArgs with the required arguments.
-func NewRequestDatabaseNamesArgs(securityOrigin string) *RequestDatabaseNamesArgs {
+func NewRequestDatabaseNamesArgs() *RequestDatabaseNamesArgs {
 	args := new(RequestDatabaseNamesArgs)
-	args.SecurityOrigin = securityOrigin
+
 	return args
+}
+
+// SetSecurityOrigin sets the SecurityOrigin optional argument. At
+// least and at most one of securityOrigin, storageKey, or
+// storageBucket must be specified. Security origin.
+func (a *RequestDatabaseNamesArgs) SetSecurityOrigin(securityOrigin string) *RequestDatabaseNamesArgs {
+	a.SecurityOrigin = &securityOrigin
+	return a
+}
+
+// SetStorageKey sets the StorageKey optional argument. Storage key.
+func (a *RequestDatabaseNamesArgs) SetStorageKey(storageKey string) *RequestDatabaseNamesArgs {
+	a.StorageKey = &storageKey
+	return a
+}
+
+// SetStorageBucket sets the StorageBucket optional argument. Storage
+// bucket. If not specified, it uses the default bucket.
+func (a *RequestDatabaseNamesArgs) SetStorageBucket(storageBucket storage.Bucket) *RequestDatabaseNamesArgs {
+	a.StorageBucket = &storageBucket
+	return a
 }
 
 // RequestDatabaseNamesReply represents the return values for RequestDatabaseNames in the IndexedDB domain.

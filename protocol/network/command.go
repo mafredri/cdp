@@ -118,6 +118,12 @@ type DeleteCookiesArgs struct {
 	URL    *string `json:"url,omitempty"`    // If specified, deletes all the cookies with the given name where domain and path match provided URL.
 	Domain *string `json:"domain,omitempty"` // If specified, deletes only cookies with the exact domain.
 	Path   *string `json:"path,omitempty"`   // If specified, deletes only cookies with the exact path.
+	// PartitionKey If specified, deletes only cookies with the the given
+	// name and partitionKey where all partition key attributes match the
+	// cookie partition key attribute.
+	//
+	// Note: This property is experimental.
+	PartitionKey *CookiePartitionKey `json:"partitionKey,omitempty"`
 }
 
 // NewDeleteCookiesArgs initializes DeleteCookiesArgs with the required arguments.
@@ -149,6 +155,17 @@ func (a *DeleteCookiesArgs) SetPath(path string) *DeleteCookiesArgs {
 	return a
 }
 
+// SetPartitionKey sets the PartitionKey optional argument. If
+// specified, deletes only cookies with the the given name and
+// partitionKey where all partition key attributes match the cookie
+// partition key attribute.
+//
+// Note: This property is experimental.
+func (a *DeleteCookiesArgs) SetPartitionKey(partitionKey CookiePartitionKey) *DeleteCookiesArgs {
+	a.PartitionKey = &partitionKey
+	return a
+}
+
 // EmulateNetworkConditionsArgs represents the arguments for EmulateNetworkConditions in the Network domain.
 type EmulateNetworkConditionsArgs struct {
 	Offline            bool           `json:"offline"`                  // True to emulate internet disconnection.
@@ -156,6 +173,20 @@ type EmulateNetworkConditionsArgs struct {
 	DownloadThroughput float64        `json:"downloadThroughput"`       // Maximal aggregated download throughput (bytes/sec). -1 disables download throttling.
 	UploadThroughput   float64        `json:"uploadThroughput"`         // Maximal aggregated upload throughput (bytes/sec). -1 disables upload throttling.
 	ConnectionType     ConnectionType `json:"connectionType,omitempty"` // Connection type if known.
+	// PacketLoss WebRTC packet loss (percent, 0-100). 0 disables packet
+	// loss emulation, 100 drops all the packets.
+	//
+	// Note: This property is experimental.
+	PacketLoss *float64 `json:"packetLoss,omitempty"`
+	// PacketQueueLength WebRTC packet queue length (packet). 0 removes
+	// any queue length limitations.
+	//
+	// Note: This property is experimental.
+	PacketQueueLength *int `json:"packetQueueLength,omitempty"`
+	// PacketReordering WebRTC packetReordering feature.
+	//
+	// Note: This property is experimental.
+	PacketReordering *bool `json:"packetReordering,omitempty"`
 }
 
 // NewEmulateNetworkConditionsArgs initializes EmulateNetworkConditionsArgs with the required arguments.
@@ -172,6 +203,35 @@ func NewEmulateNetworkConditionsArgs(offline bool, latency float64, downloadThro
 // Connection type if known.
 func (a *EmulateNetworkConditionsArgs) SetConnectionType(connectionType ConnectionType) *EmulateNetworkConditionsArgs {
 	a.ConnectionType = connectionType
+	return a
+}
+
+// SetPacketLoss sets the PacketLoss optional argument. WebRTC packet
+// loss (percent, 0-100). 0 disables packet loss emulation, 100 drops
+// all the packets.
+//
+// Note: This property is experimental.
+func (a *EmulateNetworkConditionsArgs) SetPacketLoss(packetLoss float64) *EmulateNetworkConditionsArgs {
+	a.PacketLoss = &packetLoss
+	return a
+}
+
+// SetPacketQueueLength sets the PacketQueueLength optional argument.
+// WebRTC packet queue length (packet). 0 removes any queue length
+// limitations.
+//
+// Note: This property is experimental.
+func (a *EmulateNetworkConditionsArgs) SetPacketQueueLength(packetQueueLength int) *EmulateNetworkConditionsArgs {
+	a.PacketQueueLength = &packetQueueLength
+	return a
+}
+
+// SetPacketReordering sets the PacketReordering optional argument.
+// WebRTC packetReordering feature.
+//
+// Note: This property is experimental.
+func (a *EmulateNetworkConditionsArgs) SetPacketReordering(packetReordering bool) *EmulateNetworkConditionsArgs {
+	a.PacketReordering = &packetReordering
 	return a
 }
 
@@ -456,13 +516,11 @@ type SetCookieArgs struct {
 	//
 	// Note: This property is experimental.
 	SourcePort *int `json:"sourcePort,omitempty"`
-	// PartitionKey Cookie partition key. The site of the top-level URL
-	// the browser was visiting at the start of the request to the endpoint
-	// that set the cookie. If not set, the cookie will be set as not
-	// partitioned.
+	// PartitionKey Cookie partition key. If not set, the cookie will be
+	// set as not partitioned.
 	//
 	// Note: This property is experimental.
-	PartitionKey *string `json:"partitionKey,omitempty"`
+	PartitionKey *CookiePartitionKey `json:"partitionKey,omitempty"`
 }
 
 // NewSetCookieArgs initializes SetCookieArgs with the required arguments.
@@ -562,12 +620,11 @@ func (a *SetCookieArgs) SetSourcePort(sourcePort int) *SetCookieArgs {
 }
 
 // SetPartitionKey sets the PartitionKey optional argument. Cookie
-// partition key. The site of the top-level URL the browser was
-// visiting at the start of the request to the endpoint that set the
-// cookie. If not set, the cookie will be set as not partitioned.
+// partition key. If not set, the cookie will be set as not
+// partitioned.
 //
 // Note: This property is experimental.
-func (a *SetCookieArgs) SetPartitionKey(partitionKey string) *SetCookieArgs {
+func (a *SetCookieArgs) SetPartitionKey(partitionKey CookiePartitionKey) *SetCookieArgs {
 	a.PartitionKey = &partitionKey
 	return a
 }
@@ -627,6 +684,23 @@ func NewSetRequestInterceptionArgs(patterns []RequestPattern) *SetRequestInterce
 	args := new(SetRequestInterceptionArgs)
 	args.Patterns = patterns
 	return args
+}
+
+// StreamResourceContentArgs represents the arguments for StreamResourceContent in the Network domain.
+type StreamResourceContentArgs struct {
+	RequestID RequestID `json:"requestId"` // Identifier of the request to stream.
+}
+
+// NewStreamResourceContentArgs initializes StreamResourceContentArgs with the required arguments.
+func NewStreamResourceContentArgs(requestID RequestID) *StreamResourceContentArgs {
+	args := new(StreamResourceContentArgs)
+	args.RequestID = requestID
+	return args
+}
+
+// StreamResourceContentReply represents the return values for StreamResourceContent in the Network domain.
+type StreamResourceContentReply struct {
+	BufferedData []byte `json:"bufferedData"` // Data that has been buffered until streaming is enabled. (Encoded as a base64 string when passed over JSON)
 }
 
 // GetSecurityIsolationStatusArgs represents the arguments for GetSecurityIsolationStatus in the Network domain.

@@ -9,7 +9,7 @@ import (
 // SourceOrderConfig Configuration data for drawing the source order of an
 // elements children.
 type SourceOrderConfig struct {
-	ParentOutlineColor dom.RGBA `json:"parentOutlineColor"` // the color to outline the givent element in.
+	ParentOutlineColor dom.RGBA `json:"parentOutlineColor"` // the color to outline the given element in.
 	ChildOutlineColor  dom.RGBA `json:"childOutlineColor"`  // the color to outline the child elements in.
 }
 
@@ -185,6 +185,13 @@ type HingeConfig struct {
 	Rect         dom.Rect  `json:"rect"`                   // A rectangle represent hinge
 	ContentColor *dom.RGBA `json:"contentColor,omitempty"` // The content box highlight fill color (default: a dark color).
 	OutlineColor *dom.RGBA `json:"outlineColor,omitempty"` // The content box highlight outline color (default: transparent).
+}
+
+// WindowControlsOverlayConfig Configuration for Window Controls Overlay
+type WindowControlsOverlayConfig struct {
+	ShowCSS          bool   `json:"showCSS"`          // Whether the title bar CSS should be shown when emulating the Window Controls Overlay.
+	SelectedPlatform string `json:"selectedPlatform"` // Selected platforms to show the overlay.
+	ThemeColor       string `json:"themeColor"`       // The theme color defined in app manifest.
 }
 
 // ContainerQueryHighlightConfig

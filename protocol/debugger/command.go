@@ -211,6 +211,43 @@ type GetScriptSourceReply struct {
 	Bytecode     []byte `json:"bytecode,omitempty"` // Wasm bytecode. (Encoded as a base64 string when passed over JSON)
 }
 
+// DisassembleWASMModuleArgs represents the arguments for DisassembleWASMModule in the Debugger domain.
+type DisassembleWASMModuleArgs struct {
+	ScriptID runtime.ScriptID `json:"scriptId"` // Id of the script to disassemble
+}
+
+// NewDisassembleWASMModuleArgs initializes DisassembleWASMModuleArgs with the required arguments.
+func NewDisassembleWASMModuleArgs(scriptID runtime.ScriptID) *DisassembleWASMModuleArgs {
+	args := new(DisassembleWASMModuleArgs)
+	args.ScriptID = scriptID
+	return args
+}
+
+// DisassembleWASMModuleReply represents the return values for DisassembleWASMModule in the Debugger domain.
+type DisassembleWASMModuleReply struct {
+	StreamID            *string              `json:"streamId,omitempty"`  // For large modules, return a stream from which additional chunks of disassembly can be read successively.
+	TotalNumberOfLines  int                  `json:"totalNumberOfLines"`  // The total number of lines in the disassembly text.
+	FunctionBodyOffsets []int                `json:"functionBodyOffsets"` // The offsets of all function bodies, in the format [start1, end1, start2, end2, ...] where all ends are exclusive.
+	Chunk               WASMDisassemblyChunk `json:"chunk"`               // The first chunk of disassembly.
+}
+
+// NextWASMDisassemblyChunkArgs represents the arguments for NextWASMDisassemblyChunk in the Debugger domain.
+type NextWASMDisassemblyChunkArgs struct {
+	StreamID string `json:"streamId"` // No description.
+}
+
+// NewNextWASMDisassemblyChunkArgs initializes NextWASMDisassemblyChunkArgs with the required arguments.
+func NewNextWASMDisassemblyChunkArgs(streamID string) *NextWASMDisassemblyChunkArgs {
+	args := new(NextWASMDisassemblyChunkArgs)
+	args.StreamID = streamID
+	return args
+}
+
+// NextWASMDisassemblyChunkReply represents the return values for NextWASMDisassemblyChunk in the Debugger domain.
+type NextWASMDisassemblyChunkReply struct {
+	Chunk WASMDisassemblyChunk `json:"chunk"` // The next chunk of disassembly.
+}
+
 // GetWASMBytecodeArgs represents the arguments for GetWASMBytecode in the Debugger domain.
 type GetWASMBytecodeArgs struct {
 	ScriptID runtime.ScriptID `json:"scriptId"` // Id of the Wasm script to get source for.
@@ -272,6 +309,13 @@ func NewRemoveBreakpointArgs(breakpointID BreakpointID) *RemoveBreakpointArgs {
 // RestartFrameArgs represents the arguments for RestartFrame in the Debugger domain.
 type RestartFrameArgs struct {
 	CallFrameID CallFrameID `json:"callFrameId"` // Call frame identifier to evaluate on.
+	// Mode The `mode` parameter must be present and set to 'StepInto',
+	// otherwise `restartFrame` will error out.
+	//
+	// Values: "StepInto".
+	//
+	// Note: This property is experimental.
+	Mode *string `json:"mode,omitempty"`
 }
 
 // NewRestartFrameArgs initializes RestartFrameArgs with the required arguments.
@@ -281,13 +325,31 @@ func NewRestartFrameArgs(callFrameID CallFrameID) *RestartFrameArgs {
 	return args
 }
 
+// SetMode sets the Mode optional argument. The `mode` parameter must
+// be present and set to 'StepInto', otherwise `restartFrame` will
+// error out.
+//
+// Values: "StepInto".
+//
+// Note: This property is experimental.
+func (a *RestartFrameArgs) SetMode(mode string) *RestartFrameArgs {
+	a.Mode = &mode
+	return a
+}
+
 // RestartFrameReply represents the return values for RestartFrame in the Debugger domain.
 type RestartFrameReply struct {
-	CallFrames      []CallFrame         `json:"callFrames"`                // New stack trace.
-	AsyncStackTrace *runtime.StackTrace `json:"asyncStackTrace,omitempty"` // Async stack trace, if any.
-	// AsyncStackTraceID Async stack trace, if any.
+	// CallFrames is deprecated.
 	//
-	// Note: This property is experimental.
+	// Deprecated: New stack trace.
+	CallFrames []CallFrame `json:"callFrames"`
+	// AsyncStackTrace is deprecated.
+	//
+	// Deprecated: Async stack trace, if any.
+	AsyncStackTrace *runtime.StackTrace `json:"asyncStackTrace,omitempty"`
+	// AsyncStackTraceID is deprecated.
+	//
+	// Deprecated: Async stack trace, if any.
 	AsyncStackTraceID *runtime.StackTraceID `json:"asyncStackTraceId,omitempty"`
 }
 
@@ -537,7 +599,7 @@ func NewSetBreakpointsActiveArgs(active bool) *SetBreakpointsActiveArgs {
 type SetPauseOnExceptionsArgs struct {
 	// State Pause on exceptions mode.
 	//
-	// Values: "none", "uncaught", "all".
+	// Values: "none", "caught", "uncaught", "all".
 	State string `json:"state"`
 }
 
@@ -565,6 +627,12 @@ type SetScriptSourceArgs struct {
 	ScriptID     runtime.ScriptID `json:"scriptId"`         // Id of the script to edit.
 	ScriptSource string           `json:"scriptSource"`     // New content of the script.
 	DryRun       *bool            `json:"dryRun,omitempty"` // If true the change will not actually be applied. Dry run may be used to get result description without actually modifying the code.
+	// AllowTopFrameEditing If true, then `scriptSource` is allowed to
+	// change the function on top of the stack as long as the top-most
+	// stack frame is the only activation of that function.
+	//
+	// Note: This property is experimental.
+	AllowTopFrameEditing *bool `json:"allowTopFrameEditing,omitempty"`
 }
 
 // NewSetScriptSourceArgs initializes SetScriptSourceArgs with the required arguments.
@@ -583,16 +651,46 @@ func (a *SetScriptSourceArgs) SetDryRun(dryRun bool) *SetScriptSourceArgs {
 	return a
 }
 
+// SetAllowTopFrameEditing sets the AllowTopFrameEditing optional argument.
+// If true, then `scriptSource` is allowed to change the function on
+// top of the stack as long as the top-most stack frame is the only
+// activation of that function.
+//
+// Note: This property is experimental.
+func (a *SetScriptSourceArgs) SetAllowTopFrameEditing(allowTopFrameEditing bool) *SetScriptSourceArgs {
+	a.AllowTopFrameEditing = &allowTopFrameEditing
+	return a
+}
+
 // SetScriptSourceReply represents the return values for SetScriptSource in the Debugger domain.
 type SetScriptSourceReply struct {
-	CallFrames      []CallFrame         `json:"callFrames,omitempty"`      // New stack trace in case editing has happened while VM was stopped.
-	StackChanged    *bool               `json:"stackChanged,omitempty"`    // Whether current call stack was modified after applying the changes.
-	AsyncStackTrace *runtime.StackTrace `json:"asyncStackTrace,omitempty"` // Async stack trace, if any.
-	// AsyncStackTraceID Async stack trace, if any.
+	// CallFrames is deprecated.
+	//
+	// Deprecated: New stack trace in case editing has happened while VM
+	// was stopped.
+	CallFrames []CallFrame `json:"callFrames,omitempty"`
+	// StackChanged is deprecated.
+	//
+	// Deprecated: Whether current call stack was modified after applying
+	// the changes.
+	StackChanged *bool `json:"stackChanged,omitempty"`
+	// AsyncStackTrace is deprecated.
+	//
+	// Deprecated: Async stack trace, if any.
+	AsyncStackTrace *runtime.StackTrace `json:"asyncStackTrace,omitempty"`
+	// AsyncStackTraceID is deprecated.
+	//
+	// Deprecated: Async stack trace, if any.
+	AsyncStackTraceID *runtime.StackTraceID `json:"asyncStackTraceId,omitempty"`
+	// Status Whether the operation was successful or not. Only `Ok`
+	// denotes a successful live edit while the other enum variants denote
+	// why the live edit failed.
+	//
+	// Values: "Ok", "CompileError", "BlockedByActiveGenerator", "BlockedByActiveFunction", "BlockedByTopLevelEsModuleChange".
 	//
 	// Note: This property is experimental.
-	AsyncStackTraceID *runtime.StackTraceID     `json:"asyncStackTraceId,omitempty"`
-	ExceptionDetails  *runtime.ExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details if any.
+	Status           string                    `json:"status"`
+	ExceptionDetails *runtime.ExceptionDetails `json:"exceptionDetails,omitempty"` // Exception details if any. Only present when `status` is `CompileError`.
 }
 
 // SetSkipAllPausesArgs represents the arguments for SetSkipAllPauses in the Debugger domain.

@@ -41,6 +41,45 @@ type AddVirtualAuthenticatorReply struct {
 	AuthenticatorID AuthenticatorID `json:"authenticatorId"` // No description.
 }
 
+// SetResponseOverrideBitsArgs represents the arguments for SetResponseOverrideBits in the WebAuthn domain.
+type SetResponseOverrideBitsArgs struct {
+	AuthenticatorID  AuthenticatorID `json:"authenticatorId"`            // No description.
+	IsBogusSignature *bool           `json:"isBogusSignature,omitempty"` // If isBogusSignature is set, overrides the signature in the authenticator response to be zero. Defaults to false.
+	IsBadUV          *bool           `json:"isBadUV,omitempty"`          // If isBadUV is set, overrides the UV bit in the flags in the authenticator response to be zero. Defaults to false.
+	IsBadUP          *bool           `json:"isBadUP,omitempty"`          // If isBadUP is set, overrides the UP bit in the flags in the authenticator response to be zero. Defaults to false.
+}
+
+// NewSetResponseOverrideBitsArgs initializes SetResponseOverrideBitsArgs with the required arguments.
+func NewSetResponseOverrideBitsArgs(authenticatorID AuthenticatorID) *SetResponseOverrideBitsArgs {
+	args := new(SetResponseOverrideBitsArgs)
+	args.AuthenticatorID = authenticatorID
+	return args
+}
+
+// SetIsBogusSignature sets the IsBogusSignature optional argument. If
+// isBogusSignature is set, overrides the signature in the
+// authenticator response to be zero. Defaults to false.
+func (a *SetResponseOverrideBitsArgs) SetIsBogusSignature(isBogusSignature bool) *SetResponseOverrideBitsArgs {
+	a.IsBogusSignature = &isBogusSignature
+	return a
+}
+
+// SetIsBadUV sets the IsBadUV optional argument. If isBadUV is set,
+// overrides the UV bit in the flags in the authenticator response to
+// be zero. Defaults to false.
+func (a *SetResponseOverrideBitsArgs) SetIsBadUV(isBadUV bool) *SetResponseOverrideBitsArgs {
+	a.IsBadUV = &isBadUV
+	return a
+}
+
+// SetIsBadUP sets the IsBadUP optional argument. If isBadUP is set,
+// overrides the UP bit in the flags in the authenticator response to
+// be zero. Defaults to false.
+func (a *SetResponseOverrideBitsArgs) SetIsBadUP(isBadUP bool) *SetResponseOverrideBitsArgs {
+	a.IsBadUP = &isBadUP
+	return a
+}
+
 // RemoveVirtualAuthenticatorArgs represents the arguments for RemoveVirtualAuthenticator in the WebAuthn domain.
 type RemoveVirtualAuthenticatorArgs struct {
 	AuthenticatorID AuthenticatorID `json:"authenticatorId"` // No description.
@@ -155,4 +194,32 @@ func NewSetAutomaticPresenceSimulationArgs(authenticatorID AuthenticatorID, enab
 	args.AuthenticatorID = authenticatorID
 	args.Enabled = enabled
 	return args
+}
+
+// SetCredentialPropertiesArgs represents the arguments for SetCredentialProperties in the WebAuthn domain.
+type SetCredentialPropertiesArgs struct {
+	AuthenticatorID   AuthenticatorID `json:"authenticatorId"`             // No description.
+	CredentialID      string          `json:"credentialId"`                // No description.
+	BackupEligibility *bool           `json:"backupEligibility,omitempty"` // No description.
+	BackupState       *bool           `json:"backupState,omitempty"`       // No description.
+}
+
+// NewSetCredentialPropertiesArgs initializes SetCredentialPropertiesArgs with the required arguments.
+func NewSetCredentialPropertiesArgs(authenticatorID AuthenticatorID, credentialID string) *SetCredentialPropertiesArgs {
+	args := new(SetCredentialPropertiesArgs)
+	args.AuthenticatorID = authenticatorID
+	args.CredentialID = credentialID
+	return args
+}
+
+// SetBackupEligibility sets the BackupEligibility optional argument.
+func (a *SetCredentialPropertiesArgs) SetBackupEligibility(backupEligibility bool) *SetCredentialPropertiesArgs {
+	a.BackupEligibility = &backupEligibility
+	return a
+}
+
+// SetBackupState sets the BackupState optional argument.
+func (a *SetCredentialPropertiesArgs) SetBackupState(backupState bool) *SetCredentialPropertiesArgs {
+	a.BackupState = &backupState
+	return a
 }

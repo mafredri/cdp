@@ -121,7 +121,7 @@ func (d *domainClient) GetChildAXNodes(ctx context.Context, args *GetChildAXNode
 // QueryAXTree invokes the Accessibility method. Query a DOM node's
 // accessibility subtree for accessible name and role. This command computes
 // the name and role for all nodes in the subtree, including those that are
-// ignored for accessibility, and returns those that mactch the specified name
+// ignored for accessibility, and returns those that match the specified name
 // and role. If no DOM node is specified, or the DOM node does not exist, the
 // command returns an error. If neither `accessibleName` or `role` is
 // specified, it returns all the accessibility nodes in the subtree.

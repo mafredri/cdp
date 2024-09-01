@@ -22,11 +22,7 @@ func NewCompositingReasonsArgs(layerID LayerID) *CompositingReasonsArgs {
 
 // CompositingReasonsReply represents the return values for CompositingReasons in the LayerTree domain.
 type CompositingReasonsReply struct {
-	// CompositingReasons is deprecated.
-	//
-	// Deprecated: A list of strings specifying reasons for the given
-	// layer to become composited.
-	CompositingReasons   []string `json:"compositingReasons"`
+	CompositingReasons   []string `json:"compositingReasons"`   // A list of strings specifying reasons for the given layer to become composited.
 	CompositingReasonIDs []string `json:"compositingReasonIds"` // A list of strings specifying reason IDs for the given layer to become composited.
 }
 

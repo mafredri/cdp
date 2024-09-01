@@ -21,6 +21,14 @@ type DisplayFeature struct {
 	MaskLength  int    `json:"maskLength"` // A display feature may mask content such that it is not physically displayed - this length along with the offset describes this area. A display feature that only splits content will have a 0 mask_length.
 }
 
+// DevicePosture
+type DevicePosture struct {
+	// Type Current posture of the device
+	//
+	// Values: "continuous", "folded".
+	Type string `json:"type"`
+}
+
 // MediaFeature
 type MediaFeature struct {
 	Name  string `json:"name"`  // No description.
@@ -57,7 +65,7 @@ func (e VirtualTimePolicy) String() string {
 	return string(e)
 }
 
-// UserAgentBrandVersion Used to specify User Agent Cient Hints to emulate.
+// UserAgentBrandVersion Used to specify User Agent Client Hints to emulate.
 // See https://wicg.github.io/ua-client-hints
 //
 // Note: This type is experimental.
@@ -66,14 +74,14 @@ type UserAgentBrandVersion struct {
 	Version string `json:"version"` // No description.
 }
 
-// UserAgentMetadata Used to specify User Agent Cient Hints to emulate. See
+// UserAgentMetadata Used to specify User Agent Client Hints to emulate. See
 // https://wicg.github.io/ua-client-hints Missing optional values will be
 // filled in by the target with what it would normally use.
 //
 // Note: This type is experimental.
 type UserAgentMetadata struct {
-	Brands          []UserAgentBrandVersion `json:"brands,omitempty"`          // No description.
-	FullVersionList []UserAgentBrandVersion `json:"fullVersionList,omitempty"` // No description.
+	Brands          []UserAgentBrandVersion `json:"brands,omitempty"`          // Brands appearing in Sec-CH-UA.
+	FullVersionList []UserAgentBrandVersion `json:"fullVersionList,omitempty"` // Brands appearing in Sec-CH-UA-Full-Version-List.
 	// FullVersion is deprecated.
 	//
 	// Deprecated: This property should not be used.
@@ -87,6 +95,141 @@ type UserAgentMetadata struct {
 	Wow64           *bool   `json:"wow64,omitempty"`   // No description.
 }
 
+// SensorType Used to specify sensor types to emulate. See
+// https://w3c.github.io/sensors/#automation for more information.
+//
+// Note: This type is experimental.
+type SensorType string
+
+// SensorType as enums.
+const (
+	SensorTypeNotSet              SensorType = ""
+	SensorTypeAbsoluteOrientation SensorType = "absolute-orientation"
+	SensorTypeAccelerometer       SensorType = "accelerometer"
+	SensorTypeAmbientLight        SensorType = "ambient-light"
+	SensorTypeGravity             SensorType = "gravity"
+	SensorTypeGyroscope           SensorType = "gyroscope"
+	SensorTypeLinearAcceleration  SensorType = "linear-acceleration"
+	SensorTypeMagnetometer        SensorType = "magnetometer"
+	SensorTypeProximity           SensorType = "proximity"
+	SensorTypeRelativeOrientation SensorType = "relative-orientation"
+)
+
+func (e SensorType) Valid() bool {
+	switch e {
+	case "absolute-orientation", "accelerometer", "ambient-light", "gravity", "gyroscope", "linear-acceleration", "magnetometer", "proximity", "relative-orientation":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e SensorType) String() string {
+	return string(e)
+}
+
+// SensorMetadata
+//
+// Note: This type is experimental.
+type SensorMetadata struct {
+	Available        *bool    `json:"available,omitempty"`        // No description.
+	MinimumFrequency *float64 `json:"minimumFrequency,omitempty"` // No description.
+	MaximumFrequency *float64 `json:"maximumFrequency,omitempty"` // No description.
+}
+
+// SensorReadingSingle
+//
+// Note: This type is experimental.
+type SensorReadingSingle struct {
+	Value float64 `json:"value"` // No description.
+}
+
+// SensorReadingXYZ
+//
+// Note: This type is experimental.
+type SensorReadingXYZ struct {
+	X float64 `json:"x"` // No description.
+	Y float64 `json:"y"` // No description.
+	Z float64 `json:"z"` // No description.
+}
+
+// SensorReadingQuaternion
+//
+// Note: This type is experimental.
+type SensorReadingQuaternion struct {
+	X float64 `json:"x"` // No description.
+	Y float64 `json:"y"` // No description.
+	Z float64 `json:"z"` // No description.
+	W float64 `json:"w"` // No description.
+}
+
+// SensorReading
+//
+// Note: This type is experimental.
+type SensorReading struct {
+	Single     *SensorReadingSingle     `json:"single,omitempty"`     // No description.
+	Xyz        *SensorReadingXYZ        `json:"xyz,omitempty"`        // No description.
+	Quaternion *SensorReadingQuaternion `json:"quaternion,omitempty"` // No description.
+}
+
+// PressureSource
+//
+// Note: This type is experimental.
+type PressureSource string
+
+// PressureSource as enums.
+const (
+	PressureSourceNotSet PressureSource = ""
+	PressureSourceCPU    PressureSource = "cpu"
+)
+
+func (e PressureSource) Valid() bool {
+	switch e {
+	case "cpu":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e PressureSource) String() string {
+	return string(e)
+}
+
+// PressureState
+//
+// Note: This type is experimental.
+type PressureState string
+
+// PressureState as enums.
+const (
+	PressureStateNotSet   PressureState = ""
+	PressureStateNominal  PressureState = "nominal"
+	PressureStateFair     PressureState = "fair"
+	PressureStateSerious  PressureState = "serious"
+	PressureStateCritical PressureState = "critical"
+)
+
+func (e PressureState) Valid() bool {
+	switch e {
+	case "nominal", "fair", "serious", "critical":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e PressureState) String() string {
+	return string(e)
+}
+
+// PressureMetadata
+//
+// Note: This type is experimental.
+type PressureMetadata struct {
+	Available *bool `json:"available,omitempty"` // No description.
+}
+
 // DisabledImageType Enum of image types that can be disabled.
 //
 // Note: This type is experimental.
@@ -96,13 +239,12 @@ type DisabledImageType string
 const (
 	DisabledImageTypeNotSet DisabledImageType = ""
 	DisabledImageTypeAVIF   DisabledImageType = "avif"
-	DisabledImageTypeJXL    DisabledImageType = "jxl"
 	DisabledImageTypeWEBP   DisabledImageType = "webp"
 )
 
 func (e DisabledImageType) Valid() bool {
 	switch e {
-	case "avif", "jxl", "webp":
+	case "avif", "webp":
 		return true
 	default:
 		return false
