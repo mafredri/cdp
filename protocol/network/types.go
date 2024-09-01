@@ -462,19 +462,19 @@ type BlockedReason string
 const (
 	BlockedReasonNotSet                                                  BlockedReason = ""
 	BlockedReasonOther                                                   BlockedReason = "other"
-	BlockedReasonCsp                                                     BlockedReason = "csp"
+	BlockedReasonCSP                                                     BlockedReason = "csp"
 	BlockedReasonMixedContent                                            BlockedReason = "mixed-content"
 	BlockedReasonOrigin                                                  BlockedReason = "origin"
 	BlockedReasonInspector                                               BlockedReason = "inspector"
 	BlockedReasonSubresourceFilter                                       BlockedReason = "subresource-filter"
 	BlockedReasonContentType                                             BlockedReason = "content-type"
 	BlockedReasonCOEPFrameResourceNeedsCOEPHeader                        BlockedReason = "coep-frame-resource-needs-coep-header"
-	BlockedReasonCoopSandboxedIframeCannotNavigateToCoopPage             BlockedReason = "coop-sandboxed-iframe-cannot-navigate-to-coop-page"
-	BlockedReasonCorpNotSameOrigin                                       BlockedReason = "corp-not-same-origin"
-	BlockedReasonCorpNotSameOriginAfterDefaultedToSameOriginByCOEP       BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-coep"
-	BlockedReasonCorpNotSameOriginAfterDefaultedToSameOriginByDip        BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-dip"
-	BlockedReasonCorpNotSameOriginAfterDefaultedToSameOriginByCOEPAndDip BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-coep-and-dip"
-	BlockedReasonCorpNotSameSite                                         BlockedReason = "corp-not-same-site"
+	BlockedReasonCOOPSandboxedIframeCannotNavigateToCOOPPage             BlockedReason = "coop-sandboxed-iframe-cannot-navigate-to-coop-page"
+	BlockedReasonCORPNotSameOrigin                                       BlockedReason = "corp-not-same-origin"
+	BlockedReasonCORPNotSameOriginAfterDefaultedToSameOriginByCOEP       BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-coep"
+	BlockedReasonCORPNotSameOriginAfterDefaultedToSameOriginByDIP        BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-dip"
+	BlockedReasonCORPNotSameOriginAfterDefaultedToSameOriginByCOEPAndDIP BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-coep-and-dip"
+	BlockedReasonCORPNotSameSite                                         BlockedReason = "corp-not-same-site"
 )
 
 func (e BlockedReason) Valid() bool {
@@ -1309,7 +1309,7 @@ const (
 	CrossOriginEmbedderPolicyValueNotSet         CrossOriginEmbedderPolicyValue = ""
 	CrossOriginEmbedderPolicyValueNone           CrossOriginEmbedderPolicyValue = "None"
 	CrossOriginEmbedderPolicyValueCredentialless CrossOriginEmbedderPolicyValue = "Credentialless"
-	CrossOriginEmbedderPolicyValueRequireCorp    CrossOriginEmbedderPolicyValue = "RequireCorp"
+	CrossOriginEmbedderPolicyValueRequireCORP    CrossOriginEmbedderPolicyValue = "RequireCorp"
 )
 
 func (e CrossOriginEmbedderPolicyValue) Valid() bool {
@@ -1373,9 +1373,9 @@ type ContentSecurityPolicyStatus struct {
 //
 // Note: This type is experimental.
 type SecurityIsolationStatus struct {
-	Coop *CrossOriginOpenerPolicyStatus   `json:"coop,omitempty"` // No description.
+	COOP *CrossOriginOpenerPolicyStatus   `json:"coop,omitempty"` // No description.
 	COEP *CrossOriginEmbedderPolicyStatus `json:"coep,omitempty"` // No description.
-	Csp  []ContentSecurityPolicyStatus    `json:"csp,omitempty"`  // No description.
+	CSP  []ContentSecurityPolicyStatus    `json:"csp,omitempty"`  // No description.
 }
 
 // ReportStatus The status of a Reporting API report.

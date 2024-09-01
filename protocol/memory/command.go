@@ -6,7 +6,7 @@ package memory
 type GetDOMCountersReply struct {
 	Documents        int `json:"documents"`        // No description.
 	Nodes            int `json:"nodes"`            // No description.
-	JsEventListeners int `json:"jsEventListeners"` // No description.
+	JSEventListeners int `json:"jsEventListeners"` // No description.
 }
 
 // GetDOMCountersForLeakDetectionReply represents the return values for GetDOMCountersForLeakDetection in the Memory domain.

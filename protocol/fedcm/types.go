@@ -34,7 +34,7 @@ const (
 	DialogTypeNotSet          DialogType = ""
 	DialogTypeAccountChooser  DialogType = "AccountChooser"
 	DialogTypeAutoReauthn     DialogType = "AutoReauthn"
-	DialogTypeConfirmIdpLogin DialogType = "ConfirmIdpLogin"
+	DialogTypeConfirmIDPLogin DialogType = "ConfirmIdpLogin"
 	DialogTypeError           DialogType = "Error"
 )
 
@@ -57,7 +57,7 @@ type DialogButton string
 // DialogButton as enums.
 const (
 	DialogButtonNotSet                  DialogButton = ""
-	DialogButtonConfirmIdpLoginContinue DialogButton = "ConfirmIdpLoginContinue"
+	DialogButtonConfirmIDPLoginContinue DialogButton = "ConfirmIdpLoginContinue"
 	DialogButtonErrorGotIt              DialogButton = "ErrorGotIt"
 	DialogButtonErrorMoreDetails        DialogButton = "ErrorMoreDetails"
 )
@@ -105,8 +105,8 @@ type Account struct {
 	Name              string     `json:"name"`                        // No description.
 	GivenName         string     `json:"givenName"`                   // No description.
 	PictureURL        string     `json:"pictureUrl"`                  // No description.
-	IdpConfigURL      string     `json:"idpConfigUrl"`                // No description.
-	IdpLoginURL       string     `json:"idpLoginUrl"`                 // No description.
+	IDPConfigURL      string     `json:"idpConfigUrl"`                // No description.
+	IDPLoginURL       string     `json:"idpLoginUrl"`                 // No description.
 	LoginState        LoginState `json:"loginState"`                  // No description.
 	TermsOfServiceURL *string    `json:"termsOfServiceUrl,omitempty"` // These two are only set if the loginState is signUp
 	PrivacyPolicyURL  *string    `json:"privacyPolicyUrl,omitempty"`  // No description.

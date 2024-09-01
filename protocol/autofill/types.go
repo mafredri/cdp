@@ -13,7 +13,7 @@ type CreditCard struct {
 	Name        string `json:"name"`        // Name of the credit card owner.
 	ExpiryMonth string `json:"expiryMonth"` // 2-digit expiry month.
 	ExpiryYear  string `json:"expiryYear"`  // 4-digit expiry year.
-	Cvc         string `json:"cvc"`         // 3-digit card verification code.
+	CVC         string `json:"cvc"`         // 3-digit card verification code.
 }
 
 // AddressField

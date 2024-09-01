@@ -5,12 +5,17 @@ import (
 	"log"
 	"strings"
 
-	"github.com/mafredri/cdp/cmd/cdpgen/lint"
-
 	"github.com/client9/misspell"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+
+	"github.com/mafredri/cdp/cmd/cdpgen/lint"
 )
 
-var misspellReplacer = misspell.New()
+var (
+	misspellReplacer = misspell.New()
+	titleCase        = cases.Title(language.AmericanEnglish, cases.NoLower).String
+)
 
 func init() {
 	misspellReplacer.AddRuleList(misspell.DictAmerican)
@@ -43,12 +48,12 @@ type Domain struct {
 
 // Name returns the domain name.
 func (d Domain) Name() string {
-	return d.Domain
+	return lint.Name(titleCase(d.Domain))
 }
 
 // Type returns the domain type.
 func (d Domain) Type() string {
-	return d.Domain
+	return lint.Name(titleCase(d.Domain))
 }
 
 // Desc returns the domain decription.
@@ -71,7 +76,7 @@ type Command struct {
 
 // Name rturns the linted command name.
 func (c Command) Name() string {
-	return lint.Name(strings.Title(c.NameName))
+	return lint.Name(titleCase(c.NameName))
 }
 
 // Desc returns a cleaned description.
@@ -183,7 +188,7 @@ type Event struct {
 
 // Name returns the name of the event.
 func (e Event) Name() string {
-	return lint.Name(strings.Title(e.NameName))
+	return lint.Name(titleCase(e.NameName))
 }
 
 // Desc returns the cleaned description.
@@ -214,7 +219,7 @@ func (e Enum) Name() string {
 		return strings.Replace(string(e), "-", "Negative", 1)
 	}
 	s := strings.Replace(string(e), "-", " ", -1)
-	s = strings.Title(s)
+	s = titleCase(s)
 	return lint.Name(strings.Replace(s, " ", "", -1))
 }
 
@@ -245,7 +250,7 @@ func (at AnyType) ExportedName(d Domain) string {
 	if at.IDName != "" {
 		return at.Name(d)
 	}
-	return lint.Name(strings.Title(at.NameName))
+	return lint.Name(titleCase(at.NameName))
 }
 
 // Name returns a Go-ified name for the AnyType.
@@ -263,10 +268,11 @@ func (at AnyType) Recvr(d Domain) string {
 }
 
 func nameInDomain(d Domain, name, _ string) string {
-	name = lint.Name(strings.Title(name))
+	name = lint.Name(titleCase(name))
 	if name != d.Name() && strings.Index(name, d.Name()) == 0 {
 		name = strings.Replace(name, d.Name(), "", 1)
 	}
+	name = strings.TrimPrefix(name, "ing") // preload.Preloading -> ing -> ""
 	return name
 }
 
@@ -349,8 +355,8 @@ func (at AnyType) refType(pkg string, d Domain) string {
 	if strings.ContainsRune(at.Ref, '.') {
 		s := strings.Split(at.Ref, ".")
 		prefix = strings.ToLower(s[0]) + "."
-		s[0] = lint.Name(strings.Title(s[0]))
-		s[1] = lint.Name(strings.Title(s[1]))
+		s[0] = lint.Name(titleCase(s[0]))
+		s[1] = lint.Name(titleCase(s[1]))
 
 		// Remove stutter, e.g. SecuritySecurityState.
 		if strings.Index(s[1], s[0]) == 0 || s[1] == s[0] {
@@ -362,7 +368,7 @@ func (at AnyType) refType(pkg string, d Domain) string {
 			prefix = ""
 			at.Ref = s[1]
 		}
-		name := prefix + strings.Title(lint.Name(s[1]))
+		name := prefix + titleCase(lint.Name(s[1]))
 
 		// Special cases for circular types.
 		switch {

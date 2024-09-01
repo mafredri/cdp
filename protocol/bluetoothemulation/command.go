@@ -19,16 +19,16 @@ type SimulatePreconnectedPeripheralArgs struct {
 	Address           string             `json:"address"`           // No description.
 	Name              string             `json:"name"`              // No description.
 	ManufacturerData  []ManufacturerData `json:"manufacturerData"`  // No description.
-	KnownServiceUuids []string           `json:"knownServiceUuids"` // No description.
+	KnownServiceUUIDs []string           `json:"knownServiceUuids"` // No description.
 }
 
 // NewSimulatePreconnectedPeripheralArgs initializes SimulatePreconnectedPeripheralArgs with the required arguments.
-func NewSimulatePreconnectedPeripheralArgs(address string, name string, manufacturerData []ManufacturerData, knownServiceUuids []string) *SimulatePreconnectedPeripheralArgs {
+func NewSimulatePreconnectedPeripheralArgs(address string, name string, manufacturerData []ManufacturerData, knownServiceUUIDs []string) *SimulatePreconnectedPeripheralArgs {
 	args := new(SimulatePreconnectedPeripheralArgs)
 	args.Address = address
 	args.Name = name
 	args.ManufacturerData = manufacturerData
-	args.KnownServiceUuids = knownServiceUuids
+	args.KnownServiceUUIDs = knownServiceUUIDs
 	return args
 }
 

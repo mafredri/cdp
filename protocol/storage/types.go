@@ -124,9 +124,9 @@ type InterestGroupAuctionFetchType string
 // InterestGroupAuctionFetchType as enums.
 const (
 	InterestGroupAuctionFetchTypeNotSet               InterestGroupAuctionFetchType = ""
-	InterestGroupAuctionFetchTypeBidderJs             InterestGroupAuctionFetchType = "bidderJs"
+	InterestGroupAuctionFetchTypeBidderJS             InterestGroupAuctionFetchType = "bidderJs"
 	InterestGroupAuctionFetchTypeBidderWASM           InterestGroupAuctionFetchType = "bidderWasm"
-	InterestGroupAuctionFetchTypeSellerJs             InterestGroupAuctionFetchType = "sellerJs"
+	InterestGroupAuctionFetchTypeSellerJS             InterestGroupAuctionFetchType = "sellerJs"
 	InterestGroupAuctionFetchTypeBidderTrustedSignals InterestGroupAuctionFetchType = "bidderTrustedSignals"
 	InterestGroupAuctionFetchTypeSellerTrustedSignals InterestGroupAuctionFetchType = "sellerTrustedSignals"
 )

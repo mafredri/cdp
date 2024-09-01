@@ -156,7 +156,7 @@ type GetVersionReply struct {
 	Product         string `json:"product"`         // Product name.
 	Revision        string `json:"revision"`        // Product revision.
 	UserAgent       string `json:"userAgent"`       // User-Agent.
-	JsVersion       string `json:"jsVersion"`       // V8 version.
+	JSVersion       string `json:"jsVersion"`       // V8 version.
 }
 
 // GetBrowserCommandLineReply represents the return values for GetBrowserCommandLine in the Browser domain.
