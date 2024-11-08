@@ -16,7 +16,7 @@ func (n Headers) Map() (map[string]string, error) {
 // return type seems to be string. The ResponseReceivedExtraInfoReply
 // field CookiePartitionKeyOpaque tells us if it is a string, however
 // it's not clear if an object can be returned. For now we will keep the
-// struct just in case and unmarhsla into TopLevelSite.
+// struct just in case and unmarshal into TopLevelSite.
 //
 // https://chromium.googlesource.com/chromium/src/+/refs/heads/main/net/cookies/cookie_partition_key.cc
 // https://chromium.googlesource.com/chromium/src/+/refs/heads/main/net/cookies/cookie_partition_key.h
