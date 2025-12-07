@@ -37,7 +37,7 @@ type DevTools struct {
 
 // New returns a DevTools instance that uses URL.
 func New(url string, opts ...DevToolsOption) *DevTools {
-	devtools := &DevTools{url: url}
+	devtools := &DevTools{url: strings.TrimRight(url, "/")}
 	for _, o := range opts {
 		o(devtools)
 	}
@@ -297,6 +297,7 @@ func (d *DevTools) resolveHost(ctx context.Context) error {
 		return err
 	}
 
+	var tried []string
 	newURL := ""
 	for _, a := range addrs {
 		host[0] = a
@@ -305,7 +306,9 @@ func (d *DevTools) resolveHost(ctx context.Context) error {
 
 		// The selection of "/json/version" here is arbitrary,
 		// it just needs to exist and not have side-effects.
-		req, err := http.NewRequest(http.MethodGet, try+"/json/version", nil)
+		endpoint := try + "/json/version"
+		tried = append(tried, endpoint)
+		req, err := http.NewRequest(http.MethodGet, endpoint, nil)
 		if err != nil {
 			return err
 		}
@@ -322,7 +325,7 @@ func (d *DevTools) resolveHost(ctx context.Context) error {
 		}
 	}
 	if newURL == "" {
-		return errors.New("could not resolve IP for " + origHost)
+		return fmt.Errorf("could not find a working endpoint for %q, tried: %v", origHost, tried)
 	}
 	d.url = newURL
 
