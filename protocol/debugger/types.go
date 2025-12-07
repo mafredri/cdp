@@ -124,7 +124,13 @@ func (e ScriptLanguage) String() string {
 type DebugSymbols struct {
 	// Type Type of the debug symbols.
 	//
-	// Values: "None", "SourceMap", "EmbeddedDWARF", "ExternalDWARF".
+	// Values: "SourceMap", "EmbeddedDWARF", "ExternalDWARF".
 	Type        string  `json:"type"`
 	ExternalURL *string `json:"externalURL,omitempty"` // URL of the external symbol source.
+}
+
+// ResolvedBreakpoint
+type ResolvedBreakpoint struct {
+	BreakpointID BreakpointID `json:"breakpointId"` // Breakpoint unique identifier.
+	Location     Location     `json:"location"`     // Actual breakpoint location.
 }

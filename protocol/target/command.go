@@ -73,8 +73,9 @@ type CloseTargetReply struct {
 
 // ExposeDevToolsProtocolArgs represents the arguments for ExposeDevToolsProtocol in the Target domain.
 type ExposeDevToolsProtocolArgs struct {
-	TargetID    ID      `json:"targetId"`              // No description.
-	BindingName *string `json:"bindingName,omitempty"` // Binding name, 'cdp' if not specified.
+	TargetID           ID      `json:"targetId"`                     // No description.
+	BindingName        *string `json:"bindingName,omitempty"`        // Binding name, 'cdp' if not specified.
+	InheritPermissions *bool   `json:"inheritPermissions,omitempty"` // If true, inherits the current root session's permissions (default: false).
 }
 
 // NewExposeDevToolsProtocolArgs initializes ExposeDevToolsProtocolArgs with the required arguments.
@@ -88,6 +89,14 @@ func NewExposeDevToolsProtocolArgs(targetID ID) *ExposeDevToolsProtocolArgs {
 // name, 'cdp' if not specified.
 func (a *ExposeDevToolsProtocolArgs) SetBindingName(bindingName string) *ExposeDevToolsProtocolArgs {
 	a.BindingName = &bindingName
+	return a
+}
+
+// SetInheritPermissions sets the InheritPermissions optional argument.
+// If true, inherits the current root session's permissions (default:
+// false).
+func (a *ExposeDevToolsProtocolArgs) SetInheritPermissions(inheritPermissions bool) *ExposeDevToolsProtocolArgs {
+	a.InheritPermissions = &inheritPermissions
 	return a
 }
 
@@ -173,25 +182,44 @@ type GetBrowserContextsReply struct {
 
 // CreateTargetArgs represents the arguments for CreateTarget in the Target domain.
 type CreateTargetArgs struct {
-	URL    string `json:"url"`              // The initial URL the page will be navigated to. An empty string indicates about:blank.
-	Width  *int   `json:"width,omitempty"`  // Frame width in DIP (headless chrome only).
-	Height *int   `json:"height,omitempty"` // Frame height in DIP (headless chrome only).
+	URL string `json:"url"` // The initial URL the page will be navigated to. An empty string indicates about:blank.
+	// Left Frame left origin in DIP (requires newWindow to be true or
+	// headless shell).
+	//
+	// Note: This property is experimental.
+	Left *int `json:"left,omitempty"`
+	// Top Frame top origin in DIP (requires newWindow to be true or
+	// headless shell).
+	//
+	// Note: This property is experimental.
+	Top         *int        `json:"top,omitempty"`
+	Width       *int        `json:"width,omitempty"`       // Frame width in DIP (requires newWindow to be true or headless shell).
+	Height      *int        `json:"height,omitempty"`      // Frame height in DIP (requires newWindow to be true or headless shell).
+	WindowState WindowState `json:"windowState,omitempty"` // Frame window state (requires newWindow to be true or headless shell). Default is normal.
 	// BrowserContextID The browser context to create the page in.
 	//
 	// Note: This property is experimental.
 	BrowserContextID *internal.BrowserContextID `json:"browserContextId,omitempty"`
 	// EnableBeginFrameControl Whether BeginFrames for this target will be
-	// controlled via DevTools (headless chrome only, not supported on
-	// MacOS yet, false by default).
+	// controlled via DevTools (headless shell only, not supported on MacOS
+	// yet, false by default).
 	//
 	// Note: This property is experimental.
 	EnableBeginFrameControl *bool `json:"enableBeginFrameControl,omitempty"`
-	NewWindow               *bool `json:"newWindow,omitempty"`  // Whether to create a new Window or Tab (chrome-only, false by default).
-	Background              *bool `json:"background,omitempty"` // Whether to create the target in background or foreground (chrome-only, false by default).
+	NewWindow               *bool `json:"newWindow,omitempty"`  // Whether to create a new Window or Tab (false by default, not supported by headless shell).
+	Background              *bool `json:"background,omitempty"` // Whether to create the target in background or foreground (false by default, not supported by headless shell).
 	// ForTab Whether to create the target of type "tab".
 	//
 	// Note: This property is experimental.
 	ForTab *bool `json:"forTab,omitempty"`
+	// Hidden Whether to create a hidden target. The hidden target is
+	// observable via protocol, but not present in the tab UI strip. Cannot
+	// be created with `forTab: true`, `newWindow: true` or `background:
+	// false`. The life-time of the tab is limited to the life-time of the
+	// session.
+	//
+	// Note: This property is experimental.
+	Hidden *bool `json:"hidden,omitempty"`
 }
 
 // NewCreateTargetArgs initializes CreateTargetArgs with the required arguments.
@@ -201,17 +229,43 @@ func NewCreateTargetArgs(url string) *CreateTargetArgs {
 	return args
 }
 
+// SetLeft sets the Left optional argument. Frame left origin in DIP
+// (requires newWindow to be true or headless shell).
+//
+// Note: This property is experimental.
+func (a *CreateTargetArgs) SetLeft(left int) *CreateTargetArgs {
+	a.Left = &left
+	return a
+}
+
+// SetTop sets the Top optional argument. Frame top origin in DIP
+// (requires newWindow to be true or headless shell).
+//
+// Note: This property is experimental.
+func (a *CreateTargetArgs) SetTop(top int) *CreateTargetArgs {
+	a.Top = &top
+	return a
+}
+
 // SetWidth sets the Width optional argument. Frame width in DIP
-// (headless chrome only).
+// (requires newWindow to be true or headless shell).
 func (a *CreateTargetArgs) SetWidth(width int) *CreateTargetArgs {
 	a.Width = &width
 	return a
 }
 
 // SetHeight sets the Height optional argument. Frame height in DIP
-// (headless chrome only).
+// (requires newWindow to be true or headless shell).
 func (a *CreateTargetArgs) SetHeight(height int) *CreateTargetArgs {
 	a.Height = &height
+	return a
+}
+
+// SetWindowState sets the WindowState optional argument. Frame window
+// state (requires newWindow to be true or headless shell). Default is
+// normal.
+func (a *CreateTargetArgs) SetWindowState(windowState WindowState) *CreateTargetArgs {
+	a.WindowState = windowState
 	return a
 }
 
@@ -226,8 +280,7 @@ func (a *CreateTargetArgs) SetBrowserContextID(browserContextID internal.Browser
 
 // SetEnableBeginFrameControl sets the EnableBeginFrameControl optional argument.
 // Whether BeginFrames for this target will be controlled via DevTools
-// (headless chrome only, not supported on MacOS yet, false by
-// default).
+// (headless shell only, not supported on MacOS yet, false by default).
 //
 // Note: This property is experimental.
 func (a *CreateTargetArgs) SetEnableBeginFrameControl(enableBeginFrameControl bool) *CreateTargetArgs {
@@ -236,15 +289,16 @@ func (a *CreateTargetArgs) SetEnableBeginFrameControl(enableBeginFrameControl bo
 }
 
 // SetNewWindow sets the NewWindow optional argument. Whether to
-// create a new Window or Tab (chrome-only, false by default).
+// create a new Window or Tab (false by default, not supported by
+// headless shell).
 func (a *CreateTargetArgs) SetNewWindow(newWindow bool) *CreateTargetArgs {
 	a.NewWindow = &newWindow
 	return a
 }
 
 // SetBackground sets the Background optional argument. Whether to
-// create the target in background or foreground (chrome-only, false by
-// default).
+// create the target in background or foreground (false by default, not
+// supported by headless shell).
 func (a *CreateTargetArgs) SetBackground(background bool) *CreateTargetArgs {
 	a.Background = &background
 	return a
@@ -256,6 +310,18 @@ func (a *CreateTargetArgs) SetBackground(background bool) *CreateTargetArgs {
 // Note: This property is experimental.
 func (a *CreateTargetArgs) SetForTab(forTab bool) *CreateTargetArgs {
 	a.ForTab = &forTab
+	return a
+}
+
+// SetHidden sets the Hidden optional argument. Whether to create a
+// hidden target. The hidden target is observable via protocol, but not
+// present in the tab UI strip. Cannot be created with `forTab: true`,
+// `newWindow: true` or `background: false`. The life-time of the tab
+// is limited to the life-time of the session.
+//
+// Note: This property is experimental.
+func (a *CreateTargetArgs) SetHidden(hidden bool) *CreateTargetArgs {
+	a.Hidden = &hidden
 	return a
 }
 
@@ -504,4 +570,47 @@ func NewSetRemoteLocationsArgs(locations []RemoteLocation) *SetRemoteLocationsAr
 	args := new(SetRemoteLocationsArgs)
 	args.Locations = locations
 	return args
+}
+
+// GetDevToolsTargetArgs represents the arguments for GetDevToolsTarget in the Target domain.
+type GetDevToolsTargetArgs struct {
+	TargetID ID `json:"targetId"` // Page or tab target ID.
+}
+
+// NewGetDevToolsTargetArgs initializes GetDevToolsTargetArgs with the required arguments.
+func NewGetDevToolsTargetArgs(targetID ID) *GetDevToolsTargetArgs {
+	args := new(GetDevToolsTargetArgs)
+	args.TargetID = targetID
+	return args
+}
+
+// GetDevToolsTargetReply represents the return values for GetDevToolsTarget in the Target domain.
+type GetDevToolsTargetReply struct {
+	TargetID *ID `json:"targetId,omitempty"` // The targetId of DevTools page target if exists.
+}
+
+// OpenDevToolsArgs represents the arguments for OpenDevTools in the Target domain.
+type OpenDevToolsArgs struct {
+	TargetID ID      `json:"targetId"`          // This can be the page or tab target ID.
+	PanelID  *string `json:"panelId,omitempty"` // The id of the panel we want DevTools to open initially. Currently supported panels are elements, console, network, sources, resources and performance.
+}
+
+// NewOpenDevToolsArgs initializes OpenDevToolsArgs with the required arguments.
+func NewOpenDevToolsArgs(targetID ID) *OpenDevToolsArgs {
+	args := new(OpenDevToolsArgs)
+	args.TargetID = targetID
+	return args
+}
+
+// SetPanelID sets the PanelID optional argument. The id of the panel
+// we want DevTools to open initially. Currently supported panels are
+// elements, console, network, sources, resources and performance.
+func (a *OpenDevToolsArgs) SetPanelID(panelID string) *OpenDevToolsArgs {
+	a.PanelID = &panelID
+	return a
+}
+
+// OpenDevToolsReply represents the return values for OpenDevTools in the Target domain.
+type OpenDevToolsReply struct {
+	TargetID ID `json:"targetId"` // The targetId of DevTools page target.
 }

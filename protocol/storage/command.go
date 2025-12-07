@@ -27,6 +27,29 @@ type GetStorageKeyForFrameReply struct {
 	StorageKey SerializedStorageKey `json:"storageKey"` // No description.
 }
 
+// GetStorageKeyArgs represents the arguments for GetStorageKey in the Storage domain.
+type GetStorageKeyArgs struct {
+	FrameID *page.FrameID `json:"frameId,omitempty"` // No description.
+}
+
+// NewGetStorageKeyArgs initializes GetStorageKeyArgs with the required arguments.
+func NewGetStorageKeyArgs() *GetStorageKeyArgs {
+	args := new(GetStorageKeyArgs)
+
+	return args
+}
+
+// SetFrameID sets the FrameID optional argument.
+func (a *GetStorageKeyArgs) SetFrameID(frameID page.FrameID) *GetStorageKeyArgs {
+	a.FrameID = &frameID
+	return a
+}
+
+// GetStorageKeyReply represents the return values for GetStorageKey in the Storage domain.
+type GetStorageKeyReply struct {
+	StorageKey SerializedStorageKey `json:"storageKey"` // No description.
+}
+
 // ClearDataForOriginArgs represents the arguments for ClearDataForOrigin in the Storage domain.
 type ClearDataForOriginArgs struct {
 	Origin       string `json:"origin"`       // Security origin.
@@ -497,4 +520,39 @@ type SendPendingAttributionReportsReply struct {
 // GetRelatedWebsiteSetsReply represents the return values for GetRelatedWebsiteSets in the Storage domain.
 type GetRelatedWebsiteSetsReply struct {
 	Sets []RelatedWebsiteSet `json:"sets"` // No description.
+}
+
+// GetAffectedURLsForThirdPartyCookieMetadataArgs represents the arguments for GetAffectedURLsForThirdPartyCookieMetadata in the Storage domain.
+type GetAffectedURLsForThirdPartyCookieMetadataArgs struct {
+	FirstPartyURL  string   `json:"firstPartyUrl"`  // The URL of the page currently being visited.
+	ThirdPartyURLs []string `json:"thirdPartyUrls"` // The list of embedded resource URLs from the page.
+}
+
+// NewGetAffectedURLsForThirdPartyCookieMetadataArgs initializes GetAffectedURLsForThirdPartyCookieMetadataArgs with the required arguments.
+func NewGetAffectedURLsForThirdPartyCookieMetadataArgs(firstPartyURL string, thirdPartyURLs []string) *GetAffectedURLsForThirdPartyCookieMetadataArgs {
+	args := new(GetAffectedURLsForThirdPartyCookieMetadataArgs)
+	args.FirstPartyURL = firstPartyURL
+	args.ThirdPartyURLs = thirdPartyURLs
+	return args
+}
+
+// GetAffectedURLsForThirdPartyCookieMetadataReply represents the return values for GetAffectedURLsForThirdPartyCookieMetadata in the Storage domain.
+type GetAffectedURLsForThirdPartyCookieMetadataReply struct {
+	MatchedURLs []string `json:"matchedUrls"` // Array of matching URLs. If there is a primary pattern match for the first- party URL, only the first-party URL is returned in the array.
+}
+
+// SetProtectedAudienceKAnonymityArgs represents the arguments for SetProtectedAudienceKAnonymity in the Storage domain.
+type SetProtectedAudienceKAnonymityArgs struct {
+	Owner  string   `json:"owner"`  // No description.
+	Name   string   `json:"name"`   // No description.
+	Hashes []string `json:"hashes"` // No description.
+}
+
+// NewSetProtectedAudienceKAnonymityArgs initializes SetProtectedAudienceKAnonymityArgs with the required arguments.
+func NewSetProtectedAudienceKAnonymityArgs(owner string, name string, hashes []string) *SetProtectedAudienceKAnonymityArgs {
+	args := new(SetProtectedAudienceKAnonymityArgs)
+	args.Owner = owner
+	args.Name = name
+	args.Hashes = hashes
+	return args
 }

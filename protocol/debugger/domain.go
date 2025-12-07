@@ -273,6 +273,23 @@ func (d *domainClient) SetAsyncCallStackDepth(ctx context.Context, args *SetAsyn
 	return
 }
 
+// SetBlackboxExecutionContexts invokes the Debugger method. Replace previous
+// blackbox execution contexts with passed ones. Forces backend to skip
+// stepping/pausing in scripts in these execution contexts. VM will try to
+// leave blackboxed script by performing 'step in' several times, finally
+// resorting to 'step out' if unsuccessful.
+func (d *domainClient) SetBlackboxExecutionContexts(ctx context.Context, args *SetBlackboxExecutionContextsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Debugger.setBlackboxExecutionContexts", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Debugger.setBlackboxExecutionContexts", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Debugger", Op: "SetBlackboxExecutionContexts", Err: err}
+	}
+	return
+}
+
 // SetBlackboxPatterns invokes the Debugger method. Replace previous blackbox
 // patterns with passed ones. Forces backend to skip stepping/pausing in
 // scripts with url matching one of the patterns. VM will try to leave

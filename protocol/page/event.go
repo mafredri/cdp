@@ -158,6 +158,31 @@ type FrameResizedClient interface {
 type FrameResizedReply struct {
 }
 
+// FrameStartedNavigatingClient is a client for FrameStartedNavigating events.
+// Fired when a navigation starts. This event is fired for both
+// renderer-initiated and browser-initiated navigations. For renderer-initiated
+// navigations, the event is fired after `frameRequestedNavigation`. Navigation
+// may still be canceled after the event is issued. Multiple events can be
+// fired for a single navigation, for example, when a same-document navigation
+// becomes a cross-document navigation (such as in the case of a frameset).
+type FrameStartedNavigatingClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*FrameStartedNavigatingReply, error)
+	rpcc.Stream
+}
+
+// FrameStartedNavigatingReply is the reply for FrameStartedNavigating events.
+type FrameStartedNavigatingReply struct {
+	FrameID  FrameID          `json:"frameId"`  // ID of the frame that is being navigated.
+	URL      string           `json:"url"`      // The URL the navigation started with. The final URL can be different.
+	LoaderID network.LoaderID `json:"loaderId"` // Loader identifier. Even though it is present in case of same-document navigation, the previously committed loaderId would not change unless the navigation changes from a same-document to a cross-document navigation.
+	// NavigationType
+	//
+	// Values: "reload", "reloadBypassingCache", "restore", "restoreWithPost", "historySameDocument", "historyDifferentDocument", "sameDocument", "differentDocument".
+	NavigationType string `json:"navigationType"`
+}
+
 // FrameRequestedNavigationClient is a client for FrameRequestedNavigation events.
 // Fired when a renderer-initiated navigation is requested. Navigation may
 // still be canceled after the event is issued.
@@ -298,8 +323,12 @@ type JavascriptDialogClosedClient interface {
 
 // JavascriptDialogClosedReply is the reply for JavascriptDialogClosed events.
 type JavascriptDialogClosedReply struct {
-	Result    bool   `json:"result"`    // Whether dialog was confirmed.
-	UserInput string `json:"userInput"` // User input in case of prompt.
+	// FrameID Frame id.
+	//
+	// Note: This property is experimental.
+	FrameID   FrameID `json:"frameId"`
+	Result    bool    `json:"result"`    // Whether dialog was confirmed.
+	UserInput string  `json:"userInput"` // User input in case of prompt.
 }
 
 // JavascriptDialogOpeningClient is a client for JavascriptDialogOpening events.
@@ -314,15 +343,20 @@ type JavascriptDialogOpeningClient interface {
 
 // JavascriptDialogOpeningReply is the reply for JavascriptDialogOpening events.
 type JavascriptDialogOpeningReply struct {
-	URL               string     `json:"url"`                     // Frame url.
+	URL string `json:"url"` // Frame url.
+	// FrameID Frame id.
+	//
+	// Note: This property is experimental.
+	FrameID           FrameID    `json:"frameId"`
 	Message           string     `json:"message"`                 // Message that will be displayed by the dialog.
 	Type              DialogType `json:"type"`                    // Dialog type.
 	HasBrowserHandler bool       `json:"hasBrowserHandler"`       // True iff browser is capable showing or acting on the given dialog. When browser has no dialog handler for given target, calling alert while Page domain is engaged will stall the page execution. Execution can be resumed via calling Page.handleJavaScriptDialog.
 	DefaultPrompt     *string    `json:"defaultPrompt,omitempty"` // Default dialog prompt.
 }
 
-// LifecycleEventClient is a client for LifecycleEvent events. Fired for top
-// level page lifecycle events such as navigation, load, paint, etc.
+// LifecycleEventClient is a client for LifecycleEvent events. Fired for
+// lifecycle events (navigation, load, paint, etc) in the current target
+// (including local frames).
 type LifecycleEventClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -439,8 +473,7 @@ type WindowOpenReply struct {
 }
 
 // CompilationCacheProducedClient is a client for CompilationCacheProduced events.
-// Issued for every compilation cache generated. Is only available if
-// Page.setGenerateCompilationCache is enabled.
+// Issued for every compilation cache generated.
 type CompilationCacheProducedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.

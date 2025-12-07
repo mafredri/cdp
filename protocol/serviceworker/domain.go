@@ -75,19 +75,6 @@ func (d *domainClient) Enable(ctx context.Context) (err error) {
 	return
 }
 
-// InspectWorker invokes the ServiceWorker method.
-func (d *domainClient) InspectWorker(ctx context.Context, args *InspectWorkerArgs) (err error) {
-	if args != nil {
-		err = rpcc.Invoke(ctx, "ServiceWorker.inspectWorker", args, nil, d.conn)
-	} else {
-		err = rpcc.Invoke(ctx, "ServiceWorker.inspectWorker", nil, nil, d.conn)
-	}
-	if err != nil {
-		err = &internal.OpError{Domain: "ServiceWorker", Op: "InspectWorker", Err: err}
-	}
-	return
-}
-
 // SetForceUpdateOnPageLoad invokes the ServiceWorker method.
 func (d *domainClient) SetForceUpdateOnPageLoad(ctx context.Context, args *SetForceUpdateOnPageLoadArgs) (err error) {
 	if args != nil {

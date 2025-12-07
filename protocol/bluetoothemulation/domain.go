@@ -35,6 +35,20 @@ func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error)
 	return
 }
 
+// SetSimulatedCentralState invokes the BluetoothEmulation method. Set the
+// state of the simulated central.
+func (d *domainClient) SetSimulatedCentralState(ctx context.Context, args *SetSimulatedCentralStateArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.setSimulatedCentralState", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.setSimulatedCentralState", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "BluetoothEmulation", Op: "SetSimulatedCentralState", Err: err}
+	}
+	return
+}
+
 // Disable invokes the BluetoothEmulation method. Disable the
 // BluetoothEmulation domain.
 func (d *domainClient) Disable(ctx context.Context) (err error) {
@@ -72,4 +86,222 @@ func (d *domainClient) SimulateAdvertisement(ctx context.Context, args *Simulate
 		err = &internal.OpError{Domain: "BluetoothEmulation", Op: "SimulateAdvertisement", Err: err}
 	}
 	return
+}
+
+// SimulateGATTOperationResponse invokes the BluetoothEmulation method.
+// Simulates the response code from the peripheral with |address| for a GATT
+// operation of |type|. The |code| value follows the HCI Error Codes from
+// Bluetooth Core Specification Vol 2 Part D 1.3 List Of Error Codes.
+func (d *domainClient) SimulateGATTOperationResponse(ctx context.Context, args *SimulateGATTOperationResponseArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.simulateGATTOperationResponse", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.simulateGATTOperationResponse", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "BluetoothEmulation", Op: "SimulateGATTOperationResponse", Err: err}
+	}
+	return
+}
+
+// SimulateCharacteristicOperationResponse invokes the BluetoothEmulation method.
+// Simulates the response from the characteristic with |characteristicId| for a
+// characteristic operation of |type|. The |code| value follows the Error Codes
+// from Bluetooth Core Specification Vol 3 Part F 3.4.1.1 Error Response. The
+// |data| is expected to exist when simulating a successful read operation
+// response.
+func (d *domainClient) SimulateCharacteristicOperationResponse(ctx context.Context, args *SimulateCharacteristicOperationResponseArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.simulateCharacteristicOperationResponse", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.simulateCharacteristicOperationResponse", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "BluetoothEmulation", Op: "SimulateCharacteristicOperationResponse", Err: err}
+	}
+	return
+}
+
+// SimulateDescriptorOperationResponse invokes the BluetoothEmulation method.
+// Simulates the response from the descriptor with |descriptorId| for a
+// descriptor operation of |type|. The |code| value follows the Error Codes
+// from Bluetooth Core Specification Vol 3 Part F 3.4.1.1 Error Response. The
+// |data| is expected to exist when simulating a successful read operation
+// response.
+func (d *domainClient) SimulateDescriptorOperationResponse(ctx context.Context, args *SimulateDescriptorOperationResponseArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.simulateDescriptorOperationResponse", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.simulateDescriptorOperationResponse", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "BluetoothEmulation", Op: "SimulateDescriptorOperationResponse", Err: err}
+	}
+	return
+}
+
+// AddService invokes the BluetoothEmulation method. Adds a service with
+// |serviceUuid| to the peripheral with |address|.
+func (d *domainClient) AddService(ctx context.Context, args *AddServiceArgs) (reply *AddServiceReply, err error) {
+	reply = new(AddServiceReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.addService", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.addService", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "BluetoothEmulation", Op: "AddService", Err: err}
+	}
+	return
+}
+
+// RemoveService invokes the BluetoothEmulation method. Removes the service
+// respresented by |serviceId| from the simulated central.
+func (d *domainClient) RemoveService(ctx context.Context, args *RemoveServiceArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.removeService", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.removeService", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "BluetoothEmulation", Op: "RemoveService", Err: err}
+	}
+	return
+}
+
+// AddCharacteristic invokes the BluetoothEmulation method. Adds a
+// characteristic with |characteristicUuid| and |properties| to the service
+// represented by |serviceId|.
+func (d *domainClient) AddCharacteristic(ctx context.Context, args *AddCharacteristicArgs) (reply *AddCharacteristicReply, err error) {
+	reply = new(AddCharacteristicReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.addCharacteristic", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.addCharacteristic", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "BluetoothEmulation", Op: "AddCharacteristic", Err: err}
+	}
+	return
+}
+
+// RemoveCharacteristic invokes the BluetoothEmulation method. Removes the
+// characteristic respresented by |characteristicId| from the simulated
+// central.
+func (d *domainClient) RemoveCharacteristic(ctx context.Context, args *RemoveCharacteristicArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.removeCharacteristic", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.removeCharacteristic", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "BluetoothEmulation", Op: "RemoveCharacteristic", Err: err}
+	}
+	return
+}
+
+// AddDescriptor invokes the BluetoothEmulation method. Adds a descriptor with
+// |descriptorUuid| to the characteristic respresented by |characteristicId|.
+func (d *domainClient) AddDescriptor(ctx context.Context, args *AddDescriptorArgs) (reply *AddDescriptorReply, err error) {
+	reply = new(AddDescriptorReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.addDescriptor", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.addDescriptor", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "BluetoothEmulation", Op: "AddDescriptor", Err: err}
+	}
+	return
+}
+
+// RemoveDescriptor invokes the BluetoothEmulation method. Removes the
+// descriptor with |descriptorId| from the simulated central.
+func (d *domainClient) RemoveDescriptor(ctx context.Context, args *RemoveDescriptorArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.removeDescriptor", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.removeDescriptor", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "BluetoothEmulation", Op: "RemoveDescriptor", Err: err}
+	}
+	return
+}
+
+// SimulateGATTDisconnection invokes the BluetoothEmulation method. Simulates
+// a GATT disconnection from the peripheral with |address|.
+func (d *domainClient) SimulateGATTDisconnection(ctx context.Context, args *SimulateGATTDisconnectionArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.simulateGATTDisconnection", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "BluetoothEmulation.simulateGATTDisconnection", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "BluetoothEmulation", Op: "SimulateGATTDisconnection", Err: err}
+	}
+	return
+}
+
+func (d *domainClient) GattOperationReceived(ctx context.Context) (GattOperationReceivedClient, error) {
+	s, err := rpcc.NewStream(ctx, "BluetoothEmulation.gattOperationReceived", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &gattOperationReceivedClient{Stream: s}, nil
+}
+
+type gattOperationReceivedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *gattOperationReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *gattOperationReceivedClient) Recv() (*GattOperationReceivedReply, error) {
+	event := new(GattOperationReceivedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "BluetoothEmulation", Op: "GattOperationReceived Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) CharacteristicOperationReceived(ctx context.Context) (CharacteristicOperationReceivedClient, error) {
+	s, err := rpcc.NewStream(ctx, "BluetoothEmulation.characteristicOperationReceived", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &characteristicOperationReceivedClient{Stream: s}, nil
+}
+
+type characteristicOperationReceivedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *characteristicOperationReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *characteristicOperationReceivedClient) Recv() (*CharacteristicOperationReceivedReply, error) {
+	event := new(CharacteristicOperationReceivedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "BluetoothEmulation", Op: "CharacteristicOperationReceived Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DescriptorOperationReceived(ctx context.Context) (DescriptorOperationReceivedClient, error) {
+	s, err := rpcc.NewStream(ctx, "BluetoothEmulation.descriptorOperationReceived", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &descriptorOperationReceivedClient{Stream: s}, nil
+}
+
+type descriptorOperationReceivedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *descriptorOperationReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *descriptorOperationReceivedClient) Recv() (*DescriptorOperationReceivedReply, error) {
+	event := new(DescriptorOperationReceivedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "BluetoothEmulation", Op: "DescriptorOperationReceived Recv", Err: err}
+	}
+	return event, nil
 }

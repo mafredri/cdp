@@ -21,6 +21,38 @@ type CredentialAddedReply struct {
 	Credential      Credential      `json:"credential"`      // No description.
 }
 
+// CredentialDeletedClient is a client for CredentialDeleted events. Triggered
+// when a credential is deleted, e.g. through
+// PublicKeyCredential.signalUnknownCredential().
+type CredentialDeletedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*CredentialDeletedReply, error)
+	rpcc.Stream
+}
+
+// CredentialDeletedReply is the reply for CredentialDeleted events.
+type CredentialDeletedReply struct {
+	AuthenticatorID AuthenticatorID `json:"authenticatorId"` // No description.
+	CredentialID    string          `json:"credentialId"`    // No description.
+}
+
+// CredentialUpdatedClient is a client for CredentialUpdated events. Triggered
+// when a credential is updated, e.g. through
+// PublicKeyCredential.signalCurrentUserDetails().
+type CredentialUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*CredentialUpdatedReply, error)
+	rpcc.Stream
+}
+
+// CredentialUpdatedReply is the reply for CredentialUpdated events.
+type CredentialUpdatedReply struct {
+	AuthenticatorID AuthenticatorID `json:"authenticatorId"` // No description.
+	Credential      Credential      `json:"credential"`      // No description.
+}
+
 // CredentialAssertedClient is a client for CredentialAsserted events.
 // Triggered when a credential is used in a webauthn assertion.
 type CredentialAssertedClient interface {

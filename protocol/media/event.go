@@ -68,18 +68,18 @@ type PlayerErrorsRaisedReply struct {
 	Errors   []PlayerError `json:"errors"`   // No description.
 }
 
-// PlayersCreatedClient is a client for PlayersCreated events. Called whenever
-// a player is created, or when a new agent joins and receives a list of active
-// players. If an agent is restored, it will receive the full list of player
-// ids and all events again.
-type PlayersCreatedClient interface {
+// PlayerCreatedClient is a client for PlayerCreated events. Called whenever a
+// player is created, or when a new agent joins and receives a list of active
+// players. If an agent is restored, it will receive one event for each active
+// player.
+type PlayerCreatedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
-	Recv() (*PlayersCreatedReply, error)
+	Recv() (*PlayerCreatedReply, error)
 	rpcc.Stream
 }
 
-// PlayersCreatedReply is the reply for PlayersCreated events.
-type PlayersCreatedReply struct {
-	Players []PlayerID `json:"players"` // No description.
+// PlayerCreatedReply is the reply for PlayerCreated events.
+type PlayerCreatedReply struct {
+	Player Player `json:"player"` // No description.
 }

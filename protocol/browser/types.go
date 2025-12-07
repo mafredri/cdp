@@ -62,41 +62,48 @@ type PermissionType string
 // PermissionType as enums.
 const (
 	PermissionTypeNotSet                   PermissionType = ""
-	PermissionTypeAccessibilityEvents      PermissionType = "accessibilityEvents"
+	PermissionTypeAr                       PermissionType = "ar"
 	PermissionTypeAudioCapture             PermissionType = "audioCapture"
-	PermissionTypeBackgroundSync           PermissionType = "backgroundSync"
+	PermissionTypeAutomaticFullscreen      PermissionType = "automaticFullscreen"
 	PermissionTypeBackgroundFetch          PermissionType = "backgroundFetch"
+	PermissionTypeBackgroundSync           PermissionType = "backgroundSync"
+	PermissionTypeCameraPanTiltZoom        PermissionType = "cameraPanTiltZoom"
 	PermissionTypeCapturedSurfaceControl   PermissionType = "capturedSurfaceControl"
 	PermissionTypeClipboardReadWrite       PermissionType = "clipboardReadWrite"
 	PermissionTypeClipboardSanitizedWrite  PermissionType = "clipboardSanitizedWrite"
 	PermissionTypeDisplayCapture           PermissionType = "displayCapture"
 	PermissionTypeDurableStorage           PermissionType = "durableStorage"
-	PermissionTypeFlash                    PermissionType = "flash"
 	PermissionTypeGeolocation              PermissionType = "geolocation"
+	PermissionTypeHandTracking             PermissionType = "handTracking"
 	PermissionTypeIdleDetection            PermissionType = "idleDetection"
+	PermissionTypeKeyboardLock             PermissionType = "keyboardLock"
 	PermissionTypeLocalFonts               PermissionType = "localFonts"
+	PermissionTypeLocalNetworkAccess       PermissionType = "localNetworkAccess"
 	PermissionTypeMidi                     PermissionType = "midi"
 	PermissionTypeMidiSysex                PermissionType = "midiSysex"
 	PermissionTypeNFC                      PermissionType = "nfc"
 	PermissionTypeNotifications            PermissionType = "notifications"
 	PermissionTypePaymentHandler           PermissionType = "paymentHandler"
 	PermissionTypePeriodicBackgroundSync   PermissionType = "periodicBackgroundSync"
+	PermissionTypePointerLock              PermissionType = "pointerLock"
 	PermissionTypeProtectedMediaIdentifier PermissionType = "protectedMediaIdentifier"
 	PermissionTypeSensors                  PermissionType = "sensors"
-	PermissionTypeStorageAccess            PermissionType = "storageAccess"
+	PermissionTypeSmartCard                PermissionType = "smartCard"
 	PermissionTypeSpeakerSelection         PermissionType = "speakerSelection"
+	PermissionTypeStorageAccess            PermissionType = "storageAccess"
 	PermissionTypeTopLevelStorageAccess    PermissionType = "topLevelStorageAccess"
 	PermissionTypeVideoCapture             PermissionType = "videoCapture"
-	PermissionTypeVideoCapturePanTiltZoom  PermissionType = "videoCapturePanTiltZoom"
+	PermissionTypeVr                       PermissionType = "vr"
 	PermissionTypeWakeLockScreen           PermissionType = "wakeLockScreen"
 	PermissionTypeWakeLockSystem           PermissionType = "wakeLockSystem"
 	PermissionTypeWebAppInstallation       PermissionType = "webAppInstallation"
+	PermissionTypeWebPrinting              PermissionType = "webPrinting"
 	PermissionTypeWindowManagement         PermissionType = "windowManagement"
 )
 
 func (e PermissionType) Valid() bool {
 	switch e {
-	case "accessibilityEvents", "audioCapture", "backgroundSync", "backgroundFetch", "capturedSurfaceControl", "clipboardReadWrite", "clipboardSanitizedWrite", "displayCapture", "durableStorage", "flash", "geolocation", "idleDetection", "localFonts", "midi", "midiSysex", "nfc", "notifications", "paymentHandler", "periodicBackgroundSync", "protectedMediaIdentifier", "sensors", "storageAccess", "speakerSelection", "topLevelStorageAccess", "videoCapture", "videoCapturePanTiltZoom", "wakeLockScreen", "wakeLockSystem", "webAppInstallation", "windowManagement":
+	case "ar", "audioCapture", "automaticFullscreen", "backgroundFetch", "backgroundSync", "cameraPanTiltZoom", "capturedSurfaceControl", "clipboardReadWrite", "clipboardSanitizedWrite", "displayCapture", "durableStorage", "geolocation", "handTracking", "idleDetection", "keyboardLock", "localFonts", "localNetworkAccess", "midi", "midiSysex", "nfc", "notifications", "paymentHandler", "periodicBackgroundSync", "pointerLock", "protectedMediaIdentifier", "sensors", "smartCard", "speakerSelection", "storageAccess", "topLevelStorageAccess", "videoCapture", "vr", "wakeLockScreen", "wakeLockSystem", "webAppInstallation", "webPrinting", "windowManagement":
 		return true
 	default:
 		return false
@@ -157,11 +164,12 @@ const (
 	CommandIDNotSet         CommandID = ""
 	CommandIDOpenTabSearch  CommandID = "openTabSearch"
 	CommandIDCloseTabSearch CommandID = "closeTabSearch"
+	CommandIDOpenGlic       CommandID = "openGlic"
 )
 
 func (e CommandID) Valid() bool {
 	switch e {
-	case "openTabSearch", "closeTabSearch":
+	case "openTabSearch", "closeTabSearch", "openGlic":
 		return true
 	default:
 		return false
@@ -189,4 +197,29 @@ type Histogram struct {
 	Sum     int      `json:"sum"`     // Sum of sample values.
 	Count   int      `json:"count"`   // Total number of samples.
 	Buckets []Bucket `json:"buckets"` // Buckets.
+}
+
+// PrivacySandboxAPI
+//
+// Note: This type is experimental.
+type PrivacySandboxAPI string
+
+// PrivacySandboxAPI as enums.
+const (
+	PrivacySandboxAPINotSet                    PrivacySandboxAPI = ""
+	PrivacySandboxAPIBiddingAndAuctionServices PrivacySandboxAPI = "BiddingAndAuctionServices"
+	PrivacySandboxAPITrustedKeyValue           PrivacySandboxAPI = "TrustedKeyValue"
+)
+
+func (e PrivacySandboxAPI) Valid() bool {
+	switch e {
+	case "BiddingAndAuctionServices", "TrustedKeyValue":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e PrivacySandboxAPI) String() string {
+	return string(e)
 }

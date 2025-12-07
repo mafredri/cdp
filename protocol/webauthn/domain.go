@@ -223,6 +223,48 @@ func (c *credentialAddedClient) Recv() (*CredentialAddedReply, error) {
 	return event, nil
 }
 
+func (d *domainClient) CredentialDeleted(ctx context.Context) (CredentialDeletedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAuthn.credentialDeleted", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &credentialDeletedClient{Stream: s}, nil
+}
+
+type credentialDeletedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *credentialDeletedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *credentialDeletedClient) Recv() (*CredentialDeletedReply, error) {
+	event := new(CredentialDeletedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAuthn", Op: "CredentialDeleted Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) CredentialUpdated(ctx context.Context) (CredentialUpdatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "WebAuthn.credentialUpdated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &credentialUpdatedClient{Stream: s}, nil
+}
+
+type credentialUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *credentialUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *credentialUpdatedClient) Recv() (*CredentialUpdatedReply, error) {
+	event := new(CredentialUpdatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "WebAuthn", Op: "CredentialUpdated Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) CredentialAsserted(ctx context.Context) (CredentialAssertedClient, error) {
 	s, err := rpcc.NewStream(ctx, "WebAuthn.credentialAsserted", d.conn)
 	if err != nil {

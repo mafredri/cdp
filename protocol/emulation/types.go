@@ -2,6 +2,20 @@
 
 package emulation
 
+// SafeAreaInsets
+//
+// Note: This type is experimental.
+type SafeAreaInsets struct {
+	Top       *int `json:"top,omitempty"`       // Overrides safe-area-inset-top.
+	TopMax    *int `json:"topMax,omitempty"`    // Overrides safe-area-max-inset-top.
+	Left      *int `json:"left,omitempty"`      // Overrides safe-area-inset-left.
+	LeftMax   *int `json:"leftMax,omitempty"`   // Overrides safe-area-max-inset-left.
+	Bottom    *int `json:"bottom,omitempty"`    // Overrides safe-area-inset-bottom.
+	BottomMax *int `json:"bottomMax,omitempty"` // Overrides safe-area-max-inset-bottom.
+	Right     *int `json:"right,omitempty"`     // Overrides safe-area-inset-right.
+	RightMax  *int `json:"rightMax,omitempty"`  // Overrides safe-area-max-inset-right.
+}
+
 // ScreenOrientation Screen orientation.
 type ScreenOrientation struct {
 	// Type Orientation type.
@@ -85,14 +99,15 @@ type UserAgentMetadata struct {
 	// FullVersion is deprecated.
 	//
 	// Deprecated: This property should not be used.
-	FullVersion     *string `json:"fullVersion,omitempty"`
-	Platform        string  `json:"platform"`          // No description.
-	PlatformVersion string  `json:"platformVersion"`   // No description.
-	Architecture    string  `json:"architecture"`      // No description.
-	Model           string  `json:"model"`             // No description.
-	Mobile          bool    `json:"mobile"`            // No description.
-	Bitness         *string `json:"bitness,omitempty"` // No description.
-	Wow64           *bool   `json:"wow64,omitempty"`   // No description.
+	FullVersion     *string  `json:"fullVersion,omitempty"`
+	Platform        string   `json:"platform"`              // No description.
+	PlatformVersion string   `json:"platformVersion"`       // No description.
+	Architecture    string   `json:"architecture"`          // No description.
+	Model           string   `json:"model"`                 // No description.
+	Mobile          bool     `json:"mobile"`                // No description.
+	Bitness         *string  `json:"bitness,omitempty"`     // No description.
+	Wow64           *bool    `json:"wow64,omitempty"`       // No description.
+	FormFactors     []string `json:"formFactors,omitempty"` // Used to specify User Agent form-factor values. See https://wicg.github.io/ua-client-hints/#sec-ch-ua-form-factors
 }
 
 // SensorType Used to specify sensor types to emulate. See
@@ -111,13 +126,12 @@ const (
 	SensorTypeGyroscope           SensorType = "gyroscope"
 	SensorTypeLinearAcceleration  SensorType = "linear-acceleration"
 	SensorTypeMagnetometer        SensorType = "magnetometer"
-	SensorTypeProximity           SensorType = "proximity"
 	SensorTypeRelativeOrientation SensorType = "relative-orientation"
 )
 
 func (e SensorType) Valid() bool {
 	switch e {
-	case "absolute-orientation", "accelerometer", "ambient-light", "gravity", "gyroscope", "linear-acceleration", "magnetometer", "proximity", "relative-orientation":
+	case "absolute-orientation", "accelerometer", "ambient-light", "gravity", "gyroscope", "linear-acceleration", "magnetometer", "relative-orientation":
 		return true
 	default:
 		return false
@@ -228,6 +242,45 @@ func (e PressureState) String() string {
 // Note: This type is experimental.
 type PressureMetadata struct {
 	Available *bool `json:"available,omitempty"` // No description.
+}
+
+// WorkAreaInsets
+//
+// Note: This type is experimental.
+type WorkAreaInsets struct {
+	Top    *int `json:"top,omitempty"`    // Work area top inset in pixels. Default is 0;
+	Left   *int `json:"left,omitempty"`   // Work area left inset in pixels. Default is 0;
+	Bottom *int `json:"bottom,omitempty"` // Work area bottom inset in pixels. Default is 0;
+	Right  *int `json:"right,omitempty"`  // Work area right inset in pixels. Default is 0;
+}
+
+// ScreenID
+//
+// Note: This type is experimental.
+type ScreenID string
+
+// ScreenInfo Screen information similar to the one returned by
+// window.getScreenDetails() method, see
+// https://w3c.github.io/window-management/#screendetailed.
+//
+// Note: This type is experimental.
+type ScreenInfo struct {
+	Left             int               `json:"left"`             // Offset of the left edge of the screen.
+	Top              int               `json:"top"`              // Offset of the top edge of the screen.
+	Width            int               `json:"width"`            // Width of the screen.
+	Height           int               `json:"height"`           // Height of the screen.
+	AvailLeft        int               `json:"availLeft"`        // Offset of the left edge of the available screen area.
+	AvailTop         int               `json:"availTop"`         // Offset of the top edge of the available screen area.
+	AvailWidth       int               `json:"availWidth"`       // Width of the available screen area.
+	AvailHeight      int               `json:"availHeight"`      // Height of the available screen area.
+	DevicePixelRatio float64           `json:"devicePixelRatio"` // Specifies the screen's device pixel ratio.
+	Orientation      ScreenOrientation `json:"orientation"`      // Specifies the screen's orientation.
+	ColorDepth       int               `json:"colorDepth"`       // Specifies the screen's color depth in bits.
+	IsExtended       bool              `json:"isExtended"`       // Indicates whether the device has multiple screens.
+	IsInternal       bool              `json:"isInternal"`       // Indicates whether the screen is internal to the device or external, attached to the device.
+	IsPrimary        bool              `json:"isPrimary"`        // Indicates whether the screen is set as the the operating system primary screen.
+	Label            string            `json:"label"`            // Specifies the descriptive label for the screen.
+	ID               ScreenID          `json:"id"`               // Specifies the unique identifier of the screen.
 }
 
 // DisabledImageType Enum of image types that can be disabled.

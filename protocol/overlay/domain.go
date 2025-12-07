@@ -137,7 +137,10 @@ func (d *domainClient) HighlightQuad(ctx context.Context, args *HighlightQuadArg
 }
 
 // HighlightRect invokes the Overlay method. Highlights given rectangle.
-// Coordinates are absolute with respect to the main frame viewport.
+// Coordinates are absolute with respect to the main frame viewport. Issue: the
+// method does not handle device pixel ratio (DPR) correctly. The coordinates
+// currently have to be adjusted by the client if DPR is not 1 (see
+// crbug.com/437807128).
 func (d *domainClient) HighlightRect(ctx context.Context, args *HighlightRectArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Overlay.highlightRect", args, nil, d.conn)
@@ -344,8 +347,8 @@ func (d *domainClient) SetShowHitTestBorders(ctx context.Context, args *SetShowH
 	return
 }
 
-// SetShowWebVitals invokes the Overlay method. Request that backend shows an
-// overlay with web vital metrics.
+// SetShowWebVitals invokes the Overlay method. Deprecated, no longer has any
+// effect.
 func (d *domainClient) SetShowWebVitals(ctx context.Context, args *SetShowWebVitalsArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Overlay.setShowWebVitals", args, nil, d.conn)

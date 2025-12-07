@@ -36,12 +36,13 @@ const (
 	ResourceTypePing               ResourceType = "Ping"
 	ResourceTypeCSPViolationReport ResourceType = "CSPViolationReport"
 	ResourceTypePreflight          ResourceType = "Preflight"
+	ResourceTypeFedCM              ResourceType = "FedCM"
 	ResourceTypeOther              ResourceType = "Other"
 )
 
 func (e ResourceType) Valid() bool {
 	switch e {
-	case "Document", "Stylesheet", "Image", "Media", "Font", "Script", "TextTrack", "XHR", "Fetch", "Prefetch", "EventSource", "WebSocket", "Manifest", "SignedExchange", "Ping", "CSPViolationReport", "Preflight", "Other":
+	case "Document", "Stylesheet", "Image", "Media", "Font", "Script", "TextTrack", "XHR", "Fetch", "Prefetch", "EventSource", "WebSocket", "Manifest", "SignedExchange", "Ping", "CSPViolationReport", "Preflight", "FedCM", "Other":
 		return true
 	default:
 		return false
@@ -55,7 +56,8 @@ func (e ResourceType) String() string {
 // LoaderID Unique loader identifier.
 type LoaderID string
 
-// RequestID Unique request identifier.
+// RequestID Unique network request identifier. Note that this does not
+// identify individual HTTP requests that are part of a network request.
 type RequestID string
 
 // InterceptionID Unique intercepted request identifier.
@@ -397,6 +399,10 @@ type Request struct {
 	//
 	// Note: This property is experimental.
 	IsSameSite *bool `json:"isSameSite,omitempty"`
+	// IsAdRelated True when the resource request is ad-related.
+	//
+	// Note: This property is experimental.
+	IsAdRelated *bool `json:"isAdRelated,omitempty"`
 }
 
 // SignedCertificateTimestamp Details of a signed certificate timestamp (SCT).
@@ -466,6 +472,7 @@ const (
 	BlockedReasonMixedContent                                            BlockedReason = "mixed-content"
 	BlockedReasonOrigin                                                  BlockedReason = "origin"
 	BlockedReasonInspector                                               BlockedReason = "inspector"
+	BlockedReasonIntegrity                                               BlockedReason = "integrity"
 	BlockedReasonSubresourceFilter                                       BlockedReason = "subresource-filter"
 	BlockedReasonContentType                                             BlockedReason = "content-type"
 	BlockedReasonCOEPFrameResourceNeedsCOEPHeader                        BlockedReason = "coep-frame-resource-needs-coep-header"
@@ -475,11 +482,12 @@ const (
 	BlockedReasonCORPNotSameOriginAfterDefaultedToSameOriginByDIP        BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-dip"
 	BlockedReasonCORPNotSameOriginAfterDefaultedToSameOriginByCOEPAndDIP BlockedReason = "corp-not-same-origin-after-defaulted-to-same-origin-by-coep-and-dip"
 	BlockedReasonCORPNotSameSite                                         BlockedReason = "corp-not-same-site"
+	BlockedReasonSriMessageSignatureMismatch                             BlockedReason = "sri-message-signature-mismatch"
 )
 
 func (e BlockedReason) Valid() bool {
 	switch e {
-	case "other", "csp", "mixed-content", "origin", "inspector", "subresource-filter", "content-type", "coep-frame-resource-needs-coep-header", "coop-sandboxed-iframe-cannot-navigate-to-coop-page", "corp-not-same-origin", "corp-not-same-origin-after-defaulted-to-same-origin-by-coep", "corp-not-same-origin-after-defaulted-to-same-origin-by-dip", "corp-not-same-origin-after-defaulted-to-same-origin-by-coep-and-dip", "corp-not-same-site":
+	case "other", "csp", "mixed-content", "origin", "inspector", "integrity", "subresource-filter", "content-type", "coep-frame-resource-needs-coep-header", "coop-sandboxed-iframe-cannot-navigate-to-coop-page", "corp-not-same-origin", "corp-not-same-origin-after-defaulted-to-same-origin-by-coep", "corp-not-same-origin-after-defaulted-to-same-origin-by-dip", "corp-not-same-origin-after-defaulted-to-same-origin-by-coep-and-dip", "corp-not-same-site", "sri-message-signature-mismatch":
 		return true
 	default:
 		return false
@@ -530,11 +538,12 @@ const (
 	CORSErrorPreflightMissingPrivateNetworkAccessName  CORSError = "PreflightMissingPrivateNetworkAccessName"
 	CORSErrorPrivateNetworkAccessPermissionUnavailable CORSError = "PrivateNetworkAccessPermissionUnavailable"
 	CORSErrorPrivateNetworkAccessPermissionDenied      CORSError = "PrivateNetworkAccessPermissionDenied"
+	CORSErrorLocalNetworkAccessPermissionDenied        CORSError = "LocalNetworkAccessPermissionDenied"
 )
 
 func (e CORSError) Valid() bool {
 	switch e {
-	case "DisallowedByMode", "InvalidResponse", "WildcardOriginNotAllowed", "MissingAllowOriginHeader", "MultipleAllowOriginValues", "InvalidAllowOriginValue", "AllowOriginMismatch", "InvalidAllowCredentials", "CorsDisabledScheme", "PreflightInvalidStatus", "PreflightDisallowedRedirect", "PreflightWildcardOriginNotAllowed", "PreflightMissingAllowOriginHeader", "PreflightMultipleAllowOriginValues", "PreflightInvalidAllowOriginValue", "PreflightAllowOriginMismatch", "PreflightInvalidAllowCredentials", "PreflightMissingAllowExternal", "PreflightInvalidAllowExternal", "PreflightMissingAllowPrivateNetwork", "PreflightInvalidAllowPrivateNetwork", "InvalidAllowMethodsPreflightResponse", "InvalidAllowHeadersPreflightResponse", "MethodDisallowedByPreflightResponse", "HeaderDisallowedByPreflightResponse", "RedirectContainsCredentials", "InsecurePrivateNetwork", "InvalidPrivateNetworkAccess", "UnexpectedPrivateNetworkAccess", "NoCorsRedirectModeNotFollow", "PreflightMissingPrivateNetworkAccessId", "PreflightMissingPrivateNetworkAccessName", "PrivateNetworkAccessPermissionUnavailable", "PrivateNetworkAccessPermissionDenied":
+	case "DisallowedByMode", "InvalidResponse", "WildcardOriginNotAllowed", "MissingAllowOriginHeader", "MultipleAllowOriginValues", "InvalidAllowOriginValue", "AllowOriginMismatch", "InvalidAllowCredentials", "CorsDisabledScheme", "PreflightInvalidStatus", "PreflightDisallowedRedirect", "PreflightWildcardOriginNotAllowed", "PreflightMissingAllowOriginHeader", "PreflightMultipleAllowOriginValues", "PreflightInvalidAllowOriginValue", "PreflightAllowOriginMismatch", "PreflightInvalidAllowCredentials", "PreflightMissingAllowExternal", "PreflightInvalidAllowExternal", "PreflightMissingAllowPrivateNetwork", "PreflightInvalidAllowPrivateNetwork", "InvalidAllowMethodsPreflightResponse", "InvalidAllowHeadersPreflightResponse", "MethodDisallowedByPreflightResponse", "HeaderDisallowedByPreflightResponse", "RedirectContainsCredentials", "InsecurePrivateNetwork", "InvalidPrivateNetworkAccess", "UnexpectedPrivateNetworkAccess", "NoCorsRedirectModeNotFollow", "PreflightMissingPrivateNetworkAccessId", "PreflightMissingPrivateNetworkAccessName", "PrivateNetworkAccessPermissionUnavailable", "PrivateNetworkAccessPermissionDenied", "LocalNetworkAccessPermissionDenied":
 		return true
 	default:
 		return false
@@ -660,11 +669,12 @@ const (
 	ServiceWorkerRouterSourceCache                      ServiceWorkerRouterSource = "cache"
 	ServiceWorkerRouterSourceFetchEvent                 ServiceWorkerRouterSource = "fetch-event"
 	ServiceWorkerRouterSourceRaceNetworkAndFetchHandler ServiceWorkerRouterSource = "race-network-and-fetch-handler"
+	ServiceWorkerRouterSourceRaceNetworkAndCache        ServiceWorkerRouterSource = "race-network-and-cache"
 )
 
 func (e ServiceWorkerRouterSource) Valid() bool {
 	switch e {
-	case "network", "cache", "fetch-event", "race-network-and-fetch-handler":
+	case "network", "cache", "fetch-event", "race-network-and-fetch-handler", "race-network-and-cache":
 		return true
 	default:
 		return false
@@ -769,9 +779,9 @@ type CachedResource struct {
 type Initiator struct {
 	// Type Type of this initiator.
 	//
-	// Values: "parser", "script", "preload", "SignedExchange", "preflight", "other".
+	// Values: "parser", "script", "preload", "SignedExchange", "preflight", "FedCM", "other".
 	Type         string              `json:"type"`
-	Stack        *runtime.StackTrace `json:"stack,omitempty"`        // Initiator JavaScript stack trace, set for Script only.
+	Stack        *runtime.StackTrace `json:"stack,omitempty"`        // Initiator JavaScript stack trace, set for Script only. Requires the Debugger domain to be enabled.
 	URL          *string             `json:"url,omitempty"`          // Initiator URL, set for Parser type or for Script type (when script is importing module) or for SignedExchange type.
 	LineNumber   *float64            `json:"lineNumber,omitempty"`   // Initiator line number, set for Parser type or for Script type (when script is importing module) (0-based).
 	ColumnNumber *float64            `json:"columnNumber,omitempty"` // Initiator column number, set for Parser type or for Script type (when script is importing module) (0-based).
@@ -794,7 +804,7 @@ type Cookie struct {
 	Value    string         `json:"value"`              // Cookie value.
 	Domain   string         `json:"domain"`             // Cookie domain.
 	Path     string         `json:"path"`               // Cookie path.
-	Expires  float64        `json:"expires"`            // Cookie expiration date as the number of seconds since the UNIX epoch.
+	Expires  float64        `json:"expires"`            // Cookie expiration date as the number of seconds since the UNIX epoch. The value is set to -1 if the expiry date is not set. The value can be null for values that cannot be represented in JSON (±Inf).
 	Size     int            `json:"size"`               // Cookie size.
 	HTTPOnly bool           `json:"httpOnly"`           // True if cookie is http-only.
 	Secure   bool           `json:"secure"`             // True if cookie is secure.
@@ -902,11 +912,14 @@ const (
 	CookieBlockedReasonSchemefulSameSiteUnspecifiedTreatedAsLax CookieBlockedReason = "SchemefulSameSiteUnspecifiedTreatedAsLax"
 	CookieBlockedReasonSamePartyFromCrossPartyContext           CookieBlockedReason = "SamePartyFromCrossPartyContext"
 	CookieBlockedReasonNameValuePairExceedsMaxSize              CookieBlockedReason = "NameValuePairExceedsMaxSize"
+	CookieBlockedReasonPortMismatch                             CookieBlockedReason = "PortMismatch"
+	CookieBlockedReasonSchemeMismatch                           CookieBlockedReason = "SchemeMismatch"
+	CookieBlockedReasonAnonymousContext                         CookieBlockedReason = "AnonymousContext"
 )
 
 func (e CookieBlockedReason) Valid() bool {
 	switch e {
-	case "SecureOnly", "NotOnPath", "DomainMismatch", "SameSiteStrict", "SameSiteLax", "SameSiteUnspecifiedTreatedAsLax", "SameSiteNoneInsecure", "UserPreferences", "ThirdPartyPhaseout", "ThirdPartyBlockedInFirstPartySet", "UnknownError", "SchemefulSameSiteStrict", "SchemefulSameSiteLax", "SchemefulSameSiteUnspecifiedTreatedAsLax", "SamePartyFromCrossPartyContext", "NameValuePairExceedsMaxSize":
+	case "SecureOnly", "NotOnPath", "DomainMismatch", "SameSiteStrict", "SameSiteLax", "SameSiteUnspecifiedTreatedAsLax", "SameSiteNoneInsecure", "UserPreferences", "ThirdPartyPhaseout", "ThirdPartyBlockedInFirstPartySet", "UnknownError", "SchemefulSameSiteStrict", "SchemefulSameSiteLax", "SchemefulSameSiteUnspecifiedTreatedAsLax", "SamePartyFromCrossPartyContext", "NameValuePairExceedsMaxSize", "PortMismatch", "SchemeMismatch", "AnonymousContext":
 		return true
 	default:
 		return false
@@ -935,13 +948,13 @@ const (
 	CookieExemptionReasonEnterprisePolicy             CookieExemptionReason = "EnterprisePolicy"
 	CookieExemptionReasonStorageAccess                CookieExemptionReason = "StorageAccess"
 	CookieExemptionReasonTopLevelStorageAccess        CookieExemptionReason = "TopLevelStorageAccess"
-	CookieExemptionReasonCORSOptIn                    CookieExemptionReason = "CorsOptIn"
 	CookieExemptionReasonScheme                       CookieExemptionReason = "Scheme"
+	CookieExemptionReasonSameSiteNoneCookiesInSandbox CookieExemptionReason = "SameSiteNoneCookiesInSandbox"
 )
 
 func (e CookieExemptionReason) Valid() bool {
 	switch e {
-	case "None", "UserSetting", "TPCDMetadata", "TPCDDeprecationTrial", "TopLevelTPCDDeprecationTrial", "TPCDHeuristics", "EnterprisePolicy", "StorageAccess", "TopLevelStorageAccess", "CorsOptIn", "Scheme":
+	case "None", "UserSetting", "TPCDMetadata", "TPCDDeprecationTrial", "TopLevelTPCDDeprecationTrial", "TPCDHeuristics", "EnterprisePolicy", "StorageAccess", "TopLevelStorageAccess", "Scheme", "SameSiteNoneCookiesInSandbox":
 		return true
 	default:
 		return false
@@ -1156,6 +1169,7 @@ type SignedExchangeError struct {
 // Note: This type is experimental.
 type SignedExchangeInfo struct {
 	OuterResponse   Response              `json:"outerResponse"`             // The outer response of signed HTTP exchange which was received from network.
+	HasExtraInfo    bool                  `json:"hasExtraInfo"`              // Whether network response for the signed exchange was accompanied by extra headers.
 	Header          *SignedExchangeHeader `json:"header,omitempty"`          // Information about the signed exchange header.
 	SecurityDetails *SecurityDetails      `json:"securityDetails,omitempty"` // Security details for the signed exchange header.
 	Errors          []SignedExchangeError `json:"errors,omitempty"`          // Errors occurred while handling the signed exchange.
@@ -1188,6 +1202,89 @@ func (e ContentEncoding) String() string {
 	return string(e)
 }
 
+// Conditions
+//
+// Note: This type is experimental.
+type Conditions struct {
+	URLPattern         string         `json:"urlPattern"`                  // Only matching requests will be affected by these conditions. Patterns use the URLPattern constructor string syntax (https://urlpattern.spec.whatwg.org/) and must be absolute. If the pattern is empty, all requests are matched (including p2p connections).
+	Latency            float64        `json:"latency"`                     // Minimum latency from request sent to response headers received (ms).
+	DownloadThroughput float64        `json:"downloadThroughput"`          // Maximal aggregated download throughput (bytes/sec). -1 disables download throttling.
+	UploadThroughput   float64        `json:"uploadThroughput"`            // Maximal aggregated upload throughput (bytes/sec). -1 disables upload throttling.
+	ConnectionType     ConnectionType `json:"connectionType,omitempty"`    // Connection type if known.
+	PacketLoss         *float64       `json:"packetLoss,omitempty"`        // WebRTC packet loss (percent, 0-100). 0 disables packet loss emulation, 100 drops all the packets.
+	PacketQueueLength  *int           `json:"packetQueueLength,omitempty"` // WebRTC packet queue length (packet). 0 removes any queue length limitations.
+	PacketReordering   *bool          `json:"packetReordering,omitempty"`  // WebRTC packetReordering feature.
+}
+
+// BlockPattern
+//
+// Note: This type is experimental.
+type BlockPattern struct {
+	URLPattern string `json:"urlPattern"` // URL pattern to match. Patterns use the URLPattern constructor string syntax (https://urlpattern.spec.whatwg.org/) and must be absolute. Example: `*://*:*/*.css`.
+	Block      bool   `json:"block"`      // Whether or not to block the pattern. If false, a matching request will not be blocked even if it matches a later `BlockPattern`.
+}
+
+// DirectSocketDNSQueryType
+//
+// Note: This type is experimental.
+type DirectSocketDNSQueryType string
+
+// DirectSocketDNSQueryType as enums.
+const (
+	DirectSocketDNSQueryTypeNotSet DirectSocketDNSQueryType = ""
+	DirectSocketDNSQueryTypeIpv4   DirectSocketDNSQueryType = "ipv4"
+	DirectSocketDNSQueryTypeIpv6   DirectSocketDNSQueryType = "ipv6"
+)
+
+func (e DirectSocketDNSQueryType) Valid() bool {
+	switch e {
+	case "ipv4", "ipv6":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e DirectSocketDNSQueryType) String() string {
+	return string(e)
+}
+
+// DirectTCPSocketOptions
+//
+// Note: This type is experimental.
+type DirectTCPSocketOptions struct {
+	NoDelay           bool                     `json:"noDelay"`                     // TCP_NODELAY option
+	KeepAliveDelay    *float64                 `json:"keepAliveDelay,omitempty"`    // Expected to be unsigned integer.
+	SendBufferSize    *float64                 `json:"sendBufferSize,omitempty"`    // Expected to be unsigned integer.
+	ReceiveBufferSize *float64                 `json:"receiveBufferSize,omitempty"` // Expected to be unsigned integer.
+	DNSQueryType      DirectSocketDNSQueryType `json:"dnsQueryType,omitempty"`      // No description.
+}
+
+// DirectUDPSocketOptions
+//
+// Note: This type is experimental.
+type DirectUDPSocketOptions struct {
+	RemoteAddr                   *string                  `json:"remoteAddr,omitempty"`                   // No description.
+	RemotePort                   *int                     `json:"remotePort,omitempty"`                   // Unsigned int 16.
+	LocalAddr                    *string                  `json:"localAddr,omitempty"`                    // No description.
+	LocalPort                    *int                     `json:"localPort,omitempty"`                    // Unsigned int 16.
+	DNSQueryType                 DirectSocketDNSQueryType `json:"dnsQueryType,omitempty"`                 // No description.
+	SendBufferSize               *float64                 `json:"sendBufferSize,omitempty"`               // Expected to be unsigned integer.
+	ReceiveBufferSize            *float64                 `json:"receiveBufferSize,omitempty"`            // Expected to be unsigned integer.
+	MulticastLoopback            *bool                    `json:"multicastLoopback,omitempty"`            // No description.
+	MulticastTimeToLive          *int                     `json:"multicastTimeToLive,omitempty"`          // Unsigned int 8.
+	MulticastAllowAddressSharing *bool                    `json:"multicastAllowAddressSharing,omitempty"` // No description.
+}
+
+// DirectUDPMessage
+//
+// Note: This type is experimental.
+type DirectUDPMessage struct {
+	Data       string  `json:"data"`                 // No description.
+	RemoteAddr *string `json:"remoteAddr,omitempty"` // Null for connected mode.
+	RemotePort *int    `json:"remotePort,omitempty"` // Null for connected mode. Expected to be unsigned integer.
+}
+
 // PrivateNetworkRequestPolicy
 //
 // Note: This type is experimental.
@@ -1199,13 +1296,13 @@ const (
 	PrivateNetworkRequestPolicyAllow                          PrivateNetworkRequestPolicy = "Allow"
 	PrivateNetworkRequestPolicyBlockFromInsecureToMorePrivate PrivateNetworkRequestPolicy = "BlockFromInsecureToMorePrivate"
 	PrivateNetworkRequestPolicyWarnFromInsecureToMorePrivate  PrivateNetworkRequestPolicy = "WarnFromInsecureToMorePrivate"
-	PrivateNetworkRequestPolicyPreflightBlock                 PrivateNetworkRequestPolicy = "PreflightBlock"
-	PrivateNetworkRequestPolicyPreflightWarn                  PrivateNetworkRequestPolicy = "PreflightWarn"
+	PrivateNetworkRequestPolicyPermissionBlock                PrivateNetworkRequestPolicy = "PermissionBlock"
+	PrivateNetworkRequestPolicyPermissionWarn                 PrivateNetworkRequestPolicy = "PermissionWarn"
 )
 
 func (e PrivateNetworkRequestPolicy) Valid() bool {
 	switch e {
-	case "Allow", "BlockFromInsecureToMorePrivate", "WarnFromInsecureToMorePrivate", "PreflightBlock", "PreflightWarn":
+	case "Allow", "BlockFromInsecureToMorePrivate", "WarnFromInsecureToMorePrivate", "PermissionBlock", "PermissionWarn":
 		return true
 	default:
 		return false
@@ -1223,16 +1320,16 @@ type IPAddressSpace string
 
 // IPAddressSpace as enums.
 const (
-	IPAddressSpaceNotSet  IPAddressSpace = ""
-	IPAddressSpaceLocal   IPAddressSpace = "Local"
-	IPAddressSpacePrivate IPAddressSpace = "Private"
-	IPAddressSpacePublic  IPAddressSpace = "Public"
-	IPAddressSpaceUnknown IPAddressSpace = "Unknown"
+	IPAddressSpaceNotSet   IPAddressSpace = ""
+	IPAddressSpaceLoopback IPAddressSpace = "Loopback"
+	IPAddressSpaceLocal    IPAddressSpace = "Local"
+	IPAddressSpacePublic   IPAddressSpace = "Public"
+	IPAddressSpaceUnknown  IPAddressSpace = "Unknown"
 )
 
 func (e IPAddressSpace) Valid() bool {
 	switch e {
-	case "Local", "Private", "Public", "Unknown":
+	case "Loopback", "Local", "Public", "Unknown":
 		return true
 	default:
 		return false

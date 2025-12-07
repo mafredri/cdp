@@ -65,6 +65,7 @@ type PrefetchStatusUpdatedClient interface {
 // PrefetchStatusUpdatedReply is the reply for PrefetchStatusUpdated events.
 type PrefetchStatusUpdatedReply struct {
 	Key               AttemptKey        `json:"key"`               // No description.
+	PipelineID        PipelineID        `json:"pipelineId"`        // No description.
 	InitiatingFrameID page.FrameID      `json:"initiatingFrameId"` // The frame id of the frame initiating prefetch.
 	PrefetchURL       string            `json:"prefetchUrl"`       // No description.
 	Status            Status            `json:"status"`            // No description.
@@ -84,6 +85,7 @@ type PrerenderStatusUpdatedClient interface {
 // PrerenderStatusUpdatedReply is the reply for PrerenderStatusUpdated events.
 type PrerenderStatusUpdatedReply struct {
 	Key                     AttemptKey                   `json:"key"`                               // No description.
+	PipelineID              PipelineID                   `json:"pipelineId"`                        // No description.
 	Status                  Status                       `json:"status"`                            // No description.
 	PrerenderStatus         PrerenderFinalStatus         `json:"prerenderStatus,omitempty"`         // No description.
 	DisallowedMojoInterface *string                      `json:"disallowedMojoInterface,omitempty"` // This is used to give users more information about the name of Mojo interface that is incompatible with prerender and has caused the cancellation of the attempt.

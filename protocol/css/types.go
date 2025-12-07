@@ -7,9 +7,6 @@ import (
 	"github.com/mafredri/cdp/protocol/page"
 )
 
-// StyleSheetID
-type StyleSheetID string
-
 // StyleSheetOrigin Stylesheet type: "injected" for stylesheets injected via
 // extension, "user-agent" for user-agent stylesheets, "inspector" for
 // stylesheets created by the inspector (i.e. those holding the "via inspector"
@@ -45,10 +42,24 @@ type PseudoElementMatches struct {
 	Matches          []RuleMatch    `json:"matches"`                    // Matches of CSS rules applicable to the pseudo style.
 }
 
+// AnimationStyle CSS style coming from animations with the name of the
+// animation.
+type AnimationStyle struct {
+	Name  *string `json:"name,omitempty"` // The name of the animation.
+	Style Style   `json:"style"`          // The style coming from the animation.
+}
+
 // InheritedStyleEntry Inherited CSS rule collection from ancestor node.
 type InheritedStyleEntry struct {
 	InlineStyle     *Style      `json:"inlineStyle,omitempty"` // The ancestor node's inline style, if any, in the style inheritance chain.
 	MatchedCSSRules []RuleMatch `json:"matchedCSSRules"`       // Matches of CSS rules matching the ancestor node in the style inheritance chain.
+}
+
+// InheritedAnimatedStyleEntry Inherited CSS style collection for animated
+// styles from ancestor node.
+type InheritedAnimatedStyleEntry struct {
+	AnimationStyles  []AnimationStyle `json:"animationStyles,omitempty"`  // Styles coming from the animations of the ancestor, if any, in the style inheritance chain.
+	TransitionsStyle *Style           `json:"transitionsStyle,omitempty"` // The style coming from the transitions of the ancestor, if any, in the style inheritance chain.
 }
 
 // InheritedPseudoElementMatches Inherited pseudo element matches from pseudos
@@ -92,7 +103,7 @@ type SelectorList struct {
 
 // StyleSheetHeader CSS stylesheet metainformation.
 type StyleSheetHeader struct {
-	StyleSheetID  StyleSheetID       `json:"styleSheetId"`           // The stylesheet identifier.
+	StyleSheetID  dom.StyleSheetID   `json:"styleSheetId"`           // The stylesheet identifier.
 	FrameID       page.FrameID       `json:"frameId"`                // Owner frame identifier.
 	SourceURL     string             `json:"sourceURL"`              // Stylesheet resource URL. Empty if this is a constructed stylesheet created using new CSSStyleSheet() (but non-empty if this is a constructed stylesheet imported as a CSS module script).
 	SourceMapURL  *string            `json:"sourceMapURL,omitempty"` // URL of source map associated with the stylesheet (if any).
@@ -118,16 +129,21 @@ type StyleSheetHeader struct {
 
 // Rule CSS rule representation.
 type Rule struct {
-	StyleSheetID *StyleSheetID `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
-	SelectorList SelectorList  `json:"selectorList"`           // Rule selector data.
+	StyleSheetID *dom.StyleSheetID `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
+	SelectorList SelectorList      `json:"selectorList"`           // Rule selector data.
 	// NestingSelectors Array of selectors from ancestor style rules,
 	// sorted by distance from the current rule.
 	//
 	// Note: This property is experimental.
 	NestingSelectors []string         `json:"nestingSelectors,omitempty"`
-	Origin           StyleSheetOrigin `json:"origin"`          // Parent stylesheet's origin.
-	Style            Style            `json:"style"`           // Associated style declaration.
-	Media            []Media          `json:"media,omitempty"` // Media list array (for rules involving media queries). The array enumerates media queries starting with the innermost one, going outwards.
+	Origin           StyleSheetOrigin `json:"origin"` // Parent stylesheet's origin.
+	Style            Style            `json:"style"`  // Associated style declaration.
+	// OriginTreeScopeNodeID The BackendNodeId of the DOM node that
+	// constitutes the origin tree scope of this rule.
+	//
+	// Note: This property is experimental.
+	OriginTreeScopeNodeID *dom.BackendNodeID `json:"originTreeScopeNodeId,omitempty"`
+	Media                 []Media            `json:"media,omitempty"` // Media list array (for rules involving media queries). The array enumerates media queries starting with the innermost one, going outwards.
 	// ContainerQueries Container query list array (for rules involving
 	// container queries). The array enumerates container queries starting
 	// with the innermost one, going outwards.
@@ -155,6 +171,12 @@ type Rule struct {
 	//
 	// Note: This property is experimental.
 	RuleTypes []RuleType `json:"ruleTypes,omitempty"`
+	// StartingStyles @starting-style CSS at-rule array. The array
+	// enumerates @starting-style at-rules starting with the innermost one,
+	// going outwards.
+	//
+	// Note: This property is experimental.
+	StartingStyles []StartingStyle `json:"startingStyles,omitempty"`
 }
 
 // RuleType Enum indicating the type of a CSS rule, used to represent the
@@ -166,18 +188,19 @@ type RuleType string
 
 // RuleType as enums.
 const (
-	RuleTypeNotSet        RuleType = ""
-	RuleTypeMediaRule     RuleType = "MediaRule"
-	RuleTypeSupportsRule  RuleType = "SupportsRule"
-	RuleTypeContainerRule RuleType = "ContainerRule"
-	RuleTypeLayerRule     RuleType = "LayerRule"
-	RuleTypeScopeRule     RuleType = "ScopeRule"
-	RuleTypeStyleRule     RuleType = "StyleRule"
+	RuleTypeNotSet            RuleType = ""
+	RuleTypeMediaRule         RuleType = "MediaRule"
+	RuleTypeSupportsRule      RuleType = "SupportsRule"
+	RuleTypeContainerRule     RuleType = "ContainerRule"
+	RuleTypeLayerRule         RuleType = "LayerRule"
+	RuleTypeScopeRule         RuleType = "ScopeRule"
+	RuleTypeStyleRule         RuleType = "StyleRule"
+	RuleTypeStartingStyleRule RuleType = "StartingStyleRule"
 )
 
 func (e RuleType) Valid() bool {
 	switch e {
-	case "MediaRule", "SupportsRule", "ContainerRule", "LayerRule", "ScopeRule", "StyleRule":
+	case "MediaRule", "SupportsRule", "ContainerRule", "LayerRule", "ScopeRule", "StyleRule", "StartingStyleRule":
 		return true
 	default:
 		return false
@@ -190,10 +213,10 @@ func (e RuleType) String() string {
 
 // RuleUsage CSS coverage information.
 type RuleUsage struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
-	StartOffset  float64      `json:"startOffset"`  // Offset of the start of the rule (including selector) from the beginning of the stylesheet.
-	EndOffset    float64      `json:"endOffset"`    // Offset of the end of the rule body from the beginning of the stylesheet.
-	Used         bool         `json:"used"`         // Indicates whether the rule was actually used by some element in the page.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
+	StartOffset  float64          `json:"startOffset"`  // Offset of the start of the rule (including selector) from the beginning of the stylesheet.
+	EndOffset    float64          `json:"endOffset"`    // Offset of the end of the rule body from the beginning of the stylesheet.
+	Used         bool             `json:"used"`         // Indicates whether the rule was actually used by some element in the page.
 }
 
 // SourceRange Text range within a resource. All numbers are zero-based.
@@ -217,13 +240,20 @@ type ComputedStyleProperty struct {
 	Value string `json:"value"` // Computed style property value.
 }
 
+// ComputedStyleExtraFields
+//
+// Note: This type is experimental.
+type ComputedStyleExtraFields struct {
+	IsAppearanceBase bool `json:"isAppearanceBase"` // Returns whether or not this node is being rendered with base appearance, which happens when it has its appearance property set to base/base-select or it is in the subtree of an element being rendered with base appearance.
+}
+
 // Style CSS style representation.
 type Style struct {
-	StyleSheetID     *StyleSheetID    `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
-	CSSProperties    []Property       `json:"cssProperties"`          // CSS properties in the style.
-	ShorthandEntries []ShorthandEntry `json:"shorthandEntries"`       // Computed values for all shorthands found in the style.
-	CSSText          *string          `json:"cssText,omitempty"`      // Style declaration text (if available).
-	Range            *SourceRange     `json:"range,omitempty"`        // Style declaration range in the enclosing stylesheet (if available).
+	StyleSheetID     *dom.StyleSheetID `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
+	CSSProperties    []Property        `json:"cssProperties"`          // CSS properties in the style.
+	ShorthandEntries []ShorthandEntry  `json:"shorthandEntries"`       // Computed values for all shorthands found in the style.
+	CSSText          *string           `json:"cssText,omitempty"`      // Style declaration text (if available).
+	Range            *SourceRange      `json:"range,omitempty"`        // Style declaration range in the enclosing stylesheet (if available).
 }
 
 // Property CSS property declaration data.
@@ -254,11 +284,11 @@ type Media struct {
 	// attribute in an inline stylesheet's STYLE tag.
 	//
 	// Values: "mediaRule", "importRule", "linkedSheet", "inlineSheet".
-	Source       string        `json:"source"`
-	SourceURL    *string       `json:"sourceURL,omitempty"`    // URL of the document containing the media query description.
-	Range        *SourceRange  `json:"range,omitempty"`        // The associated rule (@media or @import) header range in the enclosing stylesheet (if available).
-	StyleSheetID *StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
-	MediaList    []MediaQuery  `json:"mediaList,omitempty"`    // Array of media queries.
+	Source       string            `json:"source"`
+	SourceURL    *string           `json:"sourceURL,omitempty"`    // URL of the document containing the media query description.
+	Range        *SourceRange      `json:"range,omitempty"`        // The associated rule (@media or @import) header range in the enclosing stylesheet (if available).
+	StyleSheetID *dom.StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
+	MediaList    []MediaQuery      `json:"mediaList,omitempty"`    // Array of media queries.
 }
 
 // MediaQuery Media query descriptor.
@@ -280,40 +310,50 @@ type MediaQueryExpression struct {
 //
 // Note: This type is experimental.
 type ContainerQuery struct {
-	Text         string            `json:"text"`                   // Container query text.
-	Range        *SourceRange      `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
-	StyleSheetID *StyleSheetID     `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
-	Name         *string           `json:"name,omitempty"`         // Optional name for the container.
-	PhysicalAxes *dom.PhysicalAxes `json:"physicalAxes,omitempty"` // Optional physical axes queried for the container.
-	LogicalAxes  *dom.LogicalAxes  `json:"logicalAxes,omitempty"`  // Optional logical axes queried for the container.
+	Text               string            `json:"text"`                         // Container query text.
+	Range              *SourceRange      `json:"range,omitempty"`              // The associated rule header range in the enclosing stylesheet (if available).
+	StyleSheetID       *dom.StyleSheetID `json:"styleSheetId,omitempty"`       // Identifier of the stylesheet containing this object (if exists).
+	Name               *string           `json:"name,omitempty"`               // Optional name for the container.
+	PhysicalAxes       *dom.PhysicalAxes `json:"physicalAxes,omitempty"`       // Optional physical axes queried for the container.
+	LogicalAxes        *dom.LogicalAxes  `json:"logicalAxes,omitempty"`        // Optional logical axes queried for the container.
+	QueriesScrollState *bool             `json:"queriesScrollState,omitempty"` // true if the query contains scroll-state() queries.
+	QueriesAnchored    *bool             `json:"queriesAnchored,omitempty"`    // true if the query contains anchored() queries.
 }
 
 // Supports CSS Supports at-rule descriptor.
 //
 // Note: This type is experimental.
 type Supports struct {
-	Text         string        `json:"text"`                   // Supports rule text.
-	Active       bool          `json:"active"`                 // Whether the supports condition is satisfied.
-	Range        *SourceRange  `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
-	StyleSheetID *StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
+	Text         string            `json:"text"`                   // Supports rule text.
+	Active       bool              `json:"active"`                 // Whether the supports condition is satisfied.
+	Range        *SourceRange      `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
+	StyleSheetID *dom.StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
 }
 
 // Scope CSS Scope at-rule descriptor.
 //
 // Note: This type is experimental.
 type Scope struct {
-	Text         string        `json:"text"`                   // Scope rule text.
-	Range        *SourceRange  `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
-	StyleSheetID *StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
+	Text         string            `json:"text"`                   // Scope rule text.
+	Range        *SourceRange      `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
+	StyleSheetID *dom.StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
 }
 
 // Layer CSS Layer at-rule descriptor.
 //
 // Note: This type is experimental.
 type Layer struct {
-	Text         string        `json:"text"`                   // Layer name.
-	Range        *SourceRange  `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
-	StyleSheetID *StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
+	Text         string            `json:"text"`                   // Layer name.
+	Range        *SourceRange      `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
+	StyleSheetID *dom.StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
+}
+
+// StartingStyle CSS Starting Style at-rule descriptor.
+//
+// Note: This type is experimental.
+type StartingStyle struct {
+	Range        *SourceRange      `json:"range,omitempty"`        // The associated rule header range in the enclosing stylesheet (if available).
+	StyleSheetID *dom.StyleSheetID `json:"styleSheetId,omitempty"` // Identifier of the stylesheet containing this object (if exists).
 }
 
 // LayerData CSS Layer data.
@@ -361,18 +401,18 @@ type FontFace struct {
 
 // TryRule CSS try rule representation.
 type TryRule struct {
-	StyleSheetID *StyleSheetID    `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
-	Origin       StyleSheetOrigin `json:"origin"`                 // Parent stylesheet's origin.
-	Style        Style            `json:"style"`                  // Associated style declaration.
+	StyleSheetID *dom.StyleSheetID `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
+	Origin       StyleSheetOrigin  `json:"origin"`                 // Parent stylesheet's origin.
+	Style        Style             `json:"style"`                  // Associated style declaration.
 }
 
 // PositionTryRule CSS @position-try rule representation.
 type PositionTryRule struct {
-	Name         Value            `json:"name"`                   // The prelude dashed-ident name
-	StyleSheetID *StyleSheetID    `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
-	Origin       StyleSheetOrigin `json:"origin"`                 // Parent stylesheet's origin.
-	Style        Style            `json:"style"`                  // Associated style declaration.
-	Active       bool             `json:"active"`                 // No description.
+	Name         Value             `json:"name"`                   // The prelude dashed-ident name
+	StyleSheetID *dom.StyleSheetID `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
+	Origin       StyleSheetOrigin  `json:"origin"`                 // Parent stylesheet's origin.
+	Style        Style             `json:"style"`                  // Associated style declaration.
+	Active       bool              `json:"active"`                 // No description.
 }
 
 // KeyframesRule CSS keyframes rule representation.
@@ -390,34 +430,73 @@ type PropertyRegistration struct {
 	Syntax       string `json:"syntax"`                 // No description.
 }
 
-// FontPaletteValuesRule CSS font-palette-values rule representation.
-type FontPaletteValuesRule struct {
-	StyleSheetID    *StyleSheetID    `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
-	Origin          StyleSheetOrigin `json:"origin"`                 // Parent stylesheet's origin.
-	FontPaletteName Value            `json:"fontPaletteName"`        // Associated font palette name.
-	Style           Style            `json:"style"`                  // Associated style declaration.
+// AtRule CSS generic @rule representation.
+type AtRule struct {
+	// Type Type of at-rule.
+	//
+	// Values: "font-face", "font-feature-values", "font-palette-values".
+	Type string `json:"type"`
+	// Subsection Subsection of font-feature-values, if this is a
+	// subsection.
+	//
+	// Values: "swash", "annotation", "ornaments", "stylistic", "styleset", "character-variant".
+	Subsection   *string           `json:"subsection,omitempty"`
+	Name         *Value            `json:"name,omitempty"`         //  LINT.ThenChange(//third_party/blink/renderer/core/inspector/inspector_style_sheet.cc:FontVariantAlternatesFeatureType,//third_party/blink/renderer/core/inspector/inspector_css_agent.cc:FontVariantAlternatesFeatureType) Associated name, if applicable.
+	StyleSheetID *dom.StyleSheetID `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
+	Origin       StyleSheetOrigin  `json:"origin"`                 // Parent stylesheet's origin.
+	Style        Style             `json:"style"`                  // Associated style declaration.
 }
 
 // PropertyRule CSS property at-rule representation.
 type PropertyRule struct {
-	StyleSheetID *StyleSheetID    `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
-	Origin       StyleSheetOrigin `json:"origin"`                 // Parent stylesheet's origin.
-	PropertyName Value            `json:"propertyName"`           // Associated property name.
-	Style        Style            `json:"style"`                  // Associated style declaration.
+	StyleSheetID *dom.StyleSheetID `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
+	Origin       StyleSheetOrigin  `json:"origin"`                 // Parent stylesheet's origin.
+	PropertyName Value             `json:"propertyName"`           // Associated property name.
+	Style        Style             `json:"style"`                  // Associated style declaration.
+}
+
+// FunctionParameter CSS function argument representation.
+type FunctionParameter struct {
+	Name string `json:"name"` // The parameter name.
+	Type string `json:"type"` // The parameter type.
+}
+
+// FunctionConditionNode CSS function conditional block representation.
+type FunctionConditionNode struct {
+	Media            *Media          `json:"media,omitempty"`            // Media query for this conditional block. Only one type of condition should be set.
+	ContainerQueries *ContainerQuery `json:"containerQueries,omitempty"` // Container query for this conditional block. Only one type of condition should be set.
+	Supports         *Supports       `json:"supports,omitempty"`         // @supports CSS at-rule condition. Only one type of condition should be set.
+	Children         []FunctionNode  `json:"children"`                   // Block body.
+	ConditionText    string          `json:"conditionText"`              // The condition text.
+}
+
+// FunctionNode Section of the body of a CSS function rule.
+type FunctionNode struct {
+	Condition *FunctionConditionNode `json:"condition,omitempty"` // A conditional block. If set, style should not be set.
+	Style     *Style                 `json:"style,omitempty"`     // Values set by this node. If set, condition should not be set.
+}
+
+// FunctionRule CSS function at-rule representation.
+type FunctionRule struct {
+	Name         Value               `json:"name"`                   // Name of the function.
+	StyleSheetID *dom.StyleSheetID   `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
+	Origin       StyleSheetOrigin    `json:"origin"`                 // Parent stylesheet's origin.
+	Parameters   []FunctionParameter `json:"parameters"`             // List of parameters.
+	Children     []FunctionNode      `json:"children"`               // Function body.
 }
 
 // KeyframeRule CSS keyframe rule representation.
 type KeyframeRule struct {
-	StyleSheetID *StyleSheetID    `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
-	Origin       StyleSheetOrigin `json:"origin"`                 // Parent stylesheet's origin.
-	KeyText      Value            `json:"keyText"`                // Associated key text.
-	Style        Style            `json:"style"`                  // Associated style declaration.
+	StyleSheetID *dom.StyleSheetID `json:"styleSheetId,omitempty"` // The css style sheet identifier (absent for user agent stylesheet and user-specified stylesheet rules) this rule came from.
+	Origin       StyleSheetOrigin  `json:"origin"`                 // Parent stylesheet's origin.
+	KeyText      Value             `json:"keyText"`                // Associated key text.
+	Style        Style             `json:"style"`                  // Associated style declaration.
 }
 
 // StyleDeclarationEdit A descriptor of operation to mutate style declaration
 // text.
 type StyleDeclarationEdit struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // The css style sheet identifier.
-	Range        SourceRange  `json:"range"`        // The range of the style text in the enclosing stylesheet.
-	Text         string       `json:"text"`         // New style text.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // The css style sheet identifier.
+	Range        SourceRange      `json:"range"`        // The range of the style text in the enclosing stylesheet.
+	Text         string           `json:"text"`         // New style text.
 }

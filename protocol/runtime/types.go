@@ -50,7 +50,7 @@ type RemoteObject struct {
 	// only. NOTE: If you change anything here, make sure to also update
 	// `subtype` in `ObjectPreview` and `PropertyPreview` below.
 	//
-	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview", "webassemblymemory", "wasmvalue".
+	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview", "webassemblymemory", "wasmvalue", "trustedtype".
 	Subtype             *string              `json:"subtype,omitempty"`
 	ClassName           *string              `json:"className,omitempty"`           // Object class (constructor) name. Specified for `object` type values only.
 	Value               json.RawMessage      `json:"value,omitempty"`               // Remote object value in case of primitive values or JSON values (if it was requested).
@@ -91,7 +91,7 @@ type ObjectPreview struct {
 	// Subtype Object subtype hint. Specified for `object` type values
 	// only.
 	//
-	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview", "webassemblymemory", "wasmvalue".
+	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview", "webassemblymemory", "wasmvalue", "trustedtype".
 	Subtype     *string           `json:"subtype,omitempty"`
 	Description *string           `json:"description,omitempty"` // String representation of the object.
 	Overflow    bool              `json:"overflow"`              // True iff some of the properties or entries of the original object did not fit.
@@ -114,7 +114,7 @@ type PropertyPreview struct {
 	// Subtype Object subtype hint. Specified for `object` type values
 	// only.
 	//
-	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview", "webassemblymemory", "wasmvalue".
+	// Values: "array", "null", "node", "regexp", "date", "map", "set", "weakmap", "weakset", "iterator", "generator", "error", "proxy", "promise", "typedarray", "arraybuffer", "dataview", "webassemblymemory", "wasmvalue", "trustedtype".
 	Subtype *string `json:"subtype,omitempty"`
 }
 

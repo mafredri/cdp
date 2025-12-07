@@ -127,18 +127,17 @@ type RequestDataArgs struct {
 	StorageBucket   *storage.Bucket `json:"storageBucket,omitempty"`  // Storage bucket. If not specified, it uses the default bucket.
 	DatabaseName    string          `json:"databaseName"`             // Database name.
 	ObjectStoreName string          `json:"objectStoreName"`          // Object store name.
-	IndexName       string          `json:"indexName"`                // Index name, empty string for object store data requests.
+	IndexName       *string         `json:"indexName,omitempty"`      // Index name. If not specified, it performs an object store data request.
 	SkipCount       int             `json:"skipCount"`                // Number of records to skip.
 	PageSize        int             `json:"pageSize"`                 // Number of records to fetch.
 	KeyRange        *KeyRange       `json:"keyRange,omitempty"`       // Key range.
 }
 
 // NewRequestDataArgs initializes RequestDataArgs with the required arguments.
-func NewRequestDataArgs(databaseName string, objectStoreName string, indexName string, skipCount int, pageSize int) *RequestDataArgs {
+func NewRequestDataArgs(databaseName string, objectStoreName string, skipCount int, pageSize int) *RequestDataArgs {
 	args := new(RequestDataArgs)
 	args.DatabaseName = databaseName
 	args.ObjectStoreName = objectStoreName
-	args.IndexName = indexName
 	args.SkipCount = skipCount
 	args.PageSize = pageSize
 	return args
@@ -162,6 +161,13 @@ func (a *RequestDataArgs) SetStorageKey(storageKey string) *RequestDataArgs {
 // bucket. If not specified, it uses the default bucket.
 func (a *RequestDataArgs) SetStorageBucket(storageBucket storage.Bucket) *RequestDataArgs {
 	a.StorageBucket = &storageBucket
+	return a
+}
+
+// SetIndexName sets the IndexName optional argument. Index name. If
+// not specified, it performs an object store data request.
+func (a *RequestDataArgs) SetIndexName(indexName string) *RequestDataArgs {
+	a.IndexName = &indexName
 	return a
 }
 

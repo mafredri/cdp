@@ -424,9 +424,22 @@ func NewSetAsyncCallStackDepthArgs(maxDepth int) *SetAsyncCallStackDepthArgs {
 	return args
 }
 
+// SetBlackboxExecutionContextsArgs represents the arguments for SetBlackboxExecutionContexts in the Debugger domain.
+type SetBlackboxExecutionContextsArgs struct {
+	UniqueIDs []string `json:"uniqueIds"` // Array of execution context unique ids for the debugger to ignore.
+}
+
+// NewSetBlackboxExecutionContextsArgs initializes SetBlackboxExecutionContextsArgs with the required arguments.
+func NewSetBlackboxExecutionContextsArgs(uniqueIDs []string) *SetBlackboxExecutionContextsArgs {
+	args := new(SetBlackboxExecutionContextsArgs)
+	args.UniqueIDs = uniqueIDs
+	return args
+}
+
 // SetBlackboxPatternsArgs represents the arguments for SetBlackboxPatterns in the Debugger domain.
 type SetBlackboxPatternsArgs struct {
-	Patterns []string `json:"patterns"` // Array of regexps that will be used to check script url for blackbox state.
+	Patterns      []string `json:"patterns"`                // Array of regexps that will be used to check script url for blackbox state.
+	SkipAnonymous *bool    `json:"skipAnonymous,omitempty"` // If true, also ignore scripts with no source url.
 }
 
 // NewSetBlackboxPatternsArgs initializes SetBlackboxPatternsArgs with the required arguments.
@@ -434,6 +447,13 @@ func NewSetBlackboxPatternsArgs(patterns []string) *SetBlackboxPatternsArgs {
 	args := new(SetBlackboxPatternsArgs)
 	args.Patterns = patterns
 	return args
+}
+
+// SetSkipAnonymous sets the SkipAnonymous optional argument. If true,
+// also ignore scripts with no source url.
+func (a *SetBlackboxPatternsArgs) SetSkipAnonymous(skipAnonymous bool) *SetBlackboxPatternsArgs {
+	a.SkipAnonymous = &skipAnonymous
+	return a
 }
 
 // SetBlackboxedRangesArgs represents the arguments for SetBlackboxedRanges in the Debugger domain.

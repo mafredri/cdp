@@ -53,7 +53,7 @@ func TestManager(t *testing.T) {
 
 	pageC := cdp.NewClient(pageConn)
 
-	err = pageC.Page.Enable(ctx)
+	err = pageC.Page.Enable(ctx, nil)
 	if err != nil {
 		t.Error(err)
 	}

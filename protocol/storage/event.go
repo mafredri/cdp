@@ -7,6 +7,7 @@ import (
 
 	"github.com/mafredri/cdp/protocol/network"
 	"github.com/mafredri/cdp/protocol/page"
+	"github.com/mafredri/cdp/protocol/target"
 	"github.com/mafredri/cdp/rpcc"
 )
 
@@ -150,10 +151,33 @@ type SharedStorageAccessedClient interface {
 // SharedStorageAccessedReply is the reply for SharedStorageAccessed events.
 type SharedStorageAccessedReply struct {
 	AccessTime  network.TimeSinceEpoch    `json:"accessTime"`  // Time of the access.
-	Type        SharedStorageAccessType   `json:"type"`        // Enum value indicating the Shared Storage API method invoked.
+	Scope       SharedStorageAccessScope  `json:"scope"`       // Enum value indicating the access scope.
+	Method      SharedStorageAccessMethod `json:"method"`      // Enum value indicating the Shared Storage API method invoked.
 	MainFrameID page.FrameID              `json:"mainFrameId"` // DevTools Frame Token for the primary frame tree's root.
-	OwnerOrigin string                    `json:"ownerOrigin"` // Serialized origin for the context that invoked the Shared Storage API.
+	OwnerOrigin string                    `json:"ownerOrigin"` // Serialization of the origin owning the Shared Storage data.
+	OwnerSite   string                    `json:"ownerSite"`   // Serialization of the site owning the Shared Storage data.
 	Params      SharedStorageAccessParams `json:"params"`      // The sub-parameters wrapped by `params` are all optional and their presence/absence depends on `type`.
+}
+
+// SharedStorageWorkletOperationExecutionFinishedClient is a client for SharedStorageWorkletOperationExecutionFinished events.
+// A shared storage run or selectURL operation finished its execution. The
+// following parameters are included in all events.
+type SharedStorageWorkletOperationExecutionFinishedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*SharedStorageWorkletOperationExecutionFinishedReply, error)
+	rpcc.Stream
+}
+
+// SharedStorageWorkletOperationExecutionFinishedReply is the reply for SharedStorageWorkletOperationExecutionFinished events.
+type SharedStorageWorkletOperationExecutionFinishedReply struct {
+	FinishedTime    network.TimeSinceEpoch    `json:"finishedTime"`    // Time that the operation finished.
+	ExecutionTime   int                       `json:"executionTime"`   // Time, in microseconds, from start of shared storage JS API call until end of operation execution in the worklet.
+	Method          SharedStorageAccessMethod `json:"method"`          // Enum value indicating the Shared Storage API method invoked.
+	OperationID     string                    `json:"operationId"`     // ID of the operation call.
+	WorkletTargetID target.ID                 `json:"workletTargetId"` // Hex representation of the DevTools token used as the TargetID for the associated shared storage worklet.
+	MainFrameID     page.FrameID              `json:"mainFrameId"`     // DevTools Frame Token for the primary frame tree's root.
+	OwnerOrigin     string                    `json:"ownerOrigin"`     // Serialization of the origin owning the Shared Storage data.
 }
 
 // BucketCreatedOrUpdatedClient is a client for StorageBucketCreatedOrUpdated events.
@@ -209,4 +233,39 @@ type AttributionReportingTriggerRegisteredReply struct {
 	Registration AttributionReportingTriggerRegistration `json:"registration"` // No description.
 	EventLevel   AttributionReportingEventLevelResult    `json:"eventLevel"`   // No description.
 	Aggregatable AttributionReportingAggregatableResult  `json:"aggregatable"` // No description.
+}
+
+// AttributionReportingReportSentClient is a client for AttributionReportingReportSent events.
+type AttributionReportingReportSentClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*AttributionReportingReportSentReply, error)
+	rpcc.Stream
+}
+
+// AttributionReportingReportSentReply is the reply for AttributionReportingReportSent events.
+type AttributionReportingReportSentReply struct {
+	URL            string                           `json:"url"`                      // No description.
+	Body           json.RawMessage                  `json:"body"`                     // No description.
+	Result         AttributionReportingReportResult `json:"result"`                   // No description.
+	NetError       *int                             `json:"netError,omitempty"`       // If result is `sent`, populated with net/HTTP status.
+	NetErrorName   *string                          `json:"netErrorName,omitempty"`   // No description.
+	HTTPStatusCode *int                             `json:"httpStatusCode,omitempty"` // No description.
+}
+
+// AttributionReportingVerboseDebugReportSentClient is a client for AttributionReportingVerboseDebugReportSent events.
+type AttributionReportingVerboseDebugReportSentClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*AttributionReportingVerboseDebugReportSentReply, error)
+	rpcc.Stream
+}
+
+// AttributionReportingVerboseDebugReportSentReply is the reply for AttributionReportingVerboseDebugReportSent events.
+type AttributionReportingVerboseDebugReportSentReply struct {
+	URL            string            `json:"url"`                      // No description.
+	Body           []json.RawMessage `json:"body,omitempty"`           // No description.
+	NetError       *int              `json:"netError,omitempty"`       // No description.
+	NetErrorName   *string           `json:"netErrorName,omitempty"`   // No description.
+	HTTPStatusCode *int              `json:"httpStatusCode,omitempty"` // No description.
 }

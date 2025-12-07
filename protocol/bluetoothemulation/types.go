@@ -26,6 +26,104 @@ func (e CentralState) String() string {
 	return string(e)
 }
 
+// GATTOperationType Indicates the various types of GATT event.
+type GATTOperationType string
+
+// GATTOperationType as enums.
+const (
+	GATTOperationTypeNotSet     GATTOperationType = ""
+	GATTOperationTypeConnection GATTOperationType = "connection"
+	GATTOperationTypeDiscovery  GATTOperationType = "discovery"
+)
+
+func (e GATTOperationType) Valid() bool {
+	switch e {
+	case "connection", "discovery":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e GATTOperationType) String() string {
+	return string(e)
+}
+
+// CharacteristicWriteType Indicates the various types of characteristic
+// write.
+type CharacteristicWriteType string
+
+// CharacteristicWriteType as enums.
+const (
+	CharacteristicWriteTypeNotSet                 CharacteristicWriteType = ""
+	CharacteristicWriteTypeWriteDefaultDeprecated CharacteristicWriteType = "write-default-deprecated"
+	CharacteristicWriteTypeWriteWithResponse      CharacteristicWriteType = "write-with-response"
+	CharacteristicWriteTypeWriteWithoutResponse   CharacteristicWriteType = "write-without-response"
+)
+
+func (e CharacteristicWriteType) Valid() bool {
+	switch e {
+	case "write-default-deprecated", "write-with-response", "write-without-response":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e CharacteristicWriteType) String() string {
+	return string(e)
+}
+
+// CharacteristicOperationType Indicates the various types of characteristic
+// operation.
+type CharacteristicOperationType string
+
+// CharacteristicOperationType as enums.
+const (
+	CharacteristicOperationTypeNotSet                       CharacteristicOperationType = ""
+	CharacteristicOperationTypeRead                         CharacteristicOperationType = "read"
+	CharacteristicOperationTypeWrite                        CharacteristicOperationType = "write"
+	CharacteristicOperationTypeSubscribeToNotifications     CharacteristicOperationType = "subscribe-to-notifications"
+	CharacteristicOperationTypeUnsubscribeFromNotifications CharacteristicOperationType = "unsubscribe-from-notifications"
+)
+
+func (e CharacteristicOperationType) Valid() bool {
+	switch e {
+	case "read", "write", "subscribe-to-notifications", "unsubscribe-from-notifications":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e CharacteristicOperationType) String() string {
+	return string(e)
+}
+
+// DescriptorOperationType Indicates the various types of descriptor
+// operation.
+type DescriptorOperationType string
+
+// DescriptorOperationType as enums.
+const (
+	DescriptorOperationTypeNotSet DescriptorOperationType = ""
+	DescriptorOperationTypeRead   DescriptorOperationType = "read"
+	DescriptorOperationTypeWrite  DescriptorOperationType = "write"
+)
+
+func (e DescriptorOperationType) Valid() bool {
+	switch e {
+	case "read", "write":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e DescriptorOperationType) String() string {
+	return string(e)
+}
+
 // ManufacturerData Stores the manufacturer data
 type ManufacturerData struct {
 	Key  int    `json:"key"`  // Company identifier https://bitbucket.org/bluetooth-SIG/public/src/main/assigned_numbers/company_identifiers/company_identifiers.yaml https://usb.org/developers
@@ -48,4 +146,18 @@ type ScanEntry struct {
 	DeviceAddress string     `json:"deviceAddress"` // No description.
 	RSSI          int        `json:"rssi"`          // No description.
 	ScanRecord    ScanRecord `json:"scanRecord"`    // No description.
+}
+
+// CharacteristicProperties Describes the properties of a characteristic. This
+// follows Bluetooth Core Specification BT 4.2 Vol 3 Part G 3.3.1.
+// Characteristic Properties.
+type CharacteristicProperties struct {
+	Broadcast                 *bool `json:"broadcast,omitempty"`                 // No description.
+	Read                      *bool `json:"read,omitempty"`                      // No description.
+	WriteWithoutResponse      *bool `json:"writeWithoutResponse,omitempty"`      // No description.
+	Write                     *bool `json:"write,omitempty"`                     // No description.
+	Notify                    *bool `json:"notify,omitempty"`                    // No description.
+	Indicate                  *bool `json:"indicate,omitempty"`                  // No description.
+	AuthenticatedSignedWrites *bool `json:"authenticatedSignedWrites,omitempty"` // No description.
+	ExtendedProperties        *bool `json:"extendedProperties,omitempty"`        // No description.
 }

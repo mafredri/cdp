@@ -55,7 +55,7 @@ func run(timeout time.Duration) error {
 
 	// Enable events on the Page domain, it's often preferrable to create
 	// event clients before enabling events so that we don't miss any.
-	if err = c.Page.Enable(ctx); err != nil {
+	if err = c.Page.Enable(ctx, nil); err != nil {
 		return err
 	}
 

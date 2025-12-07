@@ -4,6 +4,7 @@ package storage
 
 import (
 	"github.com/mafredri/cdp/protocol/network"
+	"github.com/mafredri/cdp/protocol/target"
 )
 
 // SerializedStorageKey
@@ -15,7 +16,6 @@ type Type string
 // Type as enums.
 const (
 	TypeNotSet         Type = ""
-	TypeAppcache       Type = "appcache"
 	TypeCookies        Type = "cookies"
 	TypeFileSystems    Type = "file_systems"
 	TypeIndexeddb      Type = "indexeddb"
@@ -33,7 +33,7 @@ const (
 
 func (e Type) Valid() bool {
 	switch e {
-	case "appcache", "cookies", "file_systems", "indexeddb", "local_storage", "shader_cache", "websql", "service_workers", "cache_storage", "interest_groups", "shared_storage", "storage_buckets", "all", "other":
+	case "cookies", "file_systems", "indexeddb", "local_storage", "shader_cache", "websql", "service_workers", "cache_storage", "interest_groups", "shared_storage", "storage_buckets", "all", "other":
 		return true
 	default:
 		return false
@@ -144,45 +144,64 @@ func (e InterestGroupAuctionFetchType) String() string {
 	return string(e)
 }
 
-// SharedStorageAccessType Enum of shared storage access types.
-type SharedStorageAccessType string
+// SharedStorageAccessScope Enum of shared storage access scopes.
+type SharedStorageAccessScope string
 
-// SharedStorageAccessType as enums.
+// SharedStorageAccessScope as enums.
 const (
-	SharedStorageAccessTypeNotSet                 SharedStorageAccessType = ""
-	SharedStorageAccessTypeDocumentAddModule      SharedStorageAccessType = "documentAddModule"
-	SharedStorageAccessTypeDocumentSelectURL      SharedStorageAccessType = "documentSelectURL"
-	SharedStorageAccessTypeDocumentRun            SharedStorageAccessType = "documentRun"
-	SharedStorageAccessTypeDocumentSet            SharedStorageAccessType = "documentSet"
-	SharedStorageAccessTypeDocumentAppend         SharedStorageAccessType = "documentAppend"
-	SharedStorageAccessTypeDocumentDelete         SharedStorageAccessType = "documentDelete"
-	SharedStorageAccessTypeDocumentClear          SharedStorageAccessType = "documentClear"
-	SharedStorageAccessTypeDocumentGet            SharedStorageAccessType = "documentGet"
-	SharedStorageAccessTypeWorkletSet             SharedStorageAccessType = "workletSet"
-	SharedStorageAccessTypeWorkletAppend          SharedStorageAccessType = "workletAppend"
-	SharedStorageAccessTypeWorkletDelete          SharedStorageAccessType = "workletDelete"
-	SharedStorageAccessTypeWorkletClear           SharedStorageAccessType = "workletClear"
-	SharedStorageAccessTypeWorkletGet             SharedStorageAccessType = "workletGet"
-	SharedStorageAccessTypeWorkletKeys            SharedStorageAccessType = "workletKeys"
-	SharedStorageAccessTypeWorkletEntries         SharedStorageAccessType = "workletEntries"
-	SharedStorageAccessTypeWorkletLength          SharedStorageAccessType = "workletLength"
-	SharedStorageAccessTypeWorkletRemainingBudget SharedStorageAccessType = "workletRemainingBudget"
-	SharedStorageAccessTypeHeaderSet              SharedStorageAccessType = "headerSet"
-	SharedStorageAccessTypeHeaderAppend           SharedStorageAccessType = "headerAppend"
-	SharedStorageAccessTypeHeaderDelete           SharedStorageAccessType = "headerDelete"
-	SharedStorageAccessTypeHeaderClear            SharedStorageAccessType = "headerClear"
+	SharedStorageAccessScopeNotSet                   SharedStorageAccessScope = ""
+	SharedStorageAccessScopeWindow                   SharedStorageAccessScope = "window"
+	SharedStorageAccessScopeSharedStorageWorklet     SharedStorageAccessScope = "sharedStorageWorklet"
+	SharedStorageAccessScopeProtectedAudienceWorklet SharedStorageAccessScope = "protectedAudienceWorklet"
+	SharedStorageAccessScopeHeader                   SharedStorageAccessScope = "header"
 )
 
-func (e SharedStorageAccessType) Valid() bool {
+func (e SharedStorageAccessScope) Valid() bool {
 	switch e {
-	case "documentAddModule", "documentSelectURL", "documentRun", "documentSet", "documentAppend", "documentDelete", "documentClear", "documentGet", "workletSet", "workletAppend", "workletDelete", "workletClear", "workletGet", "workletKeys", "workletEntries", "workletLength", "workletRemainingBudget", "headerSet", "headerAppend", "headerDelete", "headerClear":
+	case "window", "sharedStorageWorklet", "protectedAudienceWorklet", "header":
 		return true
 	default:
 		return false
 	}
 }
 
-func (e SharedStorageAccessType) String() string {
+func (e SharedStorageAccessScope) String() string {
+	return string(e)
+}
+
+// SharedStorageAccessMethod Enum of shared storage access methods.
+type SharedStorageAccessMethod string
+
+// SharedStorageAccessMethod as enums.
+const (
+	SharedStorageAccessMethodNotSet          SharedStorageAccessMethod = ""
+	SharedStorageAccessMethodAddModule       SharedStorageAccessMethod = "addModule"
+	SharedStorageAccessMethodCreateWorklet   SharedStorageAccessMethod = "createWorklet"
+	SharedStorageAccessMethodSelectURL       SharedStorageAccessMethod = "selectURL"
+	SharedStorageAccessMethodRun             SharedStorageAccessMethod = "run"
+	SharedStorageAccessMethodBatchUpdate     SharedStorageAccessMethod = "batchUpdate"
+	SharedStorageAccessMethodSet             SharedStorageAccessMethod = "set"
+	SharedStorageAccessMethodAppend          SharedStorageAccessMethod = "append"
+	SharedStorageAccessMethodDelete          SharedStorageAccessMethod = "delete"
+	SharedStorageAccessMethodClear           SharedStorageAccessMethod = "clear"
+	SharedStorageAccessMethodGet             SharedStorageAccessMethod = "get"
+	SharedStorageAccessMethodKeys            SharedStorageAccessMethod = "keys"
+	SharedStorageAccessMethodValues          SharedStorageAccessMethod = "values"
+	SharedStorageAccessMethodEntries         SharedStorageAccessMethod = "entries"
+	SharedStorageAccessMethodLength          SharedStorageAccessMethod = "length"
+	SharedStorageAccessMethodRemainingBudget SharedStorageAccessMethod = "remainingBudget"
+)
+
+func (e SharedStorageAccessMethod) Valid() bool {
+	switch e {
+	case "addModule", "createWorklet", "selectURL", "run", "batchUpdate", "set", "append", "delete", "clear", "get", "keys", "values", "entries", "length", "remainingBudget":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e SharedStorageAccessMethod) String() string {
 	return string(e)
 }
 
@@ -199,6 +218,15 @@ type SharedStorageMetadata struct {
 	Length          int                    `json:"length"`          // Number of key-value pairs stored in origin's shared storage.
 	RemainingBudget float64                `json:"remainingBudget"` // Current amount of bits of entropy remaining in the navigation budget.
 	BytesUsed       int                    `json:"bytesUsed"`       // Total number of bytes stored as key-value pairs in origin's shared storage.
+}
+
+// SharedStoragePrivateAggregationConfig Represents a dictionary object passed
+// in as privateAggregationConfig to run or selectURL.
+type SharedStoragePrivateAggregationConfig struct {
+	AggregationCoordinatorOrigin *string `json:"aggregationCoordinatorOrigin,omitempty"` // The chosen aggregation service deployment.
+	ContextID                    *string `json:"contextId,omitempty"`                    // The context ID provided.
+	FilteringIDMaxBytes          int     `json:"filteringIdMaxBytes"`                    // Configures the maximum size allowed for filtering IDs.
+	MaxContributions             *int    `json:"maxContributions,omitempty"`             // The limit on the number of contributions in the final report.
 }
 
 // SharedStorageReportingMetadata Pair of reporting metadata details for a
@@ -218,13 +246,23 @@ type SharedStorageURLWithMetadata struct {
 // SharedStorageAccessParams Bundles the parameters for shared storage access
 // events whose presence/absence can vary according to SharedStorageAccessType.
 type SharedStorageAccessParams struct {
-	ScriptSourceURL  *string                        `json:"scriptSourceUrl,omitempty"`  // Spec of the module script URL. Present only for SharedStorageAccessType.documentAddModule.
-	OperationName    *string                        `json:"operationName,omitempty"`    // Name of the registered operation to be run. Present only for SharedStorageAccessType.documentRun and SharedStorageAccessType.documentSelectURL.
-	SerializedData   *string                        `json:"serializedData,omitempty"`   // The operation's serialized data in bytes (converted to a string). Present only for SharedStorageAccessType.documentRun and SharedStorageAccessType.documentSelectURL.
-	URLsWithMetadata []SharedStorageURLWithMetadata `json:"urlsWithMetadata,omitempty"` // Array of candidate URLs' specs, along with any associated metadata. Present only for SharedStorageAccessType.documentSelectURL.
-	Key              *string                        `json:"key,omitempty"`              // Key for a specific entry in an origin's shared storage. Present only for SharedStorageAccessType.documentSet, SharedStorageAccessType.documentAppend, SharedStorageAccessType.documentDelete, SharedStorageAccessType.workletSet, SharedStorageAccessType.workletAppend, SharedStorageAccessType.workletDelete, SharedStorageAccessType.workletGet, SharedStorageAccessType.headerSet, SharedStorageAccessType.headerAppend, and SharedStorageAccessType.headerDelete.
-	Value            *string                        `json:"value,omitempty"`            // Value for a specific entry in an origin's shared storage. Present only for SharedStorageAccessType.documentSet, SharedStorageAccessType.documentAppend, SharedStorageAccessType.workletSet, SharedStorageAccessType.workletAppend, SharedStorageAccessType.headerSet, and SharedStorageAccessType.headerAppend.
-	IgnoreIfPresent  *bool                          `json:"ignoreIfPresent,omitempty"`  // Whether or not to set an entry for a key if that key is already present. Present only for SharedStorageAccessType.documentSet, SharedStorageAccessType.workletSet, and SharedStorageAccessType.headerSet.
+	ScriptSourceURL          *string                                `json:"scriptSourceUrl,omitempty"`          // Spec of the module script URL. Present only for SharedStorageAccessMethods: addModule and createWorklet.
+	DataOrigin               *string                                `json:"dataOrigin,omitempty"`               // String denoting "context-origin", "script-origin", or a custom origin to be used as the worklet's data origin. Present only for SharedStorageAccessMethod: createWorklet.
+	OperationName            *string                                `json:"operationName,omitempty"`            // Name of the registered operation to be run. Present only for SharedStorageAccessMethods: run and selectURL.
+	OperationID              *string                                `json:"operationId,omitempty"`              // ID of the operation call. Present only for SharedStorageAccessMethods: run and selectURL.
+	KeepAlive                *bool                                  `json:"keepAlive,omitempty"`                // Whether or not to keep the worket alive for future run or selectURL calls. Present only for SharedStorageAccessMethods: run and selectURL.
+	PrivateAggregationConfig *SharedStoragePrivateAggregationConfig `json:"privateAggregationConfig,omitempty"` // Configures the private aggregation options. Present only for SharedStorageAccessMethods: run and selectURL.
+	SerializedData           *string                                `json:"serializedData,omitempty"`           // The operation's serialized data in bytes (converted to a string). Present only for SharedStorageAccessMethods: run and selectURL. TODO(crbug.com/401011862): Consider updating this parameter to binary.
+	URLsWithMetadata         []SharedStorageURLWithMetadata         `json:"urlsWithMetadata,omitempty"`         // Array of candidate URLs' specs, along with any associated metadata. Present only for SharedStorageAccessMethod: selectURL.
+	UrnUUID                  *string                                `json:"urnUuid,omitempty"`                  // Spec of the URN:UUID generated for a selectURL call. Present only for SharedStorageAccessMethod: selectURL.
+	Key                      *string                                `json:"key,omitempty"`                      // Key for a specific entry in an origin's shared storage. Present only for SharedStorageAccessMethods: set, append, delete, and get.
+	Value                    *string                                `json:"value,omitempty"`                    // Value for a specific entry in an origin's shared storage. Present only for SharedStorageAccessMethods: set and append.
+	IgnoreIfPresent          *bool                                  `json:"ignoreIfPresent,omitempty"`          // Whether or not to set an entry for a key if that key is already present. Present only for SharedStorageAccessMethod: set.
+	WorkletOrdinal           *int                                   `json:"workletOrdinal,omitempty"`           // A number denoting the (0-based) order of the worklet's creation relative to all other shared storage worklets created by documents using the current storage partition. Present only for SharedStorageAccessMethods: addModule, createWorklet.
+	WorkletTargetID          *target.ID                             `json:"workletTargetId,omitempty"`          // Hex representation of the DevTools token used as the TargetID for the associated shared storage worklet. Present only for SharedStorageAccessMethods: addModule, createWorklet, run, selectURL, and any other SharedStorageAccessMethod when the SharedStorageAccessScope is sharedStorageWorklet.
+	WithLock                 *string                                `json:"withLock,omitempty"`                 // Name of the lock to be acquired, if present. Optionally present only for SharedStorageAccessMethods: batchUpdate, set, append, delete, and clear.
+	BatchUpdateID            *string                                `json:"batchUpdateId,omitempty"`            // If the method has been called as part of a batchUpdate, then this number identifies the batch to which it belongs. Optionally present only for SharedStorageAccessMethods: batchUpdate (required), set, append, delete, and clear.
+	BatchSize                *int                                   `json:"batchSize,omitempty"`                // Number of modifier methods sent in batch. Present only for SharedStorageAccessMethod: batchUpdate.
 }
 
 // BucketsDurability
@@ -346,14 +384,6 @@ type AttributionReportingEventReportWindows struct {
 	Ends  []int `json:"ends"`  // duration in seconds
 }
 
-// AttributionReportingTriggerSpec
-//
-// Note: This type is experimental.
-type AttributionReportingTriggerSpec struct {
-	TriggerData        []float64                              `json:"triggerData"`        // number instead of integer because not all uint32 can be represented by int
-	EventReportWindows AttributionReportingEventReportWindows `json:"eventReportWindows"` // No description.
-}
-
 // AttributionReportingTriggerDataMatching
 //
 // Note: This type is experimental.
@@ -407,13 +437,22 @@ type AttributionScopesData struct {
 	MaxEventStates float64  `json:"maxEventStates"` // No description.
 }
 
+// AttributionReportingNamedBudgetDef
+//
+// Note: This type is experimental.
+type AttributionReportingNamedBudgetDef struct {
+	Name   string `json:"name"`   // No description.
+	Budget int    `json:"budget"` // No description.
+}
+
 // AttributionReportingSourceRegistration
 //
 // Note: This type is experimental.
 type AttributionReportingSourceRegistration struct {
 	Time                             network.TimeSinceEpoch                               `json:"time"`                             // No description.
 	Expiry                           int                                                  `json:"expiry"`                           // duration in seconds
-	TriggerSpecs                     []AttributionReportingTriggerSpec                    `json:"triggerSpecs"`                     // No description.
+	TriggerData                      []float64                                            `json:"triggerData"`                      // number instead of integer because not all uint32 can be represented by int
+	EventReportWindows               AttributionReportingEventReportWindows               `json:"eventReportWindows"`               // No description.
 	AggregatableReportWindow         int                                                  `json:"aggregatableReportWindow"`         // duration in seconds
 	Type                             AttributionReportingSourceType                       `json:"type"`                             // No description.
 	SourceOrigin                     string                                               `json:"sourceOrigin"`                     // No description.
@@ -428,6 +467,10 @@ type AttributionReportingSourceRegistration struct {
 	DestinationLimitPriority         SignedInt64AsBase10                                  `json:"destinationLimitPriority"`         // No description.
 	AggregatableDebugReportingConfig AttributionReportingAggregatableDebugReportingConfig `json:"aggregatableDebugReportingConfig"` // No description.
 	ScopesData                       *AttributionScopesData                               `json:"scopesData,omitempty"`             // No description.
+	MaxEventLevelReports             int                                                  `json:"maxEventLevelReports"`             // No description.
+	NamedBudgets                     []AttributionReportingNamedBudgetDef                 `json:"namedBudgets"`                     // No description.
+	DebugReporting                   bool                                                 `json:"debugReporting"`                   // No description.
+	EventLevelEpsilon                float64                                              `json:"eventLevelEpsilon"`                // No description.
 }
 
 // AttributionReportingSourceRegistrationResult
@@ -538,6 +581,14 @@ type AttributionReportingAggregatableDedupKey struct {
 	Filters  AttributionReportingFilterPair `json:"filters"`            // No description.
 }
 
+// AttributionReportingNamedBudgetCandidate
+//
+// Note: This type is experimental.
+type AttributionReportingNamedBudgetCandidate struct {
+	Name    *string                        `json:"name,omitempty"` // No description.
+	Filters AttributionReportingFilterPair `json:"filters"`        // No description.
+}
+
 // AttributionReportingTriggerRegistration
 //
 // Note: This type is experimental.
@@ -555,6 +606,7 @@ type AttributionReportingTriggerRegistration struct {
 	TriggerContextID                 *string                                              `json:"triggerContextId,omitempty"`             // No description.
 	AggregatableDebugReportingConfig AttributionReportingAggregatableDebugReportingConfig `json:"aggregatableDebugReportingConfig"`       // No description.
 	Scopes                           []string                                             `json:"scopes"`                                 // No description.
+	NamedBudgets                     []AttributionReportingNamedBudgetCandidate           `json:"namedBudgets"`                           // No description.
 }
 
 // AttributionReportingEventLevelResult
@@ -615,6 +667,7 @@ const (
 	AttributionReportingAggregatableResultExcessiveReportingOrigins           AttributionReportingAggregatableResult = "excessiveReportingOrigins"
 	AttributionReportingAggregatableResultNoHistograms                        AttributionReportingAggregatableResult = "noHistograms"
 	AttributionReportingAggregatableResultInsufficientBudget                  AttributionReportingAggregatableResult = "insufficientBudget"
+	AttributionReportingAggregatableResultInsufficientNamedBudget             AttributionReportingAggregatableResult = "insufficientNamedBudget"
 	AttributionReportingAggregatableResultNoMatchingSourceFilterData          AttributionReportingAggregatableResult = "noMatchingSourceFilterData"
 	AttributionReportingAggregatableResultNotRegistered                       AttributionReportingAggregatableResult = "notRegistered"
 	AttributionReportingAggregatableResultProhibitedByBrowserPolicy           AttributionReportingAggregatableResult = "prohibitedByBrowserPolicy"
@@ -625,7 +678,7 @@ const (
 
 func (e AttributionReportingAggregatableResult) Valid() bool {
 	switch e {
-	case "success", "internalError", "noCapacityForAttributionDestination", "noMatchingSources", "excessiveAttributions", "excessiveReportingOrigins", "noHistograms", "insufficientBudget", "noMatchingSourceFilterData", "notRegistered", "prohibitedByBrowserPolicy", "deduplicated", "reportWindowPassed", "excessiveReports":
+	case "success", "internalError", "noCapacityForAttributionDestination", "noMatchingSources", "excessiveAttributions", "excessiveReportingOrigins", "noHistograms", "insufficientBudget", "insufficientNamedBudget", "noMatchingSourceFilterData", "notRegistered", "prohibitedByBrowserPolicy", "deduplicated", "reportWindowPassed", "excessiveReports":
 		return true
 	default:
 		return false
@@ -633,6 +686,33 @@ func (e AttributionReportingAggregatableResult) Valid() bool {
 }
 
 func (e AttributionReportingAggregatableResult) String() string {
+	return string(e)
+}
+
+// AttributionReportingReportResult
+//
+// Note: This type is experimental.
+type AttributionReportingReportResult string
+
+// AttributionReportingReportResult as enums.
+const (
+	AttributionReportingReportResultNotSet           AttributionReportingReportResult = ""
+	AttributionReportingReportResultSent             AttributionReportingReportResult = "sent"
+	AttributionReportingReportResultProhibited       AttributionReportingReportResult = "prohibited"
+	AttributionReportingReportResultFailedToAssemble AttributionReportingReportResult = "failedToAssemble"
+	AttributionReportingReportResultExpired          AttributionReportingReportResult = "expired"
+)
+
+func (e AttributionReportingReportResult) Valid() bool {
+	switch e {
+	case "sent", "prohibited", "failedToAssemble", "expired":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e AttributionReportingReportResult) String() string {
 	return string(e)
 }
 

@@ -693,10 +693,11 @@ func (d *domainClient) GetFrameOwner(ctx context.Context, args *GetFrameOwnerArg
 }
 
 // GetContainerForNode invokes the DOM method. Returns the query container of
-// the given node based on container query conditions: containerName, physical,
-// and logical axes. If no axes are provided, the style container is returned,
-// which is the direct parent or the closest element with a matching
-// container-name.
+// the given node based on container query conditions: containerName, physical
+// and logical axes, and whether it queries scroll-state or anchored elements.
+// If no axes are provided and queriesScrollState is false, the style container
+// is returned, which is the direct parent or the closest element with a
+// matching container-name.
 func (d *domainClient) GetContainerForNode(ctx context.Context, args *GetContainerForNodeArgs) (reply *GetContainerForNodeReply, err error) {
 	reply = new(GetContainerForNodeReply)
 	if args != nil {
@@ -742,6 +743,22 @@ func (d *domainClient) GetAnchorElement(ctx context.Context, args *GetAnchorElem
 	return
 }
 
+// ForceShowPopover invokes the DOM method. When enabling, this API
+// force-opens the popover identified by nodeId and keeps it open until
+// disabled.
+func (d *domainClient) ForceShowPopover(ctx context.Context, args *ForceShowPopoverArgs) (reply *ForceShowPopoverReply, err error) {
+	reply = new(ForceShowPopoverReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "DOM.forceShowPopover", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "DOM.forceShowPopover", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "DOM", Op: "ForceShowPopover", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) AttributeModified(ctx context.Context) (AttributeModifiedClient, error) {
 	s, err := rpcc.NewStream(ctx, "DOM.attributeModified", d.conn)
 	if err != nil {
@@ -759,6 +776,27 @@ func (c *attributeModifiedClient) Recv() (*AttributeModifiedReply, error) {
 	event := new(AttributeModifiedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "DOM", Op: "AttributeModified Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) AdoptedStyleSheetsModified(ctx context.Context) (AdoptedStyleSheetsModifiedClient, error) {
+	s, err := rpcc.NewStream(ctx, "DOM.adoptedStyleSheetsModified", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &adoptedStyleSheetsModifiedClient{Stream: s}, nil
+}
+
+type adoptedStyleSheetsModifiedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *adoptedStyleSheetsModifiedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *adoptedStyleSheetsModifiedClient) Recv() (*AdoptedStyleSheetsModifiedReply, error) {
+	event := new(AdoptedStyleSheetsModifiedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "DOM", Op: "AdoptedStyleSheetsModified Recv", Err: err}
 	}
 	return event, nil
 }
@@ -969,6 +1007,48 @@ func (c *topLayerElementsUpdatedClient) Recv() (*TopLayerElementsUpdatedReply, e
 	event := new(TopLayerElementsUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "DOM", Op: "TopLayerElementsUpdated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) ScrollableFlagUpdated(ctx context.Context) (ScrollableFlagUpdatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "DOM.scrollableFlagUpdated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &scrollableFlagUpdatedClient{Stream: s}, nil
+}
+
+type scrollableFlagUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *scrollableFlagUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *scrollableFlagUpdatedClient) Recv() (*ScrollableFlagUpdatedReply, error) {
+	event := new(ScrollableFlagUpdatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "DOM", Op: "ScrollableFlagUpdated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) AffectedByStartingStylesFlagUpdated(ctx context.Context) (AffectedByStartingStylesFlagUpdatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "DOM.affectedByStartingStylesFlagUpdated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &affectedByStartingStylesFlagUpdatedClient{Stream: s}, nil
+}
+
+type affectedByStartingStylesFlagUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *affectedByStartingStylesFlagUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *affectedByStartingStylesFlagUpdatedClient) Recv() (*AffectedByStartingStylesFlagUpdatedReply, error) {
+	event := new(AffectedByStartingStylesFlagUpdatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "DOM", Op: "AffectedByStartingStylesFlagUpdated Recv", Err: err}
 	}
 	return event, nil
 }

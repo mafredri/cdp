@@ -211,11 +211,13 @@ func (d *domainClient) SendMessageToTarget(ctx context.Context, args *SendMessag
 }
 
 // SetAutoAttach invokes the Target method. Controls whether to automatically
-// attach to new targets which are considered to be related to this one. When
-// turned on, attaches to all existing related targets as well. When turned
-// off, automatically detaches from all currently attached targets. This also
-// clears all targets added by `autoAttachRelated` from the list of targets to
-// watch for creation of related targets.
+// attach to new targets which are considered to be directly related to this
+// one (for example, iframes or workers). When turned on, attaches to all
+// existing related targets as well. When turned off, automatically detaches
+// from all currently attached targets. This also clears all targets added by
+// `autoAttachRelated` from the list of targets to watch for creation of
+// related targets. You might want to call this recursively for auto-attached
+// targets to attach to all available targets.
 func (d *domainClient) SetAutoAttach(ctx context.Context, args *SetAutoAttachArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Target.setAutoAttach", args, nil, d.conn)
@@ -272,6 +274,36 @@ func (d *domainClient) SetRemoteLocations(ctx context.Context, args *SetRemoteLo
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Target", Op: "SetRemoteLocations", Err: err}
+	}
+	return
+}
+
+// GetDevToolsTarget invokes the Target method. Gets the targetId of the
+// DevTools page target opened for the given target (if any).
+func (d *domainClient) GetDevToolsTarget(ctx context.Context, args *GetDevToolsTargetArgs) (reply *GetDevToolsTargetReply, err error) {
+	reply = new(GetDevToolsTargetReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Target.getDevToolsTarget", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Target.getDevToolsTarget", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Target", Op: "GetDevToolsTarget", Err: err}
+	}
+	return
+}
+
+// OpenDevTools invokes the Target method. Opens a DevTools window for the
+// target.
+func (d *domainClient) OpenDevTools(ctx context.Context, args *OpenDevToolsArgs) (reply *OpenDevToolsReply, err error) {
+	reply = new(OpenDevToolsReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Target.openDevTools", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Target.openDevTools", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Target", Op: "OpenDevTools", Err: err}
 	}
 	return
 }

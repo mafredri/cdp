@@ -3,6 +3,7 @@
 package css
 
 import (
+	"github.com/mafredri/cdp/protocol/dom"
 	"github.com/mafredri/cdp/rpcc"
 )
 
@@ -61,7 +62,7 @@ type StyleSheetChangedClient interface {
 
 // StyleSheetChangedReply is the reply for StyleSheetChanged events.
 type StyleSheetChangedReply struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // No description.
 }
 
 // StyleSheetRemovedClient is a client for StyleSheetRemoved events. Fired
@@ -75,5 +76,18 @@ type StyleSheetRemovedClient interface {
 
 // StyleSheetRemovedReply is the reply for StyleSheetRemoved events.
 type StyleSheetRemovedReply struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // Identifier of the removed stylesheet.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // Identifier of the removed stylesheet.
+}
+
+// ComputedStyleUpdatedClient is a client for ComputedStyleUpdated events.
+type ComputedStyleUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*ComputedStyleUpdatedReply, error)
+	rpcc.Stream
+}
+
+// ComputedStyleUpdatedReply is the reply for ComputedStyleUpdated events.
+type ComputedStyleUpdatedReply struct {
+	NodeID dom.NodeID `json:"nodeId"` // The node id that has updated computed styles.
 }

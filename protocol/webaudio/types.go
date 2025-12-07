@@ -34,15 +34,16 @@ type ContextState string
 
 // ContextState as enums.
 const (
-	ContextStateNotSet    ContextState = ""
-	ContextStateSuspended ContextState = "suspended"
-	ContextStateRunning   ContextState = "running"
-	ContextStateClosed    ContextState = "closed"
+	ContextStateNotSet      ContextState = ""
+	ContextStateSuspended   ContextState = "suspended"
+	ContextStateRunning     ContextState = "running"
+	ContextStateClosed      ContextState = "closed"
+	ContextStateInterrupted ContextState = "interrupted"
 )
 
 func (e ContextState) Valid() bool {
 	switch e {
-	case "suspended", "running", "closed":
+	case "suspended", "running", "closed", "interrupted":
 		return true
 	default:
 		return false

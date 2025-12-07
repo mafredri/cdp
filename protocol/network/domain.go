@@ -143,7 +143,9 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 }
 
 // EmulateNetworkConditions invokes the Network method. Activates emulation of
-// network conditions.
+// network conditions. This command is deprecated in favor of the
+// emulateNetworkConditionsByRule and overrideNetworkState commands, which can
+// be used together to the same effect.
 func (d *domainClient) EmulateNetworkConditions(ctx context.Context, args *EmulateNetworkConditionsArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Network.emulateNetworkConditions", args, nil, d.conn)
@@ -152,6 +154,38 @@ func (d *domainClient) EmulateNetworkConditions(ctx context.Context, args *Emula
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "EmulateNetworkConditions", Err: err}
+	}
+	return
+}
+
+// EmulateNetworkConditionsByRule invokes the Network method. Activates
+// emulation of network conditions for individual requests using URL match
+// patterns. Unlike the deprecated Network.emulateNetworkConditions this method
+// does not affect `navigator` state. Use Network.overrideNetworkState to
+// explicitly modify `navigator` behavior.
+func (d *domainClient) EmulateNetworkConditionsByRule(ctx context.Context, args *EmulateNetworkConditionsByRuleArgs) (reply *EmulateNetworkConditionsByRuleReply, err error) {
+	reply = new(EmulateNetworkConditionsByRuleReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.emulateNetworkConditionsByRule", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.emulateNetworkConditionsByRule", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "EmulateNetworkConditionsByRule", Err: err}
+	}
+	return
+}
+
+// OverrideNetworkState invokes the Network method. Override the state of
+// navigator.onLine and navigator.connection.
+func (d *domainClient) OverrideNetworkState(ctx context.Context, args *OverrideNetworkStateArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.overrideNetworkState", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.overrideNetworkState", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "OverrideNetworkState", Err: err}
 	}
 	return
 }
@@ -477,6 +511,21 @@ func (d *domainClient) LoadNetworkResource(ctx context.Context, args *LoadNetwor
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Network", Op: "LoadNetworkResource", Err: err}
+	}
+	return
+}
+
+// SetCookieControls invokes the Network method. Sets Controls for third-party
+// cookie access Page reload is required before the new cookie behavior will be
+// observed
+func (d *domainClient) SetCookieControls(ctx context.Context, args *SetCookieControlsArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Network.setCookieControls", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Network.setCookieControls", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Network", Op: "SetCookieControls", Err: err}
 	}
 	return
 }
@@ -901,6 +950,300 @@ func (c *webTransportClosedClient) Recv() (*WebTransportClosedReply, error) {
 	return event, nil
 }
 
+func (d *domainClient) DirectTCPSocketCreated(ctx context.Context) (DirectTCPSocketCreatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directTCPSocketCreated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directTCPSocketCreatedClient{Stream: s}, nil
+}
+
+type directTCPSocketCreatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directTCPSocketCreatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directTCPSocketCreatedClient) Recv() (*DirectTCPSocketCreatedReply, error) {
+	event := new(DirectTCPSocketCreatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectTCPSocketCreated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectTCPSocketOpened(ctx context.Context) (DirectTCPSocketOpenedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directTCPSocketOpened", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directTCPSocketOpenedClient{Stream: s}, nil
+}
+
+type directTCPSocketOpenedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directTCPSocketOpenedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directTCPSocketOpenedClient) Recv() (*DirectTCPSocketOpenedReply, error) {
+	event := new(DirectTCPSocketOpenedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectTCPSocketOpened Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectTCPSocketAborted(ctx context.Context) (DirectTCPSocketAbortedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directTCPSocketAborted", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directTCPSocketAbortedClient{Stream: s}, nil
+}
+
+type directTCPSocketAbortedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directTCPSocketAbortedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directTCPSocketAbortedClient) Recv() (*DirectTCPSocketAbortedReply, error) {
+	event := new(DirectTCPSocketAbortedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectTCPSocketAborted Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectTCPSocketClosed(ctx context.Context) (DirectTCPSocketClosedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directTCPSocketClosed", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directTCPSocketClosedClient{Stream: s}, nil
+}
+
+type directTCPSocketClosedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directTCPSocketClosedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directTCPSocketClosedClient) Recv() (*DirectTCPSocketClosedReply, error) {
+	event := new(DirectTCPSocketClosedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectTCPSocketClosed Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectTCPSocketChunkSent(ctx context.Context) (DirectTCPSocketChunkSentClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directTCPSocketChunkSent", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directTCPSocketChunkSentClient{Stream: s}, nil
+}
+
+type directTCPSocketChunkSentClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directTCPSocketChunkSentClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directTCPSocketChunkSentClient) Recv() (*DirectTCPSocketChunkSentReply, error) {
+	event := new(DirectTCPSocketChunkSentReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectTCPSocketChunkSent Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectTCPSocketChunkReceived(ctx context.Context) (DirectTCPSocketChunkReceivedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directTCPSocketChunkReceived", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directTCPSocketChunkReceivedClient{Stream: s}, nil
+}
+
+type directTCPSocketChunkReceivedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directTCPSocketChunkReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directTCPSocketChunkReceivedClient) Recv() (*DirectTCPSocketChunkReceivedReply, error) {
+	event := new(DirectTCPSocketChunkReceivedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectTCPSocketChunkReceived Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectUDPSocketJoinedMulticastGroup(ctx context.Context) (DirectUDPSocketJoinedMulticastGroupClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directUDPSocketJoinedMulticastGroup", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directUDPSocketJoinedMulticastGroupClient{Stream: s}, nil
+}
+
+type directUDPSocketJoinedMulticastGroupClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directUDPSocketJoinedMulticastGroupClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directUDPSocketJoinedMulticastGroupClient) Recv() (*DirectUDPSocketJoinedMulticastGroupReply, error) {
+	event := new(DirectUDPSocketJoinedMulticastGroupReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectUDPSocketJoinedMulticastGroup Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectUDPSocketLeftMulticastGroup(ctx context.Context) (DirectUDPSocketLeftMulticastGroupClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directUDPSocketLeftMulticastGroup", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directUDPSocketLeftMulticastGroupClient{Stream: s}, nil
+}
+
+type directUDPSocketLeftMulticastGroupClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directUDPSocketLeftMulticastGroupClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directUDPSocketLeftMulticastGroupClient) Recv() (*DirectUDPSocketLeftMulticastGroupReply, error) {
+	event := new(DirectUDPSocketLeftMulticastGroupReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectUDPSocketLeftMulticastGroup Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectUDPSocketCreated(ctx context.Context) (DirectUDPSocketCreatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directUDPSocketCreated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directUDPSocketCreatedClient{Stream: s}, nil
+}
+
+type directUDPSocketCreatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directUDPSocketCreatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directUDPSocketCreatedClient) Recv() (*DirectUDPSocketCreatedReply, error) {
+	event := new(DirectUDPSocketCreatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectUDPSocketCreated Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectUDPSocketOpened(ctx context.Context) (DirectUDPSocketOpenedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directUDPSocketOpened", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directUDPSocketOpenedClient{Stream: s}, nil
+}
+
+type directUDPSocketOpenedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directUDPSocketOpenedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directUDPSocketOpenedClient) Recv() (*DirectUDPSocketOpenedReply, error) {
+	event := new(DirectUDPSocketOpenedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectUDPSocketOpened Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectUDPSocketAborted(ctx context.Context) (DirectUDPSocketAbortedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directUDPSocketAborted", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directUDPSocketAbortedClient{Stream: s}, nil
+}
+
+type directUDPSocketAbortedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directUDPSocketAbortedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directUDPSocketAbortedClient) Recv() (*DirectUDPSocketAbortedReply, error) {
+	event := new(DirectUDPSocketAbortedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectUDPSocketAborted Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectUDPSocketClosed(ctx context.Context) (DirectUDPSocketClosedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directUDPSocketClosed", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directUDPSocketClosedClient{Stream: s}, nil
+}
+
+type directUDPSocketClosedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directUDPSocketClosedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directUDPSocketClosedClient) Recv() (*DirectUDPSocketClosedReply, error) {
+	event := new(DirectUDPSocketClosedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectUDPSocketClosed Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectUDPSocketChunkSent(ctx context.Context) (DirectUDPSocketChunkSentClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directUDPSocketChunkSent", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directUDPSocketChunkSentClient{Stream: s}, nil
+}
+
+type directUDPSocketChunkSentClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directUDPSocketChunkSentClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directUDPSocketChunkSentClient) Recv() (*DirectUDPSocketChunkSentReply, error) {
+	event := new(DirectUDPSocketChunkSentReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectUDPSocketChunkSent Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) DirectUDPSocketChunkReceived(ctx context.Context) (DirectUDPSocketChunkReceivedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Network.directUDPSocketChunkReceived", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &directUDPSocketChunkReceivedClient{Stream: s}, nil
+}
+
+type directUDPSocketChunkReceivedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *directUDPSocketChunkReceivedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *directUDPSocketChunkReceivedClient) Recv() (*DirectUDPSocketChunkReceivedReply, error) {
+	event := new(DirectUDPSocketChunkReceivedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Network", Op: "DirectUDPSocketChunkReceived Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) RequestWillBeSentExtraInfo(ctx context.Context) (RequestWillBeSentExtraInfoClient, error) {
 	s, err := rpcc.NewStream(ctx, "Network.requestWillBeSentExtraInfo", d.conn)
 	if err != nil {
@@ -1002,90 +1345,6 @@ func (c *policyUpdatedClient) Recv() (*PolicyUpdatedReply, error) {
 	event := new(PolicyUpdatedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Network", Op: "PolicyUpdated Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) SubresourceWebBundleMetadataReceived(ctx context.Context) (SubresourceWebBundleMetadataReceivedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.subresourceWebBundleMetadataReceived", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &subresourceWebBundleMetadataReceivedClient{Stream: s}, nil
-}
-
-type subresourceWebBundleMetadataReceivedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *subresourceWebBundleMetadataReceivedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *subresourceWebBundleMetadataReceivedClient) Recv() (*SubresourceWebBundleMetadataReceivedReply, error) {
-	event := new(SubresourceWebBundleMetadataReceivedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "SubresourceWebBundleMetadataReceived Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) SubresourceWebBundleMetadataError(ctx context.Context) (SubresourceWebBundleMetadataErrorClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.subresourceWebBundleMetadataError", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &subresourceWebBundleMetadataErrorClient{Stream: s}, nil
-}
-
-type subresourceWebBundleMetadataErrorClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *subresourceWebBundleMetadataErrorClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *subresourceWebBundleMetadataErrorClient) Recv() (*SubresourceWebBundleMetadataErrorReply, error) {
-	event := new(SubresourceWebBundleMetadataErrorReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "SubresourceWebBundleMetadataError Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) SubresourceWebBundleInnerResponseParsed(ctx context.Context) (SubresourceWebBundleInnerResponseParsedClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.subresourceWebBundleInnerResponseParsed", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &subresourceWebBundleInnerResponseParsedClient{Stream: s}, nil
-}
-
-type subresourceWebBundleInnerResponseParsedClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *subresourceWebBundleInnerResponseParsedClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *subresourceWebBundleInnerResponseParsedClient) Recv() (*SubresourceWebBundleInnerResponseParsedReply, error) {
-	event := new(SubresourceWebBundleInnerResponseParsedReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "SubresourceWebBundleInnerResponseParsed Recv", Err: err}
-	}
-	return event, nil
-}
-
-func (d *domainClient) SubresourceWebBundleInnerResponseError(ctx context.Context) (SubresourceWebBundleInnerResponseErrorClient, error) {
-	s, err := rpcc.NewStream(ctx, "Network.subresourceWebBundleInnerResponseError", d.conn)
-	if err != nil {
-		return nil, err
-	}
-	return &subresourceWebBundleInnerResponseErrorClient{Stream: s}, nil
-}
-
-type subresourceWebBundleInnerResponseErrorClient struct{ rpcc.Stream }
-
-// GetStream returns the original Stream for use with cdp.Sync.
-func (c *subresourceWebBundleInnerResponseErrorClient) GetStream() rpcc.Stream { return c.Stream }
-
-func (c *subresourceWebBundleInnerResponseErrorClient) Recv() (*SubresourceWebBundleInnerResponseErrorReply, error) {
-	event := new(SubresourceWebBundleInnerResponseErrorReply)
-	if err := c.RecvMsg(event); err != nil {
-		return nil, &internal.OpError{Domain: "Network", Op: "SubresourceWebBundleInnerResponseError Recv", Err: err}
 	}
 	return event, nil
 }

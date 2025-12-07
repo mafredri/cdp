@@ -244,6 +244,34 @@ type CreateIsolatedWorldReply struct {
 	ExecutionContextID runtime.ExecutionContextID `json:"executionContextId"` // Execution context of the isolated world.
 }
 
+// EnableArgs represents the arguments for Enable in the Page domain.
+type EnableArgs struct {
+	// EnableFileChooserOpenedEvent If true, the `Page.fileChooserOpened`
+	// event will be emitted regardless of the state set by
+	// `Page.setInterceptFileChooserDialog` command (default: false).
+	//
+	// Note: This property is experimental.
+	EnableFileChooserOpenedEvent *bool `json:"enableFileChooserOpenedEvent,omitempty"`
+}
+
+// NewEnableArgs initializes EnableArgs with the required arguments.
+func NewEnableArgs() *EnableArgs {
+	args := new(EnableArgs)
+
+	return args
+}
+
+// SetEnableFileChooserOpenedEvent sets the EnableFileChooserOpenedEvent optional argument.
+// If true, the `Page.fileChooserOpened` event will be emitted
+// regardless of the state set by `Page.setInterceptFileChooserDialog`
+// command (default: false).
+//
+// Note: This property is experimental.
+func (a *EnableArgs) SetEnableFileChooserOpenedEvent(enableFileChooserOpenedEvent bool) *EnableArgs {
+	a.EnableFileChooserOpenedEvent = &enableFileChooserOpenedEvent
+	return a
+}
+
 // GetAppManifestArgs represents the arguments for GetAppManifest in the Page domain.
 type GetAppManifestArgs struct {
 	ManifestID *string `json:"manifestId,omitempty"` // No description.
@@ -296,21 +324,21 @@ type GetAppIDReply struct {
 	RecommendedID *string `json:"recommendedId,omitempty"` // Recommendation for manifest's id attribute to match current id computed from start_url
 }
 
-// GetAdScriptIDArgs represents the arguments for GetAdScriptID in the Page domain.
-type GetAdScriptIDArgs struct {
+// GetAdScriptAncestryArgs represents the arguments for GetAdScriptAncestry in the Page domain.
+type GetAdScriptAncestryArgs struct {
 	FrameID FrameID `json:"frameId"` // No description.
 }
 
-// NewGetAdScriptIDArgs initializes GetAdScriptIDArgs with the required arguments.
-func NewGetAdScriptIDArgs(frameID FrameID) *GetAdScriptIDArgs {
-	args := new(GetAdScriptIDArgs)
+// NewGetAdScriptAncestryArgs initializes GetAdScriptAncestryArgs with the required arguments.
+func NewGetAdScriptAncestryArgs(frameID FrameID) *GetAdScriptAncestryArgs {
+	args := new(GetAdScriptAncestryArgs)
 	args.FrameID = frameID
 	return args
 }
 
-// GetAdScriptIDReply represents the return values for GetAdScriptID in the Page domain.
-type GetAdScriptIDReply struct {
-	AdScriptID *AdScriptID `json:"adScriptId,omitempty"` // Identifies the bottom-most script which caused the frame to be labeled as an ad. Only sent if frame is labeled as an ad and id is available.
+// GetAdScriptAncestryReply represents the return values for GetAdScriptAncestry in the Page domain.
+type GetAdScriptAncestryReply struct {
+	AdScriptAncestry *AdScriptAncestry `json:"adScriptAncestry,omitempty"` // The ancestry chain of ad script identifiers leading to this frame's creation, along with the root script's filterlist rule. The ancestry chain is ordered from the most immediate script (in the frame creation stack) to more distant ancestors (that created the immediately preceding script). Only sent if frame is labeled as an ad and ids are available.
 }
 
 // GetFrameTreeReply represents the return values for GetFrameTree in the Page domain.
@@ -445,6 +473,10 @@ type NavigateReply struct {
 	FrameID   FrameID           `json:"frameId"`             // Frame id that has navigated (or failed to navigate)
 	LoaderID  *network.LoaderID `json:"loaderId,omitempty"`  // Loader identifier. This is omitted in case of same-document navigation, as the previously committed loaderId would not change.
 	ErrorText *string           `json:"errorText,omitempty"` // User friendly error message, present if and only if navigation has failed.
+	// IsDownload Whether the navigation resulted in a download.
+	//
+	// Note: This property is experimental.
+	IsDownload *bool `json:"isDownload,omitempty"`
 }
 
 // NavigateToHistoryEntryArgs represents the arguments for NavigateToHistoryEntry in the Page domain.
@@ -1013,11 +1045,14 @@ func NewAddCompilationCacheArgs(url string, data []byte) *AddCompilationCacheArg
 
 // SetSPCTransactionModeArgs represents the arguments for SetSPCTransactionMode in the Page domain.
 type SetSPCTransactionModeArgs struct {
-	Mode AutoResponseMode `json:"mode"` // No description.
+	// Mode
+	//
+	// Values: "none", "autoAccept", "autoChooseToAuthAnotherWay", "autoReject", "autoOptOut".
+	Mode string `json:"mode"`
 }
 
 // NewSetSPCTransactionModeArgs initializes SetSPCTransactionModeArgs with the required arguments.
-func NewSetSPCTransactionModeArgs(mode AutoResponseMode) *SetSPCTransactionModeArgs {
+func NewSetSPCTransactionModeArgs(mode string) *SetSPCTransactionModeArgs {
 	args := new(SetSPCTransactionModeArgs)
 	args.Mode = mode
 	return args
@@ -1025,11 +1060,14 @@ func NewSetSPCTransactionModeArgs(mode AutoResponseMode) *SetSPCTransactionModeA
 
 // SetRPHRegistrationModeArgs represents the arguments for SetRPHRegistrationMode in the Page domain.
 type SetRPHRegistrationModeArgs struct {
-	Mode AutoResponseMode `json:"mode"` // No description.
+	// Mode
+	//
+	// Values: "none", "autoAccept", "autoReject".
+	Mode string `json:"mode"`
 }
 
 // NewSetRPHRegistrationModeArgs initializes SetRPHRegistrationModeArgs with the required arguments.
-func NewSetRPHRegistrationModeArgs(mode AutoResponseMode) *SetRPHRegistrationModeArgs {
+func NewSetRPHRegistrationModeArgs(mode string) *SetRPHRegistrationModeArgs {
 	args := new(SetRPHRegistrationModeArgs)
 	args.Mode = mode
 	return args
@@ -1058,6 +1096,12 @@ func (a *GenerateTestReportArgs) SetGroup(group string) *GenerateTestReportArgs 
 // SetInterceptFileChooserDialogArgs represents the arguments for SetInterceptFileChooserDialog in the Page domain.
 type SetInterceptFileChooserDialogArgs struct {
 	Enabled bool `json:"enabled"` // No description.
+	// Cancel If true, cancels the dialog by emitting relevant events (if
+	// any) in addition to not showing it if the interception is enabled
+	// (default: false).
+	//
+	// Note: This property is experimental.
+	Cancel *bool `json:"cancel,omitempty"`
 }
 
 // NewSetInterceptFileChooserDialogArgs initializes SetInterceptFileChooserDialogArgs with the required arguments.
@@ -1065,6 +1109,16 @@ func NewSetInterceptFileChooserDialogArgs(enabled bool) *SetInterceptFileChooser
 	args := new(SetInterceptFileChooserDialogArgs)
 	args.Enabled = enabled
 	return args
+}
+
+// SetCancel sets the Cancel optional argument. If true, cancels the
+// dialog by emitting relevant events (if any) in addition to not
+// showing it if the interception is enabled (default: false).
+//
+// Note: This property is experimental.
+func (a *SetInterceptFileChooserDialogArgs) SetCancel(cancel bool) *SetInterceptFileChooserDialogArgs {
+	a.Cancel = &cancel
+	return a
 }
 
 // SetPrerenderingAllowedArgs represents the arguments for SetPrerenderingAllowed in the Page domain.
@@ -1077,4 +1131,28 @@ func NewSetPrerenderingAllowedArgs(isAllowed bool) *SetPrerenderingAllowedArgs {
 	args := new(SetPrerenderingAllowedArgs)
 	args.IsAllowed = isAllowed
 	return args
+}
+
+// GetAnnotatedPageContentArgs represents the arguments for GetAnnotatedPageContent in the Page domain.
+type GetAnnotatedPageContentArgs struct {
+	IncludeActionableInformation *bool `json:"includeActionableInformation,omitempty"` // Whether to include actionable information. Defaults to true.
+}
+
+// NewGetAnnotatedPageContentArgs initializes GetAnnotatedPageContentArgs with the required arguments.
+func NewGetAnnotatedPageContentArgs() *GetAnnotatedPageContentArgs {
+	args := new(GetAnnotatedPageContentArgs)
+
+	return args
+}
+
+// SetIncludeActionableInformation sets the IncludeActionableInformation optional argument.
+// Whether to include actionable information. Defaults to true.
+func (a *GetAnnotatedPageContentArgs) SetIncludeActionableInformation(includeActionableInformation bool) *GetAnnotatedPageContentArgs {
+	a.IncludeActionableInformation = &includeActionableInformation
+	return a
+}
+
+// GetAnnotatedPageContentReply represents the return values for GetAnnotatedPageContent in the Page domain.
+type GetAnnotatedPageContentReply struct {
+	Content []byte `json:"content"` // The annotated page content as a base64 encoded protobuf. The format is defined by the `AnnotatedPageContent` message in components/optimization_guide/proto/features/common_quality_data.proto (Encoded as a base64 string when passed over JSON)
 }

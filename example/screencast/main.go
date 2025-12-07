@@ -38,7 +38,7 @@ func run() error {
 
 	c := cdp.NewClient(conn)
 
-	err = c.Page.Enable(ctx)
+	err = c.Page.Enable(ctx, nil)
 	if err != nil {
 		return err
 	}

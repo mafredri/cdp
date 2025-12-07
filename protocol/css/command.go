@@ -3,15 +3,17 @@
 package css
 
 import (
+	"encoding/json"
+
 	"github.com/mafredri/cdp/protocol/dom"
 	"github.com/mafredri/cdp/protocol/page"
 )
 
 // AddRuleArgs represents the arguments for AddRule in the CSS domain.
 type AddRuleArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // The css style sheet identifier where a new rule should be inserted.
-	RuleText     string       `json:"ruleText"`     // The text of a new rule.
-	Location     SourceRange  `json:"location"`     // Text position of a new rule in the target style sheet.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // The css style sheet identifier where a new rule should be inserted.
+	RuleText     string           `json:"ruleText"`     // The text of a new rule.
+	Location     SourceRange      `json:"location"`     // Text position of a new rule in the target style sheet.
 	// NodeForPropertySyntaxValidation NodeId for the DOM node in whose
 	// context custom property declarations for registered properties
 	// should be validated. If omitted, declarations in the new rule text
@@ -23,7 +25,7 @@ type AddRuleArgs struct {
 }
 
 // NewAddRuleArgs initializes AddRuleArgs with the required arguments.
-func NewAddRuleArgs(styleSheetID StyleSheetID, ruleText string, location SourceRange) *AddRuleArgs {
+func NewAddRuleArgs(styleSheetID dom.StyleSheetID, ruleText string, location SourceRange) *AddRuleArgs {
 	args := new(AddRuleArgs)
 	args.StyleSheetID = styleSheetID
 	args.RuleText = ruleText
@@ -51,11 +53,11 @@ type AddRuleReply struct {
 
 // CollectClassNamesArgs represents the arguments for CollectClassNames in the CSS domain.
 type CollectClassNamesArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // No description.
 }
 
 // NewCollectClassNamesArgs initializes CollectClassNamesArgs with the required arguments.
-func NewCollectClassNamesArgs(styleSheetID StyleSheetID) *CollectClassNamesArgs {
+func NewCollectClassNamesArgs(styleSheetID dom.StyleSheetID) *CollectClassNamesArgs {
 	args := new(CollectClassNamesArgs)
 	args.StyleSheetID = styleSheetID
 	return args
@@ -68,7 +70,8 @@ type CollectClassNamesReply struct {
 
 // CreateStyleSheetArgs represents the arguments for CreateStyleSheet in the CSS domain.
 type CreateStyleSheetArgs struct {
-	FrameID page.FrameID `json:"frameId"` // Identifier of the frame where "via-inspector" stylesheet should be created.
+	FrameID page.FrameID `json:"frameId"`         // Identifier of the frame where "via-inspector" stylesheet should be created.
+	Force   *bool        `json:"force,omitempty"` // If true, creates a new stylesheet for every call. If false, returns a stylesheet previously created by a call with force=false for the frame's document if it exists or creates a new stylesheet (default: false).
 }
 
 // NewCreateStyleSheetArgs initializes CreateStyleSheetArgs with the required arguments.
@@ -78,9 +81,18 @@ func NewCreateStyleSheetArgs(frameID page.FrameID) *CreateStyleSheetArgs {
 	return args
 }
 
+// SetForce sets the Force optional argument. If true, creates a new
+// stylesheet for every call. If false, returns a stylesheet previously
+// created by a call with force=false for the frame's document if it
+// exists or creates a new stylesheet (default: false).
+func (a *CreateStyleSheetArgs) SetForce(force bool) *CreateStyleSheetArgs {
+	a.Force = &force
+	return a
+}
+
 // CreateStyleSheetReply represents the return values for CreateStyleSheet in the CSS domain.
 type CreateStyleSheetReply struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // Identifier of the created "via-inspector" stylesheet.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // Identifier of the created "via-inspector" stylesheet.
 }
 
 // ForcePseudoStateArgs represents the arguments for ForcePseudoState in the CSS domain.
@@ -94,6 +106,20 @@ func NewForcePseudoStateArgs(nodeID dom.NodeID, forcedPseudoClasses []string) *F
 	args := new(ForcePseudoStateArgs)
 	args.NodeID = nodeID
 	args.ForcedPseudoClasses = forcedPseudoClasses
+	return args
+}
+
+// ForceStartingStyleArgs represents the arguments for ForceStartingStyle in the CSS domain.
+type ForceStartingStyleArgs struct {
+	NodeID dom.NodeID `json:"nodeId"` // The element id for which to force the starting-style state.
+	Forced bool       `json:"forced"` // Boolean indicating if this is on or off.
+}
+
+// NewForceStartingStyleArgs initializes ForceStartingStyleArgs with the required arguments.
+func NewForceStartingStyleArgs(nodeID dom.NodeID, forced bool) *ForceStartingStyleArgs {
+	args := new(ForceStartingStyleArgs)
+	args.NodeID = nodeID
+	args.Forced = forced
 	return args
 }
 
@@ -131,6 +157,74 @@ func NewGetComputedStyleForNodeArgs(nodeID dom.NodeID) *GetComputedStyleForNodeA
 // GetComputedStyleForNodeReply represents the return values for GetComputedStyleForNode in the CSS domain.
 type GetComputedStyleForNodeReply struct {
 	ComputedStyle []ComputedStyleProperty `json:"computedStyle"` // Computed style for the specified DOM node.
+	// ExtraFields A list of non-standard "extra fields" which blink
+	// stores alongside each computed style.
+	//
+	// Note: This property is experimental.
+	ExtraFields ComputedStyleExtraFields `json:"extraFields"`
+}
+
+// ResolveValuesArgs represents the arguments for ResolveValues in the CSS domain.
+type ResolveValuesArgs struct {
+	Values           []string        `json:"values"`                     // Cascade-dependent keywords (revert/revert-layer) do not work.
+	NodeID           dom.NodeID      `json:"nodeId"`                     // Id of the node in whose context the expression is evaluated
+	PropertyName     *string         `json:"propertyName,omitempty"`     // Only longhands and custom property names are accepted.
+	PseudoType       *dom.PseudoType `json:"pseudoType,omitempty"`       // Pseudo element type, only works for pseudo elements that generate elements in the tree, such as ::before and ::after.
+	PseudoIdentifier *string         `json:"pseudoIdentifier,omitempty"` // Pseudo element custom ident.
+}
+
+// NewResolveValuesArgs initializes ResolveValuesArgs with the required arguments.
+func NewResolveValuesArgs(values []string, nodeID dom.NodeID) *ResolveValuesArgs {
+	args := new(ResolveValuesArgs)
+	args.Values = values
+	args.NodeID = nodeID
+	return args
+}
+
+// SetPropertyName sets the PropertyName optional argument. Only
+// longhands and custom property names are accepted.
+func (a *ResolveValuesArgs) SetPropertyName(propertyName string) *ResolveValuesArgs {
+	a.PropertyName = &propertyName
+	return a
+}
+
+// SetPseudoType sets the PseudoType optional argument. Pseudo element
+// type, only works for pseudo elements that generate elements in the
+// tree, such as ::before and ::after.
+func (a *ResolveValuesArgs) SetPseudoType(pseudoType dom.PseudoType) *ResolveValuesArgs {
+	a.PseudoType = &pseudoType
+	return a
+}
+
+// SetPseudoIdentifier sets the PseudoIdentifier optional argument.
+// Pseudo element custom ident.
+func (a *ResolveValuesArgs) SetPseudoIdentifier(pseudoIdentifier string) *ResolveValuesArgs {
+	a.PseudoIdentifier = &pseudoIdentifier
+	return a
+}
+
+// ResolveValuesReply represents the return values for ResolveValues in the CSS domain.
+type ResolveValuesReply struct {
+	Results []string `json:"results"` // No description.
+}
+
+// GetLonghandPropertiesArgs represents the arguments for GetLonghandProperties in the CSS domain.
+type GetLonghandPropertiesArgs struct {
+	ShorthandName string `json:"shorthandName"` // No description.
+	Value         string `json:"value"`         // No description.
+}
+
+// NewGetLonghandPropertiesArgs initializes GetLonghandPropertiesArgs with the required arguments.
+func NewGetLonghandPropertiesArgs(shorthandName string, value string) *GetLonghandPropertiesArgs {
+	args := new(GetLonghandPropertiesArgs)
+	args.ShorthandName = shorthandName
+	args.Value = value
+	return args
+}
+
+// GetLonghandPropertiesReply represents the return values for GetLonghandProperties in the CSS domain.
+type GetLonghandPropertiesReply struct {
+	LonghandProperties []Property `json:"longhandProperties"` // No description.
 }
 
 // GetInlineStylesForNodeArgs represents the arguments for GetInlineStylesForNode in the CSS domain.
@@ -149,6 +243,25 @@ func NewGetInlineStylesForNodeArgs(nodeID dom.NodeID) *GetInlineStylesForNodeArg
 type GetInlineStylesForNodeReply struct {
 	InlineStyle     *Style `json:"inlineStyle,omitempty"`     // Inline style for the specified DOM node.
 	AttributesStyle *Style `json:"attributesStyle,omitempty"` // Attribute-defined element style (e.g. resulting from "width=20 height=100%").
+}
+
+// GetAnimatedStylesForNodeArgs represents the arguments for GetAnimatedStylesForNode in the CSS domain.
+type GetAnimatedStylesForNodeArgs struct {
+	NodeID dom.NodeID `json:"nodeId"` // No description.
+}
+
+// NewGetAnimatedStylesForNodeArgs initializes GetAnimatedStylesForNodeArgs with the required arguments.
+func NewGetAnimatedStylesForNodeArgs(nodeID dom.NodeID) *GetAnimatedStylesForNodeArgs {
+	args := new(GetAnimatedStylesForNodeArgs)
+	args.NodeID = nodeID
+	return args
+}
+
+// GetAnimatedStylesForNodeReply represents the return values for GetAnimatedStylesForNode in the CSS domain.
+type GetAnimatedStylesForNodeReply struct {
+	AnimationStyles  []AnimationStyle              `json:"animationStyles,omitempty"`  // Styles coming from animations.
+	TransitionsStyle *Style                        `json:"transitionsStyle,omitempty"` // Style coming from transitions.
+	Inherited        []InheritedAnimatedStyleEntry `json:"inherited,omitempty"`        // Inherited style entries for animationsStyle and transitionsStyle from the inheritance chain of the element.
 }
 
 // GetMatchedStylesForNodeArgs represents the arguments for GetMatchedStylesForNode in the CSS domain.
@@ -176,12 +289,22 @@ type GetMatchedStylesForNodeReply struct {
 	ActivePositionFallbackIndex *int                            `json:"activePositionFallbackIndex,omitempty"` // Index of the active fallback in the applied position-try-fallback property, will not be set if there is no active position-try fallback.
 	CSSPropertyRules            []PropertyRule                  `json:"cssPropertyRules,omitempty"`            // A list of CSS at-property rules matching this node.
 	CSSPropertyRegistrations    []PropertyRegistration          `json:"cssPropertyRegistrations,omitempty"`    // A list of CSS property registrations matching this node.
-	CSSFontPaletteValuesRule    *FontPaletteValuesRule          `json:"cssFontPaletteValuesRule,omitempty"`    // A font-palette-values rule matching this node.
+	CSSAtRules                  []AtRule                        `json:"cssAtRules,omitempty"`                  // A list of simple @rules matching this node or its pseudo-elements.
 	// ParentLayoutNodeID Id of the first parent element that does not
 	// have display: contents.
 	//
 	// Note: This property is experimental.
 	ParentLayoutNodeID *dom.NodeID `json:"parentLayoutNodeId,omitempty"`
+	// CSSFunctionRules A list of CSS at-function rules referenced by
+	// styles of this node.
+	//
+	// Note: This property is experimental.
+	CSSFunctionRules []FunctionRule `json:"cssFunctionRules,omitempty"`
+}
+
+// GetEnvironmentVariablesReply represents the return values for GetEnvironmentVariables in the CSS domain.
+type GetEnvironmentVariablesReply struct {
+	EnvironmentVariables json.RawMessage `json:"environmentVariables"` // No description.
 }
 
 // GetMediaQueriesReply represents the return values for GetMediaQueries in the CSS domain.
@@ -208,11 +331,11 @@ type GetPlatformFontsForNodeReply struct {
 
 // GetStyleSheetTextArgs represents the arguments for GetStyleSheetText in the CSS domain.
 type GetStyleSheetTextArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // No description.
 }
 
 // NewGetStyleSheetTextArgs initializes GetStyleSheetTextArgs with the required arguments.
-func NewGetStyleSheetTextArgs(styleSheetID StyleSheetID) *GetStyleSheetTextArgs {
+func NewGetStyleSheetTextArgs(styleSheetID dom.StyleSheetID) *GetStyleSheetTextArgs {
 	args := new(GetStyleSheetTextArgs)
 	args.StyleSheetID = styleSheetID
 	return args
@@ -242,12 +365,12 @@ type GetLayersForNodeReply struct {
 
 // GetLocationForSelectorArgs represents the arguments for GetLocationForSelector in the CSS domain.
 type GetLocationForSelectorArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
-	SelectorText string       `json:"selectorText"` // No description.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // No description.
+	SelectorText string           `json:"selectorText"` // No description.
 }
 
 // NewGetLocationForSelectorArgs initializes GetLocationForSelectorArgs with the required arguments.
-func NewGetLocationForSelectorArgs(styleSheetID StyleSheetID, selectorText string) *GetLocationForSelectorArgs {
+func NewGetLocationForSelectorArgs(styleSheetID dom.StyleSheetID, selectorText string) *GetLocationForSelectorArgs {
 	args := new(GetLocationForSelectorArgs)
 	args.StyleSheetID = styleSheetID
 	args.SelectorText = selectorText
@@ -257,6 +380,24 @@ func NewGetLocationForSelectorArgs(styleSheetID StyleSheetID, selectorText strin
 // GetLocationForSelectorReply represents the return values for GetLocationForSelector in the CSS domain.
 type GetLocationForSelectorReply struct {
 	Ranges []SourceRange `json:"ranges"` // No description.
+}
+
+// TrackComputedStyleUpdatesForNodeArgs represents the arguments for TrackComputedStyleUpdatesForNode in the CSS domain.
+type TrackComputedStyleUpdatesForNodeArgs struct {
+	NodeID *dom.NodeID `json:"nodeId,omitempty"` // No description.
+}
+
+// NewTrackComputedStyleUpdatesForNodeArgs initializes TrackComputedStyleUpdatesForNodeArgs with the required arguments.
+func NewTrackComputedStyleUpdatesForNodeArgs() *TrackComputedStyleUpdatesForNodeArgs {
+	args := new(TrackComputedStyleUpdatesForNodeArgs)
+
+	return args
+}
+
+// SetNodeID sets the NodeID optional argument.
+func (a *TrackComputedStyleUpdatesForNodeArgs) SetNodeID(nodeID dom.NodeID) *TrackComputedStyleUpdatesForNodeArgs {
+	a.NodeID = &nodeID
+	return a
 }
 
 // TrackComputedStyleUpdatesArgs represents the arguments for TrackComputedStyleUpdates in the CSS domain.
@@ -294,13 +435,13 @@ func NewSetEffectivePropertyValueForNodeArgs(nodeID dom.NodeID, propertyName str
 
 // SetPropertyRulePropertyNameArgs represents the arguments for SetPropertyRulePropertyName in the CSS domain.
 type SetPropertyRulePropertyNameArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
-	Range        SourceRange  `json:"range"`        // No description.
-	PropertyName string       `json:"propertyName"` // No description.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange      `json:"range"`        // No description.
+	PropertyName string           `json:"propertyName"` // No description.
 }
 
 // NewSetPropertyRulePropertyNameArgs initializes SetPropertyRulePropertyNameArgs with the required arguments.
-func NewSetPropertyRulePropertyNameArgs(styleSheetID StyleSheetID, rang SourceRange, propertyName string) *SetPropertyRulePropertyNameArgs {
+func NewSetPropertyRulePropertyNameArgs(styleSheetID dom.StyleSheetID, rang SourceRange, propertyName string) *SetPropertyRulePropertyNameArgs {
 	args := new(SetPropertyRulePropertyNameArgs)
 	args.StyleSheetID = styleSheetID
 	args.Range = rang
@@ -315,13 +456,13 @@ type SetPropertyRulePropertyNameReply struct {
 
 // SetKeyframeKeyArgs represents the arguments for SetKeyframeKey in the CSS domain.
 type SetKeyframeKeyArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
-	Range        SourceRange  `json:"range"`        // No description.
-	KeyText      string       `json:"keyText"`      // No description.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange      `json:"range"`        // No description.
+	KeyText      string           `json:"keyText"`      // No description.
 }
 
 // NewSetKeyframeKeyArgs initializes SetKeyframeKeyArgs with the required arguments.
-func NewSetKeyframeKeyArgs(styleSheetID StyleSheetID, rang SourceRange, keyText string) *SetKeyframeKeyArgs {
+func NewSetKeyframeKeyArgs(styleSheetID dom.StyleSheetID, rang SourceRange, keyText string) *SetKeyframeKeyArgs {
 	args := new(SetKeyframeKeyArgs)
 	args.StyleSheetID = styleSheetID
 	args.Range = rang
@@ -336,13 +477,13 @@ type SetKeyframeKeyReply struct {
 
 // SetMediaTextArgs represents the arguments for SetMediaText in the CSS domain.
 type SetMediaTextArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
-	Range        SourceRange  `json:"range"`        // No description.
-	Text         string       `json:"text"`         // No description.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange      `json:"range"`        // No description.
+	Text         string           `json:"text"`         // No description.
 }
 
 // NewSetMediaTextArgs initializes SetMediaTextArgs with the required arguments.
-func NewSetMediaTextArgs(styleSheetID StyleSheetID, rang SourceRange, text string) *SetMediaTextArgs {
+func NewSetMediaTextArgs(styleSheetID dom.StyleSheetID, rang SourceRange, text string) *SetMediaTextArgs {
 	args := new(SetMediaTextArgs)
 	args.StyleSheetID = styleSheetID
 	args.Range = rang
@@ -357,13 +498,13 @@ type SetMediaTextReply struct {
 
 // SetContainerQueryTextArgs represents the arguments for SetContainerQueryText in the CSS domain.
 type SetContainerQueryTextArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
-	Range        SourceRange  `json:"range"`        // No description.
-	Text         string       `json:"text"`         // No description.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange      `json:"range"`        // No description.
+	Text         string           `json:"text"`         // No description.
 }
 
 // NewSetContainerQueryTextArgs initializes SetContainerQueryTextArgs with the required arguments.
-func NewSetContainerQueryTextArgs(styleSheetID StyleSheetID, rang SourceRange, text string) *SetContainerQueryTextArgs {
+func NewSetContainerQueryTextArgs(styleSheetID dom.StyleSheetID, rang SourceRange, text string) *SetContainerQueryTextArgs {
 	args := new(SetContainerQueryTextArgs)
 	args.StyleSheetID = styleSheetID
 	args.Range = rang
@@ -378,13 +519,13 @@ type SetContainerQueryTextReply struct {
 
 // SetSupportsTextArgs represents the arguments for SetSupportsText in the CSS domain.
 type SetSupportsTextArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
-	Range        SourceRange  `json:"range"`        // No description.
-	Text         string       `json:"text"`         // No description.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange      `json:"range"`        // No description.
+	Text         string           `json:"text"`         // No description.
 }
 
 // NewSetSupportsTextArgs initializes SetSupportsTextArgs with the required arguments.
-func NewSetSupportsTextArgs(styleSheetID StyleSheetID, rang SourceRange, text string) *SetSupportsTextArgs {
+func NewSetSupportsTextArgs(styleSheetID dom.StyleSheetID, rang SourceRange, text string) *SetSupportsTextArgs {
 	args := new(SetSupportsTextArgs)
 	args.StyleSheetID = styleSheetID
 	args.Range = rang
@@ -399,13 +540,13 @@ type SetSupportsTextReply struct {
 
 // SetScopeTextArgs represents the arguments for SetScopeText in the CSS domain.
 type SetScopeTextArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
-	Range        SourceRange  `json:"range"`        // No description.
-	Text         string       `json:"text"`         // No description.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange      `json:"range"`        // No description.
+	Text         string           `json:"text"`         // No description.
 }
 
 // NewSetScopeTextArgs initializes SetScopeTextArgs with the required arguments.
-func NewSetScopeTextArgs(styleSheetID StyleSheetID, rang SourceRange, text string) *SetScopeTextArgs {
+func NewSetScopeTextArgs(styleSheetID dom.StyleSheetID, rang SourceRange, text string) *SetScopeTextArgs {
 	args := new(SetScopeTextArgs)
 	args.StyleSheetID = styleSheetID
 	args.Range = rang
@@ -420,13 +561,13 @@ type SetScopeTextReply struct {
 
 // SetRuleSelectorArgs represents the arguments for SetRuleSelector in the CSS domain.
 type SetRuleSelectorArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
-	Range        SourceRange  `json:"range"`        // No description.
-	Selector     string       `json:"selector"`     // No description.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // No description.
+	Range        SourceRange      `json:"range"`        // No description.
+	Selector     string           `json:"selector"`     // No description.
 }
 
 // NewSetRuleSelectorArgs initializes SetRuleSelectorArgs with the required arguments.
-func NewSetRuleSelectorArgs(styleSheetID StyleSheetID, rang SourceRange, selector string) *SetRuleSelectorArgs {
+func NewSetRuleSelectorArgs(styleSheetID dom.StyleSheetID, rang SourceRange, selector string) *SetRuleSelectorArgs {
 	args := new(SetRuleSelectorArgs)
 	args.StyleSheetID = styleSheetID
 	args.Range = rang
@@ -441,12 +582,12 @@ type SetRuleSelectorReply struct {
 
 // SetStyleSheetTextArgs represents the arguments for SetStyleSheetText in the CSS domain.
 type SetStyleSheetTextArgs struct {
-	StyleSheetID StyleSheetID `json:"styleSheetId"` // No description.
-	Text         string       `json:"text"`         // No description.
+	StyleSheetID dom.StyleSheetID `json:"styleSheetId"` // No description.
+	Text         string           `json:"text"`         // No description.
 }
 
 // NewSetStyleSheetTextArgs initializes SetStyleSheetTextArgs with the required arguments.
-func NewSetStyleSheetTextArgs(styleSheetID StyleSheetID, text string) *SetStyleSheetTextArgs {
+func NewSetStyleSheetTextArgs(styleSheetID dom.StyleSheetID, text string) *SetStyleSheetTextArgs {
 	args := new(SetStyleSheetTextArgs)
 	args.StyleSheetID = styleSheetID
 	args.Text = text

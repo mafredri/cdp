@@ -14,7 +14,6 @@ import (
 	"github.com/mafredri/cdp/protocol/cast"
 	"github.com/mafredri/cdp/protocol/console"
 	"github.com/mafredri/cdp/protocol/css"
-	"github.com/mafredri/cdp/protocol/database"
 	"github.com/mafredri/cdp/protocol/debugger"
 	"github.com/mafredri/cdp/protocol/deviceaccess"
 	"github.com/mafredri/cdp/protocol/deviceorientation"
@@ -79,7 +78,6 @@ type Client struct {
 	DOMDebugger          DOMDebugger
 	DOMSnapshot          DOMSnapshot
 	DOMStorage           DOMStorage
-	Database             Database
 	Debugger             Debugger
 	DeviceAccess         DeviceAccess
 	DeviceOrientation    DeviceOrientation
@@ -139,7 +137,6 @@ func NewClient(conn *rpcc.Conn) *Client {
 		DOMDebugger:          domdebugger.NewClient(conn),
 		DOMSnapshot:          domsnapshot.NewClient(conn),
 		DOMStorage:           domstorage.NewClient(conn),
-		Database:             database.NewClient(conn),
 		Debugger:             debugger.NewClient(conn),
 		DeviceAccess:         deviceaccess.NewClient(conn),
 		DeviceOrientation:    deviceorientation.NewClient(conn),

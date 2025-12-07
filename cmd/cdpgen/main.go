@@ -633,7 +633,7 @@ func (g *Generator) DomainType(d proto.Domain, t proto.AnyType) {
 	case "RawMessage":
 		g.domainTypeRawMessage(d, t)
 	default:
-		g.Printf(typ)
+		g.Printf("%s", typ)
 	}
 	g.Printf("\n\n")
 }

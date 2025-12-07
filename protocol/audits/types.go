@@ -20,8 +20,8 @@ type AffectedCookie struct {
 // AffectedRequest Information about a request that is affected by an
 // inspector issue.
 type AffectedRequest struct {
-	RequestID network.RequestID `json:"requestId"`     // The unique request id.
-	URL       *string           `json:"url,omitempty"` // No description.
+	RequestID *network.RequestID `json:"requestId,omitempty"` // The unique request id.
+	URL       string             `json:"url"`                 // No description.
 }
 
 // AffectedFrame Information about the frame affected by an inspector issue.
@@ -44,11 +44,13 @@ const (
 	CookieExclusionReasonExcludeDomainNonASCII                         CookieExclusionReason = "ExcludeDomainNonASCII"
 	CookieExclusionReasonExcludeThirdPartyCookieBlockedInFirstPartySet CookieExclusionReason = "ExcludeThirdPartyCookieBlockedInFirstPartySet"
 	CookieExclusionReasonExcludeThirdPartyPhaseout                     CookieExclusionReason = "ExcludeThirdPartyPhaseout"
+	CookieExclusionReasonExcludePortMismatch                           CookieExclusionReason = "ExcludePortMismatch"
+	CookieExclusionReasonExcludeSchemeMismatch                         CookieExclusionReason = "ExcludeSchemeMismatch"
 )
 
 func (e CookieExclusionReason) Valid() bool {
 	switch e {
-	case "ExcludeSameSiteUnspecifiedTreatedAsLax", "ExcludeSameSiteNoneInsecure", "ExcludeSameSiteLax", "ExcludeSameSiteStrict", "ExcludeInvalidSameParty", "ExcludeSamePartyCrossPartyContext", "ExcludeDomainNonASCII", "ExcludeThirdPartyCookieBlockedInFirstPartySet", "ExcludeThirdPartyPhaseout":
+	case "ExcludeSameSiteUnspecifiedTreatedAsLax", "ExcludeSameSiteNoneInsecure", "ExcludeSameSiteLax", "ExcludeSameSiteStrict", "ExcludeInvalidSameParty", "ExcludeSamePartyCrossPartyContext", "ExcludeDomainNonASCII", "ExcludeThirdPartyCookieBlockedInFirstPartySet", "ExcludeThirdPartyPhaseout", "ExcludePortMismatch", "ExcludeSchemeMismatch":
 		return true
 	default:
 		return false
@@ -77,11 +79,13 @@ const (
 	CookieWarningReasonWarnDomainNonASCII                             CookieWarningReason = "WarnDomainNonASCII"
 	CookieWarningReasonWarnThirdPartyPhaseout                         CookieWarningReason = "WarnThirdPartyPhaseout"
 	CookieWarningReasonWarnCrossSiteRedirectDowngradeChangesInclusion CookieWarningReason = "WarnCrossSiteRedirectDowngradeChangesInclusion"
+	CookieWarningReasonWarnDeprecationTrialMetadata                   CookieWarningReason = "WarnDeprecationTrialMetadata"
+	CookieWarningReasonWarnThirdPartyCookieHeuristic                  CookieWarningReason = "WarnThirdPartyCookieHeuristic"
 )
 
 func (e CookieWarningReason) Valid() bool {
 	switch e {
-	case "WarnSameSiteUnspecifiedCrossSiteContext", "WarnSameSiteNoneInsecure", "WarnSameSiteUnspecifiedLaxAllowUnsafe", "WarnSameSiteStrictLaxDowngradeStrict", "WarnSameSiteStrictCrossDowngradeStrict", "WarnSameSiteStrictCrossDowngradeLax", "WarnSameSiteLaxCrossDowngradeStrict", "WarnSameSiteLaxCrossDowngradeLax", "WarnAttributeValueExceedsMaxSize", "WarnDomainNonASCII", "WarnThirdPartyPhaseout", "WarnCrossSiteRedirectDowngradeChangesInclusion":
+	case "WarnSameSiteUnspecifiedCrossSiteContext", "WarnSameSiteNoneInsecure", "WarnSameSiteUnspecifiedLaxAllowUnsafe", "WarnSameSiteStrictLaxDowngradeStrict", "WarnSameSiteStrictCrossDowngradeStrict", "WarnSameSiteStrictCrossDowngradeLax", "WarnSameSiteLaxCrossDowngradeStrict", "WarnSameSiteLaxCrossDowngradeLax", "WarnAttributeValueExceedsMaxSize", "WarnDomainNonASCII", "WarnThirdPartyPhaseout", "WarnCrossSiteRedirectDowngradeChangesInclusion", "WarnDeprecationTrialMetadata", "WarnThirdPartyCookieHeuristic":
 		return true
 	default:
 		return false
@@ -115,6 +119,38 @@ func (e CookieOperation) String() string {
 	return string(e)
 }
 
+// InsightType Represents the category of insight that a cookie issue falls
+// under.
+type InsightType string
+
+// InsightType as enums.
+const (
+	InsightTypeNotSet         InsightType = ""
+	InsightTypeGitHubResource InsightType = "GitHubResource"
+	InsightTypeGracePeriod    InsightType = "GracePeriod"
+	InsightTypeHeuristics     InsightType = "Heuristics"
+)
+
+func (e InsightType) Valid() bool {
+	switch e {
+	case "GitHubResource", "GracePeriod", "Heuristics":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e InsightType) String() string {
+	return string(e)
+}
+
+// CookieIssueInsight Information about the suggested solution to a cookie
+// issue.
+type CookieIssueInsight struct {
+	Type          InsightType `json:"type"`                    // No description.
+	TableEntryURL *string     `json:"tableEntryUrl,omitempty"` // Link to table entry in third-party cookie migration readiness list.
+}
+
 // CookieIssueDetails This information is currently necessary, as the
 // front-end has a difficult time finding a specific cookie. With this, we can
 // convey specific error information without the cookie.
@@ -127,6 +163,7 @@ type CookieIssueDetails struct {
 	SiteForCookies         *string                 `json:"siteForCookies,omitempty"` // No description.
 	CookieURL              *string                 `json:"cookieUrl,omitempty"`      // No description.
 	Request                *AffectedRequest        `json:"request,omitempty"`        // No description.
+	Insight                *CookieIssueInsight     `json:"insight,omitempty"`        // The recommended solution to the issue.
 }
 
 // MixedContentResolutionStatus
@@ -227,11 +264,12 @@ const (
 	BlockedByResponseReasonCORPNotSameOriginAfterDefaultedToSameOriginByDIP        BlockedByResponseReason = "CorpNotSameOriginAfterDefaultedToSameOriginByDip"
 	BlockedByResponseReasonCORPNotSameOriginAfterDefaultedToSameOriginByCOEPAndDIP BlockedByResponseReason = "CorpNotSameOriginAfterDefaultedToSameOriginByCoepAndDip"
 	BlockedByResponseReasonCORPNotSameSite                                         BlockedByResponseReason = "CorpNotSameSite"
+	BlockedByResponseReasonSRIMessageSignatureMismatch                             BlockedByResponseReason = "SRIMessageSignatureMismatch"
 )
 
 func (e BlockedByResponseReason) Valid() bool {
 	switch e {
-	case "CoepFrameResourceNeedsCoepHeader", "CoopSandboxedIFrameCannotNavigateToCoopPage", "CorpNotSameOrigin", "CorpNotSameOriginAfterDefaultedToSameOriginByCoep", "CorpNotSameOriginAfterDefaultedToSameOriginByDip", "CorpNotSameOriginAfterDefaultedToSameOriginByCoepAndDip", "CorpNotSameSite":
+	case "CoepFrameResourceNeedsCoepHeader", "CoopSandboxedIFrameCannotNavigateToCoopPage", "CorpNotSameOrigin", "CorpNotSameOriginAfterDefaultedToSameOriginByCoep", "CorpNotSameOriginAfterDefaultedToSameOriginByDip", "CorpNotSameOriginAfterDefaultedToSameOriginByCoepAndDip", "CorpNotSameSite", "SRIMessageSignatureMismatch":
 		return true
 	default:
 		return false
@@ -315,6 +353,7 @@ const (
 	ContentSecurityPolicyViolationTypeKInlineViolation             ContentSecurityPolicyViolationType = "kInlineViolation"
 	ContentSecurityPolicyViolationTypeKEvalViolation               ContentSecurityPolicyViolationType = "kEvalViolation"
 	ContentSecurityPolicyViolationTypeKURLViolation                ContentSecurityPolicyViolationType = "kURLViolation"
+	ContentSecurityPolicyViolationTypeKSRIViolation                ContentSecurityPolicyViolationType = "kSRIViolation"
 	ContentSecurityPolicyViolationTypeKTrustedTypesSinkViolation   ContentSecurityPolicyViolationType = "kTrustedTypesSinkViolation"
 	ContentSecurityPolicyViolationTypeKTrustedTypesPolicyViolation ContentSecurityPolicyViolationType = "kTrustedTypesPolicyViolation"
 	ContentSecurityPolicyViolationTypeKWasmEvalViolation           ContentSecurityPolicyViolationType = "kWasmEvalViolation"
@@ -322,7 +361,7 @@ const (
 
 func (e ContentSecurityPolicyViolationType) Valid() bool {
 	switch e {
-	case "kInlineViolation", "kEvalViolation", "kURLViolation", "kTrustedTypesSinkViolation", "kTrustedTypesPolicyViolation", "kWasmEvalViolation":
+	case "kInlineViolation", "kEvalViolation", "kURLViolation", "kSRIViolation", "kTrustedTypesSinkViolation", "kTrustedTypesPolicyViolation", "kWasmEvalViolation":
 		return true
 	default:
 		return false
@@ -466,8 +505,10 @@ const (
 	SharedDictionaryErrorWriteErrorInsufficientResources           SharedDictionaryError = "WriteErrorInsufficientResources"
 	SharedDictionaryErrorWriteErrorInvalidMatchField               SharedDictionaryError = "WriteErrorInvalidMatchField"
 	SharedDictionaryErrorWriteErrorInvalidStructuredHeader         SharedDictionaryError = "WriteErrorInvalidStructuredHeader"
+	SharedDictionaryErrorWriteErrorInvalidTTLField                 SharedDictionaryError = "WriteErrorInvalidTTLField"
 	SharedDictionaryErrorWriteErrorNavigationRequest               SharedDictionaryError = "WriteErrorNavigationRequest"
 	SharedDictionaryErrorWriteErrorNoMatchField                    SharedDictionaryError = "WriteErrorNoMatchField"
+	SharedDictionaryErrorWriteErrorNonIntegerTTLField              SharedDictionaryError = "WriteErrorNonIntegerTTLField"
 	SharedDictionaryErrorWriteErrorNonListMatchDestField           SharedDictionaryError = "WriteErrorNonListMatchDestField"
 	SharedDictionaryErrorWriteErrorNonSecureContext                SharedDictionaryError = "WriteErrorNonSecureContext"
 	SharedDictionaryErrorWriteErrorNonStringIDField                SharedDictionaryError = "WriteErrorNonStringIdField"
@@ -482,7 +523,7 @@ const (
 
 func (e SharedDictionaryError) Valid() bool {
 	switch e {
-	case "UseErrorCrossOriginNoCorsRequest", "UseErrorDictionaryLoadFailure", "UseErrorMatchingDictionaryNotUsed", "UseErrorUnexpectedContentDictionaryHeader", "WriteErrorCossOriginNoCorsRequest", "WriteErrorDisallowedBySettings", "WriteErrorExpiredResponse", "WriteErrorFeatureDisabled", "WriteErrorInsufficientResources", "WriteErrorInvalidMatchField", "WriteErrorInvalidStructuredHeader", "WriteErrorNavigationRequest", "WriteErrorNoMatchField", "WriteErrorNonListMatchDestField", "WriteErrorNonSecureContext", "WriteErrorNonStringIdField", "WriteErrorNonStringInMatchDestList", "WriteErrorNonStringMatchField", "WriteErrorNonTokenTypeField", "WriteErrorRequestAborted", "WriteErrorShuttingDown", "WriteErrorTooLongIdField", "WriteErrorUnsupportedType":
+	case "UseErrorCrossOriginNoCorsRequest", "UseErrorDictionaryLoadFailure", "UseErrorMatchingDictionaryNotUsed", "UseErrorUnexpectedContentDictionaryHeader", "WriteErrorCossOriginNoCorsRequest", "WriteErrorDisallowedBySettings", "WriteErrorExpiredResponse", "WriteErrorFeatureDisabled", "WriteErrorInsufficientResources", "WriteErrorInvalidMatchField", "WriteErrorInvalidStructuredHeader", "WriteErrorInvalidTTLField", "WriteErrorNavigationRequest", "WriteErrorNoMatchField", "WriteErrorNonIntegerTTLField", "WriteErrorNonListMatchDestField", "WriteErrorNonSecureContext", "WriteErrorNonStringIdField", "WriteErrorNonStringInMatchDestList", "WriteErrorNonStringMatchField", "WriteErrorNonTokenTypeField", "WriteErrorRequestAborted", "WriteErrorShuttingDown", "WriteErrorTooLongIdField", "WriteErrorUnsupportedType":
 		return true
 	default:
 		return false
@@ -490,6 +531,73 @@ func (e SharedDictionaryError) Valid() bool {
 }
 
 func (e SharedDictionaryError) String() string {
+	return string(e)
+}
+
+// SRIMessageSignatureError
+type SRIMessageSignatureError string
+
+// SRIMessageSignatureError as enums.
+const (
+	SRIMessageSignatureErrorNotSet                                               SRIMessageSignatureError = ""
+	SRIMessageSignatureErrorMissingSignatureHeader                               SRIMessageSignatureError = "MissingSignatureHeader"
+	SRIMessageSignatureErrorMissingSignatureInputHeader                          SRIMessageSignatureError = "MissingSignatureInputHeader"
+	SRIMessageSignatureErrorInvalidSignatureHeader                               SRIMessageSignatureError = "InvalidSignatureHeader"
+	SRIMessageSignatureErrorInvalidSignatureInputHeader                          SRIMessageSignatureError = "InvalidSignatureInputHeader"
+	SRIMessageSignatureErrorSignatureHeaderValueIsNotByteSequence                SRIMessageSignatureError = "SignatureHeaderValueIsNotByteSequence"
+	SRIMessageSignatureErrorSignatureHeaderValueIsParameterized                  SRIMessageSignatureError = "SignatureHeaderValueIsParameterized"
+	SRIMessageSignatureErrorSignatureHeaderValueIsIncorrectLength                SRIMessageSignatureError = "SignatureHeaderValueIsIncorrectLength"
+	SRIMessageSignatureErrorSignatureInputHeaderMissingLabel                     SRIMessageSignatureError = "SignatureInputHeaderMissingLabel"
+	SRIMessageSignatureErrorSignatureInputHeaderValueNotInnerList                SRIMessageSignatureError = "SignatureInputHeaderValueNotInnerList"
+	SRIMessageSignatureErrorSignatureInputHeaderValueMissingComponents           SRIMessageSignatureError = "SignatureInputHeaderValueMissingComponents"
+	SRIMessageSignatureErrorSignatureInputHeaderInvalidComponentType             SRIMessageSignatureError = "SignatureInputHeaderInvalidComponentType"
+	SRIMessageSignatureErrorSignatureInputHeaderInvalidComponentName             SRIMessageSignatureError = "SignatureInputHeaderInvalidComponentName"
+	SRIMessageSignatureErrorSignatureInputHeaderInvalidHeaderComponentParameter  SRIMessageSignatureError = "SignatureInputHeaderInvalidHeaderComponentParameter"
+	SRIMessageSignatureErrorSignatureInputHeaderInvalidDerivedComponentParameter SRIMessageSignatureError = "SignatureInputHeaderInvalidDerivedComponentParameter"
+	SRIMessageSignatureErrorSignatureInputHeaderKeyIDLength                      SRIMessageSignatureError = "SignatureInputHeaderKeyIdLength"
+	SRIMessageSignatureErrorSignatureInputHeaderInvalidParameter                 SRIMessageSignatureError = "SignatureInputHeaderInvalidParameter"
+	SRIMessageSignatureErrorSignatureInputHeaderMissingRequiredParameters        SRIMessageSignatureError = "SignatureInputHeaderMissingRequiredParameters"
+	SRIMessageSignatureErrorValidationFailedSignatureExpired                     SRIMessageSignatureError = "ValidationFailedSignatureExpired"
+	SRIMessageSignatureErrorValidationFailedInvalidLength                        SRIMessageSignatureError = "ValidationFailedInvalidLength"
+	SRIMessageSignatureErrorValidationFailedSignatureMismatch                    SRIMessageSignatureError = "ValidationFailedSignatureMismatch"
+	SRIMessageSignatureErrorValidationFailedIntegrityMismatch                    SRIMessageSignatureError = "ValidationFailedIntegrityMismatch"
+)
+
+func (e SRIMessageSignatureError) Valid() bool {
+	switch e {
+	case "MissingSignatureHeader", "MissingSignatureInputHeader", "InvalidSignatureHeader", "InvalidSignatureInputHeader", "SignatureHeaderValueIsNotByteSequence", "SignatureHeaderValueIsParameterized", "SignatureHeaderValueIsIncorrectLength", "SignatureInputHeaderMissingLabel", "SignatureInputHeaderValueNotInnerList", "SignatureInputHeaderValueMissingComponents", "SignatureInputHeaderInvalidComponentType", "SignatureInputHeaderInvalidComponentName", "SignatureInputHeaderInvalidHeaderComponentParameter", "SignatureInputHeaderInvalidDerivedComponentParameter", "SignatureInputHeaderKeyIdLength", "SignatureInputHeaderInvalidParameter", "SignatureInputHeaderMissingRequiredParameters", "ValidationFailedSignatureExpired", "ValidationFailedInvalidLength", "ValidationFailedSignatureMismatch", "ValidationFailedIntegrityMismatch":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e SRIMessageSignatureError) String() string {
+	return string(e)
+}
+
+// UnencodedDigestError
+type UnencodedDigestError string
+
+// UnencodedDigestError as enums.
+const (
+	UnencodedDigestErrorNotSet                UnencodedDigestError = ""
+	UnencodedDigestErrorMalformedDictionary   UnencodedDigestError = "MalformedDictionary"
+	UnencodedDigestErrorUnknownAlgorithm      UnencodedDigestError = "UnknownAlgorithm"
+	UnencodedDigestErrorIncorrectDigestType   UnencodedDigestError = "IncorrectDigestType"
+	UnencodedDigestErrorIncorrectDigestLength UnencodedDigestError = "IncorrectDigestLength"
+)
+
+func (e UnencodedDigestError) Valid() bool {
+	switch e {
+	case "MalformedDictionary", "UnknownAlgorithm", "IncorrectDigestType", "IncorrectDigestLength":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e UnencodedDigestError) String() string {
 	return string(e)
 }
 
@@ -527,6 +635,20 @@ type SharedDictionaryIssueDetails struct {
 	Request               AffectedRequest       `json:"request"`               // No description.
 }
 
+// SRIMessageSignatureIssueDetails
+type SRIMessageSignatureIssueDetails struct {
+	Error               SRIMessageSignatureError `json:"error"`               // No description.
+	SignatureBase       string                   `json:"signatureBase"`       // No description.
+	IntegrityAssertions []string                 `json:"integrityAssertions"` // No description.
+	Request             AffectedRequest          `json:"request"`             // No description.
+}
+
+// UnencodedDigestIssueDetails
+type UnencodedDigestIssueDetails struct {
+	Error   UnencodedDigestError `json:"error"`   // No description.
+	Request AffectedRequest      `json:"request"` // No description.
+}
+
 // GenericIssueErrorType
 type GenericIssueErrorType string
 
@@ -538,17 +660,18 @@ const (
 	GenericIssueErrorTypeFormInputWithNoLabelError                                  GenericIssueErrorType = "FormInputWithNoLabelError"
 	GenericIssueErrorTypeFormAutocompleteAttributeEmptyError                        GenericIssueErrorType = "FormAutocompleteAttributeEmptyError"
 	GenericIssueErrorTypeFormEmptyIDAndNameAttributesForInputError                  GenericIssueErrorType = "FormEmptyIdAndNameAttributesForInputError"
-	GenericIssueErrorTypeFormAriaLabelledByToNonExistingID                          GenericIssueErrorType = "FormAriaLabelledByToNonExistingId"
+	GenericIssueErrorTypeFormAriaLabelledByToNonExistingIDError                     GenericIssueErrorType = "FormAriaLabelledByToNonExistingIdError"
 	GenericIssueErrorTypeFormInputAssignedAutocompleteValueToIDOrNameAttributeError GenericIssueErrorType = "FormInputAssignedAutocompleteValueToIdOrNameAttributeError"
-	GenericIssueErrorTypeFormLabelHasNeitherForNorNestedInput                       GenericIssueErrorType = "FormLabelHasNeitherForNorNestedInput"
+	GenericIssueErrorTypeFormLabelHasNeitherForNorNestedInputError                  GenericIssueErrorType = "FormLabelHasNeitherForNorNestedInputError"
 	GenericIssueErrorTypeFormLabelForMatchesNonExistingIDError                      GenericIssueErrorType = "FormLabelForMatchesNonExistingIdError"
 	GenericIssueErrorTypeFormInputHasWrongButWellIntendedAutocompleteValueError     GenericIssueErrorType = "FormInputHasWrongButWellIntendedAutocompleteValueError"
 	GenericIssueErrorTypeResponseWasBlockedByORB                                    GenericIssueErrorType = "ResponseWasBlockedByORB"
+	GenericIssueErrorTypeNavigationEntryMarkedSkippable                             GenericIssueErrorType = "NavigationEntryMarkedSkippable"
 )
 
 func (e GenericIssueErrorType) Valid() bool {
 	switch e {
-	case "FormLabelForNameError", "FormDuplicateIdForInputError", "FormInputWithNoLabelError", "FormAutocompleteAttributeEmptyError", "FormEmptyIdAndNameAttributesForInputError", "FormAriaLabelledByToNonExistingId", "FormInputAssignedAutocompleteValueToIdOrNameAttributeError", "FormLabelHasNeitherForNorNestedInput", "FormLabelForMatchesNonExistingIdError", "FormInputHasWrongButWellIntendedAutocompleteValueError", "ResponseWasBlockedByORB":
+	case "FormLabelForNameError", "FormDuplicateIdForInputError", "FormInputWithNoLabelError", "FormAutocompleteAttributeEmptyError", "FormEmptyIdAndNameAttributesForInputError", "FormAriaLabelledByToNonExistingIdError", "FormInputAssignedAutocompleteValueToIdOrNameAttributeError", "FormLabelHasNeitherForNorNestedInputError", "FormLabelForMatchesNonExistingIdError", "FormInputHasWrongButWellIntendedAutocompleteValueError", "ResponseWasBlockedByORB", "NavigationEntryMarkedSkippable":
 		return true
 	default:
 		return false
@@ -680,15 +803,18 @@ const (
 	FederatedAuthRequestIssueReasonThirdPartyCookiesBlocked         FederatedAuthRequestIssueReason = "ThirdPartyCookiesBlocked"
 	FederatedAuthRequestIssueReasonNotSignedInWithIDP               FederatedAuthRequestIssueReason = "NotSignedInWithIdp"
 	FederatedAuthRequestIssueReasonMissingTransientUserActivation   FederatedAuthRequestIssueReason = "MissingTransientUserActivation"
-	FederatedAuthRequestIssueReasonReplacedByButtonMode             FederatedAuthRequestIssueReason = "ReplacedByButtonMode"
+	FederatedAuthRequestIssueReasonReplacedByActiveMode             FederatedAuthRequestIssueReason = "ReplacedByActiveMode"
 	FederatedAuthRequestIssueReasonInvalidFieldsSpecified           FederatedAuthRequestIssueReason = "InvalidFieldsSpecified"
 	FederatedAuthRequestIssueReasonRelyingPartyOriginIsOpaque       FederatedAuthRequestIssueReason = "RelyingPartyOriginIsOpaque"
 	FederatedAuthRequestIssueReasonTypeNotMatching                  FederatedAuthRequestIssueReason = "TypeNotMatching"
+	FederatedAuthRequestIssueReasonUIDismissedNoEmbargo             FederatedAuthRequestIssueReason = "UiDismissedNoEmbargo"
+	FederatedAuthRequestIssueReasonCORSError                        FederatedAuthRequestIssueReason = "CorsError"
+	FederatedAuthRequestIssueReasonSuppressedBySegmentationPlatform FederatedAuthRequestIssueReason = "SuppressedBySegmentationPlatform"
 )
 
 func (e FederatedAuthRequestIssueReason) Valid() bool {
 	switch e {
-	case "ShouldEmbargo", "TooManyRequests", "WellKnownHttpNotFound", "WellKnownNoResponse", "WellKnownInvalidResponse", "WellKnownListEmpty", "WellKnownInvalidContentType", "ConfigNotInWellKnown", "WellKnownTooBig", "ConfigHttpNotFound", "ConfigNoResponse", "ConfigInvalidResponse", "ConfigInvalidContentType", "ClientMetadataHttpNotFound", "ClientMetadataNoResponse", "ClientMetadataInvalidResponse", "ClientMetadataInvalidContentType", "IdpNotPotentiallyTrustworthy", "DisabledInSettings", "DisabledInFlags", "ErrorFetchingSignin", "InvalidSigninResponse", "AccountsHttpNotFound", "AccountsNoResponse", "AccountsInvalidResponse", "AccountsListEmpty", "AccountsInvalidContentType", "IdTokenHttpNotFound", "IdTokenNoResponse", "IdTokenInvalidResponse", "IdTokenIdpErrorResponse", "IdTokenCrossSiteIdpErrorResponse", "IdTokenInvalidRequest", "IdTokenInvalidContentType", "ErrorIdToken", "Canceled", "RpPageNotVisible", "SilentMediationFailure", "ThirdPartyCookiesBlocked", "NotSignedInWithIdp", "MissingTransientUserActivation", "ReplacedByButtonMode", "InvalidFieldsSpecified", "RelyingPartyOriginIsOpaque", "TypeNotMatching":
+	case "ShouldEmbargo", "TooManyRequests", "WellKnownHttpNotFound", "WellKnownNoResponse", "WellKnownInvalidResponse", "WellKnownListEmpty", "WellKnownInvalidContentType", "ConfigNotInWellKnown", "WellKnownTooBig", "ConfigHttpNotFound", "ConfigNoResponse", "ConfigInvalidResponse", "ConfigInvalidContentType", "ClientMetadataHttpNotFound", "ClientMetadataNoResponse", "ClientMetadataInvalidResponse", "ClientMetadataInvalidContentType", "IdpNotPotentiallyTrustworthy", "DisabledInSettings", "DisabledInFlags", "ErrorFetchingSignin", "InvalidSigninResponse", "AccountsHttpNotFound", "AccountsNoResponse", "AccountsInvalidResponse", "AccountsListEmpty", "AccountsInvalidContentType", "IdTokenHttpNotFound", "IdTokenNoResponse", "IdTokenInvalidResponse", "IdTokenIdpErrorResponse", "IdTokenCrossSiteIdpErrorResponse", "IdTokenInvalidRequest", "IdTokenInvalidContentType", "ErrorIdToken", "Canceled", "RpPageNotVisible", "SilentMediationFailure", "ThirdPartyCookiesBlocked", "NotSignedInWithIdp", "MissingTransientUserActivation", "ReplacedByActiveMode", "InvalidFieldsSpecified", "RelyingPartyOriginIsOpaque", "TypeNotMatching", "UiDismissedNoEmbargo", "CorsError", "SuppressedBySegmentationPlatform":
 		return true
 	default:
 		return false
@@ -750,6 +876,70 @@ type FailedRequestInfo struct {
 	URL            string             `json:"url"`                 // The URL that failed to load.
 	FailureMessage string             `json:"failureMessage"`      // The failure message for the failed request.
 	RequestID      *network.RequestID `json:"requestId,omitempty"` // No description.
+}
+
+// PartitioningBlobURLInfo
+type PartitioningBlobURLInfo string
+
+// PartitioningBlobURLInfo as enums.
+const (
+	PartitioningBlobURLInfoNotSet                        PartitioningBlobURLInfo = ""
+	PartitioningBlobURLInfoBlockedCrossPartitionFetching PartitioningBlobURLInfo = "BlockedCrossPartitionFetching"
+	PartitioningBlobURLInfoEnforceNoopenerForNavigation  PartitioningBlobURLInfo = "EnforceNoopenerForNavigation"
+)
+
+func (e PartitioningBlobURLInfo) Valid() bool {
+	switch e {
+	case "BlockedCrossPartitionFetching", "EnforceNoopenerForNavigation":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e PartitioningBlobURLInfo) String() string {
+	return string(e)
+}
+
+// PartitioningBlobURLIssueDetails
+type PartitioningBlobURLIssueDetails struct {
+	URL                     string                  `json:"url"`                     // The BlobURL that failed to load.
+	PartitioningBlobURLInfo PartitioningBlobURLInfo `json:"partitioningBlobURLInfo"` // Additional information about the Partitioning Blob URL issue.
+}
+
+// ElementAccessibilityIssueReason
+type ElementAccessibilityIssueReason string
+
+// ElementAccessibilityIssueReason as enums.
+const (
+	ElementAccessibilityIssueReasonNotSet                              ElementAccessibilityIssueReason = ""
+	ElementAccessibilityIssueReasonDisallowedSelectChild               ElementAccessibilityIssueReason = "DisallowedSelectChild"
+	ElementAccessibilityIssueReasonDisallowedOptGroupChild             ElementAccessibilityIssueReason = "DisallowedOptGroupChild"
+	ElementAccessibilityIssueReasonNonPhrasingContentOptionChild       ElementAccessibilityIssueReason = "NonPhrasingContentOptionChild"
+	ElementAccessibilityIssueReasonInteractiveContentOptionChild       ElementAccessibilityIssueReason = "InteractiveContentOptionChild"
+	ElementAccessibilityIssueReasonInteractiveContentLegendChild       ElementAccessibilityIssueReason = "InteractiveContentLegendChild"
+	ElementAccessibilityIssueReasonInteractiveContentSummaryDescendant ElementAccessibilityIssueReason = "InteractiveContentSummaryDescendant"
+)
+
+func (e ElementAccessibilityIssueReason) Valid() bool {
+	switch e {
+	case "DisallowedSelectChild", "DisallowedOptGroupChild", "NonPhrasingContentOptionChild", "InteractiveContentOptionChild", "InteractiveContentLegendChild", "InteractiveContentSummaryDescendant":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e ElementAccessibilityIssueReason) String() string {
+	return string(e)
+}
+
+// ElementAccessibilityIssueDetails This issue warns about errors in the
+// select or summary element content model.
+type ElementAccessibilityIssueDetails struct {
+	NodeID                          dom.BackendNodeID               `json:"nodeId"`                          // No description.
+	ElementAccessibilityIssueReason ElementAccessibilityIssueReason `json:"elementAccessibilityIssueReason"` // No description.
+	HasDisallowedAttributes         bool                            `json:"hasDisallowedAttributes"`         // No description.
 }
 
 // StyleSheetLoadingIssueReason
@@ -816,6 +1006,93 @@ type PropertyRuleIssueDetails struct {
 	PropertyValue           *string                 `json:"propertyValue,omitempty"` // The value of the property rule property that failed to parse
 }
 
+// UserReidentificationIssueType
+type UserReidentificationIssueType string
+
+// UserReidentificationIssueType as enums.
+const (
+	UserReidentificationIssueTypeNotSet                 UserReidentificationIssueType = ""
+	UserReidentificationIssueTypeBlockedFrameNavigation UserReidentificationIssueType = "BlockedFrameNavigation"
+	UserReidentificationIssueTypeBlockedSubresource     UserReidentificationIssueType = "BlockedSubresource"
+	UserReidentificationIssueTypeNoisedCanvasReadback   UserReidentificationIssueType = "NoisedCanvasReadback"
+)
+
+func (e UserReidentificationIssueType) Valid() bool {
+	switch e {
+	case "BlockedFrameNavigation", "BlockedSubresource", "NoisedCanvasReadback":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e UserReidentificationIssueType) String() string {
+	return string(e)
+}
+
+// UserReidentificationIssueDetails This issue warns about uses of APIs that
+// may be considered misuse to re-identify users.
+type UserReidentificationIssueDetails struct {
+	Type               UserReidentificationIssueType `json:"type"`                         // No description.
+	Request            *AffectedRequest              `json:"request,omitempty"`            // Applies to BlockedFrameNavigation and BlockedSubresource issue types.
+	SourceCodeLocation *SourceCodeLocation           `json:"sourceCodeLocation,omitempty"` // Applies to NoisedCanvasReadback issue type.
+}
+
+// PermissionElementIssueType
+type PermissionElementIssueType string
+
+// PermissionElementIssueType as enums.
+const (
+	PermissionElementIssueTypeNotSet                    PermissionElementIssueType = ""
+	PermissionElementIssueTypeInvalidType               PermissionElementIssueType = "InvalidType"
+	PermissionElementIssueTypeFencedFrameDisallowed     PermissionElementIssueType = "FencedFrameDisallowed"
+	PermissionElementIssueTypeCSPFrameAncestorsMissing  PermissionElementIssueType = "CspFrameAncestorsMissing"
+	PermissionElementIssueTypePermissionsPolicyBlocked  PermissionElementIssueType = "PermissionsPolicyBlocked"
+	PermissionElementIssueTypePaddingRightUnsupported   PermissionElementIssueType = "PaddingRightUnsupported"
+	PermissionElementIssueTypePaddingBottomUnsupported  PermissionElementIssueType = "PaddingBottomUnsupported"
+	PermissionElementIssueTypeInsetBoxShadowUnsupported PermissionElementIssueType = "InsetBoxShadowUnsupported"
+	PermissionElementIssueTypeRequestInProgress         PermissionElementIssueType = "RequestInProgress"
+	PermissionElementIssueTypeUntrustedEvent            PermissionElementIssueType = "UntrustedEvent"
+	PermissionElementIssueTypeRegistrationFailed        PermissionElementIssueType = "RegistrationFailed"
+	PermissionElementIssueTypeTypeNotSupported          PermissionElementIssueType = "TypeNotSupported"
+	PermissionElementIssueTypeInvalidTypeActivation     PermissionElementIssueType = "InvalidTypeActivation"
+	PermissionElementIssueTypeSecurityChecksFailed      PermissionElementIssueType = "SecurityChecksFailed"
+	PermissionElementIssueTypeActivationDisabled        PermissionElementIssueType = "ActivationDisabled"
+	PermissionElementIssueTypeGeolocationDeprecated     PermissionElementIssueType = "GeolocationDeprecated"
+	PermissionElementIssueTypeInvalidDisplayStyle       PermissionElementIssueType = "InvalidDisplayStyle"
+	PermissionElementIssueTypeNonOpaqueColor            PermissionElementIssueType = "NonOpaqueColor"
+	PermissionElementIssueTypeLowContrast               PermissionElementIssueType = "LowContrast"
+	PermissionElementIssueTypeFontSizeTooSmall          PermissionElementIssueType = "FontSizeTooSmall"
+	PermissionElementIssueTypeFontSizeTooLarge          PermissionElementIssueType = "FontSizeTooLarge"
+	PermissionElementIssueTypeInvalidSizeValue          PermissionElementIssueType = "InvalidSizeValue"
+)
+
+func (e PermissionElementIssueType) Valid() bool {
+	switch e {
+	case "InvalidType", "FencedFrameDisallowed", "CspFrameAncestorsMissing", "PermissionsPolicyBlocked", "PaddingRightUnsupported", "PaddingBottomUnsupported", "InsetBoxShadowUnsupported", "RequestInProgress", "UntrustedEvent", "RegistrationFailed", "TypeNotSupported", "InvalidTypeActivation", "SecurityChecksFailed", "ActivationDisabled", "GeolocationDeprecated", "InvalidDisplayStyle", "NonOpaqueColor", "LowContrast", "FontSizeTooSmall", "FontSizeTooLarge", "InvalidSizeValue":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e PermissionElementIssueType) String() string {
+	return string(e)
+}
+
+// PermissionElementIssueDetails This issue warns about improper usage of the
+// <permission> element.
+type PermissionElementIssueDetails struct {
+	IssueType              PermissionElementIssueType `json:"issueType"`                        // No description.
+	Type                   *string                    `json:"type,omitempty"`                   // The value of the type attribute.
+	NodeID                 *dom.BackendNodeID         `json:"nodeId,omitempty"`                 // The node ID of the <permission> element.
+	IsWarning              *bool                      `json:"isWarning,omitempty"`              // True if the issue is a warning, false if it is an error.
+	PermissionName         *string                    `json:"permissionName,omitempty"`         // Fields for message construction: Used for messages that reference a specific permission name
+	OccluderNodeInfo       *string                    `json:"occluderNodeInfo,omitempty"`       // Used for messages about occlusion
+	OccluderParentNodeInfo *string                    `json:"occluderParentNodeInfo,omitempty"` // Used for messages about occluder's parent
+	DisableReason          *string                    `json:"disableReason,omitempty"`          // Used for messages about activation disabled reason
+}
+
 // InspectorIssueCode A unique identifier for the type of issue. Each type may
 // use one of the optional fields in InspectorIssueDetails to convey more
 // specific information about the kind of issue.
@@ -834,6 +1111,7 @@ const (
 	InspectorIssueCodeCORSIssue                         InspectorIssueCode = "CorsIssue"
 	InspectorIssueCodeAttributionReportingIssue         InspectorIssueCode = "AttributionReportingIssue"
 	InspectorIssueCodeQuirksModeIssue                   InspectorIssueCode = "QuirksModeIssue"
+	InspectorIssueCodePartitioningBlobURLIssue          InspectorIssueCode = "PartitioningBlobURLIssue"
 	InspectorIssueCodeNavigatorUserAgentIssue           InspectorIssueCode = "NavigatorUserAgentIssue"
 	InspectorIssueCodeGenericIssue                      InspectorIssueCode = "GenericIssue"
 	InspectorIssueCodeDeprecationIssue                  InspectorIssueCode = "DeprecationIssue"
@@ -845,11 +1123,16 @@ const (
 	InspectorIssueCodeFederatedAuthUserInfoRequestIssue InspectorIssueCode = "FederatedAuthUserInfoRequestIssue"
 	InspectorIssueCodePropertyRuleIssue                 InspectorIssueCode = "PropertyRuleIssue"
 	InspectorIssueCodeSharedDictionaryIssue             InspectorIssueCode = "SharedDictionaryIssue"
+	InspectorIssueCodeElementAccessibilityIssue         InspectorIssueCode = "ElementAccessibilityIssue"
+	InspectorIssueCodeSRIMessageSignatureIssue          InspectorIssueCode = "SRIMessageSignatureIssue"
+	InspectorIssueCodeUnencodedDigestIssue              InspectorIssueCode = "UnencodedDigestIssue"
+	InspectorIssueCodeUserReidentificationIssue         InspectorIssueCode = "UserReidentificationIssue"
+	InspectorIssueCodePermissionElementIssue            InspectorIssueCode = "PermissionElementIssue"
 )
 
 func (e InspectorIssueCode) Valid() bool {
 	switch e {
-	case "CookieIssue", "MixedContentIssue", "BlockedByResponseIssue", "HeavyAdIssue", "ContentSecurityPolicyIssue", "SharedArrayBufferIssue", "LowTextContrastIssue", "CorsIssue", "AttributionReportingIssue", "QuirksModeIssue", "NavigatorUserAgentIssue", "GenericIssue", "DeprecationIssue", "ClientHintIssue", "FederatedAuthRequestIssue", "BounceTrackingIssue", "CookieDeprecationMetadataIssue", "StylesheetLoadingIssue", "FederatedAuthUserInfoRequestIssue", "PropertyRuleIssue", "SharedDictionaryIssue":
+	case "CookieIssue", "MixedContentIssue", "BlockedByResponseIssue", "HeavyAdIssue", "ContentSecurityPolicyIssue", "SharedArrayBufferIssue", "LowTextContrastIssue", "CorsIssue", "AttributionReportingIssue", "QuirksModeIssue", "PartitioningBlobURLIssue", "NavigatorUserAgentIssue", "GenericIssue", "DeprecationIssue", "ClientHintIssue", "FederatedAuthRequestIssue", "BounceTrackingIssue", "CookieDeprecationMetadataIssue", "StylesheetLoadingIssue", "FederatedAuthUserInfoRequestIssue", "PropertyRuleIssue", "SharedDictionaryIssue", "ElementAccessibilityIssue", "SRIMessageSignatureIssue", "UnencodedDigestIssue", "UserReidentificationIssue", "PermissionElementIssue":
 		return true
 	default:
 		return false
@@ -874,6 +1157,7 @@ type InspectorIssueDetails struct {
 	CORSIssueDetails                  *CORSIssueDetails                  `json:"corsIssueDetails,omitempty"`                  // No description.
 	AttributionReportingIssueDetails  *AttributionReportingIssueDetails  `json:"attributionReportingIssueDetails,omitempty"`  // No description.
 	QuirksModeIssueDetails            *QuirksModeIssueDetails            `json:"quirksModeIssueDetails,omitempty"`            // No description.
+	PartitioningBlobURLIssueDetails   *PartitioningBlobURLIssueDetails   `json:"partitioningBlobURLIssueDetails,omitempty"`   // No description.
 	// NavigatorUserAgentIssueDetails is deprecated.
 	//
 	// Deprecated: This property should not be used.
@@ -888,6 +1172,11 @@ type InspectorIssueDetails struct {
 	PropertyRuleIssueDetails                 *PropertyRuleIssueDetails                 `json:"propertyRuleIssueDetails,omitempty"`                 // No description.
 	FederatedAuthUserInfoRequestIssueDetails *FederatedAuthUserInfoRequestIssueDetails `json:"federatedAuthUserInfoRequestIssueDetails,omitempty"` // No description.
 	SharedDictionaryIssueDetails             *SharedDictionaryIssueDetails             `json:"sharedDictionaryIssueDetails,omitempty"`             // No description.
+	ElementAccessibilityIssueDetails         *ElementAccessibilityIssueDetails         `json:"elementAccessibilityIssueDetails,omitempty"`         // No description.
+	SriMessageSignatureIssueDetails          *SRIMessageSignatureIssueDetails          `json:"sriMessageSignatureIssueDetails,omitempty"`          // No description.
+	UnencodedDigestIssueDetails              *UnencodedDigestIssueDetails              `json:"unencodedDigestIssueDetails,omitempty"`              // No description.
+	UserReidentificationIssueDetails         *UserReidentificationIssueDetails         `json:"userReidentificationIssueDetails,omitempty"`         // No description.
+	PermissionElementIssueDetails            *PermissionElementIssueDetails            `json:"permissionElementIssueDetails,omitempty"`            // No description.
 }
 
 // IssueID A unique id for a DevTools inspector issue. Allows other entities

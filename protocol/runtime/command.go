@@ -447,8 +447,10 @@ type GetIsolateIDReply struct {
 
 // GetHeapUsageReply represents the return values for GetHeapUsage in the Runtime domain.
 type GetHeapUsageReply struct {
-	UsedSize  float64 `json:"usedSize"`  // Used heap size in bytes.
-	TotalSize float64 `json:"totalSize"` // Allocated heap size in bytes.
+	UsedSize             float64 `json:"usedSize"`             // Used JavaScript heap size in bytes.
+	TotalSize            float64 `json:"totalSize"`            // Allocated JavaScript heap size in bytes.
+	EmbedderHeapUsedSize float64 `json:"embedderHeapUsedSize"` // Used size in bytes in the embedder's garbage-collected heap.
+	BackingStorageSize   float64 `json:"backingStorageSize"`   // Size in bytes of backing storage for array buffers and external strings.
 }
 
 // GetPropertiesArgs represents the arguments for GetProperties in the Runtime domain.

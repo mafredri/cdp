@@ -10,7 +10,8 @@ import (
 type SetPermissionArgs struct {
 	Permission       PermissionDescriptor `json:"permission"`                 // Descriptor of permission to override.
 	Setting          PermissionSetting    `json:"setting"`                    // Setting of the permission.
-	Origin           *string              `json:"origin,omitempty"`           // Origin the permission applies to, all origins if not specified.
+	Origin           *string              `json:"origin,omitempty"`           // Embedding origin the permission applies to, all origins if not specified.
+	EmbeddedOrigin   *string              `json:"embeddedOrigin,omitempty"`   // Embedded origin the permission applies to. It is ignored unless the embedding origin is present and valid. If the embedding origin is provided but the embedded origin isn't, the embedding origin is used as the embedded origin.
 	BrowserContextID *ContextID           `json:"browserContextId,omitempty"` // Context to override. When omitted, default browser context is used.
 }
 
@@ -22,10 +23,20 @@ func NewSetPermissionArgs(permission PermissionDescriptor, setting PermissionSet
 	return args
 }
 
-// SetOrigin sets the Origin optional argument. Origin the permission
-// applies to, all origins if not specified.
+// SetOrigin sets the Origin optional argument. Embedding origin the
+// permission applies to, all origins if not specified.
 func (a *SetPermissionArgs) SetOrigin(origin string) *SetPermissionArgs {
 	a.Origin = &origin
+	return a
+}
+
+// SetEmbeddedOrigin sets the EmbeddedOrigin optional argument.
+// Embedded origin the permission applies to. It is ignored unless the
+// embedding origin is present and valid. If the embedding origin is
+// provided but the embedded origin isn't, the embedding origin is used
+// as the embedded origin.
+func (a *SetPermissionArgs) SetEmbeddedOrigin(embeddedOrigin string) *SetPermissionArgs {
+	a.EmbeddedOrigin = &embeddedOrigin
 	return a
 }
 
@@ -279,6 +290,36 @@ func NewSetWindowBoundsArgs(windowID WindowID, bounds Bounds) *SetWindowBoundsAr
 	return args
 }
 
+// SetContentsSizeArgs represents the arguments for SetContentsSize in the Browser domain.
+type SetContentsSizeArgs struct {
+	WindowID WindowID `json:"windowId"`         // Browser window id.
+	Width    *int     `json:"width,omitempty"`  // The window contents width in DIP. Assumes current width if omitted. Must be specified if 'height' is omitted.
+	Height   *int     `json:"height,omitempty"` // The window contents height in DIP. Assumes current height if omitted. Must be specified if 'width' is omitted.
+}
+
+// NewSetContentsSizeArgs initializes SetContentsSizeArgs with the required arguments.
+func NewSetContentsSizeArgs(windowID WindowID) *SetContentsSizeArgs {
+	args := new(SetContentsSizeArgs)
+	args.WindowID = windowID
+	return args
+}
+
+// SetWidth sets the Width optional argument. The window contents
+// width in DIP. Assumes current width if omitted. Must be specified if
+// 'height' is omitted.
+func (a *SetContentsSizeArgs) SetWidth(width int) *SetContentsSizeArgs {
+	a.Width = &width
+	return a
+}
+
+// SetHeight sets the Height optional argument. The window contents
+// height in DIP. Assumes current height if omitted. Must be specified
+// if 'width' is omitted.
+func (a *SetContentsSizeArgs) SetHeight(height int) *SetContentsSizeArgs {
+	a.Height = &height
+	return a
+}
+
 // SetDockTileArgs represents the arguments for SetDockTile in the Browser domain.
 type SetDockTileArgs struct {
 	BadgeLabel *string `json:"badgeLabel,omitempty"` // No description.
@@ -327,4 +368,29 @@ func NewAddPrivacySandboxEnrollmentOverrideArgs(url string) *AddPrivacySandboxEn
 	args := new(AddPrivacySandboxEnrollmentOverrideArgs)
 	args.URL = url
 	return args
+}
+
+// AddPrivacySandboxCoordinatorKeyConfigArgs represents the arguments for AddPrivacySandboxCoordinatorKeyConfig in the Browser domain.
+type AddPrivacySandboxCoordinatorKeyConfigArgs struct {
+	API               PrivacySandboxAPI `json:"api"`                        // No description.
+	CoordinatorOrigin string            `json:"coordinatorOrigin"`          // No description.
+	KeyConfig         string            `json:"keyConfig"`                  // No description.
+	BrowserContextID  *ContextID        `json:"browserContextId,omitempty"` // BrowserContext to perform the action in. When omitted, default browser context is used.
+}
+
+// NewAddPrivacySandboxCoordinatorKeyConfigArgs initializes AddPrivacySandboxCoordinatorKeyConfigArgs with the required arguments.
+func NewAddPrivacySandboxCoordinatorKeyConfigArgs(api PrivacySandboxAPI, coordinatorOrigin string, keyConfig string) *AddPrivacySandboxCoordinatorKeyConfigArgs {
+	args := new(AddPrivacySandboxCoordinatorKeyConfigArgs)
+	args.API = api
+	args.CoordinatorOrigin = coordinatorOrigin
+	args.KeyConfig = keyConfig
+	return args
+}
+
+// SetBrowserContextID sets the BrowserContextID optional argument.
+// BrowserContext to perform the action in. When omitted, default
+// browser context is used.
+func (a *AddPrivacySandboxCoordinatorKeyConfigArgs) SetBrowserContextID(browserContextID ContextID) *AddPrivacySandboxCoordinatorKeyConfigArgs {
+	a.BrowserContextID = &browserContextID
+	return a
 }
