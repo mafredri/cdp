@@ -10,6 +10,7 @@ import (
 	"log"
 	"net"
 	"sync"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -35,6 +36,7 @@ var ErrConnClosing = &closeError{msg: "rpcc: the connection is closing"}
 
 const (
 	defaultWriteBufferSize = 4096
+	defaultCloseTimeout    = 30 * time.Second
 )
 
 // DialOption represents a dial option passed to Dial.
@@ -111,8 +113,9 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	}
 
 	c := &Conn{
-		pending: make(map[uint64]*rpcCall),
-		streams: make(map[string]*streamClients),
+		pending:  make(map[uint64]*rpcCall),
+		streams:  make(map[string]*streamClients),
+		sessions: make(map[string]*Conn),
 	}
 	c.ctx, c.cancel = context.WithCancel(context.Background())
 
@@ -184,15 +187,7 @@ func DialContext(ctx context.Context, target string, opts ...DialOption) (conn *
 	}
 	c.codec = newCodec(c.conn)
 
-	recvDone := func(err error) {
-		// When we receive Inspector.detached the remote will close
-		// the connection afterwards and recvDone will return. Maybe
-		// we could give the user time to react to the event before
-		// closing?
-		// TODO(mafredri): Do we want to close here, like this?
-		c.close(err)
-	}
-	go c.recv(c.notify, recvDone)
+	go c.recv()
 
 	return c, nil
 }
@@ -264,6 +259,14 @@ type Conn struct {
 	// Encodes and decodes JSON onto conn. Encoding is
 	// guarded by mutex and decoding is done by recv.
 	codec Codec
+
+	// Session-related fields.
+	parent       *Conn                       // Parent conn for session.
+	sessionID    string                      // Non-empty for sessions.
+	sessionClose func(context.Context) error // Called on close.
+
+	sessionsMu sync.RWMutex     // Protects following.
+	sessions   map[string]*Conn // Child sessions (parent only), nil when closing.
 }
 
 // Response represents an RPC response or notification sent by the server.
@@ -276,6 +279,9 @@ type Response struct {
 	// RPC notification from remote.
 	Method string          `json:"method"` // Method invokation requested by remote.
 	Args   json.RawMessage `json:"params"` // Method parameters, if any.
+
+	// Session identifier for flattened protocol mode.
+	SessionID string `json:"sessionId,omitempty"`
 }
 
 func (r *Response) reset() {
@@ -284,6 +290,7 @@ func (r *Response) reset() {
 	r.Error = nil
 	r.Method = ""
 	r.Args = nil
+	r.SessionID = ""
 }
 
 func (r *Response) String() string {
@@ -321,13 +328,19 @@ func (c *Conn) Context() context.Context {
 // recv decodes and handles RPC responses. Responses to RPC requests
 // are forwarded to the pending call, if any. RPC Notifications are
 // forwarded by calling notify, synchronously.
-func (c *Conn) recv(notify func(string, []byte), done func(error)) {
+func (c *Conn) recv() {
 	var resp Response
 	var err error
 	for {
 		resp.reset()
 		if err = c.codec.ReadResponse(&resp); err != nil {
-			done(err)
+			// When we receive Inspector.detached the remote will close
+			// the connection afterwards. Maybe we could give the user
+			// time to react to the event before closing?
+			// TODO(mafredri): Do we want to close here, like this?
+			ctx, cancel := context.WithTimeout(context.Background(), defaultCloseTimeout)
+			defer cancel()
+			c.close(ctx, err)
 			return
 		}
 
@@ -336,45 +349,61 @@ func (c *Conn) recv(notify func(string, []byte), done func(error)) {
 			// Method represents the event that was triggered over the
 			// Chrome DevTools Protocol. We do not expect to receive
 			// RPC requests, if this was one, the ID field would be set.
-			notify(resp.Method, resp.Args)
+			if resp.SessionID != "" {
+				c.notifySession(resp.Method, resp.Args, resp.SessionID)
+			} else {
+				c.notify(resp.Method, resp.Args)
+			}
 			continue
 		}
 
-		c.mu.Lock()
-		call := c.pending[resp.ID]
-		delete(c.pending, resp.ID)
-		c.mu.Unlock()
-
-		switch {
-		case call == nil:
-			// No pending call, this could mean there was an error during
-			// send or the server sent an unexpected response.
-			if enableDebug {
-				log.Println("rpcc: no pending call: " + resp.String())
-			}
-		case resp.Error != nil:
-			call.done(resp.Error)
-		default:
-			var err error
-			if call.Reply != nil {
-				if err = json.Unmarshal(resp.Result, call.Reply); err != nil {
-					err = fmt.Errorf("rpcc: decoding %s: %s", call.Method, err.Error())
-				}
-			}
-			call.done(err)
+		if resp.SessionID != "" {
+			c.recvSessionResponse(&resp)
+		} else {
+			c.recvResponse(&resp)
 		}
+	}
+}
+
+// recvResponse processes the pending calls for this connection.
+func (c *Conn) recvResponse(resp *Response) {
+	c.mu.Lock()
+	call := c.pending[resp.ID]
+	delete(c.pending, resp.ID)
+	c.mu.Unlock()
+
+	switch {
+	case call == nil:
+		// No pending call, this could mean there was an error during
+		// send or the server sent an unexpected response.
+		if enableDebug {
+			log.Println("rpcc: no pending call: " + resp.String())
+		}
+	case resp.Error != nil:
+		call.done(resp.Error)
+	default:
+		var err error
+		if call.Reply != nil {
+			if err = json.Unmarshal(resp.Result, call.Reply); err != nil {
+				err = fmt.Errorf("rpcc: decoding %s: %s", call.Method, err.Error())
+			}
+		}
+		call.done(err)
 	}
 }
 
 // Request represents an RPC request to be sent to the server.
 type Request struct {
-	ID     uint64      `json:"id"`               // ID chosen by client.
-	Method string      `json:"method"`           // Method invoked on remote.
-	Args   interface{} `json:"params,omitempty"` // Method parameters, if any.
+	ID        uint64      `json:"id"`                  // ID chosen by client.
+	Method    string      `json:"method"`              // Method invoked on remote.
+	Args      interface{} `json:"params,omitempty"`    // Method parameters, if any.
+	SessionID string      `json:"sessionId,omitempty"` // Session identifier for flattened mode.
 }
 
 // send returns after the call has successfully been dispatched over
-// the RPC connection.
+// the RPC connection. Session connections share the parent's I/O but
+// track pending calls separately. Request IDs come from the parent to
+// ensure uniqueness across all sessions on the same websocket.
 func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 	defer func() {
 		// Give precedence for user cancellation.
@@ -385,27 +414,45 @@ func (c *Conn) send(ctx context.Context, call *rpcCall) (err error) {
 		}
 	}()
 
+	parent := c
+	if c.parent != nil {
+		parent = c.parent
+	}
+
 	c.mu.Lock()
 	if c.closed {
 		c.mu.Unlock()
 		return c.err
 	}
-	c.reqSeq++
-	reqID := c.reqSeq
+
+	// Acquire globally unique request ID from parent. This lock
+	// order (session -> parent) cannot deadlock because parent
+	// close does not hold a lock when closing sessions.
+	if c.parent != nil {
+		parent.mu.Lock()
+	}
+	parent.reqSeq++
+	reqID := parent.reqSeq
+	if c.parent != nil {
+		parent.mu.Unlock()
+	}
+
 	c.pending[reqID] = call
 	c.mu.Unlock()
 
 	done := make(chan error, 1)
 	go func() {
-		c.reqMu.Lock()
-		c.req.ID = reqID
-		c.req.Method = call.Method
-		c.req.Args = call.Args
+		parent.reqMu.Lock()
+		parent.req.ID = reqID
+		parent.req.Method = call.Method
+		parent.req.Args = call.Args
+		parent.req.SessionID = c.sessionID
 
-		err := c.codec.WriteRequest(&c.req)
+		err := parent.codec.WriteRequest(&parent.req)
 
-		c.req.Args = nil
-		c.reqMu.Unlock()
+		parent.req.Args = nil
+		parent.req.SessionID = ""
+		parent.reqMu.Unlock()
 		done <- err
 	}()
 
@@ -472,16 +519,34 @@ func (c *Conn) listen(method string, w streamWriter) (func(), error) {
 	return unsub, nil
 }
 
-// Close closes the connection. Subsequent calls to Close will return the error
-// that closed the connection.
-func (c *Conn) close(err error) error {
-	c.mu.Lock()
-	defer c.mu.Unlock()
+// close closes the connection with the given error.
+func (c *Conn) close(ctx context.Context, err error) error {
+	if c.parent == nil {
+		c.sessionsMu.Lock()
+		sessions := c.sessions
+		c.sessions = nil
+		c.sessionsMu.Unlock()
 
+		for _, sess := range sessions {
+			sess.close(ctx, err)
+		}
+	}
+
+	c.mu.Lock()
 	if c.closed {
+		c.mu.Unlock()
 		return c.err
 	}
 	c.closed = true
+
+	if c.sessionClose != nil {
+		// Perform session close whilst holding the lock
+		// so we can propagate this error via c.err.
+		if cerr := c.sessionClose(ctx); cerr != nil {
+			err = cerr
+		}
+	}
+
 	if err == nil {
 		err = ErrConnClosing
 	} else {
@@ -504,6 +569,15 @@ func (c *Conn) close(err error) error {
 			c.err = &closeError{msg: ErrConnClosing.msg, err: err}
 		}
 	}
+	c.mu.Unlock()
+
+	if c.parent != nil {
+		c.parent.sessionsMu.Lock()
+		if c.parent.sessions != nil {
+			delete(c.parent.sessions, c.sessionID)
+		}
+		c.parent.sessionsMu.Unlock()
+	}
 
 	// Delay cancel until c.err has settled, at this point any active
 	// streams will be closed.
@@ -519,6 +593,9 @@ func (c *Conn) close(err error) error {
 // range is [-2, 9]. Returns error if compression is not enabled for Conn. See
 // package compress/flate for a description of compression levels.
 func (c *Conn) SetCompressionLevel(level int) error {
+	if c.parent != nil {
+		return errors.New("rpcc: cannot set compression level on session connection")
+	}
 	if c.compressionLevel == nil {
 		return errors.New("rpcc: compression is not enabled for Conn")
 	}
@@ -527,7 +604,9 @@ func (c *Conn) SetCompressionLevel(level int) error {
 
 // Close closes the connection.
 func (c *Conn) Close() error {
-	return c.close(nil)
+	ctx, cancel := context.WithTimeout(context.Background(), defaultCloseTimeout)
+	defer cancel()
+	return c.close(ctx, nil)
 }
 
 // Debugging, enabled in tests.

@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -23,16 +24,26 @@ type testServer struct {
 }
 
 func (ts *testServer) Close() error {
-	defer ts.srv.Close()
-	return ts.conn.Close()
+	if ts.srv != nil {
+		defer ts.srv.Close()
+	}
+	if ts.wsConn == nil {
+		return nil
+	}
+	return ts.wsConn.Close()
 }
 
 func newTestServer(t testing.TB, respond func(*websocket.Conn, *Request) error) *testServer {
+	t.Helper()
+
 	// Timeouts to prevent tests from running forever.
 	timeout := 5 * time.Second
 
 	var err error
 	ts := &testServer{}
+	t.Cleanup(func() {
+		ts.Close()
+	})
 	upgrader := &websocket.Upgrader{
 		HandshakeTimeout:  timeout,
 		EnableCompression: true,
@@ -96,7 +107,6 @@ func TestConn_Invoke(t *testing.T) {
 		}
 		return conn.WriteJSON(&resp)
 	})
-	defer srv.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -131,7 +141,6 @@ func TestConn_InvokeError(t *testing.T) {
 		}
 		return conn.WriteJSON(&resp)
 	})
-	defer srv.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -148,7 +157,6 @@ func TestConn_InvokeError(t *testing.T) {
 
 func TestConn_InvokeRemoteDisconnected(t *testing.T) {
 	srv := newTestServer(t, nil)
-	defer srv.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -162,7 +170,6 @@ func TestConn_InvokeRemoteDisconnected(t *testing.T) {
 
 func TestConn_InvokeConnectionClosed(t *testing.T) {
 	srv := newTestServer(t, nil)
-	defer srv.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -179,7 +186,6 @@ func TestConn_InvokeDeadlineExceeded(t *testing.T) {
 	defer cancel()
 
 	srv := newTestServer(t, nil)
-	defer srv.Close()
 
 	err := Invoke(ctx, "test.Hello", nil, nil, srv.conn)
 	if err != context.DeadlineExceeded {
@@ -195,7 +201,6 @@ func TestConn_InvokeContextCanceled(t *testing.T) {
 		cancel()
 		return nil
 	})
-	defer srv.Close()
 
 	err := Invoke(ctx, "test.Hello", nil, nil, srv.conn)
 	if err != context.Canceled {
@@ -217,7 +222,6 @@ func TestConn_DecodeError(t *testing.T) {
 		w.Close()
 		return nil
 	})
-	defer srv.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -256,7 +260,6 @@ func TestConn_EncodeFailed(t *testing.T) {
 
 func TestConn_Notify(t *testing.T) {
 	srv := newTestServer(t, nil)
-	defer srv.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -297,7 +300,6 @@ func TestConn_Notify(t *testing.T) {
 
 func TestConn_StreamRecv(t *testing.T) {
 	srv := newTestServer(t, nil)
-	defer srv.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -341,7 +343,6 @@ func TestConn_StreamRecv(t *testing.T) {
 
 func TestConn_PropagateError(t *testing.T) {
 	srv := newTestServer(t, nil)
-	defer srv.Close()
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -395,7 +396,6 @@ func TestConn_PropagateError(t *testing.T) {
 
 func TestConn_Context(t *testing.T) {
 	srv := newTestServer(t, nil)
-	defer srv.Close()
 
 	ctx := srv.conn.Context()
 	if ctx == nil {
@@ -452,6 +452,302 @@ func TestResponse_String(t *testing.T) {
 				t.Errorf("String() got %q, want %q", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestConn_NewSession(t *testing.T) {
+	srv := newTestServer(t, func(conn *websocket.Conn, req *Request) error {
+		resp := Response{
+			ID:        req.ID,
+			Result:    []byte(fmt.Sprintf("%q", req.Method)),
+			SessionID: req.SessionID,
+		}
+		return conn.WriteJSON(&resp)
+	})
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	sess, err := NewSession(srv.conn, "session-123")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sess.Close()
+
+	if sess.SessionID() != "session-123" {
+		t.Errorf("SessionID: got %q, want %q", sess.SessionID(), "session-123")
+	}
+
+	if srv.conn.SessionID() != "" {
+		t.Errorf("Parent SessionID: got %q, want empty", srv.conn.SessionID())
+	}
+
+	var reply string
+	err = Invoke(ctx, "test.SessionMethod", nil, &reply, sess)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if reply != "test.SessionMethod" {
+		t.Errorf("Session reply: got %q, want %q", reply, "test.SessionMethod")
+	}
+}
+
+func TestConn_NewSession_Response(t *testing.T) {
+	srv := newTestServer(t, func(conn *websocket.Conn, req *Request) error {
+		resp := Response{
+			ID:        req.ID,
+			Result:    []byte(fmt.Sprintf("%q", req.SessionID)),
+			SessionID: req.SessionID,
+		}
+		return conn.WriteJSON(&resp)
+	})
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	sess1, err := NewSession(srv.conn, "session-1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sess1.Close()
+
+	sess2, err := NewSession(srv.conn, "session-2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sess2.Close()
+
+	var wg sync.WaitGroup
+	results := make([]string, 2)
+	for i, sess := range []*Conn{sess1, sess2} {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			var reply string
+			err := Invoke(ctx, "test.Method", nil, &reply, sess)
+			if err != nil {
+				t.Error(err)
+				return
+			}
+			results[i] = reply
+		}()
+	}
+
+	wg.Wait()
+
+	if got := results[0]; got != "session-1" {
+		t.Errorf("Session-1 got response for %q", got)
+	}
+	if got := results[1]; got != "session-2" {
+		t.Errorf("Session-2 got response for %q", got)
+	}
+}
+
+func TestConn_NewSession_Notification(t *testing.T) {
+	srv := newTestServer(t, nil)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	sess1, err := NewSession(srv.conn, "session-1")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sess1.Close()
+
+	sess2, err := NewSession(srv.conn, "session-2")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sess2.Close()
+
+	stream1, err := NewStream(ctx, "test.Event", sess1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer stream1.Close()
+
+	stream2, err := NewStream(ctx, "test.Event", sess2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer stream2.Close()
+
+	err = srv.wsConn.WriteJSON(&Response{
+		Method:    "test.Event",
+		Args:      []byte(`"event-for-session-1"`),
+		SessionID: "session-1",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = srv.wsConn.WriteJSON(&Response{
+		Method:    "test.Event",
+		Args:      []byte(`"event-for-session-2"`),
+		SessionID: "session-2",
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	var reply1 string
+	if err := stream1.RecvMsg(&reply1); err != nil {
+		t.Fatal(err)
+	}
+	if reply1 != "event-for-session-1" {
+		t.Errorf("Session-1 event: got %q, want %q", reply1, "event-for-session-1")
+	}
+
+	var reply2 string
+	if err := stream2.RecvMsg(&reply2); err != nil {
+		t.Fatal(err)
+	}
+	if reply2 != "event-for-session-2" {
+		t.Errorf("Session-2 event: got %q, want %q", reply2, "event-for-session-2")
+	}
+}
+
+func TestConn_NewSession_CloseFunc(t *testing.T) {
+	srv := newTestServer(t, nil)
+
+	called := make(chan struct{})
+	sess, err := NewSession(srv.conn, "session-123", WithSessionClose(func(ctx context.Context) error {
+		close(called)
+		return nil
+	}))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	err = sess.Close()
+	if err != nil {
+		t.Errorf("Session.Close error: %v", err)
+	}
+
+	select {
+	case <-called:
+		// OK.
+	case <-time.After(time.Second):
+		t.Error("Close callback was not called")
+	}
+}
+
+func TestConn_NewSession_ParentCloseClosesSession(t *testing.T) {
+	srv := newTestServer(t, nil)
+
+	called := make(chan struct{})
+	sess, err := NewSession(srv.conn, "session-123", WithSessionClose(func(ctx context.Context) error {
+		close(called)
+		return nil
+	}))
+	if err != nil {
+		srv.Close()
+		t.Fatal(err)
+	}
+
+	err = srv.conn.Close()
+	if err != nil {
+		t.Errorf("Parent.Close error: %v", err)
+	}
+	srv.srv.Close()
+
+	select {
+	case <-called:
+		// OK.
+	case <-time.After(time.Second):
+		t.Error("Session close callback was not called when parent closed")
+	}
+
+	select {
+	case <-sess.Context().Done():
+	default:
+		t.Error("Session context should be done after parent close")
+	}
+}
+
+func TestConn_NewSession_CannotCreateFromSession(t *testing.T) {
+	srv := newTestServer(t, nil)
+
+	sess, err := NewSession(srv.conn, "session-123")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sess.Close()
+
+	_, err = NewSession(sess, "nested-session")
+	if err == nil {
+		t.Error("NewSession on session should return error")
+	}
+}
+
+func TestConn_NewSession_ClosedParent(t *testing.T) {
+	srv := newTestServer(t, nil)
+
+	srv.conn.Close()
+	srv.srv.Close()
+
+	_, err := NewSession(srv.conn, "session-123")
+	if err == nil {
+		t.Error("NewSession on closed parent should return error")
+	}
+}
+
+func TestConn_NewSession_InvokeAfterClose(t *testing.T) {
+	srv := newTestServer(t, nil)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	sess, err := NewSession(srv.conn, "session-123")
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	sess.Close()
+
+	var reply string
+	err = Invoke(ctx, "test.Method", nil, &reply, sess)
+	if err != ErrConnClosing {
+		t.Errorf("Invoke after close: got %v, want ErrConnClosing", err)
+	}
+}
+
+func TestConn_NewSession_ConcurrentCreateAndClose(t *testing.T) {
+	srv := newTestServer(t, nil)
+
+	const numGoroutines = 10
+	var wg sync.WaitGroup
+	wg.Add(numGoroutines + 1)
+
+	res := make(chan error, numGoroutines)
+	for i := range numGoroutines {
+		go func() {
+			defer wg.Done()
+			sess, err := NewSession(srv.conn, fmt.Sprintf("session-%d", i))
+			if err != nil {
+				res <- err
+				return
+			}
+			sess.Close()
+			res <- nil
+		}()
+	}
+
+	go func() {
+		defer wg.Done()
+		srv.conn.Close()
+		srv.srv.Close()
+	}()
+
+	wg.Wait()
+	close(res)
+
+	for err := range res {
+		if err != nil && err != ErrConnClosing {
+			t.Errorf("NewSession returned unexpected error: %v", err)
+		}
 	}
 }
 

@@ -55,8 +55,14 @@ func TestManager_ErrorsAreSentOnErrChan(t *testing.T) {
 		message:  message,
 	}
 
-	m := Manager{cancel: func() {}, errC: make(chan error, 1)}
-	go m.watch(ev, nil, make(chan error, 1), m.errC)
+	m := Manager{
+		cancel:         func() {},
+		errC:           make(chan error, 1),
+		flatSessionC:   make(chan *flatSession),
+		legacySessionC: make(chan *legacySession),
+		done:           make(chan error, 1),
+	}
+	go m.watch(ev)
 
 	message.next()
 

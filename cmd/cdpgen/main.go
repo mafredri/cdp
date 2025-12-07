@@ -329,6 +329,7 @@ func (g *Generator) CdpClient(domains []proto.Domain) {
 // invoke methods or listen to events in every CDP domain. The Client consumes
 // a rpcc connection, used to invoke the methods.
 type Client struct {
+	conn *rpcc.Conn
 	%s
 }
 
@@ -336,8 +337,14 @@ type Client struct {
 // for communication with the debugging target.
 func NewClient(conn *rpcc.Conn) *Client {
 	return &Client{
+		conn: conn,
 		%s
 	}
+}
+
+// Conn returns the underlying rpcc.Conn used by this Client.
+func (c *Client) Conn() *rpcc.Conn {
+	return c.conn
 }
 `, fields.buf.Bytes(), newFields.buf.Bytes())
 }
