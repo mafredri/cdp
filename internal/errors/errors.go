@@ -6,8 +6,10 @@ import (
 )
 
 // Interfaces for common error unwrapping.
-type causer interface{ Cause() error }
-type wrapper interface{ Unwrap() error }
+type (
+	causer  interface{ Cause() error }
+	wrapper interface{ Unwrap() error }
+)
 
 // Cause returns the underlying cause for this error, if possible.
 // If err does not implement causer.Cause(), then err is returned.

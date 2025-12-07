@@ -3,9 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
-
 	"log"
+	"os"
 	"time"
 
 	"github.com/mafredri/cdp"

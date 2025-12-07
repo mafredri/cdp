@@ -8,7 +8,6 @@ import (
 	"flag"
 	"fmt"
 	"go/format"
-
 	"log"
 	"os"
 	"os/exec"
