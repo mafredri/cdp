@@ -47,3 +47,20 @@ tidy:
 clean:
 	go clean ./...
 	rm -f cmd/cdpgen/cdpgen
+
+.PHONY: help
+help:
+	@echo "Available targets:"
+	@echo
+	@echo "  all           Build (includes gen)"
+	@echo "  gen           Generate protocol bindings"
+	@echo "  build         Build all packages (depends on gen)"
+	@echo "  update        Update protocol definitions from upstream"
+	@echo "  test          Run tests"
+	@echo "  test-race     Run tests with race detector"
+	@echo "  test-browser  Run all tests (requires Chrome on port 9222)"
+	@echo "  lint          Run go vet"
+	@echo "  fmt           Format code"
+	@echo "  tidy          Tidy go.mod"
+	@echo "  clean         Clean build artifacts"
+	@echo "  help          Show this help"
