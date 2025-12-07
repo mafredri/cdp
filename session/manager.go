@@ -2,6 +2,7 @@ package session
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/mafredri/cdp"
@@ -9,17 +10,6 @@ import (
 	"github.com/mafredri/cdp/protocol/target"
 	"github.com/mafredri/cdp/rpcc"
 )
-
-// Manager establishes session connections to targets.
-type Manager struct {
-	ctx    context.Context
-	cancel context.CancelFunc
-
-	c    *cdp.Client
-	sC   chan *session
-	done chan error
-	errC chan error
-}
 
 const (
 	// This timeout is used for invoking DetachFromTarget when a
@@ -31,24 +21,152 @@ const (
 	// The default timeout is a compromise between not blocking for
 	// extended periods of time and allowing slow connections to
 	// deliver the message.
-	//
-	// TODO(mafredri): Should we allow configuring the timeout?
 	defaultDetachTimeout = 5 * time.Second
 )
 
-// Dial establishes a target session and creates a lightweight rpcc.Conn
-// that uses SendMessageToTarget and ReceivedMessageFromTarget from the
-// Target domain instead of a new websocket connection.
+// Manager establishes session connections to targets. It handles both
+// flattened sessions (Chrome 77+) and legacy sessions.
+type Manager struct {
+	ctx    context.Context
+	cancel context.CancelFunc
+
+	c       *cdp.Client
+	conn    *rpcc.Conn
+	flatten bool
+
+	flatSessionC   chan *flatSession
+	legacySessionC chan *legacySession
+	done           chan error
+	errC           chan error
+}
+
+// ManagerOption represents an option for NewManager.
+type ManagerOption func(*managerOptions)
+
+type managerOptions struct {
+	flatten bool
+}
+
+// WithNoFlatten returns a ManagerOption that disables flattened session
+// mode. Use this for Chrome versions older than 77.
+func WithNoFlatten() ManagerOption {
+	return func(o *managerOptions) {
+		o.flatten = false
+	}
+}
+
+// NewManager creates a new session Manager.
 //
-// Dial will invoke AttachToTarget. Close (rpcc.Conn) will invoke
-// DetachFromTarget.
+// The cdp.Client will be used to listen to events and invoke commands
+// on the Target domain. It will also be used by all rpcc.Conn created
+// by Dial.
+func NewManager(c *cdp.Client, opts ...ManagerOption) (*Manager, error) {
+	conn := c.Conn()
+	if conn.SessionID() != "" {
+		return nil, errors.New("session.Manager: cannot use session connection, must use parent connection")
+	}
+
+	opt := managerOptions{flatten: true}
+	for _, o := range opts {
+		o(&opt)
+	}
+
+	m := &Manager{
+		c:              c,
+		conn:           conn,
+		flatten:        opt.flatten,
+		flatSessionC:   make(chan *flatSession),
+		legacySessionC: make(chan *legacySession),
+		errC:           make(chan error, 1),
+	}
+
+	// Inherit context from the parent connection.
+	m.ctx, m.cancel = context.WithCancel(m.conn.Context())
+
+	ev, err := newSessionEvents(m.ctx, c)
+	if err != nil {
+		close(m.errC)
+		m.Close()
+		return nil, err
+	}
+
+	m.done = make(chan error, 1)
+	go m.watch(ev)
+	return m, nil
+}
+
+// Dial establishes a target session and creates a lightweight rpcc.Conn.
+//
+// Dial invokes Target.AttachToTarget, closing the returned rpcc.Conn
+// invokes Target.DetachFromTarget.
 func (m *Manager) Dial(ctx context.Context, id target.ID) (*rpcc.Conn, error) {
-	s, err := dial(ctx, id, m.c, defaultDetachTimeout)
+	args := target.NewAttachToTargetArgs(id).SetFlatten(m.flatten)
+	reply, err := m.c.Target.AttachToTarget(ctx, args)
+	if err != nil {
+		if m.flatten {
+			return nil, fmt.Errorf("session.Manager: attach to target failed (flatten=true requires Chrome 77+, use WithNoFlatten for older versions): %w", err)
+		}
+		return nil, err
+	}
+
+	if m.flatten {
+		return m.dialFlat(reply.SessionID)
+	}
+	return m.dialLegacy(ctx, reply.SessionID)
+}
+
+// Close closes the Manager and all active sessions. All rpcc.Conn
+// created by Dial will be closed.
+func (m *Manager) Close() error {
+	m.cancel()
+
+	// Wait for watch to close all sessions and finish.
+	if m.done != nil {
+		return errors.Wrapf(<-m.done, "session.Manager: close failed")
+	}
+	return nil
+}
+
+// Err is a channel that blocks until the Manager encounters an error.
+// The channel is closed if Manager is closed.
+//
+// Errors could happen if the debug target sends events that cannot be
+// decoded from JSON.
+func (m *Manager) Err() <-chan error {
+	return m.errC
+}
+
+func (m *Manager) dialFlat(sessionID target.SessionID) (*rpcc.Conn, error) {
+	detach := func(ctx context.Context) error {
+		err := m.c.Target.DetachFromTarget(ctx, target.NewDetachFromTargetArgs().SetSessionID(sessionID))
+		if errors.Is(err, context.DeadlineExceeded) {
+			return fmt.Errorf("session.Manager: detach timed out for session %s", sessionID)
+		}
+		return err
+	}
+
+	fs, err := newFlatSession(m.conn, sessionID, detach)
+	if err != nil {
+		return nil, err
+	}
+
+	select {
+	case m.flatSessionC <- fs:
+	case <-m.ctx.Done():
+		fs.conn.Close()
+		return nil, errors.New("session.Manager: Dial failed: Manager is closed")
+	}
+
+	return fs.conn, nil
+}
+
+func (m *Manager) dialLegacy(ctx context.Context, sessionID target.SessionID) (*rpcc.Conn, error) {
+	s, err := newLegacySession(ctx, sessionID, m.c, defaultDetachTimeout)
 	if err != nil {
 		return nil, err
 	}
 	select {
-	case m.sC <- s:
+	case m.legacySessionC <- s:
 	case <-m.ctx.Done():
 		s.Close()
 		return nil, errors.New("session.Manager: Dial failed: Manager is closed")
@@ -56,17 +174,7 @@ func (m *Manager) Dial(ctx context.Context, id target.ID) (*rpcc.Conn, error) {
 	return s.Conn(), nil
 }
 
-// Close closes the Manager and all active sessions. All rpcc.Conn
-// created by Dial will be closed.
-func (m *Manager) Close() error {
-	m.cancel()
-	if m.done != nil {
-		return errors.Wrapf(<-m.done, "session.Manager: close failed")
-	}
-	return nil
-}
-
-func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC chan<- error) {
+func (m *Manager) watch(ev *sessionEvents) {
 	defer ev.Close()
 
 	isClosing := func(err error) bool {
@@ -87,22 +195,28 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 		return false
 	}
 
-	sessions := make(map[target.SessionID]*session)
+	flatSessions := make(map[target.SessionID]*flatSession)
+	legacySessions := make(map[target.SessionID]*legacySession)
 	defer func() {
-		var err []error
-		for _, ss := range sessions {
-			// TODO(mafredri): Speed up by closing sessions concurrently.
-			err = append(err, ss.Close())
+		var errs []error
+		for _, fs := range flatSessions {
+			errs = append(errs, fs.conn.Close())
 		}
-		done <- errors.Merge(err...)
-		close(done)
-		close(errC)
+		for _, ls := range legacySessions {
+			errs = append(errs, ls.Close())
+		}
+		m.done <- errors.Merge(errs...)
+		close(m.done)
+		close(m.errC)
 	}()
 
 	for {
 		select {
-		case s := <-created:
-			sessions[s.ID] = s
+		case fs := <-m.flatSessionC:
+			flatSessions[fs.id] = fs
+
+		case ls := <-m.legacySessionC:
+			legacySessions[ls.id] = ls
 
 		// Checking detached should be sufficient for monitoring the
 		// session. A DetachedFromTarget event is always sent before
@@ -114,13 +228,21 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 					return
 				}
 				err = errors.Wrapf(err, "Manager.watch: error receiving detached event")
-				sendOrDiscardErr(errC, err)
+				sendOrDiscardErr(m.errC, err)
 				continue
 			}
 
-			if s, ok := sessions[ev.SessionID]; ok {
-				delete(sessions, s.ID)
-				s.Close()
+			// Handle flattened session detachment.
+			if fs, ok := flatSessions[ev.SessionID]; ok {
+				delete(flatSessions, ev.SessionID)
+				fs.markDetached()
+				fs.conn.Close()
+			}
+
+			// Handle legacy session detachment.
+			if ls, ok := legacySessions[ev.SessionID]; ok {
+				delete(legacySessions, ls.id)
+				ls.Close()
 			}
 
 		case <-ev.message.Ready():
@@ -130,19 +252,21 @@ func (m *Manager) watch(ev *sessionEvents, created <-chan *session, done, errC c
 					return
 				}
 				err = errors.Wrapf(err, "Manager.watch: error receiving message event")
-				sendOrDiscardErr(errC, err)
+				sendOrDiscardErr(m.errC, err)
 				continue
 			}
 
-			if s, ok := sessions[ev.SessionID]; ok {
+			// Forward messages to legacy sessions only. Flattened
+			// sessions receive messages directly via rpcc.Conn.
+			if ls, ok := legacySessions[ev.SessionID]; ok {
 				// We rely on the implementation of *rpcc.Conn
 				// to read this message in a reasonably short
 				// amount of time. Blocking here can potentially
 				// delay other session messages but that should
 				// not happen.
-				err = s.Write([]byte(ev.Message))
+				err = ls.Write([]byte(ev.Message))
 				if err != nil {
-					delete(sessions, s.ID)
+					delete(legacySessions, ls.id)
 				}
 			}
 		}
@@ -154,43 +278,6 @@ func sendOrDiscardErr(errC chan<- error, err error) {
 	case errC <- err:
 	default:
 	}
-}
-
-// Err is a channel that blocks until the Manager encounters an error.
-// The channel is closed if Manager is closed.
-//
-// Errors could happen if the debug target sends events that cannot be
-// decoded from JSON.
-func (m *Manager) Err() <-chan error {
-	return m.errC
-}
-
-// NewManager creates a new session Manager.
-//
-// The cdp.Client will be used to listen to events and invoke commands
-// on the Target domain. It will also be used by all rpcc.Conn created
-// by Dial.
-func NewManager(c *cdp.Client) (*Manager, error) {
-	m := &Manager{
-		c:    c,
-		sC:   make(chan *session),
-		errC: make(chan error, 1),
-	}
-
-	// TODO(mafredri): Inherit the context from rpcc.Conn in cdp.Client.
-	// cdp.Client does not yet expose the context, nor rpcc.Conn.
-	m.ctx, m.cancel = context.WithCancel(context.TODO())
-
-	ev, err := newSessionEvents(m.ctx, c)
-	if err != nil {
-		close(m.errC)
-		m.Close()
-		return nil, err
-	}
-
-	m.done = make(chan error, 1)
-	go m.watch(ev, m.sC, m.done, m.errC)
-	return m, nil
 }
 
 type sessionEvents struct {

@@ -68,5 +68,22 @@ When order is important, two streams can be synchronized with Sync:
 	if err != nil {
 		// Handle error.
 	}
+
+# Session connections
+
+Session connections allow multiplexing multiple sessions over a single
+websocket connection. A session connection shares the underlying I/O
+with its parent but has its own stream listeners. Requests sent via a
+session connection will include the session ID in the message. Using
+sessions requires server support.
+
+	session, err := rpcc.NewSession(conn, "sessionID", rpcc.WithSessionClose(closer))
+	if err != nil {
+		// Handle error.
+	}
+	defer session.Close()
+
+The optional WithSessionClose callback is invoked when the session is
+closed, allowing for cleanup.
 */
 package rpcc

@@ -2,6 +2,8 @@ package testutil
 
 import (
 	"context"
+	"encoding/json"
+	"io"
 	"testing"
 	"time"
 
@@ -10,6 +12,41 @@ import (
 	"github.com/mafredri/cdp/protocol/target"
 	"github.com/mafredri/cdp/rpcc"
 )
+
+// logCodec wraps an rpcc.Codec and logs all requests and responses.
+type logCodec struct {
+	t   *testing.T
+	enc *json.Encoder
+	dec *json.Decoder
+}
+
+func (c *logCodec) WriteRequest(r *rpcc.Request) error {
+	c.t.Helper()
+	data, _ := json.Marshal(r)
+	c.t.Logf("SEND: %s", data)
+	return c.enc.Encode(r)
+}
+
+func (c *logCodec) ReadResponse(r *rpcc.Response) error {
+	c.t.Helper()
+	if err := c.dec.Decode(r); err != nil {
+		return err
+	}
+	data, _ := json.Marshal(r)
+	c.t.Logf("RECV: %s", data)
+	return nil
+}
+
+// NewLogCodec returns a new rpcc codec that logs all requests and responses.
+func NewLogCodec(t *testing.T) rpcc.DialOption {
+	return rpcc.WithCodec(func(conn io.ReadWriter) rpcc.Codec {
+		return &logCodec{
+			t:   t,
+			enc: json.NewEncoder(conn),
+			dec: json.NewDecoder(conn),
+		}
+	})
+}
 
 // Client represents a test client.
 type Client struct {
@@ -32,7 +69,13 @@ func NewClient(ctx context.Context, t *testing.T) *Client {
 	if err != nil {
 		t.Fatal(err)
 	}
-	conn, err := rpcc.DialContext(ctx, v.WebSocketDebuggerURL)
+
+	var opts []rpcc.DialOption
+	if testing.Verbose() {
+		opts = append(opts, NewLogCodec(t))
+	}
+
+	conn, err := rpcc.DialContext(ctx, v.WebSocketDebuggerURL, opts...)
 	if err != nil {
 		t.Fatal(err)
 	}
