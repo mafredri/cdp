@@ -10,7 +10,8 @@ import (
 )
 
 // BreakpointResolvedClient is a client for BreakpointResolved events. Fired
-// when breakpoint is resolved to an actual script and location.
+// when breakpoint is resolved to an actual script and location. Deprecated in
+// favor of `resolvedBreakpoints` in the `scriptParsed` event.
 type BreakpointResolvedClient interface {
 	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
 	// triggered, context canceled or connection closed.
@@ -87,6 +88,7 @@ type ScriptFailedToParseReply struct {
 	EndColumn               int                        `json:"endColumn"`                         // Length of the last line of the script.
 	ExecutionContextID      runtime.ExecutionContextID `json:"executionContextId"`                // Specifies script creation context.
 	Hash                    string                     `json:"hash"`                              // Content hash of the script, SHA-256.
+	BuildID                 string                     `json:"buildId"`                           // For Wasm modules, the content of the `build_id` custom section. For JavaScript the `debugId` magic comment.
 	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data likely matching {isDefault: boolean, type: 'default'|'isolated'|'worker', frameId: string}
 	SourceMapURL            *string                    `json:"sourceMapURL,omitempty"`            // URL of source map associated with script (if any).
 	HasSourceURL            *bool                      `json:"hasSourceURL,omitempty"`            // True, if this script has sourceURL.
@@ -132,6 +134,7 @@ type ScriptParsedReply struct {
 	EndColumn               int                        `json:"endColumn"`                         // Length of the last line of the script.
 	ExecutionContextID      runtime.ExecutionContextID `json:"executionContextId"`                // Specifies script creation context.
 	Hash                    string                     `json:"hash"`                              // Content hash of the script, SHA-256.
+	BuildID                 string                     `json:"buildId"`                           // For Wasm modules, the content of the `build_id` custom section. For JavaScript the `debugId` magic comment.
 	ExecutionContextAuxData json.RawMessage            `json:"executionContextAuxData,omitempty"` // Embedder-specific auxiliary data likely matching {isDefault: boolean, type: 'default'|'isolated'|'worker', frameId: string}
 	// IsLiveEdit True, if this script is generated as a result of the
 	// live edit operation.
@@ -156,13 +159,20 @@ type ScriptParsedReply struct {
 	//
 	// Note: This property is experimental.
 	ScriptLanguage ScriptLanguage `json:"scriptLanguage,omitempty"`
-	// DebugSymbols If the scriptLanguage is WebASsembly, the source of
+	// DebugSymbols If the scriptLanguage is WebAssembly, the source of
 	// debug symbols for the module.
 	//
 	// Note: This property is experimental.
-	DebugSymbols *DebugSymbols `json:"debugSymbols,omitempty"`
+	DebugSymbols []DebugSymbols `json:"debugSymbols,omitempty"`
 	// EmbedderName The name the embedder supplied for this script.
 	//
 	// Note: This property is experimental.
 	EmbedderName *string `json:"embedderName,omitempty"`
+	// ResolvedBreakpoints The list of set breakpoints in this script if
+	// calls to `setBreakpointByUrl` matches this script's URL or hash.
+	// Clients that use this list can ignore the `breakpointResolved`
+	// event. They are equivalent.
+	//
+	// Note: This property is experimental.
+	ResolvedBreakpoints []ResolvedBreakpoint `json:"resolvedBreakpoints,omitempty"`
 }

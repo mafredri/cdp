@@ -38,6 +38,22 @@ func (d *domainClient) LoadUnpacked(ctx context.Context, args *LoadUnpackedArgs)
 	return
 }
 
+// Uninstall invokes the Extensions method. Uninstalls an unpacked extension
+// (others not supported) from the profile. Available if the client is
+// connected using the --remote-debugging-pipe flag and the
+// --enable-unsafe-extension-debugging.
+func (d *domainClient) Uninstall(ctx context.Context, args *UninstallArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Extensions.uninstall", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Extensions.uninstall", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Extensions", Op: "Uninstall", Err: err}
+	}
+	return
+}
+
 // GetStorageItems invokes the Extensions method. Gets data from extension
 // storage in the given `storageArea`. If `keys` is specified, these are used
 // to filter the result.

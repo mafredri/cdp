@@ -114,8 +114,12 @@ func (d *domainClient) Disable(ctx context.Context) (err error) {
 }
 
 // Enable invokes the Page method. Enables page domain notifications.
-func (d *domainClient) Enable(ctx context.Context) (err error) {
-	err = rpcc.Invoke(ctx, "Page.enable", nil, nil, d.conn)
+func (d *domainClient) Enable(ctx context.Context, args *EnableArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.enable", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.enable", nil, nil, d.conn)
+	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Page", Op: "Enable", Err: err}
 	}
@@ -173,16 +177,16 @@ func (d *domainClient) GetAppID(ctx context.Context) (reply *GetAppIDReply, err 
 	return
 }
 
-// GetAdScriptID invokes the Page method.
-func (d *domainClient) GetAdScriptID(ctx context.Context, args *GetAdScriptIDArgs) (reply *GetAdScriptIDReply, err error) {
-	reply = new(GetAdScriptIDReply)
+// GetAdScriptAncestry invokes the Page method.
+func (d *domainClient) GetAdScriptAncestry(ctx context.Context, args *GetAdScriptAncestryArgs) (reply *GetAdScriptAncestryReply, err error) {
+	reply = new(GetAdScriptAncestryReply)
 	if args != nil {
-		err = rpcc.Invoke(ctx, "Page.getAdScriptId", args, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Page.getAdScriptAncestry", args, reply, d.conn)
 	} else {
-		err = rpcc.Invoke(ctx, "Page.getAdScriptId", nil, reply, d.conn)
+		err = rpcc.Invoke(ctx, "Page.getAdScriptAncestry", nil, reply, d.conn)
 	}
 	if err != nil {
-		err = &internal.OpError{Domain: "Page", Op: "GetAdScriptID", Err: err}
+		err = &internal.OpError{Domain: "Page", Op: "GetAdScriptAncestry", Err: err}
 	}
 	return
 }
@@ -708,6 +712,22 @@ func (d *domainClient) SetPrerenderingAllowed(ctx context.Context, args *SetPrer
 	return
 }
 
+// GetAnnotatedPageContent invokes the Page method. Get the annotated page
+// content for the main frame. This is an experimental command that is subject
+// to change.
+func (d *domainClient) GetAnnotatedPageContent(ctx context.Context, args *GetAnnotatedPageContentArgs) (reply *GetAnnotatedPageContentReply, err error) {
+	reply = new(GetAnnotatedPageContentReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Page.getAnnotatedPageContent", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Page.getAnnotatedPageContent", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Page", Op: "GetAnnotatedPageContent", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) DOMContentEventFired(ctx context.Context) (DOMContentEventFiredClient, error) {
 	s, err := rpcc.NewStream(ctx, "Page.domContentEventFired", d.conn)
 	if err != nil {
@@ -893,6 +913,27 @@ func (c *frameResizedClient) Recv() (*FrameResizedReply, error) {
 	event := new(FrameResizedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Page", Op: "FrameResized Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) FrameStartedNavigating(ctx context.Context) (FrameStartedNavigatingClient, error) {
+	s, err := rpcc.NewStream(ctx, "Page.frameStartedNavigating", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &frameStartedNavigatingClient{Stream: s}, nil
+}
+
+type frameStartedNavigatingClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *frameStartedNavigatingClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *frameStartedNavigatingClient) Recv() (*FrameStartedNavigatingReply, error) {
+	event := new(FrameStartedNavigatingReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Page", Op: "FrameStartedNavigating Recv", Err: err}
 	}
 	return event, nil
 }

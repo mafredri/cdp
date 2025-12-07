@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"net/url"
@@ -350,7 +349,7 @@ func (d *DevTools) handleNodeUnsupportedMethod(ctx context.Context, resp *http.R
 }
 
 func parseError(from string, r io.Reader) error {
-	m, err := ioutil.ReadAll(r)
+	m, err := io.ReadAll(r)
 	if err != nil {
 		return err
 	}

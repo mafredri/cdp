@@ -15,6 +15,9 @@ type NodeID int
 // not have been pushed to the front-end.
 type BackendNodeID int
 
+// StyleSheetID Unique identifier for a CSS stylesheet.
+type StyleSheetID string
+
 // BackendNode Backend node with a friendly name.
 type BackendNode struct {
 	NodeType      int           `json:"nodeType"`      // `Node`'s nodeType.
@@ -27,42 +30,53 @@ type PseudoType string
 
 // PseudoType as enums.
 const (
-	PseudoTypeNotSet                  PseudoType = ""
-	PseudoTypeFirstLine               PseudoType = "first-line"
-	PseudoTypeFirstLetter             PseudoType = "first-letter"
-	PseudoTypeBefore                  PseudoType = "before"
-	PseudoTypeAfter                   PseudoType = "after"
-	PseudoTypeMarker                  PseudoType = "marker"
-	PseudoTypeBackdrop                PseudoType = "backdrop"
-	PseudoTypeSelection               PseudoType = "selection"
-	PseudoTypeSearchText              PseudoType = "search-text"
-	PseudoTypeTargetText              PseudoType = "target-text"
-	PseudoTypeSpellingError           PseudoType = "spelling-error"
-	PseudoTypeGrammarError            PseudoType = "grammar-error"
-	PseudoTypeHighlight               PseudoType = "highlight"
-	PseudoTypeFirstLineInherited      PseudoType = "first-line-inherited"
-	PseudoTypeScrollMarker            PseudoType = "scroll-marker"
-	PseudoTypeScrollMarkerGroup       PseudoType = "scroll-marker-group"
-	PseudoTypeScrollNextButton        PseudoType = "scroll-next-button"
-	PseudoTypeScrollPrevButton        PseudoType = "scroll-prev-button"
-	PseudoTypeScrollbar               PseudoType = "scrollbar"
-	PseudoTypeScrollbarThumb          PseudoType = "scrollbar-thumb"
-	PseudoTypeScrollbarButton         PseudoType = "scrollbar-button"
-	PseudoTypeScrollbarTrack          PseudoType = "scrollbar-track"
-	PseudoTypeScrollbarTrackPiece     PseudoType = "scrollbar-track-piece"
-	PseudoTypeScrollbarCorner         PseudoType = "scrollbar-corner"
-	PseudoTypeResizer                 PseudoType = "resizer"
-	PseudoTypeInputListButton         PseudoType = "input-list-button"
-	PseudoTypeViewTransition          PseudoType = "view-transition"
-	PseudoTypeViewTransitionGroup     PseudoType = "view-transition-group"
-	PseudoTypeViewTransitionImagePair PseudoType = "view-transition-image-pair"
-	PseudoTypeViewTransitionOld       PseudoType = "view-transition-old"
-	PseudoTypeViewTransitionNew       PseudoType = "view-transition-new"
+	PseudoTypeNotSet                      PseudoType = ""
+	PseudoTypeFirstLine                   PseudoType = "first-line"
+	PseudoTypeFirstLetter                 PseudoType = "first-letter"
+	PseudoTypeCheckmark                   PseudoType = "checkmark"
+	PseudoTypeBefore                      PseudoType = "before"
+	PseudoTypeAfter                       PseudoType = "after"
+	PseudoTypePickerIcon                  PseudoType = "picker-icon"
+	PseudoTypeInterestHint                PseudoType = "interest-hint"
+	PseudoTypeMarker                      PseudoType = "marker"
+	PseudoTypeBackdrop                    PseudoType = "backdrop"
+	PseudoTypeColumn                      PseudoType = "column"
+	PseudoTypeSelection                   PseudoType = "selection"
+	PseudoTypeSearchText                  PseudoType = "search-text"
+	PseudoTypeTargetText                  PseudoType = "target-text"
+	PseudoTypeSpellingError               PseudoType = "spelling-error"
+	PseudoTypeGrammarError                PseudoType = "grammar-error"
+	PseudoTypeHighlight                   PseudoType = "highlight"
+	PseudoTypeFirstLineInherited          PseudoType = "first-line-inherited"
+	PseudoTypeScrollMarker                PseudoType = "scroll-marker"
+	PseudoTypeScrollMarkerGroup           PseudoType = "scroll-marker-group"
+	PseudoTypeScrollButton                PseudoType = "scroll-button"
+	PseudoTypeScrollbar                   PseudoType = "scrollbar"
+	PseudoTypeScrollbarThumb              PseudoType = "scrollbar-thumb"
+	PseudoTypeScrollbarButton             PseudoType = "scrollbar-button"
+	PseudoTypeScrollbarTrack              PseudoType = "scrollbar-track"
+	PseudoTypeScrollbarTrackPiece         PseudoType = "scrollbar-track-piece"
+	PseudoTypeScrollbarCorner             PseudoType = "scrollbar-corner"
+	PseudoTypeResizer                     PseudoType = "resizer"
+	PseudoTypeInputListButton             PseudoType = "input-list-button"
+	PseudoTypeViewTransition              PseudoType = "view-transition"
+	PseudoTypeViewTransitionGroup         PseudoType = "view-transition-group"
+	PseudoTypeViewTransitionImagePair     PseudoType = "view-transition-image-pair"
+	PseudoTypeViewTransitionGroupChildren PseudoType = "view-transition-group-children"
+	PseudoTypeViewTransitionOld           PseudoType = "view-transition-old"
+	PseudoTypeViewTransitionNew           PseudoType = "view-transition-new"
+	PseudoTypePlaceholder                 PseudoType = "placeholder"
+	PseudoTypeFileSelectorButton          PseudoType = "file-selector-button"
+	PseudoTypeDetailsContent              PseudoType = "details-content"
+	PseudoTypePicker                      PseudoType = "picker"
+	PseudoTypePermissionIcon              PseudoType = "permission-icon"
+	PseudoTypeOverscrollAreaParent        PseudoType = "overscroll-area-parent"
+	PseudoTypeOverscrollClientArea        PseudoType = "overscroll-client-area"
 )
 
 func (e PseudoType) Valid() bool {
 	switch e {
-	case "first-line", "first-letter", "before", "after", "marker", "backdrop", "selection", "search-text", "target-text", "spelling-error", "grammar-error", "highlight", "first-line-inherited", "scroll-marker", "scroll-marker-group", "scroll-next-button", "scroll-prev-button", "scrollbar", "scrollbar-thumb", "scrollbar-button", "scrollbar-track", "scrollbar-track-piece", "scrollbar-corner", "resizer", "input-list-button", "view-transition", "view-transition-group", "view-transition-image-pair", "view-transition-old", "view-transition-new":
+	case "first-line", "first-letter", "checkmark", "before", "after", "picker-icon", "interest-hint", "marker", "backdrop", "column", "selection", "search-text", "target-text", "spelling-error", "grammar-error", "highlight", "first-line-inherited", "scroll-marker", "scroll-marker-group", "scroll-button", "scrollbar", "scrollbar-thumb", "scrollbar-button", "scrollbar-track", "scrollbar-track-piece", "scrollbar-corner", "resizer", "input-list-button", "view-transition", "view-transition-group", "view-transition-image-pair", "view-transition-group-children", "view-transition-old", "view-transition-new", "placeholder", "file-selector-button", "details-content", "picker", "permission-icon", "overscroll-area-parent", "overscroll-client-area":
 		return true
 	default:
 		return false
@@ -232,6 +246,18 @@ type Node struct {
 	IsSVG             *bool             `json:"isSVG,omitempty"`             // Whether the node is SVG.
 	CompatibilityMode CompatibilityMode `json:"compatibilityMode,omitempty"` // No description.
 	AssignedSlot      *BackendNode      `json:"assignedSlot,omitempty"`      // No description.
+	// IsScrollable
+	//
+	// Note: This property is experimental.
+	IsScrollable *bool `json:"isScrollable,omitempty"`
+	// AffectedByStartingStyles
+	//
+	// Note: This property is experimental.
+	AffectedByStartingStyles *bool `json:"affectedByStartingStyles,omitempty"`
+	// AdoptedStyleSheets
+	//
+	// Note: This property is experimental.
+	AdoptedStyleSheets []StyleSheetID `json:"adoptedStyleSheets,omitempty"`
 }
 
 // DetachedElementInfo A structure to hold the top-level node of a detached

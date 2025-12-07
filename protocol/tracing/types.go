@@ -35,7 +35,8 @@ var _ json.Unmarshaler = (*MemoryDumpConfig)(nil)
 
 // TraceConfig
 type TraceConfig struct {
-	// RecordMode Controls how the trace buffer stores data.
+	// RecordMode Controls how the trace buffer stores data. The default
+	// is `recordUntilFull`.
 	//
 	// Values: "recordUntilFull", "recordContinuously", "recordAsMuchAsPossible", "echoToConsole".
 	//

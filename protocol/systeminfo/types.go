@@ -89,15 +89,6 @@ func (e ImageType) String() string {
 	return string(e)
 }
 
-// ImageDecodeAcceleratorCapability Describes a supported image decoding
-// profile with its associated minimum and maximum resolutions and subsampling.
-type ImageDecodeAcceleratorCapability struct {
-	ImageType     ImageType           `json:"imageType"`     // Image coded, e.g. Jpeg.
-	MaxDimensions Size                `json:"maxDimensions"` // Maximum supported dimensions of the image in pixels.
-	MinDimensions Size                `json:"minDimensions"` // Minimum supported dimensions of the image in pixels.
-	Subsamplings  []SubsamplingFormat `json:"subsamplings"`  // Optional array of supported subsampling formats, e.g. 4:2:0, if known.
-}
-
 // GPUInfo Provides information about the GPU(s) on the system.
 type GPUInfo struct {
 	Devices              []GPUDevice                        `json:"devices"`                 // The graphics devices on the system. Element 0 is the primary GPU.
@@ -106,7 +97,6 @@ type GPUInfo struct {
 	DriverBugWorkarounds []string                           `json:"driverBugWorkarounds"`    // An optional array of GPU driver bug workarounds.
 	VideoDecoding        []VideoDecodeAcceleratorCapability `json:"videoDecoding"`           // Supported accelerated video decoding capabilities.
 	VideoEncoding        []VideoEncodeAcceleratorCapability `json:"videoEncoding"`           // Supported accelerated video encoding capabilities.
-	ImageDecoding        []ImageDecodeAcceleratorCapability `json:"imageDecoding"`           // Supported accelerated image decoding capabilities.
 }
 
 // ProcessInfo Represents process info.

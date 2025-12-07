@@ -16,7 +16,7 @@ func TestErrorf(t *testing.T) {
 func TestWrap(t *testing.T) {
 	err := errors.New("first")
 
-	msg := "second"
+	const msg = "second"
 	got := Wrapf(err, msg)
 	if !strings.Contains(got.Error(), err.Error()) {
 		t.Errorf("wrapped error did not contain the first error, got: %v", got)

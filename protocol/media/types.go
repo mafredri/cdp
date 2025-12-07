@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"time"
+
+	"github.com/mafredri/cdp/protocol/dom"
 )
 
 // PlayerID Players will get an ID that is unique within the agent context.
@@ -98,4 +100,10 @@ type PlayerError struct {
 	Stack     []PlayerErrorSourceLocation `json:"stack"`     // A trace of where this error was caused / where it passed through.
 	Cause     []PlayerError               `json:"cause"`     // Errors potentially have a root cause error, ie, a DecoderError might be caused by an WindowsError
 	Data      json.RawMessage             `json:"data"`      // Extra data attached to an error, such as an HRESULT, Video Codec, etc.
+}
+
+// Player
+type Player struct {
+	PlayerID  PlayerID           `json:"playerId"`            // No description.
+	DOMNodeID *dom.BackendNodeID `json:"domNodeId,omitempty"` // No description.
 }

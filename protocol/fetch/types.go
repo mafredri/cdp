@@ -6,7 +6,8 @@ import (
 	"github.com/mafredri/cdp/protocol/network"
 )
 
-// RequestID Unique request identifier.
+// RequestID Unique request identifier. Note that this does not identify
+// individual HTTP requests that are part of a network request.
 type RequestID string
 
 // RequestStage Stages of the request to handle. Request will intercept before

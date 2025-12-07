@@ -67,7 +67,7 @@ func Example_incognito() {
 		// This cdp client controls the "incognito tab".
 		c := cdp.NewClient(conn)
 
-		err = c.Page.Enable(ctx)
+		err = c.Page.Enable(ctx, nil)
 		if err != nil {
 			return err
 		}

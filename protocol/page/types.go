@@ -72,13 +72,23 @@ type AdFrameStatus struct {
 	Explanations []AdFrameExplanation `json:"explanations,omitempty"` // No description.
 }
 
-// AdScriptID Identifies the bottom-most script which caused the frame to be
+// AdScriptID Identifies the script which caused a script or frame to be
 // labeled as an ad.
 //
 // Note: This type is experimental.
 type AdScriptID struct {
-	ScriptID   runtime.ScriptID         `json:"scriptId"`   // Script Id of the bottom-most script which caused the frame to be labeled as an ad.
-	DebuggerID runtime.UniqueDebuggerID `json:"debuggerId"` // Id of adScriptId's debugger.
+	ScriptID   runtime.ScriptID         `json:"scriptId"`   // Script Id of the script which caused a script or frame to be labeled as an ad.
+	DebuggerID runtime.UniqueDebuggerID `json:"debuggerId"` // Id of scriptId's debugger.
+}
+
+// AdScriptAncestry Encapsulates the script ancestry and the root script
+// filterlist rule that caused the frame to be labeled as an ad. Only created
+// when `ancestryChain` is not empty.
+//
+// Note: This type is experimental.
+type AdScriptAncestry struct {
+	AncestryChain            []AdScriptID `json:"ancestryChain"`                      // A chain of `AdScriptId`s representing the ancestry of an ad script that led to the creation of a frame. The chain is ordered from the script itself (lower level) up to its root ancestor that was flagged by filterlist.
+	RootScriptFilterlistRule *string      `json:"rootScriptFilterlistRule,omitempty"` // The filterlist rule that caused the root (last) script in `ancestryChain` to be ad-tagged. Only populated if the rule is available.
 }
 
 // SecureContextType Indicates whether the frame is a secure context and why
@@ -165,109 +175,128 @@ func (e GatedAPIFeatures) String() string {
 
 // PermissionsPolicyFeature All Permissions Policy features. This enum should
 // match the one defined in
-// third_party/blink/renderer/core/permissions_policy/permissions_policy_features.json5.
+// services/network/public/cpp/permissions_policy/permissions_policy_features.json5.
+// LINT.IfChange(PermissionsPolicyFeature)
 //
 // Note: This type is experimental.
 type PermissionsPolicyFeature string
 
 // PermissionsPolicyFeature as enums.
 const (
-	PermissionsPolicyFeatureNotSet                       PermissionsPolicyFeature = ""
-	PermissionsPolicyFeatureAccelerometer                PermissionsPolicyFeature = "accelerometer"
-	PermissionsPolicyFeatureAllScreensCapture            PermissionsPolicyFeature = "all-screens-capture"
-	PermissionsPolicyFeatureAmbientLightSensor           PermissionsPolicyFeature = "ambient-light-sensor"
-	PermissionsPolicyFeatureAttributionReporting         PermissionsPolicyFeature = "attribution-reporting"
-	PermissionsPolicyFeatureAutoplay                     PermissionsPolicyFeature = "autoplay"
-	PermissionsPolicyFeatureBluetooth                    PermissionsPolicyFeature = "bluetooth"
-	PermissionsPolicyFeatureBrowsingTopics               PermissionsPolicyFeature = "browsing-topics"
-	PermissionsPolicyFeatureCamera                       PermissionsPolicyFeature = "camera"
-	PermissionsPolicyFeatureCapturedSurfaceControl       PermissionsPolicyFeature = "captured-surface-control"
-	PermissionsPolicyFeatureCHDPR                        PermissionsPolicyFeature = "ch-dpr"
-	PermissionsPolicyFeatureCHDeviceMemory               PermissionsPolicyFeature = "ch-device-memory"
-	PermissionsPolicyFeatureCHDownlink                   PermissionsPolicyFeature = "ch-downlink"
-	PermissionsPolicyFeatureCHECT                        PermissionsPolicyFeature = "ch-ect"
-	PermissionsPolicyFeatureCHPrefersColorScheme         PermissionsPolicyFeature = "ch-prefers-color-scheme"
-	PermissionsPolicyFeatureCHPrefersReducedMotion       PermissionsPolicyFeature = "ch-prefers-reduced-motion"
-	PermissionsPolicyFeatureCHPrefersReducedTransparency PermissionsPolicyFeature = "ch-prefers-reduced-transparency"
-	PermissionsPolicyFeatureCHRTT                        PermissionsPolicyFeature = "ch-rtt"
-	PermissionsPolicyFeatureCHSaveData                   PermissionsPolicyFeature = "ch-save-data"
-	PermissionsPolicyFeatureCHUA                         PermissionsPolicyFeature = "ch-ua"
-	PermissionsPolicyFeatureCHUAArch                     PermissionsPolicyFeature = "ch-ua-arch"
-	PermissionsPolicyFeatureCHUABitness                  PermissionsPolicyFeature = "ch-ua-bitness"
-	PermissionsPolicyFeatureCHUAPlatform                 PermissionsPolicyFeature = "ch-ua-platform"
-	PermissionsPolicyFeatureCHUAModel                    PermissionsPolicyFeature = "ch-ua-model"
-	PermissionsPolicyFeatureCHUAMobile                   PermissionsPolicyFeature = "ch-ua-mobile"
-	PermissionsPolicyFeatureCHUAFormFactors              PermissionsPolicyFeature = "ch-ua-form-factors"
-	PermissionsPolicyFeatureCHUAFullVersion              PermissionsPolicyFeature = "ch-ua-full-version"
-	PermissionsPolicyFeatureCHUAFullVersionList          PermissionsPolicyFeature = "ch-ua-full-version-list"
-	PermissionsPolicyFeatureCHUAPlatformVersion          PermissionsPolicyFeature = "ch-ua-platform-version"
-	PermissionsPolicyFeatureCHUAWow64                    PermissionsPolicyFeature = "ch-ua-wow64"
-	PermissionsPolicyFeatureCHViewportHeight             PermissionsPolicyFeature = "ch-viewport-height"
-	PermissionsPolicyFeatureCHViewportWidth              PermissionsPolicyFeature = "ch-viewport-width"
-	PermissionsPolicyFeatureCHWidth                      PermissionsPolicyFeature = "ch-width"
-	PermissionsPolicyFeatureClipboardRead                PermissionsPolicyFeature = "clipboard-read"
-	PermissionsPolicyFeatureClipboardWrite               PermissionsPolicyFeature = "clipboard-write"
-	PermissionsPolicyFeatureComputePressure              PermissionsPolicyFeature = "compute-pressure"
-	PermissionsPolicyFeatureCrossOriginIsolated          PermissionsPolicyFeature = "cross-origin-isolated"
-	PermissionsPolicyFeatureDeferredFetch                PermissionsPolicyFeature = "deferred-fetch"
-	PermissionsPolicyFeatureDigitalCredentialsGet        PermissionsPolicyFeature = "digital-credentials-get"
-	PermissionsPolicyFeatureDirectSockets                PermissionsPolicyFeature = "direct-sockets"
-	PermissionsPolicyFeatureDisplayCapture               PermissionsPolicyFeature = "display-capture"
-	PermissionsPolicyFeatureDocumentDomain               PermissionsPolicyFeature = "document-domain"
-	PermissionsPolicyFeatureEncryptedMedia               PermissionsPolicyFeature = "encrypted-media"
-	PermissionsPolicyFeatureExecutionWhileOutOfViewport  PermissionsPolicyFeature = "execution-while-out-of-viewport"
-	PermissionsPolicyFeatureExecutionWhileNotRendered    PermissionsPolicyFeature = "execution-while-not-rendered"
-	PermissionsPolicyFeatureFocusWithoutUserActivation   PermissionsPolicyFeature = "focus-without-user-activation"
-	PermissionsPolicyFeatureFullscreen                   PermissionsPolicyFeature = "fullscreen"
-	PermissionsPolicyFeatureFrobulate                    PermissionsPolicyFeature = "frobulate"
-	PermissionsPolicyFeatureGamepad                      PermissionsPolicyFeature = "gamepad"
-	PermissionsPolicyFeatureGeolocation                  PermissionsPolicyFeature = "geolocation"
-	PermissionsPolicyFeatureGyroscope                    PermissionsPolicyFeature = "gyroscope"
-	PermissionsPolicyFeatureHID                          PermissionsPolicyFeature = "hid"
-	PermissionsPolicyFeatureIdentityCredentialsGet       PermissionsPolicyFeature = "identity-credentials-get"
-	PermissionsPolicyFeatureIdleDetection                PermissionsPolicyFeature = "idle-detection"
-	PermissionsPolicyFeatureInterestCohort               PermissionsPolicyFeature = "interest-cohort"
-	PermissionsPolicyFeatureJoinAdInterestGroup          PermissionsPolicyFeature = "join-ad-interest-group"
-	PermissionsPolicyFeatureKeyboardMap                  PermissionsPolicyFeature = "keyboard-map"
-	PermissionsPolicyFeatureLocalFonts                   PermissionsPolicyFeature = "local-fonts"
-	PermissionsPolicyFeatureMagnetometer                 PermissionsPolicyFeature = "magnetometer"
-	PermissionsPolicyFeatureMediaPlaybackWhileNotVisible PermissionsPolicyFeature = "media-playback-while-not-visible"
-	PermissionsPolicyFeatureMicrophone                   PermissionsPolicyFeature = "microphone"
-	PermissionsPolicyFeatureMidi                         PermissionsPolicyFeature = "midi"
-	PermissionsPolicyFeatureOTPCredentials               PermissionsPolicyFeature = "otp-credentials"
-	PermissionsPolicyFeaturePayment                      PermissionsPolicyFeature = "payment"
-	PermissionsPolicyFeaturePictureInPicture             PermissionsPolicyFeature = "picture-in-picture"
-	PermissionsPolicyFeaturePopins                       PermissionsPolicyFeature = "popins"
-	PermissionsPolicyFeaturePrivateAggregation           PermissionsPolicyFeature = "private-aggregation"
-	PermissionsPolicyFeaturePrivateStateTokenIssuance    PermissionsPolicyFeature = "private-state-token-issuance"
-	PermissionsPolicyFeaturePrivateStateTokenRedemption  PermissionsPolicyFeature = "private-state-token-redemption"
-	PermissionsPolicyFeaturePublickeyCredentialsCreate   PermissionsPolicyFeature = "publickey-credentials-create"
-	PermissionsPolicyFeaturePublickeyCredentialsGet      PermissionsPolicyFeature = "publickey-credentials-get"
-	PermissionsPolicyFeatureRunAdAuction                 PermissionsPolicyFeature = "run-ad-auction"
-	PermissionsPolicyFeatureScreenWakeLock               PermissionsPolicyFeature = "screen-wake-lock"
-	PermissionsPolicyFeatureSerial                       PermissionsPolicyFeature = "serial"
-	PermissionsPolicyFeatureSharedAutofill               PermissionsPolicyFeature = "shared-autofill"
-	PermissionsPolicyFeatureSharedStorage                PermissionsPolicyFeature = "shared-storage"
-	PermissionsPolicyFeatureSharedStorageSelectURL       PermissionsPolicyFeature = "shared-storage-select-url"
-	PermissionsPolicyFeatureSmartCard                    PermissionsPolicyFeature = "smart-card"
-	PermissionsPolicyFeatureSpeakerSelection             PermissionsPolicyFeature = "speaker-selection"
-	PermissionsPolicyFeatureStorageAccess                PermissionsPolicyFeature = "storage-access"
-	PermissionsPolicyFeatureSubApps                      PermissionsPolicyFeature = "sub-apps"
-	PermissionsPolicyFeatureSyncXHR                      PermissionsPolicyFeature = "sync-xhr"
-	PermissionsPolicyFeatureUnload                       PermissionsPolicyFeature = "unload"
-	PermissionsPolicyFeatureUSB                          PermissionsPolicyFeature = "usb"
-	PermissionsPolicyFeatureUSBUnrestricted              PermissionsPolicyFeature = "usb-unrestricted"
-	PermissionsPolicyFeatureVerticalScroll               PermissionsPolicyFeature = "vertical-scroll"
-	PermissionsPolicyFeatureWebAppInstallation           PermissionsPolicyFeature = "web-app-installation"
-	PermissionsPolicyFeatureWebPrinting                  PermissionsPolicyFeature = "web-printing"
-	PermissionsPolicyFeatureWebShare                     PermissionsPolicyFeature = "web-share"
-	PermissionsPolicyFeatureWindowManagement             PermissionsPolicyFeature = "window-management"
-	PermissionsPolicyFeatureXrSpatialTracking            PermissionsPolicyFeature = "xr-spatial-tracking"
+	PermissionsPolicyFeatureNotSet                         PermissionsPolicyFeature = ""
+	PermissionsPolicyFeatureAccelerometer                  PermissionsPolicyFeature = "accelerometer"
+	PermissionsPolicyFeatureAllScreensCapture              PermissionsPolicyFeature = "all-screens-capture"
+	PermissionsPolicyFeatureAmbientLightSensor             PermissionsPolicyFeature = "ambient-light-sensor"
+	PermissionsPolicyFeatureAriaNotify                     PermissionsPolicyFeature = "aria-notify"
+	PermissionsPolicyFeatureAttributionReporting           PermissionsPolicyFeature = "attribution-reporting"
+	PermissionsPolicyFeatureAutofill                       PermissionsPolicyFeature = "autofill"
+	PermissionsPolicyFeatureAutoplay                       PermissionsPolicyFeature = "autoplay"
+	PermissionsPolicyFeatureBluetooth                      PermissionsPolicyFeature = "bluetooth"
+	PermissionsPolicyFeatureBrowsingTopics                 PermissionsPolicyFeature = "browsing-topics"
+	PermissionsPolicyFeatureCamera                         PermissionsPolicyFeature = "camera"
+	PermissionsPolicyFeatureCapturedSurfaceControl         PermissionsPolicyFeature = "captured-surface-control"
+	PermissionsPolicyFeatureCHDPR                          PermissionsPolicyFeature = "ch-dpr"
+	PermissionsPolicyFeatureCHDeviceMemory                 PermissionsPolicyFeature = "ch-device-memory"
+	PermissionsPolicyFeatureCHDownlink                     PermissionsPolicyFeature = "ch-downlink"
+	PermissionsPolicyFeatureCHECT                          PermissionsPolicyFeature = "ch-ect"
+	PermissionsPolicyFeatureCHPrefersColorScheme           PermissionsPolicyFeature = "ch-prefers-color-scheme"
+	PermissionsPolicyFeatureCHPrefersReducedMotion         PermissionsPolicyFeature = "ch-prefers-reduced-motion"
+	PermissionsPolicyFeatureCHPrefersReducedTransparency   PermissionsPolicyFeature = "ch-prefers-reduced-transparency"
+	PermissionsPolicyFeatureCHRTT                          PermissionsPolicyFeature = "ch-rtt"
+	PermissionsPolicyFeatureCHSaveData                     PermissionsPolicyFeature = "ch-save-data"
+	PermissionsPolicyFeatureCHUA                           PermissionsPolicyFeature = "ch-ua"
+	PermissionsPolicyFeatureCHUAArch                       PermissionsPolicyFeature = "ch-ua-arch"
+	PermissionsPolicyFeatureCHUABitness                    PermissionsPolicyFeature = "ch-ua-bitness"
+	PermissionsPolicyFeatureCHUAHighEntropyValues          PermissionsPolicyFeature = "ch-ua-high-entropy-values"
+	PermissionsPolicyFeatureCHUAPlatform                   PermissionsPolicyFeature = "ch-ua-platform"
+	PermissionsPolicyFeatureCHUAModel                      PermissionsPolicyFeature = "ch-ua-model"
+	PermissionsPolicyFeatureCHUAMobile                     PermissionsPolicyFeature = "ch-ua-mobile"
+	PermissionsPolicyFeatureCHUAFormFactors                PermissionsPolicyFeature = "ch-ua-form-factors"
+	PermissionsPolicyFeatureCHUAFullVersion                PermissionsPolicyFeature = "ch-ua-full-version"
+	PermissionsPolicyFeatureCHUAFullVersionList            PermissionsPolicyFeature = "ch-ua-full-version-list"
+	PermissionsPolicyFeatureCHUAPlatformVersion            PermissionsPolicyFeature = "ch-ua-platform-version"
+	PermissionsPolicyFeatureCHUAWow64                      PermissionsPolicyFeature = "ch-ua-wow64"
+	PermissionsPolicyFeatureCHViewportHeight               PermissionsPolicyFeature = "ch-viewport-height"
+	PermissionsPolicyFeatureCHViewportWidth                PermissionsPolicyFeature = "ch-viewport-width"
+	PermissionsPolicyFeatureCHWidth                        PermissionsPolicyFeature = "ch-width"
+	PermissionsPolicyFeatureClipboardRead                  PermissionsPolicyFeature = "clipboard-read"
+	PermissionsPolicyFeatureClipboardWrite                 PermissionsPolicyFeature = "clipboard-write"
+	PermissionsPolicyFeatureComputePressure                PermissionsPolicyFeature = "compute-pressure"
+	PermissionsPolicyFeatureControlledFrame                PermissionsPolicyFeature = "controlled-frame"
+	PermissionsPolicyFeatureCrossOriginIsolated            PermissionsPolicyFeature = "cross-origin-isolated"
+	PermissionsPolicyFeatureDeferredFetch                  PermissionsPolicyFeature = "deferred-fetch"
+	PermissionsPolicyFeatureDeferredFetchMinimal           PermissionsPolicyFeature = "deferred-fetch-minimal"
+	PermissionsPolicyFeatureDeviceAttributes               PermissionsPolicyFeature = "device-attributes"
+	PermissionsPolicyFeatureDigitalCredentialsCreate       PermissionsPolicyFeature = "digital-credentials-create"
+	PermissionsPolicyFeatureDigitalCredentialsGet          PermissionsPolicyFeature = "digital-credentials-get"
+	PermissionsPolicyFeatureDirectSockets                  PermissionsPolicyFeature = "direct-sockets"
+	PermissionsPolicyFeatureDirectSocketsMulticast         PermissionsPolicyFeature = "direct-sockets-multicast"
+	PermissionsPolicyFeatureDirectSocketsPrivate           PermissionsPolicyFeature = "direct-sockets-private"
+	PermissionsPolicyFeatureDisplayCapture                 PermissionsPolicyFeature = "display-capture"
+	PermissionsPolicyFeatureDocumentDomain                 PermissionsPolicyFeature = "document-domain"
+	PermissionsPolicyFeatureEncryptedMedia                 PermissionsPolicyFeature = "encrypted-media"
+	PermissionsPolicyFeatureExecutionWhileOutOfViewport    PermissionsPolicyFeature = "execution-while-out-of-viewport"
+	PermissionsPolicyFeatureExecutionWhileNotRendered      PermissionsPolicyFeature = "execution-while-not-rendered"
+	PermissionsPolicyFeatureFencedUnpartitionedStorageRead PermissionsPolicyFeature = "fenced-unpartitioned-storage-read"
+	PermissionsPolicyFeatureFocusWithoutUserActivation     PermissionsPolicyFeature = "focus-without-user-activation"
+	PermissionsPolicyFeatureFullscreen                     PermissionsPolicyFeature = "fullscreen"
+	PermissionsPolicyFeatureFrobulate                      PermissionsPolicyFeature = "frobulate"
+	PermissionsPolicyFeatureGamepad                        PermissionsPolicyFeature = "gamepad"
+	PermissionsPolicyFeatureGeolocation                    PermissionsPolicyFeature = "geolocation"
+	PermissionsPolicyFeatureGyroscope                      PermissionsPolicyFeature = "gyroscope"
+	PermissionsPolicyFeatureHID                            PermissionsPolicyFeature = "hid"
+	PermissionsPolicyFeatureIdentityCredentialsGet         PermissionsPolicyFeature = "identity-credentials-get"
+	PermissionsPolicyFeatureIdleDetection                  PermissionsPolicyFeature = "idle-detection"
+	PermissionsPolicyFeatureInterestCohort                 PermissionsPolicyFeature = "interest-cohort"
+	PermissionsPolicyFeatureJoinAdInterestGroup            PermissionsPolicyFeature = "join-ad-interest-group"
+	PermissionsPolicyFeatureKeyboardMap                    PermissionsPolicyFeature = "keyboard-map"
+	PermissionsPolicyFeatureLanguageDetector               PermissionsPolicyFeature = "language-detector"
+	PermissionsPolicyFeatureLanguageModel                  PermissionsPolicyFeature = "language-model"
+	PermissionsPolicyFeatureLocalFonts                     PermissionsPolicyFeature = "local-fonts"
+	PermissionsPolicyFeatureLocalNetworkAccess             PermissionsPolicyFeature = "local-network-access"
+	PermissionsPolicyFeatureMagnetometer                   PermissionsPolicyFeature = "magnetometer"
+	PermissionsPolicyFeatureManualText                     PermissionsPolicyFeature = "manual-text"
+	PermissionsPolicyFeatureMediaPlaybackWhileNotVisible   PermissionsPolicyFeature = "media-playback-while-not-visible"
+	PermissionsPolicyFeatureMicrophone                     PermissionsPolicyFeature = "microphone"
+	PermissionsPolicyFeatureMidi                           PermissionsPolicyFeature = "midi"
+	PermissionsPolicyFeatureOnDeviceSpeechRecognition      PermissionsPolicyFeature = "on-device-speech-recognition"
+	PermissionsPolicyFeatureOTPCredentials                 PermissionsPolicyFeature = "otp-credentials"
+	PermissionsPolicyFeaturePayment                        PermissionsPolicyFeature = "payment"
+	PermissionsPolicyFeaturePictureInPicture               PermissionsPolicyFeature = "picture-in-picture"
+	PermissionsPolicyFeaturePrivateAggregation             PermissionsPolicyFeature = "private-aggregation"
+	PermissionsPolicyFeaturePrivateStateTokenIssuance      PermissionsPolicyFeature = "private-state-token-issuance"
+	PermissionsPolicyFeaturePrivateStateTokenRedemption    PermissionsPolicyFeature = "private-state-token-redemption"
+	PermissionsPolicyFeaturePublickeyCredentialsCreate     PermissionsPolicyFeature = "publickey-credentials-create"
+	PermissionsPolicyFeaturePublickeyCredentialsGet        PermissionsPolicyFeature = "publickey-credentials-get"
+	PermissionsPolicyFeatureRecordAdAuctionEvents          PermissionsPolicyFeature = "record-ad-auction-events"
+	PermissionsPolicyFeatureRewriter                       PermissionsPolicyFeature = "rewriter"
+	PermissionsPolicyFeatureRunAdAuction                   PermissionsPolicyFeature = "run-ad-auction"
+	PermissionsPolicyFeatureScreenWakeLock                 PermissionsPolicyFeature = "screen-wake-lock"
+	PermissionsPolicyFeatureSerial                         PermissionsPolicyFeature = "serial"
+	PermissionsPolicyFeatureSharedStorage                  PermissionsPolicyFeature = "shared-storage"
+	PermissionsPolicyFeatureSharedStorageSelectURL         PermissionsPolicyFeature = "shared-storage-select-url"
+	PermissionsPolicyFeatureSmartCard                      PermissionsPolicyFeature = "smart-card"
+	PermissionsPolicyFeatureSpeakerSelection               PermissionsPolicyFeature = "speaker-selection"
+	PermissionsPolicyFeatureStorageAccess                  PermissionsPolicyFeature = "storage-access"
+	PermissionsPolicyFeatureSubApps                        PermissionsPolicyFeature = "sub-apps"
+	PermissionsPolicyFeatureSummarizer                     PermissionsPolicyFeature = "summarizer"
+	PermissionsPolicyFeatureSyncXHR                        PermissionsPolicyFeature = "sync-xhr"
+	PermissionsPolicyFeatureTranslator                     PermissionsPolicyFeature = "translator"
+	PermissionsPolicyFeatureUnload                         PermissionsPolicyFeature = "unload"
+	PermissionsPolicyFeatureUSB                            PermissionsPolicyFeature = "usb"
+	PermissionsPolicyFeatureUSBUnrestricted                PermissionsPolicyFeature = "usb-unrestricted"
+	PermissionsPolicyFeatureVerticalScroll                 PermissionsPolicyFeature = "vertical-scroll"
+	PermissionsPolicyFeatureWebAppInstallation             PermissionsPolicyFeature = "web-app-installation"
+	PermissionsPolicyFeatureWebPrinting                    PermissionsPolicyFeature = "web-printing"
+	PermissionsPolicyFeatureWebShare                       PermissionsPolicyFeature = "web-share"
+	PermissionsPolicyFeatureWindowManagement               PermissionsPolicyFeature = "window-management"
+	PermissionsPolicyFeatureWriter                         PermissionsPolicyFeature = "writer"
+	PermissionsPolicyFeatureXrSpatialTracking              PermissionsPolicyFeature = "xr-spatial-tracking"
 )
 
 func (e PermissionsPolicyFeature) Valid() bool {
 	switch e {
-	case "accelerometer", "all-screens-capture", "ambient-light-sensor", "attribution-reporting", "autoplay", "bluetooth", "browsing-topics", "camera", "captured-surface-control", "ch-dpr", "ch-device-memory", "ch-downlink", "ch-ect", "ch-prefers-color-scheme", "ch-prefers-reduced-motion", "ch-prefers-reduced-transparency", "ch-rtt", "ch-save-data", "ch-ua", "ch-ua-arch", "ch-ua-bitness", "ch-ua-platform", "ch-ua-model", "ch-ua-mobile", "ch-ua-form-factors", "ch-ua-full-version", "ch-ua-full-version-list", "ch-ua-platform-version", "ch-ua-wow64", "ch-viewport-height", "ch-viewport-width", "ch-width", "clipboard-read", "clipboard-write", "compute-pressure", "cross-origin-isolated", "deferred-fetch", "digital-credentials-get", "direct-sockets", "display-capture", "document-domain", "encrypted-media", "execution-while-out-of-viewport", "execution-while-not-rendered", "focus-without-user-activation", "fullscreen", "frobulate", "gamepad", "geolocation", "gyroscope", "hid", "identity-credentials-get", "idle-detection", "interest-cohort", "join-ad-interest-group", "keyboard-map", "local-fonts", "magnetometer", "media-playback-while-not-visible", "microphone", "midi", "otp-credentials", "payment", "picture-in-picture", "popins", "private-aggregation", "private-state-token-issuance", "private-state-token-redemption", "publickey-credentials-create", "publickey-credentials-get", "run-ad-auction", "screen-wake-lock", "serial", "shared-autofill", "shared-storage", "shared-storage-select-url", "smart-card", "speaker-selection", "storage-access", "sub-apps", "sync-xhr", "unload", "usb", "usb-unrestricted", "vertical-scroll", "web-app-installation", "web-printing", "web-share", "window-management", "xr-spatial-tracking":
+	case "accelerometer", "all-screens-capture", "ambient-light-sensor", "aria-notify", "attribution-reporting", "autofill", "autoplay", "bluetooth", "browsing-topics", "camera", "captured-surface-control", "ch-dpr", "ch-device-memory", "ch-downlink", "ch-ect", "ch-prefers-color-scheme", "ch-prefers-reduced-motion", "ch-prefers-reduced-transparency", "ch-rtt", "ch-save-data", "ch-ua", "ch-ua-arch", "ch-ua-bitness", "ch-ua-high-entropy-values", "ch-ua-platform", "ch-ua-model", "ch-ua-mobile", "ch-ua-form-factors", "ch-ua-full-version", "ch-ua-full-version-list", "ch-ua-platform-version", "ch-ua-wow64", "ch-viewport-height", "ch-viewport-width", "ch-width", "clipboard-read", "clipboard-write", "compute-pressure", "controlled-frame", "cross-origin-isolated", "deferred-fetch", "deferred-fetch-minimal", "device-attributes", "digital-credentials-create", "digital-credentials-get", "direct-sockets", "direct-sockets-multicast", "direct-sockets-private", "display-capture", "document-domain", "encrypted-media", "execution-while-out-of-viewport", "execution-while-not-rendered", "fenced-unpartitioned-storage-read", "focus-without-user-activation", "fullscreen", "frobulate", "gamepad", "geolocation", "gyroscope", "hid", "identity-credentials-get", "idle-detection", "interest-cohort", "join-ad-interest-group", "keyboard-map", "language-detector", "language-model", "local-fonts", "local-network-access", "magnetometer", "manual-text", "media-playback-while-not-visible", "microphone", "midi", "on-device-speech-recognition", "otp-credentials", "payment", "picture-in-picture", "private-aggregation", "private-state-token-issuance", "private-state-token-redemption", "publickey-credentials-create", "publickey-credentials-get", "record-ad-auction-events", "rewriter", "run-ad-auction", "screen-wake-lock", "serial", "shared-storage", "shared-storage-select-url", "smart-card", "speaker-selection", "storage-access", "sub-apps", "summarizer", "sync-xhr", "translator", "unload", "usb", "usb-unrestricted", "vertical-scroll", "web-app-installation", "web-printing", "web-share", "window-management", "writer", "xr-spatial-tracking":
 		return true
 	default:
 		return false
@@ -442,6 +471,14 @@ type OriginTrial struct {
 	TokensWithStatus []OriginTrialTokenWithStatus `json:"tokensWithStatus"` // No description.
 }
 
+// SecurityOriginDetails Additional information about the frame document's
+// security origin.
+//
+// Note: This type is experimental.
+type SecurityOriginDetails struct {
+	IsLocalhost bool `json:"isLocalhost"` // Indicates whether the frame document's security origin is one of the local hostnames (e.g. "localhost") or IP addresses (IPv4 127.0.0.0/8 or IPv6 ::1).
+}
+
 // Frame Information about the Frame on the page.
 type Frame struct {
 	ID       FrameID          `json:"id"`                 // Frame unique identifier.
@@ -461,7 +498,12 @@ type Frame struct {
 	// Note: This property is experimental.
 	DomainAndRegistry string `json:"domainAndRegistry"`
 	SecurityOrigin    string `json:"securityOrigin"` // Frame document's security origin.
-	MimeType          string `json:"mimeType"`       // Frame document's mimeType as determined by the browser.
+	// SecurityOriginDetails Additional details about the frame document's
+	// security origin.
+	//
+	// Note: This property is experimental.
+	SecurityOriginDetails *SecurityOriginDetails `json:"securityOriginDetails,omitempty"`
+	MimeType              string                 `json:"mimeType"` // Frame document's mimeType as determined by the browser.
 	// UnreachableURL If the frame failed to load, this contains the URL
 	// that could not be loaded. Note that unlike url above, this URL may
 	// contain a fragment.
@@ -910,34 +952,6 @@ type WebAppManifest struct {
 	ThemeColor                *string              `json:"themeColor,omitempty"`                // No description.
 }
 
-// AutoResponseMode Enum of possible auto-response for permission / prompt
-// dialogs.
-//
-// Note: This type is experimental.
-type AutoResponseMode string
-
-// AutoResponseMode as enums.
-const (
-	AutoResponseModeNotSet     AutoResponseMode = ""
-	AutoResponseModeNone       AutoResponseMode = "none"
-	AutoResponseModeAutoAccept AutoResponseMode = "autoAccept"
-	AutoResponseModeAutoReject AutoResponseMode = "autoReject"
-	AutoResponseModeAutoOptOut AutoResponseMode = "autoOptOut"
-)
-
-func (e AutoResponseMode) Valid() bool {
-	switch e {
-	case "none", "autoAccept", "autoReject", "autoOptOut":
-		return true
-	default:
-		return false
-	}
-}
-
-func (e AutoResponseMode) String() string {
-	return string(e)
-}
-
 // NavigationType The type of a frameNavigated event.
 //
 // Note: This type is experimental.
@@ -1052,8 +1066,11 @@ const (
 	BackForwardCacheNotRestoredReasonBroadcastChannel                                         BackForwardCacheNotRestoredReason = "BroadcastChannel"
 	BackForwardCacheNotRestoredReasonWebXR                                                    BackForwardCacheNotRestoredReason = "WebXR"
 	BackForwardCacheNotRestoredReasonSharedWorker                                             BackForwardCacheNotRestoredReason = "SharedWorker"
+	BackForwardCacheNotRestoredReasonSharedWorkerMessage                                      BackForwardCacheNotRestoredReason = "SharedWorkerMessage"
+	BackForwardCacheNotRestoredReasonSharedWorkerWithNoActiveClient                           BackForwardCacheNotRestoredReason = "SharedWorkerWithNoActiveClient"
 	BackForwardCacheNotRestoredReasonWebLocks                                                 BackForwardCacheNotRestoredReason = "WebLocks"
 	BackForwardCacheNotRestoredReasonWebHID                                                   BackForwardCacheNotRestoredReason = "WebHID"
+	BackForwardCacheNotRestoredReasonWebBluetooth                                             BackForwardCacheNotRestoredReason = "WebBluetooth"
 	BackForwardCacheNotRestoredReasonWebShare                                                 BackForwardCacheNotRestoredReason = "WebShare"
 	BackForwardCacheNotRestoredReasonRequestedStorageAccessGrant                              BackForwardCacheNotRestoredReason = "RequestedStorageAccessGrant"
 	BackForwardCacheNotRestoredReasonWebNFC                                                   BackForwardCacheNotRestoredReason = "WebNfc"
@@ -1076,9 +1093,9 @@ const (
 	BackForwardCacheNotRestoredReasonIndexedDBEvent                                           BackForwardCacheNotRestoredReason = "IndexedDBEvent"
 	BackForwardCacheNotRestoredReasonDummy                                                    BackForwardCacheNotRestoredReason = "Dummy"
 	BackForwardCacheNotRestoredReasonJSNetworkRequestReceivedCacheControlNoStoreResource      BackForwardCacheNotRestoredReason = "JsNetworkRequestReceivedCacheControlNoStoreResource"
-	BackForwardCacheNotRestoredReasonWebRTCSticky                                             BackForwardCacheNotRestoredReason = "WebRTCSticky"
-	BackForwardCacheNotRestoredReasonWebTransportSticky                                       BackForwardCacheNotRestoredReason = "WebTransportSticky"
-	BackForwardCacheNotRestoredReasonWebSocketSticky                                          BackForwardCacheNotRestoredReason = "WebSocketSticky"
+	BackForwardCacheNotRestoredReasonWebRTCUsedWithCCNS                                       BackForwardCacheNotRestoredReason = "WebRTCUsedWithCCNS"
+	BackForwardCacheNotRestoredReasonWebTransportUsedWithCCNS                                 BackForwardCacheNotRestoredReason = "WebTransportUsedWithCCNS"
+	BackForwardCacheNotRestoredReasonWebSocketUsedWithCCNS                                    BackForwardCacheNotRestoredReason = "WebSocketUsedWithCCNS"
 	BackForwardCacheNotRestoredReasonSmartCard                                                BackForwardCacheNotRestoredReason = "SmartCard"
 	BackForwardCacheNotRestoredReasonLiveMediaStreamTrack                                     BackForwardCacheNotRestoredReason = "LiveMediaStreamTrack"
 	BackForwardCacheNotRestoredReasonUnloadHandler                                            BackForwardCacheNotRestoredReason = "UnloadHandler"
@@ -1110,11 +1127,15 @@ const (
 	BackForwardCacheNotRestoredReasonEmbedderExtensionMessagingForOpenPort                    BackForwardCacheNotRestoredReason = "EmbedderExtensionMessagingForOpenPort"
 	BackForwardCacheNotRestoredReasonEmbedderExtensionSentMessageToCachedFrame                BackForwardCacheNotRestoredReason = "EmbedderExtensionSentMessageToCachedFrame"
 	BackForwardCacheNotRestoredReasonRequestedByWebViewClient                                 BackForwardCacheNotRestoredReason = "RequestedByWebViewClient"
+	BackForwardCacheNotRestoredReasonPostMessageByWebViewClient                               BackForwardCacheNotRestoredReason = "PostMessageByWebViewClient"
+	BackForwardCacheNotRestoredReasonCacheControlNoStoreDeviceBoundSessionTerminated          BackForwardCacheNotRestoredReason = "CacheControlNoStoreDeviceBoundSessionTerminated"
+	BackForwardCacheNotRestoredReasonCacheLimitPrunedOnModerateMemoryPressure                 BackForwardCacheNotRestoredReason = "CacheLimitPrunedOnModerateMemoryPressure"
+	BackForwardCacheNotRestoredReasonCacheLimitPrunedOnCriticalMemoryPressure                 BackForwardCacheNotRestoredReason = "CacheLimitPrunedOnCriticalMemoryPressure"
 )
 
 func (e BackForwardCacheNotRestoredReason) Valid() bool {
 	switch e {
-	case "NotPrimaryMainFrame", "BackForwardCacheDisabled", "RelatedActiveContentsExist", "HTTPStatusNotOK", "SchemeNotHTTPOrHTTPS", "Loading", "WasGrantedMediaAccess", "DisableForRenderFrameHostCalled", "DomainNotAllowed", "HTTPMethodNotGET", "SubframeIsNavigating", "Timeout", "CacheLimit", "JavaScriptExecution", "RendererProcessKilled", "RendererProcessCrashed", "SchedulerTrackedFeatureUsed", "ConflictingBrowsingInstance", "CacheFlushed", "ServiceWorkerVersionActivation", "SessionRestored", "ServiceWorkerPostMessage", "EnteredBackForwardCacheBeforeServiceWorkerHostAdded", "RenderFrameHostReused_SameSite", "RenderFrameHostReused_CrossSite", "ServiceWorkerClaim", "IgnoreEventAndEvict", "HaveInnerContents", "TimeoutPuttingInCache", "BackForwardCacheDisabledByLowMemory", "BackForwardCacheDisabledByCommandLine", "NetworkRequestDatapipeDrainedAsBytesConsumer", "NetworkRequestRedirected", "NetworkRequestTimeout", "NetworkExceedsBufferLimit", "NavigationCancelledWhileRestoring", "NotMostRecentNavigationEntry", "BackForwardCacheDisabledForPrerender", "UserAgentOverrideDiffers", "ForegroundCacheLimit", "BrowsingInstanceNotSwapped", "BackForwardCacheDisabledForDelegate", "UnloadHandlerExistsInMainFrame", "UnloadHandlerExistsInSubFrame", "ServiceWorkerUnregistration", "CacheControlNoStore", "CacheControlNoStoreCookieModified", "CacheControlNoStoreHTTPOnlyCookieModified", "NoResponseHead", "Unknown", "ActivationNavigationsDisallowedForBug1234857", "ErrorDocument", "FencedFramesEmbedder", "CookieDisabled", "HTTPAuthRequired", "CookieFlushed", "BroadcastChannelOnMessage", "WebViewSettingsChanged", "WebViewJavaScriptObjectChanged", "WebViewMessageListenerInjected", "WebViewSafeBrowsingAllowlistChanged", "WebViewDocumentStartJavascriptChanged", "WebSocket", "WebTransport", "WebRTC", "MainResourceHasCacheControlNoStore", "MainResourceHasCacheControlNoCache", "SubresourceHasCacheControlNoStore", "SubresourceHasCacheControlNoCache", "ContainsPlugins", "DocumentLoaded", "OutstandingNetworkRequestOthers", "RequestedMIDIPermission", "RequestedAudioCapturePermission", "RequestedVideoCapturePermission", "RequestedBackForwardCacheBlockedSensors", "RequestedBackgroundWorkPermission", "BroadcastChannel", "WebXR", "SharedWorker", "WebLocks", "WebHID", "WebShare", "RequestedStorageAccessGrant", "WebNfc", "OutstandingNetworkRequestFetch", "OutstandingNetworkRequestXHR", "AppBanner", "Printing", "WebDatabase", "PictureInPicture", "SpeechRecognizer", "IdleManager", "PaymentManager", "SpeechSynthesis", "KeyboardLock", "WebOTPService", "OutstandingNetworkRequestDirectSocket", "InjectedJavascript", "InjectedStyleSheet", "KeepaliveRequest", "IndexedDBEvent", "Dummy", "JsNetworkRequestReceivedCacheControlNoStoreResource", "WebRTCSticky", "WebTransportSticky", "WebSocketSticky", "SmartCard", "LiveMediaStreamTrack", "UnloadHandler", "ParserAborted", "ContentSecurityHandler", "ContentWebAuthenticationAPI", "ContentFileChooser", "ContentSerial", "ContentFileSystemAccess", "ContentMediaDevicesDispatcherHost", "ContentWebBluetooth", "ContentWebUSB", "ContentMediaSessionService", "ContentScreenReader", "ContentDiscarded", "EmbedderPopupBlockerTabHelper", "EmbedderSafeBrowsingTriggeredPopupBlocker", "EmbedderSafeBrowsingThreatDetails", "EmbedderAppBannerManager", "EmbedderDomDistillerViewerSource", "EmbedderDomDistillerSelfDeletingRequestDelegate", "EmbedderOomInterventionTabHelper", "EmbedderOfflinePage", "EmbedderChromePasswordManagerClientBindCredentialManager", "EmbedderPermissionRequestManager", "EmbedderModalDialog", "EmbedderExtensions", "EmbedderExtensionMessaging", "EmbedderExtensionMessagingForOpenPort", "EmbedderExtensionSentMessageToCachedFrame", "RequestedByWebViewClient":
+	case "NotPrimaryMainFrame", "BackForwardCacheDisabled", "RelatedActiveContentsExist", "HTTPStatusNotOK", "SchemeNotHTTPOrHTTPS", "Loading", "WasGrantedMediaAccess", "DisableForRenderFrameHostCalled", "DomainNotAllowed", "HTTPMethodNotGET", "SubframeIsNavigating", "Timeout", "CacheLimit", "JavaScriptExecution", "RendererProcessKilled", "RendererProcessCrashed", "SchedulerTrackedFeatureUsed", "ConflictingBrowsingInstance", "CacheFlushed", "ServiceWorkerVersionActivation", "SessionRestored", "ServiceWorkerPostMessage", "EnteredBackForwardCacheBeforeServiceWorkerHostAdded", "RenderFrameHostReused_SameSite", "RenderFrameHostReused_CrossSite", "ServiceWorkerClaim", "IgnoreEventAndEvict", "HaveInnerContents", "TimeoutPuttingInCache", "BackForwardCacheDisabledByLowMemory", "BackForwardCacheDisabledByCommandLine", "NetworkRequestDatapipeDrainedAsBytesConsumer", "NetworkRequestRedirected", "NetworkRequestTimeout", "NetworkExceedsBufferLimit", "NavigationCancelledWhileRestoring", "NotMostRecentNavigationEntry", "BackForwardCacheDisabledForPrerender", "UserAgentOverrideDiffers", "ForegroundCacheLimit", "BrowsingInstanceNotSwapped", "BackForwardCacheDisabledForDelegate", "UnloadHandlerExistsInMainFrame", "UnloadHandlerExistsInSubFrame", "ServiceWorkerUnregistration", "CacheControlNoStore", "CacheControlNoStoreCookieModified", "CacheControlNoStoreHTTPOnlyCookieModified", "NoResponseHead", "Unknown", "ActivationNavigationsDisallowedForBug1234857", "ErrorDocument", "FencedFramesEmbedder", "CookieDisabled", "HTTPAuthRequired", "CookieFlushed", "BroadcastChannelOnMessage", "WebViewSettingsChanged", "WebViewJavaScriptObjectChanged", "WebViewMessageListenerInjected", "WebViewSafeBrowsingAllowlistChanged", "WebViewDocumentStartJavascriptChanged", "WebSocket", "WebTransport", "WebRTC", "MainResourceHasCacheControlNoStore", "MainResourceHasCacheControlNoCache", "SubresourceHasCacheControlNoStore", "SubresourceHasCacheControlNoCache", "ContainsPlugins", "DocumentLoaded", "OutstandingNetworkRequestOthers", "RequestedMIDIPermission", "RequestedAudioCapturePermission", "RequestedVideoCapturePermission", "RequestedBackForwardCacheBlockedSensors", "RequestedBackgroundWorkPermission", "BroadcastChannel", "WebXR", "SharedWorker", "SharedWorkerMessage", "SharedWorkerWithNoActiveClient", "WebLocks", "WebHID", "WebBluetooth", "WebShare", "RequestedStorageAccessGrant", "WebNfc", "OutstandingNetworkRequestFetch", "OutstandingNetworkRequestXHR", "AppBanner", "Printing", "WebDatabase", "PictureInPicture", "SpeechRecognizer", "IdleManager", "PaymentManager", "SpeechSynthesis", "KeyboardLock", "WebOTPService", "OutstandingNetworkRequestDirectSocket", "InjectedJavascript", "InjectedStyleSheet", "KeepaliveRequest", "IndexedDBEvent", "Dummy", "JsNetworkRequestReceivedCacheControlNoStoreResource", "WebRTCUsedWithCCNS", "WebTransportUsedWithCCNS", "WebSocketUsedWithCCNS", "SmartCard", "LiveMediaStreamTrack", "UnloadHandler", "ParserAborted", "ContentSecurityHandler", "ContentWebAuthenticationAPI", "ContentFileChooser", "ContentSerial", "ContentFileSystemAccess", "ContentMediaDevicesDispatcherHost", "ContentWebBluetooth", "ContentWebUSB", "ContentMediaSessionService", "ContentScreenReader", "ContentDiscarded", "EmbedderPopupBlockerTabHelper", "EmbedderSafeBrowsingTriggeredPopupBlocker", "EmbedderSafeBrowsingThreatDetails", "EmbedderAppBannerManager", "EmbedderDomDistillerViewerSource", "EmbedderDomDistillerSelfDeletingRequestDelegate", "EmbedderOomInterventionTabHelper", "EmbedderOfflinePage", "EmbedderChromePasswordManagerClientBindCredentialManager", "EmbedderPermissionRequestManager", "EmbedderModalDialog", "EmbedderExtensions", "EmbedderExtensionMessaging", "EmbedderExtensionMessagingForOpenPort", "EmbedderExtensionSentMessageToCachedFrame", "RequestedByWebViewClient", "PostMessageByWebViewClient", "CacheControlNoStoreDeviceBoundSessionTerminated", "CacheLimitPrunedOnModerateMemoryPressure", "CacheLimitPrunedOnCriticalMemoryPressure":
 		return true
 	default:
 		return false

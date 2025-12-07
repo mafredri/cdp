@@ -23,6 +23,18 @@ type LoadUnpackedReply struct {
 	ID string `json:"id"` // Extension id.
 }
 
+// UninstallArgs represents the arguments for Uninstall in the Extensions domain.
+type UninstallArgs struct {
+	ID string `json:"id"` // Extension id.
+}
+
+// NewUninstallArgs initializes UninstallArgs with the required arguments.
+func NewUninstallArgs(id string) *UninstallArgs {
+	args := new(UninstallArgs)
+	args.ID = id
+	return args
+}
+
 // GetStorageItemsArgs represents the arguments for GetStorageItems in the Extensions domain.
 type GetStorageItemsArgs struct {
 	ID          string      `json:"id"`             // ID of extension.

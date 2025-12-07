@@ -4,12 +4,26 @@ package bluetoothemulation
 
 // EnableArgs represents the arguments for Enable in the BluetoothEmulation domain.
 type EnableArgs struct {
-	State CentralState `json:"state"` // State of the simulated central.
+	State       CentralState `json:"state"`       // State of the simulated central.
+	LeSupported bool         `json:"leSupported"` // If the simulated central supports low-energy.
 }
 
 // NewEnableArgs initializes EnableArgs with the required arguments.
-func NewEnableArgs(state CentralState) *EnableArgs {
+func NewEnableArgs(state CentralState, leSupported bool) *EnableArgs {
 	args := new(EnableArgs)
+	args.State = state
+	args.LeSupported = leSupported
+	return args
+}
+
+// SetSimulatedCentralStateArgs represents the arguments for SetSimulatedCentralState in the BluetoothEmulation domain.
+type SetSimulatedCentralStateArgs struct {
+	State CentralState `json:"state"` // State of the simulated central.
+}
+
+// NewSetSimulatedCentralStateArgs initializes SetSimulatedCentralStateArgs with the required arguments.
+func NewSetSimulatedCentralStateArgs(state CentralState) *SetSimulatedCentralStateArgs {
+	args := new(SetSimulatedCentralStateArgs)
 	args.State = state
 	return args
 }
@@ -41,5 +55,174 @@ type SimulateAdvertisementArgs struct {
 func NewSimulateAdvertisementArgs(entry ScanEntry) *SimulateAdvertisementArgs {
 	args := new(SimulateAdvertisementArgs)
 	args.Entry = entry
+	return args
+}
+
+// SimulateGATTOperationResponseArgs represents the arguments for SimulateGATTOperationResponse in the BluetoothEmulation domain.
+type SimulateGATTOperationResponseArgs struct {
+	Address string            `json:"address"` // No description.
+	Type    GATTOperationType `json:"type"`    // No description.
+	Code    int               `json:"code"`    // No description.
+}
+
+// NewSimulateGATTOperationResponseArgs initializes SimulateGATTOperationResponseArgs with the required arguments.
+func NewSimulateGATTOperationResponseArgs(address string, typ GATTOperationType, code int) *SimulateGATTOperationResponseArgs {
+	args := new(SimulateGATTOperationResponseArgs)
+	args.Address = address
+	args.Type = typ
+	args.Code = code
+	return args
+}
+
+// SimulateCharacteristicOperationResponseArgs represents the arguments for SimulateCharacteristicOperationResponse in the BluetoothEmulation domain.
+type SimulateCharacteristicOperationResponseArgs struct {
+	CharacteristicID string                      `json:"characteristicId"` // No description.
+	Type             CharacteristicOperationType `json:"type"`             // No description.
+	Code             int                         `json:"code"`             // No description.
+	Data             *string                     `json:"data,omitempty"`   // No description.
+}
+
+// NewSimulateCharacteristicOperationResponseArgs initializes SimulateCharacteristicOperationResponseArgs with the required arguments.
+func NewSimulateCharacteristicOperationResponseArgs(characteristicID string, typ CharacteristicOperationType, code int) *SimulateCharacteristicOperationResponseArgs {
+	args := new(SimulateCharacteristicOperationResponseArgs)
+	args.CharacteristicID = characteristicID
+	args.Type = typ
+	args.Code = code
+	return args
+}
+
+// SetData sets the Data optional argument.
+func (a *SimulateCharacteristicOperationResponseArgs) SetData(data string) *SimulateCharacteristicOperationResponseArgs {
+	a.Data = &data
+	return a
+}
+
+// SimulateDescriptorOperationResponseArgs represents the arguments for SimulateDescriptorOperationResponse in the BluetoothEmulation domain.
+type SimulateDescriptorOperationResponseArgs struct {
+	DescriptorID string                  `json:"descriptorId"`   // No description.
+	Type         DescriptorOperationType `json:"type"`           // No description.
+	Code         int                     `json:"code"`           // No description.
+	Data         *string                 `json:"data,omitempty"` // No description.
+}
+
+// NewSimulateDescriptorOperationResponseArgs initializes SimulateDescriptorOperationResponseArgs with the required arguments.
+func NewSimulateDescriptorOperationResponseArgs(descriptorID string, typ DescriptorOperationType, code int) *SimulateDescriptorOperationResponseArgs {
+	args := new(SimulateDescriptorOperationResponseArgs)
+	args.DescriptorID = descriptorID
+	args.Type = typ
+	args.Code = code
+	return args
+}
+
+// SetData sets the Data optional argument.
+func (a *SimulateDescriptorOperationResponseArgs) SetData(data string) *SimulateDescriptorOperationResponseArgs {
+	a.Data = &data
+	return a
+}
+
+// AddServiceArgs represents the arguments for AddService in the BluetoothEmulation domain.
+type AddServiceArgs struct {
+	Address     string `json:"address"`     // No description.
+	ServiceUUID string `json:"serviceUuid"` // No description.
+}
+
+// NewAddServiceArgs initializes AddServiceArgs with the required arguments.
+func NewAddServiceArgs(address string, serviceUUID string) *AddServiceArgs {
+	args := new(AddServiceArgs)
+	args.Address = address
+	args.ServiceUUID = serviceUUID
+	return args
+}
+
+// AddServiceReply represents the return values for AddService in the BluetoothEmulation domain.
+type AddServiceReply struct {
+	ServiceID string `json:"serviceId"` // An identifier that uniquely represents this service.
+}
+
+// RemoveServiceArgs represents the arguments for RemoveService in the BluetoothEmulation domain.
+type RemoveServiceArgs struct {
+	ServiceID string `json:"serviceId"` // No description.
+}
+
+// NewRemoveServiceArgs initializes RemoveServiceArgs with the required arguments.
+func NewRemoveServiceArgs(serviceID string) *RemoveServiceArgs {
+	args := new(RemoveServiceArgs)
+	args.ServiceID = serviceID
+	return args
+}
+
+// AddCharacteristicArgs represents the arguments for AddCharacteristic in the BluetoothEmulation domain.
+type AddCharacteristicArgs struct {
+	ServiceID          string                   `json:"serviceId"`          // No description.
+	CharacteristicUUID string                   `json:"characteristicUuid"` // No description.
+	Properties         CharacteristicProperties `json:"properties"`         // No description.
+}
+
+// NewAddCharacteristicArgs initializes AddCharacteristicArgs with the required arguments.
+func NewAddCharacteristicArgs(serviceID string, characteristicUUID string, properties CharacteristicProperties) *AddCharacteristicArgs {
+	args := new(AddCharacteristicArgs)
+	args.ServiceID = serviceID
+	args.CharacteristicUUID = characteristicUUID
+	args.Properties = properties
+	return args
+}
+
+// AddCharacteristicReply represents the return values for AddCharacteristic in the BluetoothEmulation domain.
+type AddCharacteristicReply struct {
+	CharacteristicID string `json:"characteristicId"` // An identifier that uniquely represents this characteristic.
+}
+
+// RemoveCharacteristicArgs represents the arguments for RemoveCharacteristic in the BluetoothEmulation domain.
+type RemoveCharacteristicArgs struct {
+	CharacteristicID string `json:"characteristicId"` // No description.
+}
+
+// NewRemoveCharacteristicArgs initializes RemoveCharacteristicArgs with the required arguments.
+func NewRemoveCharacteristicArgs(characteristicID string) *RemoveCharacteristicArgs {
+	args := new(RemoveCharacteristicArgs)
+	args.CharacteristicID = characteristicID
+	return args
+}
+
+// AddDescriptorArgs represents the arguments for AddDescriptor in the BluetoothEmulation domain.
+type AddDescriptorArgs struct {
+	CharacteristicID string `json:"characteristicId"` // No description.
+	DescriptorUUID   string `json:"descriptorUuid"`   // No description.
+}
+
+// NewAddDescriptorArgs initializes AddDescriptorArgs with the required arguments.
+func NewAddDescriptorArgs(characteristicID string, descriptorUUID string) *AddDescriptorArgs {
+	args := new(AddDescriptorArgs)
+	args.CharacteristicID = characteristicID
+	args.DescriptorUUID = descriptorUUID
+	return args
+}
+
+// AddDescriptorReply represents the return values for AddDescriptor in the BluetoothEmulation domain.
+type AddDescriptorReply struct {
+	DescriptorID string `json:"descriptorId"` // An identifier that uniquely represents this descriptor.
+}
+
+// RemoveDescriptorArgs represents the arguments for RemoveDescriptor in the BluetoothEmulation domain.
+type RemoveDescriptorArgs struct {
+	DescriptorID string `json:"descriptorId"` // No description.
+}
+
+// NewRemoveDescriptorArgs initializes RemoveDescriptorArgs with the required arguments.
+func NewRemoveDescriptorArgs(descriptorID string) *RemoveDescriptorArgs {
+	args := new(RemoveDescriptorArgs)
+	args.DescriptorID = descriptorID
+	return args
+}
+
+// SimulateGATTDisconnectionArgs represents the arguments for SimulateGATTDisconnection in the BluetoothEmulation domain.
+type SimulateGATTDisconnectionArgs struct {
+	Address string `json:"address"` // No description.
+}
+
+// NewSimulateGATTDisconnectionArgs initializes SimulateGATTDisconnectionArgs with the required arguments.
+func NewSimulateGATTDisconnectionArgs(address string) *SimulateGATTDisconnectionArgs {
+	args := new(SimulateGATTDisconnectionArgs)
+	args.Address = address
 	return args
 }

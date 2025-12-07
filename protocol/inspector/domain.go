@@ -100,3 +100,24 @@ func (c *targetReloadedAfterCrashClient) Recv() (*TargetReloadedAfterCrashReply,
 	}
 	return event, nil
 }
+
+func (d *domainClient) WorkerScriptLoaded(ctx context.Context) (WorkerScriptLoadedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Inspector.workerScriptLoaded", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &workerScriptLoadedClient{Stream: s}, nil
+}
+
+type workerScriptLoadedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *workerScriptLoadedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *workerScriptLoadedClient) Recv() (*WorkerScriptLoadedReply, error) {
+	event := new(WorkerScriptLoadedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Inspector", Op: "WorkerScriptLoaded Recv", Err: err}
+	}
+	return event, nil
+}

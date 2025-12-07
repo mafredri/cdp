@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"io"
-	"io/ioutil"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -17,7 +17,7 @@ var update = flag.Bool("update", false, "update .golden files")
 
 func TestRuntimeRemoteObject_String(t *testing.T) {
 	in := filepath.Join("testdata", "log.input")
-	input, err := ioutil.ReadFile(in)
+	input, err := os.ReadFile(in)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -41,14 +41,14 @@ func TestRuntimeRemoteObject_String(t *testing.T) {
 	}
 
 	out := filepath.Join("testdata", "log.golden")
-	want, err := ioutil.ReadFile(out)
+	want, err := os.ReadFile(out)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if got := buf.Bytes(); !bytes.Equal(got, want) {
 		if *update {
-			err := ioutil.WriteFile(out, got, 0o666)
+			err := os.WriteFile(out, got, 0o666)
 			if err != nil {
 				t.Error(err)
 			}

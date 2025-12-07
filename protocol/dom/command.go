@@ -469,6 +469,11 @@ type GetOuterHTMLArgs struct {
 	NodeID        *NodeID                 `json:"nodeId,omitempty"`        // Identifier of the node.
 	BackendNodeID *BackendNodeID          `json:"backendNodeId,omitempty"` // Identifier of the backend node.
 	ObjectID      *runtime.RemoteObjectID `json:"objectId,omitempty"`      // JavaScript object id of the node wrapper.
+	// IncludeShadowDOM Include all shadow roots. Equals to false if not
+	// specified.
+	//
+	// Note: This property is experimental.
+	IncludeShadowDOM *bool `json:"includeShadowDOM,omitempty"`
 }
 
 // NewGetOuterHTMLArgs initializes GetOuterHTMLArgs with the required arguments.
@@ -496,6 +501,15 @@ func (a *GetOuterHTMLArgs) SetBackendNodeID(backendNodeID BackendNodeID) *GetOut
 // id of the node wrapper.
 func (a *GetOuterHTMLArgs) SetObjectID(objectID runtime.RemoteObjectID) *GetOuterHTMLArgs {
 	a.ObjectID = &objectID
+	return a
+}
+
+// SetIncludeShadowDOM sets the IncludeShadowDOM optional argument.
+// Include all shadow roots. Equals to false if not specified.
+//
+// Note: This property is experimental.
+func (a *GetOuterHTMLArgs) SetIncludeShadowDOM(includeShadowDOM bool) *GetOuterHTMLArgs {
+	a.IncludeShadowDOM = &includeShadowDOM
 	return a
 }
 
@@ -678,7 +692,7 @@ type GetElementByRelationArgs struct {
 	NodeID NodeID `json:"nodeId"` // Id of the node from which to query the relation.
 	// Relation Type of relation to get.
 	//
-	// Values: "PopoverTarget".
+	// Values: "PopoverTarget", "InterestTarget", "CommandFor".
 	Relation string `json:"relation"`
 }
 
@@ -1021,10 +1035,12 @@ type GetFrameOwnerReply struct {
 
 // GetContainerForNodeArgs represents the arguments for GetContainerForNode in the DOM domain.
 type GetContainerForNodeArgs struct {
-	NodeID        NodeID       `json:"nodeId"`                  // No description.
-	ContainerName *string      `json:"containerName,omitempty"` // No description.
-	PhysicalAxes  PhysicalAxes `json:"physicalAxes,omitempty"`  // No description.
-	LogicalAxes   LogicalAxes  `json:"logicalAxes,omitempty"`   // No description.
+	NodeID             NodeID       `json:"nodeId"`                       // No description.
+	ContainerName      *string      `json:"containerName,omitempty"`      // No description.
+	PhysicalAxes       PhysicalAxes `json:"physicalAxes,omitempty"`       // No description.
+	LogicalAxes        LogicalAxes  `json:"logicalAxes,omitempty"`        // No description.
+	QueriesScrollState *bool        `json:"queriesScrollState,omitempty"` // No description.
+	QueriesAnchored    *bool        `json:"queriesAnchored,omitempty"`    // No description.
 }
 
 // NewGetContainerForNodeArgs initializes GetContainerForNodeArgs with the required arguments.
@@ -1049,6 +1065,18 @@ func (a *GetContainerForNodeArgs) SetPhysicalAxes(physicalAxes PhysicalAxes) *Ge
 // SetLogicalAxes sets the LogicalAxes optional argument.
 func (a *GetContainerForNodeArgs) SetLogicalAxes(logicalAxes LogicalAxes) *GetContainerForNodeArgs {
 	a.LogicalAxes = logicalAxes
+	return a
+}
+
+// SetQueriesScrollState sets the QueriesScrollState optional argument.
+func (a *GetContainerForNodeArgs) SetQueriesScrollState(queriesScrollState bool) *GetContainerForNodeArgs {
+	a.QueriesScrollState = &queriesScrollState
+	return a
+}
+
+// SetQueriesAnchored sets the QueriesAnchored optional argument.
+func (a *GetContainerForNodeArgs) SetQueriesAnchored(queriesAnchored bool) *GetContainerForNodeArgs {
+	a.QueriesAnchored = &queriesAnchored
 	return a
 }
 
@@ -1100,4 +1128,23 @@ func (a *GetAnchorElementArgs) SetAnchorSpecifier(anchorSpecifier string) *GetAn
 // GetAnchorElementReply represents the return values for GetAnchorElement in the DOM domain.
 type GetAnchorElementReply struct {
 	NodeID NodeID `json:"nodeId"` // The anchor element of the given anchor query.
+}
+
+// ForceShowPopoverArgs represents the arguments for ForceShowPopover in the DOM domain.
+type ForceShowPopoverArgs struct {
+	NodeID NodeID `json:"nodeId"` // Id of the popover HTMLElement
+	Enable bool   `json:"enable"` // If true, opens the popover and keeps it open. If false, closes the popover if it was previously force-opened.
+}
+
+// NewForceShowPopoverArgs initializes ForceShowPopoverArgs with the required arguments.
+func NewForceShowPopoverArgs(nodeID NodeID, enable bool) *ForceShowPopoverArgs {
+	args := new(ForceShowPopoverArgs)
+	args.NodeID = nodeID
+	args.Enable = enable
+	return args
+}
+
+// ForceShowPopoverReply represents the return values for ForceShowPopover in the DOM domain.
+type ForceShowPopoverReply struct {
+	NodeIDs []NodeID `json:"nodeIds"` // List of popovers that were closed in order to respect popover stacking order.
 }

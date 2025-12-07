@@ -31,6 +31,11 @@ type Info struct {
 	//
 	// Note: This property is experimental.
 	OpenerFrameID *page.FrameID `json:"openerFrameId,omitempty"`
+	// ParentFrameID Id of the parent frame, only present for the "iframe"
+	// targets.
+	//
+	// Note: This property is experimental.
+	ParentFrameID *page.FrameID `json:"parentFrameId,omitempty"`
 	// BrowserContextID
 	//
 	// Note: This property is experimental.
@@ -66,4 +71,31 @@ type Filter []FilterEntry
 type RemoteLocation struct {
 	Host string `json:"host"` // No description.
 	Port int    `json:"port"` // No description.
+}
+
+// WindowState The state of the target window.
+//
+// Note: This type is experimental.
+type WindowState string
+
+// WindowState as enums.
+const (
+	WindowStateNotSet     WindowState = ""
+	WindowStateNormal     WindowState = "normal"
+	WindowStateMinimized  WindowState = "minimized"
+	WindowStateMaximized  WindowState = "maximized"
+	WindowStateFullscreen WindowState = "fullscreen"
+)
+
+func (e WindowState) Valid() bool {
+	switch e {
+	case "normal", "minimized", "maximized", "fullscreen":
+		return true
+	default:
+		return false
+	}
+}
+
+func (e WindowState) String() string {
+	return string(e)
 }

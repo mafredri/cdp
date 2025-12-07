@@ -71,7 +71,7 @@ func TestBrowser_RemoteDebuggingProtocol(t *testing.T) {
 
 	c := cdp.NewClient(conn)
 
-	if err = c.Page.Enable(ctx); err != nil {
+	if err = c.Page.Enable(ctx, nil); err != nil {
 		panic(err)
 	}
 	if err = c.Runtime.Enable(ctx); err != nil {

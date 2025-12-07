@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -55,7 +54,7 @@ func run(timeout time.Duration) error {
 
 	// Enable events on the Page domain, it's often preferrable to create
 	// event clients before enabling events so that we don't miss any.
-	if err = c.Page.Enable(ctx); err != nil {
+	if err = c.Page.Enable(ctx, nil); err != nil {
 		return err
 	}
 
@@ -100,7 +99,7 @@ func run(timeout time.Duration) error {
 	if err != nil {
 		return err
 	}
-	if err = ioutil.WriteFile(screenshotName, screenshot.Data, 0o644); err != nil {
+	if err = os.WriteFile(screenshotName, screenshot.Data, 0o644); err != nil {
 		return err
 	}
 

@@ -16,7 +16,6 @@ import (
 	"github.com/mafredri/cdp/protocol/cast"
 	"github.com/mafredri/cdp/protocol/console"
 	"github.com/mafredri/cdp/protocol/css"
-	"github.com/mafredri/cdp/protocol/database"
 	"github.com/mafredri/cdp/protocol/debugger"
 	"github.com/mafredri/cdp/protocol/deviceaccess"
 	"github.com/mafredri/cdp/protocol/deviceorientation"
@@ -341,6 +340,11 @@ type BluetoothEmulation interface {
 	// Enable the BluetoothEmulation domain.
 	Enable(context.Context, *bluetoothemulation.EnableArgs) error
 
+	// Command SetSimulatedCentralState
+	//
+	// Set the state of the simulated central.
+	SetSimulatedCentralState(context.Context, *bluetoothemulation.SetSimulatedCentralStateArgs) error
+
 	// Command Disable
 	//
 	// Disable the BluetoothEmulation domain.
@@ -357,6 +361,93 @@ type BluetoothEmulation interface {
 	// Simulates an advertisement packet described in |entry| being
 	// received by the central.
 	SimulateAdvertisement(context.Context, *bluetoothemulation.SimulateAdvertisementArgs) error
+
+	// Command SimulateGATTOperationResponse
+	//
+	// Simulates the response code from the peripheral with |address| for
+	// a GATT operation of |type|. The |code| value follows the HCI Error
+	// Codes from Bluetooth Core Specification Vol 2 Part D 1.3 List Of
+	// Error Codes.
+	SimulateGATTOperationResponse(context.Context, *bluetoothemulation.SimulateGATTOperationResponseArgs) error
+
+	// Command SimulateCharacteristicOperationResponse
+	//
+	// Simulates the response from the characteristic with
+	// |characteristicId| for a characteristic operation of |type|. The
+	// |code| value follows the Error Codes from Bluetooth Core
+	// Specification Vol 3 Part F 3.4.1.1 Error Response. The |data| is
+	// expected to exist when simulating a successful read operation
+	// response.
+	SimulateCharacteristicOperationResponse(context.Context, *bluetoothemulation.SimulateCharacteristicOperationResponseArgs) error
+
+	// Command SimulateDescriptorOperationResponse
+	//
+	// Simulates the response from the descriptor with |descriptorId| for
+	// a descriptor operation of |type|. The |code| value follows the Error
+	// Codes from Bluetooth Core Specification Vol 3 Part F 3.4.1.1 Error
+	// Response. The |data| is expected to exist when simulating a
+	// successful read operation response.
+	SimulateDescriptorOperationResponse(context.Context, *bluetoothemulation.SimulateDescriptorOperationResponseArgs) error
+
+	// Command AddService
+	//
+	// Adds a service with |serviceUuid| to the peripheral with |address|.
+	AddService(context.Context, *bluetoothemulation.AddServiceArgs) (*bluetoothemulation.AddServiceReply, error)
+
+	// Command RemoveService
+	//
+	// Removes the service respresented by |serviceId| from the simulated
+	// central.
+	RemoveService(context.Context, *bluetoothemulation.RemoveServiceArgs) error
+
+	// Command AddCharacteristic
+	//
+	// Adds a characteristic with |characteristicUuid| and |properties| to
+	// the service represented by |serviceId|.
+	AddCharacteristic(context.Context, *bluetoothemulation.AddCharacteristicArgs) (*bluetoothemulation.AddCharacteristicReply, error)
+
+	// Command RemoveCharacteristic
+	//
+	// Removes the characteristic respresented by |characteristicId| from
+	// the simulated central.
+	RemoveCharacteristic(context.Context, *bluetoothemulation.RemoveCharacteristicArgs) error
+
+	// Command AddDescriptor
+	//
+	// Adds a descriptor with |descriptorUuid| to the characteristic
+	// respresented by |characteristicId|.
+	AddDescriptor(context.Context, *bluetoothemulation.AddDescriptorArgs) (*bluetoothemulation.AddDescriptorReply, error)
+
+	// Command RemoveDescriptor
+	//
+	// Removes the descriptor with |descriptorId| from the simulated
+	// central.
+	RemoveDescriptor(context.Context, *bluetoothemulation.RemoveDescriptorArgs) error
+
+	// Command SimulateGATTDisconnection
+	//
+	// Simulates a GATT disconnection from the peripheral with |address|.
+	SimulateGATTDisconnection(context.Context, *bluetoothemulation.SimulateGATTDisconnectionArgs) error
+
+	// Event GattOperationReceived
+	//
+	// Event for when a GATT operation of |type| to the peripheral with
+	// |address| happened.
+	GattOperationReceived(context.Context) (bluetoothemulation.GattOperationReceivedClient, error)
+
+	// Event CharacteristicOperationReceived
+	//
+	// Event for when a characteristic operation of |type| to the
+	// characteristic respresented by |characteristicId| happened. |data|
+	// and |writeType| is expected to exist when |type| is write.
+	CharacteristicOperationReceived(context.Context) (bluetoothemulation.CharacteristicOperationReceivedClient, error)
+
+	// Event DescriptorOperationReceived
+	//
+	// Event for when a descriptor operation of |type| to the descriptor
+	// respresented by |descriptorId| happened. |data| is expected to exist
+	// when |type| is write.
+	DescriptorOperationReceived(context.Context) (bluetoothemulation.DescriptorOperationReceivedClient, error)
 }
 
 // The Browser domain. The Browser domain defines methods and events for
@@ -364,15 +455,15 @@ type BluetoothEmulation interface {
 type Browser interface {
 	// Command SetPermission
 	//
-	// Set permission settings for given origin.
+	// Set permission settings for given embedding and embedded origins.
 	//
 	// Note: This command is experimental.
 	SetPermission(context.Context, *browser.SetPermissionArgs) error
 
 	// Command GrantPermissions
 	//
-	// Grant specific permissions to the given origin and reject all
-	// others.
+	// Deprecated: Grant specific permissions to the given origin and
+	// reject all others. Use setPermission instead.
 	//
 	// Note: This command is experimental.
 	GrantPermissions(context.Context, *browser.GrantPermissionsArgs) error
@@ -463,6 +554,14 @@ type Browser interface {
 	// Note: This command is experimental.
 	SetWindowBounds(context.Context, *browser.SetWindowBoundsArgs) error
 
+	// Command SetContentsSize
+	//
+	// Set size of the browser contents resizing browser window as
+	// necessary.
+	//
+	// Note: This command is experimental.
+	SetContentsSize(context.Context, *browser.SetContentsSizeArgs) error
+
 	// Command SetDockTile
 	//
 	// Set dock tile details, platform-specific.
@@ -483,6 +582,14 @@ type Browser interface {
 	// enrollment without the site actually being enrolled. Only supported
 	// on page targets.
 	AddPrivacySandboxEnrollmentOverride(context.Context, *browser.AddPrivacySandboxEnrollmentOverrideArgs) error
+
+	// Command AddPrivacySandboxCoordinatorKeyConfig
+	//
+	// Configures encryption keys used with a given privacy sandbox API to
+	// talk to a trusted coordinator. Since this is intended for test
+	// automation only, coordinatorOrigin must be a .test domain. No
+	// existing coordinator configuration for the origin may exist.
+	AddPrivacySandboxCoordinatorKeyConfig(context.Context, *browser.AddPrivacySandboxCoordinatorKeyConfigArgs) error
 
 	// Event DownloadWillBegin
 	//
@@ -545,6 +652,11 @@ type CSS interface {
 	// whenever its style is computed by the browser.
 	ForcePseudoState(context.Context, *css.ForcePseudoStateArgs) error
 
+	// Command ForceStartingStyle
+	//
+	// Ensures that the given node is in its starting-style state.
+	ForceStartingStyle(context.Context, *css.ForceStartingStyleArgs) error
+
 	// Command GetBackgroundColors
 	GetBackgroundColors(context.Context, *css.GetBackgroundColorsArgs) (*css.GetBackgroundColorsReply, error)
 
@@ -553,6 +665,26 @@ type CSS interface {
 	// Returns the computed style for a DOM node identified by `nodeId`.
 	GetComputedStyleForNode(context.Context, *css.GetComputedStyleForNodeArgs) (*css.GetComputedStyleForNodeReply, error)
 
+	// Command ResolveValues
+	//
+	// Resolve the specified values in the context of the provided
+	// element. For example, a value of '1em' is evaluated according to the
+	// computed 'font-size' of the element and a value 'calc(1px + 2px)'
+	// will be resolved to '3px'. If the `propertyName` was specified the
+	// `values` are resolved as if they were property's declaration. If a
+	// value cannot be parsed according to the provided property syntax,
+	// the value is parsed using combined syntax as if null `propertyName`
+	// was provided. If the value cannot be resolved even then, return the
+	// provided value without any changes.
+	//
+	// Note: This command is experimental.
+	ResolveValues(context.Context, *css.ResolveValuesArgs) (*css.ResolveValuesReply, error)
+
+	// Command GetLonghandProperties
+	//
+	// Note: This command is experimental.
+	GetLonghandProperties(context.Context, *css.GetLonghandPropertiesArgs) (*css.GetLonghandPropertiesReply, error)
+
 	// Command GetInlineStylesForNode
 	//
 	// Returns the styles defined inline (explicitly in the "style"
@@ -560,10 +692,26 @@ type CSS interface {
 	// identified by `nodeId`.
 	GetInlineStylesForNode(context.Context, *css.GetInlineStylesForNodeArgs) (*css.GetInlineStylesForNodeReply, error)
 
+	// Command GetAnimatedStylesForNode
+	//
+	// Returns the styles coming from animations & transitions including
+	// the animation & transition styles coming from inheritance chain.
+	//
+	// Note: This command is experimental.
+	GetAnimatedStylesForNode(context.Context, *css.GetAnimatedStylesForNodeArgs) (*css.GetAnimatedStylesForNodeReply, error)
+
 	// Command GetMatchedStylesForNode
 	//
 	// Returns requested styles for a DOM node identified by `nodeId`.
 	GetMatchedStylesForNode(context.Context, *css.GetMatchedStylesForNodeArgs) (*css.GetMatchedStylesForNodeReply, error)
+
+	// Command GetEnvironmentVariables
+	//
+	// Returns the values of the default UA-defined environment variables
+	// used in env()
+	//
+	// Note: This command is experimental.
+	GetEnvironmentVariables(context.Context) (*css.GetEnvironmentVariablesReply, error)
 
 	// Command GetMediaQueries
 	//
@@ -600,6 +748,18 @@ type CSS interface {
 	//
 	// Note: This command is experimental.
 	GetLocationForSelector(context.Context, *css.GetLocationForSelectorArgs) (*css.GetLocationForSelectorReply, error)
+
+	// Command TrackComputedStyleUpdatesForNode
+	//
+	// Starts tracking the given node for the computed style updates and
+	// whenever the computed style is updated for node, it queues a
+	// `computedStyleUpdated` event with throttling. There can only be 1
+	// node tracked for computed style updates so passing a new node id
+	// removes tracking from the previous node. Pass `undefined` to disable
+	// tracking.
+	//
+	// Note: This command is experimental.
+	TrackComputedStyleUpdatesForNode(context.Context, *css.TrackComputedStyleUpdatesForNodeArgs) error
 
 	// Command TrackComputedStyleUpdates
 	//
@@ -732,6 +892,11 @@ type CSS interface {
 	//
 	// Fired whenever an active document stylesheet is removed.
 	StyleSheetRemoved(context.Context) (css.StyleSheetRemovedClient, error)
+
+	// Event ComputedStyleUpdated
+	//
+	// Note: This event is experimental.
+	ComputedStyleUpdated(context.Context) (css.ComputedStyleUpdatedClient, error)
 }
 
 // The CacheStorage domain.
@@ -1163,9 +1328,11 @@ type DOM interface {
 	// Command GetContainerForNode
 	//
 	// Returns the query container of the given node based on container
-	// query conditions: containerName, physical, and logical axes. If no
-	// axes are provided, the style container is returned, which is the
-	// direct parent or the closest element with a matching container-name.
+	// query conditions: containerName, physical and logical axes, and
+	// whether it queries scroll-state or anchored elements. If no axes are
+	// provided and queriesScrollState is false, the style container is
+	// returned, which is the direct parent or the closest element with a
+	// matching container-name.
 	//
 	// Note: This command is experimental.
 	GetContainerForNode(context.Context, *dom.GetContainerForNodeArgs) (*dom.GetContainerForNodeReply, error)
@@ -1186,10 +1353,25 @@ type DOM interface {
 	// Note: This command is experimental.
 	GetAnchorElement(context.Context, *dom.GetAnchorElementArgs) (*dom.GetAnchorElementReply, error)
 
+	// Command ForceShowPopover
+	//
+	// When enabling, this API force-opens the popover identified by
+	// nodeId and keeps it open until disabled.
+	//
+	// Note: This command is experimental.
+	ForceShowPopover(context.Context, *dom.ForceShowPopoverArgs) (*dom.ForceShowPopoverReply, error)
+
 	// Event AttributeModified
 	//
 	// Fired when `Element`'s attribute is modified.
 	AttributeModified(context.Context) (dom.AttributeModifiedClient, error)
+
+	// Event AdoptedStyleSheetsModified
+	//
+	// Fired when `Element`'s adoptedStyleSheets are modified.
+	//
+	// Note: This event is experimental.
+	AdoptedStyleSheetsModified(context.Context) (dom.AdoptedStyleSheetsModifiedClient, error)
 
 	// Event AttributeRemoved
 	//
@@ -1250,6 +1432,20 @@ type DOM interface {
 	//
 	// Note: This event is experimental.
 	TopLayerElementsUpdated(context.Context) (dom.TopLayerElementsUpdatedClient, error)
+
+	// Event ScrollableFlagUpdated
+	//
+	// Fired when a node's scrollability state changes.
+	//
+	// Note: This event is experimental.
+	ScrollableFlagUpdated(context.Context) (dom.ScrollableFlagUpdatedClient, error)
+
+	// Event AffectedByStartingStylesFlagUpdated
+	//
+	// Fired when a node's starting styles changes.
+	//
+	// Note: This event is experimental.
+	AffectedByStartingStylesFlagUpdated(context.Context) (dom.AffectedByStartingStylesFlagUpdatedClient, error)
 
 	// Event PseudoElementRemoved
 	//
@@ -1401,32 +1597,6 @@ type DOMStorage interface {
 	DOMStorageItemsCleared(context.Context) (domstorage.ItemsClearedClient, error)
 }
 
-// The Database domain.
-//
-// Note: This domain is experimental.
-type Database interface {
-	// Command Disable
-	//
-	// Disables database tracking, prevents database events from being
-	// sent to the client.
-	Disable(context.Context) error
-
-	// Command Enable
-	//
-	// Enables database tracking, database events will now be delivered to
-	// the client.
-	Enable(context.Context) error
-
-	// Command ExecuteSQL
-	ExecuteSQL(context.Context, *database.ExecuteSQLArgs) (*database.ExecuteSQLReply, error)
-
-	// Command GetDatabaseTableNames
-	GetDatabaseTableNames(context.Context, *database.GetDatabaseTableNamesArgs) (*database.GetDatabaseTableNamesReply, error)
-
-	// Event AddDatabase
-	AddDatabase(context.Context) (database.AddDatabaseClient, error)
-}
-
 // The Debugger domain. Debugger domain exposes JavaScript debugging
 // capabilities. It allows setting and removing breakpoints, stepping through
 // execution, exploring stack traces, etc.
@@ -1543,6 +1713,17 @@ type Debugger interface {
 	// Enables or disables async call stacks tracking.
 	SetAsyncCallStackDepth(context.Context, *debugger.SetAsyncCallStackDepthArgs) error
 
+	// Command SetBlackboxExecutionContexts
+	//
+	// Replace previous blackbox execution contexts with passed ones.
+	// Forces backend to skip stepping/pausing in scripts in these
+	// execution contexts. VM will try to leave blackboxed script by
+	// performing 'step in' several times, finally resorting to 'step out'
+	// if unsuccessful.
+	//
+	// Note: This command is experimental.
+	SetBlackboxExecutionContexts(context.Context, *debugger.SetBlackboxExecutionContextsArgs) error
+
 	// Command SetBlackboxPatterns
 	//
 	// Replace previous blackbox patterns with passed ones. Forces backend
@@ -1654,7 +1835,9 @@ type Debugger interface {
 
 	// Event BreakpointResolved
 	//
-	// Fired when breakpoint is resolved to an actual script and location.
+	// Deprecated: Fired when breakpoint is resolved to an actual script
+	// and location. Deprecated in favor of `resolvedBreakpoints` in the
+	// `scriptParsed` event.
 	BreakpointResolved(context.Context) (debugger.BreakpointResolvedClient, error)
 
 	// Event Paused
@@ -1778,6 +1961,15 @@ type Emulation interface {
 	// frame. This override is used if the content does not specify one.
 	SetDefaultBackgroundColorOverride(context.Context, *emulation.SetDefaultBackgroundColorOverrideArgs) error
 
+	// Command SetSafeAreaInsetsOverride
+	//
+	// Overrides the values for env(safe-area-inset-*) and
+	// env(safe-area-max-inset-*). Unset values will cause the respective
+	// variables to be undefined, even if previously overridden.
+	//
+	// Note: This command is experimental.
+	SetSafeAreaInsetsOverride(context.Context, *emulation.SetSafeAreaInsetsOverrideArgs) error
+
 	// Command SetDeviceMetricsOverride
 	//
 	// Overrides the values of device screen dimensions
@@ -1803,6 +1995,25 @@ type Emulation interface {
 	//
 	// Note: This command is experimental.
 	ClearDevicePostureOverride(context.Context) error
+
+	// Command SetDisplayFeaturesOverride
+	//
+	// Start using the given display features to pupulate the Viewport
+	// Segments API. This override can also be set in
+	// setDeviceMetricsOverride().
+	//
+	// Note: This command is experimental.
+	SetDisplayFeaturesOverride(context.Context, *emulation.SetDisplayFeaturesOverrideArgs) error
+
+	// Command ClearDisplayFeaturesOverride
+	//
+	// Clears the display features override set with either
+	// setDeviceMetricsOverride() or setDisplayFeaturesOverride() and
+	// starts using display features from the platform again. Does nothing
+	// if no override is set.
+	//
+	// Note: This command is experimental.
+	ClearDisplayFeaturesOverride(context.Context) error
 
 	// Command SetScrollbarsHidden
 	//
@@ -1830,10 +2041,15 @@ type Emulation interface {
 	// Emulates the given vision deficiency.
 	SetEmulatedVisionDeficiency(context.Context, *emulation.SetEmulatedVisionDeficiencyArgs) error
 
+	// Command SetEmulatedOSTextScale
+	//
+	// Emulates the given OS text scale.
+	SetEmulatedOSTextScale(context.Context, *emulation.SetEmulatedOSTextScaleArgs) error
+
 	// Command SetGeolocationOverride
 	//
-	// Overrides the Geolocation Position or Error. Omitting any of the
-	// parameters emulates position unavailable.
+	// Overrides the Geolocation Position or Error. Omitting latitude,
+	// longitude or accuracy emulates position unavailable.
 	SetGeolocationOverride(context.Context, *emulation.SetGeolocationOverrideArgs) error
 
 	// Command GetOverriddenSensorInformation
@@ -1873,12 +2089,22 @@ type Emulation interface {
 
 	// Command SetPressureStateOverride
 	//
+	// TODO: OBSOLETE: To remove when setPressureDataOverride is merged.
 	// Provides a given pressure state that will be processed and
 	// eventually be delivered to PressureObserver users. |source| must
 	// have been previously overridden by setPressureSourceOverrideEnabled.
 	//
 	// Note: This command is experimental.
 	SetPressureStateOverride(context.Context, *emulation.SetPressureStateOverrideArgs) error
+
+	// Command SetPressureDataOverride
+	//
+	// Provides a given pressure data set that will be processed and
+	// eventually be delivered to PressureObserver users. |source| must
+	// have been previously overridden by setPressureSourceOverrideEnabled.
+	//
+	// Note: This command is experimental.
+	SetPressureDataOverride(context.Context, *emulation.SetPressureDataOverrideArgs) error
 
 	// Command SetIdleOverride
 	//
@@ -1951,6 +2177,13 @@ type Emulation interface {
 	// Note: This command is experimental.
 	SetDisabledImageTypes(context.Context, *emulation.SetDisabledImageTypesArgs) error
 
+	// Command SetDataSaverOverride
+	//
+	// Override the value of navigator.connection.saveData
+	//
+	// Note: This command is experimental.
+	SetDataSaverOverride(context.Context, *emulation.SetDataSaverOverrideArgs) error
+
 	// Command SetHardwareConcurrencyOverride
 	//
 	// Note: This command is experimental.
@@ -1968,6 +2201,36 @@ type Emulation interface {
 	//
 	// Note: This command is experimental.
 	SetAutomationOverride(context.Context, *emulation.SetAutomationOverrideArgs) error
+
+	// Command SetSmallViewportHeightDifferenceOverride
+	//
+	// Allows overriding the difference between the small and large
+	// viewport sizes, which determine the value of the `svh` and `lvh`
+	// unit, respectively. Only supported for top-level frames.
+	//
+	// Note: This command is experimental.
+	SetSmallViewportHeightDifferenceOverride(context.Context, *emulation.SetSmallViewportHeightDifferenceOverrideArgs) error
+
+	// Command GetScreenInfos
+	//
+	// Returns device's screen configuration.
+	//
+	// Note: This command is experimental.
+	GetScreenInfos(context.Context) (*emulation.GetScreenInfosReply, error)
+
+	// Command AddScreen
+	//
+	// Add a new screen to the device. Only supported in headless mode.
+	//
+	// Note: This command is experimental.
+	AddScreen(context.Context, *emulation.AddScreenArgs) (*emulation.AddScreenReply, error)
+
+	// Command RemoveScreen
+	//
+	// Remove screen from the device. Only supported in headless mode.
+	//
+	// Note: This command is experimental.
+	RemoveScreen(context.Context, *emulation.RemoveScreenArgs) error
 
 	// Event VirtualTimeBudgetExpired
 	//
@@ -2013,6 +2276,14 @@ type Extensions interface {
 	// --remote-debugging-pipe flag and the
 	// --enable-unsafe-extension-debugging flag is set.
 	LoadUnpacked(context.Context, *extensions.LoadUnpackedArgs) (*extensions.LoadUnpackedReply, error)
+
+	// Command Uninstall
+	//
+	// Uninstalls an unpacked extension (others not supported) from the
+	// profile. Available if the client is connected using the
+	// --remote-debugging-pipe flag and the
+	// --enable-unsafe-extension-debugging.
+	Uninstall(context.Context, *extensions.UninstallArgs) error
 
 	// Command GetStorageItems
 	//
@@ -2471,6 +2742,14 @@ type Inspector interface {
 	//
 	// Fired when debugging target has reloaded after crash
 	TargetReloadedAfterCrash(context.Context) (inspector.TargetReloadedAfterCrashClient, error)
+
+	// Event WorkerScriptLoaded
+	//
+	// Fired on worker targets when main worker script and any imported
+	// scripts have been evaluated.
+	//
+	// Note: This event is experimental.
+	WorkerScriptLoaded(context.Context) (inspector.WorkerScriptLoadedClient, error)
 }
 
 // The LayerTree domain.
@@ -2562,7 +2841,7 @@ type Log interface {
 	EntryAdded(context.Context) (log.EntryAddedClient, error)
 }
 
-// The Media domain. This domain allows detailed inspection of media elements
+// The Media domain. This domain allows detailed inspection of media elements.
 //
 // Note: This domain is experimental.
 type Media interface {
@@ -2600,12 +2879,12 @@ type Media interface {
 	// Send a list of any errors that need to be delivered.
 	PlayerErrorsRaised(context.Context) (media.PlayerErrorsRaisedClient, error)
 
-	// Event PlayersCreated
+	// Event PlayerCreated
 	//
 	// Called whenever a player is created, or when a new agent joins and
 	// receives a list of active players. If an agent is restored, it will
-	// receive the full list of player ids and all events again.
-	PlayersCreated(context.Context) (media.PlayersCreatedClient, error)
+	// receive one event for each active player.
+	PlayerCreated(context.Context) (media.PlayerCreatedClient, error)
 }
 
 // The Memory domain.
@@ -2747,8 +3026,29 @@ type Network interface {
 
 	// Command EmulateNetworkConditions
 	//
-	// Activates emulation of network conditions.
+	// Deprecated: Activates emulation of network conditions. This command
+	// is deprecated in favor of the emulateNetworkConditionsByRule and
+	// overrideNetworkState commands, which can be used together to the
+	// same effect.
 	EmulateNetworkConditions(context.Context, *network.EmulateNetworkConditionsArgs) error
+
+	// Command EmulateNetworkConditionsByRule
+	//
+	// Activates emulation of network conditions for individual requests
+	// using URL match patterns. Unlike the deprecated
+	// Network.emulateNetworkConditions this method does not affect
+	// `navigator` state. Use Network.overrideNetworkState to explicitly
+	// modify `navigator` behavior.
+	//
+	// Note: This command is experimental.
+	EmulateNetworkConditionsByRule(context.Context, *network.EmulateNetworkConditionsByRuleArgs) (*network.EmulateNetworkConditionsByRuleReply, error)
+
+	// Command OverrideNetworkState
+	//
+	// Override the state of navigator.onLine and navigator.connection.
+	//
+	// Note: This command is experimental.
+	OverrideNetworkState(context.Context, *network.OverrideNetworkStateArgs) error
 
 	// Command Enable
 	//
@@ -2906,6 +3206,14 @@ type Network interface {
 	// Note: This command is experimental.
 	LoadNetworkResource(context.Context, *network.LoadNetworkResourceArgs) (*network.LoadNetworkResourceReply, error)
 
+	// Command SetCookieControls
+	//
+	// Sets Controls for third-party cookie access Page reload is required
+	// before the new cookie behavior will be observed
+	//
+	// Note: This command is experimental.
+	SetCookieControls(context.Context, *network.SetCookieControlsArgs) error
+
 	// Event DataReceived
 	//
 	// Fired when data chunk was received over the network.
@@ -3014,6 +3322,100 @@ type Network interface {
 	// Fired when WebTransport is disposed.
 	WebTransportClosed(context.Context) (network.WebTransportClosedClient, error)
 
+	// Event DirectTCPSocketCreated
+	//
+	// Fired upon direct_socket.TCPSocket creation.
+	//
+	// Note: This event is experimental.
+	DirectTCPSocketCreated(context.Context) (network.DirectTCPSocketCreatedClient, error)
+
+	// Event DirectTCPSocketOpened
+	//
+	// Fired when direct_socket.TCPSocket connection is opened.
+	//
+	// Note: This event is experimental.
+	DirectTCPSocketOpened(context.Context) (network.DirectTCPSocketOpenedClient, error)
+
+	// Event DirectTCPSocketAborted
+	//
+	// Fired when direct_socket.TCPSocket is aborted.
+	//
+	// Note: This event is experimental.
+	DirectTCPSocketAborted(context.Context) (network.DirectTCPSocketAbortedClient, error)
+
+	// Event DirectTCPSocketClosed
+	//
+	// Fired when direct_socket.TCPSocket is closed.
+	//
+	// Note: This event is experimental.
+	DirectTCPSocketClosed(context.Context) (network.DirectTCPSocketClosedClient, error)
+
+	// Event DirectTCPSocketChunkSent
+	//
+	// Fired when data is sent to tcp direct socket stream.
+	//
+	// Note: This event is experimental.
+	DirectTCPSocketChunkSent(context.Context) (network.DirectTCPSocketChunkSentClient, error)
+
+	// Event DirectTCPSocketChunkReceived
+	//
+	// Fired when data is received from tcp direct socket stream.
+	//
+	// Note: This event is experimental.
+	DirectTCPSocketChunkReceived(context.Context) (network.DirectTCPSocketChunkReceivedClient, error)
+
+	// Event DirectUDPSocketJoinedMulticastGroup
+	//
+	// Note: This event is experimental.
+	DirectUDPSocketJoinedMulticastGroup(context.Context) (network.DirectUDPSocketJoinedMulticastGroupClient, error)
+
+	// Event DirectUDPSocketLeftMulticastGroup
+	//
+	// Note: This event is experimental.
+	DirectUDPSocketLeftMulticastGroup(context.Context) (network.DirectUDPSocketLeftMulticastGroupClient, error)
+
+	// Event DirectUDPSocketCreated
+	//
+	// Fired upon direct_socket.UDPSocket creation.
+	//
+	// Note: This event is experimental.
+	DirectUDPSocketCreated(context.Context) (network.DirectUDPSocketCreatedClient, error)
+
+	// Event DirectUDPSocketOpened
+	//
+	// Fired when direct_socket.UDPSocket connection is opened.
+	//
+	// Note: This event is experimental.
+	DirectUDPSocketOpened(context.Context) (network.DirectUDPSocketOpenedClient, error)
+
+	// Event DirectUDPSocketAborted
+	//
+	// Fired when direct_socket.UDPSocket is aborted.
+	//
+	// Note: This event is experimental.
+	DirectUDPSocketAborted(context.Context) (network.DirectUDPSocketAbortedClient, error)
+
+	// Event DirectUDPSocketClosed
+	//
+	// Fired when direct_socket.UDPSocket is closed.
+	//
+	// Note: This event is experimental.
+	DirectUDPSocketClosed(context.Context) (network.DirectUDPSocketClosedClient, error)
+
+	// Event DirectUDPSocketChunkSent
+	//
+	// Fired when message is sent to udp direct socket stream.
+	//
+	// Note: This event is experimental.
+	DirectUDPSocketChunkSent(context.Context) (network.DirectUDPSocketChunkSentClient, error)
+
+	// Event DirectUDPSocketChunkReceived
+	//
+	// Fired when message is received from udp direct socket stream.
+	//
+	// Note: This event is experimental.
+	DirectUDPSocketChunkReceived(context.Context) (network.DirectUDPSocketChunkReceivedClient, error)
+
 	// Event RequestWillBeSentExtraInfo
 	//
 	// Fired when additional information about a requestWillBeSent event
@@ -3063,37 +3465,6 @@ type Network interface {
 	//
 	// Note: This event is experimental.
 	PolicyUpdated(context.Context) (network.PolicyUpdatedClient, error)
-
-	// Event SubresourceWebBundleMetadataReceived
-	//
-	// Fired once when parsing the .wbn file has succeeded. The event
-	// contains the information about the web bundle contents.
-	//
-	// Note: This event is experimental.
-	SubresourceWebBundleMetadataReceived(context.Context) (network.SubresourceWebBundleMetadataReceivedClient, error)
-
-	// Event SubresourceWebBundleMetadataError
-	//
-	// Fired once when parsing the .wbn file has failed.
-	//
-	// Note: This event is experimental.
-	SubresourceWebBundleMetadataError(context.Context) (network.SubresourceWebBundleMetadataErrorClient, error)
-
-	// Event SubresourceWebBundleInnerResponseParsed
-	//
-	// Fired when handling requests for resources within a .wbn file.
-	// Note: this will only be fired for resources that are requested by
-	// the webpage.
-	//
-	// Note: This event is experimental.
-	SubresourceWebBundleInnerResponseParsed(context.Context) (network.SubresourceWebBundleInnerResponseParsedClient, error)
-
-	// Event SubresourceWebBundleInnerResponseError
-	//
-	// Fired when request for resources within a .wbn file failed.
-	//
-	// Note: This event is experimental.
-	SubresourceWebBundleInnerResponseError(context.Context) (network.SubresourceWebBundleInnerResponseErrorClient, error)
 
 	// Event ReportingAPIReportAdded
 	//
@@ -3172,7 +3543,9 @@ type Overlay interface {
 	// Command HighlightRect
 	//
 	// Highlights given rectangle. Coordinates are absolute with respect
-	// to the main frame viewport.
+	// to the main frame viewport. Issue: the method does not handle device
+	// pixel ratio (DPR) correctly. The coordinates currently have to be
+	// adjusted by the client if DPR is not 1 (see crbug.com/437807128).
 	HighlightRect(context.Context, *overlay.HighlightRectArgs) error
 
 	// Command HighlightSourceOrder
@@ -3243,7 +3616,7 @@ type Overlay interface {
 
 	// Command SetShowWebVitals
 	//
-	// Request that backend shows an overlay with web vital metrics.
+	// Deprecated: No longer has any effect.
 	SetShowWebVitals(context.Context, *overlay.SetShowWebVitalsArgs) error
 
 	// Command SetShowViewportSizeOnResize
@@ -3303,15 +3676,31 @@ type PWA interface {
 	// Command Install
 	//
 	// Installs the given manifest identity, optionally using the given
-	// install_url or IWA bundle location.
+	// installUrlOrBundleUrl
 	//
-	// TODO(crbug.com/337872319) Support IWA to meet the following
-	// specific requirement. IWA-specific install description: If the
-	// manifest_id is isolated-app://, install_url_or_bundle_url is
-	// required, and can be either an http(s) URL or file:// URL pointing
-	// to a signed web bundle (.swbn). The .swbn file's signing key must
-	// correspond to manifest_id. If Chrome is not in IWA dev mode, the
-	// installation will fail, regardless of the state of the allowlist.
+	// IWA-specific install description: manifestId corresponds to
+	// isolated-app:// + web_package::SignedWebBundleId
+	//
+	// File installation mode: The installUrlOrBundleUrl can be either
+	// file:// or http(s):// pointing to a signed web bundle (.swbn). In
+	// this case SignedWebBundleId must correspond to The .swbn file's
+	// signing key.
+	//
+	// Dev proxy installation mode: installUrlOrBundleUrl must be
+	// http(s):// that serves dev mode IWA. web_package::SignedWebBundleId
+	// must be of type dev proxy.
+	//
+	// The advantage of dev proxy mode is that all changes to IWA
+	// automatically will be reflected in the running app without
+	// reinstallation.
+	//
+	// To generate bundle id for proxy mode: 1. Generate 32 random bytes.
+	// 2. Add a specific suffix at the end following the documentation
+	// https://github.com/WICG/isolated-web-apps/blob/main/Scheme.md#suffix
+	// 3. Encode the entire sequence using Base32 without padding.
+	//
+	// If Chrome is not in IWA dev mode, the installation will fail,
+	// regardless of the state of the allowlist.
 	Install(context.Context, *pwa.InstallArgs) error
 
 	// Command Uninstall
@@ -3416,7 +3805,7 @@ type Page interface {
 	// Command Enable
 	//
 	// Enables page domain notifications.
-	Enable(context.Context) error
+	Enable(context.Context, *page.EnableArgs) error
 
 	// Command GetAppManifest
 	//
@@ -3448,10 +3837,10 @@ type Page interface {
 	// Note: This command is experimental.
 	GetAppID(context.Context) (*page.GetAppIDReply, error)
 
-	// Command GetAdScriptID
+	// Command GetAdScriptAncestry
 	//
 	// Note: This command is experimental.
-	GetAdScriptID(context.Context, *page.GetAdScriptIDArgs) (*page.GetAdScriptIDReply, error)
+	GetAdScriptAncestry(context.Context, *page.GetAdScriptAncestryArgs) (*page.GetAdScriptAncestryReply, error)
 
 	// Command GetFrameTree
 	//
@@ -3720,6 +4109,14 @@ type Page interface {
 	// Note: This command is experimental.
 	SetPrerenderingAllowed(context.Context, *page.SetPrerenderingAllowedArgs) error
 
+	// Command GetAnnotatedPageContent
+	//
+	// Get the annotated page content for the main frame. This is an
+	// experimental command that is subject to change.
+	//
+	// Note: This command is experimental.
+	GetAnnotatedPageContent(context.Context, *page.GetAnnotatedPageContentArgs) (*page.GetAnnotatedPageContentReply, error)
+
 	// Event DOMContentEventFired
 	DOMContentEventFired(context.Context) (page.DOMContentEventFiredClient, error)
 
@@ -3768,6 +4165,19 @@ type Page interface {
 	//
 	// Note: This event is experimental.
 	FrameResized(context.Context) (page.FrameResizedClient, error)
+
+	// Event FrameStartedNavigating
+	//
+	// Fired when a navigation starts. This event is fired for both
+	// renderer-initiated and browser-initiated navigations. For
+	// renderer-initiated navigations, the event is fired after
+	// `frameRequestedNavigation`. Navigation may still be canceled after
+	// the event is issued. Multiple events can be fired for a single
+	// navigation, for example, when a same-document navigation becomes a
+	// cross-document navigation (such as in the case of a frameset).
+	//
+	// Note: This event is experimental.
+	FrameStartedNavigating(context.Context) (page.FrameStartedNavigatingClient, error)
 
 	// Event FrameRequestedNavigation
 	//
@@ -3836,8 +4246,8 @@ type Page interface {
 
 	// Event LifecycleEvent
 	//
-	// Fired for top level page lifecycle events such as navigation, load,
-	// paint, etc.
+	// Fired for lifecycle events (navigation, load, paint, etc) in the
+	// current target (including local frames).
 	LifecycleEvent(context.Context) (page.LifecycleEventClient, error)
 
 	// Event BackForwardCacheNotUsed
@@ -3885,8 +4295,7 @@ type Page interface {
 
 	// Event CompilationCacheProduced
 	//
-	// Issued for every compilation cache generated. Is only available if
-	// Page.setGenerateCompilationCache is enabled.
+	// Issued for every compilation cache generated.
 	//
 	// Note: This event is experimental.
 	CompilationCacheProduced(context.Context) (page.CompilationCacheProducedClient, error)
@@ -4243,7 +4652,7 @@ type Schema interface {
 	GetDomains(context.Context) (*schema.GetDomainsReply, error)
 }
 
-// The Security domain. Security
+// The Security domain.
 type Security interface {
 	// Command Disable
 	//
@@ -4316,9 +4725,6 @@ type ServiceWorker interface {
 	// Command Enable
 	Enable(context.Context) error
 
-	// Command InspectWorker
-	InspectWorker(context.Context, *serviceworker.InspectWorkerArgs) error
-
 	// Command SetForceUpdateOnPageLoad
 	SetForceUpdateOnPageLoad(context.Context, *serviceworker.SetForceUpdateOnPageLoadArgs) error
 
@@ -4356,8 +4762,18 @@ type ServiceWorker interface {
 type Storage interface {
 	// Command GetStorageKeyForFrame
 	//
-	// Returns a storage key given a frame id.
+	// Deprecated: Returns a storage key given a frame id. Deprecated.
+	// Please use Storage.getStorageKey instead.
 	GetStorageKeyForFrame(context.Context, *storage.GetStorageKeyForFrameArgs) (*storage.GetStorageKeyForFrameReply, error)
+
+	// Command GetStorageKey
+	//
+	// Returns storage key for the given frame. If no frame ID is
+	// provided, the storage key of the target executing this command is
+	// returned.
+	//
+	// Note: This command is experimental.
+	GetStorageKey(context.Context, *storage.GetStorageKeyArgs) (*storage.GetStorageKeyReply, error)
 
 	// Command ClearDataForOrigin
 	//
@@ -4586,6 +5002,18 @@ type Storage interface {
 	// Note: This command is experimental.
 	GetRelatedWebsiteSets(context.Context) (*storage.GetRelatedWebsiteSetsReply, error)
 
+	// Command GetAffectedURLsForThirdPartyCookieMetadata
+	//
+	// Returns the list of URLs from a page and its embedded resources
+	// that match existing grace period URL pattern rules.
+	// https://developers.google.com/privacy-sandbox/cookies/temporary-exceptions/grace-period
+	//
+	// Note: This command is experimental.
+	GetAffectedURLsForThirdPartyCookieMetadata(context.Context, *storage.GetAffectedURLsForThirdPartyCookieMetadataArgs) (*storage.GetAffectedURLsForThirdPartyCookieMetadataReply, error)
+
+	// Command SetProtectedAudienceKAnonymity
+	SetProtectedAudienceKAnonymity(context.Context, *storage.SetProtectedAudienceKAnonymityArgs) error
+
 	// Event CacheStorageContentUpdated
 	//
 	// A cache's contents have been modified.
@@ -4632,6 +5060,12 @@ type Storage interface {
 	// parameters are included in all events.
 	SharedStorageAccessed(context.Context) (storage.SharedStorageAccessedClient, error)
 
+	// Event SharedStorageWorkletOperationExecutionFinished
+	//
+	// A shared storage run or selectURL operation finished its execution.
+	// The following parameters are included in all events.
+	SharedStorageWorkletOperationExecutionFinished(context.Context) (storage.SharedStorageWorkletOperationExecutionFinishedClient, error)
+
 	// Event StorageBucketCreatedOrUpdated
 	StorageBucketCreatedOrUpdated(context.Context) (storage.BucketCreatedOrUpdatedClient, error)
 
@@ -4647,6 +5081,16 @@ type Storage interface {
 	//
 	// Note: This event is experimental.
 	AttributionReportingTriggerRegistered(context.Context) (storage.AttributionReportingTriggerRegisteredClient, error)
+
+	// Event AttributionReportingReportSent
+	//
+	// Note: This event is experimental.
+	AttributionReportingReportSent(context.Context) (storage.AttributionReportingReportSentClient, error)
+
+	// Event AttributionReportingVerboseDebugReportSent
+	//
+	// Note: This event is experimental.
+	AttributionReportingVerboseDebugReportSent(context.Context) (storage.AttributionReportingVerboseDebugReportSentClient, error)
 }
 
 // The SystemInfo domain. The SystemInfo domain defines methods and events for
@@ -4760,11 +5204,13 @@ type Target interface {
 	// Command SetAutoAttach
 	//
 	// Controls whether to automatically attach to new targets which are
-	// considered to be related to this one. When turned on, attaches to
-	// all existing related targets as well. When turned off, automatically
-	// detaches from all currently attached targets. This also clears all
-	// targets added by `autoAttachRelated` from the list of targets to
-	// watch for creation of related targets.
+	// considered to be directly related to this one (for example, iframes
+	// or workers). When turned on, attaches to all existing related
+	// targets as well. When turned off, automatically detaches from all
+	// currently attached targets. This also clears all targets added by
+	// `autoAttachRelated` from the list of targets to watch for creation
+	// of related targets. You might want to call this recursively for
+	// auto-attached targets to attach to all available targets.
 	SetAutoAttach(context.Context, *target.SetAutoAttachArgs) error
 
 	// Command AutoAttachRelated
@@ -4793,6 +5239,21 @@ type Target interface {
 	//
 	// Note: This command is experimental.
 	SetRemoteLocations(context.Context, *target.SetRemoteLocationsArgs) error
+
+	// Command GetDevToolsTarget
+	//
+	// Gets the targetId of the DevTools page target opened for the given
+	// target (if any).
+	//
+	// Note: This command is experimental.
+	GetDevToolsTarget(context.Context, *target.GetDevToolsTargetArgs) (*target.GetDevToolsTargetReply, error)
+
+	// Command OpenDevTools
+	//
+	// Opens a DevTools window for the target.
+	//
+	// Note: This command is experimental.
+	OpenDevTools(context.Context, *target.OpenDevToolsArgs) (*target.OpenDevToolsReply, error)
 
 	// Event AttachedToTarget
 	//
@@ -5087,6 +5548,18 @@ type WebAuthn interface {
 	//
 	// Triggered when a credential is added to an authenticator.
 	CredentialAdded(context.Context) (webauthn.CredentialAddedClient, error)
+
+	// Event CredentialDeleted
+	//
+	// Triggered when a credential is deleted, e.g. through
+	// PublicKeyCredential.signalUnknownCredential().
+	CredentialDeleted(context.Context) (webauthn.CredentialDeletedClient, error)
+
+	// Event CredentialUpdated
+	//
+	// Triggered when a credential is updated, e.g. through
+	// PublicKeyCredential.signalCurrentUserDetails().
+	CredentialUpdated(context.Context) (webauthn.CredentialUpdatedClient, error)
 
 	// Event CredentialAsserted
 	//

@@ -369,6 +369,234 @@ type WebTransportClosedReply struct {
 	Timestamp   MonotonicTime `json:"timestamp"`   // Timestamp.
 }
 
+// DirectTCPSocketCreatedClient is a client for DirectTCPSocketCreated events.
+// Fired upon direct_socket.TCPSocket creation.
+type DirectTCPSocketCreatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectTCPSocketCreatedReply, error)
+	rpcc.Stream
+}
+
+// DirectTCPSocketCreatedReply is the reply for DirectTCPSocketCreated events.
+type DirectTCPSocketCreatedReply struct {
+	Identifier RequestID              `json:"identifier"`          // No description.
+	RemoteAddr string                 `json:"remoteAddr"`          // No description.
+	RemotePort int                    `json:"remotePort"`          // Unsigned int 16.
+	Options    DirectTCPSocketOptions `json:"options"`             // No description.
+	Timestamp  MonotonicTime          `json:"timestamp"`           // No description.
+	Initiator  *Initiator             `json:"initiator,omitempty"` // No description.
+}
+
+// DirectTCPSocketOpenedClient is a client for DirectTCPSocketOpened events.
+// Fired when direct_socket.TCPSocket connection is opened.
+type DirectTCPSocketOpenedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectTCPSocketOpenedReply, error)
+	rpcc.Stream
+}
+
+// DirectTCPSocketOpenedReply is the reply for DirectTCPSocketOpened events.
+type DirectTCPSocketOpenedReply struct {
+	Identifier RequestID     `json:"identifier"`          // No description.
+	RemoteAddr string        `json:"remoteAddr"`          // No description.
+	RemotePort int           `json:"remotePort"`          // Expected to be unsigned integer.
+	Timestamp  MonotonicTime `json:"timestamp"`           // No description.
+	LocalAddr  *string       `json:"localAddr,omitempty"` // No description.
+	LocalPort  *int          `json:"localPort,omitempty"` // Expected to be unsigned integer.
+}
+
+// DirectTCPSocketAbortedClient is a client for DirectTCPSocketAborted events.
+// Fired when direct_socket.TCPSocket is aborted.
+type DirectTCPSocketAbortedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectTCPSocketAbortedReply, error)
+	rpcc.Stream
+}
+
+// DirectTCPSocketAbortedReply is the reply for DirectTCPSocketAborted events.
+type DirectTCPSocketAbortedReply struct {
+	Identifier   RequestID     `json:"identifier"`   // No description.
+	ErrorMessage string        `json:"errorMessage"` // No description.
+	Timestamp    MonotonicTime `json:"timestamp"`    // No description.
+}
+
+// DirectTCPSocketClosedClient is a client for DirectTCPSocketClosed events.
+// Fired when direct_socket.TCPSocket is closed.
+type DirectTCPSocketClosedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectTCPSocketClosedReply, error)
+	rpcc.Stream
+}
+
+// DirectTCPSocketClosedReply is the reply for DirectTCPSocketClosed events.
+type DirectTCPSocketClosedReply struct {
+	Identifier RequestID     `json:"identifier"` // No description.
+	Timestamp  MonotonicTime `json:"timestamp"`  // No description.
+}
+
+// DirectTCPSocketChunkSentClient is a client for DirectTCPSocketChunkSent events.
+// Fired when data is sent to tcp direct socket stream.
+type DirectTCPSocketChunkSentClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectTCPSocketChunkSentReply, error)
+	rpcc.Stream
+}
+
+// DirectTCPSocketChunkSentReply is the reply for DirectTCPSocketChunkSent events.
+type DirectTCPSocketChunkSentReply struct {
+	Identifier RequestID     `json:"identifier"` // No description.
+	Data       string        `json:"data"`       // No description.
+	Timestamp  MonotonicTime `json:"timestamp"`  // No description.
+}
+
+// DirectTCPSocketChunkReceivedClient is a client for DirectTCPSocketChunkReceived events.
+// Fired when data is received from tcp direct socket stream.
+type DirectTCPSocketChunkReceivedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectTCPSocketChunkReceivedReply, error)
+	rpcc.Stream
+}
+
+// DirectTCPSocketChunkReceivedReply is the reply for DirectTCPSocketChunkReceived events.
+type DirectTCPSocketChunkReceivedReply struct {
+	Identifier RequestID     `json:"identifier"` // No description.
+	Data       string        `json:"data"`       // No description.
+	Timestamp  MonotonicTime `json:"timestamp"`  // No description.
+}
+
+// DirectUDPSocketJoinedMulticastGroupClient is a client for DirectUDPSocketJoinedMulticastGroup events.
+type DirectUDPSocketJoinedMulticastGroupClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectUDPSocketJoinedMulticastGroupReply, error)
+	rpcc.Stream
+}
+
+// DirectUDPSocketJoinedMulticastGroupReply is the reply for DirectUDPSocketJoinedMulticastGroup events.
+type DirectUDPSocketJoinedMulticastGroupReply struct {
+	Identifier RequestID `json:"identifier"` // No description.
+	IPAddress  string    `json:"IPAddress"`  // No description.
+}
+
+// DirectUDPSocketLeftMulticastGroupClient is a client for DirectUDPSocketLeftMulticastGroup events.
+type DirectUDPSocketLeftMulticastGroupClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectUDPSocketLeftMulticastGroupReply, error)
+	rpcc.Stream
+}
+
+// DirectUDPSocketLeftMulticastGroupReply is the reply for DirectUDPSocketLeftMulticastGroup events.
+type DirectUDPSocketLeftMulticastGroupReply struct {
+	Identifier RequestID `json:"identifier"` // No description.
+	IPAddress  string    `json:"IPAddress"`  // No description.
+}
+
+// DirectUDPSocketCreatedClient is a client for DirectUDPSocketCreated events.
+// Fired upon direct_socket.UDPSocket creation.
+type DirectUDPSocketCreatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectUDPSocketCreatedReply, error)
+	rpcc.Stream
+}
+
+// DirectUDPSocketCreatedReply is the reply for DirectUDPSocketCreated events.
+type DirectUDPSocketCreatedReply struct {
+	Identifier RequestID              `json:"identifier"`          // No description.
+	Options    DirectUDPSocketOptions `json:"options"`             // No description.
+	Timestamp  MonotonicTime          `json:"timestamp"`           // No description.
+	Initiator  *Initiator             `json:"initiator,omitempty"` // No description.
+}
+
+// DirectUDPSocketOpenedClient is a client for DirectUDPSocketOpened events.
+// Fired when direct_socket.UDPSocket connection is opened.
+type DirectUDPSocketOpenedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectUDPSocketOpenedReply, error)
+	rpcc.Stream
+}
+
+// DirectUDPSocketOpenedReply is the reply for DirectUDPSocketOpened events.
+type DirectUDPSocketOpenedReply struct {
+	Identifier RequestID     `json:"identifier"`           // No description.
+	LocalAddr  string        `json:"localAddr"`            // No description.
+	LocalPort  int           `json:"localPort"`            // Expected to be unsigned integer.
+	Timestamp  MonotonicTime `json:"timestamp"`            // No description.
+	RemoteAddr *string       `json:"remoteAddr,omitempty"` // No description.
+	RemotePort *int          `json:"remotePort,omitempty"` // Expected to be unsigned integer.
+}
+
+// DirectUDPSocketAbortedClient is a client for DirectUDPSocketAborted events.
+// Fired when direct_socket.UDPSocket is aborted.
+type DirectUDPSocketAbortedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectUDPSocketAbortedReply, error)
+	rpcc.Stream
+}
+
+// DirectUDPSocketAbortedReply is the reply for DirectUDPSocketAborted events.
+type DirectUDPSocketAbortedReply struct {
+	Identifier   RequestID     `json:"identifier"`   // No description.
+	ErrorMessage string        `json:"errorMessage"` // No description.
+	Timestamp    MonotonicTime `json:"timestamp"`    // No description.
+}
+
+// DirectUDPSocketClosedClient is a client for DirectUDPSocketClosed events.
+// Fired when direct_socket.UDPSocket is closed.
+type DirectUDPSocketClosedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectUDPSocketClosedReply, error)
+	rpcc.Stream
+}
+
+// DirectUDPSocketClosedReply is the reply for DirectUDPSocketClosed events.
+type DirectUDPSocketClosedReply struct {
+	Identifier RequestID     `json:"identifier"` // No description.
+	Timestamp  MonotonicTime `json:"timestamp"`  // No description.
+}
+
+// DirectUDPSocketChunkSentClient is a client for DirectUDPSocketChunkSent events.
+// Fired when message is sent to udp direct socket stream.
+type DirectUDPSocketChunkSentClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectUDPSocketChunkSentReply, error)
+	rpcc.Stream
+}
+
+// DirectUDPSocketChunkSentReply is the reply for DirectUDPSocketChunkSent events.
+type DirectUDPSocketChunkSentReply struct {
+	Identifier RequestID        `json:"identifier"` // No description.
+	Message    DirectUDPMessage `json:"message"`    // No description.
+	Timestamp  MonotonicTime    `json:"timestamp"`  // No description.
+}
+
+// DirectUDPSocketChunkReceivedClient is a client for DirectUDPSocketChunkReceived events.
+// Fired when message is received from udp direct socket stream.
+type DirectUDPSocketChunkReceivedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*DirectUDPSocketChunkReceivedReply, error)
+	rpcc.Stream
+}
+
+// DirectUDPSocketChunkReceivedReply is the reply for DirectUDPSocketChunkReceived events.
+type DirectUDPSocketChunkReceivedReply struct {
+	Identifier RequestID        `json:"identifier"` // No description.
+	Message    DirectUDPMessage `json:"message"`    // No description.
+	Timestamp  MonotonicTime    `json:"timestamp"`  // No description.
+}
+
 // RequestWillBeSentExtraInfoClient is a client for RequestWillBeSentExtraInfo events.
 // Fired when additional information about a requestWillBeSent event is
 // available from the network stack. Not every requestWillBeSent event will
@@ -393,6 +621,7 @@ type RequestWillBeSentExtraInfoReply struct {
 	ConnectTiming                 ConnectTiming        `json:"connectTiming"`
 	ClientSecurityState           *ClientSecurityState `json:"clientSecurityState,omitempty"`           // The client security state set for the request.
 	SiteHasCookieInOtherPartition *bool                `json:"siteHasCookieInOtherPartition,omitempty"` // Whether the site has partitioned cookies stored in a partition different than the current one.
+	AppliedNetworkConditionsID    *string              `json:"appliedNetworkConditionsId,omitempty"`    // The network conditions id if this request was affected by network conditions configured via emulateNetworkConditionsByRule.
 }
 
 // ResponseReceivedExtraInfoClient is a client for ResponseReceivedExtraInfo events.
@@ -411,7 +640,7 @@ type ResponseReceivedExtraInfoClient interface {
 type ResponseReceivedExtraInfoReply struct {
 	RequestID              RequestID                    `json:"requestId"`              // Request identifier. Used to match this information to another responseReceived event.
 	BlockedCookies         []BlockedSetCookieWithReason `json:"blockedCookies"`         // A list of cookies which were not stored from the response along with the corresponding reasons for blocking. The cookies here may not be valid due to syntax errors, which are represented by the invalid cookie line string instead of a proper cookie.
-	Headers                Headers                      `json:"headers"`                // Raw response headers as they were received over the wire.
+	Headers                Headers                      `json:"headers"`                // Raw response headers as they were received over the wire. Duplicate headers in the response are represented as a single key with their values concatentated using `\n` as the separator. See also `headersText` that contains verbatim text for HTTP/1.*.
 	ResourceIPAddressSpace IPAddressSpace               `json:"resourceIPAddressSpace"` // The IP address space of the resource. The address space can only be determined once the transport established the connection, so we can't send it in `requestWillBeSentExtraInfo`.
 	StatusCode             int                          `json:"statusCode"`             // The status code of the response. This is useful in cases the request failed and no responseReceived event is triggered, which is the case for, e.g., CORS errors. This is also the correct status code for cached requests, where the status in responseReceived is a 200 and this will be 304.
 	HeadersText            *string                      `json:"headersText,omitempty"`  // Raw response header text as it was received over the wire. The raw text may not always be available, such as in the case of HTTP/2 or QUIC.
@@ -440,7 +669,7 @@ type ResponseReceivedEarlyHintsClient interface {
 // ResponseReceivedEarlyHintsReply is the reply for ResponseReceivedEarlyHints events.
 type ResponseReceivedEarlyHintsReply struct {
 	RequestID RequestID `json:"requestId"` // Request identifier. Used to match this information to another responseReceived event.
-	Headers   Headers   `json:"headers"`   // Raw response headers as they were received over the wire.
+	Headers   Headers   `json:"headers"`   // Raw response headers as they were received over the wire. Duplicate headers in the response are represented as a single key with their values concatentated using `\n` as the separator. See also `headersText` that contains verbatim text for HTTP/1.*.
 }
 
 // TrustTokenOperationDoneClient is a client for TrustTokenOperationDone events.
@@ -462,7 +691,7 @@ type TrustTokenOperationDoneReply struct {
 	// of the operation already exists und thus, the operation was abort
 	// preemptively (e.g. a cache hit).
 	//
-	// Values: "Ok", "InvalidArgument", "MissingIssuerKeys", "FailedPrecondition", "ResourceExhausted", "AlreadyExists", "ResourceLimited", "Unauthorized", "BadResponse", "InternalError", "UnknownError", "FulfilledLocally".
+	// Values: "Ok", "InvalidArgument", "MissingIssuerKeys", "FailedPrecondition", "ResourceExhausted", "AlreadyExists", "ResourceLimited", "Unauthorized", "BadResponse", "InternalError", "UnknownError", "FulfilledLocally", "SiteIssuerLimit".
 	Status           string                  `json:"status"`
 	Type             TrustTokenOperationType `json:"type"`                       // No description.
 	RequestID        RequestID               `json:"requestId"`                  // No description.
@@ -482,71 +711,6 @@ type PolicyUpdatedClient interface {
 
 // PolicyUpdatedReply is the reply for PolicyUpdated events.
 type PolicyUpdatedReply struct {
-}
-
-// SubresourceWebBundleMetadataReceivedClient is a client for SubresourceWebBundleMetadataReceived events.
-// Fired once when parsing the .wbn file has succeeded. The event contains the
-// information about the web bundle contents.
-type SubresourceWebBundleMetadataReceivedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*SubresourceWebBundleMetadataReceivedReply, error)
-	rpcc.Stream
-}
-
-// SubresourceWebBundleMetadataReceivedReply is the reply for SubresourceWebBundleMetadataReceived events.
-type SubresourceWebBundleMetadataReceivedReply struct {
-	RequestID RequestID `json:"requestId"` // Request identifier. Used to match this information to another event.
-	URLs      []string  `json:"urls"`      // A list of URLs of resources in the subresource Web Bundle.
-}
-
-// SubresourceWebBundleMetadataErrorClient is a client for SubresourceWebBundleMetadataError events.
-// Fired once when parsing the .wbn file has failed.
-type SubresourceWebBundleMetadataErrorClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*SubresourceWebBundleMetadataErrorReply, error)
-	rpcc.Stream
-}
-
-// SubresourceWebBundleMetadataErrorReply is the reply for SubresourceWebBundleMetadataError events.
-type SubresourceWebBundleMetadataErrorReply struct {
-	RequestID    RequestID `json:"requestId"`    // Request identifier. Used to match this information to another event.
-	ErrorMessage string    `json:"errorMessage"` // Error message
-}
-
-// SubresourceWebBundleInnerResponseParsedClient is a client for SubresourceWebBundleInnerResponseParsed events.
-// Fired when handling requests for resources within a .wbn file. Note: this
-// will only be fired for resources that are requested by the webpage.
-type SubresourceWebBundleInnerResponseParsedClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*SubresourceWebBundleInnerResponseParsedReply, error)
-	rpcc.Stream
-}
-
-// SubresourceWebBundleInnerResponseParsedReply is the reply for SubresourceWebBundleInnerResponseParsed events.
-type SubresourceWebBundleInnerResponseParsedReply struct {
-	InnerRequestID  RequestID  `json:"innerRequestId"`            // Request identifier of the subresource request
-	InnerRequestURL string     `json:"innerRequestURL"`           // URL of the subresource resource.
-	BundleRequestID *RequestID `json:"bundleRequestId,omitempty"` // Bundle request identifier. Used to match this information to another event. This made be absent in case when the instrumentation was enabled only after webbundle was parsed.
-}
-
-// SubresourceWebBundleInnerResponseErrorClient is a client for SubresourceWebBundleInnerResponseError events.
-// Fired when request for resources within a .wbn file failed.
-type SubresourceWebBundleInnerResponseErrorClient interface {
-	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
-	// triggered, context canceled or connection closed.
-	Recv() (*SubresourceWebBundleInnerResponseErrorReply, error)
-	rpcc.Stream
-}
-
-// SubresourceWebBundleInnerResponseErrorReply is the reply for SubresourceWebBundleInnerResponseError events.
-type SubresourceWebBundleInnerResponseErrorReply struct {
-	InnerRequestID  RequestID  `json:"innerRequestId"`            // Request identifier of the subresource request
-	InnerRequestURL string     `json:"innerRequestURL"`           // URL of the subresource resource.
-	ErrorMessage    string     `json:"errorMessage"`              // Error message
-	BundleRequestID *RequestID `json:"bundleRequestId,omitempty"` // Bundle request identifier. Used to match this information to another event. This made be absent in case when the instrumentation was enabled only after webbundle was parsed.
 }
 
 // ReportingAPIReportAddedClient is a client for ReportingAPIReportAdded events.

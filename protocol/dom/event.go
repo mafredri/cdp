@@ -22,6 +22,24 @@ type AttributeModifiedReply struct {
 	Value  string `json:"value"`  // Attribute value.
 }
 
+// AdoptedStyleSheetsModifiedClient is a client for AdoptedStyleSheetsModified events.
+// Fired when `Element`'s adoptedStyleSheets are modified.
+type AdoptedStyleSheetsModifiedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*AdoptedStyleSheetsModifiedReply, error)
+	rpcc.Stream
+}
+
+// AdoptedStyleSheetsModifiedReply is the reply for AdoptedStyleSheetsModified events.
+type AdoptedStyleSheetsModifiedReply struct {
+	NodeID NodeID `json:"nodeId"` // Id of the node that has changed.
+	// AdoptedStyleSheets New adoptedStyleSheets array.
+	//
+	// Note: This property is experimental.
+	AdoptedStyleSheets []StyleSheetID `json:"adoptedStyleSheets"`
+}
+
 // AttributeRemovedClient is a client for AttributeRemoved events. Fired when
 // `Element`'s attribute is removed.
 type AttributeRemovedClient interface {
@@ -167,6 +185,36 @@ type TopLayerElementsUpdatedClient interface {
 
 // TopLayerElementsUpdatedReply is the reply for TopLayerElementsUpdated events.
 type TopLayerElementsUpdatedReply struct {
+}
+
+// ScrollableFlagUpdatedClient is a client for ScrollableFlagUpdated events.
+// Fired when a node's scrollability state changes.
+type ScrollableFlagUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*ScrollableFlagUpdatedReply, error)
+	rpcc.Stream
+}
+
+// ScrollableFlagUpdatedReply is the reply for ScrollableFlagUpdated events.
+type ScrollableFlagUpdatedReply struct {
+	NodeID       NodeID `json:"nodeId"`       // The id of the node.
+	IsScrollable bool   `json:"isScrollable"` // If the node is scrollable.
+}
+
+// AffectedByStartingStylesFlagUpdatedClient is a client for AffectedByStartingStylesFlagUpdated events.
+// Fired when a node's starting styles changes.
+type AffectedByStartingStylesFlagUpdatedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*AffectedByStartingStylesFlagUpdatedReply, error)
+	rpcc.Stream
+}
+
+// AffectedByStartingStylesFlagUpdatedReply is the reply for AffectedByStartingStylesFlagUpdated events.
+type AffectedByStartingStylesFlagUpdatedReply struct {
+	NodeID                   NodeID `json:"nodeId"`                   // The id of the node.
+	AffectedByStartingStyles bool   `json:"affectedByStartingStyles"` // If the node has starting styles.
 }
 
 // PseudoElementRemovedClient is a client for PseudoElementRemoved events.

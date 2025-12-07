@@ -118,6 +118,22 @@ func (d *domainClient) SetDefaultBackgroundColorOverride(ctx context.Context, ar
 	return
 }
 
+// SetSafeAreaInsetsOverride invokes the Emulation method. Overrides the
+// values for env(safe-area-inset-*) and env(safe-area-max-inset-*). Unset
+// values will cause the respective variables to be undefined, even if
+// previously overridden.
+func (d *domainClient) SetSafeAreaInsetsOverride(ctx context.Context, args *SetSafeAreaInsetsOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setSafeAreaInsetsOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setSafeAreaInsetsOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetSafeAreaInsetsOverride", Err: err}
+	}
+	return
+}
+
 // SetDeviceMetricsOverride invokes the Emulation method. Overrides the values
 // of device screen dimensions (window.screen.width, window.screen.height,
 // window.innerWidth, window.innerHeight, and
@@ -157,6 +173,33 @@ func (d *domainClient) ClearDevicePostureOverride(ctx context.Context) (err erro
 	err = rpcc.Invoke(ctx, "Emulation.clearDevicePostureOverride", nil, nil, d.conn)
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "ClearDevicePostureOverride", Err: err}
+	}
+	return
+}
+
+// SetDisplayFeaturesOverride invokes the Emulation method. Start using the
+// given display features to pupulate the Viewport Segments API. This override
+// can also be set in setDeviceMetricsOverride().
+func (d *domainClient) SetDisplayFeaturesOverride(ctx context.Context, args *SetDisplayFeaturesOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setDisplayFeaturesOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setDisplayFeaturesOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetDisplayFeaturesOverride", Err: err}
+	}
+	return
+}
+
+// ClearDisplayFeaturesOverride invokes the Emulation method. Clears the
+// display features override set with either setDeviceMetricsOverride() or
+// setDisplayFeaturesOverride() and starts using display features from the
+// platform again. Does nothing if no override is set.
+func (d *domainClient) ClearDisplayFeaturesOverride(ctx context.Context) (err error) {
+	err = rpcc.Invoke(ctx, "Emulation.clearDisplayFeaturesOverride", nil, nil, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "ClearDisplayFeaturesOverride", Err: err}
 	}
 	return
 }
@@ -228,9 +271,23 @@ func (d *domainClient) SetEmulatedVisionDeficiency(ctx context.Context, args *Se
 	return
 }
 
+// SetEmulatedOSTextScale invokes the Emulation method. Emulates the given OS
+// text scale.
+func (d *domainClient) SetEmulatedOSTextScale(ctx context.Context, args *SetEmulatedOSTextScaleArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setEmulatedOSTextScale", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setEmulatedOSTextScale", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetEmulatedOSTextScale", Err: err}
+	}
+	return
+}
+
 // SetGeolocationOverride invokes the Emulation method. Overrides the
-// Geolocation Position or Error. Omitting any of the parameters emulates
-// position unavailable.
+// Geolocation Position or Error. Omitting latitude, longitude or accuracy
+// emulates position unavailable.
 func (d *domainClient) SetGeolocationOverride(ctx context.Context, args *SetGeolocationOverrideArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Emulation.setGeolocationOverride", args, nil, d.conn)
@@ -307,9 +364,10 @@ func (d *domainClient) SetPressureSourceOverrideEnabled(ctx context.Context, arg
 	return
 }
 
-// SetPressureStateOverride invokes the Emulation method. Provides a given
-// pressure state that will be processed and eventually be delivered to
-// PressureObserver users. |source| must have been previously overridden by
+// SetPressureStateOverride invokes the Emulation method. TODO: OBSOLETE: To
+// remove when setPressureDataOverride is merged. Provides a given pressure
+// state that will be processed and eventually be delivered to PressureObserver
+// users. |source| must have been previously overridden by
 // setPressureSourceOverrideEnabled.
 func (d *domainClient) SetPressureStateOverride(ctx context.Context, args *SetPressureStateOverrideArgs) (err error) {
 	if args != nil {
@@ -319,6 +377,22 @@ func (d *domainClient) SetPressureStateOverride(ctx context.Context, args *SetPr
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetPressureStateOverride", Err: err}
+	}
+	return
+}
+
+// SetPressureDataOverride invokes the Emulation method. Provides a given
+// pressure data set that will be processed and eventually be delivered to
+// PressureObserver users. |source| must have been previously overridden by
+// setPressureSourceOverrideEnabled.
+func (d *domainClient) SetPressureDataOverride(ctx context.Context, args *SetPressureDataOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setPressureDataOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setPressureDataOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetPressureDataOverride", Err: err}
 	}
 	return
 }
@@ -476,6 +550,20 @@ func (d *domainClient) SetDisabledImageTypes(ctx context.Context, args *SetDisab
 	return
 }
 
+// SetDataSaverOverride invokes the Emulation method. Override the value of
+// navigator.connection.saveData
+func (d *domainClient) SetDataSaverOverride(ctx context.Context, args *SetDataSaverOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setDataSaverOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setDataSaverOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetDataSaverOverride", Err: err}
+	}
+	return
+}
+
 // SetHardwareConcurrencyOverride invokes the Emulation method.
 func (d *domainClient) SetHardwareConcurrencyOverride(ctx context.Context, args *SetHardwareConcurrencyOverrideArgs) (err error) {
 	if args != nil {
@@ -514,6 +602,62 @@ func (d *domainClient) SetAutomationOverride(ctx context.Context, args *SetAutom
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Emulation", Op: "SetAutomationOverride", Err: err}
+	}
+	return
+}
+
+// SetSmallViewportHeightDifferenceOverride invokes the Emulation method.
+// Allows overriding the difference between the small and large viewport sizes,
+// which determine the value of the `svh` and `lvh` unit, respectively. Only
+// supported for top-level frames.
+func (d *domainClient) SetSmallViewportHeightDifferenceOverride(ctx context.Context, args *SetSmallViewportHeightDifferenceOverrideArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.setSmallViewportHeightDifferenceOverride", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.setSmallViewportHeightDifferenceOverride", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "SetSmallViewportHeightDifferenceOverride", Err: err}
+	}
+	return
+}
+
+// GetScreenInfos invokes the Emulation method. Returns device's screen
+// configuration.
+func (d *domainClient) GetScreenInfos(ctx context.Context) (reply *GetScreenInfosReply, err error) {
+	reply = new(GetScreenInfosReply)
+	err = rpcc.Invoke(ctx, "Emulation.getScreenInfos", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "GetScreenInfos", Err: err}
+	}
+	return
+}
+
+// AddScreen invokes the Emulation method. Add a new screen to the device.
+// Only supported in headless mode.
+func (d *domainClient) AddScreen(ctx context.Context, args *AddScreenArgs) (reply *AddScreenReply, err error) {
+	reply = new(AddScreenReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.addScreen", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.addScreen", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "AddScreen", Err: err}
+	}
+	return
+}
+
+// RemoveScreen invokes the Emulation method. Remove screen from the device.
+// Only supported in headless mode.
+func (d *domainClient) RemoveScreen(ctx context.Context, args *RemoveScreenArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Emulation.removeScreen", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Emulation.removeScreen", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Emulation", Op: "RemoveScreen", Err: err}
 	}
 	return
 }

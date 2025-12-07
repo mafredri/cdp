@@ -3,7 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"os"
+
 	"log"
 	"time"
 
@@ -38,7 +39,7 @@ func run() error {
 
 	c := cdp.NewClient(conn)
 
-	err = c.Page.Enable(ctx)
+	err = c.Page.Enable(ctx, nil)
 	if err != nil {
 		return err
 	}
@@ -88,7 +89,7 @@ func run() error {
 
 			// Write the frame to file (without blocking).
 			go func() {
-				err = ioutil.WriteFile(name, ev.Data, 0o644)
+				err = os.WriteFile(name, ev.Data, 0o644)
 				if err != nil {
 					log.Printf("Failed to write ScreencastFrame to %q: %v", name, err)
 				}

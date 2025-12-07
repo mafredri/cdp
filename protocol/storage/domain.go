@@ -19,7 +19,7 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 }
 
 // GetStorageKeyForFrame invokes the Storage method. Returns a storage key
-// given a frame id.
+// given a frame id. Deprecated. Please use Storage.getStorageKey instead.
 func (d *domainClient) GetStorageKeyForFrame(ctx context.Context, args *GetStorageKeyForFrameArgs) (reply *GetStorageKeyForFrameReply, err error) {
 	reply = new(GetStorageKeyForFrameReply)
 	if args != nil {
@@ -29,6 +29,22 @@ func (d *domainClient) GetStorageKeyForFrame(ctx context.Context, args *GetStora
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Storage", Op: "GetStorageKeyForFrame", Err: err}
+	}
+	return
+}
+
+// GetStorageKey invokes the Storage method. Returns storage key for the given
+// frame. If no frame ID is provided, the storage key of the target executing
+// this command is returned.
+func (d *domainClient) GetStorageKey(ctx context.Context, args *GetStorageKeyArgs) (reply *GetStorageKeyReply, err error) {
+	reply = new(GetStorageKeyReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.getStorageKey", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.getStorageKey", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "GetStorageKey", Err: err}
 	}
 	return
 }
@@ -502,6 +518,36 @@ func (d *domainClient) GetRelatedWebsiteSets(ctx context.Context) (reply *GetRel
 	return
 }
 
+// GetAffectedURLsForThirdPartyCookieMetadata invokes the Storage method.
+// Returns the list of URLs from a page and its embedded resources that match
+// existing grace period URL pattern rules.
+// https://developers.google.com/privacy-sandbox/cookies/temporary-exceptions/grace-period
+func (d *domainClient) GetAffectedURLsForThirdPartyCookieMetadata(ctx context.Context, args *GetAffectedURLsForThirdPartyCookieMetadataArgs) (reply *GetAffectedURLsForThirdPartyCookieMetadataReply, err error) {
+	reply = new(GetAffectedURLsForThirdPartyCookieMetadataReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.getAffectedUrlsForThirdPartyCookieMetadata", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.getAffectedUrlsForThirdPartyCookieMetadata", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "GetAffectedURLsForThirdPartyCookieMetadata", Err: err}
+	}
+	return
+}
+
+// SetProtectedAudienceKAnonymity invokes the Storage method.
+func (d *domainClient) SetProtectedAudienceKAnonymity(ctx context.Context, args *SetProtectedAudienceKAnonymityArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Storage.setProtectedAudienceKAnonymity", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Storage.setProtectedAudienceKAnonymity", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Storage", Op: "SetProtectedAudienceKAnonymity", Err: err}
+	}
+	return
+}
+
 func (d *domainClient) CacheStorageContentUpdated(ctx context.Context) (CacheStorageContentUpdatedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Storage.cacheStorageContentUpdated", d.conn)
 	if err != nil {
@@ -670,6 +716,29 @@ func (c *sharedStorageAccessedClient) Recv() (*SharedStorageAccessedReply, error
 	return event, nil
 }
 
+func (d *domainClient) SharedStorageWorkletOperationExecutionFinished(ctx context.Context) (SharedStorageWorkletOperationExecutionFinishedClient, error) {
+	s, err := rpcc.NewStream(ctx, "Storage.sharedStorageWorkletOperationExecutionFinished", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &sharedStorageWorkletOperationExecutionFinishedClient{Stream: s}, nil
+}
+
+type sharedStorageWorkletOperationExecutionFinishedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *sharedStorageWorkletOperationExecutionFinishedClient) GetStream() rpcc.Stream {
+	return c.Stream
+}
+
+func (c *sharedStorageWorkletOperationExecutionFinishedClient) Recv() (*SharedStorageWorkletOperationExecutionFinishedReply, error) {
+	event := new(SharedStorageWorkletOperationExecutionFinishedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Storage", Op: "SharedStorageWorkletOperationExecutionFinished Recv", Err: err}
+	}
+	return event, nil
+}
+
 func (d *domainClient) StorageBucketCreatedOrUpdated(ctx context.Context) (BucketCreatedOrUpdatedClient, error) {
 	s, err := rpcc.NewStream(ctx, "Storage.storageBucketCreatedOrUpdated", d.conn)
 	if err != nil {
@@ -750,6 +819,48 @@ func (c *attributionReportingTriggerRegisteredClient) Recv() (*AttributionReport
 	event := new(AttributionReportingTriggerRegisteredReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "Storage", Op: "AttributionReportingTriggerRegistered Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) AttributionReportingReportSent(ctx context.Context) (AttributionReportingReportSentClient, error) {
+	s, err := rpcc.NewStream(ctx, "Storage.attributionReportingReportSent", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &attributionReportingReportSentClient{Stream: s}, nil
+}
+
+type attributionReportingReportSentClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *attributionReportingReportSentClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *attributionReportingReportSentClient) Recv() (*AttributionReportingReportSentReply, error) {
+	event := new(AttributionReportingReportSentReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Storage", Op: "AttributionReportingReportSent Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) AttributionReportingVerboseDebugReportSent(ctx context.Context) (AttributionReportingVerboseDebugReportSentClient, error) {
+	s, err := rpcc.NewStream(ctx, "Storage.attributionReportingVerboseDebugReportSent", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &attributionReportingVerboseDebugReportSentClient{Stream: s}, nil
+}
+
+type attributionReportingVerboseDebugReportSentClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *attributionReportingVerboseDebugReportSentClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *attributionReportingVerboseDebugReportSentClient) Recv() (*AttributionReportingVerboseDebugReportSentReply, error) {
+	event := new(AttributionReportingVerboseDebugReportSentReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "Storage", Op: "AttributionReportingVerboseDebugReportSent Recv", Err: err}
 	}
 	return event, nil
 }

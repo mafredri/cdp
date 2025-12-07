@@ -11,14 +11,14 @@ import (
 type TriggerArgs struct {
 	FieldID dom.BackendNodeID `json:"fieldId"`           // Identifies a field that serves as an anchor for autofill.
 	FrameID *page.FrameID     `json:"frameId,omitempty"` // Identifies the frame that field belongs to.
-	Card    CreditCard        `json:"card"`              // Credit card information to fill out the form. Credit card data is not saved.
+	Card    *CreditCard       `json:"card,omitempty"`    // Credit card information to fill out the form. Credit card data is not saved. Mutually exclusive with `address`.
+	Address *Address          `json:"address,omitempty"` // Address to fill out the form. Address data is not saved. Mutually exclusive with `card`.
 }
 
 // NewTriggerArgs initializes TriggerArgs with the required arguments.
-func NewTriggerArgs(fieldID dom.BackendNodeID, card CreditCard) *TriggerArgs {
+func NewTriggerArgs(fieldID dom.BackendNodeID) *TriggerArgs {
 	args := new(TriggerArgs)
 	args.FieldID = fieldID
-	args.Card = card
 	return args
 }
 
@@ -26,6 +26,21 @@ func NewTriggerArgs(fieldID dom.BackendNodeID, card CreditCard) *TriggerArgs {
 // that field belongs to.
 func (a *TriggerArgs) SetFrameID(frameID page.FrameID) *TriggerArgs {
 	a.FrameID = &frameID
+	return a
+}
+
+// SetCard sets the Card optional argument. Credit card information to
+// fill out the form. Credit card data is not saved. Mutually exclusive
+// with `address`.
+func (a *TriggerArgs) SetCard(card CreditCard) *TriggerArgs {
+	a.Card = &card
+	return a
+}
+
+// SetAddress sets the Address optional argument. Address to fill out
+// the form. Address data is not saved. Mutually exclusive with `card`.
+func (a *TriggerArgs) SetAddress(address Address) *TriggerArgs {
+	a.Address = &address
 	return a
 }
 

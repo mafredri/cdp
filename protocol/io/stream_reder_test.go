@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 	"io"
-	"io/ioutil"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
@@ -138,7 +137,7 @@ func TestNewStreamReader_Read(t *testing.T) {
 
 			r := NewStreamReader(tt.args.ctx, c, tt.args.handle)
 
-			b, err := ioutil.ReadAll(r)
+			b, err := io.ReadAll(r)
 			if err != nil {
 				t.Error(err)
 			}

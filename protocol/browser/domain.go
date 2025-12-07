@@ -21,7 +21,7 @@ func NewClient(conn *rpcc.Conn) *domainClient {
 }
 
 // SetPermission invokes the Browser method. Set permission settings for given
-// origin.
+// embedding and embedded origins.
 func (d *domainClient) SetPermission(ctx context.Context, args *SetPermissionArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Browser.setPermission", args, nil, d.conn)
@@ -35,7 +35,8 @@ func (d *domainClient) SetPermission(ctx context.Context, args *SetPermissionArg
 }
 
 // GrantPermissions invokes the Browser method. Grant specific permissions to
-// the given origin and reject all others.
+// the given origin and reject all others. Deprecated. Use setPermission
+// instead.
 func (d *domainClient) GrantPermissions(ctx context.Context, args *GrantPermissionsArgs) (err error) {
 	if args != nil {
 		err = rpcc.Invoke(ctx, "Browser.grantPermissions", args, nil, d.conn)
@@ -210,6 +211,20 @@ func (d *domainClient) SetWindowBounds(ctx context.Context, args *SetWindowBound
 	return
 }
 
+// SetContentsSize invokes the Browser method. Set size of the browser
+// contents resizing browser window as necessary.
+func (d *domainClient) SetContentsSize(ctx context.Context, args *SetContentsSizeArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.setContentsSize", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.setContentsSize", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "SetContentsSize", Err: err}
+	}
+	return
+}
+
 // SetDockTile invokes the Browser method. Set dock tile details,
 // platform-specific.
 func (d *domainClient) SetDockTile(ctx context.Context, args *SetDockTileArgs) (err error) {
@@ -249,6 +264,23 @@ func (d *domainClient) AddPrivacySandboxEnrollmentOverride(ctx context.Context, 
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "Browser", Op: "AddPrivacySandboxEnrollmentOverride", Err: err}
+	}
+	return
+}
+
+// AddPrivacySandboxCoordinatorKeyConfig invokes the Browser method.
+// Configures encryption keys used with a given privacy sandbox API to talk to
+// a trusted coordinator. Since this is intended for test automation only,
+// coordinatorOrigin must be a .test domain. No existing coordinator
+// configuration for the origin may exist.
+func (d *domainClient) AddPrivacySandboxCoordinatorKeyConfig(ctx context.Context, args *AddPrivacySandboxCoordinatorKeyConfigArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "Browser.addPrivacySandboxCoordinatorKeyConfig", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "Browser.addPrivacySandboxCoordinatorKeyConfig", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "Browser", Op: "AddPrivacySandboxCoordinatorKeyConfig", Err: err}
 	}
 	return
 }

@@ -85,7 +85,7 @@ func Example_advanced() {
 		// Enable all the domain events that we're interested in.
 		func() error { return c.DOM.Enable(ctx, nil) },
 		func() error { return c.Network.Enable(ctx, nil) },
-		func() error { return c.Page.Enable(ctx) },
+		func() error { return c.Page.Enable(ctx, nil) },
 		func() error { return c.Runtime.Enable(ctx) },
 
 		func() error { return setCookies(ctx, c.Network, Cookies...) },
@@ -225,7 +225,7 @@ func navigate(ctx context.Context, pageClient cdp.Page, url string, timeout time
 	defer cancel()
 
 	// Make sure Page events are enabled.
-	err := pageClient.Enable(ctx)
+	err := pageClient.Enable(ctx, nil)
 	if err != nil {
 		return err
 	}

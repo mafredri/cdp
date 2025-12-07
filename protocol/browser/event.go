@@ -42,4 +42,10 @@ type DownloadProgressReply struct {
 	//
 	// Values: "inProgress", "completed", "canceled".
 	State string `json:"state"`
+	// FilePath If download is "completed", provides the path of the
+	// downloaded file. Depending on the platform, it is not guaranteed to
+	// be set, nor the file is guaranteed to exist.
+	//
+	// Note: This property is experimental.
+	FilePath *string `json:"filePath,omitempty"`
 }

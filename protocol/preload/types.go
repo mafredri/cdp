@@ -24,6 +24,7 @@ type RuleSet struct {
 	// Deprecated: TODO(https://crbug.com/1425354): Replace this property
 	// with structured error.
 	ErrorMessage *string `json:"errorMessage,omitempty"`
+	Tag          *string `json:"tag,omitempty"` // For more details, see: https://github.com/WICG/nav-speculation/blob/main/speculation-rules-tags.md
 }
 
 // RuleSetErrorType
@@ -31,14 +32,15 @@ type RuleSetErrorType string
 
 // RuleSetErrorType as enums.
 const (
-	RuleSetErrorTypeNotSet                RuleSetErrorType = ""
-	RuleSetErrorTypeSourceIsNotJSONObject RuleSetErrorType = "SourceIsNotJsonObject"
-	RuleSetErrorTypeInvalidRulesSkipped   RuleSetErrorType = "InvalidRulesSkipped"
+	RuleSetErrorTypeNotSet                 RuleSetErrorType = ""
+	RuleSetErrorTypeSourceIsNotJSONObject  RuleSetErrorType = "SourceIsNotJsonObject"
+	RuleSetErrorTypeInvalidRulesSkipped    RuleSetErrorType = "InvalidRulesSkipped"
+	RuleSetErrorTypeInvalidRulesetLevelTag RuleSetErrorType = "InvalidRulesetLevelTag"
 )
 
 func (e RuleSetErrorType) Valid() bool {
 	switch e {
-	case "SourceIsNotJsonObject", "InvalidRulesSkipped":
+	case "SourceIsNotJsonObject", "InvalidRulesSkipped", "InvalidRulesetLevelTag":
 		return true
 	default:
 		return false
@@ -56,14 +58,15 @@ type SpeculationAction string
 
 // SpeculationAction as enums.
 const (
-	SpeculationActionNotSet    SpeculationAction = ""
-	SpeculationActionPrefetch  SpeculationAction = "Prefetch"
-	SpeculationActionPrerender SpeculationAction = "Prerender"
+	SpeculationActionNotSet               SpeculationAction = ""
+	SpeculationActionPrefetch             SpeculationAction = "Prefetch"
+	SpeculationActionPrerender            SpeculationAction = "Prerender"
+	SpeculationActionPrerenderUntilScript SpeculationAction = "PrerenderUntilScript"
 )
 
 func (e SpeculationAction) Valid() bool {
 	switch e {
-	case "Prefetch", "Prerender":
+	case "Prefetch", "Prerender", "PrerenderUntilScript":
 		return true
 	default:
 		return false
@@ -122,6 +125,15 @@ type AttemptSource struct {
 	NodeIDs    []dom.BackendNodeID `json:"nodeIds"`    // No description.
 }
 
+// PipelineID Chrome manages different types of preloads together using a
+// concept of preloading pipeline. For example, if a site uses a
+// SpeculationRules for prerender, Chrome first starts a prefetch and then
+// upgrades it to prerender.
+//
+// CDP events for them are emitted separately but they share
+// `PreloadPipelineId`.
+type PipelineID string
+
 // PrerenderFinalStatus List of FinalStatus reasons for Prerender2.
 type PrerenderFinalStatus string
 
@@ -134,7 +146,6 @@ const (
 	PrerenderFinalStatusInvalidSchemeRedirect                                      PrerenderFinalStatus = "InvalidSchemeRedirect"
 	PrerenderFinalStatusInvalidSchemeNavigation                                    PrerenderFinalStatus = "InvalidSchemeNavigation"
 	PrerenderFinalStatusNavigationRequestBlockedByCSP                              PrerenderFinalStatus = "NavigationRequestBlockedByCsp"
-	PrerenderFinalStatusMainFrameNavigation                                        PrerenderFinalStatus = "MainFrameNavigation"
 	PrerenderFinalStatusMojoBinderPolicy                                           PrerenderFinalStatus = "MojoBinderPolicy"
 	PrerenderFinalStatusRendererProcessCrashed                                     PrerenderFinalStatus = "RendererProcessCrashed"
 	PrerenderFinalStatusRendererProcessKilled                                      PrerenderFinalStatus = "RendererProcessKilled"
@@ -199,11 +210,15 @@ const (
 	PrerenderFinalStatusWindowClosed                                               PrerenderFinalStatus = "WindowClosed"
 	PrerenderFinalStatusSlowNetwork                                                PrerenderFinalStatus = "SlowNetwork"
 	PrerenderFinalStatusOtherPrerenderedPageActivated                              PrerenderFinalStatus = "OtherPrerenderedPageActivated"
+	PrerenderFinalStatusV8OptimizerDisabled                                        PrerenderFinalStatus = "V8OptimizerDisabled"
+	PrerenderFinalStatusPrerenderFailedDuringPrefetch                              PrerenderFinalStatus = "PrerenderFailedDuringPrefetch"
+	PrerenderFinalStatusBrowsingDataRemoved                                        PrerenderFinalStatus = "BrowsingDataRemoved"
+	PrerenderFinalStatusPrerenderHostReused                                        PrerenderFinalStatus = "PrerenderHostReused"
 )
 
 func (e PrerenderFinalStatus) Valid() bool {
 	switch e {
-	case "Activated", "Destroyed", "LowEndDevice", "InvalidSchemeRedirect", "InvalidSchemeNavigation", "NavigationRequestBlockedByCsp", "MainFrameNavigation", "MojoBinderPolicy", "RendererProcessCrashed", "RendererProcessKilled", "Download", "TriggerDestroyed", "NavigationNotCommitted", "NavigationBadHttpStatus", "ClientCertRequested", "NavigationRequestNetworkError", "CancelAllHostsForTesting", "DidFailLoad", "Stop", "SslCertificateError", "LoginAuthRequested", "UaChangeRequiresReload", "BlockedByClient", "AudioOutputDeviceRequested", "MixedContent", "TriggerBackgrounded", "MemoryLimitExceeded", "DataSaverEnabled", "TriggerUrlHasEffectiveUrl", "ActivatedBeforeStarted", "InactivePageRestriction", "StartFailed", "TimeoutBackgrounded", "CrossSiteRedirectInInitialNavigation", "CrossSiteNavigationInInitialNavigation", "SameSiteCrossOriginRedirectNotOptInInInitialNavigation", "SameSiteCrossOriginNavigationNotOptInInInitialNavigation", "ActivationNavigationParameterMismatch", "ActivatedInBackground", "EmbedderHostDisallowed", "ActivationNavigationDestroyedBeforeSuccess", "TabClosedByUserGesture", "TabClosedWithoutUserGesture", "PrimaryMainFrameRendererProcessCrashed", "PrimaryMainFrameRendererProcessKilled", "ActivationFramePolicyNotCompatible", "PreloadingDisabled", "BatterySaverEnabled", "ActivatedDuringMainFrameNavigation", "PreloadingUnsupportedByWebContents", "CrossSiteRedirectInMainFrameNavigation", "CrossSiteNavigationInMainFrameNavigation", "SameSiteCrossOriginRedirectNotOptInInMainFrameNavigation", "SameSiteCrossOriginNavigationNotOptInInMainFrameNavigation", "MemoryPressureOnTrigger", "MemoryPressureAfterTriggered", "PrerenderingDisabledByDevTools", "SpeculationRuleRemoved", "ActivatedWithAuxiliaryBrowsingContexts", "MaxNumOfRunningEagerPrerendersExceeded", "MaxNumOfRunningNonEagerPrerendersExceeded", "MaxNumOfRunningEmbedderPrerendersExceeded", "PrerenderingUrlHasEffectiveUrl", "RedirectedPrerenderingUrlHasEffectiveUrl", "ActivationUrlHasEffectiveUrl", "JavaScriptInterfaceAdded", "JavaScriptInterfaceRemoved", "AllPrerenderingCanceled", "WindowClosed", "SlowNetwork", "OtherPrerenderedPageActivated":
+	case "Activated", "Destroyed", "LowEndDevice", "InvalidSchemeRedirect", "InvalidSchemeNavigation", "NavigationRequestBlockedByCsp", "MojoBinderPolicy", "RendererProcessCrashed", "RendererProcessKilled", "Download", "TriggerDestroyed", "NavigationNotCommitted", "NavigationBadHttpStatus", "ClientCertRequested", "NavigationRequestNetworkError", "CancelAllHostsForTesting", "DidFailLoad", "Stop", "SslCertificateError", "LoginAuthRequested", "UaChangeRequiresReload", "BlockedByClient", "AudioOutputDeviceRequested", "MixedContent", "TriggerBackgrounded", "MemoryLimitExceeded", "DataSaverEnabled", "TriggerUrlHasEffectiveUrl", "ActivatedBeforeStarted", "InactivePageRestriction", "StartFailed", "TimeoutBackgrounded", "CrossSiteRedirectInInitialNavigation", "CrossSiteNavigationInInitialNavigation", "SameSiteCrossOriginRedirectNotOptInInInitialNavigation", "SameSiteCrossOriginNavigationNotOptInInInitialNavigation", "ActivationNavigationParameterMismatch", "ActivatedInBackground", "EmbedderHostDisallowed", "ActivationNavigationDestroyedBeforeSuccess", "TabClosedByUserGesture", "TabClosedWithoutUserGesture", "PrimaryMainFrameRendererProcessCrashed", "PrimaryMainFrameRendererProcessKilled", "ActivationFramePolicyNotCompatible", "PreloadingDisabled", "BatterySaverEnabled", "ActivatedDuringMainFrameNavigation", "PreloadingUnsupportedByWebContents", "CrossSiteRedirectInMainFrameNavigation", "CrossSiteNavigationInMainFrameNavigation", "SameSiteCrossOriginRedirectNotOptInInMainFrameNavigation", "SameSiteCrossOriginNavigationNotOptInInMainFrameNavigation", "MemoryPressureOnTrigger", "MemoryPressureAfterTriggered", "PrerenderingDisabledByDevTools", "SpeculationRuleRemoved", "ActivatedWithAuxiliaryBrowsingContexts", "MaxNumOfRunningEagerPrerendersExceeded", "MaxNumOfRunningNonEagerPrerendersExceeded", "MaxNumOfRunningEmbedderPrerendersExceeded", "PrerenderingUrlHasEffectiveUrl", "RedirectedPrerenderingUrlHasEffectiveUrl", "ActivationUrlHasEffectiveUrl", "JavaScriptInterfaceAdded", "JavaScriptInterfaceRemoved", "AllPrerenderingCanceled", "WindowClosed", "SlowNetwork", "OtherPrerenderedPageActivated", "V8OptimizerDisabled", "PrerenderFailedDuringPrefetch", "BrowsingDataRemoved", "PrerenderHostReused":
 		return true
 	default:
 		return false
@@ -256,6 +271,7 @@ const (
 	PrefetchStatusPrefetchFailedMIMENotSupported                              PrefetchStatus = "PrefetchFailedMIMENotSupported"
 	PrefetchStatusPrefetchFailedNetError                                      PrefetchStatus = "PrefetchFailedNetError"
 	PrefetchStatusPrefetchFailedNon2XX                                        PrefetchStatus = "PrefetchFailedNon2XX"
+	PrefetchStatusPrefetchEvictedAfterBrowsingDataRemoved                     PrefetchStatus = "PrefetchEvictedAfterBrowsingDataRemoved"
 	PrefetchStatusPrefetchEvictedAfterCandidateRemoved                        PrefetchStatus = "PrefetchEvictedAfterCandidateRemoved"
 	PrefetchStatusPrefetchEvictedForNewerPrefetch                             PrefetchStatus = "PrefetchEvictedForNewerPrefetch"
 	PrefetchStatusPrefetchHeldback                                            PrefetchStatus = "PrefetchHeldback"
@@ -271,6 +287,9 @@ const (
 	PrefetchStatusPrefetchNotEligibleSchemeIsNotHTTPS                         PrefetchStatus = "PrefetchNotEligibleSchemeIsNotHttps"
 	PrefetchStatusPrefetchNotEligibleUserHasCookies                           PrefetchStatus = "PrefetchNotEligibleUserHasCookies"
 	PrefetchStatusPrefetchNotEligibleUserHasServiceWorker                     PrefetchStatus = "PrefetchNotEligibleUserHasServiceWorker"
+	PrefetchStatusPrefetchNotEligibleUserHasServiceWorkerNoFetchHandler       PrefetchStatus = "PrefetchNotEligibleUserHasServiceWorkerNoFetchHandler"
+	PrefetchStatusPrefetchNotEligibleRedirectFromServiceWorker                PrefetchStatus = "PrefetchNotEligibleRedirectFromServiceWorker"
+	PrefetchStatusPrefetchNotEligibleRedirectToServiceWorker                  PrefetchStatus = "PrefetchNotEligibleRedirectToServiceWorker"
 	PrefetchStatusPrefetchNotEligibleBatterySaverEnabled                      PrefetchStatus = "PrefetchNotEligibleBatterySaverEnabled"
 	PrefetchStatusPrefetchNotEligiblePreloadingDisabled                       PrefetchStatus = "PrefetchNotEligiblePreloadingDisabled"
 	PrefetchStatusPrefetchNotFinishedInTime                                   PrefetchStatus = "PrefetchNotFinishedInTime"
@@ -284,7 +303,7 @@ const (
 
 func (e PrefetchStatus) Valid() bool {
 	switch e {
-	case "PrefetchAllowed", "PrefetchFailedIneligibleRedirect", "PrefetchFailedInvalidRedirect", "PrefetchFailedMIMENotSupported", "PrefetchFailedNetError", "PrefetchFailedNon2XX", "PrefetchEvictedAfterCandidateRemoved", "PrefetchEvictedForNewerPrefetch", "PrefetchHeldback", "PrefetchIneligibleRetryAfter", "PrefetchIsPrivacyDecoy", "PrefetchIsStale", "PrefetchNotEligibleBrowserContextOffTheRecord", "PrefetchNotEligibleDataSaverEnabled", "PrefetchNotEligibleExistingProxy", "PrefetchNotEligibleHostIsNonUnique", "PrefetchNotEligibleNonDefaultStoragePartition", "PrefetchNotEligibleSameSiteCrossOriginPrefetchRequiredProxy", "PrefetchNotEligibleSchemeIsNotHttps", "PrefetchNotEligibleUserHasCookies", "PrefetchNotEligibleUserHasServiceWorker", "PrefetchNotEligibleBatterySaverEnabled", "PrefetchNotEligiblePreloadingDisabled", "PrefetchNotFinishedInTime", "PrefetchNotStarted", "PrefetchNotUsedCookiesChanged", "PrefetchProxyNotAvailable", "PrefetchResponseUsed", "PrefetchSuccessfulButNotUsed", "PrefetchNotUsedProbeFailed":
+	case "PrefetchAllowed", "PrefetchFailedIneligibleRedirect", "PrefetchFailedInvalidRedirect", "PrefetchFailedMIMENotSupported", "PrefetchFailedNetError", "PrefetchFailedNon2XX", "PrefetchEvictedAfterBrowsingDataRemoved", "PrefetchEvictedAfterCandidateRemoved", "PrefetchEvictedForNewerPrefetch", "PrefetchHeldback", "PrefetchIneligibleRetryAfter", "PrefetchIsPrivacyDecoy", "PrefetchIsStale", "PrefetchNotEligibleBrowserContextOffTheRecord", "PrefetchNotEligibleDataSaverEnabled", "PrefetchNotEligibleExistingProxy", "PrefetchNotEligibleHostIsNonUnique", "PrefetchNotEligibleNonDefaultStoragePartition", "PrefetchNotEligibleSameSiteCrossOriginPrefetchRequiredProxy", "PrefetchNotEligibleSchemeIsNotHttps", "PrefetchNotEligibleUserHasCookies", "PrefetchNotEligibleUserHasServiceWorker", "PrefetchNotEligibleUserHasServiceWorkerNoFetchHandler", "PrefetchNotEligibleRedirectFromServiceWorker", "PrefetchNotEligibleRedirectToServiceWorker", "PrefetchNotEligibleBatterySaverEnabled", "PrefetchNotEligiblePreloadingDisabled", "PrefetchNotFinishedInTime", "PrefetchNotStarted", "PrefetchNotUsedCookiesChanged", "PrefetchProxyNotAvailable", "PrefetchResponseUsed", "PrefetchSuccessfulButNotUsed", "PrefetchNotUsedProbeFailed":
 		return true
 	default:
 		return false

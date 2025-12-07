@@ -114,6 +114,20 @@ func (d *domainClient) ForcePseudoState(ctx context.Context, args *ForcePseudoSt
 	return
 }
 
+// ForceStartingStyle invokes the CSS method. Ensures that the given node is
+// in its starting-style state.
+func (d *domainClient) ForceStartingStyle(ctx context.Context, args *ForceStartingStyleArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.forceStartingStyle", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.forceStartingStyle", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "ForceStartingStyle", Err: err}
+	}
+	return
+}
+
 // GetBackgroundColors invokes the CSS method.
 func (d *domainClient) GetBackgroundColors(ctx context.Context, args *GetBackgroundColorsArgs) (reply *GetBackgroundColorsReply, err error) {
 	reply = new(GetBackgroundColorsReply)
@@ -143,6 +157,42 @@ func (d *domainClient) GetComputedStyleForNode(ctx context.Context, args *GetCom
 	return
 }
 
+// ResolveValues invokes the CSS method. Resolve the specified values in the
+// context of the provided element. For example, a value of '1em' is evaluated
+// according to the computed 'font-size' of the element and a value 'calc(1px +
+// 2px)' will be resolved to '3px'. If the `propertyName` was specified the
+// `values` are resolved as if they were property's declaration. If a value
+// cannot be parsed according to the provided property syntax, the value is
+// parsed using combined syntax as if null `propertyName` was provided. If the
+// value cannot be resolved even then, return the provided value without any
+// changes.
+func (d *domainClient) ResolveValues(ctx context.Context, args *ResolveValuesArgs) (reply *ResolveValuesReply, err error) {
+	reply = new(ResolveValuesReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.resolveValues", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.resolveValues", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "ResolveValues", Err: err}
+	}
+	return
+}
+
+// GetLonghandProperties invokes the CSS method.
+func (d *domainClient) GetLonghandProperties(ctx context.Context, args *GetLonghandPropertiesArgs) (reply *GetLonghandPropertiesReply, err error) {
+	reply = new(GetLonghandPropertiesReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.getLonghandProperties", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.getLonghandProperties", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "GetLonghandProperties", Err: err}
+	}
+	return
+}
+
 // GetInlineStylesForNode invokes the CSS method. Returns the styles defined
 // inline (explicitly in the "style" attribute and implicitly, using DOM
 // attributes) for a DOM node identified by `nodeId`.
@@ -159,6 +209,22 @@ func (d *domainClient) GetInlineStylesForNode(ctx context.Context, args *GetInli
 	return
 }
 
+// GetAnimatedStylesForNode invokes the CSS method. Returns the styles coming
+// from animations & transitions including the animation & transition styles
+// coming from inheritance chain.
+func (d *domainClient) GetAnimatedStylesForNode(ctx context.Context, args *GetAnimatedStylesForNodeArgs) (reply *GetAnimatedStylesForNodeReply, err error) {
+	reply = new(GetAnimatedStylesForNodeReply)
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.getAnimatedStylesForNode", args, reply, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.getAnimatedStylesForNode", nil, reply, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "GetAnimatedStylesForNode", Err: err}
+	}
+	return
+}
+
 // GetMatchedStylesForNode invokes the CSS method. Returns requested styles
 // for a DOM node identified by `nodeId`.
 func (d *domainClient) GetMatchedStylesForNode(ctx context.Context, args *GetMatchedStylesForNodeArgs) (reply *GetMatchedStylesForNodeReply, err error) {
@@ -170,6 +236,17 @@ func (d *domainClient) GetMatchedStylesForNode(ctx context.Context, args *GetMat
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "GetMatchedStylesForNode", Err: err}
+	}
+	return
+}
+
+// GetEnvironmentVariables invokes the CSS method. Returns the values of the
+// default UA-defined environment variables used in env()
+func (d *domainClient) GetEnvironmentVariables(ctx context.Context) (reply *GetEnvironmentVariablesReply, err error) {
+	reply = new(GetEnvironmentVariablesReply)
+	err = rpcc.Invoke(ctx, "CSS.getEnvironmentVariables", nil, reply, d.conn)
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "GetEnvironmentVariables", Err: err}
 	}
 	return
 }
@@ -245,6 +322,24 @@ func (d *domainClient) GetLocationForSelector(ctx context.Context, args *GetLoca
 	}
 	if err != nil {
 		err = &internal.OpError{Domain: "CSS", Op: "GetLocationForSelector", Err: err}
+	}
+	return
+}
+
+// TrackComputedStyleUpdatesForNode invokes the CSS method. Starts tracking
+// the given node for the computed style updates and whenever the computed
+// style is updated for node, it queues a `computedStyleUpdated` event with
+// throttling. There can only be 1 node tracked for computed style updates so
+// passing a new node id removes tracking from the previous node. Pass
+// `undefined` to disable tracking.
+func (d *domainClient) TrackComputedStyleUpdatesForNode(ctx context.Context, args *TrackComputedStyleUpdatesForNodeArgs) (err error) {
+	if args != nil {
+		err = rpcc.Invoke(ctx, "CSS.trackComputedStyleUpdatesForNode", args, nil, d.conn)
+	} else {
+		err = rpcc.Invoke(ctx, "CSS.trackComputedStyleUpdatesForNode", nil, nil, d.conn)
+	}
+	if err != nil {
+		err = &internal.OpError{Domain: "CSS", Op: "TrackComputedStyleUpdatesForNode", Err: err}
 	}
 	return
 }
@@ -575,6 +670,27 @@ func (c *styleSheetRemovedClient) Recv() (*StyleSheetRemovedReply, error) {
 	event := new(StyleSheetRemovedReply)
 	if err := c.RecvMsg(event); err != nil {
 		return nil, &internal.OpError{Domain: "CSS", Op: "StyleSheetRemoved Recv", Err: err}
+	}
+	return event, nil
+}
+
+func (d *domainClient) ComputedStyleUpdated(ctx context.Context) (ComputedStyleUpdatedClient, error) {
+	s, err := rpcc.NewStream(ctx, "CSS.computedStyleUpdated", d.conn)
+	if err != nil {
+		return nil, err
+	}
+	return &computedStyleUpdatedClient{Stream: s}, nil
+}
+
+type computedStyleUpdatedClient struct{ rpcc.Stream }
+
+// GetStream returns the original Stream for use with cdp.Sync.
+func (c *computedStyleUpdatedClient) GetStream() rpcc.Stream { return c.Stream }
+
+func (c *computedStyleUpdatedClient) Recv() (*ComputedStyleUpdatedReply, error) {
+	event := new(ComputedStyleUpdatedReply)
+	if err := c.RecvMsg(event); err != nil {
+		return nil, &internal.OpError{Domain: "CSS", Op: "ComputedStyleUpdated Recv", Err: err}
 	}
 	return event, nil
 }

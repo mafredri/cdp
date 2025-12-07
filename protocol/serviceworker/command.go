@@ -52,18 +52,6 @@ func NewDispatchPeriodicSyncEventArgs(origin string, registrationID Registration
 	return args
 }
 
-// InspectWorkerArgs represents the arguments for InspectWorker in the ServiceWorker domain.
-type InspectWorkerArgs struct {
-	VersionID string `json:"versionId"` // No description.
-}
-
-// NewInspectWorkerArgs initializes InspectWorkerArgs with the required arguments.
-func NewInspectWorkerArgs(versionID string) *InspectWorkerArgs {
-	args := new(InspectWorkerArgs)
-	args.VersionID = versionID
-	return args
-}
-
 // SetForceUpdateOnPageLoadArgs represents the arguments for SetForceUpdateOnPageLoad in the ServiceWorker domain.
 type SetForceUpdateOnPageLoadArgs struct {
 	ForceUpdateOnPageLoad bool `json:"forceUpdateOnPageLoad"` // No description.

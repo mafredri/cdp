@@ -77,6 +77,18 @@ func (a *SetDefaultBackgroundColorOverrideArgs) SetColor(color dom.RGBA) *SetDef
 	return a
 }
 
+// SetSafeAreaInsetsOverrideArgs represents the arguments for SetSafeAreaInsetsOverride in the Emulation domain.
+type SetSafeAreaInsetsOverrideArgs struct {
+	Insets SafeAreaInsets `json:"insets"` // No description.
+}
+
+// NewSetSafeAreaInsetsOverrideArgs initializes SetSafeAreaInsetsOverrideArgs with the required arguments.
+func NewSetSafeAreaInsetsOverrideArgs(insets SafeAreaInsets) *SetSafeAreaInsetsOverrideArgs {
+	args := new(SetSafeAreaInsetsOverrideArgs)
+	args.Insets = insets
+	return args
+}
+
 // SetDeviceMetricsOverrideArgs represents the arguments for SetDeviceMetricsOverride in the Emulation domain.
 type SetDeviceMetricsOverrideArgs struct {
 	Width             int     `json:"width"`             // Overriding width value in pixels (minimum 0, maximum 10000000). 0 disables the override.
@@ -119,8 +131,11 @@ type SetDeviceMetricsOverrideArgs struct {
 	//
 	// Note: This property is experimental.
 	Viewport *page.Viewport `json:"viewport,omitempty"`
-	// DisplayFeature If set, the display feature of a multi-segment
-	// screen. If not set, multi-segment support is turned-off.
+	// DisplayFeature is deprecated.
+	//
+	// Deprecated: If set, the display feature of a multi-segment screen.
+	// If not set, multi-segment support is turned-off. Deprecated, use
+	// Emulation.setDisplayFeaturesOverride.
 	//
 	// Note: This property is experimental.
 	DisplayFeature *DisplayFeature `json:"displayFeature,omitempty"`
@@ -217,9 +232,12 @@ func (a *SetDeviceMetricsOverrideArgs) SetViewport(viewport page.Viewport) *SetD
 	return a
 }
 
-// SetDisplayFeature sets the DisplayFeature optional argument. If
+// SetDisplayFeature sets the DisplayFeature optional argument.
+//
+// Deprecated: If
 // set, the display feature of a multi-segment screen. If not set,
-// multi-segment support is turned-off.
+// multi-segment support is turned-off. Deprecated, use
+// Emulation.setDisplayFeaturesOverride.
 //
 // Note: This property is experimental.
 func (a *SetDeviceMetricsOverrideArgs) SetDisplayFeature(displayFeature DisplayFeature) *SetDeviceMetricsOverrideArgs {
@@ -248,6 +266,18 @@ type SetDevicePostureOverrideArgs struct {
 func NewSetDevicePostureOverrideArgs(posture DevicePosture) *SetDevicePostureOverrideArgs {
 	args := new(SetDevicePostureOverrideArgs)
 	args.Posture = posture
+	return args
+}
+
+// SetDisplayFeaturesOverrideArgs represents the arguments for SetDisplayFeaturesOverride in the Emulation domain.
+type SetDisplayFeaturesOverrideArgs struct {
+	Features []DisplayFeature `json:"features"` // No description.
+}
+
+// NewSetDisplayFeaturesOverrideArgs initializes SetDisplayFeaturesOverrideArgs with the required arguments.
+func NewSetDisplayFeaturesOverrideArgs(features []DisplayFeature) *SetDisplayFeaturesOverrideArgs {
+	args := new(SetDisplayFeaturesOverrideArgs)
+	args.Features = features
 	return args
 }
 
@@ -345,11 +375,33 @@ func NewSetEmulatedVisionDeficiencyArgs(typ string) *SetEmulatedVisionDeficiency
 	return args
 }
 
+// SetEmulatedOSTextScaleArgs represents the arguments for SetEmulatedOSTextScale in the Emulation domain.
+type SetEmulatedOSTextScaleArgs struct {
+	Scale *float64 `json:"scale,omitempty"` // No description.
+}
+
+// NewSetEmulatedOSTextScaleArgs initializes SetEmulatedOSTextScaleArgs with the required arguments.
+func NewSetEmulatedOSTextScaleArgs() *SetEmulatedOSTextScaleArgs {
+	args := new(SetEmulatedOSTextScaleArgs)
+
+	return args
+}
+
+// SetScale sets the Scale optional argument.
+func (a *SetEmulatedOSTextScaleArgs) SetScale(scale float64) *SetEmulatedOSTextScaleArgs {
+	a.Scale = &scale
+	return a
+}
+
 // SetGeolocationOverrideArgs represents the arguments for SetGeolocationOverride in the Emulation domain.
 type SetGeolocationOverrideArgs struct {
-	Latitude  *float64 `json:"latitude,omitempty"`  // Mock latitude
-	Longitude *float64 `json:"longitude,omitempty"` // Mock longitude
-	Accuracy  *float64 `json:"accuracy,omitempty"`  // Mock accuracy
+	Latitude         *float64 `json:"latitude,omitempty"`         // Mock latitude
+	Longitude        *float64 `json:"longitude,omitempty"`        // Mock longitude
+	Accuracy         *float64 `json:"accuracy,omitempty"`         // Mock accuracy
+	Altitude         *float64 `json:"altitude,omitempty"`         // Mock altitude
+	AltitudeAccuracy *float64 `json:"altitudeAccuracy,omitempty"` // Mock altitudeAccuracy
+	Heading          *float64 `json:"heading,omitempty"`          // Mock heading
+	Speed            *float64 `json:"speed,omitempty"`            // Mock speed
 }
 
 // NewSetGeolocationOverrideArgs initializes SetGeolocationOverrideArgs with the required arguments.
@@ -374,6 +426,31 @@ func (a *SetGeolocationOverrideArgs) SetLongitude(longitude float64) *SetGeoloca
 // SetAccuracy sets the Accuracy optional argument. Mock accuracy
 func (a *SetGeolocationOverrideArgs) SetAccuracy(accuracy float64) *SetGeolocationOverrideArgs {
 	a.Accuracy = &accuracy
+	return a
+}
+
+// SetAltitude sets the Altitude optional argument. Mock altitude
+func (a *SetGeolocationOverrideArgs) SetAltitude(altitude float64) *SetGeolocationOverrideArgs {
+	a.Altitude = &altitude
+	return a
+}
+
+// SetAltitudeAccuracy sets the AltitudeAccuracy optional argument.
+// Mock altitudeAccuracy
+func (a *SetGeolocationOverrideArgs) SetAltitudeAccuracy(altitudeAccuracy float64) *SetGeolocationOverrideArgs {
+	a.AltitudeAccuracy = &altitudeAccuracy
+	return a
+}
+
+// SetHeading sets the Heading optional argument. Mock heading
+func (a *SetGeolocationOverrideArgs) SetHeading(heading float64) *SetGeolocationOverrideArgs {
+	a.Heading = &heading
+	return a
+}
+
+// SetSpeed sets the Speed optional argument. Mock speed
+func (a *SetGeolocationOverrideArgs) SetSpeed(speed float64) *SetGeolocationOverrideArgs {
+	a.Speed = &speed
 	return a
 }
 
@@ -462,6 +539,27 @@ func NewSetPressureStateOverrideArgs(source PressureSource, state PressureState)
 	args.Source = source
 	args.State = state
 	return args
+}
+
+// SetPressureDataOverrideArgs represents the arguments for SetPressureDataOverride in the Emulation domain.
+type SetPressureDataOverrideArgs struct {
+	Source                  PressureSource `json:"source"`                            // No description.
+	State                   PressureState  `json:"state"`                             // No description.
+	OwnContributionEstimate *float64       `json:"ownContributionEstimate,omitempty"` // No description.
+}
+
+// NewSetPressureDataOverrideArgs initializes SetPressureDataOverrideArgs with the required arguments.
+func NewSetPressureDataOverrideArgs(source PressureSource, state PressureState) *SetPressureDataOverrideArgs {
+	args := new(SetPressureDataOverrideArgs)
+	args.Source = source
+	args.State = state
+	return args
+}
+
+// SetOwnContributionEstimate sets the OwnContributionEstimate optional argument.
+func (a *SetPressureDataOverrideArgs) SetOwnContributionEstimate(ownContributionEstimate float64) *SetPressureDataOverrideArgs {
+	a.OwnContributionEstimate = &ownContributionEstimate
+	return a
 }
 
 // SetIdleOverrideArgs represents the arguments for SetIdleOverride in the Emulation domain.
@@ -636,6 +734,25 @@ func NewSetDisabledImageTypesArgs(imageTypes []DisabledImageType) *SetDisabledIm
 	return args
 }
 
+// SetDataSaverOverrideArgs represents the arguments for SetDataSaverOverride in the Emulation domain.
+type SetDataSaverOverrideArgs struct {
+	DataSaverEnabled *bool `json:"dataSaverEnabled,omitempty"` // Override value. Omitting the parameter disables the override.
+}
+
+// NewSetDataSaverOverrideArgs initializes SetDataSaverOverrideArgs with the required arguments.
+func NewSetDataSaverOverrideArgs() *SetDataSaverOverrideArgs {
+	args := new(SetDataSaverOverrideArgs)
+
+	return args
+}
+
+// SetDataSaverEnabled sets the DataSaverEnabled optional argument.
+// Override value. Omitting the parameter disables the override.
+func (a *SetDataSaverOverrideArgs) SetDataSaverEnabled(dataSaverEnabled bool) *SetDataSaverOverrideArgs {
+	a.DataSaverEnabled = &dataSaverEnabled
+	return a
+}
+
 // SetHardwareConcurrencyOverrideArgs represents the arguments for SetHardwareConcurrencyOverride in the Emulation domain.
 type SetHardwareConcurrencyOverrideArgs struct {
 	HardwareConcurrency int `json:"hardwareConcurrency"` // Hardware concurrency to report
@@ -700,5 +817,107 @@ type SetAutomationOverrideArgs struct {
 func NewSetAutomationOverrideArgs(enabled bool) *SetAutomationOverrideArgs {
 	args := new(SetAutomationOverrideArgs)
 	args.Enabled = enabled
+	return args
+}
+
+// SetSmallViewportHeightDifferenceOverrideArgs represents the arguments for SetSmallViewportHeightDifferenceOverride in the Emulation domain.
+type SetSmallViewportHeightDifferenceOverrideArgs struct {
+	Difference int `json:"difference"` // This will cause an element of size 100svh to be `difference` pixels smaller than an element of size 100lvh.
+}
+
+// NewSetSmallViewportHeightDifferenceOverrideArgs initializes SetSmallViewportHeightDifferenceOverrideArgs with the required arguments.
+func NewSetSmallViewportHeightDifferenceOverrideArgs(difference int) *SetSmallViewportHeightDifferenceOverrideArgs {
+	args := new(SetSmallViewportHeightDifferenceOverrideArgs)
+	args.Difference = difference
+	return args
+}
+
+// GetScreenInfosReply represents the return values for GetScreenInfos in the Emulation domain.
+type GetScreenInfosReply struct {
+	ScreenInfos []ScreenInfo `json:"screenInfos"` // No description.
+}
+
+// AddScreenArgs represents the arguments for AddScreen in the Emulation domain.
+type AddScreenArgs struct {
+	Left             int             `json:"left"`                       // Offset of the left edge of the screen in pixels.
+	Top              int             `json:"top"`                        // Offset of the top edge of the screen in pixels.
+	Width            int             `json:"width"`                      // The width of the screen in pixels.
+	Height           int             `json:"height"`                     // The height of the screen in pixels.
+	WorkAreaInsets   *WorkAreaInsets `json:"workAreaInsets,omitempty"`   // Specifies the screen's work area. Default is entire screen.
+	DevicePixelRatio *float64        `json:"devicePixelRatio,omitempty"` // Specifies the screen's device pixel ratio. Default is 1.
+	Rotation         *int            `json:"rotation,omitempty"`         // Specifies the screen's rotation angle. Available values are 0, 90, 180 and 270. Default is 0.
+	ColorDepth       *int            `json:"colorDepth,omitempty"`       // Specifies the screen's color depth in bits. Default is 24.
+	Label            *string         `json:"label,omitempty"`            // Specifies the descriptive label for the screen. Default is none.
+	IsInternal       *bool           `json:"isInternal,omitempty"`       // Indicates whether the screen is internal to the device or external, attached to the device. Default is false.
+}
+
+// NewAddScreenArgs initializes AddScreenArgs with the required arguments.
+func NewAddScreenArgs(left int, top int, width int, height int) *AddScreenArgs {
+	args := new(AddScreenArgs)
+	args.Left = left
+	args.Top = top
+	args.Width = width
+	args.Height = height
+	return args
+}
+
+// SetWorkAreaInsets sets the WorkAreaInsets optional argument.
+// Specifies the screen's work area. Default is entire screen.
+func (a *AddScreenArgs) SetWorkAreaInsets(workAreaInsets WorkAreaInsets) *AddScreenArgs {
+	a.WorkAreaInsets = &workAreaInsets
+	return a
+}
+
+// SetDevicePixelRatio sets the DevicePixelRatio optional argument.
+// Specifies the screen's device pixel ratio. Default is 1.
+func (a *AddScreenArgs) SetDevicePixelRatio(devicePixelRatio float64) *AddScreenArgs {
+	a.DevicePixelRatio = &devicePixelRatio
+	return a
+}
+
+// SetRotation sets the Rotation optional argument. Specifies the
+// screen's rotation angle. Available values are 0, 90, 180 and 270.
+// Default is 0.
+func (a *AddScreenArgs) SetRotation(rotation int) *AddScreenArgs {
+	a.Rotation = &rotation
+	return a
+}
+
+// SetColorDepth sets the ColorDepth optional argument. Specifies the
+// screen's color depth in bits. Default is 24.
+func (a *AddScreenArgs) SetColorDepth(colorDepth int) *AddScreenArgs {
+	a.ColorDepth = &colorDepth
+	return a
+}
+
+// SetLabel sets the Label optional argument. Specifies the
+// descriptive label for the screen. Default is none.
+func (a *AddScreenArgs) SetLabel(label string) *AddScreenArgs {
+	a.Label = &label
+	return a
+}
+
+// SetIsInternal sets the IsInternal optional argument. Indicates
+// whether the screen is internal to the device or external, attached
+// to the device. Default is false.
+func (a *AddScreenArgs) SetIsInternal(isInternal bool) *AddScreenArgs {
+	a.IsInternal = &isInternal
+	return a
+}
+
+// AddScreenReply represents the return values for AddScreen in the Emulation domain.
+type AddScreenReply struct {
+	ScreenInfo ScreenInfo `json:"screenInfo"` // No description.
+}
+
+// RemoveScreenArgs represents the arguments for RemoveScreen in the Emulation domain.
+type RemoveScreenArgs struct {
+	ScreenID ScreenID `json:"screenId"` // No description.
+}
+
+// NewRemoveScreenArgs initializes RemoveScreenArgs with the required arguments.
+func NewRemoveScreenArgs(screenID ScreenID) *RemoveScreenArgs {
+	args := new(RemoveScreenArgs)
+	args.ScreenID = screenID
 	return args
 }

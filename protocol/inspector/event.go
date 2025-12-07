@@ -45,3 +45,17 @@ type TargetReloadedAfterCrashClient interface {
 // TargetReloadedAfterCrashReply is the reply for TargetReloadedAfterCrash events.
 type TargetReloadedAfterCrashReply struct {
 }
+
+// WorkerScriptLoadedClient is a client for WorkerScriptLoaded events. Fired
+// on worker targets when main worker script and any imported scripts have been
+// evaluated.
+type WorkerScriptLoadedClient interface {
+	// Recv calls RecvMsg on rpcc.Stream, blocks until the event is
+	// triggered, context canceled or connection closed.
+	Recv() (*WorkerScriptLoadedReply, error)
+	rpcc.Stream
+}
+
+// WorkerScriptLoadedReply is the reply for WorkerScriptLoaded events.
+type WorkerScriptLoadedReply struct {
+}

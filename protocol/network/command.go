@@ -235,6 +235,51 @@ func (a *EmulateNetworkConditionsArgs) SetPacketReordering(packetReordering bool
 	return a
 }
 
+// EmulateNetworkConditionsByRuleArgs represents the arguments for EmulateNetworkConditionsByRule in the Network domain.
+type EmulateNetworkConditionsByRuleArgs struct {
+	Offline                  bool         `json:"offline"`                  // True to emulate internet disconnection.
+	MatchedNetworkConditions []Conditions `json:"matchedNetworkConditions"` // Configure conditions for matching requests. If multiple entries match a request, the first entry wins. Global conditions can be configured by leaving the urlPattern for the conditions empty. These global conditions are also applied for throttling of p2p connections.
+}
+
+// NewEmulateNetworkConditionsByRuleArgs initializes EmulateNetworkConditionsByRuleArgs with the required arguments.
+func NewEmulateNetworkConditionsByRuleArgs(offline bool, matchedNetworkConditions []Conditions) *EmulateNetworkConditionsByRuleArgs {
+	args := new(EmulateNetworkConditionsByRuleArgs)
+	args.Offline = offline
+	args.MatchedNetworkConditions = matchedNetworkConditions
+	return args
+}
+
+// EmulateNetworkConditionsByRuleReply represents the return values for EmulateNetworkConditionsByRule in the Network domain.
+type EmulateNetworkConditionsByRuleReply struct {
+	RuleIDs []string `json:"ruleIds"` // An id for each entry in matchedNetworkConditions. The id will be included in the requestWillBeSentExtraInfo for requests affected by a rule.
+}
+
+// OverrideNetworkStateArgs represents the arguments for OverrideNetworkState in the Network domain.
+type OverrideNetworkStateArgs struct {
+	Offline            bool           `json:"offline"`                  // True to emulate internet disconnection.
+	Latency            float64        `json:"latency"`                  // Minimum latency from request sent to response headers received (ms).
+	DownloadThroughput float64        `json:"downloadThroughput"`       // Maximal aggregated download throughput (bytes/sec). -1 disables download throttling.
+	UploadThroughput   float64        `json:"uploadThroughput"`         // Maximal aggregated upload throughput (bytes/sec). -1 disables upload throttling.
+	ConnectionType     ConnectionType `json:"connectionType,omitempty"` // Connection type if known.
+}
+
+// NewOverrideNetworkStateArgs initializes OverrideNetworkStateArgs with the required arguments.
+func NewOverrideNetworkStateArgs(offline bool, latency float64, downloadThroughput float64, uploadThroughput float64) *OverrideNetworkStateArgs {
+	args := new(OverrideNetworkStateArgs)
+	args.Offline = offline
+	args.Latency = latency
+	args.DownloadThroughput = downloadThroughput
+	args.UploadThroughput = uploadThroughput
+	return args
+}
+
+// SetConnectionType sets the ConnectionType optional argument.
+// Connection type if known.
+func (a *OverrideNetworkStateArgs) SetConnectionType(connectionType ConnectionType) *OverrideNetworkStateArgs {
+	a.ConnectionType = connectionType
+	return a
+}
+
 // EnableArgs represents the arguments for Enable in the Network domain.
 type EnableArgs struct {
 	// MaxTotalBufferSize Buffer size in bytes to use when preserving
@@ -248,6 +293,17 @@ type EnableArgs struct {
 	// Note: This property is experimental.
 	MaxResourceBufferSize *int `json:"maxResourceBufferSize,omitempty"`
 	MaxPostDataSize       *int `json:"maxPostDataSize,omitempty"` // Longest post body size (in bytes) that would be included in requestWillBeSent notification
+	// ReportDirectSocketTraffic Whether DirectSocket chunk send/receive
+	// events should be reported.
+	//
+	// Note: This property is experimental.
+	ReportDirectSocketTraffic *bool `json:"reportDirectSocketTraffic,omitempty"`
+	// EnableDurableMessages Enable storing response bodies outside of
+	// renderer, so that these survive a cross-process navigation. Requires
+	// maxTotalBufferSize to be set. Currently defaults to false.
+	//
+	// Note: This property is experimental.
+	EnableDurableMessages *bool `json:"enableDurableMessages,omitempty"`
 }
 
 // NewEnableArgs initializes EnableArgs with the required arguments.
@@ -282,6 +338,26 @@ func (a *EnableArgs) SetMaxResourceBufferSize(maxResourceBufferSize int) *Enable
 // requestWillBeSent notification
 func (a *EnableArgs) SetMaxPostDataSize(maxPostDataSize int) *EnableArgs {
 	a.MaxPostDataSize = &maxPostDataSize
+	return a
+}
+
+// SetReportDirectSocketTraffic sets the ReportDirectSocketTraffic optional argument.
+// Whether DirectSocket chunk send/receive events should be reported.
+//
+// Note: This property is experimental.
+func (a *EnableArgs) SetReportDirectSocketTraffic(reportDirectSocketTraffic bool) *EnableArgs {
+	a.ReportDirectSocketTraffic = &reportDirectSocketTraffic
+	return a
+}
+
+// SetEnableDurableMessages sets the EnableDurableMessages optional argument.
+// Enable storing response bodies outside of renderer, so that these
+// survive a cross-process navigation. Requires maxTotalBufferSize to
+// be set. Currently defaults to false.
+//
+// Note: This property is experimental.
+func (a *EnableArgs) SetEnableDurableMessages(enableDurableMessages bool) *EnableArgs {
+	a.EnableDurableMessages = &enableDurableMessages
 	return a
 }
 
@@ -452,14 +528,35 @@ type SearchInResponseBodyReply struct {
 
 // SetBlockedURLsArgs represents the arguments for SetBlockedURLs in the Network domain.
 type SetBlockedURLsArgs struct {
-	URLs []string `json:"urls"` // URL patterns to block. Wildcards ('*') are allowed.
+	URLPatterns []BlockPattern `json:"urlPatterns,omitempty"` // Patterns to match in the order in which they are given. These patterns also take precedence over any wildcard patterns defined in `urls`.
+	// URLs is deprecated.
+	//
+	// Deprecated: URL patterns to block. Wildcards ('*') are allowed.
+	URLs []string `json:"urls,omitempty"`
 }
 
 // NewSetBlockedURLsArgs initializes SetBlockedURLsArgs with the required arguments.
-func NewSetBlockedURLsArgs(urls []string) *SetBlockedURLsArgs {
+func NewSetBlockedURLsArgs() *SetBlockedURLsArgs {
 	args := new(SetBlockedURLsArgs)
-	args.URLs = urls
+
 	return args
+}
+
+// SetURLPatterns sets the URLPatterns optional argument. Patterns to
+// match in the order in which they are given. These patterns also take
+// precedence over any wildcard patterns defined in `urls`.
+func (a *SetBlockedURLsArgs) SetURLPatterns(urlPatterns []BlockPattern) *SetBlockedURLsArgs {
+	a.URLPatterns = urlPatterns
+	return a
+}
+
+// SetURLs sets the URLs optional argument.
+//
+// Deprecated: URL patterns to block.
+// Wildcards ('*') are allowed.
+func (a *SetBlockedURLsArgs) SetURLs(urls []string) *SetBlockedURLsArgs {
+	a.URLs = urls
+	return a
 }
 
 // SetBypassServiceWorkerArgs represents the arguments for SetBypassServiceWorker in the Network domain.
@@ -765,4 +862,20 @@ func (a *LoadNetworkResourceArgs) SetFrameID(frameID internal.PageFrameID) *Load
 // LoadNetworkResourceReply represents the return values for LoadNetworkResource in the Network domain.
 type LoadNetworkResourceReply struct {
 	Resource LoadNetworkResourcePageResult `json:"resource"` // No description.
+}
+
+// SetCookieControlsArgs represents the arguments for SetCookieControls in the Network domain.
+type SetCookieControlsArgs struct {
+	EnableThirdPartyCookieRestriction bool `json:"enableThirdPartyCookieRestriction"` // Whether 3pc restriction is enabled.
+	DisableThirdPartyCookieMetadata   bool `json:"disableThirdPartyCookieMetadata"`   // Whether 3pc grace period exception should be enabled; false by default.
+	DisableThirdPartyCookieHeuristics bool `json:"disableThirdPartyCookieHeuristics"` // Whether 3pc heuristics exceptions should be enabled; false by default.
+}
+
+// NewSetCookieControlsArgs initializes SetCookieControlsArgs with the required arguments.
+func NewSetCookieControlsArgs(enableThirdPartyCookieRestriction bool, disableThirdPartyCookieMetadata bool, disableThirdPartyCookieHeuristics bool) *SetCookieControlsArgs {
+	args := new(SetCookieControlsArgs)
+	args.EnableThirdPartyCookieRestriction = enableThirdPartyCookieRestriction
+	args.DisableThirdPartyCookieMetadata = disableThirdPartyCookieMetadata
+	args.DisableThirdPartyCookieHeuristics = disableThirdPartyCookieHeuristics
+	return args
 }
