@@ -7,7 +7,8 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
+	"os"
+
 	"net/http"
 	"net/http/httptest"
 	"path/filepath"
@@ -58,7 +59,7 @@ func (h *testHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func read(t *testing.T, name string) []byte {
-	b, err := ioutil.ReadFile(name)
+	b, err := os.ReadFile(name)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -125,14 +126,14 @@ func TestDevTools(t *testing.T) {
 	}
 
 	out := filepath.Join("testdata", "test.golden")
-	want, err := ioutil.ReadFile(out)
+	want, err := os.ReadFile(out)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if got := buf.Bytes(); !bytes.Equal(got, want) {
 		if *update {
-			err := ioutil.WriteFile(out, got, 0o666)
+			err := os.WriteFile(out, got, 0o666)
 			if err != nil {
 				t.Error(err)
 			}
@@ -194,14 +195,14 @@ func TestDevTools_Error(t *testing.T) {
 	}
 
 	out := filepath.Join("testdata", "error.golden")
-	want, err := ioutil.ReadFile(out)
+	want, err := os.ReadFile(out)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	if got := buf.Bytes(); !bytes.Equal(got, want) {
 		if *update {
-			err := ioutil.WriteFile(out, got, 0o666)
+			err := os.WriteFile(out, got, 0o666)
 			if err != nil {
 				t.Error(err)
 			}

@@ -8,7 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"go/format"
-	"io/ioutil"
+
 	"log"
 	"os"
 	"os/exec"
@@ -67,13 +67,13 @@ func main() {
 	}
 
 	var protocol, jsProtocol proto.Protocol
-	protocolData, err := ioutil.ReadFile(browserProtoJSON)
+	protocolData, err := os.ReadFile(browserProtoJSON)
 	panicErr(err)
 
 	err = json.Unmarshal(protocolData, &protocol)
 	panicErr(err)
 
-	jsProtocolData, err := ioutil.ReadFile(jsProtoFileJSON)
+	jsProtocolData, err := os.ReadFile(jsProtoFileJSON)
 	panicErr(err)
 
 	err = json.Unmarshal(jsProtocolData, &jsProtocol)
@@ -280,7 +280,7 @@ func (g *Generator) writeFile(f string) {
 		return
 	}
 	log.Printf("Writing %s...", fp)
-	err := ioutil.WriteFile(fp, g.format(), 0o644)
+	err := os.WriteFile(fp, g.format(), 0o644)
 	panicErr(err)
 
 	if g.testbuf.Len() > 0 {
@@ -291,7 +291,7 @@ func (g *Generator) writeFile(f string) {
 		fptest := strings.Replace(fp, ".go", "_test.go", 1)
 		log.Printf("Writing %s...", fptest)
 
-		err = ioutil.WriteFile(fptest, g.format(), 0o644)
+		err = os.WriteFile(fptest, g.format(), 0o644)
 		panicErr(err)
 	}
 	g.clear()

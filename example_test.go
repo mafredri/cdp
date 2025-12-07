@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"time"
@@ -100,7 +99,7 @@ func run(timeout time.Duration) error {
 	if err != nil {
 		return err
 	}
-	if err = ioutil.WriteFile(screenshotName, screenshot.Data, 0o644); err != nil {
+	if err = os.WriteFile(screenshotName, screenshot.Data, 0o644); err != nil {
 		return err
 	}
 
