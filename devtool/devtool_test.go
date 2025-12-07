@@ -253,6 +253,28 @@ func TestDevTools_InvalidURL(t *testing.T) {
 	}
 }
 
+func TestDevTools_TrailingSlash(t *testing.T) {
+	th := newTestHandler(t)
+	srv := httptest.NewServer(th)
+	defer srv.Close()
+
+	// Create DevTools with trailing slash in URL.
+	devt := New(srv.URL + "/")
+	th.hostnameLookup = true
+
+	th.status = http.StatusOK
+	th.body = read(t, filepath.Join("testdata", "version.json"))
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// This should succeed without double-slash issues.
+	_, err := devt.Version(ctx)
+	if err != nil {
+		t.Errorf("Version failed with trailing slash URL: %v", err)
+	}
+}
+
 func showDiff(t testing.TB, got, want []byte) {
 	gr := bufio.NewReader(bytes.NewReader(got))
 	wr := bufio.NewReader(bytes.NewReader(want))
